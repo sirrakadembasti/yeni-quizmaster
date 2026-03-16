@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../quiz.db"
+}
+
+model User {
+  id            String          @id @default(uuid())
+  name          String
+  email         String          @unique
+  password      String
+  role          String          @default("student") // admin, teacher, student
+  classNo       String?         // Student class number (e.g., 12A-101)
+  createdAt     DateTime        @default(now())
+  
+  // Student relation: A student belongs to exactly one class
+  classId       String?
+  class         Class?          @relation("ClassStudents", fields: [classId], references: [id])
+  
+  // Teacher relation: A teacher can manage multiple classes
+  managedClasses Class[]        @relation("ClassTeachers")
+  
+  // Teacher relation: Categories (Courses) assigned to this teacher
+  assignedCategories Category[] @relation("TeacherCategories")
+  
+  // Quiz relations
+  createdQuizzes Quiz[]         @relation("QuizCreator")
+  results        StudentResult[]
+  notifications  Notification[]
+  logs          ActionLog[]     @relation("UserLogs")
+}
+
+model ActionLog {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation("UserLogs", fields: [userId], references: [id])
+  action    String   // e.g., "CREATE_QUIZ", "SUBMIT_QUIZ", "LOGIN"
+  details   String?  // JSON or descriptive text
+  createdAt DateTime @default(now())
+}
+
+model Class {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  maxStudents Int?
+  createdAt   DateTime @default(now())
+
+  // Students in this class
+  students    User[]   @relation("ClassStudents")
+  
+  // Teachers managing this class (Many-to-Many)
+  teachers    User[]   @relation("ClassTeachers")
+
+  // Categories (Courses) assigned to this class
+  assignedCategories Category[] @relation("ClassCategories")
+
+  // Quizzes assigned to this class
+  quizzes     Quiz[]   @relation("ClassQuizzes")
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  quizzes     Quiz[]
+  
+  // Teachers assigned to this category
+  teachers    User[]   @relation("TeacherCategories")
+  
+  // Classes assigned to this category
+  classes     Class[]  @relation("ClassCategories")
+}
+
+model Quiz {
+  id               String          @id @default(uuid())
+  title            String
+  description      String?
+  difficulty       String          @default("medium")
+  timeLimit        Int?            // in minutes
+  shuffleQuestions Boolean         @default(false)
+  status           String          @default("draft") // draft, published, archived
+  createdAt        DateTime        @default(now())
+
+  // Relations
+  categoryId       String?
+  category         Category?       @relation(fields: [categoryId], references: [id])
+  createdBy        String
+  creator          User            @relation("QuizCreator", fields: [createdBy], references: [id])
+  questions        Question[]
+  results          StudentResult[]
+
+  // Classes this quiz is assigned to
+  assignedClasses Class[]        @relation("ClassQuizzes")
+}
+
+model Question {
+  id            String   @id @default(uuid())
+  quizId        String
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  text          String
+  type          String   // multiple-choice, true-false, short-answer
+  options       String?  // JSON stringified array
+  correctAnswer String
+  imageUrl      String?
+  order         Int
+  createdAt     DateTime @default(now())
+}
+
+model StudentResult {
+  id                  String    @id @default(uuid())
+  studentId           String
+  student             User      @relation(fields: [studentId], references: [id])
+  quizId              String
+  quiz                Quiz      @relation(fields: [quizId], references: [id])
+  status              String    @default("in_progress") // in_progress, completed, abandoned
+  answers             String?   // JSON stringified record
+  score               Int?
+  correctAnswersCount Int       @default(0)
+  totalQuestions      Int       @default(0)
+  timeTaken           Int?      // in seconds
+  startedAt           DateTime  @default(now())
+  submittedAt         DateTime?
+  completedAt         DateTime?
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  message   String
+  type      String   @default("info")
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
