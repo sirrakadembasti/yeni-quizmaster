@@ -1,8 +1,9 @@
 import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
+import { registerRoutes } from "./api-routes/routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 import session from "express-session";
+import connectSqlite3 from "connect-sqlite3";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import path from "path";
@@ -15,6 +16,8 @@ dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const SQLiteStore = connectSqlite3(session);
 
 const app = express();
 const httpServer = createServer(app);
@@ -57,6 +60,10 @@ app.use(cors({
 
 // Session configuration
 app.use(session({
+  store: new SQLiteStore({
+    db: "sessions.db",
+    dir: "./",
+  }) as any,
   secret: process.env.SESSION_SECRET || "quiz-master-secret-key",
   resave: false,
   saveUninitialized: false,
@@ -118,19 +125,27 @@ app.use((req, res, next) => {
     // Initialize application routes
     await registerRoutes(httpServer, app);
 
-    // Global error handler
-    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    // API 404 Handler - If it starts with /api and reaches here, it's a 404
+    app.use("/api/*", (req, res) => {
+      res.status(404).json({ message: `API rotası bulunamadı: ${req.originalUrl}` });
+    });
+
+    // Global error handler for API
+    app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
       const status = err.status || err.statusCode || 500;
-      const message = err.message || "Internal Server Error";
+      const message = err.message || "Dahili Sunucu Hatası";
       
       console.error("API Error:", {
         status,
         message,
-        error: err,
-        stack: err.stack
+        path: req.path,
+        error: err.stack
       });
 
-      res.status(status).json({ message });
+      if (req.path.startsWith("/api")) {
+        return res.status(status).json({ message });
+      }
+      _next(err);
     });
 
     // In production, serve static files from the built client

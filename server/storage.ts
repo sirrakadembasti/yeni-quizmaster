@@ -1,19 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-import { 
-  type User, 
-  type InsertUser,
-  type Quiz,
-  type InsertQuiz,
-  type Question,
-  type InsertQuestion,
-  type StudentResult,
-  type InsertStudentResult,
-  type Category,
-  type InsertCategory,
-  type Class,
-  type InsertClass,
-  type ActionLog
-} from "./schema";
+import { PrismaClient, Prisma, User, Quiz, Question, StudentResult, Category, Class, ActionLog } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -21,25 +6,31 @@ export interface IStorage {
   // Category methods
   getAllCategories(): Promise<Category[]>;
   getCategory(id: string): Promise<Category | undefined>;
-  createCategory(category: InsertCategory): Promise<Category>;
-  updateCategory(id: string, category: Partial<InsertCategory>): Promise<Category | undefined>;
+  createCategory(category: Prisma.CategoryUncheckedCreateInput): Promise<Category>;
+  updateCategory(id: string, category: Partial<Prisma.CategoryUncheckedCreateInput>): Promise<Category | undefined>;
   deleteCategory(id: string): Promise<void>;
 
   // User methods
   getUser(id: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  getUserByResetToken(token: string): Promise<User | undefined>;
+  createUser(user: Prisma.UserUncheckedCreateInput): Promise<User>;
   updateUser(id: string, data: Partial<User>): Promise<User>;
   updateUserRole(userId: string, role: string): Promise<void>;
   getAllUsers(): Promise<User[]>;
+  deleteUser(id: string): Promise<void>;
 
   // Class methods
   getAllClasses(): Promise<Class[]>;
   getClass(id: string): Promise<Class | undefined>;
-  createClass(cls: InsertClass): Promise<Class>;
+  createClass(cls: Prisma.ClassUncheckedCreateInput & { teacherId?: string }): Promise<Class>;
+  updateClass(id: string, data: Partial<Prisma.ClassUncheckedCreateInput>): Promise<Class | undefined>;
+  deleteClass(id: string): Promise<void>;
   getClassesByTeacher(teacherId: string): Promise<Class[]>;
   assignStudentToClass(studentId: string, classId: string): Promise<void>;
   removeStudentFromClass(studentId: string): Promise<void>;
+  assignTeacherToClass(teacherId: string, classId: string): Promise<void>;
+  removeTeacherFromClass(teacherId: string, classId: string): Promise<void>;
   getStudentsByClass(classId: string): Promise<User[]>;
   assignCategoryToClass(classId: string, categoryId: string): Promise<void>;
   removeCategoryFromClass(classId: string, categoryId: string): Promise<void>;
@@ -50,15 +41,15 @@ export interface IStorage {
   getAllQuizzes(): Promise<Quiz[]>;
   getQuiz(id: string): Promise<Quiz | undefined>;
   getQuizzesByCreator(teacherId: string): Promise<Quiz[]>;
-  createQuiz(quiz: InsertQuiz): Promise<Quiz>;
-  updateQuiz(id: string, quiz: Partial<InsertQuiz>): Promise<Quiz | undefined>;
+  createQuiz(quiz: Prisma.QuizUncheckedCreateInput & { assignedClassIds?: string[], category?: string }): Promise<Quiz>;
+  updateQuiz(id: string, quiz: Partial<Prisma.QuizUncheckedCreateInput> & { assignedClassIds?: string[] }): Promise<Quiz | undefined>;
   deleteQuiz(id: string): Promise<void>;
 
   // Question methods
   getQuestionsByQuiz(quizId: string): Promise<Question[]>;
   getQuestion(id: string): Promise<Question | undefined>;
-  createQuestion(question: InsertQuestion): Promise<Question>;
-  createQuestions(questions: InsertQuestion[]): Promise<Question[]>;
+  createQuestion(question: Prisma.QuestionUncheckedCreateInput & { options?: any }): Promise<Question>;
+  createQuestions(questions: (Prisma.QuestionUncheckedCreateInput & { options?: any })[]): Promise<Question[]>;
   deleteQuestion(id: string): Promise<void>;
   deleteQuestionsByQuiz(quizId: string): Promise<void>;
   
@@ -67,8 +58,8 @@ export interface IStorage {
   getResultsByQuiz(quizId: string): Promise<StudentResult[]>;
   getLiveResults(quizId: string): Promise<StudentResult[]>;
   getStudentQuizResult(studentId: string, quizId: string): Promise<StudentResult | undefined>;
-  createResult(result: InsertStudentResult): Promise<StudentResult>;
-  updateResult(id: string, result: Partial<InsertStudentResult>): Promise<void>;
+  createResult(result: Prisma.StudentResultUncheckedCreateInput & { answers?: any }): Promise<StudentResult>;
+  updateResult(id: string, result: Partial<Prisma.StudentResultUncheckedCreateInput> & { answers?: any }): Promise<void>;
   getResult(id: string): Promise<StudentResult | undefined>;
   getQuizStats(quizId: string): Promise<{
     totalParticipants: number;
@@ -84,33 +75,47 @@ export interface IStorage {
 export class PrismaStorage implements IStorage {
   // Category methods
   async getAllCategories(): Promise<Category[]> {
-    const categories = await prisma.category.findMany({
+    return await prisma.category.findMany({
       orderBy: { name: 'asc' }
     });
-    return categories.map(c => ({ ...c, createdAt: c.createdAt.toISOString() }));
   }
 
   async getCategory(id: string): Promise<Category | undefined> {
     const category = await prisma.category.findUnique({ where: { id } });
-    return category ? { ...category, createdAt: category.createdAt.toISOString() } : undefined;
+    return category || undefined;
   }
 
-  async createCategory(category: InsertCategory): Promise<Category> {
-    const created = await prisma.category.create({
+  async createCategory(category: Prisma.CategoryUncheckedCreateInput): Promise<Category> {
+    return await prisma.category.create({
       data: { name: category.name, description: category.description }
     });
-    return { ...created, createdAt: created.createdAt.toISOString() };
   }
 
-  async updateCategory(id: string, category: Partial<InsertCategory>): Promise<Category | undefined> {
-    const updated = await prisma.category.update({
+  async updateCategory(id: string, category: Partial<Prisma.CategoryUncheckedCreateInput>): Promise<Category | undefined> {
+    return await prisma.category.update({
       where: { id },
       data: { name: category.name, description: category.description }
     });
-    return { ...updated, createdAt: updated.createdAt.toISOString() };
   }
 
   async deleteCategory(id: string): Promise<void> {
+    // Check if category has quizzes or teachers assigned
+    const category = await prisma.category.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: {
+            quizzes: true,
+            teachers: true
+          }
+        }
+      }
+    });
+
+    if (category && (category._count.quizzes > 0 || category._count.teachers > 0)) {
+      throw new Error("Bu ders silinemez. Çünkü bu ders ile hazırlanmış sınavlar veya ilişkilendirilmiş öğretmenler bulunmaktadır. Sadece adını değiştirebilirsiniz.");
+    }
+
     await prisma.category.delete({ where: { id } });
   }
 
@@ -120,7 +125,7 @@ export class PrismaStorage implements IStorage {
       where: { id },
       include: { class: true, assignedCategories: true }
     });
-    return user ? { ...user, createdAt: user.createdAt.toISOString() } as User : undefined;
+    return (user as any) || undefined;
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
@@ -128,11 +133,18 @@ export class PrismaStorage implements IStorage {
       where: { email },
       include: { class: true, assignedCategories: true }
     });
-    return user ? { ...user, createdAt: user.createdAt.toISOString() } as User : undefined;
+    return (user as any) || undefined;
   }
 
-  async createUser(user: InsertUser): Promise<User> {
-    const created = await prisma.user.create({
+  async getUserByResetToken(token: string): Promise<User | undefined> {
+    const user = await prisma.user.findFirst({ 
+      where: { resetToken: token }
+    });
+    return (user as any) || undefined;
+  }
+
+  async createUser(user: Prisma.UserUncheckedCreateInput): Promise<User> {
+    return await prisma.user.create({
       data: {
         name: user.name,
         email: user.email,
@@ -142,16 +154,33 @@ export class PrismaStorage implements IStorage {
         classNo: user.classNo
       }
     });
-    return { ...created, createdAt: created.createdAt.toISOString() } as User;
   }
 
-  async updateUser(id: string, data: Partial<User>): Promise<User> {
-    const { id: _, createdAt: __, ...updateData } = data;
-    const updated = await prisma.user.update({
+  async updateUser(id: string, data: Partial<User> & { assignedCategoryIds?: string[], classIds?: string[] }): Promise<User> {
+    const { id: _, createdAt: __, assignedCategoryIds, classIds, ...updateData } = data as any;
+    
+    // Prepare update data
+    const prismaData: any = { ...updateData };
+
+    // Handle teacher categories if provided
+    if (assignedCategoryIds) {
+      prismaData.assignedCategories = {
+        set: assignedCategoryIds.map((catId: string) => ({ id: catId }))
+      };
+    }
+
+    // Handle teacher classes if provided (A teacher can be in many classes)
+    if (classIds) {
+      prismaData.classes = {
+        set: classIds.map((classId: string) => ({ id: classId }))
+      };
+    }
+
+    return await prisma.user.update({
       where: { id },
-      data: updateData as any
+      data: prismaData,
+      include: { class: true, assignedCategories: true }
     });
-    return { ...updated, createdAt: updated.createdAt.toISOString() } as User;
   }
 
   async updateUserRole(userId: string, role: string): Promise<void> {
@@ -162,7 +191,11 @@ export class PrismaStorage implements IStorage {
     const users = await prisma.user.findMany({
       include: { class: true, assignedCategories: true }
     });
-    return users.map(u => ({ ...u, createdAt: u.createdAt.toISOString() })) as User[];
+    return users as any as User[];
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await prisma.user.delete({ where: { id } });
   }
 
   // Class methods
@@ -171,11 +204,7 @@ export class PrismaStorage implements IStorage {
       include: { teachers: true, assignedCategories: true },
       orderBy: { createdAt: 'desc' } 
     });
-    return classes.map(c => ({ 
-      ...c, 
-      createdAt: c.createdAt.toISOString(),
-      teachers: c.teachers.map(t => ({ ...t, createdAt: t.createdAt.toISOString() }))
-    })) as Class[];
+    return classes as any as Class[];
   }
 
   async getClass(id: string): Promise<Class | undefined> {
@@ -183,28 +212,47 @@ export class PrismaStorage implements IStorage {
       where: { id },
       include: { teachers: true, assignedCategories: true }
     });
-    return cls ? { 
-      ...cls, 
-      createdAt: cls.createdAt.toISOString(),
-      teachers: cls.teachers.map(t => ({ ...t, createdAt: t.createdAt.toISOString() }))
-    } as Class : undefined;
+    return (cls as any) || undefined;
   }
 
-  async createClass(cls: InsertClass): Promise<Class> {
+  async createClass(cls: Prisma.ClassUncheckedCreateInput & { teacherId?: string }): Promise<Class> {
+    const data: any = {
+      name: cls.name,
+      description: cls.description,
+      maxStudents: cls.maxStudents,
+    };
+    
+    if (cls.teacherId) {
+      data.teachers = { connect: { id: cls.teacherId } };
+    }
+
     const created = await prisma.class.create({
-      data: {
-        name: cls.name,
-        description: cls.description,
-        maxStudents: cls.maxStudents,
-        teachers: { connect: { id: cls.teacherId } }
-      },
+      data,
       include: { teachers: true, assignedCategories: true }
     });
-    return { 
-      ...created, 
-      createdAt: created.createdAt.toISOString(),
-      teachers: created.teachers.map(t => ({ ...t, createdAt: t.createdAt.toISOString() }))
-    } as Class;
+    
+    return created as any as Class;
+  }
+
+  async updateClass(id: string, data: Partial<Prisma.ClassUncheckedCreateInput>): Promise<Class | undefined> {
+    try {
+      const updated = await prisma.class.update({
+        where: { id },
+        data: {
+          name: data.name,
+          description: data.description,
+          maxStudents: data.maxStudents,
+        },
+        include: { teachers: true, assignedCategories: true }
+      });
+      return updated as any as Class;
+    } catch (e) {
+      return undefined;
+    }
+  }
+
+  async deleteClass(id: string): Promise<void> {
+    await prisma.class.delete({ where: { id } });
   }
 
   async getClassesByTeacher(teacherId: string): Promise<Class[]> {
@@ -212,11 +260,7 @@ export class PrismaStorage implements IStorage {
       where: { teachers: { some: { id: teacherId } } },
       include: { teachers: true, assignedCategories: true }
     });
-    return classes.map(c => ({ 
-      ...c, 
-      createdAt: c.createdAt.toISOString(),
-      teachers: c.teachers.map(t => ({ ...t, createdAt: t.createdAt.toISOString() }))
-    })) as Class[];
+    return classes as any as Class[];
   }
 
   async assignStudentToClass(studentId: string, classId: string): Promise<void> {
@@ -227,9 +271,22 @@ export class PrismaStorage implements IStorage {
     await prisma.user.update({ where: { id: studentId }, data: { classId: null } });
   }
 
+  async assignTeacherToClass(teacherId: string, classId: string): Promise<void> {
+    await prisma.class.update({
+      where: { id: classId },
+      data: { teachers: { connect: { id: teacherId } } }
+    });
+  }
+
+  async removeTeacherFromClass(teacherId: string, classId: string): Promise<void> {
+    await prisma.class.update({
+      where: { id: classId },
+      data: { teachers: { disconnect: { id: teacherId } } }
+    });
+  }
+
   async getStudentsByClass(classId: string): Promise<User[]> {
-    const users = await prisma.user.findMany({ where: { classId } });
-    return users.map(u => ({ ...u, createdAt: u.createdAt.toISOString() })) as User[];
+    return await prisma.user.findMany({ where: { classId } });
   }
 
   async assignCategoryToClass(classId: string, categoryId: string): Promise<void> {
@@ -265,10 +322,14 @@ export class PrismaStorage implements IStorage {
     const quizzes = await prisma.quiz.findMany({
       include: {
         _count: {
-          select: { questions: true }
-        },
-        results: {
-          include: { student: true }
+          select: { 
+            questions: true,
+            results: {
+              where: {
+                student: { role: 'student' }
+              }
+            }
+          }
         },
         category: true,
         assignedClasses: true
@@ -279,9 +340,8 @@ export class PrismaStorage implements IStorage {
       ...q, 
       category: q.category?.name || 'General',
       questionCount: q._count.questions,
-      participantCount: q.results.filter(r => r.student.role === 'student').length,
-      createdAt: q.createdAt.toISOString() 
-    })) as any[];
+      participantCount: q._count.results
+    })) as any as Quiz[];
   }
 
   async getQuiz(id: string): Promise<Quiz | undefined> {
@@ -291,9 +351,8 @@ export class PrismaStorage implements IStorage {
     });
     return quiz ? { 
       ...quiz, 
-      category: quiz.category?.name || 'General',
-      createdAt: quiz.createdAt.toISOString() 
-    } as Quiz : undefined;
+      category: quiz.category?.name || 'General'
+    } as any as Quiz : undefined;
   }
 
   async getQuizzesByCreator(teacherId: string): Promise<Quiz[]> {
@@ -301,10 +360,14 @@ export class PrismaStorage implements IStorage {
       where: { createdBy: teacherId },
       include: {
         _count: {
-          select: { questions: true }
-        },
-        results: {
-          include: { student: true }
+          select: { 
+            questions: true,
+            results: {
+              where: {
+                student: { role: 'student' }
+              }
+            }
+          }
         },
         category: true,
         assignedClasses: true
@@ -315,12 +378,11 @@ export class PrismaStorage implements IStorage {
       ...q, 
       category: q.category?.name || 'General',
       questionCount: q._count.questions,
-      participantCount: q.results.filter(r => r.student.role === 'student').length,
-      createdAt: q.createdAt.toISOString() 
-    })) as any[];
+      participantCount: q._count.results
+    })) as any as Quiz[];
   }
 
-  async createQuiz(quiz: InsertQuiz & { assignedClassIds?: string[] }): Promise<Quiz> {
+  async createQuiz(quiz: Prisma.QuizUncheckedCreateInput & { assignedClassIds?: string[], category?: string }): Promise<Quiz> {
     const created = await prisma.quiz.create({
       data: {
         title: quiz.title,
@@ -339,12 +401,11 @@ export class PrismaStorage implements IStorage {
     });
     return { 
       ...created, 
-      category: quiz.category || 'General',
-      createdAt: created.createdAt.toISOString() 
-    } as Quiz;
+      category: quiz.category || 'General'
+    } as any as Quiz;
   }
 
-  async updateQuiz(id: string, quiz: Partial<InsertQuiz> & { assignedClassIds?: string[] }): Promise<Quiz | undefined> {
+  async updateQuiz(id: string, quiz: Partial<Prisma.QuizUncheckedCreateInput> & { assignedClassIds?: string[] }): Promise<Quiz | undefined> {
     const updated = await prisma.quiz.update({
       where: { id },
       data: {
@@ -361,7 +422,7 @@ export class PrismaStorage implements IStorage {
       },
       include: { assignedClasses: true }
     });
-    return { ...updated, createdAt: updated.createdAt.toISOString() } as any;
+    return updated as any as Quiz;
   }
 
   async deleteQuiz(id: string): Promise<void> {
@@ -388,8 +449,8 @@ export class PrismaStorage implements IStorage {
             options = [];
           }
         }
-        return { ...q, options, createdAt: q.createdAt.toISOString() };
-      }) as Question[];
+        return { ...q, options };
+      }) as any as Question[];
     } catch (e) {
       return [];
     }
@@ -407,13 +468,13 @@ export class PrismaStorage implements IStorage {
           options = [];
         }
       }
-      return { ...q, options, createdAt: q.createdAt.toISOString() } as Question;
+      return { ...q, options } as any as Question;
     } catch (e) {
       return undefined;
     }
   }
 
-  async createQuestion(q: InsertQuestion): Promise<Question> {
+  async createQuestion(q: Prisma.QuestionUncheckedCreateInput & { options?: any }): Promise<Question> {
     const created = await prisma.question.create({
       data: {
         quizId: q.quizId,
@@ -427,12 +488,11 @@ export class PrismaStorage implements IStorage {
     });
     return {
       ...created,
-      options: created.options ? JSON.parse(created.options) : [],
-      createdAt: created.createdAt.toISOString()
-    } as Question;
+      options: created.options ? JSON.parse(created.options) : []
+    } as any as Question;
   }
 
-  async createQuestions(questions: InsertQuestion[]): Promise<Question[]> {
+  async createQuestions(questions: (Prisma.QuestionUncheckedCreateInput & { options?: any })[]): Promise<Question[]> {
     const results: Question[] = [];
     for (const q of questions) {
       const created = await this.createQuestion(q);
@@ -469,15 +529,11 @@ export class PrismaStorage implements IStorage {
     return results.map(r => ({
       ...r,
       answers: r.answers ? JSON.parse(r.answers) : {},
-      startedAt: r.startedAt.toISOString(),
-      submittedAt: r.submittedAt?.toISOString(),
-      completedAt: r.completedAt?.toISOString(),
       quiz: { 
         ...r.quiz, 
-        category: r.quiz.category?.name || 'General',
-        createdAt: r.quiz.createdAt.toISOString() 
-      } as Quiz
-    })) as StudentResult[];
+        category: r.quiz.category?.name || 'General'
+      }
+    })) as any as StudentResult[];
   }
 
   async getResultsByQuiz(quizId: string): Promise<StudentResult[]> {
@@ -488,12 +544,8 @@ export class PrismaStorage implements IStorage {
     });
     return results.map(r => ({
       ...r,
-      answers: r.answers ? JSON.parse(r.answers) : {},
-      startedAt: r.startedAt.toISOString(),
-      submittedAt: r.submittedAt?.toISOString(),
-      completedAt: r.completedAt?.toISOString(),
-      student: { ...r.student, createdAt: r.student.createdAt.toISOString() } as User
-    })) as StudentResult[];
+      answers: r.answers ? JSON.parse(r.answers) : {}
+    })) as any as StudentResult[];
   }
 
   async getLiveResults(quizId: string): Promise<StudentResult[]> {
@@ -504,12 +556,8 @@ export class PrismaStorage implements IStorage {
     });
     return results.map(r => ({
       ...r,
-      answers: r.answers ? JSON.parse(r.answers) : {},
-      startedAt: r.startedAt.toISOString(),
-      submittedAt: r.submittedAt?.toISOString(),
-      completedAt: r.completedAt?.toISOString(),
-      student: { ...r.student, createdAt: r.student.createdAt.toISOString() } as User
-    })) as StudentResult[];
+      answers: r.answers ? JSON.parse(r.answers) : {}
+    })) as any as StudentResult[];
   }
 
   async getStudentQuizResult(studentId: string, quizId: string): Promise<StudentResult | undefined> {
@@ -519,19 +567,16 @@ export class PrismaStorage implements IStorage {
     });
     return r ? {
       ...r,
-      answers: r.answers ? JSON.parse(r.answers) : {},
-      startedAt: r.startedAt.toISOString(),
-      submittedAt: r.submittedAt?.toISOString(),
-      completedAt: r.completedAt?.toISOString()
-    } as StudentResult : undefined;
+      answers: r.answers ? JSON.parse(r.answers) : {}
+    } as any as StudentResult : undefined;
   }
 
-  async createResult(r: InsertStudentResult): Promise<StudentResult> {
+  async createResult(r: Prisma.StudentResultUncheckedCreateInput & { answers?: any }): Promise<StudentResult> {
     const created = await prisma.studentResult.create({
       data: {
         studentId: r.studentId,
         quizId: r.quizId,
-        status: r.status,
+        status: r.status || "in_progress",
         answers: r.answers ? JSON.stringify(r.answers) : null,
         totalQuestions: r.totalQuestions || 0,
         startedAt: r.startedAt || new Date()
@@ -539,14 +584,11 @@ export class PrismaStorage implements IStorage {
     });
     return {
       ...created,
-      answers: created.answers ? JSON.parse(created.answers) : {},
-      startedAt: created.startedAt.toISOString(),
-      submittedAt: created.submittedAt?.toISOString(),
-      completedAt: created.completedAt?.toISOString()
-    } as StudentResult;
+      answers: created.answers ? JSON.parse(created.answers) : {}
+    } as any as StudentResult;
   }
 
-  async updateResult(id: string, r: Partial<InsertStudentResult>): Promise<void> {
+  async updateResult(id: string, r: Partial<Prisma.StudentResultUncheckedCreateInput> & { answers?: any }): Promise<void> {
     await prisma.studentResult.update({
       where: { id },
       data: {
@@ -566,11 +608,8 @@ export class PrismaStorage implements IStorage {
     const r = await prisma.studentResult.findUnique({ where: { id } });
     return r ? {
       ...r,
-      answers: r.answers ? JSON.parse(r.answers) : {},
-      startedAt: r.startedAt.toISOString(),
-      submittedAt: r.submittedAt?.toISOString(),
-      completedAt: r.completedAt?.toISOString()
-    } as StudentResult : undefined;
+      answers: r.answers ? JSON.parse(r.answers) : {}
+    } as any as StudentResult : undefined;
   }
 
   async getQuizStats(quizId: string) {
@@ -589,10 +628,9 @@ export class PrismaStorage implements IStorage {
 
   // Log methods
   async createLog(userId: string, action: string, details?: string): Promise<ActionLog> {
-    const created = await prisma.actionLog.create({
+    return await prisma.actionLog.create({
       data: { userId, action, details }
     });
-    return { ...created, createdAt: created.createdAt.toISOString() };
   }
 
   async getLogs(): Promise<ActionLog[]> {
@@ -602,13 +640,12 @@ export class PrismaStorage implements IStorage {
     });
     return logs.map(l => ({
       ...l,
-      createdAt: l.createdAt.toISOString(),
       user: {
         name: l.user.name,
         email: l.user.email,
         role: l.user.role
       }
-    }));
+    })) as any as ActionLog[];
   }
 }
 

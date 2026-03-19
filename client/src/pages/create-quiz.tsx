@@ -1,8 +1,5 @@
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -10,47 +7,22 @@ import {
   CardTitle,
   CardDescription
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Plus,
-  Trash2,
-  GripVertical,
-  Image as ImageIcon,
   Save,
-  Clock,
   Settings,
   List,
   PlusCircle,
-  X,
-  Loader2,
-  AlertCircle,
-  Users
+  Loader2
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { AIQuestionGenerator } from "@/components/quiz/AIQuestionGenerator";
+import { QuizSettings } from "@/components/quiz/QuizSettings";
+import { QuestionItem, type QuestionForm } from "@/components/quiz/QuestionItem";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { quizApi, categoryApi, classApi } from "@/lib/api";
 import { useLocation, useParams } from "wouter";
 import { useToast } from "@/hooks/use-toast";
-import { ImageUpload } from "@/components/ui/image-upload";
-
-interface QuestionForm {
-  id: number | string;
-  type: string;
-  text: string;
-  options: string[];
-  correctAnswer: number; // index of correct option
-  imageUrl?: string;
-}
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function CreateQuizPage() {
   const [, navigate] = useLocation();
@@ -315,7 +287,6 @@ export default function CreateQuizPage() {
               className="flex-1 sm:flex-none gap-2 shadow-lg shadow-primary/20"
               onClick={() => createQuizMutation.mutate('published')}
               disabled={createQuizMutation.isPending || !title || questions.filter(q => q.text.trim() !== '').length === 0}
-              data-testid="button-publish-quiz"
             >
               {createQuizMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-1" />}
               <Save className="h-4 w-4" />
@@ -337,124 +308,22 @@ export default function CreateQuizPage() {
               </TabsTrigger>
             </TabsList>
             
-            <TabsContent value="settings" className="space-y-6 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
-              <Card className="border-border/60 shadow-sm">
-                <CardHeader>
-                  <CardTitle>Temel Bilgiler</CardTitle>
-                  <CardDescription>Sınavınızın görünümünü ve detaylarını ayarlayın.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Sınav Başlığı <span className="text-destructive">*</span></Label>
-                    <Input 
-                      id="title" 
-                      placeholder="Örn: 10. Sınıf Matematik 1. Dönem 1. Yazılı" 
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      className="text-lg font-medium"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Açıklama (Opsiyonel)</Label>
-                    <Textarea 
-                      id="description" 
-                      placeholder="Sınav hakkında kısa bir bilgi veya yönerge ekleyin..." 
-                      className="min-h-[100px] resize-none"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t">
-                    <div className="space-y-3">
-                      <Label>Ders</Label>
-                      <Select value={category} onValueChange={setCategory}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Ders seçin" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {dbCategories.map(cat => (
-                            <SelectItem key={cat.id} value={cat.name}>
-                              {cat.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-3">
-                      <Label className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-primary" />
-                        Yayınlanacak Sınıflar
-                      </Label>
-                      <div className="grid grid-cols-2 gap-2 p-3 border rounded-lg bg-muted/20">
-                        {teacherClasses.length > 0 ? (
-                          teacherClasses.map((cls) => (
-                            <div key={cls.id} className="flex items-center space-x-2">
-                              <Checkbox 
-                                id={`class-${cls.id}`} 
-                                checked={assignedClassIds.includes(cls.id)}
-                                onCheckedChange={() => toggleClass(cls.id)}
-                              />
-                              <label
-                                htmlFor={`class-${cls.id}`}
-                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                              >
-                                {cls.name}
-                              </label>
-                            </div>
-                          ))
-                        ) : (
-                          <p className="text-xs text-muted-foreground italic col-span-2">Henüz bir sınıfınız bulunmuyor.</p>
-                        )}
-                      </div>
-                      <p className="text-[10px] text-muted-foreground">Sınıf seçilmezse sınav tüm öğrencilere açık olacaktır.</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-border/60 shadow-sm">
-                <CardHeader>
-                  <CardTitle>Sınav Kuralları</CardTitle>
-                  <CardDescription>Öğrencilerin sınav deneyimini şekillendirin.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-                    <div className="space-y-0.5">
-                      <Label className="text-base font-medium flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-primary" />
-                        Süre Sınırı
-                      </Label>
-                      <p className="text-sm text-muted-foreground">Sınav için maksimum süre belirleyin</p>
-                    </div>
-                    <Switch checked={timeLimitEnabled} onCheckedChange={setTimeLimitEnabled} />
-                  </div>
-                  
-                  {timeLimitEnabled && (
-                    <div className="flex items-center gap-4 p-4 border rounded-lg bg-accent/20 animate-in fade-in zoom-in duration-300">
-                      <Label htmlFor="timeLimit" className="whitespace-nowrap font-medium">Süre (Dakika):</Label>
-                      <Input 
-                        id="timeLimit" 
-                        type="number" 
-                        min="1" 
-                        className="w-24 font-mono text-center" 
-                        value={timeLimit || ''}
-                        onChange={(e) => setTimeLimit(parseInt(e.target.value))}
-                      />
-                    </div>
-                  )}
-
-                  <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-                    <div className="space-y-0.5">
-                      <Label className="text-base font-medium">Soruları Karıştır</Label>
-                      <p className="text-sm text-muted-foreground">Her öğrenciye soruları farklı sırada gösterin</p>
-                    </div>
-                    <Switch checked={shuffleQuestions} onCheckedChange={setShuffleQuestions} />
-                  </div>
-                </CardContent>
-              </Card>
+            <TabsContent value="settings">
+              <QuizSettings 
+                title={title} setTitle={setTitle}
+                description={description} setDescription={setDescription}
+                category={category} setCategory={setCategory}
+                dbCategories={dbCategories}
+                teacherClasses={teacherClasses}
+                assignedClassIds={assignedClassIds}
+                toggleClass={toggleClass}
+                timeLimitEnabled={timeLimitEnabled}
+                setTimeLimitEnabled={setTimeLimitEnabled}
+                timeLimit={timeLimit}
+                setTimeLimit={setTimeLimit}
+                shuffleQuestions={shuffleQuestions}
+                setShuffleQuestions={setShuffleQuestions}
+              />
             </TabsContent>
 
             <TabsContent value="questions" className="space-y-6 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
@@ -468,119 +337,16 @@ export default function CreateQuizPage() {
               </Button>
 
               {questions.map((q, index) => (
-                <Card key={q.id} className="relative group border-border/60 hover:border-primary/40 transition-colors">
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/20 rounded-l-xl group-hover:bg-primary transition-colors" />
-                  <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-4">
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary font-bold text-sm">
-                        {index + 1}
-                      </div>
-                      <CardTitle className="text-base">Soru Düzenle</CardTitle>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing">
-                        <GripVertical className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                        onClick={() => removeQuestion(q.id)}
-                        disabled={questions.length === 1}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Label>Soru Metni <span className="text-destructive">*</span></Label>
-                      </div>
-                      <Textarea 
-                        placeholder="Sorunuzu buraya yazın..."
-                        value={q.text}
-                        onChange={(e) => updateQuestion(q.id, 'text', e.target.value)}
-                        className="min-h-[100px] text-base resize-none"
-                      />
-                    </div>
-
-                    <div className="space-y-2 pt-2 border-t">
-                      <Label className="flex items-center gap-2 text-muted-foreground">
-                        <ImageIcon className="h-4 w-4" /> Soru Görseli (Opsiyonel)
-                      </Label>
-                      <ImageUpload 
-                        value={q.imageUrl} 
-                        onChange={(url) => updateQuestion(q.id, 'imageUrl', url)}
-                        onRemove={() => updateQuestion(q.id, 'imageUrl', undefined)}
-                      />
-                    </div>
-
-                    <div className="space-y-3 pt-4 border-t">
-                      <Label className="text-sm font-semibold">Seçenekler</Label>
-                      <p className="text-xs text-muted-foreground mb-4">Doğru cevabı belirtmek için seçeneğin yanındaki radyo butonunu işaretleyin.</p>
-                      
-                      {q.options.map((opt, i) => (
-                        <div key={i} className="flex items-center gap-3">
-                          <button
-                            type="button"
-                            onClick={() => updateQuestion(q.id, 'correctAnswer', i)}
-                            className={`flex items-center justify-center w-6 h-6 rounded-full border-2 transition-all ${
-                              q.correctAnswer === i 
-                                ? 'border-primary bg-primary text-primary-foreground' 
-                                : 'border-input hover:border-primary/50'
-                            }`}
-                            title={q.correctAnswer === i ? "Doğru cevap olarak seçildi" : "Doğru cevap olarak işaretle"}
-                          >
-                            {q.correctAnswer === i && <div className="w-2.5 h-2.5 bg-primary-foreground rounded-full" />}
-                          </button>
-                          
-                          <div className="flex-1 flex items-center gap-2">
-                            <span className="font-semibold text-muted-foreground w-6 text-center select-none">
-                              {String.fromCharCode(65 + i)})
-                            </span>
-                            <Input 
-                              placeholder={`${i + 1}. Seçeneği yazın`}
-                              value={opt}
-                              onChange={(e) => updateOption(q.id, i, e.target.value)}
-                              className={`flex-1 ${q.correctAnswer === i ? 'border-primary/50 bg-primary/5 font-medium' : ''}`}
-                            />
-                            {q.options.length > 2 && (
-                              <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                className="h-9 w-9 text-muted-foreground hover:text-destructive"
-                                onClick={() => {
-                                  const newOptions = q.options.filter((_, idx) => idx !== i);
-                                  updateQuestion(q.id, 'options', newOptions);
-                                  if (q.correctAnswer === i) {
-                                    updateQuestion(q.id, 'correctAnswer', 0);
-                                  } else if (q.correctAnswer > i) {
-                                    updateQuestion(q.id, 'correctAnswer', q.correctAnswer - 1);
-                                  }
-                                }}
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                      
-                      {q.options.length < 6 && (
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="mt-2 ml-11 border-dashed text-muted-foreground hover:text-primary gap-1.5"
-                          onClick={() => updateQuestion(q.id, 'options', [...q.options, ""])}
-                        >
-                          <Plus className="h-3.5 w-3.5" />
-                          Seçenek Ekle
-                        </Button>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                <QuestionItem 
+                  key={q.id}
+                  question={q}
+                  index={index}
+                  isFirst={index === 0}
+                  totalQuestions={questions.length}
+                  onUpdate={updateQuestion}
+                  onRemove={removeQuestion}
+                  onUpdateOption={updateOption}
+                />
               ))}
 
               <Button 
