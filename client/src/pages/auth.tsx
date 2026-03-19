@@ -5,15 +5,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Mail, Lock, User, ArrowRight } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
   const { login, register } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isForgotLoading, setIsForgotLoading] = useState(false);
+  const [isForgotOpen, setIsForgotOpen] = useState(false);
 
   // Login State
   const [loginEmail, setLoginEmail] = useState("");
@@ -24,6 +28,9 @@ export default function AuthPage() {
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
   const [regConfirmPassword, setRegConfirmPassword] = useState("");
+
+  // Forgot Password State
+  const [forgotEmail, setForgotEmail] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,6 +120,31 @@ export default function AuthPage() {
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsForgotLoading(true);
+
+    try {
+      await apiRequest("POST", "/api/auth/forgot-password", { email: forgotEmail });
+      
+      toast({
+        title: "E-posta Gönderildi",
+        description: "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.",
+        className: "bg-emerald-50 border-emerald-200 text-emerald-800"
+      });
+      setIsForgotOpen(false);
+      setForgotEmail("");
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Hata",
+        description: error.message || "E-posta gönderilirken bir sorun oluştu.",
+      });
+    } finally {
+      setIsForgotLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-background relative overflow-hidden">
       {/* Background Elements */}
@@ -158,7 +190,49 @@ export default function AuthPage() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="password">Şifre</Label>
-                    <a href="#" className="text-xs text-primary hover:underline">Unuttum?</a>
+                    
+                    <Dialog open={isForgotOpen} onOpenChange={setIsForgotOpen}>
+                      <DialogTrigger asChild>
+                        <button type="button" className="text-xs text-primary hover:underline">Unuttum?</button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                          <DialogTitle>Şifremi Unuttum</DialogTitle>
+                          <DialogDescription>
+                            E-posta adresinizi girin, size şifre sıfırlama bağlantısı gönderelim.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <form onSubmit={handleForgotPassword} className="space-y-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="forgot-email">E-posta Adresi</Label>
+                            <div className="relative">
+                              <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                              <Input 
+                                id="forgot-email" 
+                                type="email" 
+                                placeholder="ad@ornek.com" 
+                                className="pl-9"
+                                value={forgotEmail}
+                                onChange={(e) => setForgotEmail(e.target.value)}
+                                required 
+                              />
+                            </div>
+                          </div>
+                          <DialogFooter>
+                            <Button className="w-full" type="submit" disabled={isForgotLoading}>
+                              {isForgotLoading ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  Gönderiliyor...
+                                </>
+                              ) : (
+                                "Sıfırlama Bağlantısı Gönder"
+                              )}
+                            </Button>
+                          </DialogFooter>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                   <div className="relative">
                     <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />

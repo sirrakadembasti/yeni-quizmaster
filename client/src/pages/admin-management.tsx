@@ -57,6 +57,8 @@ export default function AdminManagementPage() {
   
   // States for Category Dialog
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
+  const [isEditCategoryMode, setIsEditCategoryMode] = useState(false);
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
   const [newCategoryName, setNewCategoryName] = useState("");
   const [newCategoryDesc, setNewCategoryDesc] = useState("");
 
@@ -110,11 +112,41 @@ export default function AdminManagementPage() {
     }
   });
 
+  const updateCategoryMutation = useMutation({
+    mutationFn: ({ id, name, description }: { id: string, name: string, description?: string }) => 
+      fetch(`/api/categories/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, description }),
+      }).then(res => {
+        if (!res.ok) return res.json().then(e => { throw new Error(e.message); });
+        return res.json();
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+      setIsCategoryDialogOpen(false);
+      setEditingCategoryId(null);
+      setNewCategoryName("");
+      setNewCategoryDesc("");
+      toast({ title: "Başarılı", description: "Ders güncellendi." });
+    },
+    onError: (error: any) => {
+      toast({ title: "Hata", description: error.message || "Ders güncellenemedi.", variant: "destructive" });
+    }
+  });
+
   const deleteCategoryMutation = useMutation({
     mutationFn: (id: string) => categoryApi.deleteCategory(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
       toast({ title: "Başarılı", description: "Ders silindi." });
+    },
+    onError: (error: any) => {
+      toast({ 
+        title: "Silme Başarısız", 
+        description: error.message || "Bu ders silinemez. Çünkü bu ders ile hazırlanmış sınavlar veya ilişkilendirilmiş öğretmenler bulunmaktadır.",
+        variant: "destructive" 
+      });
     }
   });
 
@@ -151,6 +183,24 @@ export default function AdminManagementPage() {
       queryClient.invalidateQueries({ queryKey: ['users'] });
       queryClient.invalidateQueries({ queryKey: ['classes'] });
       toast({ title: "Başarılı", description: "Öğrenci sınıftan çıkarıldı." });
+    }
+  });
+
+  const assignTeacherToClassMutation = useMutation({
+    mutationFn: ({ classId, teacherId }: { classId: string, teacherId: string }) =>
+      classApi.assignTeacherToClass(classId, teacherId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['classes'] });
+      toast({ title: "Başarılı", description: "Öğretmen sınıfa atandı." });
+    }
+  });
+
+  const removeTeacherFromClassMutation = useMutation({
+    mutationFn: ({ classId, teacherId }: { classId: string, teacherId: string }) =>
+      classApi.removeTeacherFromClass(classId, teacherId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['classes'] });
+      toast({ title: "Başarılı", description: "Öğretmen sınıftan çıkarıldı." });
     }
   });
 
@@ -214,6 +264,10 @@ export default function AdminManagementPage() {
     !selectedTeacher?.assignedCategories?.some((assigned: any) => (typeof assigned === 'string' ? assigned : assigned.id) === cat.id)
   ) || [];
 
+  const unassignedTeachersForClass = teachers.filter(t => 
+    !selectedClass?.teachers?.some((assigned: any) => assigned.id === t.id)
+  );
+
   return (
     <DashboardLayout>
       <div className="space-y-8">
@@ -254,7 +308,13 @@ export default function AdminManagementPage() {
                   <CardTitle>Quiz Dersleri</CardTitle>
                   <CardDescription>Quizlerin atanabileceği konu başlıklarını yönetin.</CardDescription>
                 </div>
-                <Button onClick={() => setIsCategoryDialogOpen(true)} className="gap-2">
+                <Button onClick={() => {
+                  setIsEditCategoryMode(false);
+                  setEditingCategoryId(null);
+                  setNewCategoryName("");
+                  setNewCategoryDesc("");
+                  setIsCategoryDialogOpen(true);
+                }} className="gap-2">
                   <Plus className="h-4 w-4" />
                   Yeni Ders
                 </Button>
@@ -278,18 +338,34 @@ export default function AdminManagementPage() {
                             <TableCell className="font-medium">{cat.name}</TableCell>
                             <TableCell className="text-muted-foreground">{cat.description || '-'}</TableCell>
                             <TableCell className="text-right">
-                              <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                className="h-8 w-8 text-destructive hover:bg-destructive/10" 
-                                onClick={() => {
-                                  if(confirm('Bu dersi silmek istediğinize emin misiniz?')) {
-                                    deleteCategoryMutation.mutate(cat.id);
-                                  }
-                                }}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
+                              <div className="flex justify-end gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-8 w-8 text-primary hover:bg-primary/10" 
+                                  onClick={() => {
+                                    setIsEditCategoryMode(true);
+                                    setEditingCategoryId(cat.id);
+                                    setNewCategoryName(cat.name);
+                                    setNewCategoryDesc(cat.description || "");
+                                    setIsCategoryDialogOpen(true);
+                                  }}
+                                >
+                                  <Edit2 className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-8 w-8 text-destructive hover:bg-destructive/10" 
+                                  onClick={() => {
+                                    if(confirm('Bu dersi silmek istediğinize emin misiniz?')) {
+                                      deleteCategoryMutation.mutate(cat.id);
+                                    }
+                                  }}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))}
@@ -674,8 +750,12 @@ export default function AdminManagementPage() {
       <Dialog open={isCategoryDialogOpen} onOpenChange={setIsCategoryDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Yeni Ders Ekle</DialogTitle>
-            <DialogDescription>Quizleri organize etmek için yeni bir başlık oluşturun.</DialogDescription>
+            <DialogTitle>{isEditCategoryMode ? "Dersi Düzenle" : "Yeni Ders Ekle"}</DialogTitle>
+            <DialogDescription>
+              {isEditCategoryMode 
+                ? "Ders bilgilerini güncelleyin." 
+                : "Quizleri organize etmek için yeni bir başlık oluşturun."}
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
@@ -689,9 +769,18 @@ export default function AdminManagementPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsCategoryDialogOpen(false)}>İptal</Button>
-            <Button onClick={() => createCategoryMutation.mutate()} disabled={!newCategoryName || createCategoryMutation.isPending}>
-              {createCategoryMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Dersi Oluştur
+            <Button 
+              onClick={() => {
+                if (isEditCategoryMode && editingCategoryId) {
+                  updateCategoryMutation.mutate({ id: editingCategoryId, name: newCategoryName, description: newCategoryDesc });
+                } else {
+                  createCategoryMutation.mutate();
+                }
+              }} 
+              disabled={!newCategoryName || createCategoryMutation.isPending || updateCategoryMutation.isPending}
+            >
+              {(createCategoryMutation.isPending || updateCategoryMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isEditCategoryMode ? "Değişiklikleri Kaydet" : "Dersi Oluştur"}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -73,11 +73,14 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
   // Role based navigation config
   const adminNavigation = [
     { name: "Genel Bakış", href: "/", icon: LayoutDashboard },
+    { name: "Yönetim Paneli", href: "/management", icon: Settings },
+    { name: "Tüm Sınavlar", href: "/admin-quizzes", icon: FileText },
     { name: "Sınavlarım", href: "/quizzes", icon: FileText },
     { name: "Yeni Sınav Oluştur", href: "/create-quiz", icon: PlusCircle },
-    { name: "Sonuçlar & Analiz", href: "/results", icon: BarChart2 },
-    { name: "Sınıflar", href: "/students", icon: Users },
+    { name: "Sınıflar", href: "/classes", icon: Users },
+    { name: "Öğrenciler", href: "/students", icon: Users },
     { name: "Öğretmenler", href: "/teachers", icon: Users },
+    { name: "İstatistikler", href: "/results", icon: BarChart2 },
     { name: "Ayarlar", href: "/settings", icon: Settings },
   ];
 
@@ -89,8 +92,15 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
     { name: "Profil ve Ayarlar", href: "/settings", icon: Settings },
   ];
 
-  // Teacher navigation: hide the full teachers management page for teacher role
-  const teacherNavigation = adminNavigation.filter(item => item.name !== "Öğretmenler" && item.href !== "/teachers");
+  const teacherNavigation = [
+    { name: "Genel Bakış", href: "/", icon: LayoutDashboard },
+    { name: "Sınavlarım", href: "/quizzes", icon: FileText },
+    { name: "Yeni Sınav Oluştur", href: "/create-quiz", icon: PlusCircle },
+    { name: "Sınıflarım", href: "/classes", icon: Users },
+    { name: "Öğrenciler", href: "/students", icon: Users },
+    { name: "İstatistikler", href: "/results", icon: BarChart2 },
+    { name: "Ayarlar", href: "/settings", icon: Settings },
+  ];
 
   const navigation = role === 'student' ? studentNavigation : 
                      role === 'teacher' ? teacherNavigation : 

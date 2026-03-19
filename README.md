@@ -1,82 +1,46 @@
-# QuizMaster AI - Eğitim ve Quiz Platformu
+# Quiz-Master: AI Destekli Sınav Yönetim Platformu
 
-QuizMaster AI, Gemini Yapay Zeka desteğiyle öğretmenlerin hızlıca sınav oluşturmasını, öğrencilerin ise kendilerini test etmesini sağlayan kapsamlı bir eğitim platformudur.
+Quiz-Master, eğitim kurumları için tasarlanmış, öğretmenlerin **Gemini 3 (Flash & Pro)** yardımıyla sınav hazırlayabildiği ve öğrencilerin bu sınavları interaktif bir şekilde çözebildiği modern bir web uygulamasıdır.
 
-## 🚀 Yeni Mimari ve Teknolojiler
+## 🚀 Öne Çıkan Özellikler
 
-- **Frontend:** React 19, TypeScript, Vite, Tailwind CSS v4, TanStack Query.
-- **Backend:** Node.js (v20+), Express.js, **Prisma ORM**.
-- **Veritabanı:** SQLite (Prisma ile yönetilen ilişkisel yapı).
-- **Yapay Zeka:** Google Gemini 1.5/2.0 API (OpenAI uyumluluk katmanı ile).
-- **Güvenlik:** express-session (cookie tabanlı), bcryptjs, express-rate-limit.
+- **🤖 AI Soru Üretimi:** En yeni **Gemini 3 Flash** ve **Gemini 3 Pro** API entegrasyonu ile saniyeler içinde konu bazlı sınav hazırlama.
+- **🛡️ Gelişmiş Admin Yönetimi (CRUD):** 
+  - **Öğretmen ve Öğrenci Panelleri:** Sisteme yeni kişiler ekleme, düzenleme, silme ve doğrudan şifre atama yetenekleri (Merkezi UI bileşenleri ile güçlendirilmiş).
+  - **Sınıf Yönetimi:** Sanal sınıflar oluşturma, her sınıfa çoklu öğretmen ve öğrenci atayabilme.
+  - **Global Sınav Yönetimi:** Sistemdeki tüm sınavları tek bir ekrandan kontrol edebilme.
+- **👥 Çoklu Rol Sistemi:** Admin, Öğretmen ve Öğrenci rolleri için tamamen izole edilmiş dashboardlar.
+- **📄 PDF Raporlama:** Sınav sonuçlarını profesyonel PDF formatında dışa aktarma.
+- **🎨 Modern Arayüz:** React 19 ve TailwindCSS v4 ile inşa edilmiş, ultra hızlı ve duyarlı tasarım.
+- **⚙️ Temiz Mimari:** Modüler backend yapısı (`api-routes`) ve pnpm workspace ile tek merkezden bağımlılık yönetimi.
 
-## 🛠 Kurulum ve Başlatma
+## 🚧 Yol Haritası (Gelecek Özellikler)
+- **📊 Canlı Takip:** Sınav sonuçlarını anlık izleme ekranı (Backend altyapısı hazır).
+- **📱 Mobil Uygulama:** Flutter veya React Native desteği.
 
-### 1. Bağımlılıkları Kurun
+## 📦 Kurulum ve Demo Giriş Bilgileri
+
+### 1. Kurulum
+Uygulama monorepo yapısında pnpm workspace kullanmaktadır. Kök dizinde tek bir pnpm kurulumu yeterlidir.
 ```bash
-# Kök dizinde
 pnpm install
-cd server && pnpm install
-cd ../client && pnpm install
-```
-
-### 2. Veritabanını Başlatın (Prisma)
-Aşağıdaki komutları sırasıyla `server` dizininde çalıştırın:
-```bash
-# 1. Şemayı veritabanına uygulayın
-pnpm db:migrate --name init
-
-# 2. Prisma Client'ı oluşturun
+cd server
 pnpm db:generate
-
-# 3. Yeni Demo Hesapları ve Kategorileri Yükleyin (Seed)
 pnpm db:seed
-```
-
-### 3. Uygulamayı Çalıştırın
-```bash
-# server dizininde
-pnpm dev
-
-# client dizininde
 pnpm dev
 ```
 
-## 🔐 Yeni Güvenli Demo Hesapları
+### 📧 E-posta Yapılandırması (Şifre Sıfırlama)
+Uygulama, şifre sıfırlama işlemleri için e-posta gönderim desteğine sahiptir. Yerel geliştirme ortamında hata almamak için bu özellik varsayılan olarak "pasif" (loglama modunda) tutulmuştur. Aktifleştirmek için:
+1. `server/.env` dosyasına SMTP bilgilerinizi ekleyin (`EMAIL_HOST`, `EMAIL_USER`, `EMAIL_PASS` vb.).
+2. `server/utils/email.ts` dosyasındaki `transporter.verify` bloğunun yorum satırlarını kaldırın.
 
+### 🔑 Demo Hesapları (Varsayılan Şifre: `QuizMaster2026!`)
 | Rol | E-posta | Şifre |
-|-----|---------|-------|
-| **Admin** | admin@quizmaster.com | `QuizMaster2026!` |
-| **Öğretmen** | teacher@quizmaster.com | `QuizMaster2026!` |
-| **Öğrenci** | student@quizmaster.com | `QuizMaster2026!` |
+| :--- | :--- | :--- |
+| **Admin** | `admin@quizmaster.com` | `QuizMaster2026!` |
+| **Öğretmen** | `teacher@quizmaster.com` | `QuizMaster2026!` |
+| **Öğrenci** | `student@quizmaster.com` | `QuizMaster2026!` |
 
-## 📡 API Uç Noktaları (RESTful)
-
-### Auth
-- `POST /api/auth/register` - Yeni kullanıcı kaydı
-- `POST /api/auth/login` - Giriş yap
-- `GET /api/auth/me` - Mevcut kullanıcı bilgisi
-
-### Quiz & Sorular
-- `GET /api/quizzes` - Tüm quizleri listele (Role göre filtrelenir)
-- `POST /api/quizzes` - Yeni quiz oluştur (Admin/Teacher)
-- `POST /api/quizzes/:id/questions` - Quize toplu soru ekle
-- `GET /api/quizzes/:id` - Quiz detaylarını ve sorularını getir
-
-### Kategori Yönetimi (Admin/Teacher)
-- `GET /api/categories` - Tüm kategoriler
-- `POST /api/categories` - Yeni kategori oluştur
-- `DELETE /api/categories/:id` - Kategori sil
-
-### Sınıf Yönetimi (Admin)
-- `GET /api/classes` - Sınıfları listele
-- `POST /api/classes` - Yeni sınıf oluştur
-- `POST /api/classes/:id/students` - Sınıfa öğrenci ata (Öğrenci başına tek sınıf kısıtı)
-
-### Yapay Zeka (AI)
-- `POST /api/ai/generate-questions` - Gemini API kullanarak soru üret
-
-## 💡 Temel Özellikler
-- **AI Soru Üretici:** `gemini-3-flash-preview` ve `gemini-3-pro-preview` modellerini destekler.
-- **Canlı İzleme:** Öğretmenler aktif sınavları anlık olarak takip edebilir.
-- **İlişkisel Veri:** Prisma sayesinde sınıflar, öğrenciler ve öğretmenler arasındaki bağlar kesin kısıtlamalarla korunur.
+---
+*Geliştirici Notu: Bu proje en güncel Gemini 3 modelleri ve React 19 standartları ile optimize edilmiştir.*

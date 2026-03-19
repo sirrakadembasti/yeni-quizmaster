@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:../quiz.db"
+  url      = "file:./dev.db"
 }
 
 model User {
@@ -15,9 +15,14 @@ model User {
   name          String
   email         String          @unique
   password      String
-  role          String          @default("student") // admin, teacher, student
-  classNo       String?         // Student class number (e.g., 12A-101)
+  role          String          @default("pending") // admin, teacher, student, pending
+  studentNo     Int?            // Student number (auto-incremented per class in code)
+  classNo       String?         // Legacy/Optional student class code
   createdAt     DateTime        @default(now())
+  
+  // Password Reset Fields
+  resetToken       String?
+  resetTokenExpiry DateTime?
   
   // Student relation: A student belongs to exactly one class
   classId       String?
@@ -117,9 +122,9 @@ model Question {
 model StudentResult {
   id                  String    @id @default(uuid())
   studentId           String
-  student             User      @relation(fields: [studentId], references: [id])
+  student             User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
   quizId              String
-  quiz                Quiz      @relation(fields: [quizId], references: [id])
+  quiz                Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
   status              String    @default("in_progress") // in_progress, completed, abandoned
   answers             String?   // JSON stringified record
   score               Int?

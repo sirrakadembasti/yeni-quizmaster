@@ -25,9 +25,12 @@ global.matchMedia = global.matchMedia || function() {
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
+  root: Element | Document | null = null;
+  rootMargin: string = '';
+  thresholds: ReadonlyArray<number> = [];
   constructor() {}
   disconnect() {}
   observe() {}
   unobserve() {}
   takeRecords() { return []; }
-};
+} as any;
