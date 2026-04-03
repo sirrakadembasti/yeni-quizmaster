@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { quizApi } from '@/lib/api';
+import { quizApi, refreshCsrfToken } from '@/lib/api';
 import { useAuth } from '@/context/auth-context';
 import { Clock, ChevronLeft, ChevronRight, AlertCircle, CheckCircle2, Eye } from 'lucide-react';
 import {
@@ -42,41 +42,25 @@ export default function StudentQuiz() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  // 'idle' | 'saving' | 'saved' | 'error'
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
   // Start quiz on mount
   useEffect(() => {
-    console.debug('StudentQuiz mounted, quizId=', quizId, 'role=', role);
-    const startQuiz = async () => {
+    const initQuiz = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const resp = await fetch(`/api/student/quiz/${quizId}/start`, {
-          method: 'POST',
-          credentials: 'include',
-        });
-
-        const raw = await resp.text();
-        console.debug('API Response:', resp.status, raw.substring(0, 200));
-        
-        let data: any = null;
-        try {
-          data = raw ? JSON.parse(raw) : null;
-        } catch (e) {
-          console.error('JSON parse error:', e);
-          data = null;
+        // Pre-emptive CSRF refresh for previews to prevent 403 race conditions
+        if (isPreviewMode) {
+          console.log("Preview mode detected, refreshing CSRF token pre-emptively");
+          await refreshCsrfToken();
         }
 
-        if (!resp.ok) {
-          const body = raw || `HTTP ${resp.status}`;
-          throw new Error(`Başlatma hatası (${resp.status}): ${body}`);
-        }
+        const data: any = await quizApi.startQuiz(quizId);
 
-        if (!data) {
-          throw new Error('Sunucudan beklenmeyen yanıt alındı: ' + raw);
-        }
-
-        if (!data.quiz) {
+        if (!data || !data.quiz) {
           throw new Error('Quiz bilgisi alınamadı');
         }
 
@@ -104,7 +88,6 @@ export default function StudentQuiz() {
         const limitInSeconds = data.quiz?.timeLimit ? data.quiz.timeLimit * 60 : null;
         setTimeLeft(limitInSeconds); 
       } catch (err) {
-        console.error('Quiz start error:', err);
         setError(err instanceof Error ? err.message : 'Quiz başlatılamadı');
       } finally {
         setLoading(false);
@@ -112,7 +95,7 @@ export default function StudentQuiz() {
     };
 
     if (quizId) {
-      startQuiz();
+      initQuiz();
     } else {
       setError('Quiz ID bulunamadı');
       setLoading(false);
@@ -139,15 +122,37 @@ export default function StudentQuiz() {
 
   // Auto-save answer when changed
   const handleAnswerChange = async (questionId: string, option: string) => {
+    // Optimistic update: seçim anında UI'ya yansır
     setAnswers(prev => ({ ...prev, [questionId]: option }));
-    
+
     // In preview mode, don't save answers to server
     if (isPreviewMode) return;
-    
+
+    setSaveStatus('saving');
     try {
       await quizApi.submitAnswer(resultId!, questionId, option);
+      setSaveStatus('saved');
+      // 2 sn sonra göstergeyi gizle
+      setTimeout(() => setSaveStatus('idle'), 2000);
     } catch (err) {
-      console.error('Cevap kaydedilemedi:', err);
+      // Bağlantı kesilmesi veya oturum kapanması durumunda kullanıcıya görünür uyarı göster.
+      // Cevap yerel state'de tutulur; "Yeniden Dene" ile tekrar gönderilmeye çalışılır.
+      setSaveStatus('error');
+    }
+  };
+
+  // Hata durumunda "Yeniden Dene": mevcut sorunun cevabını sunucuya tekrar gönder
+  const retryLastSave = async () => {
+    const currentQuestion = questions[currentQuestionIndex];
+    const currentAnswer = answers[currentQuestion?.id];
+    if (!currentQuestion || !currentAnswer || !resultId) return;
+    setSaveStatus('saving');
+    try {
+      await quizApi.submitAnswer(resultId, currentQuestion.id, currentAnswer);
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+    } catch {
+      setSaveStatus('error');
     }
   };
 
@@ -333,6 +338,33 @@ export default function StudentQuiz() {
           <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
             <AlertCircle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
             <p className="text-sm text-red-800">Zamanın bitmek üzere. Acele et!</p>
+          </div>
+        )}
+
+        {/* Save status banner — cevap kaydetme durumu */}
+        {saveStatus === 'error' && (
+          <div className="bg-amber-50 border border-amber-300 rounded-lg p-3 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0" />
+              <p className="text-sm text-amber-800">
+                Cevap kaydedilemedi. İnternet bağlantınızı kontrol edin.
+              </p>
+            </div>
+            <Button size="sm" variant="outline" onClick={retryLastSave} className="shrink-0 border-amber-400 text-amber-800 hover:bg-amber-100">
+              Yeniden Dene
+            </Button>
+          </div>
+        )}
+        {saveStatus === 'saving' && (
+          <div className="flex items-center gap-2 text-xs text-muted-foreground px-1">
+            <div className="h-3 w-3 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+            Kaydediliyor...
+          </div>
+        )}
+        {saveStatus === 'saved' && (
+          <div className="flex items-center gap-2 text-xs text-emerald-600 px-1">
+            <CheckCircle2 className="h-3 w-3" />
+            Cevap kaydedildi
           </div>
         )}
 

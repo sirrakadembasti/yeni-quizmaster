@@ -156,7 +156,7 @@ export function AIQuestionGenerator({ onGenerate, quizTitle = "", quizDescriptio
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full gap-2 border-primary/20 text-primary hover:bg-primary/5 hover:text-primary shadow-sm h-12">
+        <Button variant="outline" className="w-full gap-2 border-primary/20 text-primary hover:bg-primary/5 hover:text-primary shadow-sm dark:shadow-none h-12">
           <Sparkles className="h-4 w-4" />
           AI ile Soruları Üret
         </Button>
@@ -237,8 +237,10 @@ export function AIQuestionGenerator({ onGenerate, quizTitle = "", quizDescriptio
               <SelectContent>
                 <SelectItem value="gemini-3-flash-preview">Gemini 3 Flash Preview (En Hızlı)</SelectItem>
                 <SelectItem value="gemini-3-pro-preview">Gemini 3 Pro Preview (En Zeki)</SelectItem>
+                <SelectItem value="gemini-3-pro">Gemini 3 Pro (Stabil)</SelectItem>
+                <SelectItem value="gemini-2.0-flash">Gemini 2.0 Flash</SelectItem>
                 <SelectItem value="gemini-1.5-flash">Gemini 1.5 Flash</SelectItem>
-                <SelectItem value="gemini-1.5-pro">Gemini 1.5 Pro</SelectItem>
+                <SelectItem value="gemini-1.5-pro">Gemini 1.5 Pro (Zeki)</SelectItem>
                 <SelectItem value="custom" className="text-primary font-bold">--- Manuel Model Gir ---</SelectItem>
               </SelectContent>
             </Select>
@@ -305,7 +307,7 @@ export function AIQuestionGenerator({ onGenerate, quizTitle = "", quizDescriptio
                   <Button 
                     variant="secondary" 
                     size="sm" 
-                    className="flex-1 gap-2 bg-background border shadow-sm hover:shadow-md transition-all font-bold"
+                    className="flex-1 gap-2 bg-background border shadow-sm dark:shadow-none hover:shadow-md transition-all font-bold"
                     onClick={handleTestConfig}
                     disabled={isTesting || isGenerating}
                   >
@@ -337,7 +339,7 @@ export function AIQuestionGenerator({ onGenerate, quizTitle = "", quizDescriptio
           <Button 
             onClick={handleGenerate} 
             disabled={!topic || isGenerating || (showCustomConfig && !isConfigTested())}
-            className="sm:flex-[2] gap-2 h-12 text-base shadow-lg shadow-primary/20"
+            className="sm:flex-[2] gap-2 h-12 text-base shadow-lg shadow-primary/20 dark:shadow-none"
           >
             {isGenerating ? (
               <>
