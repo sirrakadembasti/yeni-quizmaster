@@ -1,5 +1,80 @@
 const API_BASE = '/api';
 
+let csrfToken: string | null = null;
+let csrfPromise: Promise<string | null> | null = null;
+
+async function getCsrfToken() {
+  if (csrfToken) return csrfToken;
+  if (csrfPromise) return csrfPromise;
+
+  csrfPromise = (async () => {
+    try {
+      const res = await window.fetch(`${API_BASE}/csrf-token`, { credentials: 'include' });
+      if (res.ok) {
+        const data = await res.json();
+        csrfToken = data.token;
+        return csrfToken;
+      }
+    } catch (err) {
+      console.warn("Failed to fetch CSRF token");
+    } finally {
+      csrfPromise = null;
+    }
+    return null;
+  })();
+
+  return csrfPromise;
+}
+
+export async function refreshCsrfToken() {
+  csrfToken = null;
+  return await getCsrfToken();
+}
+
+async function apiFetch(url: string, options: RequestInit = {}) {
+  const method = options.method || 'GET';
+  
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(method.toUpperCase())) {
+    const token = await getCsrfToken();
+    if (token) {
+      options.headers = {
+        ...options.headers,
+        'x-csrf-token': token
+      };
+    }
+  }
+  
+  let response = await window.fetch(url, options);
+
+  // Automatically retry once if CSRF token is invalid
+  if (response.status === 403) {
+    const clonedResponse = response.clone();
+    try {
+      const errorData = await clonedResponse.json();
+      if (errorData.message === "invalid csrf token") {
+        console.warn("CSRF Token invalid, refreshing and retrying...");
+        csrfToken = null; // Clear global token
+        csrfPromise = null; // Clear global promise lock
+        const newToken = await getCsrfToken();
+        if (newToken) {
+          const newHeaders = {
+            ...(options.headers || {}),
+            'x-csrf-token': newToken
+          };
+          response = await window.fetch(url, {
+            ...options,
+            headers: newHeaders
+          });
+        }
+      }
+    } catch (e) {
+      // Ignored
+    }
+  }
+
+  return response;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -9,6 +84,7 @@ export interface User {
   createdAt: string;
   classNo?: string | null;
   assignedCategories?: { id: string; name: string }[];
+  assignedCategoryIds?: string[];
 }
 
 export interface Quiz {
@@ -120,10 +196,14 @@ export interface Class {
   id: string;
   name: string;
   description?: string;
-  teacherId: string;
+  teacherId?: string; // Legacy/Alias
+  classTeacherId?: string | null;
+  classTeacher?: User;
+  teachers?: User[];
   maxStudents?: number;
   createdAt: string;
   assignedCategories?: { id: string; name: string }[];
+  _count?: { students: number };
 }
 
 export interface DashboardStats {
@@ -151,8 +231,8 @@ export interface AIQuestion {
 
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Request failed' }));
-    throw new Error(error.message || `Request failed with status ${response.status}`);
+    const error = await response.json().catch(() => ({ message: 'İstek başarısız oldu.' }));
+    throw new Error(error.message || `İstek ${response.status} koduyla başarısız oldu.`);
   }
   return response.json();
 }
@@ -160,7 +240,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 // Auth APIs
 export const authApi = {
   async register(name: string, email: string, password: string, classNo?: string, classId?: string) {
-    const response = await fetch(`${API_BASE}/auth/register`, {
+    const response = await apiFetch(`${API_BASE}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, password, classNo, classId }),
@@ -170,7 +250,7 @@ export const authApi = {
   },
 
   async login(email: string, password: string) {
-    const response = await fetch(`${API_BASE}/auth/login`, {
+    const response = await apiFetch(`${API_BASE}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
@@ -180,7 +260,7 @@ export const authApi = {
   },
 
   async logout() {
-    const response = await fetch(`${API_BASE}/auth/logout`, {
+    const response = await apiFetch(`${API_BASE}/auth/logout`, {
       method: 'POST',
       credentials: 'include',
     });
@@ -188,13 +268,13 @@ export const authApi = {
   },
 
   async getCurrentUser() {
-    const response = await fetch(`${API_BASE}/auth/me`, {
+    const response = await apiFetch(`${API_BASE}/auth/me`, {
       credentials: 'include',
     });
     return handleResponse<{ user: User }>(response);
   },
   async updateProfile(name?: string, email?: string) {
-    const response = await fetch(`${API_BASE}/auth/me`, {
+    const response = await apiFetch(`${API_BASE}/auth/me`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email }),
@@ -204,7 +284,7 @@ export const authApi = {
   },
   
   async changePassword(currentPassword: string, newPassword: string) {
-    const response = await fetch(`${API_BASE}/auth/change-password`, {
+    const response = await apiFetch(`${API_BASE}/auth/change-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ currentPassword, newPassword }),
@@ -217,14 +297,14 @@ export const authApi = {
 // User Management APIs
 export const userApi = {
   async getAllUsers() {
-    const response = await fetch(`${API_BASE}/users`, {
+    const response = await apiFetch(`${API_BASE}/users`, {
       credentials: 'include',
     });
     return handleResponse<{ users: User[] }>(response);
   },
 
   async createUser(data: Partial<User> & { password?: string }) {
-    const response = await fetch(`${API_BASE}/users`, {
+    const response = await apiFetch(`${API_BASE}/users`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -234,7 +314,7 @@ export const userApi = {
   },
 
   async updateUser(userId: string, data: Partial<User> & { password?: string }) {
-    const response = await fetch(`${API_BASE}/users/${userId}`, {
+    const response = await apiFetch(`${API_BASE}/users/${userId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -244,7 +324,7 @@ export const userApi = {
   },
 
   async deleteUser(userId: string) {
-    const response = await fetch(`${API_BASE}/users/${userId}`, {
+    const response = await apiFetch(`${API_BASE}/users/${userId}`, {
       method: 'DELETE',
       credentials: 'include',
     });
@@ -252,7 +332,7 @@ export const userApi = {
   },
 
   async updateUserRole(userId: string, role: string) {
-    const response = await fetch(`${API_BASE}/users/${userId}/role`, {
+    const response = await apiFetch(`${API_BASE}/users/${userId}/role`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ role }),
@@ -262,7 +342,7 @@ export const userApi = {
   },
 
   async assignCategoryToTeacher(teacherId: string, categoryId: string) {
-    const response = await fetch(`${API_BASE}/users/${teacherId}/categories`, {
+    const response = await apiFetch(`${API_BASE}/users/${teacherId}/categories`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ categoryId }),
@@ -272,7 +352,7 @@ export const userApi = {
   },
 
   async removeCategoryFromTeacher(teacherId: string, categoryId: string) {
-    const response = await fetch(`${API_BASE}/users/${teacherId}/categories/${categoryId}`, {
+    const response = await apiFetch(`${API_BASE}/users/${teacherId}/categories/${categoryId}`, {
       method: 'DELETE',
       credentials: 'include',
     });
@@ -283,28 +363,28 @@ export const userApi = {
 // Quiz APIs
 export const quizApi = {
   async getAllQuizzes() {
-    const response = await fetch(`${API_BASE}/quizzes`, {
+    const response = await apiFetch(`${API_BASE}/quizzes`, {
       credentials: 'include',
     });
     return handleResponse<{ quizzes: QuizWithDetails[] }>(response);
   },
 
   async getAllAdminQuizzes() {
-    const response = await fetch(`${API_BASE}/admin/quizzes`, {
+    const response = await apiFetch(`${API_BASE}/admin/quizzes`, {
       credentials: 'include',
     });
     return handleResponse<{ quizzes: QuizWithDetails[] }>(response);
   },
 
   async getQuiz(id: string) {
-    const response = await fetch(`${API_BASE}/quizzes/${id}`, {
+    const response = await apiFetch(`${API_BASE}/quizzes/${id}`, {
       credentials: 'include',
     });
     return handleResponse<{ quiz: Quiz; questions: Question[] }>(response);
   },
 
   async createQuiz(quiz: CreateQuizInput) {
-    const response = await fetch(`${API_BASE}/quizzes`, {
+    const response = await apiFetch(`${API_BASE}/quizzes`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(quiz),
@@ -314,7 +394,7 @@ export const quizApi = {
   },
 
   async updateQuiz(id: string, quiz: UpdateQuizInput) {
-    const response = await fetch(`${API_BASE}/quizzes/${id}`, {
+    const response = await apiFetch(`${API_BASE}/quizzes/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(quiz),
@@ -324,7 +404,7 @@ export const quizApi = {
   },
 
   async deleteQuiz(id: string) {
-    const response = await fetch(`${API_BASE}/quizzes/${id}`, {
+    const response = await apiFetch(`${API_BASE}/quizzes/${id}`, {
       method: 'DELETE',
       credentials: 'include',
     });
@@ -332,7 +412,7 @@ export const quizApi = {
   },
 
   async addQuestions(quizId: string, questions: Partial<Question>[]) {
-    const response = await fetch(`${API_BASE}/quizzes/${quizId}/questions`, {
+    const response = await apiFetch(`${API_BASE}/quizzes/${quizId}/questions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(questions),
@@ -342,7 +422,7 @@ export const quizApi = {
   },
 
   async getQuestionsByQuiz(quizId: string) {
-    const response = await fetch(`${API_BASE}/quizzes/${quizId}`, {
+    const response = await apiFetch(`${API_BASE}/quizzes/${quizId}`, {
       credentials: 'include',
     });
     const data = await handleResponse<{ quiz: Quiz; questions: Question[] }>(response);
@@ -351,14 +431,14 @@ export const quizApi = {
 
   // Student quiz endpoints
   async getStudentQuizzes() {
-    const response = await fetch(`${API_BASE}/student/quizzes`, {
+    const response = await apiFetch(`${API_BASE}/student/quizzes`, {
       credentials: 'include',
     });
     return handleResponse<{ quizzes: Quiz[] }>(response);
   },
 
   async startQuiz(quizId: string) {
-    const response = await fetch(`${API_BASE}/student/quiz/${quizId}/start`, {
+    const response = await apiFetch(`${API_BASE}/student/quiz/${quizId}/start`, {
       method: 'POST',
       credentials: 'include',
     });
@@ -371,7 +451,7 @@ export const quizApi = {
   },
 
   async submitAnswer(resultId: string, questionId: string, selectedOption: string) {
-    const response = await fetch(`${API_BASE}/student/quiz/${resultId}/answer`, {
+    const response = await apiFetch(`${API_BASE}/student/quiz/${resultId}/answer`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ questionId, selectedOption }),
@@ -381,7 +461,7 @@ export const quizApi = {
   },
 
   async submitQuiz(resultId: string) {
-    const response = await fetch(`${API_BASE}/student/quiz/${resultId}/submit`, {
+    const response = await apiFetch(`${API_BASE}/student/quiz/${resultId}/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -399,14 +479,14 @@ export const quizApi = {
 // Category APIs
 export const categoryApi = {
   async getAllCategories() {
-    const response = await fetch(`${API_BASE}/categories`, {
+    const response = await apiFetch(`${API_BASE}/categories`, {
       credentials: 'include',
     });
     return handleResponse<Category[]>(response);
   },
 
   async createCategory(name: string, description?: string, color?: string) {
-    const response = await fetch(`${API_BASE}/categories`, {
+    const response = await apiFetch(`${API_BASE}/categories`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, description, color }),
@@ -415,8 +495,18 @@ export const categoryApi = {
     return handleResponse<Category>(response);
   },
 
+  async updateCategory(id: string, name: string, description?: string, color?: string) {
+    const response = await apiFetch(`${API_BASE}/categories/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, description, color }),
+      credentials: 'include',
+    });
+    return handleResponse<Category>(response);
+  },
+
   async deleteCategory(id: string) {
-    const response = await fetch(`${API_BASE}/categories/${id}`, {
+    const response = await apiFetch(`${API_BASE}/categories/${id}`, {
       method: 'DELETE',
       credentials: 'include',
     });
@@ -434,7 +524,7 @@ export const aiApi = {
     customBaseUrl?: string,
     customApiKey?: string
   ) {
-    const response = await fetch(`${API_BASE}/ai/generate-questions`, {
+    const response = await apiFetch(`${API_BASE}/ai/generate-questions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
@@ -451,7 +541,7 @@ export const aiApi = {
   },
 
   async testAIConfig(config: { baseUrl?: string; apiKey?: string; model?: string }) {
-    const response = await fetch(`${API_BASE}/ai/test-config`, {
+    const response = await apiFetch(`${API_BASE}/ai/test-config`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(config),
@@ -465,14 +555,14 @@ export const aiApi = {
 export const resultApi = {
   async getStudentResults(studentId?: string) {
     const url = studentId ? `${API_BASE}/student/results?studentId=${studentId}` : `${API_BASE}/student/results`;
-    const response = await fetch(url, {
+    const response = await apiFetch(url, {
       credentials: 'include',
     });
     return handleResponse<{ results: StudentResult[] }>(response);
   },
 
   async getResultDetail(resultId: string) {
-    const response = await fetch(`${API_BASE}/student/results/${resultId}`, {
+    const response = await apiFetch(`${API_BASE}/student/results/${resultId}`, {
       credentials: 'include',
     });
     return handleResponse<{
@@ -491,7 +581,7 @@ export const resultApi = {
   },
 
   async getQuizResults(quizId: string) {
-    const response = await fetch(`${API_BASE}/results/quiz/${quizId}`, {
+    const response = await apiFetch(`${API_BASE}/results/quiz/${quizId}`, {
       credentials: 'include',
     });
     return handleResponse<{ results: StudentResult[] }>(response);
@@ -501,13 +591,13 @@ export const resultApi = {
 // Dashboard APIs
 export const dashboardApi = {
   async getAdminStats() {
-    const response = await fetch(`${API_BASE}/dashboard/stats`, {
+    const response = await apiFetch(`${API_BASE}/dashboard/stats`, {
       credentials: 'include',
     });
     return handleResponse<{ stats: DashboardStats }>(response);
   },
   async getTeacherStats() {
-    const response = await fetch(`${API_BASE}/teacher/dashboard/stats`, {
+    const response = await apiFetch(`${API_BASE}/teacher/dashboard/stats`, {
       credentials: 'include',
     });
     return handleResponse<{ stats: DashboardStats }>(response);
@@ -517,28 +607,28 @@ export const dashboardApi = {
 // Class APIs
 export const classApi = {
   async getAllClasses() {
-    const response = await fetch(`${API_BASE}/classes`, {
+    const response = await apiFetch(`${API_BASE}/classes`, {
       credentials: 'include',
     });
     return handleResponse<{ classes: Class[] }>(response);
   },
 
   async getTeacherClasses() {
-    const response = await fetch(`${API_BASE}/classes`, {
+    const response = await apiFetch(`${API_BASE}/classes`, {
       credentials: 'include',
     });
     return handleResponse<{ classes: Class[] }>(response);
   },
 
   async getClass(id: string) {
-    const response = await fetch(`${API_BASE}/classes/${id}`, {
+    const response = await apiFetch(`${API_BASE}/classes/${id}`, {
       credentials: 'include',
     });
     return handleResponse<{ class: Class; students: User[] }>(response);
   },
 
-  async createClass(classData: { name: string; description?: string; teacherId?: string; maxStudents?: number }) {
-    const response = await fetch(`${API_BASE}/classes`, {
+  async createClass(classData: { name: string; description?: string; teacherId?: string; classTeacherId?: string; maxStudents?: number }) {
+    const response = await apiFetch(`${API_BASE}/classes`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(classData),
@@ -547,8 +637,8 @@ export const classApi = {
     return handleResponse<Class>(response);
   },
 
-  async updateClass(classId: string, classData: { name?: string; description?: string; maxStudents?: number }) {
-    const response = await fetch(`${API_BASE}/classes/${classId}`, {
+  async updateClass(classId: string, classData: { name?: string; description?: string; classTeacherId?: string | null; maxStudents?: number }) {
+    const response = await apiFetch(`${API_BASE}/classes/${classId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(classData),
@@ -558,7 +648,7 @@ export const classApi = {
   },
 
   async deleteClass(classId: string) {
-    const response = await fetch(`${API_BASE}/classes/${classId}`, {
+    const response = await apiFetch(`${API_BASE}/classes/${classId}`, {
       method: 'DELETE',
       credentials: 'include',
     });
@@ -566,7 +656,7 @@ export const classApi = {
   },
 
   async assignTeacherToClass(classId: string, teacherId: string) {
-    const response = await fetch(`${API_BASE}/classes/${classId}/teachers`, {
+    const response = await apiFetch(`${API_BASE}/classes/${classId}/teachers`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ teacherId }),
@@ -576,7 +666,7 @@ export const classApi = {
   },
 
   async removeTeacherFromClass(classId: string, teacherId: string) {
-    const response = await fetch(`${API_BASE}/classes/${classId}/teachers/${teacherId}`, {
+    const response = await apiFetch(`${API_BASE}/classes/${classId}/teachers/${teacherId}`, {
       method: 'DELETE',
       credentials: 'include',
     });
@@ -584,7 +674,7 @@ export const classApi = {
   },
 
   async assignStudentToClass(classId: string, studentId: string) {
-    const response = await fetch(`${API_BASE}/classes/${classId}/students`, {
+    const response = await apiFetch(`${API_BASE}/classes/${classId}/students`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ studentId }),
@@ -594,7 +684,25 @@ export const classApi = {
   },
 
   async removeStudentFromClass(classId: string, studentId: string) {
-    const response = await fetch(`${API_BASE}/classes/${classId}/students/${studentId}`, {
+    const response = await apiFetch(`${API_BASE}/classes/${classId}/students/${studentId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    return handleResponse<{ message: string }>(response);
+  },
+
+  async assignTeacherToClassWithCourse(classId: string, teacherId: string, categoryId: string) {
+    const response = await apiFetch(`${API_BASE}/classes/${classId}/teachers-with-course`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ teacherId, categoryId }),
+      credentials: 'include',
+    });
+    return handleResponse<{ message: string }>(response);
+  },
+
+  async removeTeacherFromClassWithCourse(assignmentId: string) {
+    const response = await apiFetch(`${API_BASE}/classes/teacher-course/${assignmentId}`, {
       method: 'DELETE',
       credentials: 'include',
     });
@@ -602,7 +710,7 @@ export const classApi = {
   },
 
   async assignCategoryToClass(classId: string, categoryId: string) {
-    const response = await fetch(`${API_BASE}/classes/${classId}/categories`, {
+    const response = await apiFetch(`${API_BASE}/classes/${classId}/categories`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ categoryId }),
@@ -612,7 +720,7 @@ export const classApi = {
   },
 
   async removeCategoryFromClass(classId: string, categoryId: string) {
-    const response = await fetch(`${API_BASE}/classes/${classId}/categories/${categoryId}`, {
+    const response = await apiFetch(`${API_BASE}/classes/${classId}/categories/${categoryId}`, {
       method: 'DELETE',
       credentials: 'include',
     });
@@ -622,10 +730,52 @@ export const classApi = {
 
 // Admin APIs
 export const adminApi = {
-  async getLogs() {
-    const response = await fetch(`${API_BASE}/admin/logs`, {
-      credentials: 'include',
+  async getLogs(filters?: { role?: string, userId?: string, action?: string, startDate?: string, endDate?: string }) {
+    const params = new URLSearchParams();
+    if (filters?.role) params.append('role', filters.role);
+    if (filters?.userId) params.append('userId', filters.userId);
+    if (filters?.action) params.append('action', filters.action);
+    if (filters?.startDate) params.append('startDate', filters.startDate);
+    if (filters?.endDate) params.append('endDate', filters.endDate);
+
+    const response = await apiFetch(`${API_BASE}/admin/logs?${params.toString()}`, {
+      credentials: "include",
     });
     return handleResponse<{ logs: any[] }>(response);
+  },
+  async archiveYear(academicYear: string) {
+    const response = await apiFetch(`${API_BASE}/admin/archive`, {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ academicYear }),
+      credentials: "include",
+    });
+    return handleResponse<{ message: string, quizzesArchived: number, resultsArchived: number }>(response);
+  },
+  async promoteStudents(promotions: { fromClassId: string, toClassId: string | null }[]) {
+    const response = await apiFetch(`${API_BASE}/admin/promote-students`, {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ promotions }),
+      credentials: "include",
+    });
+    return handleResponse<{ message: string, totalPromoted: number }>(response);
+  }
+};
+
+// Notification APIs
+export const notificationApi = {
+  async getNotifications() {
+    const response = await apiFetch(`${API_BASE}/notifications`, {
+      credentials: "include",
+    });
+    return handleResponse<{ notifications: any[] }>(response);
+  },
+  async markAsRead() {
+    const response = await apiFetch(`${API_BASE}/notifications/mark-read`, {
+      method: "POST",
+      credentials: "include",
+    });
+    return handleResponse<{ success: boolean }>(response);
   },
 };

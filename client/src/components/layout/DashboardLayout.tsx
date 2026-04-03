@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/context/auth-context";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { notificationApi } from "@/lib/api";
 import { 
   LayoutDashboard, 
   FileText, 
@@ -13,6 +15,7 @@ import {
   Menu,
   GraduationCap,
   History,
+  Archive,
   Moon,
   Sun
 } from "lucide-react";
@@ -27,8 +30,17 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+
+
+import { ThemeToggle } from "./ThemeToggle";
 
 
 interface DashboardLayoutProps {
@@ -39,45 +51,35 @@ interface DashboardLayoutProps {
 export function DashboardLayout({ children, hideNavigation = false }: DashboardLayoutProps) {
   const [location, setLocation] = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const { role, user, logout } = useAuth();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    // Check initial theme preference
-    const savedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    
-    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
-      setIsDarkMode(true);
-      document.documentElement.classList.add("dark");
-    } else {
-      setIsDarkMode(false);
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
+  const { data: notificationData } = useQuery({
+    queryKey: ['notifications'],
+    queryFn: () => notificationApi.getNotifications(),
+    refetchInterval: 30000, // Poll every 30 seconds
+    enabled: !!user,
+  });
 
-  const toggleTheme = () => {
-    setIsDarkMode((prev) => {
-      const newMode = !prev;
-      if (newMode) {
-        document.documentElement.classList.add("dark");
-        localStorage.setItem("theme", "dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-        localStorage.setItem("theme", "light");
-      }
-      return newMode;
-    });
-  };
+  const markAsReadMutation = useMutation({
+    mutationFn: () => notificationApi.markAsRead(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+    },
+  });
+
+  const notifications = notificationData?.notifications || [];
+  const unreadCount = notifications.filter(n => !n.isRead).length;
 
   // Role based navigation config
   const adminNavigation = [
     { name: "Genel Bakış", href: "/", icon: LayoutDashboard },
     { name: "Yönetim Paneli", href: "/management", icon: Settings },
+    { name: "Arşiv İşlemleri", href: "/archive", icon: Archive },
     { name: "Tüm Sınavlar", href: "/admin-quizzes", icon: FileText },
     { name: "Sınavlarım", href: "/quizzes", icon: FileText },
     { name: "Yeni Sınav Oluştur", href: "/create-quiz", icon: PlusCircle },
-    { name: "Sınıflar", href: "/classes", icon: Users },
+    { name: "Sınıflar", href: "/classlist", icon: Users },
     { name: "Öğrenciler", href: "/students", icon: Users },
     { name: "Öğretmenler", href: "/teachers", icon: Users },
     { name: "İstatistikler", href: "/results", icon: BarChart2 },
@@ -96,7 +98,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
     { name: "Genel Bakış", href: "/", icon: LayoutDashboard },
     { name: "Sınavlarım", href: "/quizzes", icon: FileText },
     { name: "Yeni Sınav Oluştur", href: "/create-quiz", icon: PlusCircle },
-    { name: "Sınıflarım", href: "/classes", icon: Users },
+    { name: "Sınıflarım", href: "/classlist", icon: Users },
     { name: "Öğrenciler", href: "/students", icon: Users },
     { name: "İstatistikler", href: "/results", icon: BarChart2 },
     { name: "Ayarlar", href: "/settings", icon: Settings },
@@ -130,7 +132,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer",
                   isActive
-                    ? "bg-primary/10 text-primary shadow-sm"
+                    ? "bg-primary/10 text-primary shadow-sm dark:shadow-none"
                     : "text-muted-foreground hover:bg-accent hover:text-foreground"
                 )}
               >
@@ -147,7 +149,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
   );
 
   return (
-    <div className="min-h-screen bg-background flex text-foreground print:bg-white print:text-black">
+    <div className="min-h-screen bg-background flex text-foreground print:bg-white dark:bg-background print:text-black">
       {/* Desktop Sidebar */}
       {!hideNavigation && (
         <div className="hidden md:block w-64 shrink-0 h-screen sticky top-0 print:hidden">
@@ -166,7 +168,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
       <div className="flex-1 flex flex-col min-w-0 print:w-full print:m-0 print:p-0">
         {/* Header */}
         {!hideNavigation && (
-          <header className="h-16 border-b border-border bg-card/50 backdrop-blur-xl sticky top-0 z-30 px-6 flex items-center justify-between print:hidden">
+          <header className="h-16 border-b border-border bg-card sticky top-0 z-30 px-6 flex items-center justify-between print:hidden">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
@@ -186,14 +188,42 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
             </div>
 
             <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="ghost" size="icon" onClick={toggleTheme} className="text-muted-foreground hover:text-foreground">
-                {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-              </Button>
+              <ThemeToggle />
               
-              <Button variant="ghost" size="icon" className="relative hidden sm:inline-flex">
-                <Bell className="h-5 w-5 text-muted-foreground" />
-                <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-destructive border-2 border-card" />
-              </Button>
+              <Popover onOpenChange={(open) => { if(open && unreadCount > 0) markAsReadMutation.mutate(); }}>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative hidden sm:inline-flex">
+                    <Bell className="h-5 w-5 text-muted-foreground" />
+                    {unreadCount > 0 && (
+                      <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-destructive border-2 border-card" />
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="end" className="w-80 p-0">
+                  <div className="p-4 border-b">
+                    <h4 className="font-semibold">Bildirimler</h4>
+                  </div>
+                  <ScrollArea className="h-80">
+                    {notifications.length === 0 ? (
+                      <div className="p-4 text-sm text-center text-muted-foreground">
+                        Henüz bildiriminiz yok.
+                      </div>
+                    ) : (
+                      <div className="flex flex-col">
+                        {notifications.map((notif: any) => (
+                          <div key={notif.id} className={cn("p-4 border-b text-sm transition-colors hover:bg-muted/50", !notif.isRead && "bg-primary/5")}>
+                            <p className="font-medium">{notif.title}</p>
+                            <p className="text-muted-foreground mt-1">{notif.message}</p>
+                            <span className="text-xs text-muted-foreground mt-2 block">
+                              {new Date(notif.createdAt).toLocaleString('tr-TR')}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </ScrollArea>
+                </PopoverContent>
+              </Popover>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
