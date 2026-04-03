@@ -133,7 +133,7 @@ export default function StudentDashboard() {
 
         {/* Stats Grid - Modernized Cards */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <Card className="relative overflow-hidden border border-border/50 shadow-sm hover:shadow-md hover:border-blue-500/30 transition-all duration-300 bg-card group">
+          <Card className="relative overflow-hidden border border-border/50 shadow-sm dark:shadow-none hover:shadow-md hover:border-blue-500/30 transition-all duration-300 bg-card group">
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
                 <div className="space-y-2">
@@ -151,7 +151,7 @@ export default function StudentDashboard() {
             </CardContent>
           </Card>
           
-          <Card className="relative overflow-hidden border border-border/50 shadow-sm hover:shadow-md hover:border-emerald-500/30 transition-all duration-300 bg-card group">
+          <Card className="relative overflow-hidden border border-border/50 shadow-sm dark:shadow-none hover:shadow-md hover:border-emerald-500/30 transition-all duration-300 bg-card group">
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
                 <div className="space-y-2">
@@ -168,7 +168,7 @@ export default function StudentDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="relative overflow-hidden border border-border/50 shadow-sm hover:shadow-md hover:border-amber-500/30 transition-all duration-300 bg-card group sm:col-span-2 lg:col-span-1">
+          <Card className="relative overflow-hidden border border-border/50 shadow-sm dark:shadow-none hover:shadow-md hover:border-amber-500/30 transition-all duration-300 bg-card group sm:col-span-2 lg:col-span-1">
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
                 <div className="space-y-2">

@@ -155,7 +155,7 @@ export default function DashboardPage() {
 
         {/* Stats Grid */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="border-primary/10 shadow-sm">
+          <Card className="border-primary/10 shadow-sm dark:shadow-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-bold">Toplam Sınav</CardTitle>
               <FileText className="h-4 w-4 text-blue-500" />
@@ -164,7 +164,7 @@ export default function DashboardPage() {
               <div className="text-2xl font-black">{stats?.totalQuizzes || 0}</div>
             </CardContent>
           </Card>
-          <Card className="border-primary/10 shadow-sm">
+          <Card className="border-primary/10 shadow-sm dark:shadow-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-bold">Aktif Öğrenci</CardTitle>
               <Users className="h-4 w-4 text-emerald-500" />
@@ -173,7 +173,7 @@ export default function DashboardPage() {
               <div className="text-2xl font-black">{stats?.totalStudents || 0}</div>
             </CardContent>
           </Card>
-          <Card className="border-primary/10 shadow-sm">
+          <Card className="border-primary/10 shadow-sm dark:shadow-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-bold">Toplam Katılım</CardTitle>
               <CheckCircle className="h-4 w-4 text-purple-500" />
@@ -182,7 +182,7 @@ export default function DashboardPage() {
               <div className="text-2xl font-black">{stats?.totalResults || 0}</div>
             </CardContent>
           </Card>
-          <Card className="border-primary/10 shadow-sm">
+          <Card className="border-primary/10 shadow-sm dark:shadow-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-bold">Başarı Oranı</CardTitle>
               <TrendingUp className="h-4 w-4 text-orange-500" />
@@ -256,7 +256,7 @@ export default function DashboardPage() {
             <CardContent>
               <div className="space-y-4 pt-2">
                 {recentLogs.map((log: any, i: number) => (
-                  <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
+                  <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-slate-50/50 dark:bg-slate-900/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 dark:border-slate-700">
                     <div className="mt-1.5 h-2 w-2 rounded-full bg-primary" />
                     <div className="flex-1 space-y-0.5">
                       <p className="text-sm font-bold text-foreground leading-tight">{log.action}</p>

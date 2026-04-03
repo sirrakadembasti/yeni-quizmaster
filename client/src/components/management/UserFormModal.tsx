@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Check, X } from "lucide-react";
+import { Loader2, Check, X, AlertTriangle, Book, School, Info } from "lucide-react";
 import { useState, useEffect } from "react";
 import { type User } from "./UserManagementTable";
 import { useQuery } from "@tanstack/react-query";
@@ -24,6 +24,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface UserFormModalProps {
   isOpen: boolean;
@@ -55,13 +56,13 @@ export function UserFormModal({
   });
 
   const { data: classesData } = useQuery({
-    queryKey: ['classes'],
+    queryKey: ['/api/classes'],
     queryFn: () => classApi.getAllClasses(),
     enabled: isOpen
   });
 
   const { data: categoriesData } = useQuery({
-    queryKey: ['categories'],
+    queryKey: ['/api/categories'],
     queryFn: () => categoryApi.getAllCategories(),
     enabled: isOpen
   });
@@ -74,8 +75,8 @@ export function UserFormModal({
         password: "", 
         classNo: initialData.classNo || "",
         classId: initialData.classId || "",
-        classIds: (initialData as any).classes?.map((c: any) => c.id) || [],
-        assignedCategoryIds: initialData.assignedCategories?.map(c => c.id) || []
+        classIds: (initialData as any).classes?.map((c: any) => c.id) || (initialData as any).classIds || [],
+        assignedCategoryIds: initialData.assignedCategories?.map(c => c.id) || (initialData as any).assignedCategoryIds || []
       });
     } else {
       setFormData({ 
@@ -108,75 +109,116 @@ export function UserFormModal({
     }));
   };
 
+  const allCategories = categoriesData || [];
+  const allClasses = classesData?.classes || [];
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{mode === 'create' ? `Yeni ${role === 'teacher' ? 'Öğretmen' : 'Öğrenci'} Ekle` : `${role === 'teacher' ? 'Öğretmeni' : 'Öğrenciyi'} Düzenle`}</DialogTitle>
-          <DialogDescription>
-            {mode === 'create' 
-              ? `Sisteme yeni bir ${role === 'teacher' ? 'öğretmen' : 'öğrenci'} hesabı tanımlayın.` 
-              : `Kullanıcı bilgilerini güncelleyin. ${mode === 'edit' ? 'Şifreyi değiştirmek istemiyorsanız boş bırakın.' : ''}`}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4 py-4">
-          <div className="grid grid-cols-2 gap-4">
+      <DialogContent className="sm:max-w-[550px] max-h-[95vh] overflow-y-auto rounded-3xl p-0 border-none shadow-2xl">
+        <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-6 text-white rounded-t-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-black flex items-center gap-3">
+              <div className="bg-white dark:bg-slate-900/10 p-2 rounded-xl">
+                {role === 'teacher' ? <Book className="h-6 w-6" /> : <School className="h-6 w-6" />}
+              </div>
+              {mode === 'create' ? `Yeni ${role === 'teacher' ? 'Eğitmen' : 'Öğrenci'}` : `${role === 'teacher' ? 'Eğitmen' : 'Öğrenci'} Düzenle`}
+            </DialogTitle>
+            <DialogDescription className="text-slate-300 font-medium">
+              {mode === 'create' 
+                ? "Sisteme erişimi olacak yeni kullanıcı hesabını tanımlayın." 
+                : "Kullanıcı profil bilgilerini ve yetkilerini güncelleyin."}
+            </DialogDescription>
+          </DialogHeader>
+        </div>
+
+        <div className="p-6 space-y-6 bg-white dark:bg-slate-900 dark:bg-slate-950">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>İsim Soyisim</Label>
-              <Input value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+              <Label className="text-xs font-black uppercase tracking-widest opacity-60">Tam İsim</Label>
+              <Input 
+                value={formData.name} 
+                onChange={e => setFormData({ ...formData, name: e.target.value })} 
+                placeholder="Örn: Ahmet Yılmaz"
+                className="rounded-xl border-slate-200 dark:border-slate-700 focus:ring-primary/20"
+              />
             </div>
             <div className="space-y-2">
-              <Label>E-posta Adresi</Label>
-              <Input type="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
+              <Label className="text-xs font-black uppercase tracking-widest opacity-60">E-posta Adresi</Label>
+              <Input 
+                type="email" 
+                value={formData.email} 
+                onChange={e => setFormData({ ...formData, email: e.target.value })} 
+                placeholder="ornek@okul.com"
+                className="rounded-xl border-slate-200 dark:border-slate-700"
+              />
             </div>
           </div>
 
           {role === 'student' ? (
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Öğrenci Numarası</Label>
-                <Input value={formData.classNo} onChange={e => setFormData({ ...formData, classNo: e.target.value })} />
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-xs font-black uppercase tracking-widest opacity-60">Öğrenci No</Label>
+                  <Input 
+                    value={formData.classNo} 
+                    onChange={e => setFormData({ ...formData, classNo: e.target.value })} 
+                    placeholder="Örn: 1234"
+                    className="rounded-xl"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs font-black uppercase tracking-widest opacity-60">Kayıtlı Sınıf</Label>
+                  <Select value={formData.classId} onValueChange={val => setFormData({ ...formData, classId: val })}>
+                    <SelectTrigger className="rounded-xl">
+                      <SelectValue placeholder="Sınıf Seçin" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="none">Sınıf Atanmamış</SelectItem>
+                      {allClasses.map(c => (
+                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label>Sınıf</Label>
-                <Select value={formData.classId} onValueChange={val => setFormData({ ...formData, classId: val })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sınıf Seçin" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">Sınıf Yok</SelectItem>
-                    {classesData?.classes.map(c => (
-                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              
+              <div className="bg-amber-50 border border-amber-100 p-4 rounded-2xl flex gap-3 items-start">
+                <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+                <div className="text-xs text-amber-800 leading-relaxed font-medium">
+                  <strong>Önemli:</strong> Öğrenciler aynı anda sadece <strong>tek bir sınıfa</strong> kayıtlı olabilir. Başka bir sınıf seçerseniz öğrenci otomatik olarak eski sınıfından ayrılacaktır.
+                </div>
               </div>
             </div>
           ) : (
-            <>
-              <div className="space-y-2">
-                <Label>Yetkili Olduğu Dersler</Label>
-                <div className="flex flex-wrap gap-1 mb-2">
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <Label className="text-xs font-black uppercase tracking-widest opacity-60">Yetkili Olduğu Dersler</Label>
+                  <Badge variant="outline" className="text-[10px]">{formData.assignedCategoryIds.length} Seçili</Badge>
+                </div>
+                <div className="flex flex-wrap gap-1.5 min-h-[32px]">
                   {formData.assignedCategoryIds.map(id => {
-                    const cat = categoriesData?.find(c => c.id === id);
+                    const cat = allCategories.find(c => c.id === id);
                     return cat ? (
-                      <Badge key={id} variant="secondary" className="flex items-center gap-1">
+                      <Badge key={id} variant="secondary" className="gap-1 pl-2 pr-1 py-1 rounded-lg bg-indigo-50 text-indigo-700 border-indigo-100 font-bold">
                         {cat.name}
-                        <X className="h-3 w-3 cursor-pointer" onClick={() => toggleCategory(id)} />
+                        <X className="h-3 w-3 cursor-pointer hover:text-rose-500" onClick={() => toggleCategory(id)} />
                       </Badge>
                     ) : null;
                   })}
+                  {formData.assignedCategoryIds.length === 0 && <span className="text-[10px] text-muted-foreground italic">Henüz ders seçilmedi.</span>}
                 </div>
-                <ScrollArea className="h-[100px] border rounded-md p-2">
-                  <div className="grid grid-cols-2 gap-2">
-                    {categoriesData?.map(cat => (
-                      <div key={cat.id} className="flex items-center space-x-2">
+                <ScrollArea className="h-[120px] border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 dark:bg-slate-800/50 rounded-2xl p-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    {allCategories.map(cat => (
+                      <div key={cat.id} className="flex items-center space-x-2 group">
                         <Checkbox 
                           id={`cat-${cat.id}`} 
                           checked={formData.assignedCategoryIds.includes(cat.id)}
                           onCheckedChange={() => toggleCategory(cat.id)}
+                          className="rounded-md border-slate-300 data-[state=checked]:bg-indigo-600"
                         />
-                        <label htmlFor={`cat-${cat.id}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        <label htmlFor={`cat-${cat.id}`} className="text-xs font-bold leading-none cursor-pointer group-hover:text-indigo-600 transition-colors">
                           {cat.name}
                         </label>
                       </div>
@@ -185,29 +227,34 @@ export function UserFormModal({
                 </ScrollArea>
               </div>
 
-              <div className="space-y-2">
-                <Label>Sorumlu Olduğu Sınıflar</Label>
-                <div className="flex flex-wrap gap-1 mb-2">
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <Label className="text-xs font-black uppercase tracking-widest opacity-60">Sorumlu Olduğu Sınıflar</Label>
+                  <Badge variant="outline" className="text-[10px]">{formData.classIds.length} Seçili</Badge>
+                </div>
+                <div className="flex flex-wrap gap-1.5 min-h-[32px]">
                   {formData.classIds.map(id => {
-                    const cls = classesData?.classes.find(c => c.id === id);
+                    const cls = allClasses.find(c => c.id === id);
                     return cls ? (
-                      <Badge key={id} variant="outline" className="flex items-center gap-1 border-primary/30 text-primary">
+                      <Badge key={id} variant="outline" className="gap-1 pl-2 pr-1 py-1 rounded-lg border-emerald-200 text-emerald-700 bg-emerald-50 font-bold">
                         {cls.name}
-                        <X className="h-3 w-3 cursor-pointer" onClick={() => toggleClass(id)} />
+                        <X className="h-3 w-3 cursor-pointer hover:text-rose-500" onClick={() => toggleClass(id)} />
                       </Badge>
                     ) : null;
                   })}
+                  {formData.classIds.length === 0 && <span className="text-[10px] text-muted-foreground italic">Henüz sınıf seçilmedi.</span>}
                 </div>
-                <ScrollArea className="h-[100px] border rounded-md p-2">
-                  <div className="grid grid-cols-2 gap-2">
-                    {classesData?.classes.map(cls => (
-                      <div key={cls.id} className="flex items-center space-x-2">
+                <ScrollArea className="h-[120px] border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 dark:bg-slate-800/50 rounded-2xl p-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    {allClasses.map(cls => (
+                      <div key={cls.id} className="flex items-center space-x-2 group">
                         <Checkbox 
                           id={`cls-${cls.id}`} 
                           checked={formData.classIds.includes(cls.id)}
                           onCheckedChange={() => toggleClass(cls.id)}
+                          className="rounded-md border-slate-300 data-[state=checked]:bg-emerald-600"
                         />
-                        <label htmlFor={`cls-${cls.id}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        <label htmlFor={`cls-${cls.id}`} className="text-xs font-bold leading-none cursor-pointer group-hover:text-emerald-600 transition-colors">
                           {cls.name}
                         </label>
                       </div>
@@ -215,16 +262,33 @@ export function UserFormModal({
                   </div>
                 </ScrollArea>
               </div>
-            </>
+            </div>
           )}
 
           <div className="space-y-2">
-            <Label>{mode === 'create' ? 'Şifre' : 'Yeni Şifre (İsteğe Bağlı)'}</Label>
-            <Input type="password" placeholder={mode === 'edit' ? "Değiştirmek istemiyorsanız boş bırakın" : ""} value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} />
+            <div className="flex items-center gap-2">
+              <Label className="text-xs font-black uppercase tracking-widest opacity-60">{mode === 'create' ? 'Güvenli Şifre' : 'Şifreyi Güncelle'}</Label>
+              {mode === 'edit' && (
+                <div className="group relative">
+                  <Info className="h-3 w-3 text-muted-foreground" />
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-slate-800 text-white text-[10px] rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                    Şifreyi değiştirmek istemiyorsanız bu alanı boş bırakın.
+                  </div>
+                </div>
+              )}
+            </div>
+            <Input 
+              type="password" 
+              placeholder={mode === 'edit' ? "••••••" : "En az 6 karakter"} 
+              value={formData.password} 
+              onChange={e => setFormData({ ...formData, password: e.target.value })} 
+              className="rounded-xl border-slate-200 dark:border-slate-700"
+            />
           </div>
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>İptal</Button>
+
+        <DialogFooter className="bg-slate-50 dark:bg-slate-900/80 dark:bg-slate-900/50 p-6 rounded-b-3xl border-t border-slate-100 dark:border-slate-800">
+          <Button variant="ghost" onClick={() => onOpenChange(false)} className="rounded-xl font-bold">Vazgeç</Button>
           <Button 
             onClick={() => {
               const submissionData = { ...formData };
@@ -232,9 +296,10 @@ export function UserFormModal({
               onSubmit(submissionData);
             }} 
             disabled={isPending || !formData.name || !formData.email || (mode === 'create' && !formData.password)}
+            className="rounded-xl font-black px-8 shadow-xl shadow-indigo-500/20 bg-indigo-600 hover:bg-indigo-700 text-white"
           >
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {mode === 'create' ? 'Oluştur' : 'Kaydet'}
+            {mode === 'create' ? 'Hesabı Oluştur' : 'Değişiklikleri Kaydet'}
           </Button>
         </DialogFooter>
       </DialogContent>

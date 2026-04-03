@@ -175,7 +175,7 @@ export default function StudentStats() {
 
         {/* Stats Grid */}
         <div className="grid gap-4 md:grid-cols-4">
-          <Card className="bg-card shadow-sm hover:shadow-md transition-shadow">
+          <Card className="bg-card shadow-sm dark:shadow-none hover:shadow-md transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Tamamlanan Quiz</CardTitle>
               <BookOpen className="h-5 w-5 text-blue-500" />
@@ -186,7 +186,7 @@ export default function StudentStats() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card shadow-sm hover:shadow-md transition-shadow">
+          <Card className="bg-card shadow-sm dark:shadow-none hover:shadow-md transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Ortalama Puan</CardTitle>
               <Trophy className="h-5 w-5 text-amber-500" />
@@ -197,7 +197,7 @@ export default function StudentStats() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card shadow-sm hover:shadow-md transition-shadow">
+          <Card className="bg-card shadow-sm dark:shadow-none hover:shadow-md transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Geçme Oranı</CardTitle>
               <TrendingUp className="h-5 w-5 text-emerald-500" />
@@ -208,7 +208,7 @@ export default function StudentStats() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card shadow-sm hover:shadow-md transition-shadow">
+          <Card className="bg-card shadow-sm dark:shadow-none hover:shadow-md transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Toplam Süre</CardTitle>
               <Clock className="h-5 w-5 text-purple-500" />
@@ -222,7 +222,7 @@ export default function StudentStats() {
 
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Quiz Based Bar Chart */}
-          <Card className="col-span-1 shadow-sm">
+          <Card className="col-span-1 shadow-sm dark:shadow-none">
             <CardHeader>
               <CardTitle>Quiz Bazlı Başarı</CardTitle>
               <CardDescription>Son katıldığınız quizlerin puanları</CardDescription>
@@ -278,7 +278,7 @@ export default function StudentStats() {
           </Card>
 
           {/* Lesson Based Bar Chart */}
-          <Card className="col-span-1 shadow-sm">
+          <Card className="col-span-1 shadow-sm dark:shadow-none">
             <CardHeader>
               <CardTitle>Ders Bazlı Ortalama Başarı</CardTitle>
               <CardDescription>Derslere göre ortalama performansınız</CardDescription>
@@ -336,7 +336,7 @@ export default function StudentStats() {
 
         {/* Recent Results Table */}
         {completedResults.length > 0 ? (
-          <Card className="shadow-sm">
+          <Card className="shadow-sm dark:shadow-none">
             <CardHeader>
               <CardTitle>Son Quiz Sonuçları</CardTitle>
               <CardDescription>En son tamamladığınız {Math.min(completedResults.length, 10)} quiz ve detayları</CardDescription>

@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/context/auth-context";
+import { NotificationListener } from "@/components/NotificationListener";
 
 // Pages
 import HomePage from "@/pages/home";
@@ -23,9 +24,12 @@ import QuizResultDetailPage from "@/pages/quiz-result-detail";
 import TeachersPage from "@/pages/teachers";
 import AuthPage from "@/pages/auth";
 import AdminManagementPage from "@/pages/admin-management";
-import ClassesPage from "@/pages/classes";
+import ClassListPage from "@/pages/classlist";
+import ClassDetailPage from "@/pages/class-detail";
+import AdminClassDetailPage from "@/pages/admin-class-detail";
 import AdminQuizzesPage from "@/pages/admin-quizzes";
 import ResetPasswordPage from "@/pages/reset-password";
+import ArchivePage from "@/pages/admin/archive";
 
 /**
  * Public routes accessible without authentication
@@ -68,9 +72,35 @@ function StudentRoutes() {
 }
 
 /**
- * Routes for admin and teacher roles
+ * Routes for teacher role
  */
-function AdminTeacherRoutes() {
+function TeacherRoutes() {
+  return (
+    <Switch>
+      <Route path="/" component={DashboardPage} />
+      <Route path="/quizzes" component={QuizzesPage} />
+      <Route path="/quizzes/:id" component={CreateQuizPage} />
+      <Route path="/create-quiz" component={CreateQuizPage} />
+      <Route path="/student/quiz/:quizId" component={StudentQuizPage} />
+      <Route path="/student/result/:resultId" component={QuizResultDetailPage} />
+      <Route path="/student/results" component={StudentResultsPage} />
+      <Route path="/results" component={StatisticsPage} />
+      <Route path="/students" component={StudentsPage} />
+      <Route path="/classlist" component={ClassListPage} />
+      <Route path="/classes/:id" component={ClassDetailPage} />
+      <Route path="/settings" component={SettingsPage} />
+      <Route path="/student-quizzes/:quizId">{(params: any) => <Redirect to={`/student/quiz/${params.quizId}`} />}</Route>
+      <Route path="/:rest*">
+        <Redirect to="/" />
+      </Route>
+    </Switch>
+  );
+}
+
+/**
+ * Routes for admin role
+ */
+function AdminRoutes() {
   return (
     <Switch>
       <Route path="/" component={DashboardPage} />
@@ -83,9 +113,12 @@ function AdminTeacherRoutes() {
       <Route path="/student/results" component={StudentResultsPage} />
       <Route path="/results" component={StatisticsPage} />
       <Route path="/students" component={StudentsPage} />
-      <Route path="/classes" component={ClassesPage} />
+      <Route path="/classlist" component={ClassListPage} />
+      <Route path="/classes/:id" component={ClassDetailPage} />
+      <Route path="/admin/classes/:id" component={AdminClassDetailPage} />
       <Route path="/teachers" component={TeachersPage} />
       <Route path="/management" component={AdminManagementPage} />
+      <Route path="/archive" component={ArchivePage} />
       <Route path="/settings" component={SettingsPage} />
       <Route path="/student-quizzes/:quizId">{(params: any) => <Redirect to={`/student/quiz/${params.quizId}`} />}</Route>
       <Route path="/:rest*">
@@ -103,7 +136,7 @@ function Router() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-slate-600">Yükleniyor...</p>
+          <p className="mt-4 text-slate-600 dark:text-slate-300">Yükleniyor...</p>
         </div>
       </div>
     );
@@ -113,7 +146,9 @@ function Router() {
     return <PublicRoutes />;
   }
 
-  return role === 'student' ? <StudentRoutes /> : <AdminTeacherRoutes />;
+  if (role === 'student') return <StudentRoutes />;
+  if (role === 'teacher') return <TeacherRoutes />;
+  return <AdminRoutes />;
 }
 
 function App() {
@@ -122,6 +157,7 @@ function App() {
       <AuthProvider>
         <TooltipProvider>
           <Toaster />
+          <NotificationListener />
           <Router />
         </TooltipProvider>
       </AuthProvider>

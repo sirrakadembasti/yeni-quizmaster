@@ -3,6 +3,7 @@ import { storage } from "../storage";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { requireAuth, type AuthRequest } from "../middleware/auth";
+import { logger } from "../index";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { sendResetPasswordEmail } from "../utils/email";
@@ -44,7 +45,7 @@ router.post("/register", async (req: Request, res: Response) => {
   try {
     const validation = registerSchema.safeParse(req.body);
     if (!validation.success) {
-      return res.status(400).json({ message: fromZodError(validation.error).message });
+      return res.status(400).json({ message: validation.error.errors[0].message });
     }
 
     const { name, password, email, classNo, classId } = validation.data;
@@ -110,7 +111,28 @@ router.get("/me", requireAuth, (req: AuthRequest, res: Response) => {
 
 router.patch("/me", requireAuth, async (req: AuthRequest, res: Response) => {
   try {
-    const updatedUser = await storage.updateUser(req.user!.id, req.body);
+    const { name, email } = req.body;
+    const updateData: any = {};
+
+    if (name) updateData.name = name;
+
+    if (email) {
+      const trimmedEmail = email.trim();
+      // E-posta değiştiriliyorsa başka bir kullanıcıda olup olmadığını kontrol et
+      if (trimmedEmail !== req.user!.email) {
+        const existingUser = await storage.getUserByEmail(trimmedEmail);
+        if (existingUser && existingUser.id !== req.user!.id) {
+          return res.status(400).json({ message: "Bu e-posta adresi başka bir hesap tarafından kullanılıyor." });
+        }
+      }
+      updateData.email = trimmedEmail;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ message: "Güncellenecek veri bulunamadı." });
+    }
+
+    const updatedUser = await storage.updateUser(req.user!.id, updateData);
     const { password, ...userWithoutPassword } = updatedUser;
     res.json({ user: userWithoutPassword });
   } catch (error) {
@@ -177,12 +199,21 @@ router.post("/forgot-password", async (req: Request, res: Response) => {
       resetTokenExpiry: expiry,
     });
 
-    await sendResetPasswordEmail(user.email, token);
+    // "Altyapı hazır, özellik kapalı" prensibi:
+    // SMTP konfigürasyonu yoksa e-posta gönderimi sessizce başarısız olur;
+    // kullanıcıya hata gösterilmez (güvenlik: e-posta sisteminin durumunu dışa sızdırmamak).
+    try {
+      await sendResetPasswordEmail(user.email, token);
+    } catch (emailErr) {
+      logger.warn({ err: emailErr, userId: user.id }, "[Auth] Şifre sıfırlama e-postası gönderilemedi; SMTP konfigürasyonunu kontrol edin.");
+      // E-posta hatası akışı durdurmamalı; kullanıcıya her koşulda başarı mesajı dönülür.
+    }
+
     await storage.createLog(user.id, "FORGOT_PASSWORD", "Password reset requested");
 
     res.json({ message: "E-posta başarıyla gönderildi." });
   } catch (error) {
-    console.error("Forgot password error:", error);
+    logger.error({ err: error }, "[Auth] forgot-password işlemi sırasında beklenmedik hata.");
     res.status(500).json({ message: "İşlem sırasında bir hata oluştu." });
   }
 });

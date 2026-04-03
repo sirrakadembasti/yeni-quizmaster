@@ -59,8 +59,8 @@ export default function StudentsPage() {
   });
 
   const { data: classesData } = useQuery({
-    queryKey: ['classes'],
-    queryFn: () => role === 'teacher' ? classApi.getTeacherClasses() : classApi.getAllClasses(),
+    queryKey: ['/api/classes'],
+    queryFn: () => classApi.getAllClasses(),
   });
 
   const { data: studentResults, isLoading: resultsLoading } = useQuery({

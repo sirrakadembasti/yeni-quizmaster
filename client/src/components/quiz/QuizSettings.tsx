@@ -39,7 +39,7 @@ export function QuizSettings({
 }: QuizSettingsProps) {
   return (
     <div className="space-y-6 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
-      <Card className="border-border/60 shadow-sm">
+      <Card className="border-border/60 shadow-sm dark:shadow-none">
         <CardHeader>
           <CardTitle>Temel Bilgiler</CardTitle>
           <CardDescription>Sınavınızın görünümünü ve detaylarını ayarlayın.</CardDescription>
@@ -116,7 +116,7 @@ export function QuizSettings({
         </CardContent>
       </Card>
 
-      <Card className="border-border/60 shadow-sm">
+      <Card className="border-border/60 shadow-sm dark:shadow-none">
         <CardHeader>
           <CardTitle>Sınav Kuralları</CardTitle>
           <CardDescription>Öğrencilerin sınav deneyimini şekillendirin.</CardDescription>

@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { storage } from "../storage";
+import { logger } from "../index";
 import { User } from "@prisma/client";
 import "express-session";
 
@@ -18,24 +19,24 @@ export interface AuthRequest extends Request {
 export const requireAuth = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     if (!req.session.userId) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: "Oturum açmanız gerekiyor." });
     }
     const user = await storage.getUser(req.session.userId);
     if (!user) {
-      return res.status(401).json({ message: "User not found" });
+      return res.status(401).json({ message: "Kullanıcı bulunamadı." });
     }
     req.user = user;
     next();
   } catch (error) {
-    console.error("Auth middleware error:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    logger.error({ err: error }, "[Auth] requireAuth middleware hatası.");
+    res.status(500).json({ message: "Dahili sunucu hatası." });
   }
 };
 
 export const requireRole = (roles: string[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user || !roles.includes(req.user.role)) {
-      return res.status(403).json({ message: "Forbidden" });
+      return res.status(403).json({ message: "Bu işlemi yapmak için yetkiniz yok." });
     }
     next();
   };

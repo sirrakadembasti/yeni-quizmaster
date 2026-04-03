@@ -1,10 +1,23 @@
 import { Router, type Response } from "express";
+import rateLimit from "express-rate-limit";
 import { storage } from "../storage";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
+import { getIO } from "../socket";
 
 const router: Router = Router();
+
+// Sınav başlatma ve teslim için kısıtlayıcı rate limiter.
+// Genel API limiti (1000 req/15dk) buradaki hassas işlemler için çok yüksek;
+// bu endpoint'ler öğrenci başına çok daha az çağrılmalıdır.
+const quizActionLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 dakika
+  max: 50,                   // IP başına 15 dakikada en fazla 50 istek
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Çok fazla istek gönderildi, lütfen daha sonra tekrar deneyin." },
+});
 
 // ==================== SCHEMAS ====================
 
@@ -22,7 +35,13 @@ router.get("/quizzes", requireAuth, async (req: AuthRequest, res: Response) => {
   const quizzes = allQuizzes.filter(q => {
     if (q.status !== "published") return false;
     const assignedClasses = (q as any).assignedClasses || [];
-    if (assignedClasses.length === 0) return true; 
+    if (assignedClasses.length === 0) {
+      // Herhangi bir sınıfa atanmamış sınav:
+      // - Sınıfsız öğrenciler (serbest kullanıcılar) görebilir.
+      // - Sınıfı olan öğrenciler GÖREMEZ — yanlışlıkla yayınlanan sınavların
+      //   tüm okula sızmasını önler.
+      return !studentClassId;
+    }
     return assignedClasses.some((c: any) => c.id === studentClassId);
   });
   
@@ -30,16 +49,36 @@ router.get("/quizzes", requireAuth, async (req: AuthRequest, res: Response) => {
 });
 
 router.get("/results", requireAuth, async (req: AuthRequest, res: Response) => {
-  let studentId = req.user!.id;
-  
-  // Teachers and admins can view other students' results
-  if ((req.user!.role === "teacher" || req.user!.role === "admin") && req.query.studentId) {
-    studentId = req.query.studentId as string;
+  try {
+    let studentId = req.user!.id;
+    
+    // Teachers and admins can view other students' results
+    if ((req.user!.role === "teacher" || req.user!.role === "admin") && req.query.studentId) {
+      const targetStudentId = req.query.studentId as string;
+      const targetStudent = await storage.getUser(targetStudentId);
+      
+      if (!targetStudent) return res.status(404).json({ message: "Öğrenci bulunamadı." });
+
+      // Teacher authorization check for specific student
+      if (req.user!.role === "teacher") {
+        const teacherClasses = await storage.getClassesByTeacher(req.user!.id);
+        if (!teacherClasses.some(c => c.id === targetStudent.classId)) {
+          return res.status(403).json({ message: "Bu öğrencinin sonuçlarını görme yetkiniz yok." });
+        }
+      }
+      studentId = targetStudentId;
+    }
+    
+    // Filter results by teacher if requester is a teacher
+    const teacherIdFilter = req.user!.role === "teacher" ? req.user!.id : undefined;
+    const results = await storage.getResultsByStudent(studentId, teacherIdFilter);
+
+    // getResultsByStudent zaten `include: { quiz: { include: { category: true } } }` ile quiz verisini getiriyor.
+    // Ayrıca storage.getQuiz() çağırmak N+1 sorguya yol açar; r.quiz doğrudan kullanılıyor.
+    res.json({ results });
+  } catch (error) {
+    res.status(500).json({ message: "Sonuçlar alınamadı." });
   }
-  
-  const results = await storage.getResultsByStudent(studentId);
-  const enriched = await Promise.all(results.map(async r => ({ ...r, quiz: await storage.getQuiz(r.quizId) })));
-  res.json({ results: enriched });
 });
 
 router.get("/results/:id", requireAuth, async (req: AuthRequest, res: Response) => {
@@ -50,6 +89,19 @@ router.get("/results/:id", requireAuth, async (req: AuthRequest, res: Response) 
     // IDOR Check: Students can only view their own results
     if (req.user!.role === "student" && result.studentId !== req.user!.id) {
       return res.status(403).json({ message: "Bu sonuca erişim yetkiniz yok." });
+    }
+
+    // Teacher authorization check
+    if (req.user!.role === "teacher") {
+      const student = await storage.getUser(result.studentId);
+      const teacherClasses = await storage.getClassesByTeacher(req.user!.id);
+      if (!student || !teacherClasses.some(c => c.id === student.classId)) {
+        // As a fallback, check if they created the quiz
+        const quiz = await storage.getQuiz(result.quizId);
+        if (!quiz || quiz.createdBy !== req.user!.id) {
+          return res.status(403).json({ message: "Bu sonuca erişim yetkiniz yok." });
+        }
+      }
     }
 
     const quiz = await storage.getQuiz(result.quizId);
@@ -68,51 +120,24 @@ router.get("/results/:id", requireAuth, async (req: AuthRequest, res: Response) 
   }
 });
 
-// Result management for teachers/admins
-router.get("/results/quiz/:quizId", requireAuth, requireRole(["admin", "teacher"]), async (req, res) => {
-  const results = await storage.getResultsByQuiz(req.params.quizId);
-  const quiz = await storage.getQuiz(req.params.quizId);
-  
-  // IDOR Check: Teacher must be the creator of the quiz or an admin
-  if (req.user!.role === "teacher" && quiz?.createdBy !== req.user!.id) {
-    return res.status(403).json({ message: "Bu quizin sonuçlarını görme yetkiniz yok." });
-  }
-
-  const enriched = await Promise.all(results.map(async r => ({ 
-    ...r, 
-    student: await storage.getUser(r.studentId),
-    quizTitle: quiz?.title
-  })));
-  res.json({ results: enriched });
-});
-
-router.get("/results/quiz/:quizId/live", requireAuth, requireRole(["admin", "teacher"]), async (req, res) => {
-  const results = await storage.getLiveResults(req.params.quizId);
-  const quiz = await storage.getQuiz(req.params.quizId);
-  
-  if (req.user!.role === "teacher" && quiz?.createdBy !== req.user!.id) {
-    return res.status(403).json({ message: "Bu quizi izleme yetkiniz yok." });
-  }
-
-  const enriched = await Promise.all(results.map(async r => ({ 
-    ...r, 
-    student: await storage.getUser(r.studentId),
-    quizTitle: quiz?.title
-  })));
-  res.json({ results: enriched });
-});
-
 // Quiz taking endpoints
-router.post("/quiz/:quizId/start", requireAuth, async (req: AuthRequest, res: Response) => {
+router.post("/quiz/:quizId/start", quizActionLimiter, requireAuth, async (req: AuthRequest, res: Response) => {
   try {
     const quiz = await storage.getQuiz(req.params.quizId);
     if (!quiz) return res.status(404).json({ message: "Quiz bulunamadı." });
     
-    // Check if student is assigned to this quiz/class
+    // Erişim kontrolü: Öğrenci yalnızca kendi sınıfına atanmış sınavlara girebilir.
     const studentClassId = req.user!.classId;
     const assignedClasses = (quiz as any).assignedClasses || [];
-    if (req.user!.role === "student" && assignedClasses.length > 0 && !assignedClasses.some((c: any) => c.id === studentClassId)) {
-      return res.status(403).json({ message: "Bu quize erişim yetkiniz yok." });
+    if (req.user!.role === "student") {
+      if (assignedClasses.length === 0 && studentClassId) {
+        // Hiçbir sınıfa atanmamış sınav — sınıflı öğrenci erişemez
+        return res.status(403).json({ message: "Bu quize erişim yetkiniz yok." });
+      }
+      if (assignedClasses.length > 0 && !assignedClasses.some((c: any) => c.id === studentClassId)) {
+        // Farklı sınıfa atanmış sınav
+        return res.status(403).json({ message: "Bu quize erişim yetkiniz yok." });
+      }
     }
 
     const questions = await storage.getQuestionsByQuiz(quiz.id);
@@ -184,7 +209,7 @@ router.post("/quiz/:resultId/answer", requireAuth, async (req: AuthRequest, res:
   }
 });
 
-router.post("/quiz/:resultId/submit", requireAuth, async (req: AuthRequest, res: Response) => {
+router.post("/quiz/:resultId/submit", quizActionLimiter, requireAuth, async (req: AuthRequest, res: Response) => {
   try {
     const result = await storage.getResult(req.params.resultId);
     if (!result) return res.status(404).json({ message: "Sınav oturumu bulunamadı." });
@@ -204,15 +229,28 @@ router.post("/quiz/:resultId/submit", requireAuth, async (req: AuthRequest, res:
     allQ.forEach(q => { if (answersMap[q.id] === q.correctAnswer) correct++; });
     
     const score = Math.round((correct / allQ.length) * 100);
-    await storage.updateResult(result.id, { 
-      status: "completed", 
-      score, 
-      submittedAt: new Date(), 
-      timeTaken: Math.floor((Date.now() - new Date(result.startedAt!).getTime()) / 1000) 
+    await storage.updateResult(result.id, {
+      status: "completed",
+      score,
+      submittedAt: new Date(),
+      completedAt: new Date(),   // schema'daki completedAt alanı; submittedAt ile aynı anda set ediliyor
+      timeTaken: Math.floor((Date.now() - new Date(result.startedAt!).getTime()) / 1000)
     });
-    
-    res.json({ score, correctAnswers: correct, totalQuestions: allQ.length });
-  } catch (e) {
+
+    // Notify the teacher who created the quiz
+    const quiz = await storage.getQuiz(result.quizId);
+    if (quiz) {
+      const io = getIO();
+      const notification = await storage.createNotification({
+        userId: quiz.createdBy,
+        title: "Sınav Teslim Edildi",
+        message: `${req.user!.name}, "${quiz.title}" adlı sınavı tamamladı. Skor: ${score}`,
+        type: "success"
+      });
+      io.to(`user_${quiz.createdBy}`).emit("notification", notification);
+    }
+
+    res.json({ score, correctAnswers: correct, totalQuestions: allQ.length });  } catch (e) {
     console.error("Submit quiz error:", e);
     res.status(500).json({ message: "Sınav teslim edilemedi." });
   }

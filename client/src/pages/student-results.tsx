@@ -368,7 +368,7 @@ export default function StudentResultsPage() {
                               </div>
                             </td>
                             <td className="py-5 px-6 text-center">
-                              <div className={`inline-flex items-center justify-center h-12 w-12 rounded-xl border-2 font-black text-lg shadow-sm ${scoreStyle}`}>
+                              <div className={`inline-flex items-center justify-center h-12 w-12 rounded-xl border-2 font-black text-lg shadow-sm dark:shadow-none ${scoreStyle}`}>
                                 {score.toFixed(0)}
                               </div>
                             </td>
