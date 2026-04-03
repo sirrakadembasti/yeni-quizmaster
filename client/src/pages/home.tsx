@@ -2,26 +2,29 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Users, BarChart3, Zap, ArrowRight } from "lucide-react";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 export default function HomePage() {
   const [, setLocation] = useLocation();
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-gradient-to-br from-slate-50 to-indigo-50 dark:from-slate-900 dark:to-indigo-900">
+    <div className="min-h-screen w-full flex flex-col bg-gradient-to-br from-slate-50 to-indigo-50 dark:from-slate-900 dark:to-indigo-950">
       {/* Navigation */}
       <nav className="border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-indigo-500/20">
               Q
             </div>
-            <span className="font-bold text-xl hidden sm:inline">QuizMaster</span>
+            <span className="font-bold text-xl hidden sm:inline tracking-tight">QuizMaster</span>
           </div>
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={() => setLocation("/auth")}>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <div className="h-6 w-[1px] bg-border mx-1" />
+            <Button variant="ghost" className="font-bold" onClick={() => setLocation("/auth")}>
               Giriş Yap
             </Button>
-            <Button onClick={() => setLocation("/auth")}>
+            <Button className="font-bold shadow-lg shadow-indigo-500/20" onClick={() => setLocation("/auth")}>
               Kayıt Ol
             </Button>
           </div>
@@ -53,7 +56,7 @@ export default function HomePage() {
       </div>
 
       {/* Features Section */}
-      <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border-t">
+      <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-800/50 backdrop-blur-sm border-t">
         <div className="max-w-6xl mx-auto px-4 py-20">
           <h2 className="text-3xl font-bold text-center mb-12">
             Neler Sunuyoruz?
@@ -126,8 +129,8 @@ export default function HomePage() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm py-8">
-        <div className="max-w-6xl mx-auto px-4 text-center text-slate-600 dark:text-slate-400">
+      <footer className="border-t bg-white dark:bg-slate-900/80 backdrop-blur-sm py-8">
+        <div className="max-w-6xl mx-auto px-4 text-center text-slate-600 dark:text-slate-300 dark:text-slate-400 dark:text-slate-500">
           <p>&copy; 2025 QuizMaster. Tüm hakları saklıdır.</p>
         </div>
       </footer>

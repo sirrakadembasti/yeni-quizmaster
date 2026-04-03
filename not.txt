@@ -1,0 +1,41 @@
+Sadece Quiz-Master (D:\dnm\Quiz-Master) projesine odaklanarak yaptığım derinlemesine incelemenin sonuçları aşağıdadır:
+
+  1. Mimari Analiz ve Genel Durum
+  Proje, güncel teknolojiler (React, Express, Prisma, TypeScript) kullanılarak inşa edilmiş, monorepo mantığında (client ve server dizinleri ayrılmış) oldukça kapsamlı bir
+  sınav yönetim sistemidir.
+   - Gerçek Zamanlı İletişim: Socket.io kullanılarak canlı bildirimler ve etkileşimler için bir altyapı kurulmuş.
+   - Loglama: Sunucu tarafında pino ve pino-http kütüphaneleri kullanılarak profesyonel bir loglama altyapısı tercih edilmiş.
+
+  2. Eksik Özellikler ve İyileştirme Alanları
+   - Ölçeklenebilirlik (Veritabanı): Proje veritabanı olarak SQLite kullanıyor. Eğer bu uygulama çok kullanıcılı (aynı anda yüzlerce öğrencinin sınava girdiği) bir üretim
+     ortamına (production) taşınacaksa, SQLite bir performans darboğazı yaratacaktır. PostgreSQL veya MySQL'e geçiş yapılması kritik bir iyileştirmedir.
+   - Dosya Yüklemeleri: Sisteme yüklenen dosyalar (örneğin server/api-routes/upload.ts üzerinden) yerel dosya sistemine (uploads klasörü) kaydediliyor gibi görünüyor.
+     Sunucunun çökmesi veya birden fazla sunucu (load balancer) kullanılması durumunda dosyalar kaybolabilir. AWS S3 veya benzeri bir bulut depolama entegrasyonu eksik.
+   - Konteynerizasyon: Projenin hızlıca canlıya alınabilmesi veya farklı ortamlarda sorunsuz çalışabilmesi için Dockerfile ve docker-compose.yml (Redis, DB vb. için)
+     eksikliği göze çarpıyor.
+   - Test Kapsamı: Birim ve entegrasyon testleri sınırlı görünüyor; özellikle yapay zeka (AI) modülü ve yetkilendirme (RBAC) kısımları için test yazılması gerekiyor.
+
+  3. Hatalar ve Teknik Borç (Technical Debt)
+   - Karanlık Mod (Dark Mode) Yaması: Kök dizinde yer alan dark-mode-patch.js gibi dosyalar, UI tarafında bazı kodların zorla düzeltilmeye (monkey-patch) çalışıldığını
+     gösteriyor. React/Tailwind ekosisteminde temanın daha standart (Context API veya Zustand vb. ile) yönetilmesi gerekir; bu tür yamalar ileride UI güncellemelerini
+     bozabilir.
+   - Yapay Zeka (AI) Bağımlılığı: server/api-routes/ai.ts içerisindeki AI entegrasyonu harici bir API'ye sıkı sıkıya bağlı. Eğer API yanıt vermezse veya kota aşımı olursa
+     (rate limit), fallback (yedek) bir senaryo veya kullanıcıya gösterilecek düzgün bir hata yönetimi mekanizması (graceful degradation) güçlendirilmelidir.
+   - Tip Güvenliği: Önceki taramada da belirttiğim gibi, Prisma ve Storage katmanında zaman zaman başvurulan any kullanımları, TypeScript'in sağladığı avantajları
+     zayıflatıyor ve "runtime" (çalışma zamanı) hatalarına zemin hazırlıyor.
+
+  4. Güvenlik Zafiyetleri ve Alınan Önlemler
+  Alınan İyi Önlemler:
+   - Uygulamada helmet (HTTP başlık güvenliği), CORS ayarları ve Rate Limiting (Auth ve genel API için ayrı ayrı) başarıyla uygulanmış.
+   - csrfSynchronisedProtection middleware'i ile CSRF (Siteler Arası İstek Sahteciliği) saldırılarına karşı koruma sağlanmış.
+
+  Zafiyetler ve Riskler:
+   - Demo Kullanıcı Bilgileri: Daha önce de uyardığım gibi, client/src/pages/auth.tsx dosyasında test/demo amaçlı admin, öğretmen ve öğrenci giriş bilgileri açıkça yazılı
+     duruyor. Canlı ortama çıkmadan önce UI'dan kesinlikle silinmelidir.
+   - Session (Oturum) Saklama: SQLite tabanlı bir session store kullanılması, yetkisiz dosya sistemi erişimi durumunda tüm aktif kullanıcı oturumlarının çalınmasına yol
+     açabilir. Üretim ortamında oturum yönetimi için Redis kullanılması güvenlik ve performans açısından şarttır.
+   - Çevre Değişkenleri (ENV): SESSION_SECRET gibi kritik ortam değişkenlerinin eksik olduğu durumlarda uygulamanın güvensiz varsayılan değerlerle (fallback) çalışmaya devam
+     etmesi büyük bir risktir. Bu tür durumlarda uygulamanın başlamayı reddetmesi (fail-fast) gerekir.
+
+  Eğer bu alanlardan belirli birini (örneğin veritabanını PostgreSQL'e çevirme veya Auth güvenliğini sıkılaştırma) düzeltmemi isterseniz hemen kod üzerinde çalışmaya
+  başlayabilirim.

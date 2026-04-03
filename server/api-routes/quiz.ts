@@ -1,6 +1,8 @@
 import { Router, type Response, type Request } from "express";
 import { storage } from "../storage";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
+import { getIO } from "../socket";
+import { logger } from "../index";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 
@@ -33,9 +35,14 @@ const questionsArraySchema = z.array(questionSchema);
 
 // ==================== QUIZ ROUTES ====================
 
-router.get("/admin/quizzes", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+router.get("/admin/quizzes", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
-    const quizzes = await storage.getAllQuizzes();
+    let quizzes;
+    if (req.user!.role === "admin") {
+      quizzes = await storage.getAllQuizzes();
+    } else {
+      quizzes = await storage.getQuizzesByCreator(req.user!.id);
+    }
     res.json({ quizzes });
   } catch (error) {
     res.status(500).json({ message: "Sınavlar getirilemedi." });
@@ -52,11 +59,20 @@ router.get("/", requireAuth, async (req: AuthRequest, res: Response) => {
   res.json({ quizzes });
 });
 
-router.get("/:id", requireAuth, async (req: Request, res: Response) => {
-  const quiz = await storage.getQuiz(req.params.id);
-  if (!quiz) return res.status(404).json({ message: "Sınav bulunamadı." });
-  const questions = await storage.getQuestionsByQuiz(quiz.id);
-  res.json({ quiz, questions });
+router.get("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const quiz = await storage.getQuiz(req.params.id);
+    if (!quiz) return res.status(404).json({ message: "Sınav bulunamadı." });
+    
+    if (req.user!.role === "teacher" && quiz.createdBy !== req.user!.id) {
+      return res.status(403).json({ message: "Bu sınavı görüntüleme yetkiniz yok." });
+    }
+
+    const questions = await storage.getQuestionsByQuiz(quiz.id);
+    res.json({ quiz, questions });
+  } catch (error) {
+    res.status(500).json({ message: "Sınav detayları getirilemedi." });
+  }
 });
 
 router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
@@ -104,9 +120,17 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
 
     const existingQuiz = await storage.getQuiz(req.params.id);
     if (!existingQuiz) return res.status(404).json({ message: "Sınav bulunamadı." });
-    
+
     if (req.user!.role === "teacher" && existingQuiz.createdBy !== req.user!.id) {
       return res.status(403).json({ message: "Bu sınavı düzenleme yetkiniz yok." });
+    }
+
+    // Taslaktan yayına geçişte en az 1 soru zorunlu
+    if (validation.data.status === "published" && existingQuiz.status !== "published") {
+      const questions = await storage.getQuestionsByQuiz(req.params.id);
+      if (questions.length === 0) {
+        return res.status(400).json({ message: "Sınav yayınlanabilmesi için en az 1 soru eklenmelidir." });
+      }
     }
 
     const quiz = await storage.updateQuiz(req.params.id, {
@@ -115,6 +139,24 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
     });
     
     await storage.createLog(req.user!.id, "UPDATE_QUIZ", `Updated quiz: ${existingQuiz.title}`);
+
+    // Send notifications if newly published
+    if (existingQuiz.status !== "published" && quiz?.status === "published" && quiz.assignedClasses && quiz.assignedClasses.length > 0) {
+      const io = getIO();
+      for (const cls of quiz.assignedClasses) {
+        const students = await storage.getStudentsByClass(cls.id);
+        for (const student of students) {
+          const notification = await storage.createNotification({
+            userId: student.id,
+            title: "Yeni Sınav",
+            message: `"${quiz.title}" adlı sınav yayınlandı.`,
+            type: "info"
+          });
+          io.to(`user_${student.id}`).emit("notification", notification);
+        }
+      }
+    }
+
     res.json({ quiz });
   } catch (error) {
     console.error("Update quiz error:", error);
@@ -138,8 +180,7 @@ router.post("/:id/questions", requireAuth, requireRole(["admin", "teacher"]), as
       return res.status(403).json({ message: "Bu sınava soru ekleme yetkiniz yok." });
     }
 
-    await storage.deleteQuestionsByQuiz(quizId);
-    
+    // deleteMany + createMany atomik transaction içinde — veri kaybı riski yok
     const questionsData = validation.data.map((q) => ({
       quizId: quizId,
       text: q.text,
@@ -149,11 +190,11 @@ router.post("/:id/questions", requireAuth, requireRole(["admin", "teacher"]), as
       imageUrl: q.imageUrl,
       order: q.order
     }));
-    
-    const questions = await storage.createQuestions(questionsData);
+
+    const questions = await storage.syncQuestions(quizId, questionsData);
     res.status(201).json({ questions });
   } catch (error) {
-    console.error("Sync questions error:", error);
+    logger.error({ err: error }, "Sync questions error");
     res.status(500).json({ message: "Sorular senkronize edilemedi." });
   }
 });

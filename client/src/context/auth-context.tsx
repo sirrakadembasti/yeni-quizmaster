@@ -54,15 +54,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const register = async (name: string, email: string, password: string): Promise<boolean> => {
+  const register = async (name: string, email: string, password: string): Promise<boolean | string> => {
     try {
       const { user } = await authApi.register(name, email, password);
       setUser(user);
       setIsAuthenticated(true);
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration failed:', error);
-      return false;
+      return error.message || "Kayıt başarısız oldu.";
     }
   };
 

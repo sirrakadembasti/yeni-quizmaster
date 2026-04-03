@@ -172,7 +172,7 @@ export default function StudentQuizzesPage() {
                       </CardHeader>
                       <CardFooter className="flex-1 flex flex-col justify-end pt-4">
                         <Button 
-                          className="w-full gap-2 shadow-sm"
+                          className="w-full gap-2 shadow-sm dark:shadow-none"
                           onClick={() => setLocation(`/student/quiz/${quiz.id}`)}
                         >
                           <Play className="h-4 w-4" />

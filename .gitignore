@@ -17,9 +17,15 @@ server/dist/
 server/.env
 client/.env
 
-# Prisma
+# Prisma & Data
 /server/prisma/dev.db
 /server/prisma/dev.db-journal
+/server/data/*.db
+/server/data/*.db-journal
+
+# File Uploads
+/server/uploads/*
+!/server/uploads/.gitkeep
 
 # Logs
 npm-debug.log*
@@ -42,3 +48,4 @@ Thumbs.db
 server/public/
 vite.config.ts.*
 *.tar.gz
+*.bak

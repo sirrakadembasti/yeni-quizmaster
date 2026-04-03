@@ -8,8 +8,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Mail, Lock, User, ArrowRight } from "lucide-react";
+import { Loader2, Mail, Lock, User, ArrowRight, Home } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
@@ -91,9 +92,9 @@ export default function AuthPage() {
     }
 
     try {
-      const success = await register(regName, regEmail, regPassword);
+      const result = await register(regName, regEmail, regPassword);
       
-      if (success) {
+      if (result === true) {
         toast({
           title: "Kayıt Başarılı",
           description: "Hesabınız oluşturuldu, yönlendiriliyorsunuz...",
@@ -105,7 +106,7 @@ export default function AuthPage() {
         toast({
           variant: "destructive",
           title: "Kayıt Başarısız",
-          description: "Bu e-posta zaten kullanılıyor.",
+          description: typeof result === 'string' ? result : "Kayıt işlemi gerçekleştirilemedi.",
         });
       }
     } catch (error) {
@@ -147,6 +148,14 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-background relative overflow-hidden">
+      {/* Navigation Controls */}
+      <div className="absolute top-4 right-4 flex items-center gap-2 z-50">
+        <ThemeToggle />
+        <Button variant="ghost" size="icon" onClick={() => setLocation("/")} className="rounded-full" title="Anasayfaya Dön">
+          <Home className="h-5 w-5" />
+        </Button>
+      </div>
+
       {/* Background Elements */}
       <div className="absolute inset-0 bg-grid-slate-200/50 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-800/50 -z-10" />
       <div className="absolute top-0 -left-4 w-72 h-72 bg-primary/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob" />
@@ -260,16 +269,8 @@ export default function AuthPage() {
                     </>
                   )}
                 </Button>
-                
-                <div className="mt-4 p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground text-center">
-                  <p className="font-semibold mb-1">Yeni Demo Giriş Bilgileri (Şifre: QuizMaster2026!):</p>
-                  <p>Admin: admin@quizmaster.com</p>
-                  <p>Eğitmen: teacher@quizmaster.com</p>
-                  <p>Öğrenci: student@quizmaster.com</p>
-                </div>
-              </form>
-            </TabsContent>
-            
+                </form>
+                </TabsContent>            
             <TabsContent value="register">
               <form onSubmit={handleRegister} className="space-y-4">
                 <div className="space-y-2">

@@ -62,7 +62,7 @@ const categoryColors: { [key: string]: string } = {
   "Türkçe": "bg-rose-100 text-rose-700",
   "Tarih": "bg-amber-100 text-amber-700",
   "İngilizce": "bg-purple-100 text-purple-700",
-  "Genel": "bg-slate-100 text-slate-700"
+  "Genel": "bg-slate-100 dark:bg-slate-800 dark:bg-slate-800 text-slate-700 dark:text-slate-200 dark:text-slate-200"
 };
 
 export default function QuizzesPage() {
@@ -167,7 +167,7 @@ export default function QuizzesPage() {
         </div>
 
         {/* Improved Filter Bar */}
-        <Card className="border-primary/10 shadow-sm overflow-visible">
+        <Card className="border-primary/10 shadow-sm dark:shadow-none overflow-visible">
           <CardContent className="p-6">
             <div className="flex flex-col space-y-4">
               <div className="relative w-full">

@@ -31,8 +31,11 @@ export interface User {
   role: string;
   classId?: string | null;
   classNo?: string | null;
+  studentNo?: number | null;
   assignedCategories?: { id: string; name: string }[];
   classes?: { id: string; name: string }[];
+  // Öğretmenin classTeacherId üzerinden sorumlu olduğu sınıflar
+  responsibleForClasses?: { id: string; name: string }[];
 }
 
 interface UserManagementTableProps {
@@ -62,7 +65,8 @@ export function UserManagementTable({
         <TableHeader>
           <TableRow>
             <TableHead>İsim</TableHead>
-            <TableHead>E-posta</TableHead>
+            {/* Öğretmenler için E-posta yerine Sorumlu Sınıf göster */}
+            <TableHead>{role === 'teacher' ? 'Sorumlu Sınıf' : 'E-posta'}</TableHead>
             {role === 'student' ? (
               <>
                 <TableHead>Sınıf</TableHead>
@@ -95,7 +99,23 @@ export function UserManagementTable({
             users.map((user) => (
               <TableRow key={user.id}>
                 <TableCell className="font-medium">{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
+                <TableCell>
+                  {role === 'teacher' ? (
+                    user.responsibleForClasses && user.responsibleForClasses.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {user.responsibleForClasses.map(cls => (
+                          <Badge key={cls.id} variant="secondary" className="text-[10px] bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                            {cls.name}
+                          </Badge>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-xs text-muted-foreground italic">Atanmamış</span>
+                    )
+                  ) : (
+                    user.email
+                  )}
+                </TableCell>
                 {role === 'student' ? (
                   <>
                     <TableCell>
@@ -103,7 +123,9 @@ export function UserManagementTable({
                         {classes?.find((c: any) => c.id === user.classId)?.name || 'Atanmamış'}
                       </Badge>
                     </TableCell>
-                    <TableCell>{user.classNo || '-'}</TableCell>
+                    <TableCell className="font-bold text-indigo-600">
+                      {user.studentNo ? `#${user.studentNo}` : (user.classNo || '-')}
+                    </TableCell>
                   </>
                 ) : (
                   <>

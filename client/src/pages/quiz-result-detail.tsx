@@ -176,25 +176,25 @@ export default function QuizResultDetail() {
           <CardContent className="space-y-6">
             {/* Score Display */}
             <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
-              <div className="bg-muted/30 rounded-xl p-4 border print:border-gray-300 shadow-sm">
+              <div className="bg-muted/30 rounded-xl p-4 border print:border-gray-300 shadow-sm dark:shadow-none">
                 <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Puan</p>
                 <p className="text-3xl font-black mt-2 text-primary">
                   {(result.score || 0).toFixed(0)}
                 </p>
               </div>
-              <div className="bg-emerald-50 dark:bg-emerald-950/20 rounded-xl p-4 border border-emerald-100 dark:border-emerald-900/30 print:border-gray-300 shadow-sm">
+              <div className="bg-emerald-50 dark:bg-emerald-950/20 rounded-xl p-4 border border-emerald-100 dark:border-emerald-900/30 print:border-gray-300 shadow-sm dark:shadow-none">
                 <p className="text-xs text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider">Doğru</p>
                 <p className="text-3xl font-black mt-2 text-emerald-600">
                   {correctCount}
                 </p>
               </div>
-              <div className="bg-rose-50 dark:bg-rose-950/20 rounded-xl p-4 border border-rose-100 dark:border-rose-900/30 print:border-gray-300 shadow-sm">
+              <div className="bg-rose-50 dark:bg-rose-950/20 rounded-xl p-4 border border-rose-100 dark:border-rose-900/30 print:border-gray-300 shadow-sm dark:shadow-none">
                 <p className="text-xs text-rose-600 dark:text-rose-400 font-bold uppercase tracking-wider">Yanlış</p>
                 <p className="text-3xl font-black mt-2 text-rose-600">
                   {wrongAnswers}
                 </p>
               </div>
-              <div className="bg-blue-50 dark:bg-blue-950/20 rounded-xl p-4 border border-blue-100 dark:border-blue-900/30 print:border-gray-300 shadow-sm">
+              <div className="bg-blue-50 dark:bg-blue-950/20 rounded-xl p-4 border border-blue-100 dark:border-blue-900/30 print:border-gray-300 shadow-sm dark:shadow-none">
                 <p className="text-xs text-blue-600 dark:text-blue-400 font-bold uppercase tracking-wider">Süre</p>
                 <p className="text-3xl font-black mt-2 text-blue-600">
                   {Math.floor((result.timeTaken || 0) / 60)}:{((result.timeTaken || 0) % 60).toString().padStart(2, '0')}
@@ -212,19 +212,19 @@ export default function QuizResultDetail() {
           </div>
 
           {questions.map((question, idx) => (
-            <Card key={question.id} className={`print:break-inside-avoid print:shadow-none print:border-gray-300 ${question.isCorrect ? 'border-emerald-200' : 'border-red-200'} shadow-sm transition-all hover:shadow-md`}>
+            <Card key={question.id} className={`print:break-inside-avoid print:shadow-none print:border-gray-300 ${question.isCorrect ? 'border-emerald-200' : 'border-red-200'} shadow-sm dark:shadow-none transition-all hover:shadow-md`}>
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1 w-full">
                     <div className="flex items-center justify-between">
                       <span className="font-semibold text-sm text-muted-foreground">Soru {idx + 1}</span>
                       {question.isCorrect ? (
-                        <Badge className="bg-emerald-600 print:bg-white print:text-emerald-700 print:border-emerald-600 print:border">
+                        <Badge className="bg-emerald-600 print:bg-white dark:bg-slate-900 print:text-emerald-700 print:border-emerald-600 print:border">
                           <CheckCircle2 className="h-3 w-3 mr-1" />
                           Doğru
                         </Badge>
                       ) : (
-                        <Badge className="bg-red-600 print:bg-white print:text-red-700 print:border-red-600 print:border">
+                        <Badge className="bg-red-600 print:bg-white dark:bg-slate-900 print:text-red-700 print:border-red-600 print:border">
                           <XCircle className="h-3 w-3 mr-1" />
                           Yanlış
                         </Badge>

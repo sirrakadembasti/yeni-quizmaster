@@ -6,21 +6,77 @@ import session from "express-session";
 import connectSqlite3 from "connect-sqlite3";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
+import helmet from "helmet";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import * as dotenv from "dotenv";
+import pino from "pino";
+import pinoHttp from "pino-http";
+import { setupSocket } from "./socket";
 
 // Load environment variables
 dotenv.config();
 
+// Initialize pino logger
+export const logger = pino({
+  level: process.env.NODE_ENV === "production" ? "info" : "debug",
+  transport: process.env.NODE_ENV !== "production" ? {
+    target: "pino-pretty",
+    options: {
+      colorize: true,
+      translateTime: "SYS:standard",
+      ignore: "pid,hostname",
+    },
+  } : undefined,
+});
+
+const httpLogger = pinoHttp({
+  logger,
+  customLogLevel: function (req, res, err) {
+    if (res.statusCode >= 400 && res.statusCode < 500) {
+      return "warn";
+    } else if (res.statusCode >= 500 || err) {
+      return "error";
+    } else if (res.statusCode >= 300 && res.statusCode < 400) {
+      return "silent";
+    }
+    return "info";
+  },
+  autoLogging: {
+    ignore: (req) => {
+      if (req.url && (req.url.startsWith('/assets') || req.url.startsWith('/uploads'))) {
+        return true;
+      }
+      return false;
+    }
+  }
+});
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// ==================== SESSION_SECRET KONTROLÜ ====================
+// SESSION_SECRET olmadan session güvenliği sağlanamaz. Güvensiz fallback engellendi.
+const sessionSecret = process.env.SESSION_SECRET;
+if (!sessionSecret) {
+  logger.fatal(
+    "SESSION_SECRET env değişkeni tanımlanmamış. " +
+    "Güvenli bir session secret olmadan uygulama başlatılamaz. (Fail-fast koruması) " +
+    ".env dosyanıza SESSION_SECRET=<güçlü-rastgele-değer> satırını ekleyin."
+  );
+  process.exit(1);
+}
 
 const SQLiteStore = connectSqlite3(session);
 
 const app = express();
 const httpServer = createServer(app);
+
+// Security Headers
+app.use(helmet({
+  crossOriginResourcePolicy: false, // Allows cross-origin requests for resources (like images)
+}));
 
 // Rate limiting
 const limiter = rateLimit({
@@ -59,20 +115,25 @@ app.use(cors({
 }));
 
 // Session configuration
-app.use(session({
+// sessionMiddleware değişken olarak tanımlanıyor — Socket.IO ile paylaşmak için gerekli (bkz. socket.ts)
+app.set("trust proxy", 1); // Trust first proxy (e.g. Nginx, Heroku)
+const sessionMiddleware = session({
   store: new SQLiteStore({
     db: "sessions.db",
-    dir: "./",
+    dir: "./data",
   }) as any,
-  secret: process.env.SESSION_SECRET || "quiz-master-secret-key",
+  secret: sessionSecret,
   resave: false,
   saveUninitialized: false,
+  name: "quizmaster.sid", // Custom cookie name for better security
   cookie: {
     secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
   },
-}));
+});
+app.use(sessionMiddleware);
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, "uploads");
@@ -83,45 +144,15 @@ if (!fs.existsSync(uploadsDir)) {
 // Serve uploads as static
 app.use("/uploads", express.static(uploadsDir));
 
-function log(message: string) {
-  const formattedTime = new Date().toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  });
-  console.log(`${formattedTime} [express] ${message}`);
-}
-
-app.use((req, res, next) => {
-  const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: any = null;
-
-  const originalResJson = res.json;
-  res.json = function (body) {
-    capturedJsonResponse = body;
-    return originalResJson.apply(res, arguments as any);
-  };
-
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-      log(logLine);
-    }
-  });
-
-  next();
-});
+app.use(httpLogger);
 
 (async () => {
   try {
-    log("Starting server...");
-    
+    logger.info("Starting server...");
+
+    // Initialize Socket.io — sessionMiddleware paylaşılıyor, oda auth için gerekli
+    setupSocket(httpServer, sessionMiddleware);
+
     // Initialize application routes
     await registerRoutes(httpServer, app);
 
@@ -134,13 +165,14 @@ app.use((req, res, next) => {
     app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
       const status = err.status || err.statusCode || 500;
       const message = err.message || "Dahili Sunucu Hatası";
-      
-      console.error("API Error:", {
+
+      logger.error({
+        err,
         status,
         message,
         path: req.path,
-        error: err.stack
-      });
+        method: req.method
+      }, "API Error");
 
       if (req.path.startsWith("/api")) {
         return res.status(status).json({ message });
@@ -160,11 +192,11 @@ app.use((req, res, next) => {
         host: "0.0.0.0", // Listen on all interfaces
       },
       () => {
-        log(`Server serving on port ${port}`);
+        logger.info(`Server serving on port ${port}`);
       },
     );
   } catch (error) {
-    console.error("FATAL ERROR DURING STARTUP:", error);
+    logger.fatal({ err: error }, "FATAL ERROR DURING STARTUP");
     process.exit(1);
   }
 })();

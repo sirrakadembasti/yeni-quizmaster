@@ -276,7 +276,7 @@ export default function CreateQuizPage() {
           <div className="flex gap-2 w-full sm:w-auto">
             <Button 
               variant="outline" 
-              className="flex-1 sm:flex-none gap-2 shadow-sm"
+              className="flex-1 sm:flex-none gap-2 shadow-sm dark:shadow-none"
               onClick={() => createQuizMutation.mutate('draft')}
               disabled={createQuizMutation.isPending}
             >
