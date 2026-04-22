@@ -149,7 +149,7 @@ export default function StudentQuizzesPage() {
                     <Card key={quiz.id} className="group hover:border-primary/50 transition-colors flex flex-col">
                       <CardHeader>
                         <div className="flex justify-between items-start mb-2">
-                          <Badge variant="secondary" className="font-normal">{quiz.category || 'Genel'}</Badge>
+                          <div className="flex flex-col gap-1"><Badge variant="secondary" className="w-fit font-normal">{quiz.category || 'Genel'}</Badge><span className="text-[10px] font-bold text-muted-foreground italic">Öðr: {quiz.creator?.name || 'Bilinmiyor'}</span></div>
                           <Badge 
                             variant={quiz.difficulty === 'hard' || quiz.difficulty === 'Hard' ? 'destructive' : quiz.difficulty === 'medium' || quiz.difficulty === 'Medium' ? 'default' : 'secondary'}
                             className="text-[10px]"
@@ -196,7 +196,7 @@ export default function StudentQuizzesPage() {
                       <Card key={quiz.id} className="group hover:border-primary/50 transition-colors opacity-75 flex flex-col">
                         <CardHeader>
                           <div className="flex justify-between items-start mb-2">
-                            <Badge variant="secondary" className="font-normal">{quiz.category || 'Genel'}</Badge>
+                            <div className="flex flex-col gap-1"><Badge variant="secondary" className="w-fit font-normal">{quiz.category || 'Genel'}</Badge><span className="text-[10px] font-bold text-muted-foreground italic">Öðr: {quiz.creator?.name || 'Bilinmiyor'}</span></div>
                             <Badge variant="outline" className="text-[10px] text-emerald-600">
                               <CheckCircle2 className="h-3 w-3 mr-1" /> TamamlandÄ±
                             </Badge>

@@ -54,6 +54,7 @@ model User {
   results        StudentResult[]
   notifications  Notification[]
   logs          ActionLog[]     @relation("UserLogs")
+  announcements Announcement[] @relation("AnnouncementCreator")
   questionBank   QuestionBank[] @relation("TeacherQuestionBank")
 }
 
@@ -202,4 +203,15 @@ model Notification {
   type      String   @default("info")
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model Announcement {
+  id            String   @id @default(uuid())
+  title         String
+  content       String
+  createdBy     String
+  creator       User     @relation("AnnouncementCreator", fields: [createdBy], references: [id])
+  targetRole    String?  // all, teacher, student
+  targetClassId String?
+  createdAt     DateTime @default(now())
 }

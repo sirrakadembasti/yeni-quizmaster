@@ -1,3 +1,50 @@
+# Quiz-Master Uygulama Geliştirme ve Hata Düzeltme Todo Listesi
+
+## A-) Sınıf Listesi ve Detay Sayfası İyileştirmeleri
+- [X] 1. Branş öğretmeni uyarısını düzelt: Veri olmasına rağmen çıkan "henüz branş öğretmeni atanmamıştır" uyarısını gider.
+- [X] 2. Öğrenci listesi tablosunu modern Material Design ile sadeleştir.
+- [X] 3. Tablodan "iletişim bilgisi" sütununu kaldır.
+- [X] 4. "öğrenci profili" sütun adını "öğrenci adı soyadı" olarak değiştir.
+- [X] 5. Tablo başına 1'den başlayan otomatik artan "S.No" sütunu ekle.
+- [X] 6. Sağ üst köşeye uygun formatta "Yazdır" butonu ekle.
+
+## B-) Öğrenci Detayları ve Yetkilendirme
+- [X] 1. Öğrenciler sayfasındaki "Detaylar" modalini kaldır, yerine sınav sonuç sayfasına yönlendir.
+- [X] 2. Yetki kontrolü: 
+    - Admin ve Sınıf Öğretmeni: Tüm sonuçları görsün.
+    - Branş Öğretmeni: Sadece kendi branşına ait sonuçları görsün.
+
+## C-) Dashboard Temizliği
+- [X] 1. Admin ve Öğretmen dashboard panellerinden "Sistem Bilgisi" kartını kaldır.
+
+## D-) Veri Senkronizasyonu ve Görünürlük Sorunu
+- [X] 1. Demo öğrencinin 10-A sınıf listesinde görünmemesini araştır ve düzelt.
+- [X] 2. Öğretmenin yaptığı sınavın demo öğrenci ekranında görünmemesini düzelt.
+
+## E-) Admin Dashboard Özelleştirme
+- [X] 1. Admin rolüne özel yeni kartlar ve göstergelerle modern bir dashboard tasarla.
+
+## F-) Sınav Gösterim Kartları
+- [X] 1. Sınavlarım sayfasındaki kartlarda sınavı oluşturan öğretmen bilgisini ders adının yanına ekle.
+
+## G-) Yönetim - Sınıf Sayfası Düzeltmeleri
+- [X] 1. Sınıf silme hatası: Boş sınıfların (öğretmen/öğrenci atanmamış) silinememe sorununu çöz.
+- [X] 2. Mock data olan "10-A yazılım geliştirme" sınıfını sistemden kaldır.
+- [X] 3. Sınıf kartlarındaki bilgilerin gerçek verilerle uyuşmamasını düzelt.
+
+## H-) Admin - Sınav Yönetimi
+- [X] 1. "Tüm Sınavlar" sayfasındaki tabloda, ilgili sınavın hangi sınıflara ait olduğu bilgisini (Sınıf sütunu) ekle.
+
+## K-) Duyuru Sistemi (Anonslar)
+- [X] 1. Admin için "Duyuru" sayfası (Side Menu) oluştur (CRUD işlemleri dahil).
+- [X] 2. Duyuru hedefleme (tüm kullanıcılar/belirli roller) ve ilk girişte uyarı mesajı gösterimi.
+- [X] 3. Sınıf öğretmeni için kendi sınıfına duyuru yapma yetkisi ekle.
+- [X] 4. Öğretmen ve Öğrenciler için geçmiş duyuruları görebilecekleri "Duyuru" sayfası ekle.
+- [X] 5. Profil sayfasındaki eski "bilgilendirme" sayfasını kaldır.
+- [X] 6. Sağ üstteki bildirim kısmını yeni duyuru sayfasına yönlendir.
+- [X] 7. Sağ üst bildirimlerde sınav bildirimlerinin (ve diğerlerinin) görünmesini sağla.
+
+
 Sadece Quiz-Master (D:\dnm\Quiz-Master) projesine odaklanarak yaptığım derinlemesine incelemenin sonuçları aşağıdadır:
 
   1. Mimari Analiz ve Genel Durum

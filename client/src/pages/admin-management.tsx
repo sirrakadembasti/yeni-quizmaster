@@ -485,7 +485,7 @@ const removeTeacherMutation = useMutation({
                          <Users className="h-4 w-4" />
                        </div>
                        <div className="flex flex-col">
-                         <span className="text-[11px] font-black text-foreground leading-none">{students.filter(s => s.classId === cls.id).length}</span>
+                         <span className="text-[11px] font-black text-foreground leading-none">{cls._count?.students || 0}</span>
                          <span className="text-[9px] font-bold text-muted-foreground uppercase">Öğrenci</span>
                        </div>
                     </div>
@@ -825,7 +825,7 @@ const removeTeacherMutation = useMutation({
           </div>
           <DialogFooter className="flex gap-2 p-4 pt-0">
             <Button variant="outline" onClick={() => setIsDeleteClassOpen(false)} className="rounded-xl flex-1 font-bold">Vazgeç</Button>
-            {((activeClass?._count?.students || 0) === 0 && (activeClass?.teachers?.length || 0) === 0 && (activeClass?.teacherAssignments?.length || 0) === 0) && (
+            {(activeClass?._count?.students || 0) === 0 && (
               <Button variant="destructive" onClick={() => deleteClassMutation.mutate(selectedClassId!)} className="rounded-xl flex-1 font-bold shadow-lg dark:shadow-none">Evet, Sil</Button>
             )}
           </DialogFooter>

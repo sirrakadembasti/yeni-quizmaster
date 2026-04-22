@@ -92,6 +92,9 @@ export interface IStorage {
   createLog(userId: string, action: string, details?: string): Promise<ActionLog>;
   // page ve limit filters nesnesine eklendi; total count pagination bilgisi için döndürülüyor.
   getLogs(filters?: { role?: string; userId?: string; action?: string; startDate?: Date; endDate?: Date; page?: number; limit?: number }): Promise<{ data: ActionLog[]; total: number }>;
+  createAnnouncement(data: any): Promise<any>;
+  getAllAnnouncements(): Promise<any[]>;
+  deleteAnnouncement(id: string): Promise<void>;
 }
 
 export class PrismaStorage implements IStorage {
@@ -396,7 +399,7 @@ export class PrismaStorage implements IStorage {
       }
     });
 
-    if (cls && (cls._count.students > 0 || cls._count.teacherAssignments > 0)) {
+    if (cls && cls._count.students > 0) {
       throw new Error("Sınıf kapatılamaz/silinemez. Önce sınıf içerisindeki öğretmen ve öğrencilerin boşaltılması gerekmektedir.");
     }
 
@@ -504,8 +507,8 @@ export class PrismaStorage implements IStorage {
             }
           }
         },
-        category: true,
-        assignedClasses: true
+        category: true, creator: true,
+        assignedClasses: true, creator: true
       },
       orderBy: { createdAt: 'desc' }
     });
@@ -520,7 +523,7 @@ export class PrismaStorage implements IStorage {
   async getQuiz(id: string): Promise<Quiz | undefined> {
     const quiz = await prisma.quiz.findUnique({ 
       where: { id },
-      include: { category: true, assignedClasses: true }
+      include: { category: true, creator: true, assignedClasses: true, creator: true }
     });
     return quiz ? { 
       ...quiz, 
@@ -542,8 +545,8 @@ export class PrismaStorage implements IStorage {
             }
           }
         },
-        category: true,
-        assignedClasses: true
+        category: true, creator: true,
+        assignedClasses: true, creator: true
       },
       orderBy: { createdAt: 'desc' }
     });
@@ -570,7 +573,7 @@ export class PrismaStorage implements IStorage {
           connect: quiz.assignedClassIds.map(id => ({ id }))
         } : undefined
       },
-      include: { assignedClasses: true }
+      include: { assignedClasses: true, creator: true }
     });
     return { 
       ...created, 
@@ -593,7 +596,7 @@ export class PrismaStorage implements IStorage {
           set: quiz.assignedClassIds.map(id => ({ id }))
         } : undefined
       },
-      include: { assignedClasses: true }
+      include: { assignedClasses: true, creator: true }
     });
     return updated as unknown as Quiz;
   }
@@ -1015,6 +1018,31 @@ export class PrismaStorage implements IStorage {
       quizzesPurged: quizzesDelete.count,
       resultsPurged: resultsDelete.count
     };
+  }
+
+  // Announcement methods
+  async createAnnouncement(data: any): Promise<any> {
+    return await prisma.announcement.create({
+      data: {
+        title: data.title,
+        content: data.content,
+        createdBy: data.createdBy,
+        targetRole: data.targetRole || "all",
+        targetClassId: data.targetClassId || null
+      },
+      include: { creator: { select: { name: true } } }
+    });
+  }
+
+  async getAllAnnouncements(): Promise<any[]> {
+    return await prisma.announcement.findMany({
+      include: { creator: { select: { name: true } } },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
+  async deleteAnnouncement(id: string): Promise<void> {
+    await prisma.announcement.delete({ where: { id } });
   }
 }
 

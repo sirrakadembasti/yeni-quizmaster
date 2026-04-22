@@ -14,6 +14,7 @@ import * as dotenv from "dotenv";
 import pino from "pino";
 import pinoHttp from "pino-http";
 import { setupSocket } from "./socket";
+import { generateToken, csrfSynchronisedProtection } from "./middleware/csrf";
 
 // Load environment variables
 dotenv.config();
@@ -152,6 +153,15 @@ app.use(httpLogger);
 
     // Initialize Socket.io — sessionMiddleware paylaşılıyor, oda auth için gerekli
     setupSocket(httpServer, sessionMiddleware);
+
+    // CSRF Protection
+    app.get("/api/csrf-token", (req, res) => {
+      res.json({ csrfToken: generateToken(req) });
+    });
+    
+    // Apply CSRF protection to all POST/PUT/DELETE routes
+    // Except for auth routes if needed, but usually recommended
+    app.use(csrfSynchronisedProtection);
 
     // Initialize application routes
     await registerRoutes(httpServer, app);

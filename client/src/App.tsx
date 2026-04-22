@@ -30,6 +30,7 @@ import AdminClassDetailPage from "@/pages/admin-class-detail";
 import AdminQuizzesPage from "@/pages/admin-quizzes";
 import ResetPasswordPage from "@/pages/reset-password";
 import ArchivePage from "@/pages/admin/archive";
+import AnnouncementsPage from "@/pages/announcements";
 
 /**
  * Public routes accessible without authentication
@@ -62,8 +63,9 @@ function StudentRoutes() {
       <Route path="/my-quizzes" component={StudentQuizzesPage} />
       <Route path="/my-results" component={StudentResultsPage} />
       <Route path="/my-stats" component={StudentStatsPage} />
+      <Route path="/announcements" component={AnnouncementsPage} />
       <Route path="/settings" component={SettingsPage} />
-      <Route path="/student-quizzes/:quizId">{(params: any) => <Redirect to={`/student/quiz/${params.quizId}`} />}</Route>
+      <Route path="/student-quizzes/:quizId">{(params: any) => <Redirect to={`/student/quiz/${params.quizId}`} />}</Route>    
       <Route path="/:rest*">
         <Redirect to="/" />
       </Route>
@@ -88,8 +90,9 @@ function TeacherRoutes() {
       <Route path="/students" component={StudentsPage} />
       <Route path="/classlist" component={ClassListPage} />
       <Route path="/classes/:id" component={ClassDetailPage} />
+      <Route path="/announcements" component={AnnouncementsPage} />
       <Route path="/settings" component={SettingsPage} />
-      <Route path="/student-quizzes/:quizId">{(params: any) => <Redirect to={`/student/quiz/${params.quizId}`} />}</Route>
+      <Route path="/student-quizzes/:quizId">{(params: any) => <Redirect to={`/student/quiz/${params.quizId}`} />}</Route>    
       <Route path="/:rest*">
         <Redirect to="/" />
       </Route>
@@ -119,8 +122,9 @@ function AdminRoutes() {
       <Route path="/teachers" component={TeachersPage} />
       <Route path="/management" component={AdminManagementPage} />
       <Route path="/archive" component={ArchivePage} />
+      <Route path="/announcements" component={AnnouncementsPage} />
       <Route path="/settings" component={SettingsPage} />
-      <Route path="/student-quizzes/:quizId">{(params: any) => <Redirect to={`/student/quiz/${params.quizId}`} />}</Route>
+      <Route path="/student-quizzes/:quizId">{(params: any) => <Redirect to={`/student/quiz/${params.quizId}`} />}</Route>    
       <Route path="/:rest*">
         <Redirect to="/" />
       </Route>

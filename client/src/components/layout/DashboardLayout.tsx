@@ -1,266 +1,153 @@
-import React, { useState, useEffect } from "react";
+import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/context/auth-context";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { notificationApi } from "@/lib/api";
+import { cn } from "@/lib/utils";
 import { 
   LayoutDashboard, 
   FileText, 
-  PlusCircle, 
-  BarChart2, 
+  Users, 
   Settings, 
-  Users,
-  Search,
+  LogOut, 
   Bell,
-  Menu,
+  BarChart3,
+  ListChecks,
+  UserCircle,
+  ShieldCheck,
+  Briefcase,
   GraduationCap,
-  History,
   Archive,
-  Moon,
-  Sun
+  Megaphone
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
-
-
-import { ThemeToggle } from "./ThemeToggle";
-
+import { useQuery } from "@tanstack/react-query";
 
 interface DashboardLayoutProps {
-  children: React.ReactNode;
-  hideNavigation?: boolean;
+  children: ReactNode;
 }
 
-export function DashboardLayout({ children, hideNavigation = false }: DashboardLayoutProps) {
-  const [location, setLocation] = useLocation();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { role, user, logout } = useAuth();
-  const queryClient = useQueryClient();
+export function DashboardLayout({ children }: DashboardLayoutProps) {
+  const [location] = useLocation();
+  const { user, role, logout } = useAuth();
 
-  const { data: notificationData } = useQuery({
+  const { data: notificationsData } = useQuery({
     queryKey: ['notifications'],
-    queryFn: () => notificationApi.getNotifications(),
-    refetchInterval: 30000, // Poll every 30 seconds
-    enabled: !!user,
-  });
-
-  const markAsReadMutation = useMutation({
-    mutationFn: () => notificationApi.markAsRead(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+    queryFn: async () => {
+      const res = await fetch('/api/notifications');
+      return res.json();
     },
+    refetchInterval: 30000 // Refetch every 30 seconds
   });
 
-  const notifications = notificationData?.notifications || [];
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+  const unreadCount = notificationsData?.notifications?.filter((n: any) => !n.isRead).length || 0;
 
-  // Role based navigation config
-  const adminNavigation = [
-    { name: "Genel Bakış", href: "/", icon: LayoutDashboard },
-    { name: "Yönetim Paneli", href: "/management", icon: Settings },
-    { name: "Arşiv İşlemleri", href: "/archive", icon: Archive },
-    { name: "Tüm Sınavlar", href: "/admin-quizzes", icon: FileText },
-    { name: "Sınavlarım", href: "/quizzes", icon: FileText },
-    { name: "Yeni Sınav Oluştur", href: "/create-quiz", icon: PlusCircle },
-    { name: "Sınıflar", href: "/classlist", icon: Users },
-    { name: "Öğrenciler", href: "/students", icon: Users },
-    { name: "Öğretmenler", href: "/teachers", icon: Users },
-    { name: "İstatistikler", href: "/results", icon: BarChart2 },
-    { name: "Ayarlar", href: "/settings", icon: Settings },
+  const menuItems = [
+    { label: "Dashboard", href: role === 'student' ? "/student/dashboard" : "/", icon: LayoutDashboard },
+    ...(role === 'student' ? [
+      { label: "Sınavlarım", href: "/student/quizzes", icon: FileText },
+      { label: "Sonuçlarım", href: "/student/results", icon: ListChecks },
+      { label: "İstatistikler", href: "/my-stats", icon: BarChart3 },
+    ] : []),
+    ...(role === 'teacher' ? [
+      { label: "Sınavlarım", href: "/quizzes", icon: FileText },
+      { label: "Sonuçlar", href: "/results", icon: ListChecks },
+      { label: "Öğrenciler", href: "/students", icon: Users },
+      { label: "Sınıflarım", href: "/classlist", icon: GraduationCap },
+    ] : []),
+    ...(role === 'admin' ? [
+      { label: "Sınav Yönetimi", href: "/admin-quizzes", icon: ShieldCheck },
+      { label: "Sınavlar", href: "/quizzes", icon: FileText },
+      { label: "Öğrenciler", href: "/students", icon: Users },
+      { label: "Eğitmenler", href: "/teachers", icon: Briefcase },
+      { label: "Sınıflar", href: "/classlist", icon: GraduationCap },
+      { label: "Yönetim", href: "/management", icon: Settings },
+      { label: "Arşiv", href: "/archive", icon: Archive },
+    ] : []),
+    { label: "Duyurular", href: "/announcements", icon: Megaphone },
+    { label: "Ayarlar", href: "/settings", icon: Settings },
   ];
-
-  const studentNavigation = [
-    { name: "Panelim", href: "/", icon: LayoutDashboard },
-    { name: "Sınavlarım", href: "/my-quizzes", icon: GraduationCap },
-    { name: "Sonuçlarım", href: "/my-results", icon: History },
-    { name: "İstatistikler", href: "/my-stats", icon: BarChart2 },
-    { name: "Profil ve Ayarlar", href: "/settings", icon: Settings },
-  ];
-
-  const teacherNavigation = [
-    { name: "Genel Bakış", href: "/", icon: LayoutDashboard },
-    { name: "Sınavlarım", href: "/quizzes", icon: FileText },
-    { name: "Yeni Sınav Oluştur", href: "/create-quiz", icon: PlusCircle },
-    { name: "Sınıflarım", href: "/classlist", icon: Users },
-    { name: "Öğrenciler", href: "/students", icon: Users },
-    { name: "İstatistikler", href: "/results", icon: BarChart2 },
-    { name: "Ayarlar", href: "/settings", icon: Settings },
-  ];
-
-  const navigation = role === 'student' ? studentNavigation : 
-                     role === 'teacher' ? teacherNavigation : 
-                     adminNavigation;
-
-  const SidebarContent = () => (
-    <div className="flex h-full flex-col bg-card border-r border-border">
-      <div className="p-6">
-        <div className="flex items-center gap-2 font-heading font-bold text-2xl text-primary">
-          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
-            S
-          </div>
-          SınavMaster
-        </div>
-        <div className="mt-2 px-1">
-          <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground border border-border rounded-full px-2 py-0.5">
-            {role === 'admin' ? 'Yönetici' : role === 'teacher' ? 'Öğretmen' : 'Öğrenci'} Paneli
-          </span>
-        </div>
-      </div>
-      <div className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
-        {navigation.map((item) => {
-          const isActive = location === item.href;
-          return (
-            <Link key={item.name} href={item.href}>
-              <div
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer",
-                  isActive
-                    ? "bg-primary/10 text-primary shadow-sm dark:shadow-none"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                )}
-              >
-                <item.icon className={cn("h-5 w-5", isActive ? "text-primary" : "text-muted-foreground")} />
-                {item.name}
-              </div>
-            </Link>
-          );
-        })}
-      </div>
-      <div className="p-4 border-t border-border">
-      </div>
-    </div>
-  );
 
   return (
-    <div className="min-h-screen bg-background flex text-foreground print:bg-white dark:bg-background print:text-black">
-      {/* Desktop Sidebar */}
-      {!hideNavigation && (
-        <div className="hidden md:block w-64 shrink-0 h-screen sticky top-0 print:hidden">
-          <SidebarContent />
+    <div className="flex h-screen bg-slate-50 dark:bg-slate-950 overflow-hidden font-sans">
+      {/* Sidebar */}
+      <aside className="w-64 border-r bg-white dark:bg-slate-900 flex flex-col shadow-sm">
+        <div className="p-6">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
+              <FileText className="h-6 w-6 text-white" />
+            </div>
+            <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter">
+              Quiz<span className="text-indigo-600">Master</span>
+            </span>
+          </div>
         </div>
-      )}
 
-      {/* Mobile Sidebar */}
-      <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
-        <SheetContent side="left" className="p-0 w-64 border-r border-border print:hidden">
-          <SidebarContent />
-        </SheetContent>
-      </Sheet>
+        <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto custom-scrollbar">
+          {menuItems.map((item) => (
+            <Link 
+              key={item.href} 
+              href={item.href}
+              className={cn(
+                "flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all group",
+                location === item.href 
+                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100" 
+                  : "text-slate-500 hover:bg-slate-50 hover:text-indigo-600"
+              )}
+            >
+              <item.icon className={cn(
+                "h-5 w-5",
+                location === item.href ? "text-white" : "text-slate-400 group-hover:text-indigo-600"
+              )} />
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="p-4 border-t bg-slate-50/50 dark:bg-slate-800/50">
+          <div className="flex items-center gap-3 px-4 py-3">
+            <div className="h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-600 dark:text-slate-300">
+              {user?.name?.[0].toUpperCase()}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-black text-slate-900 dark:text-white truncate leading-none">{user?.name}</p>
+              <p className="text-[10px] font-bold text-indigo-600 uppercase mt-1 tracking-widest">{role}</p>
+            </div>
+          </div>
+          <Button 
+            variant="ghost" 
+            onClick={() => logout()}
+            className="w-full justify-start gap-3 mt-2 rounded-xl text-slate-500 hover:text-red-600 hover:bg-red-50 font-bold"
+          >
+            <LogOut className="h-5 w-5" /> Çıkış Yap
+          </Button>
+        </div>
+      </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0 print:w-full print:m-0 print:p-0">
-        {/* Header */}
-        {!hideNavigation && (
-          <header className="h-16 border-b border-border bg-card sticky top-0 z-30 px-6 flex items-center justify-between print:hidden">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden"
-                onClick={() => setIsSidebarOpen(true)}
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-              <div className="relative hidden sm:block max-w-md w-64">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input 
-                  placeholder={role === 'student' ? "Sınav ara..." : "Sınav veya öğrenci ara..."}
-                  className="pl-9 h-9 bg-background/50 border-transparent focus:border-input focus:bg-background transition-all" 
-                />
-              </div>
-            </div>
+      <main className="flex-1 flex flex-col overflow-hidden">
+        <header className="h-16 border-b bg-white dark:bg-slate-900 flex items-center justify-end px-8 gap-4">
+          <div className="relative">
+            <Button variant="ghost" size="icon" className="rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-slate-50" asChild>
+              <Link href="/announcements">
+                <Bell className="h-5 w-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-2 right-2 h-4 w-4 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+                    {unreadCount}
+                  </span>
+                )}
+              </Link>
+            </Button>
+          </div>
+          <div className="h-8 w-[1px] bg-slate-100 mx-2" />
+          <div className="flex items-center gap-2">
+            <UserCircle className="h-5 w-5 text-slate-400" />
+            <span className="text-xs font-black uppercase text-slate-500">{user?.name}</span>
+          </div>
+        </header>
 
-            <div className="flex items-center gap-2 sm:gap-4">
-              <ThemeToggle />
-              
-              <Popover onOpenChange={(open) => { if(open && unreadCount > 0) markAsReadMutation.mutate(); }}>
-                <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative hidden sm:inline-flex">
-                    <Bell className="h-5 w-5 text-muted-foreground" />
-                    {unreadCount > 0 && (
-                      <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-destructive border-2 border-card" />
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent align="end" className="w-80 p-0">
-                  <div className="p-4 border-b">
-                    <h4 className="font-semibold">Bildirimler</h4>
-                  </div>
-                  <ScrollArea className="h-80">
-                    {notifications.length === 0 ? (
-                      <div className="p-4 text-sm text-center text-muted-foreground">
-                        Henüz bildiriminiz yok.
-                      </div>
-                    ) : (
-                      <div className="flex flex-col">
-                        {notifications.map((notif: any) => (
-                          <div key={notif.id} className={cn("p-4 border-b text-sm transition-colors hover:bg-muted/50", !notif.isRead && "bg-primary/5")}>
-                            <p className="font-medium">{notif.title}</p>
-                            <p className="text-muted-foreground mt-1">{notif.message}</p>
-                            <span className="text-xs text-muted-foreground mt-2 block">
-                              {new Date(notif.createdAt).toLocaleString('tr-TR')}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </ScrollArea>
-                </PopoverContent>
-              </Popover>
-              
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-9 w-9 rounded-full ml-1 sm:ml-0">
-                    <Avatar className="h-9 w-9 border border-border">
-                      <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'User'}`} alt={user?.name || 'User'} />
-                      <AvatarFallback>{user?.name?.substring(0,2).toUpperCase() || 'U'}</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user?.name || 'User'}</p>
-                      <p className="text-xs leading-none text-muted-foreground">
-                        {user?.email || ''}
-                      </p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => setLocation('/settings')}>Profil ve Ayarlar</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-destructive" onClick={logout}>Çıkış Yap</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </header>
-        )}
-
-        {/* Page Content */}
-        <main className={cn(
-          "flex-1 p-6 md:p-8 w-full animate-in fade-in-50 duration-500 print:p-0 print:max-w-none",
-          hideNavigation ? "max-w-5xl mx-auto" : "max-w-7xl mx-auto"
-        )}>
+        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
           {children}
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }
