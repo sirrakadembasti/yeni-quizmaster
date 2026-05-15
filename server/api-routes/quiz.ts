@@ -11,9 +11,9 @@ const router: Router = Router();
 // ==================== SCHEMAS ====================
 
 const quizSchema = z.object({
-  title: z.string().min(3, "Ba�l�k en az 3 karakter olmal�d�r.").max(100),
+  title: z.string().min(3, "Başlık en az 3 karakter olmalıdır.").max(100),
   description: z.string().max(500).optional().nullable(),
-  categoryId: z.string().uuid("Ge�ersiz kategori ID.").optional().nullable(),
+  categoryId: z.string().uuid("Geçersiz kategori ID.").optional().nullable(),
   category: z.string().optional().nullable(),
   difficulty: z.enum(["easy", "medium", "hard"]).default("medium"),
   timeLimit: z.number().int().positive().optional().nullable(),
@@ -25,8 +25,8 @@ const quizSchema = z.object({
 const questionSchema = z.object({
   text: z.string().min(1, "Soru metni gereklidir."),
   type: z.string().default("multiple-choice"),
-  options: z.array(z.string()).min(2, "En az 2 se�enek gereklidir."),
-  correctAnswer: z.string().min(1, "Do�ru cevap gereklidir."),
+  options: z.array(z.string()).min(2, "En az 2 seçenek gereklidir."),
+  correctAnswer: z.string().min(1, "Doğru cevap gereklidir."),
   imageUrl: z.string().url().optional().nullable(),
   order: z.number().int().default(0),
 });
@@ -45,7 +45,7 @@ router.get("/admin/quizzes", requireAuth, requireRole(["admin", "teacher"]), asy
     }
     res.json({ quizzes });
   } catch (error) {
-    res.status(500).json({ message: "S�navlar getirilemedi." });
+    res.status(500).json({ message: "Sınavlar getirilemedi." });
   }
 });
 
@@ -53,7 +53,7 @@ router.get("/", requireAuth, async (req: AuthRequest, res: Response) => {
   try {
     let quizzes;
     if (req.user!.role === "student") {
-      // ��renci sadece kendisine atanan ve yay�nlanm�� quizleri g�rmeli
+      // Öğrenci sadece kendisine atanan ve yayınlanmış quizleri görmeli
       const studentClassId = req.user!.classId;
       const allQuizzes = await storage.getAllQuizzes();
       
@@ -67,23 +67,23 @@ router.get("/", requireAuth, async (req: AuthRequest, res: Response) => {
     }
     res.json({ quizzes });
   } catch (error) {
-    res.status(500).json({ message: "S�navlar getirilemedi." });
+    res.status(500).json({ message: "Sınavlar getirilemedi." });
   }
 });
 
 router.get("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
     const quiz = await storage.getQuiz(req.params.id);
-    if (!quiz) return res.status(404).json({ message: "S�nav bulunamad�." });
+    if (!quiz) return res.status(404).json({ message: "Sınav bulunamadı." });
 
     if (req.user!.role === "teacher" && quiz.createdBy !== req.user!.id) {
-      return res.status(403).json({ message: "Bu s�nav� g�r�nt�leme yetkiniz yok." });
+      return res.status(403).json({ message: "Bu sınavı görüntüleme yetkiniz yok." });
     }
 
     const questions = await storage.getQuestionsByQuiz(quiz.id);
     res.json({ quiz, questions });
   } catch (error) {
-    res.status(500).json({ message: "S�nav detaylar� getirilemedi." });
+    res.status(500).json({ message: "Sınav detayları getirilemedi." });
   }
 });
 
@@ -119,7 +119,7 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
     res.status(201).json({ quiz });
   } catch (error) {
     console.error("Create quiz error:", error);
-    res.status(500).json({ message: "S�nav olu�turulamad�." });
+    res.status(500).json({ message: "Sınav oluşturulamadı." });
   }
 });
 
@@ -131,16 +131,16 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
     }
 
     const existingQuiz = await storage.getQuiz(req.params.id);
-    if (!existingQuiz) return res.status(404).json({ message: "S�nav bulunamad�." });
+    if (!existingQuiz) return res.status(404).json({ message: "Sınav bulunamadı." });
 
     if (req.user!.role === "teacher" && existingQuiz.createdBy !== req.user!.id) {
-      return res.status(403).json({ message: "Bu s�nav� d�zenleme yetkiniz yok." });
+      return res.status(403).json({ message: "Bu sınavı düzenleme yetkiniz yok." });
     }
 
     if (validation.data.status === "published" && existingQuiz.status !== "published") {
       const questions = await storage.getQuestionsByQuiz(req.params.id);
       if (questions.length === 0) {
-        return res.status(400).json({ message: "S�nav yay�nlanabilmesi i�in en az 1 soru eklenmelidir." });
+        return res.status(400).json({ message: "Sınav yayınlanabilmesi için en az 1 soru eklenmelidir." });
       }
     }
 
@@ -170,7 +170,7 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
     res.json({ quiz });
   } catch (error) {
     console.error("Update quiz error:", error);
-    res.status(500).json({ message: "S�nav g�ncellenemedi." });
+    res.status(500).json({ message: "Sınav güncellenemedi." });
   }
 });
 
@@ -184,10 +184,10 @@ router.post("/:id/questions", requireAuth, requireRole(["admin", "teacher"]), as
     }
 
     const quiz = await storage.getQuiz(quizId);
-    if (!quiz) return res.status(404).json({ message: "S�nav bulunamad�." });
+    if (!quiz) return res.status(404).json({ message: "Sınav bulunamadı." });
 
     if (req.user!.role === "teacher" && quiz.createdBy !== req.user!.id) {
-      return res.status(403).json({ message: "Bu s�nava soru ekleme yetkiniz yok." });
+      return res.status(403).json({ message: "Bu sınava soru ekleme yetkiniz yok." });
     }
 
     const questionsData = validation.data.map((q) => ({
@@ -211,14 +211,14 @@ router.post("/:id/questions", requireAuth, requireRole(["admin", "teacher"]), as
 router.delete("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
     const quiz = await storage.getQuiz(req.params.id);
-    if (!quiz) return res.status(404).json({ message: "S�nav bulunamad�." });
+    if (!quiz) return res.status(404).json({ message: "Sınav bulunamadı." });
     if (req.user!.role === "teacher" && quiz.createdBy !== req.user!.id) {
-      return res.status(403).json({ message: "Bu s�nav� silme yetkiniz yok." });
+      return res.status(403).json({ message: "Bu sınavı silme yetkiniz yok." });
     }
     await storage.deleteQuiz(req.params.id);
-    res.json({ message: "S�nav ba�ar�yla silindi." });
+    res.json({ message: "Sınav başarıyla silindi." });
   } catch (e) {
-    res.status(500).json({ message: "S�nav silinemedi." });
+    res.status(500).json({ message: "Sınav silinemedi." });
   }
 });
 

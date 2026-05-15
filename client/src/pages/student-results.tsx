@@ -70,7 +70,7 @@ export default function StudentResultsPage() {
           if (foundStudent) setStudent(foundStudent);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Veriler y�klenemedi");
+        setError(err instanceof Error ? err.message : "Veriler yüklenemedi");
       } finally {
         setLoading(false);
       }
@@ -84,15 +84,15 @@ export default function StudentResultsPage() {
     let baseResults = [...results];
     
     if (role === 'teacher') {
-      // Sorumlu ��retmen mi kontrol et
+      // Sorumlu Öğretmen mi kontrol et
       const isClassTeacher = student?.classTeacherId === user?.id || 
                             (student?.class?.classTeacherId === user?.id);
       
       if (!isClassTeacher) {
-        // Sadece bran� ��retmeni ise: Sadece kendi olu�turdu�u quizleri g�rs�n
+        // Sadece branş öğretmeni ise: Sadece kendi oluşturduğu quizleri görsün
         baseResults = baseResults.filter(r => r.quiz?.createdBy === user?.id);
       }
-      // Admin veya S�n�f ��retmeni ise baseResults de�i�mez (hepsini g�r�r)
+      // Admin veya Sınıf öğretmeni ise baseResults değişmez (hepsini görür)
     }
 
     return baseResults
@@ -147,13 +147,13 @@ export default function StudentResultsPage() {
             onClick={() => setLocation(studentId ? '/students' : '/student/dashboard')}
           >
             <ChevronLeft className="h-4 w-4" />
-            {studentId ? '��rencilere D�n' : 'Dashboard\'a D�n'}
+            {studentId ? 'Öğrencilere Dön' : "Dashboard'a Dön"}
           </Button>
 
           <div className="flex justify-between items-end">
             <div>
               <h1 className="text-4xl font-heading font-black text-foreground tracking-tight">
-                {studentId ? '��renci Analizi' : 'S�nav Sonu�lar�m'}
+                {studentId ? 'Öğrenci Analizi' : 'Sınav Sonuçlarım'}
               </h1>
               <p className="text-muted-foreground mt-2 text-lg">
                 {studentId
@@ -163,7 +163,7 @@ export default function StudentResultsPage() {
             </div>
             {!loading && (
               <Badge variant="secondary" className="h-8 px-4 text-sm font-bold bg-primary/10 text-primary border-primary/20"> 
-                Toplam {filteredResults.length} Kay�t
+                Toplam {filteredResults.length} Kayıt
               </Badge>
             )}
           </div>
@@ -187,7 +187,7 @@ export default function StudentResultsPage() {
                     {student.class && (
                       <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                         <School className="h-4 w-4 text-primary/60" />
-                        S�n�f: <span className="text-foreground">{student.class.name}</span>
+                        Sınıf: <span className="text-foreground">{student.class.name}</span>
                       </div>
                     )}
                     {student.studentNo && (
@@ -201,7 +201,7 @@ export default function StudentResultsPage() {
               </div>
               <div className="flex items-center gap-3">
                 <div className="text-right hidden sm:block mr-2">
-                  <p className="text-[10px] uppercase tracking-widest font-black text-muted-foreground">��renci Kodu</p>    
+                  <p className="text-[10px] uppercase tracking-widest font-black text-muted-foreground">Öğrenci Kodu</p>    
                   <p className="font-mono text-sm font-bold">{student.id.substring(0, 8)}</p>
                 </div>
                 <div className="h-12 w-[1px] bg-border mx-2 hidden sm:block" />
@@ -217,7 +217,7 @@ export default function StudentResultsPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Filter className="h-4 w-4 text-primary" />
-                <CardTitle className="text-sm font-bold uppercase tracking-wider">Geli�mi� Sorgulama Paneli</CardTitle>     
+                <CardTitle className="text-sm font-bold uppercase tracking-wider">Gelişmiş Sorgulama Paneli</CardTitle>     
               </div>
               <Button
                 variant="ghost"
@@ -233,11 +233,11 @@ export default function StudentResultsPage() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               {/* Search */}
               <div className="space-y-2">
-                <Label className="text-[11px] font-bold uppercase opacity-60">S�nav Ad�</Label>
+                <Label className="text-[11px] font-bold uppercase opacity-60">Sınav Adı</Label>
                 <div className="relative">
                   <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Ba�l�k ile ara..."
+                    placeholder="Başlık ile ara..."
                     className="pl-9 bg-muted/20"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -250,10 +250,10 @@ export default function StudentResultsPage() {
                 <Label className="text-[11px] font-bold uppercase opacity-60">Ders / Kategori</Label>
                 <Select value={filterCategory} onValueChange={setFilterCategory}>
                   <SelectTrigger className="bg-muted/20">
-                    <SelectValue placeholder="T�m Dersler" />
+                    <SelectValue placeholder="Tüm Dersler" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">T�m Dersler</SelectItem>
+                    <SelectItem value="all">Tüm Dersler</SelectItem>
                     {categories.map(cat => (
                       <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
                     ))}
@@ -263,32 +263,32 @@ export default function StudentResultsPage() {
 
               {/* Success Level */}
               <div className="space-y-2">
-                <Label className="text-[11px] font-bold uppercase opacity-60">Ba�ar� Durumu</Label>
+                <Label className="text-[11px] font-bold uppercase opacity-60">Başarı Durumu</Label>
                 <Select value={filterScore} onValueChange={setFilterScore}>
                   <SelectTrigger className="bg-muted/20">
-                    <SelectValue placeholder="T�m Puanlar" />
+                    <SelectValue placeholder="Tüm Puanlar" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">T�m Puanlar</SelectItem>
+                    <SelectItem value="all">Tüm Puanlar</SelectItem>
                     <SelectItem value="high">Pekiyi (90-100)</SelectItem>
-                    <SelectItem value="medium">Ba�ar�l� (70-89)</SelectItem>
-                    <SelectItem value="low">Geli�tirilmeli (0-69)</SelectItem>
+                    <SelectItem value="medium">Başarılı (70-89)</SelectItem>
+                    <SelectItem value="low">Geliştirilmeli (0-69)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* Sorting */}
               <div className="space-y-2">
-                <Label className="text-[11px] font-bold uppercase opacity-60">S�ralama �l��t�</Label>
+                <Label className="text-[11px] font-bold uppercase opacity-60">Sıralama Ölçütü</Label>
                 <Select value={sortBy} onValueChange={setSortBy}>
                   <SelectTrigger className="bg-muted/20">
-                    <SelectValue placeholder="S�ralama" />
+                    <SelectValue placeholder="Sıralama" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="date_desc">En Yeni Tarih</SelectItem>
                     <SelectItem value="date_asc">En Eski Tarih</SelectItem>
-                    <SelectItem value="score_desc">En Y�ksek Puan</SelectItem>
-                    <SelectItem value="score_asc">En D���k Puan</SelectItem>
+                    <SelectItem value="score_desc">En Yüksek Puan</SelectItem>
+                    <SelectItem value="score_asc">En Düşük Puan</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -300,13 +300,13 @@ export default function StudentResultsPage() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32 gap-4">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
-            <p className="text-muted-foreground font-black tracking-widest uppercase text-xs">Veriler ��leniyor...</p>      
+            <p className="text-muted-foreground font-black tracking-widest uppercase text-xs">Veriler işleniyor...</p>      
           </div>
         ) : error ? (
           <Card className="border-destructive bg-destructive/5">
             <CardContent className="pt-10 pb-10 text-center">
               <AlertCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
-              <p className="text-xl font-bold text-destructive mb-2">Sorgu Hatas�</p>
+              <p className="text-xl font-bold text-destructive mb-2">Sorgu Hatası</p>
               <p className="text-muted-foreground mb-8">{error}</p>
               <Button variant="outline" onClick={() => window.location.reload()} className="rounded-full px-8">
                 Tekrar Dene
@@ -320,7 +320,7 @@ export default function StudentResultsPage() {
                 <div className="p-2 bg-primary rounded-lg text-primary-foreground">
                   <List className="h-5 w-5" />
                 </div>
-                Detayl� Sonu� Listesi
+                Detaylı Sonuç Listesi
               </h2>
             </div>
 
@@ -332,8 +332,8 @@ export default function StudentResultsPage() {
                       <tr className="border-b bg-muted/50 text-muted-foreground uppercase text-[11px] font-black tracking-widest">
                         <th className="text-left py-5 px-8">Quiz & Ders</th>
                         <th className="text-center py-5 px-6">Tamamlama</th>
-                        <th className="text-center py-5 px-6">Do�ruluk</th>
-                        <th className="text-center py-5 px-6">S�re</th>
+                        <th className="text-center py-5 px-6">Doğruluk</th>
+                        <th className="text-center py-5 px-6">Süre</th>
                         <th className="text-center py-5 px-6">Puan</th>
                         <th className="text-right py-5 px-8">Eylem</th>
                       </tr>
@@ -348,7 +348,7 @@ export default function StudentResultsPage() {
                             <td className="py-5 px-8">
                               <div className="flex flex-col gap-1">
                                 <p className="font-black text-base text-foreground group-hover:text-primary transition-colors">
-                                  {result.quiz?.title || result.quizTitle || "�simsiz S�nav"}
+                                  {result.quiz?.title || result.quizTitle || "İsimsiz Sınav"}
                                 </p>
                                 <div className="flex items-center gap-2">
                                   <Badge variant="secondary" className="text-[10px] font-bold px-2 py-0 h-5 bg-muted/50">     
@@ -407,10 +407,10 @@ export default function StudentResultsPage() {
                     <div className="h-20 w-20 bg-muted/30 rounded-3xl flex items-center justify-center mx-auto mb-6">
                       <Search className="h-10 w-10 text-muted-foreground" />
                     </div>
-                    <h3 className="text-xl font-bold text-foreground">Sonu� Bulunamad�</h3>
-                    <p className="text-muted-foreground mt-2 max-w-xs mx-auto">Se�ti�iniz kriterlere uygun s�nav sonucu bulunmuyor. Filtreleri de�i�tirmeyi deneyin.</p>
+                    <h3 className="text-xl font-bold text-foreground">Sonuç Bulunamadı</h3>
+                    <p className="text-muted-foreground mt-2 max-w-xs mx-auto">Seçtiğiniz kriterlere uygun sınav sonucu bulunmuyor. Filtreleri değiştirmeyi deneyin.</p>
                     <Button variant="link" onClick={resetFilters} className="mt-4 font-bold text-primary">
-                      T�m Filtreleri S�f�rla
+                      Tüm Filtreleri Sıfırla
                     </Button>
                   </div>
                 )}

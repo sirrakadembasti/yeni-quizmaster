@@ -39,7 +39,8 @@ import {
   Clock, 
   GraduationCap, 
   BarChart2,
-  AlertCircle
+  AlertCircle,
+  Printer
 } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import { quizApi, resultApi, classApi, categoryApi, userApi } from "@/lib/api";
@@ -239,9 +240,20 @@ export default function StatisticsPage() {
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-black text-foreground tracking-tight">İstatistik ve Analiz</h1>
-          <p className="text-muted-foreground mt-1">Sistem genelindeki sınav performanslarını ve öğrenci verilerini analiz edin.</p>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-black text-foreground tracking-tight">İstatistik ve Analiz</h1>
+            <p className="text-muted-foreground mt-1">Sistem genelindeki sınav performanslarını ve öğrenci verilerini analiz edin.</p>
+          </div>
+          <div className="flex gap-2 print:hidden">
+            <Button 
+              variant="outline" 
+              onClick={() => window.print()}
+              className="rounded-xl font-black gap-2 border-2 hover:bg-slate-50"
+            >
+              <Printer className="h-4 w-4" /> Yazdır
+            </Button>
+          </div>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">

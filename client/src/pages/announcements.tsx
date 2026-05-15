@@ -14,7 +14,8 @@ import {
   CheckCircle2,
   AlertTriangle,
   Info,
-  ChevronRight
+  ChevronRight,
+  Printer
 } from "lucide-react";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -36,6 +37,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { announcementApi, classApi } from "@/lib/api";
 
 export default function AnnouncementsPage() {
   const { user, role } = useAuth();
@@ -51,45 +53,31 @@ export default function AnnouncementsPage() {
 
   const { data: announcementsData, isLoading } = useQuery({
     queryKey: ['announcements'],
-    queryFn: async () => {
-      const res = await fetch('/api/announcements');
-      if (!res.ok) throw new Error("Duyurular yüklenemedi");
-      return res.json();
-    }
+    queryFn: () => announcementApi.getAllAnnouncements()
   });
 
   const { data: classesData } = useQuery({
-    queryKey: ['/api/classes'],
-    queryFn: async () => {
-      const res = await fetch('/api/classes');
-      return res.json();
-    },
+    queryKey: ['classes'],
+    queryFn: () => classApi.getAllClasses(),
     enabled: role === 'admin' || role === 'teacher'
   });
 
   const createMutation = useMutation({
-    mutationFn: async (data: any) => {
-      const res = await fetch('/api/announcements', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      if (!res.ok) throw new Error("Duyuru oluşturulamadı");
-      return res.json();
-    },
+    mutationFn: (data: any) => announcementApi.createAnnouncement(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['announcements'] });
       setIsCreateOpen(false);
       setTitle("");
       setContent("");
       toast({ title: "Başarılı", description: "Duyuru yayınlandı." });
+    },
+    onError: (error: any) => {
+      toast({ variant: "destructive", title: "Hata", description: error.message || "Duyuru oluşturulamadı" });
     }
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      await fetch(`/api/announcements/${id}`, { method: 'DELETE' });
-    },
+    mutationFn: (id: string) => announcementApi.deleteAnnouncement(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['announcements'] });
       toast({ title: "Başarılı", description: "Duyuru silindi." });
@@ -111,14 +99,23 @@ export default function AnnouncementsPage() {
               <p className="text-indigo-100 font-bold mt-1">Önemli bilgilendirmeler ve anonslar</p>
             </div>
           </div>
-          {(role === 'admin' || role === 'teacher') && (
+          <div className="flex gap-2 print:hidden">
             <Button 
-              onClick={() => setIsCreateOpen(true)}
-              className="bg-white text-indigo-600 hover:bg-indigo-50 rounded-2xl h-14 px-8 font-black text-lg gap-2 shadow-lg"
+              variant="outline" 
+              onClick={() => window.print()}
+              className="rounded-2xl font-black gap-2 border-2 bg-white/10 hover:bg-white/20 text-white border-white/20 h-14 px-6"
             >
-              <Plus className="h-6 w-6" /> Yeni Duyuru Yayınla
+              <Printer className="h-5 w-5" /> Yazdır
             </Button>
-          )}
+            {(role === 'admin' || role === 'teacher') && (
+              <Button 
+                onClick={() => setIsCreateOpen(true)}
+                className="bg-white text-indigo-600 hover:bg-indigo-50 rounded-2xl h-14 px-8 font-black text-lg gap-2 shadow-lg"
+              >
+                <Plus className="h-6 w-6" /> Yeni Duyuru Yayınla
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="grid gap-6">

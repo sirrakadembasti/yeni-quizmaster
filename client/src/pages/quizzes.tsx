@@ -25,7 +25,8 @@ import {
   Trash2,
   X,
   Book,
-  Layers
+  Layers,
+  Printer
 } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import {
@@ -159,11 +160,20 @@ export default function QuizzesPage() {
             </h1>
             <p className="text-muted-foreground mt-1">Hazırladığınız sınavları listeleyin ve filtreleyin.</p>
           </div>
-          {role !== 'student' && (
-            <Button onClick={() => setLocation("/create-quiz")} className="gap-2 font-bold shadow-lg shadow-primary/20">
-              <Plus className="h-4 w-4" /> Yeni Sınav Oluştur
+          <div className="flex gap-2 print:hidden">
+            <Button 
+              variant="outline" 
+              onClick={() => window.print()}
+              className="rounded-xl font-black gap-2 border-2 hover:bg-slate-50"
+            >
+              <Printer className="h-4 w-4" /> Yazdır
             </Button>
-          )}
+            {role !== 'student' && (
+              <Button onClick={() => setLocation("/create-quiz")} className="gap-2 font-bold shadow-lg shadow-primary/20">
+                <Plus className="h-4 w-4" /> Yeni Sınav Oluştur
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Improved Filter Bar */}

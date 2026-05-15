@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
-import { authApi, type User } from '../lib/api';
+import { authApi, refreshCsrfToken, type User } from '../lib/api';
 
 type UserRole = 'admin' | 'teacher' | 'student';
 
@@ -22,9 +22,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [, setLocation] = useLocation();
 
-  // Check if user is already logged in on mount
+  // Check if user is already logged in on mount.
+  // We also pre-fetch the CSRF token here to warm up the session before
+  // the user interacts with any form. This eliminates the "first login fails"
+  // race condition where the session store hasn't been fully initialised yet.
   useEffect(() => {
     const checkAuth = async () => {
+      // Pre-fetch CSRF token to establish session early (warm up SQLite session store)
+      refreshCsrfToken().catch(() => {/* silent — will retry on first form submit */});
+
       try {
         const { user } = await authApi.getCurrentUser();
         setUser(user);

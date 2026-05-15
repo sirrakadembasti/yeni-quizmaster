@@ -90,8 +90,8 @@ NODE_ENV="development"
 
 ```bash
 cd server
-npx prisma db push      # Şemayı veritabanına uygula
-npx prisma db seed      # Demo verilerini yükle
+pnpm dlx prisma db push      # Şemayı veritabanına uygula
+pnpm dlx prisma db seed      # Demo verilerini yükle
 ```
 
 ### 4. Geliştirme Sunucusunu Başlat
@@ -123,22 +123,34 @@ Seed scripti aşağıdaki kullanıcıları oluşturur:
 
 ---
 
-## Temel Özellikler
+## Öne Çıkan Özellikler
 
-- **Rol tabanlı erişim kontrolü** — Admin, öğretmen ve öğrenci rolleri; her rol kendi yetkili alanına erişir.
-- **Sınıf ve öğretmen yönetimi** — Sınıf oluşturma, sorumlu öğretmen atama, branş öğretmeni–ders eşleştirme.
-- **Sınav yaşam döngüsü** — Taslak → Yayın → Arşiv akışı; arşivlenmiş veriler `purge` endpoint'i ile fiziksel olarak silinebilir.
-- **AI destekli soru üretimi** — Gemini API entegrasyonu; özel API anahtarı ve model desteği; SSRF koruması.
-- **Gerçek zamanlı bildirimler** — Socket.IO ile kullanıcıya anlık bildirim; oturum doğrulamalı bağlantı.
-- **Güvenlik**
-  - CSRF token koruması (tüm mutasyonlarda)
-  - Rate limiting (genel API ve AI endpoint'i için ayrı limitler)
-  - SSRF engelleme (özel IP aralıkları ve HTTP bloğu)
-  - Oturum–socket entegrasyonu (oda sahteciliği önleme)
-  - Dosya yükleme yetki kontrolü (yalnızca admin/öğretmen)
-- **Atomik soru güncelleme** — Soru senkronizasyonu `prisma.$transaction` içinde çalışır; kısmi güncelleme veri kaybına yol açmaz.
-- **Sayfalama** — Log ve bildirim listeleri sayfalanmış; N+1 sorgu sorunları giderilmiştir.
-- **Cevap kaydetme geri bildirimi** — Sınav sırasında her cevap sunucuya anlık kaydedilir; bağlantı kesilirse öğrenciye görünür uyarı ve "Yeniden Dene" seçeneği sunulur.
+- **Modern Dashboard & RBAC Log Sistemi** — Adminler tüm sistem hareketlerini, öğretmen ve öğrenciler ise yalnızca kendi aktivitelerini modern bir liste görünümünde izleyebilir.
+- **Global Yazdırma (Print) Desteği** — Sınıf listeleri, sınavlar ve sonuç raporları için optimize edilmiş "Yazdır" özelliği. Yazdırma sırasında Sidebar ve Navbar otomatik olarak gizlenir.
+- **AI Destekli Soru Üretimi** — Gemini API entegrasyonu ile saniyeler içinde konu bazlı, zorluk seviyesi ayarlanabilir çoktan seçmeli sorular.
+- **Duyuru Merkezi** — Tüm okul geneline veya spesifik bir sınıfa/role yönelik zengin içerikli duyuru yayınlama sistemi.
+- **Güvenlik ve Performans**
+  - **CSRF Koruması:** Otomatik yenileme mekanizmalı, mutasyon bazlı güvenlik.
+  - **RBAC (Rol Tabanlı Erişim):** Backend seviyesinde katı yetkilendirme middleware'leri.
+  - **Real-time:** Socket.IO ile sınav anında anlık iletişim ve bildirimler.
+  - **Atomik İşlemler:** Prisma transaksiyonları ile veri bütünlüğü koruması.
+
+---
+
+## Teknik Detaylar
+
+### Güvenlik Katmanı
+- **CSRF Token:** Her mutasyon isteğinde frontend tarafından otomatik eklenir, geçerliliğini yitirdiğinde şeffaf biçimde yenilenir.
+- **Rate Limiting:** Kaba kuvvet (brute-force) ve AI API kötüye kullanımını engellemek için endpoint bazlı limitler.
+- **SSRF Koruması:** AI modülünde sadece güvenli IP ve domain'lere izin veren filtreleme sistemi.
+
+### Log Yönetimi
+- Sistemdeki her önemli işlem (`CREATE`, `UPDATE`, `DELETE`, `LOGIN` vb.) veritabanına kaydedilir.
+- `/api/admin/logs/me` endpoint'i ile kullanıcılar kendi işlem geçmişlerini gizlilik içinde görebilir.
+
+### Yazdırma Optimizasyonu
+- Tailwind v4 `print:` sınıfları kullanılarak temiz çıktı düzeni.
+- Detay sayfalarında (Öğretmen Detay vb.) ve tüm ana listeleme sayfalarında hazır yazdırma butonları.
 
 ---
 
@@ -153,11 +165,6 @@ Seed scripti aşağıdaki kullanıcıları oluşturur:
 | `NODE_ENV` | — | `development` veya `production`. Varsayılan: `development` |
 | `PORT` | — | Backend portu. Varsayılan: `5000` |
 | `GEMINI_API_KEY` | — | Google Gemini API anahtarı. Yalnızca resmi Google endpoint'lerine gönderilir. |
-| `SMTP_HOST` | — | E-posta göndericisi sunucusu (şifre sıfırlama için) |
-| `SMTP_PORT` | — | SMTP portu |
-| `SMTP_USER` | — | SMTP kullanıcı adı |
-| `SMTP_PASS` | — | SMTP şifresi |
-| `EMAIL_FROM` | — | Gönderen e-posta adresi |
 
 ---
 

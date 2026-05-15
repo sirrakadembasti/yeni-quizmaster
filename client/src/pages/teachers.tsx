@@ -5,12 +5,14 @@ import { Search, UserPlus } from "lucide-react";
 import { useState, useMemo } from "react";
 import { userApi } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
-import { UserManagementTable } from "@/components/management/UserManagementTable";
+import { UserManagementTable, type User } from "@/components/management/UserManagementTable";
 import { UserFormModal } from "@/components/management/UserFormModal";
 import { DeleteConfirmModal } from "@/components/management/DeleteConfirmModal";
 import { useUserManagement } from "@/hooks/use-user-management";
+import { useLocation } from "wouter";
 
 export default function TeachersPage() {
+  const [, setLocation] = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const {
     isCreateOpen, setIsCreateOpen,
@@ -23,6 +25,10 @@ export default function TeachersPage() {
     handleEdit,
     handleDelete
   } = useUserManagement('teacher');
+
+  const openDetails = (user: User) => {
+    setLocation(`/teachers/${user.id}`);
+  };
 
   const { data: usersData, isLoading } = useQuery({
     queryKey: ['users'],
@@ -64,12 +70,13 @@ export default function TeachersPage() {
           </div>
         </div>
 
-        <UserManagementTable 
+        <UserManagementTable
           users={teachers}
           isLoading={isLoading}
           role="teacher"
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onDetails={openDetails}
           canManage={true}
         />
 

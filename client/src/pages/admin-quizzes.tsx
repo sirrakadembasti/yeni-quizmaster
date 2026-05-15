@@ -67,7 +67,7 @@ export default function AdminQuizzesPage() {
     mutationFn: () => quizApi.deleteQuiz(selectedQuiz!.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-quizzes'] });
-      toast({ title: "Ba�ar�l�", description: "S�nav silindi." });
+      toast({ title: "Başarılı", description: "Sınav silindi." });
       setIsDeleteOpen(false);
     }
   });
@@ -84,9 +84,9 @@ export default function AdminQuizzesPage() {
           <div>
             <h1 className="text-3xl font-heading font-bold flex items-center gap-2">
               <FileText className="h-8 w-8 text-primary" />
-              S�nav Y�netimi (Admin)
+              Sınav Yönetimi (Admin)
             </h1>
-            <p className="text-muted-foreground mt-1">Sistemdeki t�m ��retmenlerin olu�turdu�u s�navlar� y�netin.</p> 
+            <p className="text-muted-foreground mt-1">Sistemdeki tüm öğretmenlerin oluşturduğu sınavları yönetin.</p> 
           </div>
         </div>
 
@@ -94,7 +94,7 @@ export default function AdminQuizzesPage() {
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="S�nav ba�l��� veya ders ile ara..."
+              placeholder="Sınav başlığı veya ders ile ara..."
               className="pl-10"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -106,13 +106,13 @@ export default function AdminQuizzesPage() {
           <Table>
             <TableHeader className="bg-muted/50">
               <TableRow>
-                <TableHead className="font-bold">S�nav Ba�l���</TableHead>
-                <TableHead className="font-bold">��retmen (Olu�turan)</TableHead>
+                <TableHead className="font-bold">Sınav Başlığı</TableHead>
+                <TableHead className="font-bold">Öğretmen (Oluşturan)</TableHead>
                 <TableHead className="font-bold">Ders / Kategori</TableHead>
-                <TableHead className="font-bold">S�n�f</TableHead>
+                <TableHead className="font-bold">Sınıf</TableHead>
                 <TableHead className="font-bold">Durum</TableHead>
-                <TableHead className="font-bold">Olu�turulma Tarihi</TableHead>
-                <TableHead className="text-right font-bold">��lemler</TableHead>
+                <TableHead className="font-bold">Oluşturulma Tarihi</TableHead>
+                <TableHead className="text-right font-bold">İşlemler</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -125,7 +125,7 @@ export default function AdminQuizzesPage() {
               ) : filteredQuizzes.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="h-32 text-center text-muted-foreground font-medium">
-                    S�nav bulunamad�.
+                    Sınav bulunamadı.
                   </TableCell>
                 </TableRow>
               ) : (
@@ -151,13 +151,13 @@ export default function AdminQuizzesPage() {
                               </Badge>
                             ))
                           ) : (
-                            <span className="text-xs text-muted-foreground italic">Atanmam��</span>
+                            <span className="text-xs text-muted-foreground italic">Atanmamış</span>
                           )}
                         </div>
                       </TableCell>
                       <TableCell>
                         <Badge variant={quiz.status === 'published' ? 'default' : 'secondary'} className={quiz.status === 'published' ? 'bg-emerald-600' : ''}>
-                          {quiz.status === 'published' ? 'Yay�nland�' : 'Taslak'}
+                          {quiz.status === 'published' ? 'Yayınlandı' : 'Taslak'}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">{format(new Date(quiz.createdAt), "dd MMM yyyy")}</TableCell>
@@ -169,10 +169,10 @@ export default function AdminQuizzesPage() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>��lemler</DropdownMenuLabel>
+                            <DropdownMenuLabel>İşlemler</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => setLocation(`/quizzes/${quiz.id}`)} className="cursor-pointer">  
-                              <Edit2 className="h-4 w-4 mr-2" /> D�zenle
+                              <Edit2 className="h-4 w-4 mr-2" /> Düzenle
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => { setSelectedQuiz(quiz); setIsDeleteOpen(true); }} className="cursor-pointer text-destructive focus:text-destructive">
                               <Trash2 className="h-4 w-4 mr-2" /> Sil
@@ -192,16 +192,16 @@ export default function AdminQuizzesPage() {
         <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
           <DialogContent className="rounded-2xl">
             <DialogHeader>
-              <DialogTitle className="text-destructive font-black">S�nav� Sil</DialogTitle>
+              <DialogTitle className="text-destructive font-black">Sınavı Sil</DialogTitle>
               <DialogDescription className="font-medium pt-2">
-                <strong>{selectedQuiz?.title}</strong> isimli s�nav� ve ona ba�l� t�m sorular� silmek istedi�inize emin misiniz? Bu i�lem geri al�namaz.
+                <strong>{selectedQuiz?.title}</strong> isimli sınavı ve ona bağlı tüm soruları silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="pt-4 gap-2">
-              <Button variant="outline" onClick={() => setIsDeleteOpen(false)} className="rounded-xl">�ptal</Button>
+              <Button variant="outline" onClick={() => setIsDeleteOpen(false)} className="rounded-xl">İptal</Button>
               <Button variant="destructive" onClick={() => deleteMutation.mutate()} disabled={deleteMutation.isPending} className="rounded-xl px-8 shadow-lg shadow-red-100">      
                 {deleteMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Evet, Kal�c� Olarak Sil
+                Evet, Kalıcı Olarak Sil
               </Button>
             </DialogFooter>
           </DialogContent>

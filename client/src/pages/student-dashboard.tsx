@@ -102,20 +102,29 @@ export default function StudentDashboard() {
                   {user?.classNo && (
                     <Badge variant="outline" className="text-sm font-medium border-primary/20 bg-background/50 backdrop-blur-sm">
                       Sınıf No: {user.classNo}
-                    </Badge>
-                  )}
-                </div>
-              )}
-            </div>
-            <div className="flex-shrink-0">
-              <Button 
-                size="lg"
-                onClick={() => setLocation('/student/quizzes')} 
-                className="gap-2 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all text-base px-8 h-14 rounded-xl"
-              >
-                <Play className="h-5 w-5 fill-current" /> Sınavlara Git
-              </Button>
-            </div>
+                    Loader2,
+                    TrendingUp,
+                    Target,
+                    Printer
+                    } from "lucide-react";
+                    ...
+                              <div className="flex-shrink-0 flex gap-3 print:hidden">
+                                <Button 
+                                  variant="outline" 
+                                  onClick={() => window.print()}
+                                  className="gap-2 border-2 bg-background/50 backdrop-blur-sm hover:bg-background h-14 px-6 rounded-xl font-bold"
+                                >
+                                  <Printer className="h-5 w-5" /> Yazdır
+                                </Button>
+                                <Button 
+                                  size="lg"
+                                  onClick={() => setLocation('/student/quizzes')} 
+                                  className="gap-2 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all text-base px-8 h-14 rounded-xl"
+                                >
+                                  <Play className="h-5 w-5 fill-current" /> Sınavlara Git
+                                </Button>
+                              </div>
+
           </div>
           {/* Decorative background elements */}
           <div className="absolute right-0 top-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />

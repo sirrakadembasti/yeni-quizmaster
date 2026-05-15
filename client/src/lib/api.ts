@@ -12,7 +12,8 @@ async function getCsrfToken() {
       const res = await window.fetch(`${API_BASE}/csrf-token`, { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
-        csrfToken = data.token;
+        // Server returns { csrfToken: '...' } — read the correct field
+        csrfToken = data.csrfToken ?? data.token ?? null;
         return csrfToken;
       }
     } catch (err) {
@@ -597,7 +598,7 @@ export const dashboardApi = {
     return handleResponse<{ stats: DashboardStats }>(response);
   },
   async getTeacherStats() {
-    const response = await apiFetch(`${API_BASE}/teacher/dashboard/stats`, {
+    const response = await apiFetch(`${API_BASE}/dashboard/stats`, {
       credentials: 'include',
     });
     return handleResponse<{ stats: DashboardStats }>(response);
@@ -743,6 +744,12 @@ export const adminApi = {
     });
     return handleResponse<{ logs: any[] }>(response);
   },
+  async getLogsMe() {
+    const response = await apiFetch(`${API_BASE}/admin/logs/me`, {
+      credentials: "include",
+    });
+    return handleResponse<{ logs: any[] }>(response);
+  },
   async archiveYear(academicYear: string) {
     const response = await apiFetch(`${API_BASE}/admin/archive`, {
       method: "POST",
@@ -778,4 +785,37 @@ export const notificationApi = {
     });
     return handleResponse<{ success: boolean }>(response);
   },
+  // Added for settings page
+  async getUserNotifications() {
+    return this.getNotifications();
+  },
+  async markAllAsRead() {
+    return this.markAsRead();
+  }
+};
+
+// Announcement APIs
+export const announcementApi = {
+  async getAllAnnouncements() {
+    const response = await apiFetch(`${API_BASE}/announcements`, {
+      credentials: "include",
+    });
+    return handleResponse<{ announcements: any[] }>(response);
+  },
+  async createAnnouncement(data: { title: string, content: string, targetRole?: string, targetClassId?: string | null }) {
+    const response = await apiFetch(`${API_BASE}/announcements`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+      credentials: 'include',
+    });
+    return handleResponse<any>(response);
+  },
+  async deleteAnnouncement(id: string) {
+    const response = await apiFetch(`${API_BASE}/announcements/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    return handleResponse<{ message: string }>(response);
+  }
 };

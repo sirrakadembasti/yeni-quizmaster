@@ -13,7 +13,8 @@ import {
   Layers,
   Search,
   Eye,
-  Users
+  Users,
+  Printer
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { classApi, userApi } from "@/lib/api";
@@ -55,9 +56,18 @@ export default function ClassesPage() {
               </div>
               {role === 'admin' ? 'Okul Sınıfları' : 'Sınıflarım'}
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 font-medium mt-1">
+            <p className="text-slate-500 dark:text-slate-400 font-medium mt-1">
               {role === 'admin' ? 'Tüm akademik sınıfları ve atamaları izleyin.' : 'Sorumlu olduğunuz ve branş verdiğiniz derslikler.'}
             </p>
+          </div>
+          <div className="flex gap-2 print:hidden">
+            <Button 
+              variant="outline" 
+              onClick={() => window.print()}
+              className="rounded-xl font-black gap-2 border-2 hover:bg-slate-50"
+            >
+              <Printer className="h-4 w-4" /> Yazdır
+            </Button>
           </div>
         </header>
 

@@ -107,7 +107,7 @@ export default function AdminManagementPage() {
   });
 
   const { data: classesData, isLoading: classesLoading } = useQuery({
-    queryKey: ['classes'],
+    queryKey: ['/api/classes'],
     queryFn: () => classApi.getAllClasses(),
   });
 
@@ -231,7 +231,7 @@ export default function AdminManagementPage() {
 const createClassMutation = useMutation({
   mutationFn: (data: any) => classApi.createClass(data),
   onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['classes'] });
+    queryClient.invalidateQueries({ queryKey: ['/api/classes'] });
     setIsClassDialogOpen(false);
     toast({ title: "Başarılı", description: "Sınıf başarıyla oluşturuldu." });
   },
@@ -244,8 +244,7 @@ const createClassMutation = useMutation({
 const updateClassMutation = useMutation({
   mutationFn: (data: any) => classApi.updateClass(data.id, data),
   onSuccess: () => {
-    // ['classes'] prefix match: ['classes'] ve ['classes', id] dahil tüm sınıf cache'lerini geçersiz kılar
-    queryClient.invalidateQueries({ queryKey: ['classes'] });
+    queryClient.invalidateQueries({ queryKey: ['/api/classes'] });
     // Sorumlu öğretmen değişmiş olabilir — öğretmenlerin responsibleForClasses'ını güncelle
     queryClient.invalidateQueries({ queryKey: ['users'] });
     setIsClassDialogOpen(false);
@@ -261,7 +260,7 @@ const updateClassMutation = useMutation({
 const deleteClassMutation = useMutation({
   mutationFn: (id: string) => classApi.deleteClass(id),
   onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['classes'] });
+    queryClient.invalidateQueries({ queryKey: ['/api/classes'] });
     queryClient.invalidateQueries({ queryKey: ['users'] });
     setIsDeleteClassOpen(false);
     toast({ title: "Başarılı", description: "Sınıf başarıyla silindi." });
@@ -275,7 +274,7 @@ const assignTeacherMutation = useMutation({
   mutationFn: (data: { teacherId: string, categoryId: string }) =>
     classApi.assignTeacherToClassWithCourse(selectedClassId!, data.teacherId, data.categoryId),
   onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['classes'] });
+    queryClient.invalidateQueries({ queryKey: ['/api/classes'] });
     queryClient.invalidateQueries({ queryKey: ['users'] });
     setSelectedTeacherCourseId("");
     toast({ title: "Başarılı", description: "Branş öğretmeni atandı." });
@@ -285,7 +284,7 @@ const assignTeacherMutation = useMutation({
 const removeTeacherMutation = useMutation({
   mutationFn: (assignmentId: string) => classApi.removeTeacherFromClassWithCourse(assignmentId),
   onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['classes'] });
+    queryClient.invalidateQueries({ queryKey: ['/api/classes'] });
     queryClient.invalidateQueries({ queryKey: ['users'] });
     toast({ title: "Başarılı", description: "Atama kaldırıldı." });
   }
@@ -295,7 +294,7 @@ const removeTeacherMutation = useMutation({
     mutationFn: (studentId: string) => classApi.assignStudentToClass(selectedClassId!, studentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/classes'] });
       setSelectedStudentToAssign("");
       setIsLevelChangeOpen(false);
       setPendingPromotionData(null);
@@ -349,13 +348,23 @@ const removeTeacherMutation = useMutation({
           <div>
             <h1 className="text-3xl font-heading font-black text-slate-900 dark:text-slate-50 tracking-tight">Yönetim Paneli</h1>
             <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 font-medium">Okul kaynaklarını ve akademik yapıyı buradan koordine edin.</p>
-          </div>
-          <div className="flex gap-2 bg-card p-1.5 rounded-2xl border border-border">
-            <Button variant="ghost" size="sm" className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-primary hover:bg-accent" onClick={() => queryClient.invalidateQueries()}>
-              <Activity className="h-4 w-4" /> Verileri Yenile
-            </Button>
-          </div>
-        </header>
+          Briefcase,
+          Printer
+          } from "lucide-react";
+          ...
+                  <div className="flex gap-2 bg-card p-1.5 rounded-2xl border border-border print:hidden">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => window.print()}
+                      className="rounded-xl font-bold gap-2 border-2 hover:bg-slate-50 transition-all"
+                    >
+                      <Printer className="h-4 w-4" /> Yazdır
+                    </Button>
+                    <Button variant="ghost" size="sm" className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-primary hover:bg-accent" onClick={() => queryClient.invalidateQueries()}>
+                      <Activity className="h-4 w-4" /> Verileri Yenile
+                    </Button>
+                  </div>
 
         <Tabs defaultValue="categories" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="bg-muted p-1.5 rounded-2xl border border-border mb-6 flex w-fit gap-1">

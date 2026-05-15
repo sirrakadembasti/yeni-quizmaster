@@ -154,14 +154,23 @@ app.use(httpLogger);
     // Initialize Socket.io — sessionMiddleware paylaşılıyor, oda auth için gerekli
     setupSocket(httpServer, sessionMiddleware);
 
-    // CSRF Protection
+    // CSRF Protection - CSRF token endpoint'i CSRF korumasından muaf olmalı
     app.get("/api/csrf-token", (req, res) => {
       res.json({ csrfToken: generateToken(req) });
     });
     
-    // Apply CSRF protection to all POST/PUT/DELETE routes
-    // Except for auth routes if needed, but usually recommended
-    app.use(csrfSynchronisedProtection);
+    // Apply CSRF protection to all POST/PUT/DELETE routes but exclude auth endpoints
+    app.use((req, res, next) => {
+      // CSRF protection'u sadece POST/PUT/DELETE isteklerine uygula
+      // GET/HEAD/OPTIONS istekleri hariç tutma (token almak için)
+      if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
+        // Auth endpoints'e CSRF koruması uygulama (login, register, logout)
+        if (!req.path.startsWith('/api/auth/')) {
+          return csrfSynchronisedProtection(req, res, next);
+        }
+      }
+      next();
+    });
 
     // Initialize application routes
     await registerRoutes(httpServer, app);

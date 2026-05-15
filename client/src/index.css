@@ -211,3 +211,76 @@
     @apply font-heading tracking-tight;
   }
 }
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  /* Hide all navigation and layout chrome */
+  .print\:hidden,
+  aside,
+  header,
+  nav,
+  [data-sidebar],
+  .no-print {
+    display: none !important;
+  }
+
+  /* Make the main content take up the full page */
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+  }
+
+  main {
+    display: block !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  /* Print target — the scrollable content area */
+  .print-content,
+  [data-print-content] {
+    display: block !important;
+    overflow: visible !important;
+    height: auto !important;
+    padding: 0 !important;
+  }
+
+  /* Remove card shadows and borders for a clean print */
+  .rounded-\[2rem\],
+  .rounded-\[2\.5rem\],
+  [class*="rounded-"] {
+    border-radius: 4px !important;
+    box-shadow: none !important;
+  }
+
+  /* Ensure tables print cleanly */
+  table {
+    border-collapse: collapse !important;
+  }
+
+  th, td {
+    border: 1px solid #ddd !important;
+    padding: 6px 10px !important;
+  }
+
+  thead {
+    background-color: #f1f5f9 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Page break helpers */
+  .print-break-before {
+    page-break-before: always;
+  }
+  .print-break-avoid {
+    page-break-inside: avoid;
+  }
+
+  /* Page setup */
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+}

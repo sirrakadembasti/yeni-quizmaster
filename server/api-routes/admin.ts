@@ -5,6 +5,28 @@ import { logger } from "../index";
 
 const router: Router = Router();
 
+// ==================== LOG ROUTES ====================
+
+router.get("/logs/me", requireAuth, async (req: AuthRequest, res: Response) => {
+  try {
+    const { page, limit } = req.query;
+    const pageNum = page ? Math.max(1, parseInt(page as string, 10)) : 1;
+    const limitNum = limit ? Math.min(100, Math.max(1, parseInt(limit as string, 10))) : 50;
+
+    const { data: logs, total } = await storage.getLogs({
+      userId: req.user!.id,
+      page: pageNum,
+      limit: limitNum,
+    });
+    res.json({
+      logs,
+      pagination: { page: pageNum, limit: limitNum, total, totalPages: Math.ceil(total / limitNum) },
+    });
+  } catch (error) {
+    res.status(500).json({ message: "İşlem geçmişiniz getirilemedi." });
+  }
+});
+
 // ==================== ADMIN ROUTES ====================
 
 router.get("/logs", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {

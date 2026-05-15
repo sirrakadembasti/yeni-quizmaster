@@ -22,6 +22,7 @@ import StudentResultsPage from "@/pages/student-results";
 import StudentQuizPage from "@/pages/student-quiz";
 import QuizResultDetailPage from "@/pages/quiz-result-detail";
 import TeachersPage from "@/pages/teachers";
+import TeacherDetailPage from "@/pages/teacher-detail";
 import AuthPage from "@/pages/auth";
 import AdminManagementPage from "@/pages/admin-management";
 import ClassListPage from "@/pages/classlist";
@@ -87,12 +88,13 @@ function TeacherRoutes() {
       <Route path="/student/result/:resultId" component={QuizResultDetailPage} />
       <Route path="/student/results" component={StudentResultsPage} />
       <Route path="/results" component={StatisticsPage} />
+      <Route path="/my-stats" component={StudentStatsPage} />
       <Route path="/students" component={StudentsPage} />
       <Route path="/classlist" component={ClassListPage} />
       <Route path="/classes/:id" component={ClassDetailPage} />
       <Route path="/announcements" component={AnnouncementsPage} />
       <Route path="/settings" component={SettingsPage} />
-      <Route path="/student-quizzes/:quizId">{(params: any) => <Redirect to={`/student/quiz/${params.quizId}`} />}</Route>    
+      <Route path="/student-quizzes/:quizId">{(params: any) => <Redirect to={`/student/quiz/${params.quizId}`} />}</Route>
       <Route path="/:rest*">
         <Redirect to="/" />
       </Route>
@@ -115,11 +117,13 @@ function AdminRoutes() {
       <Route path="/student/result/:resultId" component={QuizResultDetailPage} />
       <Route path="/student/results" component={StudentResultsPage} />
       <Route path="/results" component={StatisticsPage} />
+      <Route path="/my-stats" component={StudentStatsPage} />
       <Route path="/students" component={StudentsPage} />
       <Route path="/classlist" component={ClassListPage} />
       <Route path="/classes/:id" component={ClassDetailPage} />
       <Route path="/admin/classes/:id" component={AdminClassDetailPage} />
       <Route path="/teachers" component={TeachersPage} />
+      <Route path="/teachers/:id" component={TeacherDetailPage} />
       <Route path="/management" component={AdminManagementPage} />
       <Route path="/archive" component={ArchivePage} />
       <Route path="/announcements" component={AnnouncementsPage} />

@@ -1022,7 +1022,7 @@ export class PrismaStorage implements IStorage {
 
   // Announcement methods
   async createAnnouncement(data: any): Promise<any> {
-    return await prisma.announcement.create({
+    const announcement = await prisma.announcement.create({
       data: {
         title: data.title,
         content: data.content,
@@ -1032,6 +1032,34 @@ export class PrismaStorage implements IStorage {
       },
       include: { creator: { select: { name: true } } }
     });
+
+    // Create notifications for target users
+    try {
+      const where: Prisma.UserWhereInput = {};
+      if (data.targetRole !== 'all') {
+        where.role = data.targetRole;
+      }
+      if (data.targetClassId) {
+        where.classId = data.targetClassId;
+      }
+
+      const users = await prisma.user.findMany({ where, select: { id: true } });
+      
+      if (users.length > 0) {
+        await prisma.notification.createMany({
+          data: users.map(u => ({
+            userId: u.id,
+            title: data.title,
+            message: data.content,
+            type: "announcement"
+          }))
+        });
+      }
+    } catch (error) {
+      console.error("Failed to create notifications for announcement:", error);
+    }
+
+    return announcement;
   }
 
   async getAllAnnouncements(): Promise<any[]> {

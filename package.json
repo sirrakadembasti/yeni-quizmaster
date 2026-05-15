@@ -2,7 +2,7 @@
   "name": "quiz-master",
   "private": true,
   "scripts": {
-    "dev": "pnpm --filter quiz-master-server dev & pnpm --filter quiz-master-client dev",
+    "dev": "concurrently --kill-others-on-fail --prefix-colors \"blue,green\" --names \"server,client\" \"pnpm --filter quiz-master-server dev\" \"pnpm --filter quiz-master-client dev\"",
     "build": "pnpm --filter quiz-master-server build && pnpm --filter quiz-master-client build",
     "install-all": "pnpm install && cd client && pnpm install && cd ../server && pnpm install",
     "test:e2e": "playwright test"
@@ -10,6 +10,7 @@
   "packageManager": "pnpm@9.15.1+sha512.1acb565e6193efbebda772702950469150cf12bcc764262e7587e71d19dc98a423dff9536e57ea44c49bdf790ff694e83c27be5faa23d67e0c033b583be4bfcf",
   "devDependencies": {
     "@playwright/test": "^1.58.2",
+    "concurrently": "^9.2.1",
     "playwright": "^1.58.2"
   }
 }

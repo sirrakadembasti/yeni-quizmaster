@@ -3,34 +3,29 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { 
   User as UserIcon, 
   Mail, 
   Shield, 
-  Phone, 
-  MapPin, 
   Key, 
   Loader2, 
   Save, 
-  GraduationCap, 
-  Briefcase,
-  Layers,
-  Bell,
-  CheckCircle2,
-  AlertCircle,
-  XCircle,
-  Clock
+  Bell, 
+  CheckCircle2, 
+  XCircle, 
+  Clock,
+  History,
+  Printer
 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/context/auth-context";
-import { userApi, authApi, notificationApi } from "@/lib/api";
+import { userApi, authApi, notificationApi, adminApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { format } from "date-fns";
+import { format, isAfter, subMonths } from "date-fns";
 import { tr } from "date-fns/locale";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -62,7 +57,19 @@ export default function SettingsPage() {
     enabled: !!user
   });
 
+  // Logs Query (6 months)
+  const { data: logsData, isLoading: logsLoading } = useQuery({
+    queryKey: ['dashboard-logs', user?.id],
+    queryFn: () => adminApi.getLogsMe(),
+    enabled: !!user && activeTab === "logs"
+  });
+
   const notifications = notificationsData?.notifications || [];
+  const logs = useMemo(() => {
+    if (!logsData?.logs) return [];
+    const sixMonthsAgo = subMonths(new Date(), 6);
+    return logsData.logs.filter((log: any) => isAfter(new Date(log.timestamp), sixMonthsAgo));
+  }, [logsData]);
 
   const markAllReadMutation = useMutation({
     mutationFn: () => notificationApi.markAllAsRead(),
@@ -73,6 +80,12 @@ export default function SettingsPage() {
   });
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get("tab");
+    if (tab) {
+      setActiveTab(tab);
+    }
+
     if (user) {
       setFormData({
         name: user.name || "",
@@ -86,9 +99,7 @@ export default function SettingsPage() {
   const isProfileChanged = useMemo(() => {
     if (!user) return false;
     return formData.name !== user.name || 
-           formData.email !== user.email || 
-           formData.phoneNumber !== (user.phoneNumber || "") || 
-           formData.address !== (user.address || "");
+           formData.email !== user.email;
   }, [formData, user]);
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
@@ -99,39 +110,29 @@ export default function SettingsPage() {
     
     setLoading(true);
     try {
-      await userApi.updateUser(user!.id, formData);
-      // Profil güncellendiğinde user verisini her yerde yenilemek için sayfayı reload edebilir veya context'i zorlayabiliriz
-      toast({ title: "Başarılı", description: "Profil bilgileriniz güncellendi. Değişikliklerin yansıması için sayfa yenilenebilir." });
-      setTimeout(() => window.location.reload(), 1500);
+      await authApi.updateProfile(formData.name, formData.email);
+      queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
+      toast({ title: "Başarılı", description: "Profil bilgileriniz güncellendi." });
     } catch (error: any) {
-      toast({ variant: "destructive", title: "Hata", description: error.message });
+      toast({ title: "Hata", description: error.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
 
-  const handlePasswordUpdate = async (e: React.FormEvent) => {
+  const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!passwordData.currentPassword || !passwordData.newPassword) {
-      return toast({ variant: "destructive", title: "Hata", description: "Lütfen tüm şifre alanlarını doldurun." });
-    }
-
-    if (passwordData.newPassword.length < 8) {
-      return toast({ variant: "destructive", title: "Güvenlik", description: "Yeni şifre en az 8 karakter olmalıdır." });
-    }
-
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      return toast({ variant: "destructive", title: "Hata", description: "Yeni şifreler birbiriyle eşleşmiyor." });
+      return toast({ title: "Hata", description: "Yeni şifreler uyuşmuyor.", variant: "destructive" });
     }
-
+    
     setLoading(true);
     try {
       await authApi.changePassword(passwordData.currentPassword, passwordData.newPassword);
-      toast({ title: "Başarılı", description: "Şifreniz başarıyla değiştirildi." });
       setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+      toast({ title: "Başarılı", description: "Şifreniz değiştirildi." });
     } catch (error: any) {
-      toast({ variant: "destructive", title: "Hata", description: error.message || "Şifre güncellenemedi." });
+      toast({ title: "Hata", description: error.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -141,195 +142,316 @@ export default function SettingsPage() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in duration-700">
-        <header>
-          <h1 className="text-3xl font-black text-foreground tracking-tight">Hesap Ayarları</h1>
-          <p className="text-muted-foreground font-medium">Profilinizi, güvenliğinizi ve bildirimlerinizi buradan yönetin.</p>
-        </header>
+      <div className="space-y-8 pb-12">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-black text-foreground tracking-tight">Hesap Ayarları</h1>
+            <p className="text-muted-foreground mt-1 font-medium">Profilinizi, güvenliğinizi ve bildirimlerinizi buradan yönetin.</p>
+          </div>
+          <div className="flex gap-2 print:hidden">
+            <Button 
+              variant="outline" 
+              onClick={() => window.print()}
+              className="rounded-xl font-black gap-2 border-2 hover:bg-slate-50"
+            >
+              <Printer className="h-4 w-4" /> Yazdır
+            </Button>
+          </div>
+        </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-muted/50 p-1.5 rounded-2xl w-fit border border-border/50">
-            <TabsTrigger value="profile" className="rounded-xl px-6 font-bold gap-2 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm dark:shadow-none">
-              <UserIcon className="h-4 w-4" /> Profil
+          <TabsList className="bg-muted/50 p-1 rounded-xl w-full max-w-2xl overflow-x-auto h-auto">
+            <TabsTrigger value="profile" className="gap-2 rounded-lg py-2 px-4 whitespace-nowrap">
+              <UserIcon className="h-4 w-4" /> Profil Bilgileri
             </TabsTrigger>
-            <TabsTrigger value="security" className="rounded-xl px-6 font-bold gap-2 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm dark:shadow-none">
-              <Shield className="h-4 w-4" /> Güvenlik
-            </TabsTrigger>
-            <TabsTrigger value="notifications" className="rounded-xl px-6 font-bold gap-2 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm dark:shadow-none">
+            <TabsTrigger value="notifications" className="gap-2 rounded-lg py-2 px-4 whitespace-nowrap">
               <Bell className="h-4 w-4" /> Bildirimler
-              {notifications.some((n: any) => !n.isRead) && <div className="h-2 w-2 rounded-full bg-destructive animate-pulse" />}
+            </TabsTrigger>
+            <TabsTrigger value="logs" className="gap-2 rounded-lg py-2 px-4 whitespace-nowrap">
+              <History className="h-4 w-4" /> İşlem Geçmişi
+            </TabsTrigger>
+            <TabsTrigger value="security" className="gap-2 rounded-lg py-2 px-4 whitespace-nowrap">
+              <Shield className="h-4 w-4" /> Güvenlik
             </TabsTrigger>
           </TabsList>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <div className="lg:col-span-4 space-y-4">
-              <Card className="rounded-3xl border-border/50 shadow-sm dark:shadow-none bg-indigo-50/30 dark:bg-indigo-950/10 border-2 border-dashed border-indigo-100/50 dark:border-indigo-900/20 overflow-hidden">
-                <CardContent className="p-6 space-y-6">
-                   <div className="flex items-center gap-4">
-                      <div className="h-16 w-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary font-black text-2xl border border-primary/20">
-                        {user.name?.[0]}
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-black text-foreground leading-tight">{user.name}</h3>
-                        <p className="text-xs font-bold text-muted-foreground">{user.email}</p>
-                      </div>
-                   </div>
-
-                   <div className="space-y-3">
-                      <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Akademik Durum</Label>
-                      <div className="grid grid-cols-1 gap-2">
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-background border border-border/50">
-                           <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground"><Layers className="h-3.5 w-3.5 text-indigo-500" /> Rol</div>
-                           <Badge variant="secondary" className="text-[10px] font-black uppercase bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400">{user.role}</Badge>
+          <TabsContent value="profile" className="animate-in fade-in-50 duration-500">
+            <div className="grid gap-6 md:grid-cols-3">
+              <Card className="md:col-span-2 rounded-3xl border-border/50 shadow-sm overflow-hidden">
+                <CardHeader className="bg-muted/20 border-b border-border/50">
+                  <CardTitle className="text-xl font-black">Kişisel Bilgiler</CardTitle>
+                  <CardDescription>Adınız ve iletişim bilgileriniz.</CardDescription>
+                </CardHeader>
+                <form onSubmit={handleProfileUpdate}>
+                  <CardContent className="space-y-4 pt-6">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Ad Soyad</Label>
+                        <div className="relative">
+                          <UserIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                          <Input 
+                            value={formData.name}
+                            onChange={(e) => setFormData({...formData, name: e.target.value})}
+                            className="pl-10 rounded-xl" 
+                            placeholder="Ad Soyad" 
+                          />
                         </div>
-                        
-                        {user.role === 'student' && (
-                          <>
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-background border border-border/50">
-                               <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground"><GraduationCap className="h-3.5 w-3.5 text-emerald-500" /> Sınıf</div>
-                               <span className="text-xs font-black">{user.class?.name || 'Atanmamış'}</span>
-                            </div>
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-background border border-border/50">
-                               <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground"><Shield className="h-3.5 w-3.5 text-rose-500" /> Öğrenci No</div>
-                               <span className="text-xs font-black">#{user.studentNo || 'N/A'}</span>
-                            </div>
-                          </>
-                        )}
-
-                        {user.role === 'teacher' && (
-                          <div className="p-3 rounded-xl bg-background border border-border/50 space-y-2">
-                             <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground"><Briefcase className="h-3.5 w-3.5 text-indigo-500" /> Branşlar</div>
-                             <div className="flex flex-wrap gap-1">
-                               {user.assignedCategories?.map((cat: any) => (
-                                 <Badge key={cat.id} className="text-[9px] font-bold py-0">{cat.name}</Badge>
-                               )) || <span className="text-[10px] italic opacity-50">Atanmamış</span>}
-                             </div>
-                          </div>
-                        )}
                       </div>
-                   </div>
-                </CardContent>
+                      <div className="space-y-2">
+                        <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">E-posta</Label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                          <Input 
+                            value={formData.email}
+                            onChange={(e) => setFormData({...formData, email: e.target.value})}
+                            className="pl-10 rounded-xl" 
+                            placeholder="email@example.com" 
+                            type="email"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="bg-muted/10 border-t border-border/50 py-4">
+                    <Button 
+                      type="submit" 
+                      disabled={loading || !isProfileChanged}
+                      className="rounded-xl font-bold ml-auto gap-2"
+                    >
+                      {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                      Değişiklikleri Kaydet
+                    </Button>
+                  </CardFooter>
+                </form>
               </Card>
 
-              <div className="p-5 rounded-3xl bg-amber-50/50 dark:bg-amber-950/10 border border-amber-100 dark:border-amber-900/30 flex gap-3">
-                 <AlertCircle className="h-5 w-5 text-amber-500 shrink-0" />
-                 <p className="text-[11px] font-medium text-amber-700 dark:text-amber-400 leading-relaxed">Güvenliğiniz için şifrenizi en az 3 ayda bir değiştirmenizi ve iletişim bilgilerinizi güncel tutmanızı öneririz.</p>
-              </div>
-            </div>
-
-            <div className="lg:col-span-8">
-               <TabsContent value="profile" className="m-0 animate-in slide-in-from-right-4 duration-500">
-                  <Card className="rounded-3xl border-border/50 shadow-sm dark:shadow-none bg-card overflow-hidden">
-                    <CardHeader className="bg-muted/30 border-b border-border/50 p-6">
-                      <CardTitle className="text-lg font-black uppercase tracking-tight flex items-center gap-2"><UserIcon className="h-5 w-5 text-primary" /> Kişisel Bilgiler</CardTitle>
-                      <CardDescription>Uygulama genelinde görünen iletişim detaylarınız.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-8 space-y-6">
-                      <form id="profile-form" onSubmit={handleProfileUpdate} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <Label className="text-xs font-bold ml-1">Tam Adınız</Label>
-                          <Input value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="rounded-xl border-border bg-background/50 h-11 font-medium" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-xs font-bold ml-1">E-Posta Adresi</Label>
-                          <Input value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="rounded-xl border-border bg-background/50 h-11 font-medium" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-xs font-bold ml-1">Telefon Numarası</Label>
-                          <Input value={formData.phoneNumber} onChange={e => setFormData({...formData, phoneNumber: e.target.value})} placeholder="05XX XXX XX XX" className="rounded-xl border-border bg-background/50 h-11 font-medium" />
-                        </div>
-                        <div className="space-y-2 md:col-span-2">
-                          <Label className="text-xs font-bold ml-1">Adres Bilgisi</Label>
-                          <Textarea value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} placeholder="Açık adresiniz..." className="rounded-xl border-border bg-background/50 min-h-[100px] resize-none font-medium" />
-                        </div>
-                      </form>
-                    </CardContent>
-                    <CardFooter className="p-6 bg-muted/20 border-t border-border/50 flex justify-end">
-                      <Button form="profile-form" disabled={loading || !isProfileChanged} className="rounded-xl px-8 font-black gap-2 shadow-lg shadow-primary/10 transition-all">
-                        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                        Değişiklikleri Kaydet
-                      </Button>
-                    </CardFooter>
-                  </Card>
-               </TabsContent>
-
-               <TabsContent value="security" className="m-0 animate-in slide-in-from-right-4 duration-500">
-                  <Card className="rounded-3xl border-border/50 shadow-sm dark:shadow-none bg-card overflow-hidden">
-                    <CardHeader className="bg-muted/30 border-b border-border/50 p-6">
-                      <CardTitle className="text-lg font-black uppercase tracking-tight flex items-center gap-2"><Key className="h-5 w-5 text-primary" /> Şifre Güncelleme</CardTitle>
-                      <CardDescription>Hesap güvenliğiniz için güçlü bir şifre belirleyin.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-8 space-y-6">
-                      <form id="password-form" onSubmit={handlePasswordUpdate} className="space-y-6 max-w-md">
-                        <div className="space-y-2">
-                          <Label className="text-xs font-bold ml-1">Mevcut Şifre</Label>
-                          <Input type="password" value={passwordData.currentPassword} onChange={e => setPasswordData({...passwordData, currentPassword: e.target.value})} className="rounded-xl border-border bg-background/50 h-11" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-xs font-bold ml-1 flex justify-between">Yeni Şifre <span className="text-[10px] text-muted-foreground uppercase">Min. 8 Karakter</span></Label>
-                          <Input type="password" value={passwordData.newPassword} onChange={e => setPasswordData({...passwordData, newPassword: e.target.value})} className="rounded-xl border-border bg-background/50 h-11" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-xs font-bold ml-1">Yeni Şifre (Tekrar)</Label>
-                          <Input type="password" value={passwordData.confirmPassword} onChange={e => setPasswordData({...passwordData, confirmPassword: e.target.value})} className="rounded-xl border-border bg-background/50 h-11" />
-                        </div>
-                      </form>
-                    </CardContent>
-                    <CardFooter className="p-6 bg-muted/20 border-t border-border/50 flex justify-end">
-                      <Button form="password-form" disabled={loading} className="rounded-xl px-8 font-black gap-2 bg-slate-900 text-white hover:bg-slate-800 transition-all">
-                         Güncelle
-                      </Button>
-                    </CardFooter>
-                  </Card>
-               </TabsContent>
-
-               <TabsContent value="notifications" className="m-0 animate-in slide-in-from-right-4 duration-500">
-                  <Card className="rounded-3xl border-border/50 shadow-sm dark:shadow-none bg-card overflow-hidden">
-                    <CardHeader className="bg-muted/30 border-b border-border/50 p-6 flex flex-row items-center justify-between">
-                      <div>
-                        <CardTitle className="text-lg font-black uppercase tracking-tight flex items-center gap-2"><Bell className="h-5 w-5 text-primary" /> Bildirim Geçmişi</CardTitle>
-                        <CardDescription>Sizinle paylaşılan son güncellemeler.</CardDescription>
+              <Card className="rounded-3xl border-border/50 shadow-sm overflow-hidden flex flex-col">
+                <CardHeader className="bg-primary/5 border-b border-primary/10">
+                  <CardTitle className="text-xl font-black text-primary">Hesap Bilgileri</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6 pt-6 flex-1">
+                  <div className="flex items-center gap-4">
+                    <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+                      <UserIcon className="h-8 w-8 text-primary" />
+                    </div>
+                    <div>
+                      <h4 className="font-black text-lg">{user?.name}</h4>
+                      <Badge variant="secondary" className="capitalize">{user?.role === 'teacher' ? 'Öğretmen' : user?.role === 'admin' ? 'Yönetici' : 'Öğrenci'}</Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4 pt-4 border-t border-border/50">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground font-medium">Katılma Tarihi</span>
+                      <span className="font-bold">{user?.createdAt ? format(new Date(user.createdAt), "d MMMM yyyy", { locale: tr }) : "-"}</span>
+                    </div>
+                    {user?.role === 'student' && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground font-medium">Sınıf No</span>
+                        <span className="font-bold">{user?.classNo || "-"}</span>
                       </div>
-                      <Button variant="ghost" size="sm" onClick={() => markAllReadMutation.mutate()} className="text-[10px] font-black uppercase text-primary hover:bg-primary/5 rounded-lg">Hepsini Okundu İşaretle</Button>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                      <ScrollArea className="h-[450px]">
-                        {notifications.length === 0 ? (
-                          <div className="flex flex-col items-center justify-center py-20 text-center opacity-40">
-                             <Bell className="h-12 w-12 mb-4" />
-                             <p className="font-bold text-sm italic">Henüz bir bildirim bulunmuyor.</p>
-                          </div>
-                        ) : (
-                          <div className="divide-y divide-border/30">
-                            {notifications.map((n: any) => (
-                              <div key={n.id} className={cn(
-                                "p-6 transition-colors flex gap-4 items-start",
-                                !n.isRead ? "bg-primary/5 dark:bg-primary/10" : "hover:bg-muted/30"
-                              )}>
-                                <div className={cn(
-                                  "h-10 w-10 rounded-xl flex items-center justify-center shrink-0 border-2",
-                                  !n.isRead ? "bg-white dark:bg-slate-900 border-primary/20 text-primary shadow-sm dark:shadow-none" : "bg-muted text-muted-foreground border-transparent"
-                                )}>
-                                  {n.type === 'quiz' ? <Layers className="h-5 w-5" /> : <Bell className="h-5 w-5" />}
-                                </div>
-                                <div className="space-y-1">
-                                  <h4 className="font-black text-sm text-foreground">{n.title}</h4>
-                                  <p className="text-xs text-muted-foreground font-medium leading-relaxed">{n.message}</p>
-                                  <div className="flex items-center gap-3 pt-1 text-[10px] font-bold text-muted-foreground/60">
-                                    <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {format(new Date(n.createdAt), "dd MMMM HH:mm", { locale: tr })}</span>
-                                    {!n.isRead && <Badge className="h-1.5 w-1.5 p-0 rounded-full bg-primary border-0" />}
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </ScrollArea>
-                    </CardContent>
-                  </Card>
-               </TabsContent>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-          </div>
+          </TabsContent>
+
+          <TabsContent value="notifications" className="animate-in fade-in-50 duration-500">
+            <Card className="rounded-3xl border-border/50 shadow-sm overflow-hidden">
+              <CardHeader className="bg-muted/20 border-b border-border/50 flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="text-xl font-black">Son Bildirimler</CardTitle>
+                  <CardDescription>Hesabınızla ilgili tüm güncel aktiviteler.</CardDescription>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="rounded-xl font-bold"
+                  onClick={() => markAllReadMutation.mutate()}
+                  disabled={markAllReadMutation.isPending || notifications.length === 0}
+                >
+                  Tümünü Okundu İşaretle
+                </Button>
+              </CardHeader>
+              <CardContent className="p-0">
+                <ScrollArea className="h-[400px]">
+                  {notifications.length > 0 ? (
+                    <div className="divide-y divide-border/50">
+                      {notifications.map((notification: any) => (
+                        <div key={notification.id} className={cn(
+                          "p-4 hover:bg-muted/30 transition-colors flex items-start gap-4",
+                          !notification.read && "bg-primary/5"
+                        )}>
+                          <div className={cn(
+                            "mt-1 p-2 rounded-lg",
+                            notification.type === 'success' ? "bg-emerald-100 text-emerald-600" :
+                            notification.type === 'error' ? "bg-rose-100 text-rose-600" :
+                            "bg-blue-100 text-blue-600"
+                          )}>
+                            {notification.type === 'success' ? <CheckCircle2 className="h-4 w-4" /> :
+                             notification.type === 'error' ? <XCircle className="h-4 w-4" /> :
+                             <Bell className="h-4 w-4" />}
+                          </div>
+                          <div className="flex-1 space-y-1">
+                            <p className="text-sm font-bold leading-none">{notification.title}</p>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{notification.content}</p>
+                            <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                              <Clock className="h-3 w-3" /> {format(new Date(notification.createdAt), "d MMMM yyyy, HH:mm", { locale: tr })}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full py-12 text-center">
+                      <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-4">
+                        <Bell className="h-6 w-6 text-muted-foreground opacity-30" />
+                      </div>
+                      <p className="text-muted-foreground font-medium">Henüz bir bildirim bulunmuyor.</p>
+                    </div>
+                  )}
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="logs" className="animate-in fade-in-50 duration-500">
+            <Card className="rounded-3xl border-border/50 shadow-sm overflow-hidden">
+              <CardHeader className="bg-muted/20 border-b border-border/50">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-xl font-black">İşlem Geçmişi</CardTitle>
+                    <CardDescription>Son 6 ay içinde gerçekleştirdiğiniz tüm sistem hareketleri.</CardDescription>
+                  </div>
+                  <Badge variant="outline" className="gap-1.5 py-1.5 px-4 rounded-full border-blue-200 bg-blue-50 text-blue-700 font-bold">
+                    <History className="h-3.5 w-3.5" /> {logs.length} İşlem
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                {logsLoading ? (
+                  <div className="flex items-center justify-center py-20">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary opacity-20" />
+                  </div>
+                ) : logs.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead className="bg-muted/10">
+                        <tr className="border-b border-border/50">
+                          <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">İşlem</th>
+                          <th className="text-left py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">Detay</th>
+                          <th className="text-right py-4 px-6 text-xs font-black uppercase tracking-wider text-muted-foreground">Tarih</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/30">
+                        {logs.map((log: any) => (
+                          <tr key={log.id} className="hover:bg-muted/20 transition-colors group">
+                            <td className="py-4 px-6">
+                              <Badge variant="outline" className={cn(
+                                "rounded-lg font-bold px-2 py-0.5 border-transparent",
+                                log.action.includes('CREATE') ? "bg-emerald-50 text-emerald-700" :
+                                log.action.includes('DELETE') ? "bg-rose-50 text-rose-700" :
+                                log.action.includes('UPDATE') ? "bg-amber-50 text-amber-700" :
+                                "bg-slate-100 text-slate-700"
+                              )}>
+                                {log.action}
+                              </Badge>
+                            </td>
+                            <td className="py-4 px-6 text-sm text-foreground/80 font-medium">
+                              {log.details || "-"}
+                            </td>
+                            <td className="py-4 px-6 text-right">
+                              <div className="flex flex-col items-end">
+                                <span className="text-sm font-bold text-foreground">
+                                  {format(new Date(log.timestamp), "d MMM yyyy", { locale: tr })}
+                                </span>
+                                <span className="text-[10px] text-muted-foreground font-medium">
+                                  {format(new Date(log.timestamp), "HH:mm:ss")}
+                                </span>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-20 text-center">
+                    <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                      <History className="h-8 w-8 text-muted-foreground opacity-20" />
+                    </div>
+                    <p className="text-muted-foreground font-bold">Herhangi bir işlem geçmişi bulunamadı.</p>
+                    <p className="text-xs text-muted-foreground max-w-xs mt-1">Sistemdeki hareketleriniz burada listelenecektir.</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="security" className="animate-in fade-in-50 duration-500">
+            <Card className="rounded-3xl border-border/50 shadow-sm overflow-hidden">
+              <CardHeader className="bg-muted/20 border-b border-border/50">
+                <CardTitle className="text-xl font-black">Şifre Değiştir</CardTitle>
+                <CardDescription>Hesabınızı güvende tutmak için şifrenizi düzenli olarak güncelleyin.</CardDescription>
+              </CardHeader>
+              <form onSubmit={handlePasswordChange}>
+                <CardContent className="space-y-4 pt-6">
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Mevcut Şifre</Label>
+                    <div className="relative">
+                      <Key className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        value={passwordData.currentPassword}
+                        onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
+                        type="password" 
+                        className="pl-10 rounded-xl" 
+                        placeholder="••••••••" 
+                      />
+                    </div>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Yeni Şifre</Label>
+                      <div className="relative">
+                        <Key className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input 
+                          value={passwordData.newPassword}
+                          onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
+                          type="password" 
+                          className="pl-10 rounded-xl" 
+                          placeholder="••••••••" 
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Yeni Şifre (Tekrar)</Label>
+                      <div className="relative">
+                        <Key className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input 
+                          value={passwordData.confirmPassword}
+                          onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
+                          type="password" 
+                          className="pl-10 rounded-xl" 
+                          placeholder="••••••••" 
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter className="bg-muted/10 border-t border-border/50 py-4">
+                  <Button 
+                    type="submit" 
+                    disabled={loading || !passwordData.newPassword || !passwordData.currentPassword}
+                    className="rounded-xl font-bold ml-auto gap-2"
+                  >
+                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Shield className="h-4 w-4" />}
+                    Şifreyi Güncelle
+                  </Button>
+                </CardFooter>
+              </form>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
     </DashboardLayout>
