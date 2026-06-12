@@ -17,9 +17,10 @@ import {
   ChevronRight,
   Printer
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/context/auth-context";
+import { refreshCsrfToken } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -44,7 +45,13 @@ export default function AnnouncementsPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  
+
+  // Sayfa açıldığında CSRF token'ı yenile — stale token nedeniyle oluşabilecek
+  // 403 hatalarını önlemek için. (Sunucu yeniden başlatıldığında session değişebilir.)
+  useEffect(() => {
+    refreshCsrfToken().catch(() => {/* sessiz hata — formda yeniden denenecek */});
+  }, []);
+
   // Form State
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");

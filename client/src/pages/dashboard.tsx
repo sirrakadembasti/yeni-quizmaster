@@ -22,7 +22,8 @@ import {
   PlusCircle,
   RefreshCw,
   Trash2,
-  ShieldCheck
+  ShieldCheck,
+  Printer
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useLocation } from "wouter";
@@ -225,30 +226,14 @@ export default function DashboardPage() {
           </div>
 
           {isTeacher && (
-            <div className="grid gap-4 sm:grid-cols-2 border-t border-primary/10 pt-5">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 border-t border-primary/10 pt-5">
               <div>
                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-1.5 mb-2">
-                  <BookOpen className="h-3.5 w-3.5 text-indigo-500" /> Branşlarım
+                  <GraduationCap className="h-3.5 w-3.5 text-emerald-500" /> Sınıf Öğretmenliği (Sorumlu Sınıf)
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {user?.assignedCategories && user.assignedCategories.length > 0 ? (
-                    user.assignedCategories.map((cat) => (
-                      <Badge key={cat.id} className="rounded-full px-3 py-1 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-bold text-xs">
-                        {cat.name}
-                      </Badge>
-                    ))
-                  ) : (
-                    <span className="text-xs text-muted-foreground italic">Branş atanmamış</span>
-                  )}
-                </div>
-              </div>
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-1.5 mb-2">
-                  <GraduationCap className="h-3.5 w-3.5 text-emerald-500" /> Sorumlu Sınıflarım
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {teacherClassesData?.classes && teacherClassesData.classes.length > 0 ? (
-                    teacherClassesData.classes.map((cls) => (
+                  {teacherClassesData?.classes && teacherClassesData.classes.filter((c: any) => c.classTeacherId === user?.id).length > 0 ? (
+                    teacherClassesData.classes.filter((c: any) => c.classTeacherId === user?.id).map((cls: any) => (
                       <button
                         key={cls.id}
                         onClick={() => setLocation(`/classes/${cls.id}`)}
@@ -264,7 +249,44 @@ export default function DashboardPage() {
                       </button>
                     ))
                   ) : (
-                    <span className="text-xs text-muted-foreground italic">Sınıf atanmamış</span>
+                    <span className="text-xs text-muted-foreground italic">Sınıf öğretmenliği atanmamış</span>
+                  )}
+                </div>
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-1.5 mb-2">
+                  <BookOpen className="h-3.5 w-3.5 text-indigo-500" /> Yetkili Olunan Dersler (Branş)
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {user?.assignedCategories && user.assignedCategories.length > 0 ? (
+                    user.assignedCategories.map((cat: any) => (
+                      <Badge key={cat.id} className="rounded-full px-3 py-1 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-bold text-xs">
+                        {cat.name}
+                      </Badge>
+                    ))
+                  ) : (
+                    <span className="text-xs text-muted-foreground italic">Ders atanmamış</span>
+                  )}
+                </div>
+              </div>
+              <div className="sm:col-span-2 lg:col-span-1">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-1.5 mb-2">
+                  <Users className="h-3.5 w-3.5 text-blue-500" /> Dersine Girdiği Sınıflar
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {teacherClassesData?.classes && teacherClassesData.classes.filter((c: any) => c.classTeacherId !== user?.id).length > 0 ? (
+                    teacherClassesData.classes.filter((c: any) => c.classTeacherId !== user?.id).map((cls: any) => (
+                      <button
+                        key={cls.id}
+                        onClick={() => setLocation(`/classes/${cls.id}`)}
+                        className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-bold text-xs hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
+                      >
+                        <Users className="h-3 w-3" />
+                        {cls.name}
+                      </button>
+                    ))
+                  ) : (
+                    <span className="text-xs text-muted-foreground italic">Atanmış sınıf yok</span>
                   )}
                 </div>
               </div>

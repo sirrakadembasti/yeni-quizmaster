@@ -28,15 +28,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // race condition where the session store hasn't been fully initialised yet.
   useEffect(() => {
     const checkAuth = async () => {
-      // Pre-fetch CSRF token to establish session early (warm up SQLite session store)
-      refreshCsrfToken().catch(() => {/* silent — will retry on first form submit */});
+      // AWAIT the CSRF token fetch before anything else.
+      // This ensures the SQLite session store finishes its first write
+      // before the loading spinner disappears and the user can click "Login".
+      // Without this await, a race condition occurs: the CSRF fetch and the
+      // login request both try to write to sessions.db simultaneously, causing
+      // SQLite to return SQLITE_BUSY and the login to fail with a 500 error
+      // on the first attempt only.
+      await refreshCsrfToken().catch(() => { /* server unreachable — will fail gracefully on submit */ });
 
       try {
         const { user } = await authApi.getCurrentUser();
         setUser(user);
         setIsAuthenticated(true);
       } catch (error) {
-        // Expected error when not logged in
+        // Expected when not logged in
         setUser(null);
         setIsAuthenticated(false);
       } finally {

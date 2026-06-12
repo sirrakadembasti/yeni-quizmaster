@@ -33,21 +33,32 @@ export default function AuthPage() {
   // Forgot Password State
   const [forgotEmail, setForgotEmail] = useState("");
 
+  /**
+   * Reads the URL the user originally intended to visit (saved by RedirectToAuth
+   * in App.tsx before redirecting them to /auth). Clears it from storage after
+   * reading so it does not persist across unrelated sessions.
+   */
+  const consumeReturnUrl = (): string => {
+    const url = sessionStorage.getItem('returnUrl') || '/';
+    sessionStorage.removeItem('returnUrl');
+    return url;
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
       const success = await login(loginEmail, loginPassword);
-      
+
       if (success) {
         toast({
           title: "Giriş Başarılı",
           description: "Yönlendiriliyorsunuz...",
           className: "bg-emerald-50 border-emerald-200 text-emerald-800"
         });
-        // Biraz bekle sonra yönlendir
-        setTimeout(() => setLocation("/"), 500);
+        const destination = consumeReturnUrl();
+        setTimeout(() => setLocation(destination), 500);
       } else {
         toast({
           variant: "destructive",
@@ -93,15 +104,15 @@ export default function AuthPage() {
 
     try {
       const result = await register(regName, regEmail, regPassword);
-      
+
       if (result === true) {
         toast({
           title: "Kayıt Başarılı",
           description: "Hesabınız oluşturuldu, yönlendiriliyorsunuz...",
           className: "bg-emerald-50 border-emerald-200 text-emerald-800"
         });
-        // Biraz bekle sonra yönlendir
-        setTimeout(() => setLocation("/"), 500);
+        const destination = consumeReturnUrl();
+        setTimeout(() => setLocation(destination), 500);
       } else {
         toast({
           variant: "destructive",

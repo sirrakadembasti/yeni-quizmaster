@@ -66,7 +66,7 @@ export function UserManagementTable({
           <TableRow>
             <TableHead>İsim</TableHead>
             {/* Öğretmenler için E-posta yerine Sorumlu Sınıf göster */}
-            <TableHead>{role === 'teacher' ? 'Sorumlu Sınıf' : 'E-posta'}</TableHead>
+            <TableHead>{role === 'teacher' ? 'Sınıf Öğretmenliği' : 'E-posta'}</TableHead>
             {role === 'student' ? (
               <>
                 <TableHead>Sınıf</TableHead>
@@ -74,8 +74,8 @@ export function UserManagementTable({
               </>
             ) : (
               <>
-                <TableHead>Atanan Dersler</TableHead>
-                <TableHead>Atanan Sınıflar</TableHead>
+                <TableHead>Atanan Branşlar</TableHead>
+                <TableHead>Dersine Girdiği Sınıflar</TableHead>
               </>
             )}
             <TableHead>Rol</TableHead>
@@ -85,13 +85,13 @@ export function UserManagementTable({
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={role === 'student' ? 6 : 5} className="h-32 text-center">
+              <TableCell colSpan={role === 'student' ? 6 : 6} className="h-32 text-center">
                 <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
               </TableCell>
             </TableRow>
           ) : users.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={role === 'student' ? 6 : 5} className="h-32 text-center text-muted-foreground">
+              <TableCell colSpan={role === 'student' ? 6 : 6} className="h-32 text-center text-muted-foreground">
                 Kullanıcı bulunamadı.
               </TableCell>
             </TableRow>
@@ -104,13 +104,13 @@ export function UserManagementTable({
                     user.responsibleForClasses && user.responsibleForClasses.length > 0 ? (
                       <div className="flex flex-wrap gap-1">
                         {user.responsibleForClasses.map(cls => (
-                          <Badge key={cls.id} variant="secondary" className="text-[10px] bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                          <Badge key={cls.id} variant="secondary" className="text-[10px] bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                             {cls.name}
                           </Badge>
                         ))}
                       </div>
                     ) : (
-                      <span className="text-xs text-muted-foreground italic">Atanmamış</span>
+                      <span className="text-xs text-muted-foreground italic">Yok</span>
                     )
                   ) : (
                     user.email
@@ -133,7 +133,7 @@ export function UserManagementTable({
                       <div className="flex flex-wrap gap-1">
                         {user.assignedCategories && user.assignedCategories.length > 0 ? (
                           user.assignedCategories.map(cat => (
-                            <Badge key={cat.id} variant="secondary" className="text-[10px]">
+                            <Badge key={cat.id} variant="secondary" className="text-[10px] bg-indigo-50 text-indigo-700 border-indigo-200">
                               {cat.name}
                             </Badge>
                           ))
@@ -144,9 +144,9 @@ export function UserManagementTable({
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
-                        {user.classes && user.classes.length > 0 ? (
-                          user.classes.map(cls => (
-                            <Badge key={cls.id} variant="outline" className="text-[10px] border-primary/30 text-primary">
+                        {user.classes && user.classes.filter(c => !user.responsibleForClasses?.some(rc => rc.id === c.id)).length > 0 ? (
+                          user.classes.filter(c => !user.responsibleForClasses?.some(rc => rc.id === c.id)).map(cls => (
+                            <Badge key={cls.id} variant="outline" className="text-[10px] border-blue-200 text-blue-700 bg-blue-50">
                               {cls.name}
                             </Badge>
                           ))

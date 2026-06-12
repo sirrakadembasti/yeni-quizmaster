@@ -12,12 +12,12 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { 
-  Plus, 
-  Trash2, 
-  Edit2, 
-  Users, 
-  BookOpen, 
+import {
+  Plus,
+  Trash2,
+  Edit2,
+  Users,
+  BookOpen,
   Loader2,
   Layers,
   Search,
@@ -32,7 +32,8 @@ import {
   MoreHorizontal,
   GraduationCap,
   ShieldCheck,
-  Briefcase
+  Briefcase,
+  Printer
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -348,23 +349,21 @@ const removeTeacherMutation = useMutation({
           <div>
             <h1 className="text-3xl font-heading font-black text-slate-900 dark:text-slate-50 tracking-tight">Yönetim Paneli</h1>
             <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 font-medium">Okul kaynaklarını ve akademik yapıyı buradan koordine edin.</p>
-          Briefcase,
-          Printer
-          } from "lucide-react";
-          ...
-                  <div className="flex gap-2 bg-card p-1.5 rounded-2xl border border-border print:hidden">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => window.print()}
-                      className="rounded-xl font-bold gap-2 border-2 hover:bg-slate-50 transition-all"
-                    >
-                      <Printer className="h-4 w-4" /> Yazdır
-                    </Button>
-                    <Button variant="ghost" size="sm" className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-primary hover:bg-accent" onClick={() => queryClient.invalidateQueries()}>
-                      <Activity className="h-4 w-4" /> Verileri Yenile
-                    </Button>
-                  </div>
+          </div>
+          <div className="flex gap-2 bg-card p-1.5 rounded-2xl border border-border print:hidden">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.print()}
+              className="rounded-xl font-bold gap-2 border-2 hover:bg-slate-50 transition-all"
+            >
+              <Printer className="h-4 w-4" /> Yazdır
+            </Button>
+            <Button variant="ghost" size="sm" className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-primary hover:bg-accent" onClick={() => queryClient.invalidateQueries()}>
+              <Activity className="h-4 w-4" /> Verileri Yenile
+            </Button>
+          </div>
+        </header>
 
         <Tabs defaultValue="categories" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="bg-muted p-1.5 rounded-2xl border border-border mb-6 flex w-fit gap-1">

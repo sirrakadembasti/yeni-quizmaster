@@ -161,6 +161,12 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
 
     if (filteredBody.password) {
       filteredBody.password = await bcrypt.hash(filteredBody.password, 10);
+    } else {
+      delete filteredBody.password;
+    }
+
+    if (filteredBody.classId === "") {
+      filteredBody.classId = null;
     }
 
     const updatedUser = await storage.updateUser(targetUserId, filteredBody);

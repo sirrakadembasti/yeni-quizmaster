@@ -114,8 +114,8 @@ export function UserFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[550px] max-h-[95vh] overflow-y-auto rounded-3xl p-0 border-none shadow-2xl">
-        <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-6 text-white rounded-t-3xl">
+      <DialogContent className="sm:max-w-[550px] max-h-[95vh] flex flex-col rounded-3xl p-0 border-none shadow-2xl overflow-hidden">
+        <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-6 text-white shrink-0">
           <DialogHeader>
             <DialogTitle className="text-2xl font-black flex items-center gap-3">
               <div className="bg-white dark:bg-slate-900/10 p-2 rounded-xl">
@@ -131,7 +131,12 @@ export function UserFormModal({
           </DialogHeader>
         </div>
 
-        <div className="p-6 space-y-6 bg-white dark:bg-slate-900 dark:bg-slate-950">
+        <form id="user-form" onSubmit={(e) => {
+          e.preventDefault();
+          const submissionData = { ...formData };
+          if (submissionData.classId === "none") submissionData.classId = "";
+          onSubmit(submissionData);
+        }} className="p-6 space-y-6 bg-white dark:bg-slate-900 flex-1 overflow-y-auto min-h-0">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="text-xs font-black uppercase tracking-widest opacity-60">Tam İsim</Label>
@@ -229,7 +234,7 @@ export function UserFormModal({
 
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <Label className="text-xs font-black uppercase tracking-widest opacity-60">Sorumlu Olduğu Sınıflar</Label>
+                  <Label className="text-xs font-black uppercase tracking-widest opacity-60">Dersine Girdiği Sınıflar</Label>
                   <Badge variant="outline" className="text-[10px]">{formData.classIds.length} Seçili</Badge>
                 </div>
                 <div className="flex flex-wrap gap-1.5 min-h-[32px]">
@@ -285,16 +290,13 @@ export function UserFormModal({
               className="rounded-xl border-slate-200 dark:border-slate-700"
             />
           </div>
-        </div>
+        </form>
 
         <DialogFooter className="bg-slate-50 dark:bg-slate-900/80 dark:bg-slate-900/50 p-6 rounded-b-3xl border-t border-slate-100 dark:border-slate-800">
-          <Button variant="ghost" onClick={() => onOpenChange(false)} className="rounded-xl font-bold">Vazgeç</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)} type="button" className="rounded-xl font-bold">Vazgeç</Button>
           <Button 
-            onClick={() => {
-              const submissionData = { ...formData };
-              if (submissionData.classId === "none") submissionData.classId = "";
-              onSubmit(submissionData);
-            }} 
+            type="submit"
+            form="user-form"
             disabled={isPending || !formData.name || !formData.email || (mode === 'create' && !formData.password)}
             className="rounded-xl font-black px-8 shadow-xl shadow-indigo-500/20 bg-indigo-600 hover:bg-indigo-700 text-white"
           >

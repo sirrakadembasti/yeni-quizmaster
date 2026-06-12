@@ -148,16 +148,60 @@ export class PrismaStorage implements IStorage {
   async getUser(id: string): Promise<User | undefined> {
     const user = await prisma.user.findUnique({ 
       where: { id },
-      include: { class: true, assignedCategories: true }
+      include: { 
+        class: true, 
+        assignedCategories: true, 
+        managedClasses: true,
+        teacherAssignments: {
+          include: { class: true, category: true }
+        }
+      }
     });
+    if (user) {
+      const combinedClasses = new Map();
+      const combinedCategories = new Map();
+      
+      (user as any).managedClasses?.forEach((c: any) => combinedClasses.set(c.id, c));
+      (user as any).assignedCategories?.forEach((c: any) => combinedCategories.set(c.id, c));
+      
+      (user as any).teacherAssignments?.forEach((ta: any) => {
+        combinedClasses.set(ta.class.id, ta.class);
+        combinedCategories.set(ta.category.id, ta.category);
+      });
+
+      (user as any).classes = Array.from(combinedClasses.values());
+      (user as any).assignedCategories = Array.from(combinedCategories.values());
+    }
     return user || undefined;
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
     const user = await prisma.user.findUnique({ 
       where: { email },
-      include: { class: true, assignedCategories: true }
+      include: { 
+        class: true, 
+        assignedCategories: true, 
+        managedClasses: true,
+        teacherAssignments: {
+          include: { class: true, category: true }
+        }
+      }
     });
+    if (user) {
+      const combinedClasses = new Map();
+      const combinedCategories = new Map();
+      
+      (user as any).managedClasses?.forEach((c: any) => combinedClasses.set(c.id, c));
+      (user as any).assignedCategories?.forEach((c: any) => combinedCategories.set(c.id, c));
+      
+      (user as any).teacherAssignments?.forEach((ta: any) => {
+        combinedClasses.set(ta.class.id, ta.class);
+        combinedCategories.set(ta.category.id, ta.category);
+      });
+
+      (user as any).classes = Array.from(combinedClasses.values());
+      (user as any).assignedCategories = Array.from(combinedCategories.values());
+    }
     return user || undefined;
   }
 
@@ -188,7 +232,7 @@ export class PrismaStorage implements IStorage {
       createdAt: __, 
       assignedCategories, 
       assignedCategoryIds,
-      class,
+      class: studentClass,
       classes,
       classIds,
       ...updateData 
@@ -221,16 +265,18 @@ export class PrismaStorage implements IStorage {
 
     // Handle teacher classes if provided
     if (classIds) {
-      prismaData.classes = {
+      prismaData.managedClasses = {
         set: classIds.map((classId: string) => ({ id: classId }))
       };
     }
 
-    return await prisma.user.update({
+    const updated = await prisma.user.update({
       where: { id },
       data: prismaData,
-      include: { class: true, assignedCategories: true }
+      include: { class: true, assignedCategories: true, managedClasses: true }
     });
+    
+    return { ...updated, classes: (updated as any).managedClasses } as unknown as User;
   }
 
   async updateUserRole(userId: string, role: string): Promise<void> {
@@ -248,11 +294,33 @@ export class PrismaStorage implements IStorage {
       include: {
         class: true,
         assignedCategories: true,
+        managedClasses: true,
         // Öğretmenin sorumlu olduğu sınıflar (classTeacherId üzerinden)
-        responsibleForClasses: { select: { id: true, name: true } }
+        responsibleForClasses: { select: { id: true, name: true } },
+        teacherAssignments: {
+          include: { class: true, category: true }
+        }
       }
     });
-    return users as unknown as User[];
+    
+    return users.map(u => {
+      const combinedClasses = new Map();
+      const combinedCategories = new Map();
+      
+      (u as any).managedClasses?.forEach((c: any) => combinedClasses.set(c.id, c));
+      (u as any).assignedCategories?.forEach((c: any) => combinedCategories.set(c.id, c));
+      
+      (u as any).teacherAssignments?.forEach((ta: any) => {
+        combinedClasses.set(ta.class.id, ta.class);
+        combinedCategories.set(ta.category.id, ta.category);
+      });
+
+      return { 
+        ...u, 
+        classes: Array.from(combinedClasses.values()),
+        assignedCategories: Array.from(combinedCategories.values())
+      };
+    }) as unknown as User[];
   }
 
   async deleteUser(id: string): Promise<void> {

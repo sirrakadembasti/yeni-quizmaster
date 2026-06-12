@@ -95,6 +95,7 @@ router.post("/login", async (req: Request, res: Response) => {
     const { password: _, ...userWithoutPassword } = user;
     res.json({ user: userWithoutPassword });
   } catch (error) {
+    console.error("Login error:", error);
     res.status(500).json({ message: "Giriş işlemi başarısız oldu." });
   }
 });

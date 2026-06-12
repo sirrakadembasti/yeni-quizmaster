@@ -125,13 +125,15 @@ Seed scripti aşağıdaki kullanıcıları oluşturur:
 
 ## Öne Çıkan Özellikler
 
-- **Modern Dashboard & RBAC Log Sistemi** — Adminler tüm sistem hareketlerini, öğretmen ve öğrenciler ise yalnızca kendi aktivitelerini modern bir liste görünümünde izleyebilir.
-- **Global Yazdırma (Print) Desteği** — Sınıf listeleri, sınavlar ve sonuç raporları için optimize edilmiş "Yazdır" özelliği. Yazdırma sırasında Sidebar ve Navbar otomatik olarak gizlenir.
+- **Modern Dashboard & RBAC Log Sistemi** — Adminler tüm sistem hareketlerini (`/management?tab=logs`), öğretmen ve öğrenciler ise yalnızca kendi aktivitelerini (`/settings?tab=logs`) modern bir liste görünümünde izleyebilir. Son 5 hareket dashboard'da doğrudan görüntülenir.
+- **Öğretmen Detay Sayfası** (`/teachers/:id`) — Öğretmen profil bilgileri, branş atamaları, sorumlu olduğu sınıflar ve oluşturduğu sınavların tek sayfada kapsamlı özeti.
+- **Öğretmen Dashboard'u** — Dashboard başlık alanında branş badge'leri ve sorumlu sınıflar dinamik olarak gösterilir. Eğitmen ilgili sınıf detay sayfasına tek tıkla erişebilir.
+- **Global Yazdırma (Print) Desteği** — Duyurular, Sınıf listeleri, Sınavlar ve Sonuç/İstatistik sayfalarında optimize edilmiş "Yazdır" butonu. Yazdırma sırasında Sidebar ve Navbar Tailwind `print:hidden` ile otomatik gizlenir.
 - **AI Destekli Soru Üretimi** — Gemini API entegrasyonu ile saniyeler içinde konu bazlı, zorluk seviyesi ayarlanabilir çoktan seçmeli sorular.
-- **Duyuru Merkezi** — Tüm okul geneline veya spesifik bir sınıfa/role yönelik zengin içerikli duyuru yayınlama sistemi.
+- **Duyuru Merkezi** — Tüm okul geneline veya spesifik bir sınıfa/role yönelik zengin içerikli duyuru yayınlama sistemi (Admin ve Öğretmen).
 - **Güvenlik ve Performans**
-  - **CSRF Koruması:** Otomatik yenileme mekanizmalı, mutasyon bazlı güvenlik.
-  - **RBAC (Rol Tabanlı Erişim):** Backend seviyesinde katı yetkilendirme middleware'leri.
+  - **CSRF Koruması:** Sayfa mount'unda otomatik token yenileme + başarısız mutasyonlarda şeffaf retry mekanizması.
+  - **RBAC (Rol Tabanlı Erişim):** Backend seviyesinde `requireAuth` + `requireRole` middleware'leri; frontend'de rol bazlı UI kontrolü.
   - **Real-time:** Socket.IO ile sınav anında anlık iletişim ve bildirimler.
   - **Atomik İşlemler:** Prisma transaksiyonları ile veri bütünlüğü koruması.
 
@@ -140,17 +142,28 @@ Seed scripti aşağıdaki kullanıcıları oluşturur:
 ## Teknik Detaylar
 
 ### Güvenlik Katmanı
-- **CSRF Token:** Her mutasyon isteğinde frontend tarafından otomatik eklenir, geçerliliğini yitirdiğinde şeffaf biçimde yenilenir.
-- **Rate Limiting:** Kaba kuvvet (brute-force) ve AI API kötüye kullanımını engellemek için endpoint bazlı limitler.
+- **CSRF Token:** Uygulama yüklendiğinde ve kritik sayfalara girildiğinde otomatik olarak taze token alınır. Her mutasyon isteğine `x-csrf-token` başlığı eklenir; token geçersizse şeffaf biçimde yenilenerek istek yeniden denenir (`csrf-sync` v4 + `apiFetch` retry logic).
+- **Rate Limiting:** Kaba kuvvet (brute-force) saldırılarına ve AI API kötüye kullanımına karşı endpoint bazlı limitler (15 dk / 1000 istek genel, 20 istek auth).
 - **SSRF Koruması:** AI modülünde sadece güvenli IP ve domain'lere izin veren filtreleme sistemi.
 
 ### Log Yönetimi
 - Sistemdeki her önemli işlem (`CREATE`, `UPDATE`, `DELETE`, `LOGIN` vb.) veritabanına kaydedilir.
-- `/api/admin/logs/me` endpoint'i ile kullanıcılar kendi işlem geçmişlerini gizlilik içinde görebilir.
+- `/api/admin/logs` (Admin) ve `/api/admin/logs/me` (Teacher/Student) endpoint'leri ile rol bazlı log erişimi sağlanır.
+- Dashboard'da her rol için son 5 log liste görünümünde gösterilir; "Tümünü Gör" linki rolün ilgili sayfasına yönlendirir.
+
+### Sayfa Yapısı (Önemli Rotalar)
+| Rota | Erişim | Açıklama |
+|------|--------|----------|
+| `/` | Herkese açık | Ana sayfa / giriş yönlendirme |
+| `/dashboard` | Admin, Teacher, Student | Rol bazlı dashboard |
+| `/management?tab=logs` | Admin | Yönetim paneli — Log sekmesi |
+| `/settings?tab=logs` | Teacher, Student | Ayarlar — Kişisel log sekmesi |
+| `/teachers/:id` | Admin | Öğretmen detay sayfası |
+| `/classes/:id` | Admin, Teacher | Sınıf detay sayfası |
 
 ### Yazdırma Optimizasyonu
-- Tailwind v4 `print:` sınıfları kullanılarak temiz çıktı düzeni.
-- Detay sayfalarında (Öğretmen Detay vb.) ve tüm ana listeleme sayfalarında hazır yazdırma butonları.
+- Tailwind v4 `print:hidden` / `print:block` sınıfları kullanılarak temiz çıktı düzeni.
+- Duyurular, Sınıflar, Sınavlar, Sonuçlar, Öğretmen Detay sayfalarında hazır "Yazdır" butonları mevcut.
 
 ---
 

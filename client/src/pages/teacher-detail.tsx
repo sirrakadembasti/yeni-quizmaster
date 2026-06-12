@@ -54,7 +54,8 @@ export default function TeacherDetailPage() {
       classesData?.classes?.filter(
         (c: any) =>
           c.classTeacherId === teacherId ||
-          (c.teachers as any[])?.some((t: any) => t.id === teacherId)
+          (c.teachers as any[])?.some((t: any) => t.id === teacherId) ||
+          (c.teacherAssignments as any[])?.some((ta: any) => ta.teacherId === teacherId)
       ) ?? [],
     [classesData, teacherId]
   );
@@ -163,20 +164,20 @@ export default function TeacherDetailPage() {
               </CardContent>
             </Card>
 
-            {/* Classes */}
+            {/* Classes (Homeroom) */}
             <Card className="rounded-[2rem] border-2 border-border overflow-hidden">
               <CardHeader className="border-b border-border pb-4">
                 <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                  <GraduationCap className="h-4 w-4 text-emerald-500" /> Sorumlu Olduğu Sınıflar
+                  <GraduationCap className="h-4 w-4 text-emerald-500" /> Sınıf Öğretmenliği (Sorumlu Sınıflar)
                   <Badge variant="outline" className="ml-auto font-black text-xs rounded-full px-2.5 py-0.5">
-                    {teacherClasses.length}
+                    {teacherClasses.filter((c: any) => c.classTeacherId === teacherId).length}
                   </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-5">
-                {teacherClasses.length > 0 ? (
+                {teacherClasses.filter((c: any) => c.classTeacherId === teacherId).length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {teacherClasses.map((cls: any) => (
+                    {teacherClasses.filter((c: any) => c.classTeacherId === teacherId).map((cls: any) => (
                       <Link key={cls.id} href={`/admin/classes/${cls.id}`}>
                         <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-bold text-sm cursor-pointer hover:bg-emerald-100 transition-colors">
                           <Users className="h-3.5 w-3.5" />
@@ -191,7 +192,35 @@ export default function TeacherDetailPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground italic">Henüz sınıf atanmamış.</p>
+                  <p className="text-sm text-muted-foreground italic">Henüz sorumlu sınıf atanmamış.</p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Classes (Assigned/Branch) */}
+            <Card className="rounded-[2rem] border-2 border-border overflow-hidden">
+              <CardHeader className="border-b border-border pb-4">
+                <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                  <BookOpen className="h-4 w-4 text-blue-500" /> Dersine Girdiği Sınıflar
+                  <Badge variant="outline" className="ml-auto font-black text-xs rounded-full px-2.5 py-0.5">
+                    {teacherClasses.filter((c: any) => c.classTeacherId !== teacherId).length}
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-5">
+                {teacherClasses.filter((c: any) => c.classTeacherId !== teacherId).length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {teacherClasses.filter((c: any) => c.classTeacherId !== teacherId).map((cls: any) => (
+                      <Link key={cls.id} href={`/admin/classes/${cls.id}`}>
+                        <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-bold text-sm cursor-pointer hover:bg-blue-100 transition-colors">
+                          <Users className="h-3.5 w-3.5" />
+                          {cls.name}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground italic">Henüz ders ataması yapılmamış.</p>
                 )}
               </CardContent>
             </Card>
