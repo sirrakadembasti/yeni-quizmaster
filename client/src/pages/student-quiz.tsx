@@ -85,8 +85,10 @@ export default function StudentQuiz() {
         setResultId(data.resultId);
         setAnswers(data.existingAnswers || {});
         // Convert minutes from DB to seconds for the timer
-        const limitInSeconds = data.quiz?.timeLimit ? data.quiz.timeLimit * 60 : null;
-        setTimeLeft(limitInSeconds); 
+        const fallbackLimit = data.quiz?.timeLimit ? data.quiz.timeLimit * 60 : null;
+        setTimeLeft(data.remainingSeconds !== undefined
+          ? data.remainingSeconds
+          : fallbackLimit);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Quiz başlatılamadı');
       } finally {

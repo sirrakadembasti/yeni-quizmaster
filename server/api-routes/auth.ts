@@ -10,14 +10,24 @@ import { sendResetPasswordEmail } from "../utils/email";
 
 const router: Router = Router();
 
+function regenerateSession(req: Request): Promise<void> {
+  return new Promise((resolve, reject) => {
+    req.session.regenerate((error) => {
+      if (error) reject(error);
+      else resolve();
+    });
+  });
+}
+
+const hashResetToken = (token: string) =>
+  crypto.createHash("sha256").update(token).digest("hex");
+
 // ==================== AUTH SCHEMAS ====================
 
 const registerSchema = z.object({
   name: z.string().min(2, "İsim en az 2 karakter olmalıdır.").max(50),
   email: z.string().email("Geçerli bir e-posta adresi giriniz."),
   password: z.string().min(6, "Şifre en az 6 karakter olmalıdır."),
-  classNo: z.string().optional(),
-  classId: z.string().optional().nullable(),
 });
 
 const loginSchema = z.object({
@@ -48,18 +58,17 @@ router.post("/register", async (req: Request, res: Response) => {
       return res.status(400).json({ message: validation.error.errors[0].message });
     }
 
-    const { name, password, email, classNo, classId } = validation.data;
+    const { name, password, email } = validation.data;
     const existingUser = await storage.getUserByEmail(email.trim());
     if (existingUser) return res.status(400).json({ message: "Bu e-posta adresi zaten kayıtlı." });
     
     const hashedPassword = await bcrypt.hash(password, 10);
+    await regenerateSession(req);
     const user = await storage.createUser({ 
       name, 
       email: email.trim(), 
       password: hashedPassword, 
-      role: 'student',
-      classNo,
-      classId: classId || undefined
+      role: 'student'
     });
     
     req.session.userId = user.id;
@@ -90,6 +99,7 @@ router.post("/login", async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Geçersiz e-posta veya şifre." });
     }
     
+    await regenerateSession(req);
     req.session.userId = user.id;
     await storage.createLog(user.id, "LOGIN", `User logged in`);
     const { password: _, ...userWithoutPassword } = user;
@@ -102,7 +112,19 @@ router.post("/login", async (req: Request, res: Response) => {
 
 router.post("/logout", requireAuth, async (req: AuthRequest, res: Response) => {
   await storage.createLog(req.user!.id, "LOGOUT", `User logged out`);
-  req.session.destroy(() => res.json({ message: "Oturum kapatıldı." }));
+  req.session.destroy((error) => {
+    if (error) {
+      return res.status(500).json({ message: "Oturum kapatılamadı." });
+    }
+
+    res.clearCookie("quizmaster.sid", {
+      path: "/",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    });
+    res.json({ message: "Oturum kapatıldı." });
+  });
 });
 
 router.get("/me", requireAuth, (req: AuthRequest, res: Response) => {
@@ -196,7 +218,7 @@ router.post("/forgot-password", async (req: Request, res: Response) => {
     const expiry = new Date(Date.now() + 3600000); // 1 hour
 
     await storage.updateUser(user.id, {
-      resetToken: token,
+      resetToken: hashResetToken(token),
       resetTokenExpiry: expiry,
     });
 
@@ -227,7 +249,7 @@ router.post("/reset-password", async (req: Request, res: Response) => {
     }
 
     const { token, password } = validation.data;
-    const user = await storage.getUserByResetToken(token);
+    const user = await storage.getUserByResetToken(hashResetToken(token));
 
     if (!user || !user.resetTokenExpiry || user.resetTokenExpiry < new Date()) {
       return res.status(400).json({ message: "Geçersiz veya süresi dolmuş token." });

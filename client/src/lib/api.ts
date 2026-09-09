@@ -268,6 +268,26 @@ export const authApi = {
     return handleResponse<{ message: string }>(response);
   },
 
+  async forgotPassword(email: string) {
+    const response = await apiFetch(`${API_BASE}/auth/forgot-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+      credentials: 'include',
+    });
+    return handleResponse<{ message: string }>(response);
+  },
+
+  async resetPassword(token: string, password: string) {
+    const response = await apiFetch(`${API_BASE}/auth/reset-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, password }),
+      credentials: 'include',
+    });
+    return handleResponse<{ message: string }>(response);
+  },
+
   async getCurrentUser() {
     const response = await apiFetch(`${API_BASE}/auth/me`, {
       credentials: 'include',
@@ -448,6 +468,7 @@ export const quizApi = {
       quiz: { id: string; title: string; description?: string; timeLimit?: number; totalQuestions: number };
       questions: Array<{ id: string; text: string; type: string; options?: string[] }>;
       existingAnswers?: Record<string, string>;
+      remainingSeconds?: number | null;
     }>(response);
   },
 
@@ -458,7 +479,7 @@ export const quizApi = {
       body: JSON.stringify({ questionId, selectedOption }),
       credentials: 'include',
     });
-    return handleResponse<{ message: string; isCorrect: boolean }>(response);
+    return handleResponse<{ message: string }>(response);
   },
 
   async submitQuiz(resultId: string) {

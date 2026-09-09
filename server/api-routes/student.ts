@@ -91,6 +91,10 @@ router.get("/results/:id", requireAuth, async (req: AuthRequest, res: Response) 
       return res.status(403).json({ message: "Bu sonuca erişim yetkiniz yok." });
     }
 
+    if (req.user!.role === "student" && result.status !== "completed") {
+      return res.status(409).json({ message: "Sınav tamamlanmadan sonuç detayları görüntülenemez." });
+    }
+
     // Teacher authorization check
     if (req.user!.role === "teacher") {
       const student = await storage.getUser(result.studentId);
@@ -126,6 +130,10 @@ router.post("/quiz/:quizId/start", quizActionLimiter, requireAuth, async (req: A
     const quiz = await storage.getQuiz(req.params.quizId);
     if (!quiz) return res.status(404).json({ message: "Quiz bulunamadı." });
     
+    if (req.user!.role === "student" && quiz.status !== "published") {
+      return res.status(403).json({ message: "Bu sınav henüz yayında değil." });
+    }
+
     // Erişim kontrolü: Öğrenci yalnızca kendi sınıfına atanmış sınavlara girebilir.
     const studentClassId = req.user!.classId;
     const assignedClasses = (quiz as any).assignedClasses || [];
@@ -153,11 +161,21 @@ router.post("/quiz/:quizId/start", quizActionLimiter, requireAuth, async (req: A
         startedAt: new Date()
       });
     }    
+
+    const timeLimitSeconds = quiz.timeLimit ? quiz.timeLimit * 60 : null;
+    const elapsedSeconds = result?.startedAt
+      ? Math.max(0, Math.floor((Date.now() - new Date(result.startedAt).getTime()) / 1000))
+      : 0;
+    const remainingSeconds = timeLimitSeconds === null
+      ? null
+      : Math.max(0, timeLimitSeconds - elapsedSeconds);
+
     res.json({ 
       resultId: result?.id || 'preview-mode', 
       quiz, 
       questions: questions.map(({id, text, type, options}) => ({id, text, type, options})), 
-      existingAnswers: (result as any)?.answers || {} 
+      existingAnswers: (result as any)?.answers || {},
+      remainingSeconds,
     });
   } catch (e) {
     console.error("Start quiz error:", e);
@@ -185,6 +203,16 @@ router.post("/quiz/:resultId/answer", requireAuth, async (req: AuthRequest, res:
       return res.status(400).json({ message: "Bu sınav zaten tamamlanmış." });
     }
 
+    const quiz = await storage.getQuiz(result.quizId);
+    if (!quiz) return res.status(404).json({ message: "Quiz bulunamadı." });
+
+    if (quiz.timeLimit && result.startedAt) {
+      const deadline = new Date(result.startedAt).getTime() + quiz.timeLimit * 60 * 1000;
+      if (Date.now() >= deadline) {
+        return res.status(409).json({ message: "Sınav süresi dolduğu için cevap kaydedilemedi." });
+      }
+    }
+
     const question = await storage.getQuestion(questionId);
     if (!question || question.quizId !== result.quizId) {
       return res.status(404).json({ message: "Soru bulunamadı." });
@@ -202,7 +230,7 @@ router.post("/quiz/:resultId/answer", requireAuth, async (req: AuthRequest, res:
       correctAnswersCount: correct 
     });
     
-    res.json({ isCorrect: question.correctAnswer === selectedOption });
+    res.json({ message: "Cevap kaydedildi." });
   } catch (e) {
     console.error("Answer quiz error:", e);
     res.status(500).json({ message: "Cevap kaydedilemedi." });

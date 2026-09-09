@@ -2,6 +2,27 @@
 
 Quiz-Master, okul ortamları için geliştirilmiş, rol tabanlı bir çevrimiçi sınav yönetim platformudur. Yöneticiler okul yapısını (sınıf, öğretmen, ders) tanımlar; öğretmenler sınav oluşturur, yayınlar ve AI yardımıyla soru üretir; öğrenciler kendilerine atanan sınavları çözer ve sonuçlarını anlık olarak görür. Temel amacı, sınav sürecinin tüm aşamalarını (oluşturma, atama, çözme, değerlendirme) tek bir platformda güvenli biçimde yönetmektir.
 
+## Kullanıcı Kılavuzları
+
+Rolünüze uygun ayrıntılı kullanım kılavuzunu açın:
+
+- [Yönetici Kullanıcı Kılavuzu](docs/user-guides/admin-guide.md)
+- [Öğretmen Kullanıcı Kılavuzu](docs/user-guides/teacher-guide.md)
+- [Öğrenci Kullanıcı Kılavuzu](docs/user-guides/student-guide.md)
+
+### Güncel güvenlik davranışları
+
+- API yanıtlarında parola ve hesap kurtarma belirteçleri merkezi olarak filtrelenir.
+- Giriş ve kayıt sonrasında oturum kimliği yenilenir; tüm veri değiştiren istekler CSRF korumasından geçer.
+- Açık kayıtla oluşturulan öğrenci kendi sınıfını belirleyemez; sınıf üyeliği yetkili kullanıcı tarafından atanır.
+- Öğretmen yalnızca sorumlu olduğu sınıflara sınav ve duyuru atayabilir.
+- Öğrenci yalnızca yayınlanmış ve kendisine atanmış sınavı başlatabilir.
+- Sınav süresi sayfa yenilendiğinde sıfırlanmaz ve sunucu tarafından da denetlenir.
+- Tamamlanmamış sınavlarda doğru cevap/cevap anahtarı öğrenciye gönderilmez.
+- Parola sıfırlama belirteçleri veritabanında açık metin yerine özetlenmiş olarak saklanır.
+
+> **Çevrimdışı kullanım:** PWA/çevrimdışı sınav altyapısı henüz uygulanmamıştır. Sınavı başlatmak, cevapları kaydetmek ve teslim etmek için internet bağlantısı gerekir.
+
 ---
 
 ## Teknoloji Yığını

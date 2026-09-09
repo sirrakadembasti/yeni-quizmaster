@@ -15,6 +15,7 @@ import pino from "pino";
 import pinoHttp from "pino-http";
 import { setupSocket } from "./socket";
 import { generateToken, csrfSynchronisedProtection } from "./middleware/csrf";
+import { secureJsonReplacer } from "./utils/json-security";
 
 // Load environment variables
 dotenv.config();
@@ -73,6 +74,10 @@ const SQLiteStore = connectSqlite3(session);
 
 const app = express();
 const httpServer = createServer(app);
+
+// Prevent nested Prisma relations from serializing credentials or recovery
+// secrets if a route accidentally includes a complete User record.
+app.set("json replacer", secureJsonReplacer);
 
 // Security Headers
 app.use(helmet({
@@ -159,16 +164,12 @@ app.use(httpLogger);
       res.json({ csrfToken: generateToken(req) });
     });
     
-    // Apply CSRF protection to all POST/PUT/DELETE routes but exclude auth endpoints
+    // Protect every state-changing request, including auth and PATCH routes.
     app.use((req, res, next) => {
-      // CSRF protection'u sadece POST/PUT/DELETE isteklerine uygula
-      // GET/HEAD/OPTIONS istekleri hariç tutma (token almak için)
-      if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
-        // Auth endpoints'e CSRF koruması uygulama (login, register, logout)
-        if (!req.path.startsWith('/api/auth/')) {
-          return csrfSynchronisedProtection(req, res, next);
-        }
+      if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method.toUpperCase())) {
+        return csrfSynchronisedProtection(req, res, next);
       }
+
       next();
     });
 

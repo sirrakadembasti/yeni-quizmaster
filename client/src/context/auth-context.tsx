@@ -56,6 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       const { user } = await authApi.login(email, password);
+      await refreshCsrfToken().catch(() => { /* refreshed on the next mutation */ });
       setUser(user);
       setIsAuthenticated(true);
       // Yönlendirme auth.tsx'de yapılıyor, burada yapma
@@ -69,6 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (name: string, email: string, password: string): Promise<boolean | string> => {
     try {
       const { user } = await authApi.register(name, email, password);
+      await refreshCsrfToken().catch(() => { /* refreshed on the next mutation */ });
       setUser(user);
       setIsAuthenticated(true);
       return true;

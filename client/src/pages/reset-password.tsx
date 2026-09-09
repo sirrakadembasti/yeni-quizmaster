@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Lock, ArrowLeft, CheckCircle2 } from "lucide-react";
-import { apiRequest } from "@/lib/queryClient";
+import { authApi } from "@/lib/api";
 
 export default function ResetPasswordPage() {
   const [location, setLocation] = useLocation();
@@ -56,10 +56,7 @@ export default function ResetPasswordPage() {
     setIsLoading(true);
 
     try {
-      await apiRequest("POST", "/api/auth/reset-password", {
-        token,
-        password
-      });
+      await authApi.resetPassword(token, password);
       
       setIsSuccess(true);
       toast({

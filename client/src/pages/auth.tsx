@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Mail, Lock, User, ArrowRight, Home } from "lucide-react";
-import { apiRequest } from "@/lib/queryClient";
+import { authApi } from "@/lib/api";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 export default function AuthPage() {
@@ -137,7 +137,7 @@ export default function AuthPage() {
     setIsForgotLoading(true);
 
     try {
-      await apiRequest("POST", "/api/auth/forgot-password", { email: forgotEmail });
+      await authApi.forgotPassword(forgotEmail);
       
       toast({
         title: "E-posta Gönderildi",

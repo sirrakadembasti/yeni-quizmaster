@@ -5,6 +5,7 @@ import { getIO } from "../socket";
 import { logger } from "../index";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
+import { canAssignClasses } from "../utils/class-authorization";
 
 const router: Router = Router();
 
@@ -96,6 +97,10 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
 
     const { title, description, category, categoryId, difficulty, timeLimit, shuffleQuestions, status, assignedClassIds } = validation.data;
 
+    if (!await canAssignClasses(req.user!.role, req.user!.id, assignedClassIds)) {
+      return res.status(403).json({ message: "Yalnızca sorumlu olduğunuz sınıflara sınav atayabilirsiniz." });
+    }
+
     let finalCategoryId = categoryId;
     if (!finalCategoryId && category) {
       const cats = await storage.getAllCategories();
@@ -135,6 +140,12 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
 
     if (req.user!.role === "teacher" && existingQuiz.createdBy !== req.user!.id) {
       return res.status(403).json({ message: "Bu sınavı düzenleme yetkiniz yok." });
+    }
+
+    const assignedClassIds = validation.data.assignedClassIds;
+    if (assignedClassIds &&
+        !await canAssignClasses(req.user!.role, req.user!.id, assignedClassIds)) {
+      return res.status(403).json({ message: "Yalnızca sorumlu olduğunuz sınıflara sınav atayabilirsiniz." });
     }
 
     if (validation.data.status === "published" && existingQuiz.status !== "published") {
