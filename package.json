@@ -1,6 +1,10 @@
 {
   "name": "quiz-master",
   "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "scripts": {
     "dev": "concurrently --kill-others-on-fail --prefix-colors \"blue,green\" --names \"server,client\" \"pnpm --filter quiz-master-server dev\" \"pnpm --filter quiz-master-client dev\"",
     "build": "pnpm --filter quiz-master-server build && pnpm --filter quiz-master-client build",

@@ -5,9 +5,10 @@
   "description": "Quiz Master Backend API",
   "main": "dist/index.cjs",
   "scripts": {
-    "dev": "tsx --watch index.ts",
+    "dev": "tsx watch --exclude \"../node_modules/**\" --exclude \"node_modules/**\" index.ts",
     "build": "esbuild index.ts --bundle --platform=node --target=node20 --outfile=../dist/index.cjs --external:sqlite3",
     "start": "cross-env NODE_ENV=production node ../dist/index.cjs",
+    "postinstall": "prisma generate",
     "type-check": "tsc --noEmit",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",

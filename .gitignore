@@ -49,3 +49,6 @@ server/public/
 vite.config.ts.*
 *.tar.gz
 *.bak
+graphify-out/
+.npmrc
+

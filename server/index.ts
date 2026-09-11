@@ -13,6 +13,7 @@ import { fileURLToPath } from "url";
 import * as dotenv from "dotenv";
 import pino from "pino";
 import pinoHttp from "pino-http";
+import pretty from "pino-pretty";
 import { setupSocket } from "./socket";
 import { generateToken, csrfSynchronisedProtection } from "./middleware/csrf";
 import { secureJsonReplacer } from "./utils/json-security";
@@ -20,18 +21,22 @@ import { secureJsonReplacer } from "./utils/json-security";
 // Load environment variables
 dotenv.config();
 
-// Initialize pino logger
-export const logger = pino({
-  level: process.env.NODE_ENV === "production" ? "info" : "debug",
-  transport: process.env.NODE_ENV !== "production" ? {
-    target: "pino-pretty",
-    options: {
+// Keep development logging in-process. This avoids worker-thread crashes when
+// the TSX watcher restarts the server while preserving the same pretty output.
+const isProduction = process.env.NODE_ENV === "production";
+const developmentLogStream = isProduction
+  ? undefined
+  : pretty({
       colorize: true,
       translateTime: "SYS:standard",
       ignore: "pid,hostname",
-    },
-  } : undefined,
-});
+      sync: true,
+    });
+
+export const logger = pino(
+  { level: isProduction ? "info" : "debug" },
+  developmentLogStream,
+);
 
 const httpLogger = pinoHttp({
   logger,
