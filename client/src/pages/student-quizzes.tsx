@@ -236,7 +236,7 @@ export default function StudentQuizzesPage() {
                         <div className="flex items-center gap-4 text-xs mt-3 text-muted-foreground">
                           {quiz.timeLimit && (
                             <span className="flex items-center gap-1">
-                              <Clock className="h-3 w-3" /> {Math.floor(quiz.timeLimit / 60)} dk
+                              <Clock className="h-3 w-3" /> {quiz.timeLimit} dk
                             </span>
                           )}
                           <span className="flex items-center gap-1">

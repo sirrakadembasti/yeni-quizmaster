@@ -167,7 +167,7 @@ export default function DashboardPage() {
       <DashboardLayout>
         <div className="flex items-center justify-center py-32 flex-col gap-4">
           <Loader2 className="h-12 w-12 animate-spin text-primary" />
-          <p className="text-muted-foreground font-black animate-pulse">VERİLER HAZIRLANIYOR...</p>
+          <p className="text-muted-foreground font-semibold animate-pulse">Veriler hazırlanıyor...</p>
         </div>
       </DashboardLayout>
     );
@@ -180,11 +180,11 @@ export default function DashboardPage() {
         <div className="flex flex-col gap-6 bg-gradient-to-r from-primary/10 via-transparent to-transparent p-6 rounded-3xl border border-primary/10">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-black text-foreground tracking-tighter">
+              <h1 className="text-3xl font-bold text-foreground tracking-tight">
                 {isAdmin ? 'Yönetim Paneli' : isTeacher ? 'Eğitmen Paneli' : 'Öğrenci Paneli'}
               </h1>
               <div className="flex items-center gap-3 mt-3">
-                <div className="h-10 w-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-xs shadow-lg shadow-slate-200">
+                <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-xs ring-1 ring-primary/15">
                   {user?.name?.[0].toUpperCase()}
                 </div>
                 <div>
@@ -200,25 +200,25 @@ export default function DashboardPage() {
               <Button 
                 variant="outline" 
                 onClick={() => window.print()}
-                className="rounded-2xl font-black gap-2 border-2 hover:bg-slate-50 transition-all active:scale-95"
+                className="rounded-xl font-semibold gap-2 transition-all active:scale-95 print:hidden"
               >
                 <Printer className="h-4 w-4" /> Yazdır
               </Button>
               {isAdmin ? (
                 <>
-                  <Button onClick={() => setLocation("/management")} variant="outline" className="rounded-2xl font-black gap-2 border-2">
+                  <Button onClick={() => setLocation("/management")} variant="outline" className="rounded-xl font-semibold gap-2">
                     <Settings className="h-4 w-4" /> Sistem Ayarları
                   </Button>
-                  <Button onClick={() => setLocation("/teachers")} className="rounded-2xl font-black gap-2 shadow-xl shadow-primary/20">
+                  <Button onClick={() => setLocation("/teachers")} className="rounded-xl font-semibold gap-2 shadow-sm">
                     <UserCheck className="h-4 w-4" /> Eğitmenleri Yönet
                   </Button>
                 </>
               ) : isTeacher ? (
-                <Button onClick={() => setLocation("/create-quiz")} className="rounded-2xl font-black gap-2 shadow-xl shadow-primary/20 h-12 px-8 text-lg transition-all active:scale-95">
+                <Button onClick={() => setLocation("/create-quiz")} className="rounded-xl font-semibold gap-2 shadow-sm h-11 px-6 transition-all active:scale-95">
                   <FileText className="h-5 w-5" /> Yeni Sınav Oluştur
                 </Button>
               ) : (
-                <Button onClick={() => setLocation("/quizzes")} className="rounded-2xl font-black gap-2 shadow-xl shadow-primary/20 h-12 px-8 text-lg transition-all active:scale-95">
+                <Button onClick={() => setLocation("/quizzes")} className="rounded-xl font-semibold gap-2 shadow-sm h-11 px-6 transition-all active:scale-95">
                   <BookOpen className="h-5 w-5" /> Sınavlara Göz At
                 </Button>
               )}
@@ -335,10 +335,10 @@ export default function DashboardPage() {
         {/* Charts & Popular Section */}
         {!isStudent && (
           <div className="grid gap-6 md:grid-cols-7">
-            <Card className="col-span-4 rounded-[2.5rem] border-2 border-border shadow-md overflow-hidden bg-white">
+            <Card className="col-span-4 overflow-hidden bg-card">
               <CardHeader className="border-b bg-muted/20">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg font-black flex items-center gap-2">
+                  <CardTitle className="text-lg font-semibold flex items-center gap-2">
                     <BarChart3 className="h-5 w-5 text-primary" /> Haftalık Aktivite Grafiği
                   </CardTitle>
                   <Badge variant="outline" className="font-bold">Son 7 Gün</Badge>
@@ -362,9 +362,9 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            <Card className="col-span-3 rounded-[2.5rem] border-2 border-border shadow-md overflow-hidden bg-white">
+            <Card className="col-span-3 overflow-hidden bg-card">
               <CardHeader className="border-b bg-muted/20">
-                <CardTitle className="text-lg font-black flex items-center gap-2">
+                <CardTitle className="text-lg font-semibold flex items-center gap-2">
                   <BrainCircuit className="h-5 w-5 text-indigo-600" /> Popüler Sınavlar
                 </CardTitle>
               </CardHeader>
@@ -403,7 +403,7 @@ export default function DashboardPage() {
                 <Clock className="h-5 w-5" />
               </div>
               <div>
-                <h2 className="text-xl font-black text-slate-900 dark:text-slate-50 uppercase tracking-tight">
+                <h2 className="text-xl font-semibold text-foreground tracking-tight">
                   {isAdmin ? "Sistem Logları & Aktiviteler" : "Son İşlemlerim"}
                 </h2>
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Son 5 Hareket</p>
@@ -447,7 +447,7 @@ export default function DashboardPage() {
                 </div>
               ))
             ) : (
-              <div className="p-12 text-center bg-slate-50 dark:bg-slate-900/50 rounded-[2.5rem] border-2 border-dashed border-slate-200 dark:border-slate-800">
+              <div className="p-10 text-center bg-muted/30 rounded-2xl border border-dashed border-border">
                 <Activity className="h-12 w-12 mx-auto text-slate-300 mb-3" />
                 <p className="text-slate-400 font-bold italic">Henüz bir aktivite kaydı bulunmuyor.</p>
               </div>
@@ -461,9 +461,9 @@ export default function DashboardPage() {
 
 function StatCard({ title, value, loading, icon, color, description }: any) {
   return (
-    <Card className="rounded-[2rem] border-2 border-border hover:border-primary transition-all group overflow-hidden bg-white shadow-sm">
+    <Card className="hover:border-primary/50 transition-all group overflow-hidden bg-card">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">{title}</CardTitle>
+        <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{title}</CardTitle>
         <div className={`p-2 ${color} rounded-xl group-hover:bg-primary group-hover:text-white transition-colors`}>
           {icon}
         </div>
@@ -472,7 +472,7 @@ function StatCard({ title, value, loading, icon, color, description }: any) {
         {loading ? (
           <Skeleton className="h-10 w-24" />
         ) : (
-          <div className="text-4xl font-black tracking-tighter">{value || 0}</div>
+          <div className="text-4xl font-bold tracking-tight">{value || 0}</div>
         )}
         <p className="text-[10px] font-bold text-primary mt-1">{description}</p>
       </CardContent>

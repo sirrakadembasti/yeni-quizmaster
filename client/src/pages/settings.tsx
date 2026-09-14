@@ -15,11 +15,14 @@ import {
   XCircle, 
   Clock,
   History,
-  Printer
+  Printer,
+  Trash2,
+  Volume2,
+  VolumeX
 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/context/auth-context";
-import { userApi, authApi, notificationApi, adminApi } from "@/lib/api";
+import { authApi, notificationApi, adminApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -28,14 +31,19 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { format, isAfter, subMonths } from "date-fns";
 import { tr } from "date-fns/locale";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Switch } from "@/components/ui/switch";
+import { useLocation } from "wouter";
+import { removeNotification, type NotificationPage } from "@/lib/notification-cache";
 
 export default function SettingsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [currentLocation] = useLocation();
   
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
+  const [notificationPage, setNotificationPage] = useState(1);
   
   const [formData, setFormData] = useState({
     name: "",
@@ -52,8 +60,14 @@ export default function SettingsPage() {
 
   // Notifications Query
   const { data: notificationsData } = useQuery({
-    queryKey: ['/api/notifications'],
-    queryFn: () => notificationApi.getUserNotifications(),
+    queryKey: ["notifications", "all", notificationPage],
+    queryFn: () => notificationApi.getUserNotifications(notificationPage, 20),
+    enabled: !!user
+  });
+
+  const { data: notificationPreferences } = useQuery({
+    queryKey: ["notifications", "preferences"],
+    queryFn: () => notificationApi.getPreferences(),
     enabled: !!user
   });
 
@@ -74,10 +88,49 @@ export default function SettingsPage() {
   const markAllReadMutation = useMutation({
     mutationFn: () => notificationApi.markAllAsRead(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
       toast({ title: "Başarılı", description: "Tüm bildirimler okundu işaretlendi." });
     }
   });
+
+  const deleteNotificationMutation = useMutation({
+    mutationFn: (id: string) => notificationApi.deleteNotification(id),
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: ["notifications"] });
+      const previous = queryClient.getQueriesData({ queryKey: ["notifications"] });
+      queryClient.setQueriesData<NotificationPage>(
+        { queryKey: ["notifications"] },
+        current => removeNotification(current, id)
+      );
+      return { previous };
+    },
+    onSuccess: () => {
+      if (notifications.length === 1 && notificationPage > 1) {
+        setNotificationPage(page => page - 1);
+      }
+      toast({ title: "Bildirim silindi" });
+    },
+    onError: (_error, _id, context) => {
+      context?.previous.forEach(([key, data]) => queryClient.setQueryData(key, data));
+      toast({ title: "Hata", description: "Bildirim silinemedi.", variant: "destructive" });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.refetchQueries({ queryKey: ["notifications"], type: "active" });
+    }
+  });
+
+  const muteNotificationsMutation = useMutation({
+    mutationFn: (muted: boolean) => notificationApi.updatePreferences(muted),
+    onSuccess: (preferences) => {
+      queryClient.setQueryData(["notifications", "preferences"], preferences);
+      toast({
+        title: preferences.muted ? "Bildirimler sessize alındı" : "Bildirimlerin sesi açıldı"
+      });
+    }
+  });
+
+  const notificationsMuted = notificationPreferences?.muted ?? false;
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -94,7 +147,7 @@ export default function SettingsPage() {
         address: user.address || ""
       });
     }
-  }, [user]);
+  }, [user, currentLocation]);
 
   const isProfileChanged = useMemo(() => {
     if (!user) return false;
@@ -275,13 +328,33 @@ export default function SettingsPage() {
                 </Button>
               </CardHeader>
               <CardContent className="p-0">
+                <div className="flex items-center justify-between gap-4 border-b border-border/50 bg-card p-4 sm:p-5">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                      {notificationsMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                    </div>
+                    <div>
+                      <Label htmlFor="notification-sound" className="font-semibold">Bildirim sesi</Label>
+                      <p className="text-xs text-muted-foreground">
+                        {notificationsMuted ? "Anlık bildirim uyarıları sessiz." : "Anlık bildirim uyarıları açık."}
+                      </p>
+                    </div>
+                  </div>
+                  <Switch
+                    id="notification-sound"
+                    checked={!notificationsMuted}
+                    disabled={muteNotificationsMutation.isPending}
+                    onCheckedChange={(enabled) => muteNotificationsMutation.mutate(!enabled)}
+                    aria-label="Bildirim sesini aç veya kapat"
+                  />
+                </div>
                 <ScrollArea className="h-[400px]">
                   {notifications.length > 0 ? (
                     <div className="divide-y divide-border/50">
                       {notifications.map((notification: any) => (
                         <div key={notification.id} className={cn(
                           "p-4 hover:bg-muted/30 transition-colors flex items-start gap-4",
-                          !notification.read && "bg-primary/5"
+                          !notification.isRead && "bg-primary/5"
                         )}>
                           <div className={cn(
                             "mt-1 p-2 rounded-lg",
@@ -295,11 +368,21 @@ export default function SettingsPage() {
                           </div>
                           <div className="flex-1 space-y-1">
                             <p className="text-sm font-bold leading-none">{notification.title}</p>
-                            <p className="text-xs text-muted-foreground leading-relaxed">{notification.content}</p>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{notification.message || notification.content}</p>
                             <p className="text-[10px] text-muted-foreground flex items-center gap-1">
                               <Clock className="h-3 w-3" /> {format(new Date(notification.createdAt), "d MMMM yyyy, HH:mm", { locale: tr })}
                             </p>
                           </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 shrink-0 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                            aria-label="Bildirimi sil"
+                            disabled={deleteNotificationMutation.isPending}
+                            onClick={() => deleteNotificationMutation.mutate(notification.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
                       ))}
                     </div>
@@ -312,6 +395,29 @@ export default function SettingsPage() {
                     </div>
                   )}
                 </ScrollArea>
+                {(notificationsData?.pagination?.totalPages ?? 1) > 1 && (
+                  <div className="flex items-center justify-between border-t border-border/50 px-4 py-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={notificationPage <= 1}
+                      onClick={() => setNotificationPage(page => Math.max(1, page - 1))}
+                    >
+                      Önceki
+                    </Button>
+                    <span className="text-xs font-medium text-muted-foreground">
+                      Sayfa {notificationPage} / {notificationsData?.pagination?.totalPages}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={notificationPage >= (notificationsData?.pagination?.totalPages ?? 1)}
+                      onClick={() => setNotificationPage(page => page + 1)}
+                    >
+                      Sonraki
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

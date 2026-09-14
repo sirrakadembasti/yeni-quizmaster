@@ -810,11 +810,11 @@ export const adminApi = {
 
 // Notification APIs
 export const notificationApi = {
-  async getNotifications() {
-    const response = await apiFetch(`${API_BASE}/notifications`, {
+  async getNotifications(page = 1, limit = 20) {
+    const response = await apiFetch(`${API_BASE}/notifications?page=${page}&limit=${limit}`, {
       credentials: "include",
     });
-    return handleResponse<{ notifications: any[] }>(response);
+    return handleResponse<{ notifications: any[]; pagination: { page: number; limit: number; total: number; unread: number; totalPages: number } }>(response);
   },
   async markAsRead() {
     const response = await apiFetch(`${API_BASE}/notifications/mark-read`, {
@@ -823,12 +823,33 @@ export const notificationApi = {
     });
     return handleResponse<{ success: boolean }>(response);
   },
-  // Added for settings page
-  async getUserNotifications() {
-    return this.getNotifications();
+  async getUserNotifications(page = 1, limit = 100) {
+    return this.getNotifications(page, limit);
   },
   async markAllAsRead() {
     return this.markAsRead();
+  },
+  async deleteNotification(id: string) {
+    const response = await apiFetch(`${API_BASE}/notifications/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    return handleResponse<{ success: boolean }>(response);
+  },
+  async getPreferences() {
+    const response = await apiFetch(`${API_BASE}/notifications/preferences`, {
+      credentials: "include",
+    });
+    return handleResponse<{ muted: boolean }>(response);
+  },
+  async updatePreferences(muted: boolean) {
+    const response = await apiFetch(`${API_BASE}/notifications/preferences`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ muted }),
+      credentials: "include",
+    });
+    return handleResponse<{ muted: boolean }>(response);
   }
 };
 

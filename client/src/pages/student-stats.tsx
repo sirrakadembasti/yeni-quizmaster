@@ -113,15 +113,7 @@ export default function StudentStats() {
   };
 
   const exportToPDF = () => {
-    // Simple PDF export using HTML print
-    const printContent = document.getElementById('stats-content');
-    if (!printContent) return;
-
-    const originalContent = document.body.innerHTML;
-    document.body.innerHTML = printContent.innerHTML;
     window.print();
-    document.body.innerHTML = originalContent;
-    window.location.reload(); // Refresh to restore the original React DOM state cleanly
   };
 
   if (loading) {
@@ -157,7 +149,7 @@ export default function StudentStats() {
             <Button 
               variant="outline" 
               onClick={exportToPDF}
-              className="gap-2 border-red-200 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20"
+              className="gap-2 border-red-200 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20 print:hidden"
             >
               <Download className="h-4 w-4" />
               PDF İndir

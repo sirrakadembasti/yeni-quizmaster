@@ -80,8 +80,12 @@ export interface IStorage {
   // Notification methods
   // page ve limit opsiyonel — sağlanmazsa sayfa 1, varsayılan limit kullanılır.
   // Dönüş: { data, total } — geriye dönük uyumluluk: route `notifications` key'i altında veriyi döndürür.
-  getUserNotifications(userId: string, page?: number, limit?: number): Promise<{ data: any[]; total: number }>;
+  getUserNotifications(userId: string, page?: number, limit?: number): Promise<{ data: any[]; total: number; unread: number }>;
+  createNotification(data: { userId: string; title: string; message: string; type?: string }): Promise<any>;
   markNotificationsAsRead(userId: string): Promise<void>;
+  deleteNotification(userId: string, notificationId: string): Promise<boolean>;
+  getNotificationPreferences(userId: string): Promise<{ muted: boolean }>;
+  updateNotificationPreferences(userId: string, muted: boolean): Promise<{ muted: boolean }>;
 
   // Arşiv yönetimi
   // purgeArchivedData: Belirtilen akademik yıla ait archived sınavları ve öğrenci sonuçlarını
@@ -478,10 +482,21 @@ export class PrismaStorage implements IStorage {
       where: { 
         OR: [
           { teachers: { some: { id: teacherId } } },
-          { classTeacherId: teacherId }
+          { classTeacherId: teacherId },
+          { teacherAssignments: { some: { teacherId } } }
         ]
       },
-      include: { teachers: true, classTeacher: true, assignedCategories: true }
+      include: {
+        teachers: true,
+        classTeacher: true,
+        assignedCategories: true,
+        teacherAssignments: {
+          include: {
+            teacher: true,
+            category: true
+          }
+        }
+      }
     });
     return classes as unknown as Class[];
   }
@@ -951,9 +966,9 @@ export class PrismaStorage implements IStorage {
   }
 
   // Notification methods
-  async getUserNotifications(userId: string, page = 1, limit = 20): Promise<{ data: any[]; total: number }> {
+  async getUserNotifications(userId: string, page = 1, limit = 20): Promise<{ data: any[]; total: number; unread: number }> {
     const skip = (page - 1) * limit;
-    const [data, total] = await Promise.all([
+    const [data, total, unread] = await Promise.all([
       prisma.notification.findMany({
         where: { userId },
         orderBy: { createdAt: 'desc' },
@@ -961,8 +976,9 @@ export class PrismaStorage implements IStorage {
         skip,
       }),
       prisma.notification.count({ where: { userId } }),
+      prisma.notification.count({ where: { userId, isRead: false } }),
     ]);
-    return { data, total };
+    return { data, total, unread };
   }
 
   async createNotification(data: { userId: string, title: string, message: string, type?: string }): Promise<any> {
@@ -981,6 +997,30 @@ export class PrismaStorage implements IStorage {
       where: { userId, isRead: false },
       data: { isRead: true }
     });
+  }
+
+  async deleteNotification(userId: string, notificationId: string): Promise<boolean> {
+    const result = await prisma.notification.deleteMany({
+      where: { id: notificationId, userId }
+    });
+    return result.count > 0;
+  }
+
+  async getNotificationPreferences(userId: string): Promise<{ muted: boolean }> {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { notificationMuted: true }
+    });
+    return { muted: user?.notificationMuted ?? false };
+  }
+
+  async updateNotificationPreferences(userId: string, muted: boolean): Promise<{ muted: boolean }> {
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: { notificationMuted: muted },
+      select: { notificationMuted: true }
+    });
+    return { muted: user.notificationMuted };
   }
 
   // Log methods
@@ -1098,41 +1138,15 @@ export class PrismaStorage implements IStorage {
         targetRole: data.targetRole || "all",
         targetClassId: data.targetClassId || null
       },
-      include: { creator: { select: { name: true } } }
+      include: { creator: { select: { name: true, role: true } } }
     });
-
-    // Create notifications for target users
-    try {
-      const where: Prisma.UserWhereInput = {};
-      if (data.targetRole !== 'all') {
-        where.role = data.targetRole;
-      }
-      if (data.targetClassId) {
-        where.classId = data.targetClassId;
-      }
-
-      const users = await prisma.user.findMany({ where, select: { id: true } });
-      
-      if (users.length > 0) {
-        await prisma.notification.createMany({
-          data: users.map(u => ({
-            userId: u.id,
-            title: data.title,
-            message: data.content,
-            type: "announcement"
-          }))
-        });
-      }
-    } catch (error) {
-      console.error("Failed to create notifications for announcement:", error);
-    }
 
     return announcement;
   }
 
   async getAllAnnouncements(): Promise<any[]> {
     return await prisma.announcement.findMany({
-      include: { creator: { select: { name: true } } },
+      include: { creator: { select: { name: true, role: true } } },
       orderBy: { createdAt: 'desc' }
     });
   }

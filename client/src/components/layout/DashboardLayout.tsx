@@ -19,9 +19,13 @@ import {
   Megaphone,
   ChevronDown,
   CheckCircle2,
-  XCircle,
   Clock,
-  ExternalLink
+  ExternalLink,
+  Menu,
+  X,
+  Trash2,
+  Volume2,
+  VolumeX
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,33 +47,72 @@ import { notificationApi } from "@/lib/api";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
+import { removeNotification, type NotificationPage } from "@/lib/notification-cache";
+import { toast } from "sonner";
 
 interface DashboardLayoutProps {
   children: ReactNode;
+  hideNavigation?: boolean;
 }
 
-export function DashboardLayout({ children }: DashboardLayoutProps) {
+export function DashboardLayout({ children, hideNavigation = false }: DashboardLayoutProps) {
   const [location] = useLocation();
+  const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
   const { user, role, logout } = useAuth();
   const queryClient = useQueryClient();
 
   const { data: notificationsData } = useQuery({
-    queryKey: ['/api/notifications'],
-    queryFn: () => notificationApi.getUserNotifications(),
-    refetchInterval: 60000,
+    queryKey: ["notifications", "nav"],
+    queryFn: () => notificationApi.getUserNotifications(1, 5),
+    refetchInterval: 10000,
+    refetchOnWindowFocus: true,
+    enabled: !!user
+  });
+
+  const { data: notificationPreferences } = useQuery({
+    queryKey: ["notifications", "preferences"],
+    queryFn: () => notificationApi.getPreferences(),
     enabled: !!user
   });
 
   const markAllReadMutation = useMutation({
     mutationFn: () => notificationApi.markAllAsRead(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+
+  const deleteNotificationMutation = useMutation({
+    mutationFn: (id: string) => notificationApi.deleteNotification(id),
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: ["notifications"] });
+      const previous = queryClient.getQueriesData({ queryKey: ["notifications"] });
+      queryClient.setQueriesData<NotificationPage>(
+        { queryKey: ["notifications"] },
+        current => removeNotification(current, id)
+      );
+      return { previous };
+    },
+    onError: (_error, _id, context) => {
+      context?.previous.forEach(([key, data]) => queryClient.setQueryData(key, data));
+      toast.error("Bildirim silinemedi. Lütfen tekrar deneyin.");
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.refetchQueries({ queryKey: ["notifications"], type: "active" });
+    }
+  });
+
+  const muteNotificationsMutation = useMutation({
+    mutationFn: (muted: boolean) => notificationApi.updatePreferences(muted),
+    onSuccess: (preferences) => {
+      queryClient.setQueryData(["notifications", "preferences"], preferences);
     }
   });
 
   const notifications = notificationsData?.notifications || [];
-  const unreadCount = notifications.filter((n: any) => !n.isRead).length;
+  const unreadCount = notificationsData?.pagination?.unread ?? notifications.filter((n: any) => !n.isRead).length;
+  const notificationsMuted = notificationPreferences?.muted ?? false;
 
   const menuItems = [
     { label: "Dashboard", href: role === 'student' ? "/student/dashboard" : "/", icon: LayoutDashboard },
@@ -101,17 +144,34 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   ];
 
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-950 overflow-hidden font-sans">
+    <div data-dashboard-shell className="flex h-screen overflow-hidden bg-background font-sans">
       {/* Sidebar */}
-      <aside className="w-64 border-r bg-white dark:bg-slate-900 flex flex-col shadow-sm print:hidden">
+      {!hideNavigation && mobileNavigationOpen && (
+        <button
+          type="button"
+          aria-label="Menüyü kapat"
+          className="fixed inset-0 z-40 bg-slate-950/45 backdrop-blur-sm lg:hidden print:hidden"
+          onClick={() => setMobileNavigationOpen(false)}
+        />
+      )}
+      {!hideNavigation && (
+      <aside className={cn(
+        "fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-border/70 bg-card shadow-xl transition-transform duration-200 lg:static lg:w-64 lg:translate-x-0 lg:shadow-sm print:hidden",
+        mobileNavigationOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
         <div className="p-6">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
             <div className="h-10 w-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
               <FileText className="h-6 w-6 text-white" />
             </div>
-            <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter">
+            <span className="text-2xl font-black text-foreground tracking-tighter">
               Quiz<span className="text-indigo-600">Master</span>
             </span>
+            </div>
+            <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileNavigationOpen(false)}>
+              <X className="h-5 w-5" />
+            </Button>
           </div>
         </div>
 
@@ -120,11 +180,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => setMobileNavigationOpen(false)}
               className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all group",
+                "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-colors group",
                 location === item.href
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
-                  : "text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-indigo-600"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
               <item.icon className={cn(
@@ -136,15 +197,27 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           ))}
         </nav>
       </aside>
+      )}
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
-        <header className="h-16 border-b bg-white dark:bg-slate-900 flex items-center justify-end px-8 gap-3 print:hidden">
+      <main data-dashboard-main className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        {!hideNavigation && (
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-border/70 bg-card/95 px-4 backdrop-blur sm:px-6 lg:justify-end lg:px-8 print:hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
+            aria-label="Menüyü aç"
+            onClick={() => setMobileNavigationOpen(true)}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+          <div className="flex items-center gap-2 sm:gap-3">
           {/* Notification Bell with Popover */}
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-slate-50 dark:hover:bg-slate-800">
-                <Bell className="h-5 w-5" />
+              <Button variant="ghost" size="icon" aria-label="Bildirimleri aç" className="relative rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-slate-50 dark:hover:bg-slate-800">
+                {notificationsMuted ? <VolumeX className="h-5 w-5" /> : <Bell className="h-5 w-5" />}
                 {unreadCount > 0 && (
                   <span className="absolute top-2 right-2 h-4 w-4 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-sm">
                     {unreadCount}
@@ -155,7 +228,19 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <PopoverContent align="end" className="w-80 sm:w-96 p-0 rounded-2xl shadow-2xl border-border/60 overflow-hidden bg-white dark:bg-slate-900">
               <div className="p-4 border-b bg-muted/20 dark:bg-muted/5 flex items-center justify-between">
                 <h3 className="font-black text-sm uppercase tracking-wider">Bildirimler</h3>
-                {unreadCount > 0 && (
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 rounded-lg"
+                    aria-label={notificationsMuted ? "Bildirimlerin sesini aç" : "Bildirimleri sessize al"}
+                    title={notificationsMuted ? "Bildirimlerin sesini aç" : "Bildirimleri sessize al"}
+                    disabled={muteNotificationsMutation.isPending}
+                    onClick={() => muteNotificationsMutation.mutate(!notificationsMuted)}
+                  >
+                    {notificationsMuted ? <VolumeX className="h-4 w-4 text-muted-foreground" /> : <Volume2 className="h-4 w-4" />}
+                  </Button>
+                  {unreadCount > 0 && (
                   <Button 
                     variant="ghost" 
                     size="sm" 
@@ -164,7 +249,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   >
                     Hepsini Oku
                   </Button>
-                )}
+                  )}
+                </div>
               </div>
               <ScrollArea className="h-[400px]">
                 {notifications.length > 0 ? (
@@ -185,9 +271,21 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                            <Bell className="h-4 w-4" />}
                         </div>
                         <div className="flex-1 space-y-1">
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-start justify-between gap-2">
                             <p className="text-xs font-black leading-none">{n.title}</p>
-                            {!n.isRead && <div className="h-1.5 w-1.5 rounded-full bg-indigo-500" />}
+                            <div className="flex shrink-0 items-center gap-1">
+                              {!n.isRead && <div className="h-1.5 w-1.5 rounded-full bg-indigo-500" />}
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                                aria-label="Bildirimi sil"
+                                disabled={deleteNotificationMutation.isPending}
+                                onClick={() => deleteNotificationMutation.mutate(n.id)}
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </Button>
+                            </div>
                           </div>
                           <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">{n.message || n.content}</p>
                           <div className="flex items-center justify-between pt-1">
@@ -212,8 +310,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 )}
               </ScrollArea>
               <div className="p-3 border-t bg-slate-50 dark:bg-slate-800/20 text-center">
-                <Link href="/announcements" className="text-[11px] font-black text-indigo-600 dark:text-indigo-400 hover:underline uppercase tracking-tighter">
-                  Tüm Duyuruları Gör
+                <Link href="/settings?tab=notifications" className="text-[11px] font-black text-indigo-600 dark:text-indigo-400 hover:underline uppercase tracking-tighter">
+                  Tüm Bildirimleri Gör
                 </Link>
               </div>
             </PopoverContent>
@@ -260,10 +358,21 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          </div>
         </header>
+        )}
 
-        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-          {children}
+        <div data-print-content className="flex-1 overflow-y-auto px-4 py-5 custom-scrollbar sm:px-6 sm:py-7 lg:px-8">
+          <div className="print-masthead hidden">
+            <div>
+              <strong>QuizMaster</strong>
+              <span> Yönetim ve Sınav Sistemi</span>
+            </div>
+            <div>{user?.name} · {role === 'admin' ? 'Yönetici' : role === 'teacher' ? 'Öğretmen' : 'Öğrenci'}</div>
+          </div>
+          <div className="dashboard-page mx-auto w-full max-w-[1600px]">
+            {children}
+          </div>
         </div>
       </main>
     </div>

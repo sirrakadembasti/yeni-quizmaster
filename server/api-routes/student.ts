@@ -5,6 +5,7 @@ import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { getIO } from "../socket";
+import { shouldNotifyQuizOwnerOfSubmission } from "../utils/notification-policy";
 
 const router: Router = Router();
 
@@ -338,16 +339,21 @@ router.post("/quiz/:resultId/submit", quizActionLimiter, requireAuth, async (req
       timeTaken: Math.floor((Date.now() - new Date(result.startedAt!).getTime()) / 1000)
     });
 
-    // Notify the teacher who created the quiz
-    if (quiz) {
-      const io = getIO();
-      const notification = await storage.createNotification({
-        userId: quiz.createdBy,
-        title: "Sınav Teslim Edildi",
-        message: `${req.user!.name}, "${quiz.title}" adlı sınavı tamamladı. Skor: ${score}`,
-        type: "success"
-      });
-      io.to(`user_${quiz.createdBy}`).emit("notification", notification);
+    // Yalnızca sınavın sahibi öğretmeni bilgilendir. Admin, öğrenci teslimlerinden bildirim almaz.
+    try {
+      const quizCreator = await storage.getUser(quiz.createdBy);
+      if (quizCreator && shouldNotifyQuizOwnerOfSubmission(quizCreator.role)) {
+        const io = getIO();
+        const notification = await storage.createNotification({
+          userId: quizCreator.id,
+          title: "Sınav Teslim Edildi",
+          message: `${req.user!.name}, "${quiz.title}" adlı sınavı tamamladı. Skor: ${score}`,
+          type: "success"
+        });
+        io.to(`user_${quizCreator.id}`).emit("notification", notification);
+      }
+    } catch (notificationError) {
+      console.error("Quiz submission notification error:", notificationError);
     }
 
     res.json({

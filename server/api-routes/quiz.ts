@@ -6,8 +6,35 @@ import { logger } from "../index";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { canAssignClasses } from "../utils/class-authorization";
+import { shouldNotifyAdminAboutQuiz } from "../utils/notification-policy";
 
 const router: Router = Router();
+
+async function notifyAdminsAboutTeacherQuiz(
+  actor: NonNullable<AuthRequest["user"]>,
+  quiz: { title: string },
+  event: "created" | "published"
+) {
+  if (actor.role !== "teacher") return;
+  try {
+    const admins = (await storage.getAllUsers()).filter(user => shouldNotifyAdminAboutQuiz(actor.role, user.role));
+    const io = getIO();
+    const title = event === "created" ? "Öğretmen Sınav Oluşturdu" : "Öğretmen Sınav Yayınladı";
+    const message = `${actor.name}, "${quiz.title}" adlı sınavı ${event === "created" ? "oluşturdu" : "yayınladı"}.`;
+
+    await Promise.all(admins.map(async admin => {
+      const notification = await storage.createNotification({
+        userId: admin.id,
+        title,
+        message,
+        type: "quiz"
+      });
+      io.to(`user_${admin.id}`).emit("notification", notification);
+    }));
+  } catch (notificationError) {
+    logger.error({ err: notificationError }, "[Quiz] Admin bildirimleri gönderilemedi.");
+  }
+}
 
 // ==================== SCHEMAS ====================
 
@@ -121,6 +148,7 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
     });
 
     await storage.createLog(req.user!.id, "CREATE_QUIZ", `Created quiz: ${quiz.title}`);
+    await notifyAdminsAboutTeacherQuiz(req.user!, quiz, "created");
     res.status(201).json({ quiz });
   } catch (error) {
     console.error("Create quiz error:", error);
@@ -161,6 +189,10 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
     });
 
     await storage.createLog(req.user!.id, "UPDATE_QUIZ", `Updated quiz: ${quiz?.title}`);
+
+    if (quiz && existingQuiz.status !== "published" && quiz.status === "published") {
+      await notifyAdminsAboutTeacherQuiz(req.user!, quiz, "published");
+    }
 
     if (existingQuiz.status !== "published" && quiz?.status === "published" && (quiz as any).assignedClasses && (quiz as any).assignedClasses.length > 0) {
       const io = getIO();

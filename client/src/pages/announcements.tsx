@@ -1,5 +1,5 @@
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,11 +9,7 @@ import {
   Plus, 
   Trash2, 
   Calendar, 
-  User, 
   Bell,
-  CheckCircle2,
-  AlertTriangle,
-  Info,
   ChevronRight,
   Printer
 } from "lucide-react";
@@ -41,7 +37,7 @@ import { useToast } from "@/hooks/use-toast";
 import { announcementApi, classApi } from "@/lib/api";
 
 export default function AnnouncementsPage() {
-  const { user, role } = useAuth();
+  const { role } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -57,6 +53,13 @@ export default function AnnouncementsPage() {
   const [content, setContent] = useState("");
   const [targetRole, setTargetRole] = useState("all");
   const [targetClassId, setTargetClassId] = useState("none");
+  const isTeacher = role === "teacher";
+
+  const openCreateDialog = () => {
+    setTargetRole(isTeacher ? "student" : "all");
+    setTargetClassId("none");
+    setIsCreateOpen(true);
+  };
 
   const { data: announcementsData, isLoading } = useQuery({
     queryKey: ['announcements'],
@@ -76,6 +79,8 @@ export default function AnnouncementsPage() {
       setIsCreateOpen(false);
       setTitle("");
       setContent("");
+      setTargetRole(isTeacher ? "student" : "all");
+      setTargetClassId("none");
       toast({ title: "Başarılı", description: "Duyuru yayınlandı." });
     },
     onError: (error: any) => {
@@ -95,57 +100,60 @@ export default function AnnouncementsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-indigo-600 p-8 rounded-[2.5rem] text-white shadow-xl shadow-indigo-100">
-          <div className="flex items-center gap-6">
-            <div className="h-16 w-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md">
-              <Megaphone className="h-10 w-10" />
+      <div className="space-y-6">
+        <section className="relative overflow-hidden rounded-2xl border border-border/70 bg-card p-6 shadow-sm sm:p-8">
+          <div className="relative z-10 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/15">
+              <Megaphone className="h-6 w-6" />
             </div>
             <div>
-              <h1 className="text-4xl font-black tracking-tighter italic">Duyuru Merkezi</h1>
-              <p className="text-indigo-100 font-bold mt-1">Önemli bilgilendirmeler ve anonslar</p>
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">Duyuru Merkezi</h1>
+              <p className="mt-1 text-sm text-muted-foreground">Önemli bilgilendirmeler ve güncel duyurular</p>
             </div>
           </div>
-          <div className="flex gap-2 print:hidden">
+          <div className="flex flex-col gap-2 sm:flex-row print:hidden">
             <Button 
               variant="outline" 
               onClick={() => window.print()}
-              className="rounded-2xl font-black gap-2 border-2 bg-white/10 hover:bg-white/20 text-white border-white/20 h-14 px-6"
+              className="h-10 gap-2 rounded-xl px-4 font-semibold"
             >
-              <Printer className="h-5 w-5" /> Yazdır
+              <Printer className="h-4 w-4" /> Yazdır
             </Button>
             {(role === 'admin' || role === 'teacher') && (
               <Button 
-                onClick={() => setIsCreateOpen(true)}
-                className="bg-white text-indigo-600 hover:bg-indigo-50 rounded-2xl h-14 px-8 font-black text-lg gap-2 shadow-lg"
+                onClick={openCreateDialog}
+                className="h-10 gap-2 rounded-xl px-5 font-semibold shadow-sm"
               >
-                <Plus className="h-6 w-6" /> Yeni Duyuru Yayınla
+                <Plus className="h-4 w-4" /> Yeni Duyuru
               </Button>
             )}
           </div>
-        </div>
+          </div>
+          <div className="pointer-events-none absolute -right-14 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-3xl" />
+        </section>
 
-        <div className="grid gap-6">
+        <div className="grid gap-4">
           {isLoading ? (
             <div className="text-center py-20 font-black animate-pulse text-muted-foreground">DUYURULAR YÜKLENİYOR...</div>
           ) : announcements.length === 0 ? (
-            <Card className="rounded-[2rem] border-2 border-dashed py-20 text-center bg-muted/20">
+            <Card className="border-dashed bg-card py-16 text-center">
               <Bell className="h-12 w-12 mx-auto text-muted-foreground opacity-20 mb-4" />
-              <p className="text-xl font-black text-muted-foreground italic">Henüz bir duyuru yayınlanmamış.</p>
+              <p className="text-lg font-semibold text-muted-foreground">Henüz bir duyuru yayınlanmamış.</p>
             </Card>
           ) : (
             announcements.map((ann: any) => (
-              <Card key={ann.id} className="rounded-3xl border-2 border-border hover:border-indigo-500 transition-all overflow-hidden group">
-                <div className="p-8">
-                  <div className="flex justify-between items-start mb-6">
+              <Card key={ann.id} className="group overflow-hidden transition-colors hover:border-primary/40">
+                <div className="p-5 sm:p-6">
+                  <div className="mb-5 flex items-start justify-between gap-4">
                     <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center font-black shadow-lg">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 font-bold text-primary ring-1 ring-primary/15">
                         {ann.creator?.name?.[0].toUpperCase()}
                       </div>
                       <div>
-                        <h3 className="text-2xl font-black tracking-tight group-hover:text-indigo-600 transition-colors">{ann.title}</h3>
-                        <div className="flex items-center gap-3 mt-1">
-                          <Badge variant="secondary" className="text-[10px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-700">
+                        <h3 className="text-xl font-bold tracking-tight text-foreground transition-colors group-hover:text-primary">{ann.title}</h3>
+                        <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                          <Badge variant="secondary" className="bg-primary/10 text-[10px] font-bold uppercase tracking-wider text-primary dark:bg-primary/15">
                             {ann.creator?.role === 'admin' ? 'SİSTEM YÖNETİMİ' : 'EĞİTMEN'}
                           </Badge>
                           <span className="text-xs font-bold text-muted-foreground flex items-center gap-1">
@@ -159,31 +167,32 @@ export default function AnnouncementsPage() {
                         variant="ghost" 
                         size="icon" 
                         onClick={() => deleteMutation.mutate(ann.id)}
-                        className="text-muted-foreground hover:text-red-600 rounded-xl"
+                        className="rounded-xl text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                        aria-label="Duyuruyu sil"
                       >
                         <Trash2 className="h-5 w-5" />
                       </Button>
                     )}
                   </div>
                   
-                  <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 italic font-medium text-slate-700 leading-relaxed">
+                  <div className="rounded-xl border border-border/60 bg-muted/35 p-5 text-sm font-medium leading-7 text-foreground">
                     {ann.content}
                   </div>
 
-                  <div className="mt-6 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                       <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">KİMLERE:</span>
-                       <Badge variant="outline" className="text-[10px] font-black rounded-lg uppercase">
+                  <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                       <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Hedef:</span>
+                       <Badge variant="outline" className="rounded-lg text-[10px] font-bold uppercase">
                          {ann.targetRole === 'all' ? 'HERKESE' : ann.targetRole === 'student' ? 'ÖĞRENCİLERE' : 'ÖĞRETMENLERE'}
                        </Badge>
                        {ann.targetClassId && (
-                         <Badge className="text-[10px] font-black rounded-lg bg-emerald-50 text-emerald-700 border-emerald-100">
+                         <Badge variant="outline" className="rounded-lg border-emerald-500/25 bg-emerald-500/10 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
                            SINIF BAZLI
                          </Badge>
                        )}
                     </div>
-                    <div className="flex items-center gap-2 text-xs font-bold text-indigo-600">
-                      Okundu olarak işaretle <ChevronRight className="h-4 w-4" />
+                    <div className="flex items-center gap-1 text-xs font-semibold text-muted-foreground">
+                      Duyuru <ChevronRight className="h-3.5 w-3.5" />
                     </div>
                   </div>
                 </div>
@@ -195,13 +204,17 @@ export default function AnnouncementsPage() {
 
       {/* CREATE DIALOG */}
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-        <DialogContent className="rounded-[2.5rem] sm:max-w-lg">
+        <DialogContent className="rounded-2xl border-border/70 sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-black tracking-tight italic flex items-center gap-3">
+            <DialogTitle className="flex items-center gap-3 text-2xl font-bold tracking-tight">
               <Megaphone className="h-6 w-6 text-indigo-600" />
               Yeni Duyuru Oluştur
             </DialogTitle>
-            <DialogDescription className="font-bold">Kullanıcıları bilgilendirmek için bir not hazırlayın.</DialogDescription>
+            <DialogDescription>
+              {isTeacher
+                ? "Yalnızca dersine girdiğiniz sınıflardaki öğrencilere duyuru gönderebilirsiniz."
+                : "Kullanıcıları bilgilendirmek için bir duyuru hazırlayın."}
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-6 py-6">
             <div className="space-y-2">
@@ -226,13 +239,13 @@ export default function AnnouncementsPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="font-black text-xs uppercase tracking-widest text-muted-foreground pl-1">Hedef Kitle</Label>
-                <Select value={targetRole} onValueChange={setTargetRole}>
+                <Select value={isTeacher ? "student" : targetRole} onValueChange={setTargetRole} disabled={isTeacher}>
                   <SelectTrigger className="rounded-2xl border-2 h-12 font-bold">
                     <SelectValue placeholder="Seçiniz" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
-                    <SelectItem value="all">Herkes</SelectItem>
-                    <SelectItem value="teacher">Öğretmenler</SelectItem>
+                    {!isTeacher && <SelectItem value="all">Herkes</SelectItem>}
+                    {!isTeacher && <SelectItem value="teacher">Öğretmenler</SelectItem>}
                     <SelectItem value="student">Öğrenciler</SelectItem>
                   </SelectContent>
                 </Select>
@@ -244,7 +257,9 @@ export default function AnnouncementsPage() {
                     <SelectValue placeholder="Seçiniz" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
-                    <SelectItem value="none">Tüm Sınıflar</SelectItem>
+                    {isTeacher
+                      ? <SelectItem value="none" disabled>Sınıf seçiniz</SelectItem>
+                      : <SelectItem value="none">Tüm Sınıflar</SelectItem>}
                     {classesData?.classes?.map((cls: any) => (
                       <SelectItem key={cls.id} value={cls.id}>{cls.name}</SelectItem>
                     ))}
@@ -255,16 +270,16 @@ export default function AnnouncementsPage() {
           </div>
           <DialogFooter>
             <Button 
-              disabled={!title || !content}
+              disabled={!title || !content || createMutation.isPending || (isTeacher && targetClassId === "none")}
               onClick={() => createMutation.mutate({ 
                 title, 
                 content, 
-                targetRole, 
+                targetRole: isTeacher ? "student" : targetRole,
                 targetClassId: targetClassId === "none" ? null : targetClassId 
               })}
-              className="w-full rounded-2xl h-14 font-black text-lg bg-indigo-600 hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all active:scale-95"
+                className="h-11 w-full rounded-xl font-semibold shadow-sm"
             >
-              DUYURUYU YAYINLA
+              Duyuruyu Yayınla
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -2,6 +2,12 @@ import { Router, type Response } from "express";
 import { storage } from "../storage";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { canAssignClasses } from "../utils/class-authorization";
+import { getIO } from "../socket";
+import { logger } from "../index";
+import {
+  isValidTeacherAnnouncementTarget,
+  matchesAnnouncementRecipient
+} from "../utils/notification-policy";
 
 const router: Router = Router();
 
@@ -19,10 +25,9 @@ router.get("/", requireAuth, async (req: AuthRequest, res: Response) => {
         return a.targetRole === 'all' || a.targetRole === 'student';
       });
     } else if (req.user!.role === 'teacher') {
-      filtered = all.filter(a => 
-        a.targetRole === 'all' || 
-        a.targetRole === 'teacher' ||
-        a.createdBy === req.user!.id
+      filtered = all.filter(a =>
+        a.createdBy === req.user!.id ||
+        (a.creator?.role === 'admin' && (a.targetRole === 'all' || a.targetRole === 'teacher'))
       );
     }
 
@@ -37,8 +42,11 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
     const { title, content, targetRole, targetClassId } = req.body;
     if (!title || !content) return res.status(400).json({ message: "Başlık ve içerik zorunludur." });
 
-    if (req.user!.role === "teacher" && !targetClassId) {
-      return res.status(403).json({ message: "Öğretmen duyuruları sorumlu olunan bir sınıfa hedeflenmelidir." });
+    if (req.user!.role === "teacher" &&
+        !isValidTeacherAnnouncementTarget(targetRole, targetClassId)) {
+      return res.status(403).json({
+        message: "Öğretmenler yalnızca dersine girdikleri bir sınıftaki öğrencilere duyuru gönderebilir."
+      });
     }
 
     if (targetClassId &&
@@ -53,6 +61,31 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
       targetRole,
       targetClassId
     });
+
+    try {
+      const allUsers = await storage.getAllUsers();
+      const recipients = allUsers.filter(user => matchesAnnouncementRecipient({
+        recipientId: user.id,
+        recipientRole: user.role,
+        recipientClassId: user.classId,
+        creatorId: req.user!.id,
+        targetRole,
+        targetClassId,
+      }));
+
+      const io = getIO();
+      await Promise.all(recipients.map(async user => {
+        const notification = await storage.createNotification({
+          userId: user.id,
+          title,
+          message: content,
+          type: "announcement"
+        });
+        io.to(`user_${user.id}`).emit("notification", notification);
+      }));
+    } catch (notificationError) {
+      logger.error({ err: notificationError }, "[Announcement] Anlık bildirimler gönderilemedi.");
+    }
 
     res.status(201).json(announcement);
   } catch (error) {

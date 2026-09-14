@@ -40,7 +40,8 @@ import {
   GraduationCap, 
   BarChart2,
   AlertCircle,
-  Printer
+  Printer,
+  Users
 } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import { quizApi, resultApi, classApi, categoryApi, userApi } from "@/lib/api";

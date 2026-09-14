@@ -26,12 +26,18 @@ export function setupSocket(httpServer: HTTPServer, sessionMiddleware: RequestHa
   io.engine.use(sessionMiddleware);
 
   io.on("connection", (socket) => {
+    const session = (socket.request as any).session;
+    const authenticatedUserId: string | undefined = session?.userId;
+
+    // Oturumu doğrulanmış kullanıcıyı bağlantı kurulur kurulmaz odasına al.
+    // Böylece istemcinin joinUserRoom olayının ağda gecikmesi/kaçması bildirimleri geciktirmez.
+    if (authenticatedUserId) {
+      socket.join(`user_${authenticatedUserId}`);
+    }
+
     // Kullanıcı kendi bildirim odasına katılmak istediğinde session doğrulaması yap.
     // session.userId ile istemciden gelen userId eşleşmiyorsa bağlantıyı kes.
     socket.on("joinUserRoom", (userId: string) => {
-      const session = (socket.request as any).session;
-      const authenticatedUserId: string | undefined = session?.userId;
-
       if (!authenticatedUserId || authenticatedUserId !== userId) {
         // Kimlik doğrulama başarısız: yetkisiz oda katılımını reddet
         socket.disconnect(true);

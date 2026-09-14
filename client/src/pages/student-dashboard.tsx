@@ -119,7 +119,7 @@ export default function StudentDashboard() {
               <Button
                 size="lg"
                 onClick={() => setLocation('/student/quizzes')}
-                className="gap-2 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all text-base px-8 h-14 rounded-xl"
+                className="gap-2 shadow-sm hover:shadow-md transition-all px-6 h-11 rounded-xl"
               >
                 <Play className="h-5 w-5 fill-current" /> Sınavlara Git
               </Button>
@@ -233,7 +233,7 @@ export default function StudentDashboard() {
                       <CardTitle className="text-lg group-hover:text-primary transition-colors line-clamp-1">{quiz.title}</CardTitle>
                       <div className="flex items-center gap-4 text-xs text-muted-foreground font-medium mt-3">
                         {quiz.timeLimit && (
-                          <span className="flex items-center gap-1.5 bg-muted/50 px-2 py-1 rounded-md"><Clock className="h-3.5 w-3.5" /> {Math.floor(quiz.timeLimit / 60)} dk</span>
+                          <span className="flex items-center gap-1.5 bg-muted/50 px-2 py-1 rounded-md"><Clock className="h-3.5 w-3.5" /> {quiz.timeLimit} dk</span>
                         )}
                         <span className="flex items-center gap-1.5 bg-muted/50 px-2 py-1 rounded-md"><BookOpen className="h-3.5 w-3.5" /> {quiz.questionCount || 0} Soru</span>
                       </div>

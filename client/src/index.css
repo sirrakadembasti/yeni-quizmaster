@@ -74,13 +74,11 @@
 }
 
 :root {
-  /* Slate 50 background */
-  --background: 210 40% 98%;
+  --background: 220 28% 97%;
   /* Slate 900 foreground */
   --foreground: 222 47% 11%;
 
-  /* Cream card */
-  --card: 45 40% 98%;
+  --card: 0 0% 100%;
   --card-foreground: 222 47% 11%;
 
   --popover: 0 0% 100%;
@@ -105,9 +103,8 @@
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 210 40% 98%;
 
-  /* Slate 200 Border */
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
+  --border: 216 25% 88%;
+  --input: 216 25% 88%;
   --ring: 249 72% 60%;
 
   --radius: 0.75rem;
@@ -129,32 +126,32 @@
 }
 
 .dark {
-  --background: 215 20% 18%; /* Daha hafif koyuluk (slate-800 benzeri) */
+  --background: 222 32% 10%;
   --foreground: 210 40% 98%;
 
-  --card: 217 24% 22%; /* Kartlar arka plandan biraz daha açık */
+  --card: 221 28% 14%;
   --card-foreground: 210 40% 98%;
 
-  --popover: 217 24% 22%;
+  --popover: 221 28% 14%;
   --popover-foreground: 210 40% 98%;
 
   --primary: 249 72% 70%; /* Gece modunda primary rengini biraz daha belirgin yap */
   --primary-foreground: 222.2 47.4% 11.2%;
 
-  --secondary: 217 24% 28%;
+  --secondary: 217 23% 20%;
   --secondary-foreground: 210 40% 98%;
 
-  --muted: 217 24% 28%;
-  --muted-foreground: 215 20.2% 75%;
+  --muted: 217 23% 19%;
+  --muted-foreground: 215 18% 72%;
 
-  --accent: 217 24% 28%;
+  --accent: 217 23% 20%;
   --accent-foreground: 210 40% 98%;
 
   --destructive: 0 62.8% 50.6%;
   --destructive-foreground: 210 40% 98%;
 
-  --border: 215 20% 15%; /* Daha koyu border */
-  --input: 215 20% 15%;
+  --border: 216 20% 25%;
+  --input: 216 20% 25%;
   --ring: 249 72% 70%;
 
   --chart-1: 220 70% 50%;
@@ -177,12 +174,6 @@
   * {
     @apply border-border;
   }
-  .dark {
-    --tw-shadow: 0 0 #0000 !important;
-    --tw-shadow-colored: 0 0 #0000 !important;
-    box-shadow: none !important;
-  }
-  
   /* Force global dark mode overrides for utility classes */
   .dark .bg-white {
     background-color: hsl(var(--card)) !important;
@@ -200,8 +191,7 @@
     border-color: hsl(var(--border)) !important;
   }
   .dark .shadow-sm, .dark .shadow-md, .dark .shadow-lg, .dark .shadow-xl, .dark .shadow-2xl {
-    --tw-shadow: 0 0 #0000 !important;
-    box-shadow: none !important;
+    box-shadow: 0 12px 30px rgb(0 0 0 / 0.18) !important;
   }
 
   body {
@@ -212,9 +202,83 @@
   }
 }
 
+.dashboard-page [data-slot="card"] {
+  border-radius: 1rem;
+}
+
+.dashboard-page .rounded-\[2rem\],
+.dashboard-page .rounded-\[2\.5rem\],
+.dashboard-page .rounded-\[3rem\] {
+  border-radius: 1rem !important;
+}
+
+.dashboard-page .shadow-xl,
+.dashboard-page .shadow-2xl {
+  box-shadow: 0 10px 26px rgb(15 23 42 / 0.08) !important;
+}
+
+.dark .dashboard-page .shadow-xl,
+.dark .dashboard-page .shadow-2xl {
+  box-shadow: 0 12px 30px rgb(0 0 0 / 0.2) !important;
+}
+
+.dark .bg-indigo-50,
+.dark .bg-blue-50,
+.dark .bg-purple-50 {
+  background-color: rgb(99 102 241 / 0.14) !important;
+}
+
+.dark .bg-emerald-50 {
+  background-color: rgb(16 185 129 / 0.13) !important;
+}
+
+.dark .bg-amber-50,
+.dark .bg-orange-50 {
+  background-color: rgb(245 158 11 / 0.13) !important;
+}
+
+.dark .bg-red-50,
+.dark .bg-rose-50 {
+  background-color: rgb(244 63 94 / 0.13) !important;
+}
+
+.dark .text-indigo-700,
+.dark .text-blue-700,
+.dark .text-purple-700 {
+  color: rgb(165 180 252) !important;
+}
+
+.dark .text-emerald-700 {
+  color: rgb(110 231 183) !important;
+}
+
+.dark .text-amber-700,
+.dark .text-orange-700 {
+  color: rgb(253 230 138) !important;
+}
+
+.dark .text-red-700,
+.dark .text-rose-700 {
+  color: rgb(253 164 175) !important;
+}
+
+.dark .border-indigo-100,
+.dark .border-indigo-200,
+.dark .border-blue-100,
+.dark .border-blue-200,
+.dark .border-emerald-100,
+.dark .border-emerald-200,
+.dark .border-amber-100,
+.dark .border-amber-200,
+.dark .border-red-100,
+.dark .border-red-200,
+.dark .border-rose-100,
+.dark .border-rose-200 {
+  border-color: hsl(var(--border)) !important;
+}
+
 /* ===== PRINT STYLES ===== */
 @media print {
-  /* Hide all navigation and layout chrome */
   .print\:hidden,
   aside,
   header,
@@ -224,44 +288,156 @@
     display: none !important;
   }
 
-  /* Make the main content take up the full page */
+  html,
   body {
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
     background: white !important;
     color: black !important;
-    font-size: 12pt;
+    font-size: 9pt !important;
+    line-height: 1.35 !important;
   }
 
+  #root,
+  [data-dashboard-shell],
+  [data-dashboard-main],
   main {
     display: block !important;
+    width: 100% !important;
+    min-height: 0 !important;
     overflow: visible !important;
     height: auto !important;
+    background: white !important;
   }
 
-  /* Print target — the scrollable content area */
   .print-content,
   [data-print-content] {
     display: block !important;
     overflow: visible !important;
     height: auto !important;
     padding: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
   }
 
-  /* Remove card shadows and borders for a clean print */
-  .rounded-\[2rem\],
-  .rounded-\[2\.5rem\],
-  [class*="rounded-"] {
-    border-radius: 4px !important;
+  .dashboard-page {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+
+  .dashboard-page button,
+  .dashboard-page input,
+  .dashboard-page textarea,
+  .dashboard-page [role="tablist"],
+  .dashboard-page [role="combobox"] {
+    display: none !important;
+  }
+
+  .print-masthead {
+    display: flex !important;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 8mm;
+    padding-bottom: 3mm;
+    border-bottom: 1px solid #cbd5e1;
+    color: #334155 !important;
+    font-size: 8pt;
+  }
+
+  .print-masthead strong {
+    color: #111827 !important;
+    font-size: 14pt;
+  }
+
+  [data-slot="card"] {
+    break-inside: avoid;
+    border: 1px solid #d7dde5 !important;
+    border-radius: 6px !important;
     box-shadow: none !important;
+    background: white !important;
+    color: #111827 !important;
   }
 
-  /* Ensure tables print cleanly */
+  [data-slot="card-header"],
+  [data-slot="card-content"],
+  [data-slot="card-footer"] {
+    padding: 10px !important;
+  }
+
+  [data-slot="card-content"],
+  [data-slot="card-footer"] {
+    padding-top: 0 !important;
+  }
+
+  [data-slot="card-title"] {
+    font-size: 11pt !important;
+  }
+
+  .dashboard-page .grid {
+    gap: 8px !important;
+  }
+
+  [class~="sm:grid-cols-2"],
+  [class~="md:grid-cols-2"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  [class~="md:grid-cols-3"],
+  [class~="lg:grid-cols-3"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  [class~="md:grid-cols-4"],
+  [class~="lg:grid-cols-4"] {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  [class~="lg:grid-cols-5"] {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  }
+
+  .dashboard-page .space-y-8 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 12px !important;
+  }
+
+  .dashboard-page .space-y-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 9px !important;
+  }
+
+  .dashboard-page h1 {
+    font-size: 18pt !important;
+  }
+
+  .dashboard-page h2 {
+    font-size: 13pt !important;
+  }
+
+  .dashboard-page p,
+  .dashboard-page span {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .recharts-responsive-container {
+    max-height: 68mm !important;
+  }
+
+  svg,
+  img {
+    max-width: 100% !important;
+  }
+
   table {
+    width: 100% !important;
     border-collapse: collapse !important;
+    font-size: 8pt !important;
   }
 
   th, td {
-    border: 1px solid #ddd !important;
-    padding: 6px 10px !important;
+    border: 1px solid #d7dde5 !important;
+    padding: 4px 6px !important;
   }
 
   thead {
@@ -270,7 +446,6 @@
     print-color-adjust: exact;
   }
 
-  /* Page break helpers */
   .print-break-before {
     page-break-before: always;
   }
@@ -278,9 +453,8 @@
     page-break-inside: avoid;
   }
 
-  /* Page setup */
   @page {
-    margin: 1.5cm;
+    margin: 10mm;
     size: A4;
   }
 }

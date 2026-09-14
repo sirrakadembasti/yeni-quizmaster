@@ -152,7 +152,7 @@ export default function StudentResultsPage() {
 
           <div className="flex justify-between items-end">
             <div>
-              <h1 className="text-4xl font-heading font-black text-foreground tracking-tight">
+              <h1 className="text-3xl font-heading font-bold text-foreground tracking-tight">
                 {studentId ? 'Öğrenci Analizi' : 'Sınav Sonuçlarım'}
               </h1>
               <p className="text-muted-foreground mt-2 text-lg">
@@ -171,14 +171,14 @@ export default function StudentResultsPage() {
 
         {/* Student Mini Profile */}
         {student && (
-          <Card className="overflow-hidden border-primary/20 shadow-xl bg-gradient-to-br from-card to-primary/5">
+          <Card className="overflow-hidden border-primary/20 shadow-sm bg-gradient-to-br from-card to-primary/5">
             <div className="px-6 py-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="flex items-center gap-5">
                 <div className="h-20 w-20 rounded-2xl bg-primary/10 flex items-center justify-center border-2 border-primary/20 shadow-inner rotate-3 hover:rotate-0 transition-transform duration-300">
                   <UserIcon className="h-10 w-10 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black text-foreground">{student.name}</h2>
+                  <h2 className="text-2xl font-bold text-foreground">{student.name}</h2>
                   <div className="flex flex-wrap gap-x-6 gap-y-2 mt-2">
                     <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                       <Mail className="h-4 w-4 text-primary/60" />
@@ -324,7 +324,7 @@ export default function StudentResultsPage() {
               </h2>
             </div>
 
-            <Card className="border-none shadow-2xl overflow-hidden rounded-2xl">
+            <Card className="border-border/70 shadow-sm overflow-hidden rounded-2xl">
               <CardContent className="p-0">
                 <div className="overflow-x-auto">
                   <table className="w-full">

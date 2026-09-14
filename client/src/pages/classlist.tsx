@@ -50,13 +50,13 @@ export default function ClassesPage() {
       <div className="space-y-6">
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-heading font-black text-slate-900 dark:text-slate-50 tracking-tight flex items-center gap-3">
-              <div className="bg-indigo-600 p-2 rounded-xl text-white shadow-lg shadow-indigo-200">
+            <h1 className="flex items-center gap-3 text-3xl font-heading font-bold tracking-tight text-foreground">
+              <div className="rounded-xl bg-primary/10 p-2 text-primary ring-1 ring-primary/15">
                 <Layers className="h-6 w-6" />
               </div>
               {role === 'admin' ? 'Okul Sınıfları' : 'Sınıflarım'}
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 font-medium mt-1">
+            <p className="mt-1 text-muted-foreground">
               {role === 'admin' ? 'Tüm akademik sınıfları ve atamaları izleyin.' : 'Sorumlu olduğunuz ve branş verdiğiniz derslikler.'}
             </p>
           </div>
@@ -64,7 +64,7 @@ export default function ClassesPage() {
             <Button 
               variant="outline" 
               onClick={() => window.print()}
-              className="rounded-xl font-black gap-2 border-2 hover:bg-slate-50"
+              className="gap-2 rounded-xl font-semibold"
             >
               <Printer className="h-4 w-4" /> Yazdır
             </Button>
@@ -73,29 +73,29 @@ export default function ClassesPage() {
 
         <div className="flex flex-col gap-6">
           <div className="relative group max-w-sm">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-500 transition-colors" />
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
             <Input 
               placeholder="Sınıf ara..." 
-              className="pl-10 rounded-2xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none focus:border-indigo-300 focus:ring-4 focus:ring-indigo-50 transition-all"
+              className="rounded-xl border-input bg-card pl-10 shadow-sm transition-colors focus:border-primary/50"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
 
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none overflow-hidden">
+          <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
             {isClassesLoading ? (
               <div className="p-8 flex justify-center items-center">
                 <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
               </div>
             ) : (
               <Table>
-                <TableHeader className="bg-slate-50/50 dark:bg-slate-900/50 dark:bg-slate-800/50">
-                  <TableRow className="hover:bg-transparent border-slate-100 dark:border-slate-800">
-                    <TableHead className="font-black text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 uppercase tracking-widest py-4 pl-6">Sınıf Adı</TableHead>
-                    <TableHead className="font-black text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 uppercase tracking-widest py-4">Açıklama</TableHead>
-                    <TableHead className="font-black text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 uppercase tracking-widest py-4 text-center">Öğrenci Sayısı</TableHead>
-                    <TableHead className="font-black text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 uppercase tracking-widest py-4">Sorumlu Öğretmen</TableHead>
-                    <TableHead className="font-black text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 uppercase tracking-widest py-4 text-right pr-6">İşlemler</TableHead>
+                <TableHeader className="bg-muted/40">
+                  <TableRow className="border-border/60 hover:bg-transparent">
+                    <TableHead className="py-4 pl-6 text-xs font-bold uppercase tracking-wider text-muted-foreground">Sınıf Adı</TableHead>
+                    <TableHead className="py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Açıklama</TableHead>
+                    <TableHead className="py-4 text-center text-xs font-bold uppercase tracking-wider text-muted-foreground">Öğrenci Sayısı</TableHead>
+                    <TableHead className="py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Sorumlu Öğretmen</TableHead>
+                    <TableHead className="py-4 pr-6 text-right text-xs font-bold uppercase tracking-wider text-muted-foreground">İşlemler</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -109,27 +109,27 @@ export default function ClassesPage() {
                     filteredClasses.map((cls: any) => {
                       const classStudents = students.filter(s => s.classId === cls.id);
                       return (
-                        <TableRow key={cls.id} className="hover:bg-slate-50/80 transition-colors border-slate-100 dark:border-slate-800">
+                        <TableRow key={cls.id} className="border-border/60 transition-colors hover:bg-muted/30">
                           <TableCell className="pl-6 py-4">
                             <div className="flex items-center gap-3">
-                              <div className="bg-indigo-50 p-2 rounded-lg text-indigo-600">
+                              <div className="rounded-lg bg-primary/10 p-2 text-primary">
                                 <Layers className="h-4 w-4" />
                               </div>
-                              <span className="font-bold text-slate-900 dark:text-slate-50">{cls.name}</span>
+                              <span className="font-semibold text-foreground">{cls.name}</span>
                             </div>
                           </TableCell>
-                          <TableCell className="py-4 text-slate-500 dark:text-slate-400 dark:text-slate-500 text-sm">
+                          <TableCell className="py-4 text-sm text-muted-foreground">
                             {cls.description || '-'}
                           </TableCell>
                           <TableCell className="py-4 text-center">
-                            <Badge variant="outline" className="font-black text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700">
+                            <Badge variant="outline" className="border-border bg-background font-bold text-foreground">
                               <Users className="h-3 w-3 mr-1" />
                               {classStudents.length}
                             </Badge>
                           </TableCell>
                           <TableCell className="py-4">
                             {cls.classTeacher ? (
-                              <Badge className="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border-0 font-bold">
+                              <Badge variant="secondary" className="border-0 bg-primary/10 font-semibold text-primary">
                                 {cls.classTeacher.name}
                               </Badge>
                             ) : (

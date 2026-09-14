@@ -32,6 +32,7 @@ model User {
   // Aktivasyon: kayıt sonrası token oluştur → e-posta gönder → /verify-email?token=... endpoint'i ekle
   emailVerified          Boolean  @default(false)
   emailVerificationToken String?
+  notificationMuted      Boolean  @default(false)
   
   // Student relation: A student belongs to exactly one class
   classId       String?
