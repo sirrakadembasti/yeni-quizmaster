@@ -7,7 +7,16 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { quizApi, refreshCsrfToken } from '@/lib/api';
 import { useAuth } from '@/context/auth-context';
-import { Clock, ChevronLeft, ChevronRight, AlertCircle, CheckCircle2, Eye } from 'lucide-react';
+import { Clock, ChevronLeft, ChevronRight, AlertCircle, CheckCircle2, Eye, WifiOff, CloudUpload } from 'lucide-react';
+import {
+  getOfflineSession,
+  getOfflineRemainingSeconds,
+  markOfflineSubmit,
+  normalizeOfflineQuestions,
+  removeOfflineSession,
+  saveOfflineSession,
+  updateOfflineAnswers,
+} from '@/lib/offline-quiz';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,6 +53,8 @@ export default function StudentQuiz() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   // 'idle' | 'saving' | 'saved' | 'error'
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [offlineMode, setOfflineMode] = useState(false);
+  const [submissionQueued, setSubmissionQueued] = useState(false);
 
   // Start quiz on mount
   useEffect(() => {
@@ -65,21 +76,10 @@ export default function StudentQuiz() {
         }
 
         setQuiz(data.quiz);
+        setOfflineMode(false);
 
         // Normalize questions - ensure options is always an array
-        const normalizedQuestions = (data.questions || []).map((q: any) => {
-          let options = q.options;
-          if (typeof options === 'string') {
-            try {
-              options = JSON.parse(options);
-            } catch (e) {
-              options = [];
-            }
-          } else if (!Array.isArray(options)) {
-            options = [];
-          }
-          return { ...q, options };
-        });
+        const normalizedQuestions = normalizeOfflineQuestions(data.questions || []);
 
         setQuestions(normalizedQuestions);
         setResultId(data.resultId);
@@ -89,8 +89,35 @@ export default function StudentQuiz() {
         setTimeLeft(data.remainingSeconds !== undefined
           ? data.remainingSeconds
           : fallbackLimit);
+        if (!isPreviewMode && user) {
+          const capturedAt = new Date().toISOString();
+          saveOfflineSession({
+            version: 1,
+            userId: user.id,
+            quizId,
+            resultId: data.resultId,
+            quiz: data.quiz,
+            questions: normalizedQuestions,
+            answers: data.existingAnswers || {},
+            remainingSeconds: data.remainingSeconds ?? fallbackLimit,
+            timerCapturedAt: capturedAt,
+            cachedAt: capturedAt,
+            pendingSubmit: false,
+          });
+        }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Quiz başlatılamadı');
+        const cached = user ? getOfflineSession(user.id, quizId) : null;
+        if (!isPreviewMode && cached) {
+          setQuiz(cached.quiz);
+          setQuestions(cached.questions);
+          setResultId(cached.resultId);
+          setAnswers(cached.answers);
+          setTimeLeft(getOfflineRemainingSeconds(cached));
+          setOfflineMode(true);
+          setSubmissionQueued(cached.pendingSubmit);
+        } else {
+          setError(err instanceof Error ? err.message : 'Quiz başlatılamadı');
+        }
       } finally {
         setLoading(false);
       }
@@ -102,11 +129,11 @@ export default function StudentQuiz() {
       setError('Quiz ID bulunamadı');
       setLoading(false);
     }
-  }, [quizId, role]);
+  }, [quizId, role, user, isPreviewMode]);
 
   // Timer countdown
   useEffect(() => {
-    if (!resultId || submitted || timeLeft === null) return;
+    if (!resultId || submitted || submissionQueued || timeLeft === null) return;
 
     const timer = setInterval(() => {
       setTimeLeft(prev => {
@@ -120,25 +147,33 @@ export default function StudentQuiz() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [resultId, submitted, timeLeft]);
+  }, [resultId, submitted, submissionQueued, timeLeft]);
 
   // Auto-save answer when changed
   const handleAnswerChange = async (questionId: string, option: string) => {
+    if (submissionQueued) return;
     // Optimistic update: seçim anında UI'ya yansır
-    setAnswers(prev => ({ ...prev, [questionId]: option }));
+    const nextAnswers = { ...answers, [questionId]: option };
+    setAnswers(nextAnswers);
 
     // In preview mode, don't save answers to server
     if (isPreviewMode) return;
+    if (user) updateOfflineAnswers(user.id, quizId, nextAnswers);
+    if (!navigator.onLine) {
+      setOfflineMode(true);
+      setSaveStatus('saved');
+      return;
+    }
 
     setSaveStatus('saving');
     try {
       await quizApi.submitAnswer(resultId!, questionId, option);
+      setOfflineMode(false);
       setSaveStatus('saved');
       // 2 sn sonra göstergeyi gizle
       setTimeout(() => setSaveStatus('idle'), 2000);
     } catch (err) {
-      // Bağlantı kesilmesi veya oturum kapanması durumunda kullanıcıya görünür uyarı göster.
-      // Cevap yerel state'de tutulur; "Yeniden Dene" ile tekrar gönderilmeye çalışılır.
+      setOfflineMode(true);
       setSaveStatus('error');
     }
   };
@@ -151,6 +186,7 @@ export default function StudentQuiz() {
     setSaveStatus('saving');
     try {
       await quizApi.submitAnswer(resultId, currentQuestion.id, currentAnswer);
+      setOfflineMode(false);
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
     } catch {
@@ -166,7 +202,16 @@ export default function StudentQuiz() {
     }
 
     try {
-      const result = await quizApi.submitQuiz(resultId!);
+      if (!navigator.onLine) {
+        if (user) markOfflineSubmit(user.id, quizId, true);
+        setOfflineMode(true);
+        setSubmissionQueued(true);
+        setShowConfirmDialog(false);
+        return;
+      }
+
+      await quizApi.submitQuiz(resultId!, answers);
+      if (user) removeOfflineSession(user.id, quizId);
       setSubmitted(true);
       
       // Show result
@@ -174,9 +219,34 @@ export default function StudentQuiz() {
         setLocation(`/student/result/${resultId}`);
       }, 2000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Quiz gönderilemedi');
+      if (user) markOfflineSubmit(user.id, quizId, true);
+      setOfflineMode(true);
+      setSubmissionQueued(true);
+      setShowConfirmDialog(false);
     }
   };
+
+  useEffect(() => {
+    if (!submissionQueued || !resultId || !user || isPreviewMode) return;
+
+    const syncSubmission = async () => {
+      if (!navigator.onLine) return;
+      const cached = getOfflineSession(user.id, quizId);
+      try {
+        await quizApi.submitQuiz(resultId, cached?.answers || answers);
+        removeOfflineSession(user.id, quizId);
+        setSubmissionQueued(false);
+        setSubmitted(true);
+        setTimeout(() => setLocation(`/student/result/${resultId}`), 1000);
+      } catch {
+        setSubmissionQueued(true);
+      }
+    };
+
+    window.addEventListener('online', syncSubmission);
+    syncSubmission();
+    return () => window.removeEventListener('online', syncSubmission);
+  }, [submissionQueued, resultId, user, quizId, answers, isPreviewMode, setLocation]);
 
   if (loading) {
     return (
@@ -304,6 +374,14 @@ export default function StudentQuiz() {
   return (
     <DashboardLayout hideNavigation>
       <div className="max-w-4xl mx-auto space-y-6">
+        {(offlineMode || submissionQueued) && (
+          <div className="flex items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+            {submissionQueued ? <CloudUpload className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />}
+            {submissionQueued
+              ? "Teslim yerel olarak kaydedildi. İnternet gelince otomatik gönderilecek."
+              : "Çevrimdışı çalışıyorsunuz. Cevaplar bu cihazda saklanıyor."}
+          </div>
+        )}
         {/* Preview Banner for Teachers */}
         {isPreviewMode && (
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
@@ -349,7 +427,7 @@ export default function StudentQuiz() {
             <div className="flex items-center gap-2">
               <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0" />
               <p className="text-sm text-amber-800">
-                Cevap kaydedilemedi. İnternet bağlantınızı kontrol edin.
+                Cevap bu cihazda saklandı; sunucuya henüz aktarılamadı.
               </p>
             </div>
             <Button size="sm" variant="outline" onClick={retryLastSave} className="shrink-0 border-amber-400 text-amber-800 hover:bg-amber-100">
@@ -397,6 +475,7 @@ export default function StudentQuiz() {
                 {currentQuestion.options.map((option, idx) => (
                   <button
                     key={idx}
+                    disabled={submissionQueued}
                     onClick={() => handleAnswerChange(currentQuestion.id, option)}
                     className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
                       answers[currentQuestion.id] === option
@@ -444,6 +523,7 @@ export default function StudentQuiz() {
           {currentQuestionIndex === questions.length - 1 ? (
             <Button
               onClick={() => setShowConfirmDialog(true)}
+              disabled={submissionQueued}
               size="lg"
               className={isPreviewMode ? 'bg-amber-600 hover:bg-amber-700' : 'bg-emerald-600 hover:bg-emerald-700'}
             >
@@ -511,4 +591,3 @@ export default function StudentQuiz() {
     </DashboardLayout>
   );
 }
-

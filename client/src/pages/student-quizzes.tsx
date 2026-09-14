@@ -19,17 +19,32 @@ import {
   Search,
   CheckCircle2,
   AlertCircle,
+  Download,
+  WifiOff,
 } from "lucide-react";
 import { quizApi, resultApi } from "@/lib/api";
+import { useAuth } from "@/context/auth-context";
+import {
+  getOfflineQuizList,
+  getOfflineSession,
+  normalizeOfflineQuestions,
+  saveOfflineQuizList,
+  saveOfflineSession,
+} from "@/lib/offline-quiz";
 
 export default function StudentQuizzesPage() {
   const [, setLocation] = useLocation();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [quizzes, setQuizzes] = useState<any[]>([]);
   const [results, setResults] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [error, setError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [preparingId, setPreparingId] = useState<string | null>(null);
+  const [preparedIds, setPreparedIds] = useState<Set<string>>(new Set());
+  const [offlineView, setOfflineView] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,17 +54,63 @@ export default function StudentQuizzesPage() {
           quizApi.getStudentQuizzes(),
           resultApi.getStudentResults(),
         ]);
-        setQuizzes(quizzesData.quizzes || []);
+        const nextQuizzes = quizzesData.quizzes || [];
+        setQuizzes(nextQuizzes);
         setResults(resultsData.results || []);
+        setOfflineView(false);
+        setError(null);
+        if (user) {
+          saveOfflineQuizList(user.id, nextQuizzes);
+          setPreparedIds(new Set(nextQuizzes
+            .filter(quiz => getOfflineSession(user.id, quiz.id))
+            .map(quiz => quiz.id)));
+        }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Sınavlar yüklenemedi");
+        const cachedQuizzes = user ? getOfflineQuizList(user.id) : [];
+        if (cachedQuizzes.length > 0) {
+          setQuizzes(cachedQuizzes);
+          setResults([]);
+          setPreparedIds(new Set(cachedQuizzes
+            .filter(quiz => getOfflineSession(user!.id, quiz.id))
+            .map(quiz => quiz.id)));
+          setOfflineView(true);
+        } else {
+          setError(err instanceof Error ? err.message : "Sınavlar yüklenemedi");
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [user]);
+
+  const prepareOffline = async (quizId: string) => {
+    if (!user) return;
+    try {
+      setPreparingId(quizId);
+      setActionError(null);
+      const data = await quizApi.prepareQuizOffline(quizId);
+      saveOfflineSession({
+        version: 1,
+        userId: user.id,
+        quizId,
+        resultId: data.resultId,
+        quiz: data.quiz,
+        questions: normalizeOfflineQuestions(data.questions),
+        answers: data.existingAnswers || {},
+        remainingSeconds: null,
+        timerCapturedAt: data.preparedAt,
+        cachedAt: data.preparedAt,
+        pendingSubmit: false,
+      });
+      setPreparedIds(previous => new Set(previous).add(quizId));
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Sınav çevrimdışı kullanım için hazırlanamadı");
+    } finally {
+      setPreparingId(null);
+    }
+  };
 
   const getQuizStatus = (quizId: string) => {
     const result = results.find(r => r.quizId === quizId);
@@ -76,6 +137,19 @@ export default function StudentQuizzesPage() {
           <h1 className="text-3xl font-heading font-bold text-foreground">Sınavlarım</h1>
           <p className="text-muted-foreground mt-2">Size atanan sınavları buradan görebilir ve çözebilirsiniz.</p>
         </div>
+
+        {offlineView && (
+          <div className="flex items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+            <WifiOff className="h-4 w-4" />
+            Çevrimdışısınız. Yalnızca önceden hazırlanmış sınavlar açılabilir.
+          </div>
+        )}
+
+        {actionError && (
+          <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
+            {actionError}
+          </div>
+        )}
 
         {/* Stats */}
         <div className="grid gap-4 md:grid-cols-2">
@@ -170,9 +244,23 @@ export default function StudentQuizzesPage() {
                           </span>
                         </div>
                       </CardHeader>
-                      <CardFooter className="flex-1 flex flex-col justify-end pt-4">
+                      <CardFooter className="flex-1 flex flex-col justify-end gap-2 pt-4">
+                        {!quiz.timeLimit && (
+                          <Button
+                            variant="outline"
+                            className="w-full gap-2"
+                            disabled={preparingId === quiz.id || offlineView}
+                            onClick={() => prepareOffline(quiz.id)}
+                          >
+                            <Download className="h-4 w-4" />
+                            {preparedIds.has(quiz.id)
+                              ? "Çevrimdışı Hazır"
+                              : preparingId === quiz.id ? "Hazırlanıyor..." : "Çevrimdışı Hazırla"}
+                          </Button>
+                        )}
                         <Button 
                           className="w-full gap-2 shadow-sm dark:shadow-none"
+                          disabled={offlineView && !preparedIds.has(quiz.id)}
                           onClick={() => setLocation(`/student/quiz/${quiz.id}`)}
                         >
                           <Play className="h-4 w-4" />

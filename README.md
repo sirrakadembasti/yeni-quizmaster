@@ -21,7 +21,7 @@ Rolünüze uygun ayrıntılı kullanım kılavuzunu açın:
 - Tamamlanmamış sınavlarda doğru cevap/cevap anahtarı öğrenciye gönderilmez.
 - Parola sıfırlama belirteçleri veritabanında açık metin yerine özetlenmiş olarak saklanır.
 
-> **Çevrimdışı kullanım:** PWA/çevrimdışı sınav altyapısı henüz uygulanmamıştır. Sınavı başlatmak, cevapları kaydetmek ve teslim etmek için internet bağlantısı gerekir.
+> **Çevrimdışı kullanım:** Süresiz sınavlar öğrenci tarafından önceden **Çevrimdışı Hazırla** ile bu cihaza alınabilir. Cevaplar cihazda saklanır ve teslim bağlantı geri geldiğinde otomatik senkronize edilir. Süreli sınavlar güvenlik nedeniyle çevrimdışı başlatılamaz; sunucu süresi dolduktan sonra gelen yeni cevaplar kabul edilmez.
 
 ---
 
@@ -49,6 +49,7 @@ Rolünüze uygun ayrıntılı kullanım kılavuzunu açın:
 | Yönlendirme | Wouter |
 | Stil | Tailwind CSS + shadcn/ui |
 | İkonlar | lucide-react |
+| Çevrimdışı çalışma | Service Worker + tarayıcı yerel depolaması |
 
 ### Monorepo
 - **pnpm workspaces** — `server/` ve `client/` ayrı paket olarak yönetilir.
@@ -65,6 +66,7 @@ Quiz-Master/
 │   │   ├── hooks/           # Özel React hook'ları
 │   │   ├── lib/             # API istemcisi ve yardımcı araçlar
 │   │   └── pages/           # Sayfa bileşenleri (admin, teacher, student)
+│   ├── public/sw.js         # Üretim PWA uygulama kabuğu önbelleği
 │   └── vite.config.ts       # Vite yapılandırması (proxy kuralları dahil)
 │
 ├── server/                  # Express backend
@@ -152,6 +154,7 @@ Seed scripti aşağıdaki kullanıcıları oluşturur:
 - **Global Yazdırma (Print) Desteği** — Duyurular, Sınıf listeleri, Sınavlar ve Sonuç/İstatistik sayfalarında optimize edilmiş "Yazdır" butonu. Yazdırma sırasında Sidebar ve Navbar Tailwind `print:hidden` ile otomatik gizlenir.
 - **AI Destekli Soru Üretimi** — Gemini API entegrasyonu ile saniyeler içinde konu bazlı, zorluk seviyesi ayarlanabilir çoktan seçmeli sorular.
 - **Duyuru Merkezi** — Tüm okul geneline veya spesifik bir sınıfa/role yönelik zengin içerikli duyuru yayınlama sistemi (Admin ve Öğretmen).
+- **Çevrimdışı Sınav Desteği** — Süresiz sınavları önceden cihaza hazırlama, cevapları kullanıcı+sınav bazında yerelde saklama ve bağlantı geri geldiğinde atomik teslim senkronizasyonu.
 - **Güvenlik ve Performans**
   - **CSRF Koruması:** Sayfa mount'unda otomatik token yenileme + başarısız mutasyonlarda şeffaf retry mekanizması.
   - **RBAC (Rol Tabanlı Erişim):** Backend seviyesinde `requireAuth` + `requireRole` middleware'leri; frontend'de rol bazlı UI kontrolü.
@@ -166,6 +169,7 @@ Seed scripti aşağıdaki kullanıcıları oluşturur:
 - **CSRF Token:** Uygulama yüklendiğinde ve kritik sayfalara girildiğinde otomatik olarak taze token alınır. Her mutasyon isteğine `x-csrf-token` başlığı eklenir; token geçersizse şeffaf biçimde yenilenerek istek yeniden denenir (`csrf-sync` v4 + `apiFetch` retry logic).
 - **Rate Limiting:** Kaba kuvvet (brute-force) saldırılarına ve AI API kötüye kullanımına karşı endpoint bazlı limitler (15 dk / 1000 istek genel, 20 istek auth).
 - **SSRF Koruması:** AI modülünde sadece güvenli IP ve domain'lere izin veren filtreleme sistemi.
+- **Çevrimdışı Sınav Güvenliği:** Çevrimdışı pakette cevap anahtarı bulunmaz; sınıf/yayın yetkisi hazırlama sırasında doğrulanır, puanlama sunucuda yapılır ve süreli sınavlar çevrimdışı başlatılmaz.
 
 ### Log Yönetimi
 - Sistemdeki her önemli işlem (`CREATE`, `UPDATE`, `DELETE`, `LOGIN` vb.) veritabanına kaydedilir.
@@ -204,6 +208,7 @@ Seed scripti aşağıdaki kullanıcıları oluşturur:
 
 ## Notlar ve Kısıtlamalar
 
+- **Çevrimdışı çalışma:** Service worker yalnızca üretim derlemesinde kaydedilir. Yerel doğrulama için önce `pnpm build`, ardından istemci önizleme komutu kullanılmalıdır. Çevrimdışı veri tarayıcıya ve cihaza özeldir.
 - **JSON alanları:** Prisma'nın `Json` tipi SQLite tarafından desteklenmediğinden `Question.options`, `QuestionBank.options` ve `StudentResult.answers` alanları şemada `String?` olarak tutulmaktadır. PostgreSQL'e geçişte bu alanlar `Json?` tipine dönüştürülecek ve `storage.ts`'deki manuel `JSON.stringify`/`JSON.parse` çağrıları kaldırılacaktır.
 - **E-posta doğrulama:** `User` modeline `emailVerified` ve `emailVerificationToken` alanları eklendi; aktivasyon akışı (token oluşturma → e-posta gönderme → doğrulama endpoint'i) altyapı olarak hazır ancak henüz devreye alınmamıştır.
 - **SQLite eş zamanlılığı:** Yüksek trafikli üretim ortamları için PostgreSQL'e geçiş önerilir. Geçiş için `schema.prisma` içindeki `provider = "sqlite"` satırını `"postgresql"` olarak değiştirmek yeterlidir.

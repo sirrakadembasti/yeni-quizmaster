@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { authApi, refreshCsrfToken, type User } from '../lib/api';
+import { clearOfflineUser, getOfflineUser, saveOfflineUser } from '../lib/offline-quiz';
 
 type UserRole = 'admin' | 'teacher' | 'student';
 
@@ -41,10 +42,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { user } = await authApi.getCurrentUser();
         setUser(user);
         setIsAuthenticated(true);
+        saveOfflineUser(user);
       } catch (error) {
-        // Expected when not logged in
-        setUser(null);
-        setIsAuthenticated(false);
+        const cachedUser = typeof navigator !== 'undefined' && !navigator.onLine
+          ? getOfflineUser()
+          : null;
+        setUser(cachedUser);
+        setIsAuthenticated(Boolean(cachedUser));
       } finally {
         setLoading(false);
       }
@@ -59,6 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await refreshCsrfToken().catch(() => { /* refreshed on the next mutation */ });
       setUser(user);
       setIsAuthenticated(true);
+      saveOfflineUser(user);
       // Yönlendirme auth.tsx'de yapılıyor, burada yapma
       return true;
     } catch (error) {
@@ -73,6 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await refreshCsrfToken().catch(() => { /* refreshed on the next mutation */ });
       setUser(user);
       setIsAuthenticated(true);
+      saveOfflineUser(user);
       return true;
     } catch (error: any) {
       console.error('Registration failed:', error);
@@ -88,6 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setUser(null);
       setIsAuthenticated(false);
+      clearOfflineUser();
       // Ana sayfaya yönlendir (misafir kullanıcı home page'ini görecek)
       setLocation('/');
     }

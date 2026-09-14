@@ -39,6 +39,11 @@ Yayınlamadan önce şunları kontrol edin:
 
 Öğrenci yalnızca yayınlanmış ve kendi sınıfına atanmış sınavı başlatabilir. Taslak veya başka sınıfa ait bir sınav doğrudan bağlantıyla açılamaz.
 
+Süre alanı çevrimdışı kullanımı da belirler:
+
+- **Süresiz sınav:** Öğrenci bağlantısı varken sınavı cihazına hazırlayıp daha sonra çevrimdışı çözebilir.
+- **Süreli sınav:** Güvenlik ve sunucu zamanı denetimi nedeniyle çevrimdışı hazırlanamaz veya başlatılamaz.
+
 ## 5. Sınav sırasında güvenlik davranışı
 
 - Öğrencinin seçimi sunucuya otomatik kaydedilir.
@@ -70,12 +75,14 @@ Sağ üst zil simgesinden bildirimleri okuyabilir ve tümünü okundu işaretley
 
 ## 10. Çevrimdışı kullanım
 
-Çevrimdışı sınav çözme altyapısı henüz yoktur. Öğrenci sınavı başlatırken, cevap kaydederken ve teslim ederken internete bağlı olmalıdır. Bağlantı kesilirse öğrenci ekrandaki kayıt uyarısını takip etmeli ve bağlantı geldikten sonra **Tekrar Dene** seçeneğini kullanmalıdır.
+Öğrenci, süresiz sınavı internet bağlantısı varken **Çevrimdışı Hazırla** ile kullandığı cihaza alabilir. Cevaplar bağlantı yokken cihazda tutulur; teslim bağlantı geri geldiğinde sunucuya aktarılır ve puanlama sunucuda yapılır. Çevrimdışı pakette doğru cevaplar bulunmaz.
+
+Süreli sınavlar çevrimdışı başlatılamaz. Çevrimiçi başlayan süreli sınavda bağlantı kesilirse öğrenci cevaplamaya devam edebilir; ancak sunucudaki süre dolduktan sonra ulaşan yeni cevaplar güvenlik nedeniyle kabul edilmez.
 
 ## 11. Sorun giderme
 
 - **Sınıf seçilemiyor:** Yöneticiden öğretmen–sınıf atamasını kontrol etmesini isteyin.
 - **Sınav yayınlanmıyor:** En az bir geçerli soru bulunduğunu kontrol edin.
 - **Öğrenci sınavı göremiyor:** Yayın durumunu ve sınıf atamasını doğrulayın.
-- **Cevap kaydedilemedi:** Öğrencinin internetini ve sınav süresini kontrol edin.
+- **Cevap sunucuya ulaşmadı:** Öğrencinin aynı cihaz ve tarayıcıyı kullandığını, bekleyen teslim ekranını yeniden açtığını ve internet bağlantısının geri geldiğini kontrol edin.
 - **403/yetki hatası:** Hedef sınıfın sorumluluğunuzda olduğundan emin olun.

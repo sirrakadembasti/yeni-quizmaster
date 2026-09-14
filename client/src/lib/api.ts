@@ -472,6 +472,21 @@ export const quizApi = {
     }>(response);
   },
 
+  async prepareQuizOffline(quizId: string) {
+    const response = await apiFetch(`${API_BASE}/student/quiz/${quizId}/prepare-offline`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+    return handleResponse<{
+      resultId: string;
+      quiz: Quiz;
+      questions: Array<{ id: string; text: string; type: string; options?: string[] }>;
+      existingAnswers?: Record<string, string>;
+      remainingSeconds: null;
+      preparedAt: string;
+    }>(response);
+  },
+
   async submitAnswer(resultId: string, questionId: string, selectedOption: string) {
     const response = await apiFetch(`${API_BASE}/student/quiz/${resultId}/answer`, {
       method: 'POST',
@@ -482,10 +497,11 @@ export const quizApi = {
     return handleResponse<{ message: string }>(response);
   },
 
-  async submitQuiz(resultId: string) {
+  async submitQuiz(resultId: string, answers?: Record<string, string>) {
     const response = await apiFetch(`${API_BASE}/student/quiz/${resultId}/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answers }),
       credentials: 'include',
     });
     return handleResponse<{
@@ -494,6 +510,7 @@ export const quizApi = {
       totalQuestions: number;
       correctAnswers: number;
       timeTaken: number;
+      acceptedQueuedAnswers: boolean;
     }>(response);
   },
 };

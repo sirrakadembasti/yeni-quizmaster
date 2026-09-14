@@ -74,9 +74,15 @@ Yönetici; okul geneline, belirli bir role veya sınıfa duyuru gönderebilir. B
 
 **Yönetim > Loglar** bölümünde giriş, oluşturma, güncelleme ve silme gibi sistem hareketlerini izleyin. Şüpheli bir işlemde kullanıcı, zaman ve işlem türünü birlikte değerlendirin.
 
-## 9. Bilinen sınır
+## 9. Çevrimdışı sınav yönetimi
 
-Çevrimdışı sınav/PWA altyapısı henüz etkin değildir. Öğrencilerin sınavı başlatmak, cevaplarını kaydetmek ve teslim etmek için internet bağlantısına ihtiyacı vardır.
+PWA çevrimdışı sınav altyapısı süresiz sınavlarda etkindir. Öğrenci, bağlantısı varken yayınlanmış ve sınıfına atanmış sınavı cihazına hazırlayabilir; çevrimdışı cevaplar aynı tarayıcıda saklanır ve bağlantı geri geldiğinde teslim sunucuya aktarılır.
+
+- Doğru cevaplar cihazdaki çevrimdışı pakete eklenmez.
+- Yetki ve sınıf ataması çevrimdışı paket hazırlanırken sunucuda denetlenir.
+- Puanlama ve kesin teslim durumu yalnızca sunucuda oluşturulur.
+- Süreli sınavlar güvenlik nedeniyle çevrimdışı hazırlanamaz veya başlatılamaz.
+- Tarayıcı verilerinin temizlenmesi, cihaz değişimi veya gizli pencere kullanımı yerel cevapların kaybına neden olabilir.
 
 ## 10. Sorun giderme
 
@@ -85,3 +91,4 @@ Yönetici; okul geneline, belirli bir role veya sınıfa duyuru gönderebilir. B
 - **Duyuru yanlış grupta görünmüyor:** Rol ve sınıf hedefinin birlikte doğru seçildiğini doğrulayın.
 - **İstek reddedildi:** Sayfayı yenileyip tekrar giriş yapın; güvenlik belirteci otomatik yenilenir.
 - **Bağlantı sorunu:** İşlemi tekrarlamadan önce internet erişimini doğrulayın.
+- **Çevrimdışı teslim bekliyor:** Öğrencinin aynı cihaz ve tarayıcıda sınavı yeniden açıp bağlantının geri gelmesini beklemesini sağlayın.

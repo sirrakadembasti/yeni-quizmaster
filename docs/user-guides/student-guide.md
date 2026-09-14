@@ -19,7 +19,7 @@ Yeni hesap oluştururken adınızı, geçerli e-posta adresinizi ve şifrenizi g
 
 ## 3. Bir sınavı başlatmadan önce
 
-1. İnternet bağlantınızın çalıştığını kontrol edin.
+1. Süreli sınav için internet bağlantınızın çalıştığını kontrol edin. Süresiz sınavı çevrimdışı çözecekseniz bağlantınız varken **Çevrimdışı Hazırla** işlemini tamamlayın.
 2. Cihazınızın şarjını ve tarayıcı durumunu kontrol edin.
 3. **Sınavlarım > Yapılacak Sınavlar** bölümünden sınavı seçin.
 4. Sınav süresini ve soru sayısını okuyun.
@@ -29,7 +29,7 @@ Yalnızca yayınlanmış ve sınıfınıza atanmış sınavları görebilirsiniz
 
 ## 4. Sınavı çözme
 
-- Bir seçeneğe bastığınızda cevap ekranda hemen işaretlenir ve sunucuya otomatik kaydedilir.
+- Bir seçeneğe bastığınızda cevap ekranda hemen işaretlenir. Bağlantı varsa sunucuya, bağlantı yoksa bu cihazdaki çevrimdışı kayda yazılır.
 - Kayıt başarılıysa **Cevap kaydedildi** bilgisi gösterilir.
 - Kayıt başarısızsa uyarıyı takip edin; bağlantı geldikten sonra **Tekrar Dene** seçeneğini kullanın.
 - Önceki/sonraki düğmeleri ve soru numaralarını kullanarak sorular arasında geçiş yapabilirsiniz.
@@ -47,7 +47,7 @@ Tarayıcı saatini değiştirmek sınav süresini uzatmaz; süre sunucu tarafın
 2. **Sınavı Bitir/Teslim Et** düğmesini seçin.
 3. Onay penceresinde işlemi doğrulayın.
 
-Teslim işleminden sonra cevaplar değiştirilemez. Sonuç ve soru incelemesi yalnızca sınav tamamlandıktan sonra görüntülenebilir.
+Çevrimiçi teslimden veya bekleyen çevrimdışı teslim sunucuya ulaştıktan sonra cevaplar değiştirilemez. Sonuç ve soru incelemesi yalnızca sunucudaki teslim tamamlandıktan sonra görüntülenebilir.
 
 ## 7. Sonuçlar ve istatistikler
 
@@ -59,14 +59,13 @@ Teslim işleminden sonra cevaplar değiştirilemez. Sonuç ve soru incelemesi ya
 
 ## 9. Çevrimdışı kullanım hakkında önemli bilgi
 
-Uygulamada henüz çevrimdışı sınav altyapısı bulunmamaktadır.
+Süresiz bir sınavı internet yokken çözmek için bağlantınız varken **Sınavlarım** ekranındaki **Çevrimdışı Hazırla** düğmesine basın. **Çevrimdışı Hazır** yazısını gördükten sonra sınav bu cihazdan bağlantı olmadan açılabilir.
 
-- İnternet yokken yeni sınav başlatılamaz.
-- İnternet yokken cevapların sunucuya kaydedileceği garanti edilmez.
-- İnternet yokken sınav güvenilir biçimde teslim edilemez.
-- Sayfa açıkken bağlantı kesilirse ekrandaki kayıt durumunu kontrol edin ve sayfayı kapatmadan bağlantının geri gelmesini bekleyin.
-
-Çevrimdışı sınav indirme ve daha sonra senkronizasyon özelliği ayrı geliştirme fazında planlanmaktadır.
+- Çevrimdışı cevaplar yalnızca kullandığınız tarayıcı ve cihazda saklanır.
+- Çevrimdışı teslimde **İnternet gelince otomatik gönderilecek** bilgisi gösterilir. Sayfayı açık tutun veya daha sonra aynı sınavı bu cihazda yeniden açın.
+- Tarayıcı verilerini temizlemek, gizli pencere kullanmak veya başka cihaza geçmek yerel cevaplara erişimi kaybettirebilir.
+- Doğru cevaplar çevrimdışı pakete dahil edilmez; puanlama yalnızca sunucuda yapılır.
+- Süreli sınavlar güvenlik nedeniyle çevrimdışı hazırlanamaz veya başlatılamaz. Çevrimiçi başlatılan süreli sınavda bağlantı kesilirse cevaplar yerelde tutulur; ancak sunucudaki süre dolmadan yeniden bağlanmayan yeni cevaplar puanlamaya alınmaz.
 
 ## 10. Hesap güvenliği
 
@@ -78,7 +77,8 @@ Uygulamada henüz çevrimdışı sınav altyapısı bulunmamaktadır.
 ## 11. Sorun giderme
 
 - **Sınav görünmüyor:** Sınıf atamanızı ve sınavın yayınlandığını öğretmeninizle kontrol edin.
-- **Cevap kaydedilemiyor:** İnternet bağlantısını kontrol edip **Tekrar Dene** kullanın.
+- **Cevap sunucuya aktarılamıyor:** Cevap cihazda saklanır. Bağlantı geri geldiğinde **Tekrar Dene** kullanın veya bekleyen teslimin otomatik gönderilmesini bekleyin.
+- **Çevrimdışı sınav açılmıyor:** İnternet varken aynı cihaz ve tarayıcıda **Çevrimdışı Hazırla** işleminin tamamlandığını kontrol edin.
 - **Süre beklediğimden az:** Süre ilk başlatma anından itibaren devam eder; sayfa yenileme süreyi sıfırlamaz.
 - **Sonuç ayrıntısı açılmıyor:** Sınavın teslim edildiğinden emin olun.
 - **Oturum sona erdi:** Yeniden giriş yapın; güvenlik belirteçleri otomatik yenilenir.
