@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminApi, classApi, quizApi } from "@/lib/api";
@@ -12,8 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from "@/components/ui/dialog";
 
 export default function ArchivePage() {
   const queryClient = useQueryClient();
@@ -32,7 +31,7 @@ export default function ArchivePage() {
     queryFn: () => classApi.getAllClasses(),
   });
 
-  const { data: quizzesData, isLoading: quizzesLoading } = useQuery({
+  const { data: quizzesData } = useQuery({
     queryKey: ['/api/admin/quizzes'],
     queryFn: () => quizApi.getAllAdminQuizzes(),
   });

@@ -25,7 +25,7 @@ import {
   X,
   Trash2,
   Volume2,
-  VolumeX
+  VolumeX,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -123,7 +123,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
     ] : []),
     ...(role === 'teacher' ? [
       { label: "Sınavlarım", href: "/quizzes", icon: FileText },
-      { label: "İstatistikler", href: "/my-stats", icon: BarChart3 },
+      { label: "Sınıf İstatistikleri", href: "/statistics", icon: BarChart3 },
       { label: "Sınav Sonuçları", href: "/results", icon: ListChecks },
       { label: "Öğrenciler", href: "/students", icon: Users },
       { label: "Sınıflarım", href: "/classlist", icon: GraduationCap },
@@ -131,7 +131,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
     ...(role === 'admin' ? [
       { label: "Sınav Yönetimi", href: "/admin-quizzes", icon: ShieldCheck },
       { label: "Sınavlar", href: "/quizzes", icon: FileText },
-      { label: "İstatistikler", href: "/my-stats", icon: BarChart3 },
+      { label: "Sınıf İstatistikleri", href: "/statistics", icon: BarChart3 },
       { label: "Sınav Sonuçları", href: "/results", icon: ListChecks },
       { label: "Öğrenciler", href: "/students", icon: Users },
       { label: "Eğitmenler", href: "/teachers", icon: Briefcase },
@@ -362,7 +362,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
         </header>
         )}
 
-        <div data-print-content className="flex-1 overflow-y-auto px-4 py-5 custom-scrollbar sm:px-6 sm:py-7 lg:px-8">
+        <div data-print-content className="flex-1 overflow-y-auto px-3.5 py-4 custom-scrollbar sm:px-5 sm:py-5 lg:px-6">
           <div className="print-masthead hidden">
             <div>
               <strong>QuizMaster</strong>

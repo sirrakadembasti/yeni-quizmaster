@@ -84,6 +84,15 @@ export interface User {
   classId?: string | null;
   createdAt: string;
   classNo?: string | null;
+  studentNo?: number | null;
+  phoneNumber?: string | null;
+  address?: string | null;
+  parentName?: string | null;
+  parentRelation?: string | null;
+  parentPhone?: string | null;
+  parentEmail?: string | null;
+  parentAddress?: string | null;
+  class?: any;
   assignedCategories?: { id: string; name: string }[];
   assignedCategoryIds?: string[];
 }
@@ -97,6 +106,8 @@ export interface Quiz {
   timeLimit?: number;
   shuffleQuestions: boolean;
   createdBy: string;
+  publishedAt?: string | null;
+  audienceSize?: number | null;
   status: string;
   createdAt: string;
   questionCount?: number;
@@ -110,7 +121,8 @@ export interface Question {
   text: string;
   type: string;
   options?: string[];
-  correctAnswer: string;
+  correctAnswer?: string | null;
+  config?: Record<string, any> | null;
   order: number;
   createdAt: string;
 }
@@ -141,7 +153,8 @@ export interface StudentResultDetail {
     text: string;
     type: string;
     options?: string[];
-    correctAnswer: string;
+    correctAnswer?: string | null;
+    config?: Record<string, any> | null;
     studentAnswer?: string;
     isCorrect: boolean;
   }>;
@@ -178,7 +191,8 @@ export interface CreateQuizInput {
     text: string;
     type: 'multiple-choice' | 'true-false' | 'short-answer';
     options?: string[];
-    correctAnswer: string;
+    correctAnswer?: string | null;
+    config?: Record<string, any> | null;
     order?: number;
   }>;
 }
@@ -201,6 +215,7 @@ export interface Class {
   classTeacherId?: string | null;
   classTeacher?: User;
   teachers?: User[];
+  teacherAssignments?: any[];
   maxStudents?: number;
   createdAt: string;
   assignedCategories?: { id: string; name: string }[];
@@ -213,6 +228,26 @@ export interface DashboardStats {
   totalTeachers: number;
   totalResults: number;
   averageStudentScore: number;
+}
+
+export interface DashboardQuizOverview {
+  id: string;
+  title: string;
+  category: string;
+  createdAt: string;
+  assignedStudents: number;
+  participants: number;
+  participationRate: number;
+}
+
+export interface ClassAnalyticsItem {
+  classId: string;
+  className: string;
+  studentCount: number;
+  participantCount: number;
+  completedCount: number;
+  averageScore: number;
+  participationRate: number;
 }
 
 export interface StudentStats {
@@ -322,6 +357,13 @@ export const userApi = {
       credentials: 'include',
     });
     return handleResponse<{ users: User[] }>(response);
+  },
+
+  async getUser(userId: string) {
+    const response = await apiFetch(`${API_BASE}/users/${userId}`, {
+      credentials: 'include',
+    });
+    return handleResponse<{ user: User }>(response);
   },
 
   async createUser(data: Partial<User> & { password?: string }) {
@@ -612,7 +654,8 @@ export const resultApi = {
         text: string;
         type: string;
         options?: string[];
-        correctAnswer: string;
+        correctAnswer?: string | null;
+    config?: Record<string, any> | null;
         studentAnswer?: string;
         isCorrect: boolean;
       }>;
@@ -640,6 +683,27 @@ export const dashboardApi = {
       credentials: 'include',
     });
     return handleResponse<{ stats: DashboardStats }>(response);
+  },
+  async getOverview() {
+    const response = await apiFetch(`${API_BASE}/dashboard/overview`, { credentials: 'include' });
+    return handleResponse<{ recentQuizzes: DashboardQuizOverview[] }>(response);
+  },
+};
+
+export const analyticsApi = {
+  async getClassAnalytics(filters: { classId?: string; startDate?: string; endDate?: string } = {}) {
+    const params = new URLSearchParams();
+    if (filters.classId && filters.classId !== 'all') params.set('classId', filters.classId);
+    if (filters.startDate) params.set('startDate', filters.startDate);
+    if (filters.endDate) params.set('endDate', filters.endDate);
+    const query = params.toString();
+    const response = await apiFetch(`${API_BASE}/analytics/classes${query ? `?${query}` : ''}`, {
+      credentials: 'include',
+    });
+    return handleResponse<{
+      classes: ClassAnalyticsItem[];
+      filters: { classId: string | null; startDate: string; endDate: string };
+    }>(response);
   },
 };
 
@@ -769,13 +833,15 @@ export const classApi = {
 
 // Admin APIs
 export const adminApi = {
-  async getLogs(filters?: { role?: string, userId?: string, action?: string, startDate?: string, endDate?: string }) {
+  async getLogs(filters?: { role?: string, userId?: string, action?: string, startDate?: string, endDate?: string, page?: number, limit?: number }) {
     const params = new URLSearchParams();
     if (filters?.role) params.append('role', filters.role);
     if (filters?.userId) params.append('userId', filters.userId);
     if (filters?.action) params.append('action', filters.action);
     if (filters?.startDate) params.append('startDate', filters.startDate);
     if (filters?.endDate) params.append('endDate', filters.endDate);
+    if (filters?.page) params.append('page', String(filters.page));
+    if (filters?.limit) params.append('limit', String(filters.limit));
 
     const response = await apiFetch(`${API_BASE}/admin/logs?${params.toString()}`, {
       credentials: "include",
@@ -878,3 +944,4 @@ export const announcementApi = {
     return handleResponse<{ message: string }>(response);
   }
 };
+

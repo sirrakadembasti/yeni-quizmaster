@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { quizApi, refreshCsrfToken } from '@/lib/api';
 import { useAuth } from '@/context/auth-context';
-import { Clock, ChevronLeft, ChevronRight, AlertCircle, CheckCircle2, Eye, WifiOff, CloudUpload } from 'lucide-react';
+import { ChevronLeft, ChevronRight, AlertCircle, CheckCircle2, Eye, WifiOff, CloudUpload } from 'lucide-react';
 import {
   getOfflineSession,
   getOfflineRemainingSeconds,

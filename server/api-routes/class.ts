@@ -3,6 +3,7 @@ import { storage } from "../storage";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
+import { canAccessClass } from "../utils/class-authorization";
 
 const router: Router = Router();
 
@@ -44,14 +45,19 @@ router.get("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
       return res.status(403).json({ message: "Sadece kendi sınıfınızın detaylarını görebilirsiniz." });
     }
     if (req.user!.role === "teacher") {
-      const isAssigned = (cls as any).teachers?.some((t: any) => t.id === req.user!.id) || cls.classTeacherId === req.user!.id;
-      if (!isAssigned) {
+      if (!await canAccessClass(req.user!.role, req.user!.id, cls.id)) {
          return res.status(403).json({ message: "Sadece atandığınız sınıfların detaylarını görebilirsiniz." });
       }
     }
 
     const students = await storage.getStudentsByClass(req.params.id);
-    res.json({ class: cls, students });
+    const sanitizedStudents = req.user!.role === "admin" 
+      ? students 
+      : students.map(s => {
+          const { parentName, parentRelation, parentPhone, parentEmail, parentAddress, ...safeStudent } = s as any;
+          return safeStudent;
+        });
+    res.json({ class: cls, students: sanitizedStudents });
   } catch (error) {
     res.status(500).json({ message: "Sınıf detayları getirilemedi." });
   }
@@ -67,14 +73,19 @@ router.get("/:id/students", requireAuth, async (req: AuthRequest, res: Response)
     if (req.user!.role === "teacher") {
       const cls = await storage.getClass(req.params.id);
       if (!cls) return res.status(404).json({ message: "Sınıf bulunamadı." });
-      const isAssigned = (cls as any).teachers?.some((t: any) => t.id === req.user!.id) || cls.classTeacherId === req.user!.id;
-      if (!isAssigned) {
+      if (!await canAccessClass(req.user!.role, req.user!.id, cls.id)) {
         return res.status(403).json({ message: "Sadece atandığınız sınıfların öğrencilerini görebilirsiniz." });
       }
     }
 
     const students = await storage.getStudentsByClass(req.params.id);
-    res.json({ students });
+    const sanitizedStudents = req.user!.role === "admin" 
+      ? students 
+      : students.map(s => {
+          const { parentName, parentRelation, parentPhone, parentEmail, parentAddress, ...safeStudent } = s as any;
+          return safeStudent;
+        });
+    res.json({ students: sanitizedStudents });
   } catch (error) {
     res.status(500).json({ message: "Sınıf öğrencileri getirilemedi." });
   }
@@ -86,7 +97,11 @@ router.post("/", requireAuth, requireRole(["admin"]), async (req: AuthRequest, r
     if (!validation.success) {
       return res.status(400).json({ message: fromZodError(validation.error).message });
     }
-    const cls = await storage.createClass(validation.data);
+    const cls = await storage.createClass({
+      ...validation.data,
+      teacherId: validation.data.teacherId ?? undefined,
+      classTeacherId: validation.data.classTeacherId ?? undefined,
+    });
     res.status(201).json(cls);
   } catch (error: any) {
     if (error.message === "CLASS_EXISTS") {
@@ -153,9 +168,7 @@ router.post("/:id/students", requireAuth, requireRole(["admin", "teacher"]), asy
 
     // Teacher ownership check — classTeacherId veya teachers listesi üzerinden iki yollu kontrol
     if (req.user!.role === "teacher") {
-      const isAssigned =
-        (cls as any).teachers?.some((t: any) => t.id === req.user!.id) ||
-        cls.classTeacherId === req.user!.id;
+      const isAssigned = await canAccessClass(req.user!.role, req.user!.id, cls.id);
       if (!isAssigned) return res.status(403).json({ message: "Bu sınıfa öğrenci ekleme yetkiniz yok." });
     }
 
@@ -177,9 +190,7 @@ router.delete("/:id/students/:studentId", requireAuth, requireRole(["admin", "te
 
     // Teacher ownership check — classTeacherId veya teachers listesi üzerinden iki yollu kontrol
     if (req.user!.role === "teacher") {
-      const isAssigned =
-        (cls as any).teachers?.some((t: any) => t.id === req.user!.id) ||
-        cls.classTeacherId === req.user!.id;
+      const isAssigned = await canAccessClass(req.user!.role, req.user!.id, cls.id);
       if (!isAssigned) return res.status(403).json({ message: "Bu sınıftan öğrenci çıkarma yetkiniz yok." });
     }
 

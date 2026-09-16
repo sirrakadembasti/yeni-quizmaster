@@ -41,7 +41,7 @@ export const sendEmail = async (options: nodemailer.SendMailOptions) => {
     return info;
   } catch (error) {
     // Yerel geliştirme sırasında SMTP hatası alınırsa sunucunun çökmemesi için hata loglanır
-    console.error("[Email] Error sending email (Check SMTP settings):", error.message);
+    console.error("[Email] Error sending email (Check SMTP settings):", error instanceof Error ? error.message : error);
     throw error;
   }
 };

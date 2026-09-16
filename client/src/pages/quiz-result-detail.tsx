@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { resultApi } from '@/lib/api';
-import { ArrowLeft, CheckCircle2, XCircle, Clock, AlertCircle, Printer, Download, HelpCircle } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, XCircle, AlertCircle, Printer, Download, HelpCircle } from 'lucide-react';
 
 interface Question {
   id: string;

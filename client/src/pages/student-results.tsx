@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,6 @@ import {
 import {
   ArrowRight,
   Search,
-  Award,
   Calendar,
   Clock,
   User as UserIcon,
@@ -29,13 +28,16 @@ import {
   AlertCircle,
   Filter,
   X,
-  Info
+  Info,
+  Users
 } from "lucide-react";
 import { resultApi, userApi, categoryApi } from "@/lib/api";
 import { useAuth } from "@/context/auth-context";
+import { PrintButton, PrintMeta } from "@/components/print/PrintTools";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function StudentResultsPage() {
-  const [locationPath, setLocation] = useLocation();
+  const [, setLocation] = useLocation();
   const { user, role } = useAuth();
   const searchParams = new URLSearchParams(window.location.search);
   const studentId = searchParams.get('studentId') || undefined;
@@ -51,6 +53,7 @@ export default function StudentResultsPage() {
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterScore, setFilterScore] = useState("all"); 
   const [sortBy, setSortBy] = useState("date_desc");
+  const [activeTab, setActiveTab] = useState("exams");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,9 +68,16 @@ export default function StudentResultsPage() {
         setCategories(catsData || []);
 
         if (studentId) {
-          const usersData = await userApi.getAllUsers();
-          const foundStudent = usersData.users.find((u: any) => u.id === studentId);
-          if (foundStudent) setStudent(foundStudent);
+          try {
+            const userData = await userApi.getUser(studentId);
+            if (userData?.user) {
+              setStudent(userData.user);
+            }
+          } catch {
+            const usersData = await userApi.getAllUsers();
+            const foundStudent = usersData.users.find((u: any) => u.id === studentId);
+            if (foundStudent) setStudent(foundStudent);
+          }
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Veriler yüklenemedi");
@@ -135,11 +145,113 @@ export default function StudentResultsPage() {
     return "text-rose-600 bg-rose-50 border-rose-200";
   };
 
+  const renderStudentContent = () => {
+    if (!student) return null;
+    return (
+      <Card className="rounded-3xl border-border/60 shadow-sm overflow-hidden">
+        <CardHeader className="bg-muted/20 border-b border-border/50 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+              <UserIcon className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle className="text-xl font-black">Öğrenci Bilgileri</CardTitle>
+              <p className="text-xs text-muted-foreground font-medium mt-0.5">Öğrencinin temel kimlik, okul ve iletişim detayları.</p>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Adı Soyadı</Label>
+              <p className="text-base font-bold text-foreground">{student.name || "-"}</p>
+            </div>
+            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">E-Posta Adresi</Label>
+              <p className="text-base font-bold text-foreground">{student.email || "-"}</p>
+            </div>
+            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Kayıtlı Sınıf</Label>
+              <p className="text-base font-bold text-foreground">{student.class?.name || "Atanmamış"}</p>
+            </div>
+            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Okul No</Label>
+              <p className="text-base font-bold text-foreground">{student.studentNo || student.classNo || "-"}</p>
+            </div>
+            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Telefon Numarası</Label>
+              <p className="text-base font-bold text-foreground">{student.phoneNumber || "Belirtilmemiş"}</p>
+            </div>
+            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Kayıt Tarihi</Label>
+              <p className="text-base font-bold text-foreground">{student.createdAt ? new Date(student.createdAt).toLocaleDateString('tr-TR') : "-"}</p>
+            </div>
+            <div className="sm:col-span-2 lg:col-span-3 space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Adres</Label>
+              <p className="text-base font-medium text-foreground">{student.address || "Belirtilmemiş"}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  const renderParentContent = () => {
+    if (!student) return null;
+    return (
+      <Card className="rounded-3xl border-border/60 shadow-sm overflow-hidden">
+        <CardHeader className="bg-muted/20 border-b border-border/50 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600">
+              <Users className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle className="text-xl font-black">Veli Bilgileri</CardTitle>
+              <p className="text-xs text-muted-foreground font-medium mt-0.5">Yalnızca yöneticilere açık veli iletişim detayları.</p>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Veli Adı Soyadı</Label>
+              <p className="text-base font-bold text-foreground">{student.parentName || "Belirtilmemiş"}</p>
+            </div>
+            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Yakınlık Derecesi</Label>
+              <p className="text-base font-bold text-foreground">{student.parentRelation || "Belirtilmemiş"}</p>
+            </div>
+            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Veli Telefonu</Label>
+              <p className="text-base font-bold text-foreground">{student.parentPhone || "Belirtilmemiş"}</p>
+            </div>
+            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Veli E-Postası</Label>
+              <p className="text-base font-bold text-foreground">{student.parentEmail || "Belirtilmemiş"}</p>
+            </div>
+            <div className="sm:col-span-2 space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Veli İkametgah Adresi</Label>
+              <p className="text-base font-medium text-foreground">{student.parentAddress || "Belirtilmemiş"}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-8 pb-12">
+        <PrintMeta
+          title={studentId ? "\u00d6\u011frenci Analizi" : "S\u0131nav Sonu\u00e7lar\u0131m"}
+          filters={[
+            { label: "\u00d6\u011frenci", value: student?.name || user?.name },
+            { label: "Arama", value: searchTerm || "T\u00fcm\u00fc" },
+            { label: "Ders", value: categories.find((item: any) => item.id === filterCategory)?.name || "T\u00fcm dersler" },
+          ]}
+        />
         {/* Navigation & Header */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 print:hidden no-print">
           <Button
             variant="ghost"
             size="sm"
@@ -161,6 +273,7 @@ export default function StudentResultsPage() {
                   : 'Tamamladığınız tüm sınavların gelişmiş dökümü.'}
               </p>
             </div>
+            <PrintButton className="rounded-xl" />
             {!loading && (
               <Badge variant="secondary" className="h-8 px-4 text-sm font-bold bg-primary/10 text-primary border-primary/20"> 
                 Toplam {filteredResults.length} Kayıt
@@ -211,8 +324,32 @@ export default function StudentResultsPage() {
           </Card>
         )}
 
-        {/* Advanced Query Panel */}
-        <Card className="border-primary/10 shadow-md overflow-hidden">
+        {/* Sekmeli Görünüm: Sadece Admin ve öğrenci detayı varken 3 sekmeli yapı sunulur. Öğretmen için sadece sınav bilgileri gösterilir. */}
+        {role === 'admin' && student && (
+          <div className="print:hidden no-print">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="bg-muted/50 p-1 rounded-xl w-full max-w-xl grid grid-cols-3">
+                <TabsTrigger value="exams" className="gap-2 rounded-lg py-2.5 font-bold text-xs sm:text-sm">
+                  <Trophy className="h-4 w-4" /> 1. Sınav Bilgileri
+                </TabsTrigger>
+                <TabsTrigger value="student" className="gap-2 rounded-lg py-2.5 font-bold text-xs sm:text-sm">
+                  <UserIcon className="h-4 w-4" /> 2. Öğrenci Bilgileri
+                </TabsTrigger>
+                <TabsTrigger value="parent" className="gap-2 rounded-lg py-2.5 font-bold text-xs sm:text-sm">
+                  <Users className="h-4 w-4" /> 3. Veli Bilgileri
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+        )}
+
+        {role === 'admin' && student && activeTab === 'student' && renderStudentContent()}
+        {role === 'admin' && student && activeTab === 'parent' && renderParentContent()}
+
+        {(!(role === 'admin' && student) || activeTab === 'exams') && (
+          <>
+            {/* Advanced Query Panel */}
+            <Card className="border-primary/10 shadow-md overflow-hidden print:hidden no-print">
           <CardHeader className="bg-muted/30 pb-4 border-b">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -418,6 +555,8 @@ export default function StudentResultsPage() {
             </Card>
           </div>
         )}
+      </>
+    )}
       </div>
     </DashboardLayout>
   );

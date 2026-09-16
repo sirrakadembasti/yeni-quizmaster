@@ -1,7 +1,7 @@
 import { Router, type Response } from "express";
 import rateLimit from "express-rate-limit";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
-import { logger } from "../index";
+import { logger } from "../utils/logger";
 import { z } from "zod";
 
 const router: Router = Router();
@@ -127,7 +127,7 @@ router.post("/test-config", aiTestLimiter, requireAuth, requireRole(["admin", "t
     const {
       baseUrl: rawBaseUrl,
       apiKey: requestApiKey,
-      model = "gemini-3-flash-preview",
+      model = "gemini-3.8-flash",
     } = req.body;
 
     const baseUrl: string = rawBaseUrl || OFFICIAL_BASE_URL;
@@ -156,7 +156,8 @@ router.post("/test-config", aiTestLimiter, requireAuth, requireRole(["admin", "t
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+        "Authorization": `Bearer ${apiKey}`,
+        "x-goog-api-key": apiKey,
       },
       body: JSON.stringify({
         model,
@@ -186,7 +187,7 @@ router.post("/generate-questions", requireAuth, requireRole(["admin", "teacher"]
       topic, 
       count = 3, 
       difficulty = "medium", 
-      model = "gemini-3-flash-preview",
+      model = "gemini-3.8-flash",
       customBaseUrl,
       customApiKey,
       questionType = "multiple-choice"
@@ -232,7 +233,8 @@ Output ONLY raw JSON.`;
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
+          'Authorization': `Bearer ${apiKey}`,
+          'x-goog-api-key': apiKey
         },
         body: JSON.stringify({
           model: model,

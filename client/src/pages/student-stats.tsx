@@ -10,7 +10,6 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  Legend, 
   ResponsiveContainer 
 } from "recharts";
 import { 
@@ -23,7 +22,6 @@ import {
 } from "lucide-react";
 import { resultApi } from "@/lib/api";
 
-const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
 
 export default function StudentStats() {
   const [loading, setLoading] = useState(true);

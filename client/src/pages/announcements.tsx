@@ -8,11 +8,11 @@ import {
   Megaphone, 
   Plus, 
   Trash2, 
-  Calendar, 
   Bell,
   ChevronRight,
   Printer
 } from "lucide-react";
+import { AnnouncementAuthor } from "@/components/announcements/AnnouncementAuthor";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/context/auth-context";
@@ -144,39 +144,29 @@ export default function AnnouncementsPage() {
           ) : (
             announcements.map((ann: any) => (
               <Card key={ann.id} className="group overflow-hidden transition-colors hover:border-primary/40">
-                <div className="p-5 sm:p-6">
-                  <div className="mb-5 flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 font-bold text-primary ring-1 ring-primary/15">
-                        {ann.creator?.name?.[0].toUpperCase()}
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-bold tracking-tight text-foreground transition-colors group-hover:text-primary">{ann.title}</h3>
-                        <div className="mt-1.5 flex flex-wrap items-center gap-2">
-                          <Badge variant="secondary" className="bg-primary/10 text-[10px] font-bold uppercase tracking-wider text-primary dark:bg-primary/15">
-                            {ann.creator?.role === 'admin' ? 'SİSTEM YÖNETİMİ' : 'EĞİTMEN'}
-                          </Badge>
-                          <span className="text-xs font-bold text-muted-foreground flex items-center gap-1">
-                            <Calendar className="h-3 w-3" /> {new Date(ann.createdAt).toLocaleDateString('tr-TR')}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+                <div className="p-5 sm:p-6 space-y-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <AnnouncementAuthor creator={ann.creator} createdAt={ann.createdAt} />
                     {role === 'admin' && (
                       <Button 
                         variant="ghost" 
                         size="icon" 
                         onClick={() => deleteMutation.mutate(ann.id)}
-                        className="rounded-xl text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                        className="rounded-xl text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0"
                         aria-label="Duyuruyu sil"
                       >
                         <Trash2 className="h-5 w-5" />
                       </Button>
                     )}
                   </div>
-                  
-                  <div className="rounded-xl border border-border/60 bg-muted/35 p-5 text-sm font-medium leading-7 text-foreground">
-                    {ann.content}
+
+                  <div>
+                    <h3 className="text-xl font-bold tracking-tight text-foreground transition-colors group-hover:text-primary mb-2">
+                      {ann.title}
+                    </h3>
+                    <div className="rounded-xl border border-border/60 bg-muted/35 p-4 sm:p-5 text-sm font-medium leading-relaxed text-foreground whitespace-pre-wrap">
+                      {ann.content}
+                    </div>
                   </div>
 
                   <div className="mt-5 flex flex-wrap items-center justify-between gap-3">

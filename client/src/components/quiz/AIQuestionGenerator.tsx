@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { 
   Dialog, 
@@ -41,10 +41,14 @@ interface AIQuestionGeneratorProps {
   quizDescription?: string;
 }
 
-export function AIQuestionGenerator({ onGenerate, quizTitle = "", quizDescription = "" }: AIQuestionGeneratorProps) {
+export function AIQuestionGenerator({ 
+  onGenerate, 
+  quizTitle = "", 
+  quizDescription = "" 
+}: AIQuestionGeneratorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [difficulty, setDifficulty] = useState("medium");
-  const [model, setModel] = useState("gemini-3-flash-preview");
+  const [model, setModel] = useState("gemini-3.8-flash");
   const [count, setCount] = useState("3");
   const [isGenerating, setIsGenerating] = useState(false);
   
@@ -101,7 +105,11 @@ export function AIQuestionGenerator({ onGenerate, quizTitle = "", quizDescriptio
 
   const handleGenerate = async () => {
     if (!topic) {
-      toast({ title: "Hata", description: "Lütfen önce sınav başlığı veya açıklaması girin", variant: "destructive" });
+      toast({ 
+        title: "Hata", 
+        description: "Lütfen önce sınav başlığı veya açıklaması girin", 
+        variant: "destructive" 
+      });
       return;
     }
 
@@ -124,12 +132,14 @@ export function AIQuestionGenerator({ onGenerate, quizTitle = "", quizDescriptio
         showCustomConfig ? customApiKey : undefined
       );
 
-      if (response.questions && response.questions.length > 0) {
-        onGenerate(response.questions);
+      const generatedQuestions = response.questions || [];
+
+      if (generatedQuestions && generatedQuestions.length > 0) {
+        onGenerate(generatedQuestions);
         setIsOpen(false);
         toast({
           title: "Sorular Oluşturuldu",
-          description: `Yapay zeka başarıyla ${response.questions.length} yeni soru oluşturdu.`,
+          description: `Yapay zeka başarıyla ${generatedQuestions.length} yeni soru oluşturdu.`,
         });
         resetForm();
       } else {
@@ -178,11 +188,17 @@ export function AIQuestionGenerator({ onGenerate, quizTitle = "", quizDescriptio
           {/* Main Topic Section */}
           <div className="space-y-3 p-4 rounded-xl bg-muted/30 border border-border/50">
             <div className="flex items-center justify-between mb-1">
-              <Label className="text-[11px] font-bold uppercase tracking-widest opacity-60">Sınav Konusu (Otomatik)</Label>
+              <Label className="text-[11px] font-bold uppercase tracking-widest opacity-60">
+                Sınav Konusu (Otomatik)
+              </Label>
               <Badge variant="outline" className="text-[9px] h-4 bg-background px-1.5 opacity-70">Salt Okunur</Badge>
             </div>
             <div className="text-sm font-medium text-foreground line-clamp-3">
-              {topic || <span className="text-destructive font-bold italic">Lütfen önce sınav ayarlarından başlık girin!</span>}
+              {topic || (
+                <span className="text-destructive font-bold italic">
+                  Lütfen önce sınav ayarlarından başlık girin!
+                </span>
+              )}
             </div>
             <div className="flex items-start gap-2 mt-3 pt-3 border-t border-border/40">
               <Info className="h-3.5 w-3.5 text-blue-500 mt-0.5 flex-shrink-0" />
@@ -227,7 +243,7 @@ export function AIQuestionGenerator({ onGenerate, quizTitle = "", quizDescriptio
             <div className="flex justify-between items-center">
               <Label className="text-sm font-bold uppercase tracking-wider opacity-70">AI Modeli</Label>
               <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-tighter bg-primary/5 text-primary border-primary/20">
-                Gemini v3 Destekli
+                Gemini 3.8 / 2.5 Destekli
               </Badge>
             </div>
             <Select value={model} onValueChange={setModel} disabled={isGenerating}>
@@ -235,12 +251,11 @@ export function AIQuestionGenerator({ onGenerate, quizTitle = "", quizDescriptio
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="gemini-3-flash-preview">Gemini 3 Flash Preview (En Hızlı)</SelectItem>
-                <SelectItem value="gemini-3-pro-preview">Gemini 3 Pro Preview (En Zeki)</SelectItem>
-                <SelectItem value="gemini-3-pro">Gemini 3 Pro (Stabil)</SelectItem>
-                <SelectItem value="gemini-2.0-flash">Gemini 2.0 Flash</SelectItem>
+                <SelectItem value="gemini-3.8-flash">Gemini 3.8 Flash (Önerilen & Güncel)</SelectItem>
+                <SelectItem value="gemini-2.5-flash">Gemini 2.5 Flash</SelectItem>
+                <SelectItem value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</SelectItem>
                 <SelectItem value="gemini-1.5-flash">Gemini 1.5 Flash</SelectItem>
-                <SelectItem value="gemini-1.5-pro">Gemini 1.5 Pro (Zeki)</SelectItem>
+                <SelectItem value="gemini-1.5-pro">Gemini 1.5 Pro</SelectItem>
                 <SelectItem value="custom" className="text-primary font-bold">--- Manuel Model Gir ---</SelectItem>
               </SelectContent>
             </Select>

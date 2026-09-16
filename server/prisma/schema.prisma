@@ -11,17 +11,25 @@ datasource db {
 }
 
 model User {
-  id            String          @id @default(uuid())
-  name          String
-  email         String          @unique
-  password      String
-  role          String          @default("student") // admin, teacher, student
-  phoneNumber   String?
-  address       String?
-  studentNo     Int?            // Student number (auto-incremented per class in code)
-  classNo       String?         // Legacy/Optional student class code
-  createdAt     DateTime        @default(now())
-  
+  id          String   @id @default(uuid())
+  name        String
+  email       String   @unique
+  password    String
+  role        String   @default("student") // admin, teacher, student
+  phoneNumber String?
+  address     String?
+  studentNo   Int? // Student number (auto-incremented per class in code)
+  classNo     String? // Legacy/Optional student class code
+
+  // Veli (Parent) Bilgileri
+  parentName     String?
+  parentRelation String? // Anne, Baba, Vasi vb.
+  parentPhone    String?
+  parentEmail    String?
+  parentAddress  String?
+
+  createdAt   DateTime @default(now())
+
   // Password Reset Fields
   resetToken       String?
   resetTokenExpiry DateTime?
@@ -30,55 +38,55 @@ model User {
   // TODO: E-posta doğrulama akışı — bkz. Zafiyet 6
   // Aktif akış henüz eklenmedi; altyapı hazır tutulmaktadır.
   // Aktivasyon: kayıt sonrası token oluştur → e-posta gönder → /verify-email?token=... endpoint'i ekle
-  emailVerified          Boolean  @default(false)
+  emailVerified          Boolean @default(false)
   emailVerificationToken String?
-  notificationMuted      Boolean  @default(false)
-  
+  notificationMuted      Boolean @default(false)
+
   // Student relation: A student belongs to exactly one class
-  classId       String?
-  class         Class?          @relation("ClassStudents", fields: [classId], references: [id])
-  
+  classId String?
+  class   Class?  @relation("ClassStudents", fields: [classId], references: [id])
+
   // Teacher relation: A teacher can manage multiple classes (assistant/subject teacher)
-  managedClasses Class[]        @relation("ClassTeachers")
+  managedClasses Class[] @relation("ClassTeachers")
 
   // Teacher relation: A teacher can be a primary responsible teacher for many classes
   responsibleForClasses Class[] @relation("ClassTeacher")
-  
+
   // Teacher relation: Categories (Courses) assigned to this teacher
   assignedCategories Category[] @relation("TeacherCategories")
-  
+
   // Triple relationship assignments for this teacher
   teacherAssignments ClassTeacherCourse[]
 
   // Quiz relations
-  createdQuizzes Quiz[]         @relation("QuizCreator")
-  results        StudentResult[]
-  notifications  Notification[]
-  logs          ActionLog[]     @relation("UserLogs")
-  announcements Announcement[] @relation("AnnouncementCreator")
-  questionBank   QuestionBank[] @relation("TeacherQuestionBank")
+  createdQuizzes    Quiz[]             @relation("QuizCreator")
+  results           StudentResult[]
+  notifications     Notification[]
+  logs              ActionLog[]        @relation("UserLogs")
+  announcements     Announcement[]     @relation("AnnouncementCreator")
+  questionBank      QuestionBank[]     @relation("TeacherQuestionBank")
 }
 
 model QuestionBank {
-  id            String   @id @default(uuid())
+  id            String    @id @default(uuid())
   teacherId     String
-  teacher       User     @relation("TeacherQuestionBank", fields: [teacherId], references: [id])
+  teacher       User      @relation("TeacherQuestionBank", fields: [teacherId], references: [id])
   text          String
-  type          String   // multiple-choice, true-false, short-answer
-  options       String?  // JSON stringified array — TODO: migrate to Json? when switching to PostgreSQL
+  type          String // multiple-choice, true-false, short-answer
+  options       String? // JSON stringified array — TODO: migrate to Json? when switching to PostgreSQL
   correctAnswer String
   imageUrl      String?
   categoryId    String?
   category      Category? @relation(fields: [categoryId], references: [id])
-  createdAt     DateTime @default(now())
+  createdAt     DateTime  @default(now())
 }
 
 model ActionLog {
   id        String   @id @default(uuid())
   userId    String
   user      User     @relation("UserLogs", fields: [userId], references: [id])
-  action    String   // e.g., "CREATE_QUIZ", "SUBMIT_QUIZ", "LOGIN"
-  details   String?  // JSON or descriptive text
+  action    String // e.g., "CREATE_QUIZ", "SUBMIT_QUIZ", "LOGIN"
+  details   String? // JSON or descriptive text
   createdAt DateTime @default(now())
 }
 
@@ -90,8 +98,8 @@ model Class {
   createdAt   DateTime @default(now())
 
   // Students in this class
-  students    User[]   @relation("ClassStudents")
-  
+  students User[] @relation("ClassStudents")
+
   // Primary Responsible Teacher (Sorumlu Öğretmen)
   classTeacherId String?
   classTeacher   User?   @relation("ClassTeacher", fields: [classTeacherId], references: [id])
@@ -100,13 +108,13 @@ model Class {
   teacherAssignments ClassTeacherCourse[]
 
   // Legacy/Secondary All teachers managing this class (Many-to-Many)
-  teachers    User[]   @relation("ClassTeachers")
+  teachers User[] @relation("ClassTeachers")
 
   // Categories (Courses) assigned to this class
   assignedCategories Category[] @relation("ClassCategories")
 
   // Quizzes assigned to this class
-  quizzes     Quiz[]   @relation("ClassQuizzes")
+  quizzes Quiz[] @relation("ClassQuizzes")
 }
 
 model ClassTeacherCourse {
@@ -128,12 +136,12 @@ model Category {
   description String?
   createdAt   DateTime @default(now())
   quizzes     Quiz[]
-  
+
   // Teachers assigned to this category
-  teachers    User[]   @relation("TeacherCategories")
-  
+  teachers User[] @relation("TeacherCategories")
+
   // Classes assigned to this category
-  classes     Class[]  @relation("ClassCategories")
+  classes Class[] @relation("ClassCategories")
 
   // Triple relationship assignments for this category
   teacherAssignments ClassTeacherCourse[]
@@ -142,39 +150,44 @@ model Category {
 }
 
 model Quiz {
-  id               String          @id @default(uuid())
+  id               String    @id @default(uuid())
   title            String
   description      String?
-  difficulty       String          @default("medium")
-  timeLimit        Int?            // in minutes
-  shuffleQuestions Boolean         @default(false)
-  status           String          @default("draft") // draft, published, archived
+  difficulty       String    @default("medium")
+  timeLimit        Int? // in minutes
+  shuffleQuestions Boolean   @default(false)
+  status           String    @default("draft") // draft, published, archived
+  publishedAt      DateTime?
+  audienceSize     Int?
   academicYear     String?
-  createdAt        DateTime        @default(now())
+  createdAt        DateTime  @default(now())
 
   // Relations
-  categoryId       String?
-  category         Category?       @relation(fields: [categoryId], references: [id])
-  createdBy        String
-  creator          User            @relation("QuizCreator", fields: [createdBy], references: [id])
-  questions        Question[]
-  results          StudentResult[]
+  categoryId String?
+  category   Category?       @relation(fields: [categoryId], references: [id])
+  createdBy  String
+  creator    User            @relation("QuizCreator", fields: [createdBy], references: [id])
+  questions  Question[]
+  results    StudentResult[]
 
   // Classes this quiz is assigned to
-  assignedClasses Class[]        @relation("ClassQuizzes")
+  assignedClasses   Class[]            @relation("ClassQuizzes")
+
+  @@index([status, createdAt])
 }
 
 model Question {
-  id            String   @id @default(uuid())
+  id            String         @id @default(uuid())
   quizId        String
-  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  quiz          Quiz           @relation(fields: [quizId], references: [id], onDelete: Cascade)
   text          String
-  type          String   // multiple-choice, true-false, short-answer
-  options       String?  // JSON stringified array — TODO: migrate to Json? when switching to PostgreSQL
-  correctAnswer String
+  type          String // multiple-choice, true-false, short-answer
+  options       String? // JSON stringified array — TODO: migrate to Json? when switching to PostgreSQL
+  correctAnswer String?
+  config        String? // JSON settings
   imageUrl      String?
   order         Int
-  createdAt     DateTime @default(now())
+  createdAt     DateTime       @default(now())
 }
 
 model StudentResult {
@@ -184,11 +197,11 @@ model StudentResult {
   quizId              String
   quiz                Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
   status              String    @default("in_progress") // in_progress, completed, abandoned
-  answers             String?   // JSON stringified record — TODO: migrate to Json? when switching to PostgreSQL
+  answers             String? // JSON stringified record — TODO: migrate to Json? when switching to PostgreSQL
   score               Int?
   correctAnswersCount Int       @default(0)
   totalQuestions      Int       @default(0)
-  timeTaken           Int?      // in seconds
+  timeTaken           Int? // in seconds
   academicYear        String?
   startedAt           DateTime  @default(now())
   submittedAt         DateTime?
@@ -212,7 +225,7 @@ model Announcement {
   content       String
   createdBy     String
   creator       User     @relation("AnnouncementCreator", fields: [createdBy], references: [id])
-  targetRole    String?  // all, teacher, student
+  targetRole    String? // all, teacher, student
   targetClassId String?
   createdAt     DateTime @default(now())
 }

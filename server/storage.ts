@@ -23,7 +23,7 @@ export interface IStorage {
   // Class methods
   getAllClasses(): Promise<Class[]>;
   getClass(id: string): Promise<Class | undefined>;
-  createClass(cls: Prisma.ClassUncheckedCreateInput & { teacherId?: string }): Promise<Class>;
+  createClass(cls: Prisma.ClassUncheckedCreateInput & { teacherId?: string | null }): Promise<Class>;
   updateClass(id: string, data: Partial<Prisma.ClassUncheckedCreateInput>): Promise<Class | undefined>;
   deleteClass(id: string): Promise<void>;
   getClassesByTeacher(teacherId: string): Promise<Class[]>;
@@ -34,6 +34,7 @@ export interface IStorage {
   assignTeacherToClassWithCourse(classId: string, teacherId: string, categoryId: string): Promise<void>;
   removeTeacherFromClassWithCourse(assignmentId: string): Promise<void>;
   getStudentsByClass(classId: string): Promise<User[]>;
+  getStudentsByTeacher(teacherId: string): Promise<User[]>;
   assignCategoryToClass(classId: string, categoryId: string): Promise<void>;
   removeCategoryFromClass(classId: string, categoryId: string): Promise<void>;
   assignCategoryToTeacher(teacherId: string, categoryId: string): Promise<void>;
@@ -50,13 +51,13 @@ export interface IStorage {
   // Question methods
   getQuestionsByQuiz(quizId: string): Promise<Question[]>;
   getQuestion(id: string): Promise<Question | undefined>;
-  createQuestion(question: Prisma.QuestionUncheckedCreateInput & { options?: any }): Promise<Question>;
-  createQuestions(questions: (Prisma.QuestionUncheckedCreateInput & { options?: any })[]): Promise<Question[]>;
+  createQuestion(question: Omit<Prisma.QuestionUncheckedCreateInput, 'options' | 'config' | 'correctAnswer'> & { options?: any; config?: any; correctAnswer?: string | null }): Promise<Question>;
+  createQuestions(questions: (Omit<Prisma.QuestionUncheckedCreateInput, 'options' | 'config' | 'correctAnswer'> & { options?: any; config?: any; correctAnswer?: string | null })[]): Promise<Question[]>;
   deleteQuestion(id: string): Promise<void>;
   deleteQuestionsByQuiz(quizId: string): Promise<void>;
   // Atomik soru senkronizasyonu: mevcut soruları siler ve yenilerini tek bir transaction içinde ekler.
   // deleteMany başarılı olsa bile createMany hata verirse tüm değişiklikler geri alınır.
-  syncQuestions(quizId: string, questions: (Prisma.QuestionUncheckedCreateInput & { options?: any })[]): Promise<Question[]>;
+  syncQuestions(quizId: string, questions: (Omit<Prisma.QuestionUncheckedCreateInput, 'options' | 'config' | 'correctAnswer'> & { options?: any; config?: any; correctAnswer?: string | null })[]): Promise<Question[]>;
   
   // Student Result methods
   getResultsByStudent(studentId: string, teacherId?: string): Promise<StudentResult[]>;
@@ -76,6 +77,11 @@ export interface IStorage {
     totalResults: number;
     averageStudentScore: number;
   }>;
+  getClassAnalytics(classIds: string[], startDate: Date, endDate: Date): Promise<any[]>;
+  getDashboardOverview(role: string, userId: string): Promise<any[]>;
+  getQuestionBankItems(teacherId: string): Promise<QuestionBank[]>;
+  createQuestionBankItem(item: Omit<Prisma.QuestionBankUncheckedCreateInput, 'id' | 'createdAt' | 'options'> & { options?: any }): Promise<QuestionBank>;
+
 
   // Notification methods
   // page ve limit opsiyonel — sağlanmazsa sayfa 1, varsayılan limit kullanılır.
@@ -548,6 +554,29 @@ export class PrismaStorage implements IStorage {
     });
   }
 
+  async getStudentsByTeacher(teacherId: string): Promise<User[]> {
+    return await prisma.user.findMany({
+      where: {
+        role: 'student',
+        class: {
+          is: {
+            OR: [
+              { classTeacherId: teacherId },
+              { teachers: { some: { id: teacherId } } },
+              { teacherAssignments: { some: { teacherId } } },
+            ],
+          },
+        },
+      },
+      include: { class: true },
+      orderBy: [
+        { class: { name: 'asc' } },
+        { studentNo: 'asc' },
+        { name: 'asc' },
+      ],
+    });
+  }
+
   async assignCategoryToClass(classId: string, categoryId: string): Promise<void> {
     await prisma.class.update({
       where: { id: classId },
@@ -591,7 +620,7 @@ export class PrismaStorage implements IStorage {
           }
         },
         category: true, creator: true,
-        assignedClasses: true, creator: true
+        assignedClasses: true
       },
       orderBy: { createdAt: 'desc' }
     });
@@ -606,7 +635,7 @@ export class PrismaStorage implements IStorage {
   async getQuiz(id: string): Promise<Quiz | undefined> {
     const quiz = await prisma.quiz.findUnique({ 
       where: { id },
-      include: { category: true, creator: true, assignedClasses: true, creator: true }
+      include: { category: true, creator: true, assignedClasses: true }
     });
     return quiz ? { 
       ...quiz, 
@@ -629,7 +658,7 @@ export class PrismaStorage implements IStorage {
           }
         },
         category: true, creator: true,
-        assignedClasses: true, creator: true
+        assignedClasses: true
       },
       orderBy: { createdAt: 'desc' }
     });
@@ -651,15 +680,17 @@ export class PrismaStorage implements IStorage {
         timeLimit: quiz.timeLimit,
         shuffleQuestions: quiz.shuffleQuestions || false,
         status: quiz.status || 'draft',
+        publishedAt: quiz.publishedAt,
+        audienceSize: quiz.audienceSize,
         createdBy: quiz.createdBy,
         assignedClasses: quiz.assignedClassIds ? {
           connect: quiz.assignedClassIds.map(id => ({ id }))
-        } : undefined
+        } : undefined,
       },
       include: { assignedClasses: true, creator: true }
     });
-    return { 
-      ...created, 
+    return {
+      ...created,
       category: quiz.category || 'General'
     } as unknown as Quiz;
   }
@@ -675,9 +706,11 @@ export class PrismaStorage implements IStorage {
         timeLimit: quiz.timeLimit,
         shuffleQuestions: quiz.shuffleQuestions,
         status: quiz.status,
+        publishedAt: quiz.publishedAt,
+        audienceSize: quiz.audienceSize,
         assignedClasses: quiz.assignedClassIds ? {
           set: quiz.assignedClassIds.map(id => ({ id }))
-        } : undefined
+        } : undefined,
       },
       include: { assignedClasses: true, creator: true }
     });
@@ -694,83 +727,58 @@ export class PrismaStorage implements IStorage {
 
   // Question methods
   async getQuestionsByQuiz(quizId: string): Promise<Question[]> {
-    try {
-      const questions = await prisma.question.findMany({
-        where: { quizId },
-        orderBy: { order: 'asc' }
-      });
-      return questions.map(q => {
-        let options: string[] = [];
-        if (q.options) {
-          try {
-            options = typeof q.options === 'string' ? JSON.parse(q.options) : q.options;
-          } catch (e) {
-            options = [];
-          }
-        }
-        return { ...q, options };
-      }) as unknown as Question[];
-    } catch (e) {
-      return [];
-    }
+    const questions = await prisma.question.findMany({ where: { quizId }, orderBy: { order: 'asc' } });
+    return questions.map((question) => ({
+      ...question,
+      options: question.options ? JSON.parse(question.options) : [],
+      config: question.config ? JSON.parse(question.config) : null,
+    })) as unknown as Question[];
   }
 
   async getQuestion(id: string): Promise<Question | undefined> {
-    try {
-      const q = await prisma.question.findUnique({ where: { id } });
-      if (!q) return undefined;
-      let options: string[] = [];
-      if (q.options) {
-        try {
-          options = typeof q.options === 'string' ? JSON.parse(q.options) : q.options;
-        } catch (e) {
-          options = [];
-        }
-      }
-      return { ...q, options } as unknown as Question;
-    } catch (e) {
-      return undefined;
-    }
+    const question = await prisma.question.findUnique({ where: { id } });
+    if (!question) return undefined;
+    return {
+      ...question,
+      options: question.options ? JSON.parse(question.options) : [],
+      config: question.config ? JSON.parse(question.config) : null,
+    } as unknown as Question;
   }
 
-  async createQuestion(q: Prisma.QuestionUncheckedCreateInput & { options?: any }): Promise<Question> {
+  async createQuestion(q: Prisma.QuestionUncheckedCreateInput & { options?: any; config?: any }): Promise<Question> {
     const created = await prisma.question.create({
       data: {
         quizId: q.quizId,
         text: q.text,
         type: q.type,
-        options: q.options ? JSON.stringify(q.options) : "[]",
-        correctAnswer: q.correctAnswer,
+        options: JSON.stringify(q.options || []),
+        correctAnswer: q.correctAnswer || null,
+        config: q.config ? JSON.stringify(q.config) : null,
         imageUrl: q.imageUrl,
-        order: q.order
+        order: q.order,
       }
     });
     return {
       ...created,
-      options: created.options ? JSON.parse(created.options) : []
+      options: created.options ? JSON.parse(created.options) : [],
+      config: created.config ? JSON.parse(created.config) : null,
     } as unknown as Question;
   }
 
-  async createQuestions(questions: (Prisma.QuestionUncheckedCreateInput & { options?: any })[]): Promise<Question[]> {
+  async createQuestions(questions: (Prisma.QuestionUncheckedCreateInput & { options?: any; config?: any })[]): Promise<Question[]> {
     if (questions.length === 0) return [];
-
-    // createMany ile tüm soruları tek DB sorgusunda ekle (N ayrı sorgu yerine 1 sorgu)
-    // Not: Prisma'nın createMany metodu oluşturulan kayıtları döndürmez;
-    //      bu nedenle ekleme sonrasında getQuestionsByQuiz ile sonuçları çekiyoruz.
-    // Not: Tüm sorular aynı quiz'e ait olmalıdır (quizId aynı olmalı).
     await prisma.question.createMany({
       data: questions.map((q) => ({
         quizId: q.quizId as string,
         text: q.text as string,
         type: q.type as string,
-        options: q.options ? JSON.stringify(q.options) : "[]",
-        correctAnswer: q.correctAnswer as string,
+        options: JSON.stringify(q.options || []),
+        correctAnswer: (q.correctAnswer as string | null | undefined) || null,
+        config: q.config ? JSON.stringify(q.config) : null,
         imageUrl: (q.imageUrl as string | null | undefined) ?? null,
         order: q.order as number,
       })),
     });
-
-    // Eklenen soruları sıralı olarak geri döndür
     return this.getQuestionsByQuiz(questions[0].quizId as string);
   }
 
@@ -782,18 +790,17 @@ export class PrismaStorage implements IStorage {
     await prisma.question.deleteMany({ where: { quizId } });
   }
 
-  async syncQuestions(quizId: string, questions: (Prisma.QuestionUncheckedCreateInput & { options?: any })[]): Promise<Question[]> {
-    // Silme ve ekleme işlemlerini tek bir transaction içinde çalıştır.
-    // createMany hata verirse deleteMany da geri alınır — veri kaybı yaşanmaz.
+  async syncQuestions(quizId: string, questions: (Omit<Prisma.QuestionUncheckedCreateInput, 'options' | 'config' | 'correctAnswer'> & { options?: any; config?: any; correctAnswer?: string | null })[]): Promise<Question[]> {
     await prisma.$transaction([
       prisma.question.deleteMany({ where: { quizId } }),
       prisma.question.createMany({
         data: questions.map((q) => ({
-          quizId: quizId,
+          quizId,
           text: q.text as string,
           type: q.type as string,
-          options: q.options ? JSON.stringify(q.options) : "[]",
-          correctAnswer: q.correctAnswer as string,
+          options: JSON.stringify(q.options || []),
+          correctAnswer: (q.correctAnswer as string | null | undefined) || null,
+          config: q.config ? JSON.stringify(q.config) : null,
           imageUrl: (q.imageUrl as string | null | undefined) ?? null,
           order: q.order as number,
         })),
@@ -815,7 +822,7 @@ export class PrismaStorage implements IStorage {
     })) as unknown as QuestionBank[];
   }
 
-  async createQuestionBankItem(item: Omit<Prisma.QuestionBankUncheckedCreateInput, 'id' | 'createdAt'> & { options?: any }): Promise<QuestionBank> {
+  async createQuestionBankItem(item: Omit<Prisma.QuestionBankUncheckedCreateInput, 'id' | 'createdAt' | 'options'> & { options?: any }): Promise<QuestionBank> {
     const created = await prisma.questionBank.create({
       data: {
         ...item,
@@ -963,6 +970,88 @@ export class PrismaStorage implements IStorage {
       totalResults: agg._count.id,
       averageStudentScore: Math.round(agg._avg.score ?? 0),
     };
+  }
+
+  async getClassAnalytics(classIds: string[], startDate: Date, endDate: Date): Promise<any[]> {
+    if (classIds.length === 0) return [];
+    const classes = await prisma.class.findMany({
+      where: { id: { in: classIds } },
+      orderBy: { name: 'asc' },
+      include: {
+        students: {
+          where: { role: 'student' },
+          select: {
+            id: true,
+            results: {
+              where: {
+                status: 'completed',
+                submittedAt: { gte: startDate, lte: endDate },
+                score: { not: null },
+              },
+              select: { score: true, quizId: true, studentId: true },
+            },
+          },
+        },
+      },
+    });
+
+    return classes.map((classroom) => {
+      const results = classroom.students.flatMap((student) => student.results);
+      const participantIds = new Set(results.map((result) => result.studentId));
+      const scoreTotal = results.reduce((total, result) => total + (result.score ?? 0), 0);
+      return {
+        classId: classroom.id,
+        className: classroom.name,
+        studentCount: classroom.students.length,
+        participantCount: participantIds.size,
+        completedCount: results.length,
+        averageScore: results.length > 0 ? Math.round(scoreTotal / results.length) : 0,
+        participationRate: classroom.students.length > 0
+          ? Math.round((participantIds.size / classroom.students.length) * 100)
+          : 0,
+      };
+    });
+  }
+
+  async getDashboardOverview(role: string, userId: string): Promise<any[]> {
+    const quizzes = await prisma.quiz.findMany({
+      where: {
+        status: 'published',
+        ...(role === 'teacher' ? { createdBy: userId } : {}),
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 5,
+      include: {
+        category: { select: { name: true } },
+        assignedClasses: {
+          select: {
+            students: { where: { role: 'student' }, select: { id: true } },
+          },
+        },
+        results: {
+          where: { status: 'completed' },
+          select: { studentId: true },
+        },
+      },
+    });
+
+    return quizzes.map((quiz) => {
+      const assignedIds = new Set(quiz.assignedClasses.flatMap((classroom) => classroom.students.map((student) => student.id)));
+      const participantIds = new Set(quiz.results.map((result) => result.studentId));
+      const participants = assignedIds.size > 0
+        ? [...participantIds].filter((studentId) => assignedIds.has(studentId)).length
+        : participantIds.size;
+      const assignedStudents = assignedIds.size > 0 ? assignedIds.size : participantIds.size;
+      return {
+        id: quiz.id,
+        title: quiz.title,
+        category: quiz.category?.name || 'Genel',
+        createdAt: quiz.createdAt,
+        assignedStudents,
+        participants,
+        participationRate: assignedStudents > 0 ? Math.round((participants / assignedStudents) * 100) : (participants > 0 ? 100 : 0),
+      };
+    });
   }
 
   // Notification methods

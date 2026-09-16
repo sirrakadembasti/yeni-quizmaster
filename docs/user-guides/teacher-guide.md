@@ -18,12 +18,12 @@ E-posta ve şifrenizle giriş yaptığınızda öğretmen dashboard'u açılır.
 - **Duyurular:** Sınıfa yönelik duyuru oluşturma ve görüntüleme.
 - **Ayarlar:** Profil, bildirimler, kişisel işlem geçmişi ve şifre.
 
-## 3. Sınav oluşturma
+## 3. Sınav oluşturma ve AI soru üretimi
 
 1. **Sınavlarım** ekranından yeni sınav oluşturun.
 2. **Ayarlar** sekmesinde başlık, açıklama, ders, zorluk, süre, soru karıştırma ve sınıf atamalarını belirleyin.
 3. **Sorular** sekmesinde soru metnini, seçenekleri ve doğru cevabı girin.
-4. İsterseniz yapılandırılmış AI soru üretme aracını kullanıp üretilen soruları mutlaka gözden geçirin.
+4. **AI ile Soru Üret:** Google Gemini (`gemini-3.8-flash`) desteği ile istediğiniz konu ve zorlukta çoktan seçmeli veya açık uçlu soruları saniyeler içinde oluşturabilir, eklemeden önce düzenleyebilirsiniz.
 5. Sınavı taslak kaydedin; son kontrolden sonra yayınlayın.
 
 En az bir soru eklenmeden sınav yayınlanamaz. Öğretmen yalnızca sorumlu olduğu sınıflara sınav atayabilir; başka bir sınıf kimliği API üzerinden gönderilse bile sunucu isteği reddeder.
@@ -52,13 +52,13 @@ Süre alanı çevrimdışı kullanımı da belirler:
 - Süre bittikten sonra sunucu yeni cevap kabul etmez.
 - Öğrenci tamamlanmamış sınavın cevap anahtarını sonuç ekranından görüntüleyemez.
 
-## 6. Sonuçları inceleme
+## 6. Sonuçları inceleme ve yazdırma
 
-**Sınav Sonuçları** ekranında sınavı seçerek katılım, puan ve öğrenci bazlı sonuçları inceleyin. Filtreleri kullanabilir, raporları yazdırabilir veya mevcut dışa aktarma seçeneğini kullanabilirsiniz.
+**Sınav Sonuçları** ekranında sınavı seçerek katılım, puan ve öğrenci bazlı sonuçları inceleyin. Filtreleri kullanabilir, "Yazdır" butonu ile ilk sayfa boşluğu olmadan doğrudan optimize edilmiş A4 çıktısı alabilirsiniz.
 
 ## 7. Sınıflar ve öğrenciler
 
-**Sınıflarım** ekranında yalnızca sorumlu olduğunuz sınıflar görüntülenir. Sınıf detayından öğrenci listesini ve ilgili bilgileri inceleyebilirsiniz. Yetkiniz dışında bir sınıfa sınav veya duyuru atamaya çalışırsanız işlem güvenlik nedeniyle reddedilir.
+**Sınıflarım** ekranında yalnızca sorumlu olduğunuz sınıflar görüntülenir. Sınıf detayından öğrenci listesini inceleyebilirsiniz. Bir öğrencinin detayına girildiğinde öğretmenlere KVKK ve güvenlik gereği yalnızca **Sınav Bilgileri** ve sonuçları sunulur; Veli Bilgileri ve özel kimlik sekmeleri gizlenir. Yetkiniz dışında bir sınıfa sınav veya duyuru atamaya çalışırsanız işlem güvenlik nedeniyle reddedilir.
 
 ## 8. Duyuru oluşturma
 

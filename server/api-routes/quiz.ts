@@ -2,7 +2,7 @@ import { Router, type Response, type Request } from "express";
 import { storage } from "../storage";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { getIO } from "../socket";
-import { logger } from "../index";
+import { logger } from "../utils/logger";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { canAssignClasses } from "../utils/class-authorization";
@@ -53,8 +53,9 @@ const quizSchema = z.object({
 const questionSchema = z.object({
   text: z.string().min(1, "Soru metni gereklidir."),
   type: z.string().default("multiple-choice"),
-  options: z.array(z.string()).min(2, "En az 2 seçenek gereklidir."),
-  correctAnswer: z.string().min(1, "Doğru cevap gereklidir."),
+  options: z.array(z.string()).default([]),
+  correctAnswer: z.string().optional().nullable(),
+  config: z.record(z.any()).optional().nullable(),
   imageUrl: z.string().url().optional().nullable(),
   order: z.number().int().default(0),
 });
@@ -135,6 +136,12 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
       if (found) finalCategoryId = found.id;
     }
 
+    const assignedStudentIds = new Set<string>();
+    for (const classId of assignedClassIds) {
+      const students = await storage.getStudentsByClass(classId);
+      students.forEach((student) => assignedStudentIds.add(student.id));
+    }
+
     const quiz = await storage.createQuiz({
       title,
       description,
@@ -144,6 +151,8 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
       shuffleQuestions,
       status,
       createdBy: req.user!.id,
+      publishedAt: status === "published" ? new Date() : null,
+      audienceSize: status === "published" ? assignedStudentIds.size : null,
       assignedClassIds
     });
 
@@ -159,51 +168,54 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
 router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
     const validation = quizSchema.partial().safeParse(req.body);
-    if (!validation.success) {
-      return res.status(400).json({ message: fromZodError(validation.error).message });
-    }
+    if (!validation.success) return res.status(400).json({ message: fromZodError(validation.error).message });
 
     const existingQuiz = await storage.getQuiz(req.params.id);
-    if (!existingQuiz) return res.status(404).json({ message: "Sınav bulunamadı." });
-
+    if (!existingQuiz) return res.status(404).json({ message: "Icerik bulunamadi." });
     if (req.user!.role === "teacher" && existingQuiz.createdBy !== req.user!.id) {
-      return res.status(403).json({ message: "Bu sınavı düzenleme yetkiniz yok." });
+      return res.status(403).json({ message: "Bu icerigi duzenleme yetkiniz yok." });
     }
 
     const assignedClassIds = validation.data.assignedClassIds;
-    if (assignedClassIds &&
-        !await canAssignClasses(req.user!.role, req.user!.id, assignedClassIds)) {
-      return res.status(403).json({ message: "Yalnızca sorumlu olduğunuz sınıflara sınav atayabilirsiniz." });
+    if (assignedClassIds && !await canAssignClasses(req.user!.role, req.user!.id, assignedClassIds)) {
+      return res.status(403).json({ message: "Yalnizca yetkili oldugunuz siniflara atama yapabilirsiniz." });
     }
 
     if (validation.data.status === "published" && existingQuiz.status !== "published") {
       const questions = await storage.getQuestionsByQuiz(req.params.id);
-      if (questions.length === 0) {
-        return res.status(400).json({ message: "Sınav yayınlanabilmesi için en az 1 soru eklenmelidir." });
+      if (questions.length === 0) return res.status(400).json({ message: "Yayinlamak icin en az bir soru gereklidir." });
+    }
+
+    const publicationFields: { publishedAt?: Date; audienceSize?: number } = {};
+    if (validation.data.status === "published" && existingQuiz.status !== "published") {
+      const effectiveClassIds = assignedClassIds || ((existingQuiz as any).assignedClasses || []).map((item: any) => item.id);
+      const audienceIds = new Set<string>();
+      for (const classId of effectiveClassIds) {
+        const students = await storage.getStudentsByClass(classId);
+        students.forEach((student) => audienceIds.add(student.id));
       }
+      publicationFields.publishedAt = new Date();
+      publicationFields.audienceSize = audienceIds.size;
     }
 
     const quiz = await storage.updateQuiz(req.params.id, {
       ...validation.data,
-      assignedClassIds: validation.data.assignedClassIds
+      ...publicationFields,
+      assignedClassIds,
     });
-
     await storage.createLog(req.user!.id, "UPDATE_QUIZ", `Updated quiz: ${quiz?.title}`);
 
     if (quiz && existingQuiz.status !== "published" && quiz.status === "published") {
       await notifyAdminsAboutTeacherQuiz(req.user!, quiz, "published");
-    }
-
-    if (existingQuiz.status !== "published" && quiz?.status === "published" && (quiz as any).assignedClasses && (quiz as any).assignedClasses.length > 0) {
       const io = getIO();
-      for (const cls of (quiz as any).assignedClasses) {
-        const students = await storage.getStudentsByClass(cls.id);
+      for (const classroom of (quiz as any).assignedClasses || []) {
+        const students = await storage.getStudentsByClass(classroom.id);
         for (const student of students) {
           const notification = await storage.createNotification({
             userId: student.id,
             title: "Yeni Sınav",
-            message: `"${quiz?.title}" adlı sınav yayınlandı.`,
-            type: "info"
+            message: `"${quiz.title}" yayımlandı.`,
+            type: "info",
           });
           io.to(`user_${student.id}`).emit("notification", notification);
         }
@@ -213,37 +225,35 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
     res.json({ quiz });
   } catch (error) {
     console.error("Update quiz error:", error);
-    res.status(500).json({ message: "Sınav güncellenemedi." });
+    res.status(500).json({ message: "İçerik güncellenemedi." });
   }
 });
 
-router.post("/:id/questions", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {    
+router.post("/:id/questions", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
-    const quizId = req.params.id;
-
     const validation = questionsArraySchema.safeParse(req.body);
-    if (!validation.success) {
-      return res.status(400).json({ message: fromZodError(validation.error).message });
-    }
+    if (!validation.success) return res.status(400).json({ message: fromZodError(validation.error).message });
 
-    const quiz = await storage.getQuiz(quizId);
-    if (!quiz) return res.status(404).json({ message: "Sınav bulunamadı." });
-
+    const quiz = await storage.getQuiz(req.params.id);
+    if (!quiz) return res.status(404).json({ message: "İçerik bulunamadı." });
     if (req.user!.role === "teacher" && quiz.createdBy !== req.user!.id) {
-      return res.status(403).json({ message: "Bu sınava soru ekleme yetkiniz yok." });
+      return res.status(403).json({ message: "Bu içeriğe soru ekleme yetkiniz yok." });
     }
 
-    const questionsData = validation.data.map((q) => ({
-      quizId: quizId,
-      text: q.text,
-      type: q.type,
-      options: q.options,
-      correctAnswer: q.correctAnswer,
-      imageUrl: q.imageUrl,
-      order: q.order
-    }));
+    if (validation.data.some((question) => question.options.length < 2 || !question.correctAnswer)) {
+      return res.status(400).json({ message: "Sınav sorularında seçenekler ve doğru cevap zorunludur." });
+    }
 
-    const questions = await storage.syncQuestions(quizId, questionsData);
+    const questions = await storage.syncQuestions(req.params.id, validation.data.map((question) => ({
+      quizId: req.params.id,
+      text: question.text,
+      type: question.type,
+      options: question.options,
+      correctAnswer: question.correctAnswer || null,
+      config: question.config,
+      imageUrl: question.imageUrl,
+      order: question.order,
+    })));
     res.status(201).json({ questions });
   } catch (error) {
     logger.error({ err: error }, "Sync questions error");

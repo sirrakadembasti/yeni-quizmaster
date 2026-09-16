@@ -308,6 +308,64 @@ export default function SettingsPage() {
                 </CardContent>
               </Card>
             </div>
+
+            {user?.role === 'student' && (
+              <Card className="rounded-3xl border-border/50 shadow-sm overflow-hidden mt-6">
+                <CardHeader className="bg-muted/20 border-b border-border/50">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-xl font-black">Veli Bilgileri</CardTitle>
+                      <CardDescription>Kayıtlı veli ve iletişim bilgileriniz (Salt Okunur).</CardDescription>
+                    </div>
+                    <Badge variant="outline" className="text-xs font-bold text-muted-foreground">Düzenlenemez</Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4 pt-6">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Veli Adı Soyadı</Label>
+                      <Input 
+                        disabled 
+                        value={user.parentName || "Belirtilmemiş"} 
+                        className="rounded-xl bg-muted/30 cursor-not-allowed opacity-80" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Yakınlık Derecesi</Label>
+                      <Input 
+                        disabled 
+                        value={user.parentRelation || "Belirtilmemiş"} 
+                        className="rounded-xl bg-muted/30 cursor-not-allowed opacity-80" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Veli Telefonu</Label>
+                      <Input 
+                        disabled 
+                        value={user.parentPhone || "Belirtilmemiş"} 
+                        className="rounded-xl bg-muted/30 cursor-not-allowed opacity-80" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Veli E-Postası</Label>
+                      <Input 
+                        disabled 
+                        value={user.parentEmail || "Belirtilmemiş"} 
+                        className="rounded-xl bg-muted/30 cursor-not-allowed opacity-80" 
+                      />
+                    </div>
+                    <div className="sm:col-span-2 space-y-2">
+                      <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Veli Adresi</Label>
+                      <Input 
+                        disabled 
+                        value={user.parentAddress || "Belirtilmemiş"} 
+                        className="rounded-xl bg-muted/30 cursor-not-allowed opacity-80" 
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="notifications" className="animate-in fade-in-50 duration-500">

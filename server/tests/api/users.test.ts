@@ -11,6 +11,7 @@ vi.mock('../../storage', () => ({
     getAllUsers: vi.fn(),
     getClassesByTeacher: vi.fn(),
     getStudentsByClass: vi.fn(),
+    getStudentsByTeacher: vi.fn(),
     getUserByEmail: vi.fn(),
     createUser: vi.fn(),
     getUser: vi.fn(),
@@ -69,17 +70,13 @@ describe('Users API Integration Tests', () => {
       
       vi.mocked(storage.getUser).mockResolvedValue(teacherUser as any);
       
-      const mockClasses = [{ id: 'class-1', name: 'Math' }];
-      const mockStudents = [{ id: 'student-1', role: 'student' }];
-      
-      vi.mocked(storage.getClassesByTeacher).mockResolvedValue(mockClasses as any);
-      vi.mocked(storage.getStudentsByClass).mockResolvedValue(mockStudents as any);
+      const mockStudents = [{ id: 'student-1', role: 'student', password: 'hashed' }];
+      vi.mocked(storage.getStudentsByTeacher).mockResolvedValue(mockStudents as any);
 
       const res = await request(app).get('/api/users');
 
       expect(res.status).toBe(200);
-      expect(storage.getClassesByTeacher).toHaveBeenCalledWith('teacher-1');
-      expect(storage.getStudentsByClass).toHaveBeenCalledWith('class-1');
+      expect(storage.getStudentsByTeacher).toHaveBeenCalledWith('teacher-1');
       expect(res.body.users).toHaveLength(2); // Teacher + 1 Student
     });
 

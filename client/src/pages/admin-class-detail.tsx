@@ -3,22 +3,19 @@ import { useParams, Link } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { classApi, userApi, categoryApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ArrowLeft,
   Users,
-  Plus,
   Trash2,
   UserPlus,
   Loader2,
   Search,
-  Mail,
   Briefcase,
   GraduationCap,
   BookOpen
 } from "lucide-react";
 import { useState, useMemo } from "react";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import {
   Table,
@@ -37,7 +34,6 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function AdminClassDetailPage() {
@@ -133,7 +129,7 @@ export default function AdminClassDetailPage() {
   };
 
   const removeStudentMutation = useMutation({
-    mutationFn: (studentId: string) => classApi.removeStudentFromClass(studentId),
+    mutationFn: (studentId: string) => classApi.removeStudentFromClass(id as string, studentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['classes'] });
       queryClient.invalidateQueries({ queryKey: ['users'] });

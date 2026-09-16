@@ -18,8 +18,7 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
-  Cell,
-  Legend
+  Cell
 } from 'recharts';
 import { 
   Select, 
@@ -36,11 +35,9 @@ import {
   Loader2, 
   Search, 
   Activity, 
-  Clock, 
   GraduationCap, 
   BarChart2,
   AlertCircle,
-  Printer,
   Users
 } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
@@ -49,7 +46,7 @@ import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
-import { tr } from "date-fns/locale";
+import { PrintButton, PrintMeta } from "@/components/print/PrintTools";
 
 export default function StatisticsPage() {
   const { role, user: currentUser } = useAuth();
@@ -68,6 +65,7 @@ export default function StatisticsPage() {
   const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
+    document.title = "Sınav Sonuçları | Quiz Master";
     const params = new URLSearchParams(window.location.search);
     const tab = params.get("tab");
     if (tab === "reports" && role === "teacher") {
@@ -240,20 +238,22 @@ export default function StatisticsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="space-y-5">
+        <PrintMeta
+          title="Sınav Sonuçları"
+          filters={[
+            { label: "Kategori", value: categories.find((c: any) => c.id === selectedCategoryId)?.name || "Tümü" },
+            { label: "Sınıf", value: classes.find((c: any) => c.id === selectedClassId)?.name || "Tümü" },
+          ]}
+        />
+
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 print:hidden no-print">
           <div>
-            <h1 className="text-3xl font-black text-foreground tracking-tight">İstatistik ve Analiz</h1>
-            <p className="text-muted-foreground mt-1">Sistem genelindeki sınav performanslarını ve öğrenci verilerini analiz edin.</p>
+            <h1 className="text-3xl font-black text-foreground tracking-tight">Sınav Sonuçları</h1>
+            <p className="text-muted-foreground mt-1 text-sm">Sistem genelindeki sınav sonuçlarını ve başarı performanslarını analiz edin.</p>
           </div>
-          <div className="flex gap-2 print:hidden">
-            <Button 
-              variant="outline" 
-              onClick={() => window.print()}
-              className="rounded-xl font-black gap-2 border-2 hover:bg-slate-50"
-            >
-              <Printer className="h-4 w-4" /> Yazdır
-            </Button>
+          <div className="flex gap-2">
+            <PrintButton className="rounded-xl" />
           </div>
         </div>
 

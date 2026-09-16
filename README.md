@@ -149,10 +149,12 @@ Seed scripti aşağıdaki kullanıcıları oluşturur:
 ## Öne Çıkan Özellikler
 
 - **Modern Dashboard & RBAC Log Sistemi** — Adminler tüm sistem hareketlerini (`/management?tab=logs`), öğretmen ve öğrenciler ise yalnızca kendi aktivitelerini (`/settings?tab=logs`) modern bir liste görünümünde izleyebilir. Son 5 hareket dashboard'da doğrudan görüntülenir.
+- **Öğrenci & Veli Bilgileri Yönetimi** — Öğrenci detay ekranında (`/students/:id`) yöneticilere özel 3 sekmeli yapı: *Sınav Bilgileri*, *Öğrenci Bilgileri* ve *Veli Bilgileri* (Veli Adı, Yakınlık, Telefon, E-posta, Adres). Öğretmenler yalnızca sınav sonuçlarını görebilir; öğrenciler kendi veli bilgilerini Profil ayarlarında salt okunur olarak inceler.
 - **Öğretmen Detay Sayfası** (`/teachers/:id`) — Öğretmen profil bilgileri, branş atamaları, sorumlu olduğu sınıflar ve oluşturduğu sınavların tek sayfada kapsamlı özeti.
 - **Öğretmen Dashboard'u** — Dashboard başlık alanında branş badge'leri ve sorumlu sınıflar dinamik olarak gösterilir. Eğitmen ilgili sınıf detay sayfasına tek tıkla erişebilir.
-- **Global Yazdırma (Print) Desteği** — Duyurular, Sınıf listeleri, Sınavlar ve Sonuç/İstatistik sayfalarında optimize edilmiş "Yazdır" butonu. Yazdırma sırasında Sidebar ve Navbar Tailwind `print:hidden` ile otomatik gizlenir.
-- **AI Destekli Soru Üretimi** — Gemini API entegrasyonu ile saniyeler içinde konu bazlı, zorluk seviyesi ayarlanabilir çoktan seçmeli sorular.
+- **Sınıf İstatistikleri & Sınav Sonuçları** (`/class-statistics`, `/results`) — Sınıf bazlı KPI metrik kartları (Toplam Öğrenci, Katılımcı Sayısı, Katılım Oranı, Ortalama Başarı %) ve sınıf bazında detaylandırılmış performans grafikleri.
+- **Global ve Optimize Yazdırma (Print) Desteği** — Duyurular, Sınıf listeleri, Sınavlar ve Sonuç/İstatistik sayfalarında A4 dikey/yatay optimize edilmiş "Yazdır" altyapısı. İlk sayfa boş çıkma sorunu giderilmiş olup, filtre panelleri, Sidebar ve Navbar otomatik gizlenir.
+- **AI Destekli Soru Üretimi (Gemini 3.8 Flash)** — Google Gemini API entegrasyonu (varsayılan: `gemini-3.8-flash`) ile konu bazlı, zorluk seviyesi ve soru tipi ayarlanabilir sorular saniyeler içinde üretilir. Hem standart Bearer hem de Google `x-goog-api-key` formatları tam desteklenir.
 - **Duyuru Merkezi** — Tüm okul geneline veya spesifik bir sınıfa/role yönelik zengin içerikli duyuru yayınlama sistemi (Admin ve Öğretmen).
 - **Çevrimdışı Sınav Desteği** — Süresiz sınavları önceden cihaza hazırlama, cevapları kullanıcı+sınav bazında yerelde saklama ve bağlantı geri geldiğinde atomik teslim senkronizasyonu.
 - **Güvenlik ve Performans**

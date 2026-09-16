@@ -11,32 +11,12 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import * as dotenv from "dotenv";
-import pino from "pino";
 import pinoHttp from "pino-http";
-import pretty from "pino-pretty";
 import { setupSocket } from "./socket";
 import { generateToken, csrfSynchronisedProtection } from "./middleware/csrf";
 import { secureJsonReplacer } from "./utils/json-security";
-
-// Load environment variables
-dotenv.config();
-
-// Keep development logging in-process. This avoids worker-thread crashes when
-// the TSX watcher restarts the server while preserving the same pretty output.
-const isProduction = process.env.NODE_ENV === "production";
-const developmentLogStream = isProduction
-  ? undefined
-  : pretty({
-      colorize: true,
-      translateTime: "SYS:standard",
-      ignore: "pid,hostname",
-      sync: true,
-    });
-
-export const logger = pino(
-  { level: isProduction ? "info" : "debug" },
-  developmentLogStream,
-);
+import { logger } from "./utils/logger";
+export { logger };
 
 const httpLogger = pinoHttp({
   logger,

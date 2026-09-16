@@ -1,6 +1,6 @@
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,18 +21,10 @@ import {
   Loader2,
   Layers,
   Search,
-  X,
-  History,
   Activity,
-  CheckCircle2,
-  XCircle,
   AlertCircle,
   UserPlus,
-  ArrowRight,
   MoreHorizontal,
-  GraduationCap,
-  ShieldCheck,
-  Briefcase,
   Printer
 } from "lucide-react";
 import { useState, useMemo } from "react";
@@ -57,7 +49,6 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { 
   DropdownMenu, 
@@ -71,15 +62,15 @@ export default function AdminManagementPage() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState("categories");
-  
-  // States
+
+  // Dialog States
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
   const [isEditCategoryMode, setIsEditCategoryMode] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [categoryName, setCategoryName] = useState("");
   const [categoryDesc, setCategoryDesc] = useState("");
-  const [isDeleteCategoryOpen, setIsDeleteCategoryOpen] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [isDeleteCategoryOpen, setIsDeleteCategoryOpen] = useState(false);
 
   const [isClassDialogOpen, setIsClassDialogOpen] = useState(false);
   const [isEditClassMode, setIsEditClassMode] = useState(false);
@@ -88,8 +79,6 @@ export default function AdminManagementPage() {
   const [classSection, setClassSection] = useState("");
   const [classDesc, setClassNameDesc] = useState("");
   const [selectedTeacherId, setSelectedTeacherId] = useState("");
-  const [selectedTeacherCourseId, setSelectedTeacherCourseId] = useState("");
-  const [selectedStudentToAssign, setSelectedStudentToAssign] = useState("");
   const [isDeleteClassOpen, setIsDeleteClassOpen] = useState(false);
 
   const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
@@ -98,21 +87,18 @@ export default function AdminManagementPage() {
   const [isDeleteUserOpen, setIsDeleteUserOpen] = useState(false);
   const [userRoleFilter, setUserRoleFilter] = useState("all");
 
-  const [isLevelChangeOpen, setIsLevelChangeOpen] = useState(false);
-  const [pendingPromotionData, setPendingPromotionData] = useState<{studentId: string, fromLevel: string, toLevel: string} | null>(null);
-
   // Fetch Data
-  const { data: categories = [], isLoading: catsLoading } = useQuery({
+  const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
     queryFn: () => categoryApi.getAllCategories(),
   });
 
-  const { data: classesData, isLoading: classesLoading } = useQuery({
+  const { data: classesData } = useQuery({
     queryKey: ['/api/classes'],
     queryFn: () => classApi.getAllClasses(),
   });
 
-  const { data: usersData, isLoading: usersLoading } = useQuery({
+  const { data: usersData } = useQuery({
     queryKey: ['users'],
     queryFn: () => userApi.getAllUsers(),
   });
@@ -125,7 +111,6 @@ export default function AdminManagementPage() {
   const logDateRange = useMemo(() => {
     const now = new Date();
     const startDate = new Date();
-    const endDate = new Date();
 
     if (logDateFilter === "academic-year") {
       // Academic year starts on July 1st
@@ -158,7 +143,6 @@ export default function AdminManagementPage() {
 
   const teachers = usersData?.users.filter(u => u.role === 'teacher') || [];
   const classes = classesData?.classes || [];
-  const students = usersData?.users.filter(u => u.role === 'student') || [];
   const logs = logsData?.logs || [];
 
   // Mutations - User Management
@@ -271,72 +255,7 @@ const deleteClassMutation = useMutation({
   }
 });
 
-const assignTeacherMutation = useMutation({
-  mutationFn: (data: { teacherId: string, categoryId: string }) =>
-    classApi.assignTeacherToClassWithCourse(selectedClassId!, data.teacherId, data.categoryId),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['/api/classes'] });
-    queryClient.invalidateQueries({ queryKey: ['users'] });
-    setSelectedTeacherCourseId("");
-    toast({ title: "Başarılı", description: "Branş öğretmeni atandı." });
-  }
-});
-
-const removeTeacherMutation = useMutation({
-  mutationFn: (assignmentId: string) => classApi.removeTeacherFromClassWithCourse(assignmentId),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['/api/classes'] });
-    queryClient.invalidateQueries({ queryKey: ['users'] });
-    toast({ title: "Başarılı", description: "Atama kaldırıldı." });
-  }
-});
-
-  const assignStudentMutation = useMutation({
-    mutationFn: (studentId: string) => classApi.assignStudentToClass(selectedClassId!, studentId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/classes'] });
-      setSelectedStudentToAssign("");
-      setIsLevelChangeOpen(false);
-      setPendingPromotionData(null);
-      toast({ title: "Başarılı", description: "Öğrenci sınıfa eklendi." });
-    },
-    onError: (e: any) => toast({ variant: "destructive", title: "Hata", description: e.message })
-  });
-
-  // Active Contexts
   const activeClass = useMemo(() => classes.find(c => c.id === selectedClassId), [classes, selectedClassId]);
-  const activeClassStudents = useMemo(() => students.filter(s => s.classId === selectedClassId), [students, selectedClassId]);
-
-  const handleStudentAssignment = (studentId: string) => {
-    const student = students.find(s => s.id === studentId);
-    const targetClass = classes.find(c => c.id === selectedClassId);
-    
-    if (!student || !targetClass) return;
-
-    const currentClass = classes.find(c => c.id === student.classId);
-    const fromLevel = currentClass?.name.split("-")[0] || "Seviyesiz";
-    const toLevel = targetClass.name.split("-")[0];
-
-    if (fromLevel !== toLevel) {
-      setPendingPromotionData({ studentId, fromLevel, toLevel });
-      setIsLevelChangeOpen(true);
-    } else {
-      assignStudentMutation.mutate(studentId);
-    }
-  };
-
-  const teacherCourseOptions = useMemo(() => {
-    const options: any[] = [];
-    teachers.forEach(t => {
-      (t.assignedCategories || []).forEach((cat: any) => {
-        if (!activeClass?.teacherAssignments?.some((ta: any) => ta.teacherId === t.id && ta.categoryId === cat.id)) {
-          options.push({ id: `${t.id}-${cat.id}`, teacherId: t.id, categoryId: cat.id, label: `${t.name} (${cat.name})` });
-        }
-      });
-    });
-    return options;
-  }, [teachers, activeClass]);
 
   const filteredUsers = useMemo(() => {
     return usersData?.users.filter(u => userRoleFilter === "all" || u.role === userRoleFilter) || [];
@@ -840,29 +759,7 @@ const removeTeacherMutation = useMutation({
         </DialogContent>
       </Dialog>
 
-      {/* Level Change Confirmation */}
-      <Dialog open={isLevelChangeOpen} onOpenChange={setIsLevelChangeOpen}>
-        <DialogContent className="rounded-3xl max-w-sm bg-card">
-          <DialogHeader className="sr-only">
-            <DialogTitle>Seviye Değişikliği Onayı</DialogTitle>
-            <DialogDescription>Sınıf seviyesi değişim uyarısı</DialogDescription>
-          </DialogHeader>
-          <div className="py-8 text-center space-y-4">
-            <div className="h-16 w-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-amber-100 shadow-lg dark:shadow-none">
-              <GraduationCap className="h-8 w-8" />
-            </div>
-            <h2 className="text-xl font-black text-slate-900 dark:text-slate-50">Seviye Değişimi!</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 font-medium px-4">
-              Öğrenci mevcut sınıf seviyesinden ({pendingPromotionData?.fromLevel}) farklı bir seviyeye ({pendingPromotionData?.toLevel}) geçirilecektir. Bunu onaylıyor musunuz?
-            </p>
-          </div>
-          <DialogFooter className="flex gap-2 p-4 pt-0">
-            <Button variant="outline" onClick={() => { setIsLevelChangeOpen(false); setPendingPromotionData(null); }} className="rounded-xl flex-1 font-bold">Vazgeç</Button>
-            <Button onClick={() => assignStudentMutation.mutate(pendingPromotionData!.studentId)} className="rounded-xl flex-1 font-bold bg-indigo-600 hover:bg-indigo-700 shadow-lg dark:shadow-none">Evet, Onayla</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
+      {/* Delete User Confirmation */}
       <Dialog open={isDeleteUserOpen} onOpenChange={setIsDeleteUserOpen}>
         <DialogContent className="rounded-3xl max-w-sm bg-card">
           <DialogHeader className="sr-only">

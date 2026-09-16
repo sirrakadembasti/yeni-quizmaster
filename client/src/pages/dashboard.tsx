@@ -1,5 +1,5 @@
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -28,16 +28,13 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useLocation } from "wouter";
 import { useAuth } from "@/context/auth-context";
-import { dashboardApi, quizApi, userApi, resultApi, classApi, adminApi } from "@/lib/api";
+import { dashboardApi, classApi, adminApi } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 
-function formatDayLabel(date: Date) {
-  return date.toLocaleDateString('tr-TR', { weekday: 'short' });
-}
 
 export default function DashboardPage() {
   const [, setLocation] = useLocation();
@@ -52,32 +49,10 @@ export default function DashboardPage() {
     enabled: !!user && !isStudent,
   });
 
-  const { data: quizzesData, isLoading: quizzesLoading } = useQuery({
-    queryKey: ['quizzes'],
-    queryFn: () => quizApi.getAllQuizzes(),
-    enabled: !isStudent,
-  });
-
-  const { data: usersData, isLoading: usersLoading } = useQuery({
-    queryKey: ['users'],
-    queryFn: () => userApi.getAllUsers(),
-    enabled: isAdmin,
-  });
-
-  const { data: resultsData, isLoading: resultsLoading } = useQuery({
-    queryKey: ['all-results'],
-    queryFn: async () => {
-      if (!quizzesData?.quizzes) return [];
-      const resultsPerQuiz = await Promise.all(
-        quizzesData.quizzes.map((q) =>
-          resultApi.getQuizResults(q.id)
-            .then(r => (r.results || []).map(res => ({ ...res, quizId: q.id, quizTitle: q.title })))
-            .catch(() => [])
-        )
-      );
-      return resultsPerQuiz.flat();
-    },
-    enabled: !!quizzesData?.quizzes && !isStudent,
+  const { data: overviewData, isLoading: overviewLoading } = useQuery({
+    queryKey: ['dashboard-overview', user?.id, role],
+    queryFn: () => dashboardApi.getOverview(),
+    enabled: !!user && !isStudent,
   });
 
   const { data: logsData, isLoading: logsLoading } = useQuery({
@@ -94,57 +69,15 @@ export default function DashboardPage() {
   });
 
   const stats = statsData?.stats;
-  const isLoading = statsLoading || (isAdmin && (quizzesLoading || usersLoading || resultsLoading)) || (isTeacher && (quizzesLoading || resultsLoading)) || logsLoading;
-
-  const { chartData, recentQuizzes, adminStats } = useMemo(() => {
-    if (isStudent || !resultsData || !quizzesData?.quizzes) {
-      return { chartData: [], recentQuizzes: [], adminStats: null };
-    }
-
-    const totalStudentsCount = usersData?.users?.filter((u: any) => u.role === 'student').length || 0;
-    const totalTeachersCount = usersData?.users?.filter((u: any) => u.role === 'teacher').length || 0;
-
-    // Chart Data
-    const last7: Record<string, number> = {};
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(); d.setDate(d.getDate() - (6 - i));
-      last7[d.toDateString()] = 0;
-    }
-
-    resultsData.forEach((r: any) => {
-      if (!r.submittedAt) return;
-      const d = new Date(r.submittedAt).toDateString();
-      if (last7[d] !== undefined) last7[d]++;
-    });
-
-    const chart = Object.keys(last7).map(k => ({
-      name: formatDayLabel(new Date(k)),
-      count: last7[k]
-    }));
-
-    // Recent Quizzes
-    const recent = quizzesData.quizzes
-      .slice(0, 5)
-      .map((q: any) => {
-        const participants = resultsData.filter((r: any) => r.quizId === q.id).length;
-        const percentage = totalStudentsCount > 0 
-          ? Math.round((participants / totalStudentsCount) * 100)
-          : 0;
-
-        return { title: q.title, participants, percentage };
-      });
-
-    return { 
-      chartData: chart, 
-      recentQuizzes: recent,
-      adminStats: isAdmin ? {
-        totalStudents: totalStudentsCount,
-        totalTeachers: totalTeachersCount,
-        totalQuizzes: quizzesData.quizzes.length,
-        totalResults: resultsData.length
-      } : null
-    };
-  }, [resultsData, quizzesData, usersData, isAdmin, isStudent]);
+  const isLoading = statsLoading || overviewLoading || logsLoading;
+  const recentQuizzes = useMemo(() => (overviewData?.recentQuizzes || []).map((quiz) => ({
+    ...quiz,
+    percentage: quiz.participationRate,
+  })), [overviewData]);
+  const chartData = useMemo(() => recentQuizzes.map((quiz) => ({
+    name: quiz.title.length > 18 ? `${quiz.title.slice(0, 18)}...` : quiz.title,
+    rate: quiz.participationRate,
+  })), [recentQuizzes]);
 
   const logs = (logsData?.logs || []).slice(0, 5);
 
@@ -299,7 +232,7 @@ export default function DashboardPage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <StatCard 
               title="Toplam Sınav" 
-              value={isAdmin ? adminStats?.totalQuizzes : stats?.totalQuizzes} 
+              value={stats?.totalQuizzes} 
               loading={statsLoading}
               icon={<FileText className="h-6 w-6 text-indigo-600" />}
               color="bg-indigo-50"
@@ -307,7 +240,7 @@ export default function DashboardPage() {
             />
             <StatCard 
               title={isAdmin ? "Toplam Öğrenci" : "Aktif Öğrenci"} 
-              value={isAdmin ? adminStats?.totalStudents : stats?.totalStudents} 
+              value={stats?.totalStudents} 
               loading={statsLoading}
               icon={<Users className="h-6 w-6 text-emerald-600" />}
               color="bg-emerald-50"
@@ -315,7 +248,7 @@ export default function DashboardPage() {
             />
             <StatCard 
               title="Toplam Katılım" 
-              value={isAdmin ? adminStats?.totalResults : stats?.totalResults} 
+              value={stats?.totalResults} 
               loading={statsLoading}
               icon={<CheckCircle className="h-6 w-6 text-purple-600" />}
               color="bg-purple-50"
@@ -323,7 +256,7 @@ export default function DashboardPage() {
             />
             <StatCard 
               title={isAdmin ? "Eğitmen Sayısı" : "Başarı Oranı"} 
-              value={isAdmin ? adminStats?.totalTeachers : `${stats?.averageStudentScore || 0}%`} 
+              value={isAdmin ? stats?.totalTeachers : `${stats?.averageStudentScore || 0}%`} 
               loading={statsLoading}
               icon={isAdmin ? <ShieldAlert className="h-6 w-6 text-orange-600" /> : <TrendingUp className="h-6 w-6 text-rose-600" />}
               color={isAdmin ? "bg-orange-50" : "bg-rose-50"}
@@ -339,9 +272,9 @@ export default function DashboardPage() {
               <CardHeader className="border-b bg-muted/20">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                    <BarChart3 className="h-5 w-5 text-primary" /> Haftalık Aktivite Grafiği
+                    <BarChart3 className="h-5 w-5 text-primary" /> Sınavlara Katılım Oranı
                   </CardTitle>
-                  <Badge variant="outline" className="font-bold">Son 7 Gün</Badge>
+                  <Badge variant="outline" className="font-bold">Son 5 Sınav</Badge>
                 </div>
               </CardHeader>
               <CardContent className="pt-8">
@@ -350,12 +283,12 @@ export default function DashboardPage() {
                     <BarChart data={chartData}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.05} />
                       <XAxis dataKey="name" fontSize={11} tickLine={false} axisLine={false} fontWeight={700} />
-                      <YAxis fontSize={11} tickLine={false} axisLine={false} fontWeight={700} />
+                      <YAxis domain={[0, 100]} unit="%" fontSize={11} tickLine={false} axisLine={false} fontWeight={700} />
                       <Tooltip 
                         cursor={{fill: 'rgba(0,0,0,0.02)'}}
                         contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                       />
-                      <Bar dataKey="count" name="Katılım" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} barSize={40} />
+                      <Bar dataKey="rate" name="Katılım Oranı" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} barSize={40} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -365,7 +298,7 @@ export default function DashboardPage() {
             <Card className="col-span-3 overflow-hidden bg-card">
               <CardHeader className="border-b bg-muted/20">
                 <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                  <BrainCircuit className="h-5 w-5 text-indigo-600" /> Popüler Sınavlar
+                  <BrainCircuit className="h-5 w-5 text-indigo-600" /> Son Sınavlar
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-6">

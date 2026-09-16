@@ -3,7 +3,7 @@ import { storage } from "../storage";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { requireAuth, type AuthRequest } from "../middleware/auth";
-import { logger } from "../index";
+import { logger } from "../utils/logger";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { sendResetPasswordEmail } from "../utils/email";

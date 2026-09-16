@@ -11,7 +11,8 @@ vi.mock('../../lib/api', () => ({
     login: vi.fn(),
     register: vi.fn(),
     logout: vi.fn(),
-  }
+  },
+  refreshCsrfToken: vi.fn().mockResolvedValue('token'),
 }));
 
 // Mock wouter
@@ -103,7 +104,7 @@ describe('Auth Context & useAuth', () => {
   it('logout clears user state', async () => {
     const mockUser = { id: '1', name: 'Admin', role: 'admin', email: 'admin@test.com' };
     vi.mocked(authApi.getCurrentUser).mockResolvedValue({ user: mockUser as any });
-    vi.mocked(authApi.logout).mockResolvedValue(undefined);
+    vi.mocked(authApi.logout).mockResolvedValue({ message: 'OK' });
 
     const { result } = renderHook(() => useAuth(), { wrapper });
 

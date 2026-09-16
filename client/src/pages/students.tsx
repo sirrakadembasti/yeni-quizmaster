@@ -16,9 +16,10 @@ import { UserFormModal } from "@/components/management/UserFormModal";
 import { DeleteConfirmModal } from "@/components/management/DeleteConfirmModal";
 import { useUserManagement } from "@/hooks/use-user-management";
 import { useLocation } from "wouter";
+import { PrintButton, PrintMeta } from "@/components/print/PrintTools";
 
 export default function StudentsPage() {
-  const { role } = useAuth();
+  const { role, user: currentUser } = useAuth();
   const [, setLocation] = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClassFilter, setSelectedClassFilter] = useState("all");
@@ -27,7 +28,7 @@ export default function StudentsPage() {
     isCreateOpen, setIsCreateOpen,
     isEditOpen, setIsEditOpen,
     isDeleteOpen, setIsDeleteOpen,
-    selectedUser, setSelectedUser,
+    selectedUser,
     createMutation,
     updateMutation,
     deleteMutation,
@@ -37,12 +38,12 @@ export default function StudentsPage() {
 
   // Data Queries
   const { data: usersData, isLoading: usersLoading } = useQuery({
-    queryKey: ['users'],
+    queryKey: ['users', currentUser?.id, role],
     queryFn: () => userApi.getAllUsers(),
   });
 
   const { data: classesData } = useQuery({
-    queryKey: ['/api/classes'],
+    queryKey: ['/api/classes', currentUser?.id, role],
     queryFn: () => classApi.getAllClasses(),
   });
 
@@ -51,7 +52,8 @@ export default function StudentsPage() {
     let list = usersData.users.filter(u => u.role === 'student');
 
     // Öğretmen ise sadece kendi sınıflarındaki öğrencileri görsün
-    if (role === 'teacher' && classesData?.classes) {
+    if (role === 'teacher') {
+      if (!classesData?.classes) return [];
       const myClassIds = classesData.classes.map(c => c.id);
       list = list.filter(s => s.classId && myClassIds.includes(s.classId));
     }
@@ -72,7 +74,14 @@ export default function StudentsPage() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
+        <PrintMeta
+          title="Öğrenci Listesi"
+          filters={[
+            { label: "Arama", value: searchTerm || "Tümü" },
+            { label: "Sınıf", value: classesData?.classes?.find((item: any) => item.id === selectedClassFilter)?.name || "Tüm sınıflar" },
+          ]}
+        />
+        <div className="flex justify-between items-center print:hidden no-print">
           <div>
             <h1 className="text-3xl font-heading font-bold">Öğrenci Yönetimi</h1>
             <p className="text-muted-foreground mt-1">
@@ -84,9 +93,10 @@ export default function StudentsPage() {
               <UserPlus className="h-4 w-4" /> Yeni Öğrenci
             </Button>
           )}
+          <PrintButton className="rounded-xl" />
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col md:flex-row gap-4 print:hidden no-print">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input

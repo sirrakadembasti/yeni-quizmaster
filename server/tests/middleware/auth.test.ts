@@ -32,7 +32,7 @@ describe('Auth Middleware', () => {
       await requireAuth(mockReq as AuthRequest, mockRes as Response, mockNext);
       
       expect(mockRes.status).toHaveBeenCalledWith(401);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: "Unauthorized" });
+      expect(mockRes.json).toHaveBeenCalledWith({ message: "Oturum açmanız gerekiyor." });
       expect(mockNext).not.toHaveBeenCalled();
     });
 
@@ -44,7 +44,7 @@ describe('Auth Middleware', () => {
 
       expect(storage.getUser).toHaveBeenCalledWith('non-existent-id');
       expect(mockRes.status).toHaveBeenCalledWith(401);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: "User not found" });
+      expect(mockRes.json).toHaveBeenCalledWith({ message: "Kullanıcı bulunamadı." });
       expect(mockNext).not.toHaveBeenCalled();
     });
 
@@ -67,7 +67,7 @@ describe('Auth Middleware', () => {
       await requireAuth(mockReq as AuthRequest, mockRes as Response, mockNext);
 
       expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: "Internal Server Error" });
+      expect(mockRes.json).toHaveBeenCalledWith({ message: "Dahili sunucu hatası." });
       expect(mockNext).not.toHaveBeenCalled();
     });
   });
@@ -78,7 +78,7 @@ describe('Auth Middleware', () => {
       middleware(mockReq as AuthRequest, mockRes as Response, mockNext);
 
       expect(mockRes.status).toHaveBeenCalledWith(403);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: "Forbidden" });
+      expect(mockRes.json).toHaveBeenCalledWith({ message: "Bu işlemi yapmak için yetkiniz yok." });
       expect(mockNext).not.toHaveBeenCalled();
     });
 
@@ -89,7 +89,7 @@ describe('Auth Middleware', () => {
       middleware(mockReq as AuthRequest, mockRes as Response, mockNext);
 
       expect(mockRes.status).toHaveBeenCalledWith(403);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: "Forbidden" });
+      expect(mockRes.json).toHaveBeenCalledWith({ message: "Bu işlemi yapmak için yetkiniz yok." });
       expect(mockNext).not.toHaveBeenCalled();
     });
 

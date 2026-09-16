@@ -49,15 +49,19 @@ Tarayıcı saatini değiştirmek sınav süresini uzatmaz; süre sunucu tarafın
 
 Çevrimiçi teslimden veya bekleyen çevrimdışı teslim sunucuya ulaştıktan sonra cevaplar değiştirilemez. Sonuç ve soru incelemesi yalnızca sunucudaki teslim tamamlandıktan sonra görüntülenebilir.
 
-## 7. Sonuçlar ve istatistikler
+## 7. Sonuçlar, istatistikler ve yazdırma
 
-**Sonuçlarım** ekranında tamamladığınız sınavları filtreleyebilir ve ayrıntıyı açabilirsiniz. Ayrıntı ekranında puan, süre, verilen cevaplar ve soru incelemesi bulunur. **İstatistiklerim** ekranında genel ortalama, geçme oranı, toplam süre ve ders/sınav bazlı performans gösterilir.
+**Sonuçlarım** ekranında tamamladığınız sınavları filtreleyebilir ve ayrıntıyı açabilirsiniz. Ayrıntı ekranında puan, süre, verilen cevaplar ve soru incelemesi bulunur. Sınav sonuç belgenizi "Yazdır" butonuyla A4 formatında temiz bir şekilde yazdırabilir veya PDF olarak kaydedebilirsiniz. **İstatistiklerim** ekranında genel ortalama, geçme oranı, toplam süre ve ders/sınav bazlı performans gösterilir.
 
 ## 8. Duyurular ve bildirimler
 
 **Duyurular** ekranında okul geneli, öğrenci rolü veya sınıfınız için yayımlanan iletileri görebilirsiniz. Başka bir sınıfa hedeflenen duyurular hesabınıza gösterilmez. Sağ üst zil simgesi yeni bildirimleri gösterir.
 
-## 9. Çevrimdışı kullanım hakkında önemli bilgi
+## 9. Profil ve veli bilgileri
+
+**Ayarlar > Profil** sekmesinde kişisel bilgilerinizi ve sisteme kayıtlı **Veli Bilgileri**nizi (Veli Adı, Yakınlık, Telefon, E-posta, Açık Adres) salt okunur (read-only) olarak inceleyebilirsiniz. Veli veya adres bilgilerinizde bir hata veya değişiklik varsa okul yönetimine (admin) başvurarak güncellenmesini talep edebilirsiniz.
+
+## 10. Çevrimdışı kullanım hakkında önemli bilgi
 
 Süresiz bir sınavı internet yokken çözmek için bağlantınız varken **Sınavlarım** ekranındaki **Çevrimdışı Hazırla** düğmesine basın. **Çevrimdışı Hazır** yazısını gördükten sonra sınav bu cihazdan bağlantı olmadan açılabilir.
 
@@ -67,14 +71,14 @@ Süresiz bir sınavı internet yokken çözmek için bağlantınız varken **Sı
 - Doğru cevaplar çevrimdışı pakete dahil edilmez; puanlama yalnızca sunucuda yapılır.
 - Süreli sınavlar güvenlik nedeniyle çevrimdışı hazırlanamaz veya başlatılamaz. Çevrimiçi başlatılan süreli sınavda bağlantı kesilirse cevaplar yerelde tutulur; ancak sunucudaki süre dolmadan yeniden bağlanmayan yeni cevaplar puanlamaya alınmaz.
 
-## 10. Hesap güvenliği
+## 11. Hesap güvenliği
 
 - Şifrenizi başka kişilerle paylaşmayın.
 - Ortak cihazlarda tarayıcıyı kapatmadan önce **Güvenli Çıkış** yapın.
 - Parola sıfırlama bağlantısını kimseye göndermeyin.
 - Beklemediğiniz bir sınav veya duyuru görürseniz öğretmeninize/yöneticinize bildirin.
 
-## 11. Sorun giderme
+## 12. Sorun giderme
 
 - **Sınav görünmüyor:** Sınıf atamanızı ve sınavın yayınlandığını öğretmeninizle kontrol edin.
 - **Cevap sunucuya aktarılamıyor:** Cevap cihazda saklanır. Bağlantı geri geldiğinde **Tekrar Dene** kullanın veya bekleyen teslimin otomatik gönderilmesini bekleyin.

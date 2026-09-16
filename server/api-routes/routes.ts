@@ -14,6 +14,7 @@ import questionBankRouter from "./question-bank";
 import notificationRouter from "./notification";
 import announcementRouter from "./announcement";
 import studentRouter from "./student";
+import analyticsRouter from "./analytics";
 
 export async function registerRoutes(_httpServer: Server, app: Express) {
   const router: Router = Router();
@@ -32,6 +33,7 @@ export async function registerRoutes(_httpServer: Server, app: Express) {
   router.use("/notifications", notificationRouter);
   router.use("/announcements", announcementRouter);
   router.use("/student", studentRouter);
+  router.use("/analytics", analyticsRouter);
 
   // Register the router with /api prefix
   app.use("/api", router);

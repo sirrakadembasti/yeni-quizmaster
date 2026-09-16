@@ -1,7 +1,7 @@
 import { Router, type Response } from "express";
 import { storage } from "../storage";
 import { requireAuth, type AuthRequest } from "../middleware/auth";
-import { logger } from "../index";
+import { logger } from "../utils/logger";
 import { z } from "zod";
 
 const router: Router = Router();

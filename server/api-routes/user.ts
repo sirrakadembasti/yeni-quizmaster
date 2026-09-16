@@ -9,32 +9,15 @@ const router: Router = Router();
 
 router.get("/", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
-    let users;
+    let users: any[];
     const userRole = String(req.user!.role).toLowerCase();
     
     if (userRole === 'admin') {
       // Admins see everyone
       users = await storage.getAllUsers();
     } else if (userRole === 'teacher') {
-      // Teachers see students in their classes AND themselves
-      const teacherClasses = await storage.getClassesByTeacher(req.user!.id);
-      const studentIds = new Set<string>();
-      const usersList: any[] = [];
-      
-      // Add themselves
-      usersList.push(req.user!);
-      
-      // Add students from their classes
-      for (const cls of teacherClasses) {
-        const classStudents = await storage.getStudentsByClass(cls.id);
-        classStudents.forEach(s => {
-          if (!studentIds.has(s.id)) {
-            studentIds.add(s.id);
-            usersList.push(s);
-          }
-        });
-      }
-      users = usersList;
+      // Tek sorgu: yaln?zca yetkili s?n?flardaki ??renciler ve oturum sahibi ??retmen.
+      users = [req.user!, ...await storage.getStudentsByTeacher(req.user!.id)];
     } else {
       users = [];
     }
@@ -44,6 +27,13 @@ router.get("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Auth
       const userObj = JSON.parse(JSON.stringify(u));
       // Remove sensitive fields
       const { password, resetToken, resetTokenExpiry, ...safeUser } = userObj;
+      if (userRole === 'teacher') {
+        delete safeUser.parentName;
+        delete safeUser.parentRelation;
+        delete safeUser.parentPhone;
+        delete safeUser.parentEmail;
+        delete safeUser.parentAddress;
+      }
       return safeUser;
     });
 
@@ -54,9 +44,59 @@ router.get("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Auth
   }
 });
 
+router.get("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
+  try {
+    const targetUserId = req.params.id;
+    const currentUser = req.user!;
+    const userRole = String(currentUser.role).toLowerCase();
+
+    const targetUser = await storage.getUser(targetUserId);
+    if (!targetUser) {
+      return res.status(404).json({ message: "Kullanıcı bulunamadı." });
+    }
+
+    if (userRole === 'admin') {
+      const { password, resetToken, resetTokenExpiry, ...safeUser } = targetUser as any;
+      return res.json({ user: safeUser });
+    }
+
+    if (userRole === 'teacher') {
+      if (targetUser.role !== 'student') {
+        return res.status(403).json({ message: "Bu kullanıcıyı görüntüleme yetkiniz yok." });
+      }
+      const teacherClasses = await storage.getClassesByTeacher(currentUser.id);
+      if (!teacherClasses.some(c => c.id === targetUser.classId)) {
+        return res.status(403).json({ message: "Bu öğrenciyi görüntüleme yetkiniz yok." });
+      }
+      const { 
+        password, resetToken, resetTokenExpiry, 
+        parentName, parentRelation, parentPhone, parentEmail, parentAddress, 
+        ...safeUser 
+      } = targetUser as any;
+      return res.json({ user: safeUser });
+    }
+
+    if (userRole === 'student') {
+      if (currentUser.id !== targetUserId) {
+        return res.status(403).json({ message: "Bu profili görüntüleme yetkiniz yok." });
+      }
+      const { password, resetToken, resetTokenExpiry, ...safeUser } = targetUser as any;
+      return res.json({ user: safeUser });
+    }
+
+    return res.status(403).json({ message: "Yetkisiz işlem." });
+  } catch (error) {
+    console.error("[GET /api/users/:id] Error:", error);
+    res.status(500).json({ message: "Kullanıcı bilgileri getirilemedi." });
+  }
+});
+
 router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
-    const { name, email, password, role, classNo, classId } = req.body;
+    const { 
+      name, email, password, role, classNo, classId,
+      parentName, parentRelation, parentPhone, parentEmail, parentAddress
+    } = req.body;
     
     if (req.user!.role === 'teacher') {
       if (role !== 'student') {
@@ -76,9 +116,20 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
     if (existingUser) return res.status(400).json({ message: "Bu e-posta adresi zaten kullanımda." });
     
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await storage.createUser({ 
+    const userPayload: any = { 
       name, email, password: hashedPassword, role: role || 'student', classNo, classId 
-    });
+    };
+
+    // Only admin can set parent information
+    if (req.user!.role === 'admin') {
+      if (parentName !== undefined) userPayload.parentName = parentName;
+      if (parentRelation !== undefined) userPayload.parentRelation = parentRelation;
+      if (parentPhone !== undefined) userPayload.parentPhone = parentPhone;
+      if (parentEmail !== undefined) userPayload.parentEmail = parentEmail;
+      if (parentAddress !== undefined) userPayload.parentAddress = parentAddress;
+    }
+
+    const user = await storage.createUser(userPayload);
     
     const { password: _, ...userWithoutPassword } = user;
     res.status(201).json({ user: userWithoutPassword });
@@ -149,6 +200,11 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
       delete filteredBody.role;
       delete filteredBody.classId;
       delete filteredBody.studentNo;
+      delete filteredBody.parentName;
+      delete filteredBody.parentRelation;
+      delete filteredBody.parentPhone;
+      delete filteredBody.parentEmail;
+      delete filteredBody.parentAddress;
     } else if (isTeacher) {
       // Teacher updating a student
       const allowedFieldsForTeacherOnStudent = ['name', 'email', 'phoneNumber', 'address', 'password', 'classId', 'classNo', 'studentNo'];
@@ -157,6 +213,11 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
           filteredBody[field] = req.body[field];
         }
       }
+      delete filteredBody.parentName;
+      delete filteredBody.parentRelation;
+      delete filteredBody.parentPhone;
+      delete filteredBody.parentEmail;
+      delete filteredBody.parentAddress;
     }
 
     if (filteredBody.password) {

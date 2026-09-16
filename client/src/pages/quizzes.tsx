@@ -6,9 +6,7 @@ import {
   Card, 
   CardContent, 
   CardFooter, 
-  CardHeader,
-  CardTitle,
-  CardDescription
+  CardHeader
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {

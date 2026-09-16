@@ -9,7 +9,7 @@ import { Loader2, Lock, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { authApi } from "@/lib/api";
 
 export default function ResetPasswordPage() {
-  const [location, setLocation] = useLocation();
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -53,7 +53,14 @@ export default function ResetPasswordPage() {
       return;
     }
 
-    setIsLoading(true);
+    if (!token) {
+      toast({
+        variant: "destructive",
+        title: "Hata",
+        description: "Geçersiz veya eksik sıfırlama bağlantısı.",
+      });
+      return;
+    }
 
     try {
       await authApi.resetPassword(token, password);

@@ -9,14 +9,15 @@ const router: Router = Router();
 // Get all results for a specific quiz
 router.get("/quiz/:quizId", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
-    const results = await storage.getResultsByQuiz(req.params.quizId);
     const quiz = await storage.getQuiz(req.params.quizId);
     
+    if (!quiz) return res.status(404).json({ message: "S?nav bulunamad?." });
     // Authorization Check: Teacher must be creator. Admin can see all.
     if (req.user!.role === "teacher" && quiz?.createdBy !== req.user!.id) {
       return res.status(403).json({ message: "Bu sınavın sonuçlarını görme yetkiniz yok." });
     }
 
+    const results = await storage.getResultsByQuiz(req.params.quizId);
     // getResultsByQuiz zaten `include: { student: true }` ile Prisma'dan student verisini çekiyor.
     // Ayrıca storage.getUser() çağırmak N+1 sorguya neden olur; (r as any).student kullanıyoruz.
     const enriched = results.map(r => ({
@@ -34,13 +35,14 @@ router.get("/quiz/:quizId", requireAuth, requireRole(["admin", "teacher"]), asyn
 // Live results for a quiz
 router.get("/quiz/:quizId/live", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
-    const results = await storage.getLiveResults(req.params.quizId);
     const quiz = await storage.getQuiz(req.params.quizId);
 
     if (req.user!.role === "teacher" && quiz?.createdBy !== req.user!.id) {
+    if (!quiz) return res.status(404).json({ message: "S?nav bulunamad?." });
       return res.status(403).json({ message: "Bu quizi izleme yetkiniz yok." });
     }
 
+    const results = await storage.getLiveResults(req.params.quizId);
     // getLiveResults de `include: { student: true }` içeriyor; ayrı sorgu gerekmez.
     const enriched = results.map(r => ({
       ...r,
@@ -57,13 +59,14 @@ router.get("/quiz/:quizId/live", requireAuth, requireRole(["admin", "teacher"]),
 // Export results as CSV
 router.get("/quiz/:quizId/export", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
-    const results = await storage.getResultsByQuiz(req.params.quizId);
     const quiz = await storage.getQuiz(req.params.quizId);
     
     if (req.user!.role === "teacher" && quiz?.createdBy !== req.user!.id) {
+    if (!quiz) return res.status(404).json({ message: "S?nav bulunamad?." });
       return res.status(403).json({ message: "Bu sınavın sonuçlarını indirme yetkiniz yok." });
     }
 
+    const results = await storage.getResultsByQuiz(req.params.quizId);
     const csvRows = [
       ["Öğrenci Adı", "Öğrenci Email", "Sınıf/No", "Durum", "Skor", "Doğru Sayısı", "Toplam Soru", "Süre (sn)", "Tarih"]
     ];

@@ -16,6 +16,7 @@ import DashboardPage from "@/pages/dashboard";
 import QuizzesPage from "@/pages/quizzes";
 import CreateQuizPage from "@/pages/create-quiz";
 import StatisticsPage from "@/pages/results";
+import ClassStatisticsPage from "@/pages/class-statistics";
 import StudentsPage from "@/pages/students";
 import SettingsPage from "@/pages/settings";
 import StudentDashboard from "@/pages/student-dashboard";
@@ -95,6 +96,7 @@ const ROUTES: RouteConfig[] = [
   { path: '/create-quiz',   component: CreateQuizPage, roles: ['teacher', 'admin'] },
   { path: '/quizzes/:id',   component: CreateQuizPage, roles: ['teacher', 'admin'] },
   { path: '/results',       component: StatisticsPage, roles: ['teacher', 'admin'] },
+  { path: '/statistics',    component: ClassStatisticsPage, roles: ['teacher', 'admin'] },
   { path: '/students',      component: StudentsPage,   roles: ['teacher', 'admin'] },
   { path: '/classlist',     component: ClassListPage,  roles: ['teacher', 'admin'] },
   { path: '/classes/:id',   component: ClassDetailPage, roles: ['teacher', 'admin'] },

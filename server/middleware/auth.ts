@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { storage } from "../storage";
-import { logger } from "../index";
+import { logger } from "../utils/logger";
 import { User } from "@prisma/client";
 import "express-session";
 

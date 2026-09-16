@@ -3,7 +3,7 @@ import { storage } from "../storage";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { canAssignClasses } from "../utils/class-authorization";
 import { getIO } from "../socket";
-import { logger } from "../index";
+import { logger } from "../utils/logger";
 import {
   isValidTeacherAnnouncementTarget,
   matchesAnnouncementRecipient

@@ -125,15 +125,17 @@ export default function CreateQuizPage() {
       const q = questions[i];
       if (q.text.trim() === '') continue;
 
-      const nonViewOptions = q.options.filter(o => o.trim() !== "");
-      const uniqueOptions = new Set(nonViewOptions);
-      if (uniqueOptions.size !== nonViewOptions.length) {
-        toast({ 
-          title: "Hata", 
-          description: `Soru ${i + 1}: Aynı cevap seçeneği birden fazla kez kullanılamaz.`, 
-          variant: "destructive" 
-        });
-        return false;
+      if (['multiple-choice', 'single-choice', 'likert'].includes(q.type)) {
+        const nonViewOptions = q.options.filter(o => o.trim() !== "");
+        const uniqueOptions = new Set(nonViewOptions);
+        if (uniqueOptions.size !== nonViewOptions.length) {
+          toast({ 
+            title: "Hata", 
+            description: `Soru ${i + 1}: Aynı cevap seçeneği birden fazla kez kullanılamaz.`, 
+            variant: "destructive" 
+          });
+          return false;
+        }
       }
     }
     return true;
@@ -171,8 +173,8 @@ export default function CreateQuizPage() {
         const questionsToAdd = validQuestions.map((q, index) => ({
           text: q.text,
           type: q.type as any,
-          options: q.type === 'multiple-choice' ? q.options.filter(o => o.trim() !== '') : undefined,
-          correctAnswer: q.type === 'multiple-choice' ? q.options[q.correctAnswer] || q.options[0] : '',
+          options: q.options.filter(o => o.trim() !== ''),
+          correctAnswer: q.options[q.correctAnswer] || q.options[0],
           imageUrl: q.imageUrl,
           order: index + 1,
         }));
@@ -181,7 +183,7 @@ export default function CreateQuizPage() {
 
       return quizIdToUse;
     },
-    onSuccess: (quizId, status) => {
+    onSuccess: (_quizId, status) => {
       queryClient.invalidateQueries({ queryKey: ['quizzes'] });
       toast({
         title: status === 'published' ? 'Sınav yayınlandı!' : 'Taslak kaydedildi!',

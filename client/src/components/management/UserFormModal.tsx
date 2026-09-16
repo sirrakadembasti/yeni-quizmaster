@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Check, X, AlertTriangle, Book, School, Info } from "lucide-react";
+import { Loader2, X, AlertTriangle, Book, School, Info } from "lucide-react";
 import { useState, useEffect } from "react";
 import { type User } from "./UserManagementTable";
 import { useQuery } from "@tanstack/react-query";
@@ -24,7 +24,6 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 
 interface UserFormModalProps {
   isOpen: boolean;
@@ -52,7 +51,12 @@ export function UserFormModal({
     classNo: "", 
     classId: "", 
     classIds: [] as string[],
-    assignedCategoryIds: [] as string[] 
+    assignedCategoryIds: [] as string[],
+    parentName: "",
+    parentRelation: "",
+    parentPhone: "",
+    parentEmail: "",
+    parentAddress: ""
   });
 
   const { data: classesData } = useQuery({
@@ -76,7 +80,12 @@ export function UserFormModal({
         classNo: initialData.classNo || "",
         classId: initialData.classId || "",
         classIds: (initialData as any).classes?.map((c: any) => c.id) || (initialData as any).classIds || [],
-        assignedCategoryIds: initialData.assignedCategories?.map(c => c.id) || (initialData as any).assignedCategoryIds || []
+        assignedCategoryIds: initialData.assignedCategories?.map(c => c.id) || (initialData as any).assignedCategoryIds || [],
+        parentName: initialData.parentName || "",
+        parentRelation: initialData.parentRelation || "",
+        parentPhone: initialData.parentPhone || "",
+        parentEmail: initialData.parentEmail || "",
+        parentAddress: initialData.parentAddress || ""
       });
     } else {
       setFormData({ 
@@ -86,7 +95,12 @@ export function UserFormModal({
         classNo: "", 
         classId: "", 
         classIds: [],
-        assignedCategoryIds: [] 
+        assignedCategoryIds: [],
+        parentName: "",
+        parentRelation: "",
+        parentPhone: "",
+        parentEmail: "",
+        parentAddress: ""
       });
     }
   }, [initialData, isOpen]);
@@ -191,6 +205,61 @@ export function UserFormModal({
                 <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
                 <div className="text-xs text-amber-800 leading-relaxed font-medium">
                   <strong>Önemli:</strong> Öğrenciler aynı anda sadece <strong>tek bir sınıfa</strong> kayıtlı olabilir. Başka bir sınıf seçerseniz öğrenci otomatik olarak eski sınıfından ayrılacaktır.
+                </div>
+              </div>
+
+              {/* Veli Bilgileri Bölümü */}
+              <div className="border-t border-slate-100 dark:border-slate-800 pt-4 space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-black uppercase tracking-wider text-primary">Veli Bilgileri (İsteğe Bağlı)</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-[11px] font-bold uppercase text-muted-foreground">Veli Adı Soyadı</Label>
+                    <Input
+                      value={formData.parentName}
+                      onChange={e => setFormData({ ...formData, parentName: e.target.value })}
+                      placeholder="Örn: Mehmet Yılmaz"
+                      className="rounded-xl"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-[11px] font-bold uppercase text-muted-foreground">Yakınlık Derecesi</Label>
+                    <Input
+                      value={formData.parentRelation}
+                      onChange={e => setFormData({ ...formData, parentRelation: e.target.value })}
+                      placeholder="Örn: Anne / Baba / Vasi"
+                      className="rounded-xl"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-[11px] font-bold uppercase text-muted-foreground">Veli Telefonu</Label>
+                    <Input
+                      value={formData.parentPhone}
+                      onChange={e => setFormData({ ...formData, parentPhone: e.target.value })}
+                      placeholder="05xx xxx xx xx"
+                      className="rounded-xl"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-[11px] font-bold uppercase text-muted-foreground">Veli E-Posta</Label>
+                    <Input
+                      type="email"
+                      value={formData.parentEmail}
+                      onChange={e => setFormData({ ...formData, parentEmail: e.target.value })}
+                      placeholder="veli@example.com"
+                      className="rounded-xl"
+                    />
+                  </div>
+                  <div className="md:col-span-2 space-y-1.5">
+                    <Label className="text-[11px] font-bold uppercase text-muted-foreground">Veli Adresi</Label>
+                    <Input
+                      value={formData.parentAddress}
+                      onChange={e => setFormData({ ...formData, parentAddress: e.target.value })}
+                      placeholder="Ev / İş Adresi"
+                      className="rounded-xl"
+                    />
+                  </div>
                 </div>
               </div>
             </div>

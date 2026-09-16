@@ -36,6 +36,11 @@ export interface User {
   classes?: { id: string; name: string }[];
   // Öğretmenin classTeacherId üzerinden sorumlu olduğu sınıflar
   responsibleForClasses?: { id: string; name: string }[];
+  parentName?: string | null;
+  parentRelation?: string | null;
+  parentPhone?: string | null;
+  parentEmail?: string | null;
+  parentAddress?: string | null;
 }
 
 interface UserManagementTableProps {

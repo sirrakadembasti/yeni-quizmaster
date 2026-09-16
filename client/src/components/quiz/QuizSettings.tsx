@@ -45,6 +45,7 @@ export function QuizSettings({
           <CardDescription>Sınavınızın görünümünü ve detaylarını ayarlayın.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+
           <div className="space-y-2">
             <Label htmlFor="title">Sınav Başlığı <span className="text-destructive">*</span></Label>
             <Input 
