@@ -49,9 +49,10 @@ function resolveApiKey(
   requestBaseUrl: string | undefined
 ): string | undefined {
   const isOfficial = !requestBaseUrl || requestBaseUrl === OFFICIAL_BASE_URL;
+  const cleanKey = requestApiKey?.trim() ? requestApiKey.trim() : undefined;
   return isOfficial
-    ? requestApiKey || process.env.GEMINI_API_KEY
-    : requestApiKey; // Özel URL — env key kullanma
+    ? cleanKey || process.env.GEMINI_API_KEY
+    : cleanKey; // Özel URL — env key kullanma
 }
 
 // test-config için kısıtlayıcı rate limiter (harici HTTP isteği yapıyor)
@@ -176,8 +177,13 @@ router.post("/test-config", aiTestLimiter, requireAuth, requireRole(["admin", "t
         details: errorData.error?.message || "Servis sağlayıcı hatası.",
       });
     }
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Bağlantı testi sırasında bir hata oluştu." });
+  } catch (error: any) {
+    logger.error({ err: error }, "[AI] test-config bağlantı hatası");
+    res.status(500).json({ 
+      success: false, 
+      message: "Bağlantı testi sırasında bir hata oluştu.",
+      details: error?.message || (error?.cause ? error.cause.message : undefined)
+    });
   }
 });
 
@@ -250,7 +256,8 @@ Output ONLY raw JSON.`;
       return res.status(502).json({ 
         message: fetchError.name === 'AbortError' 
           ? "AI sağlayıcısı çok geç yanıt verdi (Timeout)." 
-          : "AI sağlayıcısına bağlanılamadı." 
+          : "AI sağlayıcısına bağlanılamadı.",
+        details: fetchError.message || (fetchError.cause ? fetchError.cause.message : undefined)
       });
     } finally {
       clearTimeout(timeoutId);

@@ -268,7 +268,10 @@ export interface AIQuestion {
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'İstek başarısız oldu.' }));
-    throw new Error(error.message || `İstek ${response.status} koduyla başarısız oldu.`);
+    const errorMsg = error.details 
+      ? `${error.message || 'Hata'} (${error.details})` 
+      : (error.message || `İstek ${response.status} koduyla başarısız oldu.`);
+    throw new Error(errorMsg);
   }
   return response.json();
 }
@@ -601,7 +604,7 @@ export const aiApi = {
     topic: string, 
     count: number = 3, 
     difficulty: string = "medium", 
-    model: string = "gemini-1.5-flash",
+    model: string = "gemini-3.8-flash",
     customBaseUrl?: string,
     customApiKey?: string
   ) {

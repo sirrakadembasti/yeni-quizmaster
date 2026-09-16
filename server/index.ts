@@ -16,6 +16,18 @@ import { setupSocket } from "./socket";
 import { generateToken, csrfSynchronisedProtection } from "./middleware/csrf";
 import { secureJsonReplacer } from "./utils/json-security";
 import { logger } from "./utils/logger";
+import { setupDnsFallback } from "./utils/dns-fallback";
+
+// DNS Fallback: Windows/MEB ağında getaddrinfo ENOTFOUND hatalarını önler
+setupDnsFallback();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Çevresel değişkenleri yükle
+dotenv.config({ path: path.resolve(__dirname, ".env") });
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+
 export { logger };
 
 const httpLogger = pinoHttp({
@@ -39,9 +51,6 @@ const httpLogger = pinoHttp({
     }
   }
 });
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // ==================== SESSION_SECRET KONTROLÜ ====================
 // SESSION_SECRET olmadan session güvenliği sağlanamaz. Güvensiz fallback engellendi.
