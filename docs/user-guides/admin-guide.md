@@ -80,9 +80,18 @@ En az bir sorusu olmayan sınav yayınlanamaz. Öğrenciler yalnızca yayınlanm
 
 Yönetici; okul geneline, belirli bir role veya sınıfa duyuru gönderebilir. Başlık, içerik ve hedefi kontrol ederek yayımlayın. Sağ üstteki zil simgesi okunmamış bildirimleri gösterir; **Hepsini Oku** ile bildirimleri topluca işaretleyebilirsiniz.
 
-## 8. Loglar ve denetim
+## 8. Loglar ve denetim (3 Alt Sekmeli Yapı)
 
-**Yönetim > Loglar** bölümünde giriş, oluşturma, güncelleme ve silme gibi sistem hareketlerini izleyin. Şüpheli bir işlemde kullanıcı, zaman ve işlem türünü birlikte değerlendirin.
+**Yönetim > Loglar** bölümünde sistem hareketleri ve haberleşme kayıtları 3 ayrı alt sekmede tasnif edilerek sunulur:
+
+1. **Kullanıcı Logları:** Kullanıcıların gerçekleştirdiği operasyonlar (Giriş, Sınav oluşturma/güncelleme/silme vb.). Rol filtresi, işlem araması ve eğitim yılı/tarih aralığı ile filtrelenebilir.
+2. **E-Posta Logları:** Sistemden kullanıcılara gönderilen tüm e-postaların Outbox kuyruk durumu:
+   - **KPI Sayaçları:** Toplam Gönderim, Başarılı (İletilen), Kuyrukta Bekleyen ve Başarısız/Hatalı sayaçları anlık güncellenir.
+   - **Arama & Filtreleme:** Alıcı e-posta veya konuya göre anında arama, duruma göre (Sent, Pending, Failed) filtreleme.
+   - **Detay & HTML Önizleme:** Göz simgesi ile gönderilen e-postanın şablonu, parametreleri ve varsa hata detayları incelenebilir.
+   - **Tekrar Gönderim (Retry):** Gönderilememiş veya hatalı e-postalar tek tıkla yeniden kuyruğa alınabilir.
+   - **Silme:** Gereksiz veya test amaçlı kuyruk logları tablodan silinebilir.
+3. **Sistem Hata & İşlemleri:** Yıl sonu arşivleme (`ARCHIVE_YEAR`), öğrenci sınıf atlatma (`PROMOTE_STUDENTS`), arşiv verisi kalıcı temizleme (`PURGE_ARCHIVED_DATA`) ve sistem hatalarının izlendiği denetim günlüğü.
 
 ## 9. Çevrimdışı sınav yönetimi
 

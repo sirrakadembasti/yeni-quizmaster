@@ -53,6 +53,113 @@ router.get("/logs", requireAuth, requireRole(["admin"]), async (req: AuthRequest
   }
 });
 
+// E-Posta Logları ve Kuyruk Yönetimi
+router.get("/logs/emails", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const { status, search, startDate, endDate, page, limit } = req.query;
+    const pageNum = page ? Math.max(1, parseInt(page as string, 10)) : 1;
+    const limitNum = limit ? Math.min(500, Math.max(1, parseInt(limit as string, 10))) : 100;
+
+    const result = await storage.getEmailLogs({
+      status: status as string,
+      search: search as string,
+      startDate: startDate ? new Date(startDate as string) : undefined,
+      endDate: endDate ? new Date(endDate as string) : undefined,
+      page: pageNum,
+      limit: limitNum,
+    });
+
+    res.json({
+      emails: result.data,
+      counts: result.counts,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total: result.total,
+        totalPages: Math.ceil(result.total / limitNum),
+      },
+    });
+  } catch (error) {
+    logger.error({ err: error }, "[GET /api/admin/logs/emails] Error");
+    res.status(500).json({ message: "E-posta logları getirilemedi." });
+  }
+});
+
+// E-Posta Tekrar Gönderim (Retry)
+router.post("/logs/emails/:id/retry", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const updated = await storage.retryEmail(id);
+    if (!updated) {
+      return res.status(404).json({ message: "E-posta kaydı bulunamadı." });
+    }
+
+    // Log the action
+    await storage.createLog(req.user!.id, "RETRY_EMAIL", `E-posta tekrar gönderime alındı: ${updated.to} (${updated.subject})`);
+
+    // Arka planda derhal tetikle
+    const { processEmailQueue } = await import("../utils/email");
+    setImmediate(() => {
+      processEmailQueue().catch(err => {
+        logger.error({ err }, "[RetryEmail] Immediate send error");
+      });
+    });
+
+    res.json({ message: "E-posta tekrar gönderim kuyruğuna alındı.", email: updated });
+  } catch (error) {
+    logger.error({ err: error }, "[POST /api/admin/logs/emails/:id/retry] Error");
+    res.status(500).json({ message: "E-posta tekrar gönderilemedi." });
+  }
+});
+
+// E-Posta Log Silme
+router.delete("/logs/emails/:id", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const success = await storage.deleteEmailLog(id);
+    if (!success) {
+      return res.status(404).json({ message: "E-posta kaydı bulunamadı veya silinemedi." });
+    }
+
+    await storage.createLog(req.user!.id, "DELETE_EMAIL_LOG", `E-posta log kaydı silindi: ID ${id}`);
+
+    res.json({ message: "E-posta kaydı başarıyla silindi." });
+  } catch (error) {
+    logger.error({ err: error }, "[DELETE /api/admin/logs/emails/:id] Error");
+    res.status(500).json({ message: "E-posta kaydı silinirken hata oluştu." });
+  }
+});
+
+// Sistem Hata & İşlemleri Logları
+router.get("/logs/system", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const { search, startDate, endDate, page, limit } = req.query;
+    const pageNum = page ? Math.max(1, parseInt(page as string, 10)) : 1;
+    const limitNum = limit ? Math.min(500, Math.max(1, parseInt(limit as string, 10))) : 100;
+
+    const { data: logs, total } = await storage.getSystemLogs({
+      search: search as string,
+      startDate: startDate ? new Date(startDate as string) : undefined,
+      endDate: endDate ? new Date(endDate as string) : undefined,
+      page: pageNum,
+      limit: limitNum,
+    });
+
+    res.json({
+      logs,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages: Math.ceil(total / limitNum),
+      },
+    });
+  } catch (error) {
+    logger.error({ err: error }, "[GET /api/admin/logs/system] Error");
+    res.status(500).json({ message: "Sistem logları getirilemedi." });
+  }
+});
+
 router.get("/quizzes", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
   try {
     const quizzes = await storage.getAllQuizzes();

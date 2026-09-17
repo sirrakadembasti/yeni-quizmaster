@@ -17,6 +17,7 @@ import { generateToken, csrfSynchronisedProtection } from "./middleware/csrf";
 import { secureJsonReplacer } from "./utils/json-security";
 import { logger } from "./utils/logger";
 import { setupDnsFallback } from "./utils/dns-fallback";
+import { startEmailWorker } from "./utils/email";
 
 // DNS Fallback: Windows/MEB ağında getaddrinfo ENOTFOUND hatalarını önler
 setupDnsFallback();
@@ -207,6 +208,7 @@ app.use(httpLogger);
       },
       () => {
         logger.info(`Server serving on port ${port}`);
+        startEmailWorker();
       },
     );
   } catch (error) {

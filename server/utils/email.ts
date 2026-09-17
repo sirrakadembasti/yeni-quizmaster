@@ -1,76 +1,158 @@
 import nodemailer from "nodemailer";
+import { storage } from "../storage";
+import { logger } from "./logger";
 
 // Configure email transporter
-// In production, these should come from environment variables
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || "smtp.ethereal.email",
-  port: parseInt(process.env.EMAIL_PORT || "587", 10),
+const hasAuth = !!(process.env.EMAIL_USER && process.env.EMAIL_PASS);
+
+export const transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_HOST || "127.0.0.1",
+  port: parseInt(process.env.EMAIL_PORT || "1026", 10),
   secure: process.env.EMAIL_SECURE === "true",
-  auth: {
-    user: process.env.EMAIL_USER || "test@example.com",
-    pass: process.env.EMAIL_PASS || "password",
-  },
+  auth: hasAuth
+    ? {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      }
+    : undefined,
 });
 
 /**
- * [YEREL GELİŞTİRME NOTU]
- * Sunucu her başladığında SMTP bağlantısını doğrulamak için aşağıdaki satırları kullanabilirsiniz.
- * Eğer .env dosyasında geçerli bir SMTP bilgileriniz yoksa hata almamak için kapalı tutulmuştur.
- * Gerçek bir e-posta gönderimi yapacaksanız bu bloğu aktifleştirin.
+ * Direct email sender (underlying SMTP call)
  */
-/*
-transporter.verify((error) => {
-  if (error) {
-    console.error("[Email] Transporter connection error:", error.message);
-  } else {
-    console.log("[Email] Server is ready to take our messages");
-  }
-});
-*/
+export const sendDirectEmail = async (options: nodemailer.SendMailOptions) => {
+  const from = options.from || `"QuizMaster Support" <${process.env.EMAIL_FROM || "noreply@quizmaster.com"}>`;
+  const info = await transporter.sendMail({
+    ...options,
+    from,
+  });
+  return info;
+};
 
 /**
- * Generic email sender
+ * Queue an email in database for asynchronous Outbox delivery
  */
-export const sendEmail = async (options: nodemailer.SendMailOptions) => {
-  try {
-    const info = await transporter.sendMail({
-      from: `"QuizMaster Support" <${process.env.EMAIL_FROM || "noreply@quizmaster.com"}>`,
-      ...options,
+export const queueEmail = async (params: {
+  to: string;
+  subject: string;
+  body: string;
+  type?: string;
+  maxAttempts?: number;
+}) => {
+  const queued = await storage.enqueueEmail(params);
+  // Trigger immediate non-blocking processing
+  setImmediate(() => {
+    processEmailQueue().catch((err) => {
+      logger.error({ err }, "[EmailQueue] Error in background dispatch");
     });
-    console.log("[Email] Sent: %s", info.messageId);
-    return info;
-  } catch (error) {
-    // Yerel geliştirme sırasında SMTP hatası alınırsa sunucunun çökmemesi için hata loglanır
-    console.error("[Email] Error sending email (Check SMTP settings):", error instanceof Error ? error.message : error);
-    throw error;
+  });
+  return queued;
+};
+
+let isProcessing = false;
+
+/**
+ * Process pending emails in the queue
+ */
+export const processEmailQueue = async () => {
+  if (isProcessing) return;
+  isProcessing = true;
+
+  try {
+    const pendingEmails = await storage.getPendingEmails(10);
+    for (const email of pendingEmails) {
+      try {
+        await sendDirectEmail({
+          to: email.to,
+          subject: email.subject,
+          html: email.body,
+        });
+
+        await storage.updateEmailStatus(email.id, "sent", null);
+        logger.info({ emailId: email.id, to: email.to }, "[EmailQueue] Successfully sent email");
+      } catch (err: any) {
+        const errorMsg = err?.message || String(err);
+        const newAttempts = email.attempts + 1;
+        const newStatus = newAttempts >= email.maxAttempts ? "failed" : "pending";
+
+        await storage.updateEmailStatus(email.id, newStatus, errorMsg);
+        logger.warn(
+          { emailId: email.id, to: email.to, attempt: newAttempts, error: errorMsg },
+          `[EmailQueue] Failed to send email (attempt ${newAttempts}/${email.maxAttempts})`
+        );
+      }
+    }
+  } catch (err) {
+    logger.error({ err }, "[EmailQueue] Critical error in queue processing");
+  } finally {
+    isProcessing = false;
+  }
+};
+
+let workerTimer: NodeJS.Timeout | null = null;
+
+/**
+ * Start recurring background worker for email queue
+ */
+export const startEmailWorker = (intervalMs = 5000) => {
+  if (workerTimer) return;
+  workerTimer = setInterval(() => {
+    processEmailQueue().catch((err) => {
+      logger.error({ err }, "[EmailWorker] Error during queue check");
+    });
+  }, intervalMs);
+  logger.info("[EmailWorker] Background email worker started (interval: %dms)", intervalMs);
+};
+
+export const stopEmailWorker = () => {
+  if (workerTimer) {
+    clearInterval(workerTimer);
+    workerTimer = null;
   }
 };
 
 /**
- * Send reset password email
+ * Send reset password email via Outbox queue
  */
 export const sendResetPasswordEmail = async (email: string, token: string) => {
   const resetUrl = `${process.env.FRONTEND_URL || "http://localhost:5173"}/reset-password?token=${token}`;
 
-  return sendEmail({
-    to: email,
-    subject: "Şifre Sıfırlama İsteği",
-    html: `
-      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-        <h2 style="color: #333;">Şifre Sıfırlama</h2>
-        <p>Hesabınız için bir şifre sıfırlama talebinde bulundunuz.</p>
-        <p>Şifrenizi sıfırlamak için lütfen aşağıdaki butona tıklayın:</p>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${resetUrl}" style="background-color: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">Şifremi Sıfırla</a>
+  const html = `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 25px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; color: #1e293b;">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h1 style="color: #4f46e5; margin: 0; font-size: 24px; font-weight: 800;">QuizMaster</h1>
+        <p style="color: #64748b; font-size: 14px; margin-top: 4px;">Sınav ve Değerlendirme Sistemi</p>
+      </div>
+      <div style="padding: 20px; background-color: #f8fafc; border-radius: 12px; margin-bottom: 20px;">
+        <h2 style="color: #0f172a; margin-top: 0; font-size: 18px;">Şifre Sıfırlama Talebi</h2>
+        <p style="font-size: 14px; line-height: 1.6; color: #334155;">
+          Hesabınız için bir şifre sıfırlama talebinde bulunuldu. Şifrenizi belirlemek için lütfen aşağıdaki butona tıklayın:
+        </p>
+        <div style="text-align: center; margin: 28px 0;">
+          <a href="${resetUrl}" style="background-color: #4f46e5; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 14px; display: inline-block; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);">
+            Şifremi Sıfırla
+          </a>
         </div>
-        <p>Eğer bu talebi siz yapmadıysanız, bu e-postayı dikkate almayabilirsiniz. Şifreniz değişmeyecektir.</p>
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-        <p style="font-size: 12px; color: #777;">Bu bağlantı 1 saat boyunca geçerlidir.</p>
-        <p style="font-size: 11px; color: #999; margin-top: 20px;">
-          Eğer buton çalışmıyorsa şu bağlantıyı tarayıcınıza yapıştırın:<br>
-          <a href="${resetUrl}">${resetUrl}</a>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 0;">
+          Eğer bu talebi siz yapmadıysanız, bu e-postayı güvenle göz ardı edebilirsiniz. Mevcut şifreniz değişmeyecektir.
         </p>
       </div>
-    `,
+      <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
+      <p style="font-size: 12px; color: #94a3b8; text-align: center; margin: 0;">
+        Bu bağlantı <strong>1 saat</strong> süreyle geçerlidir.<br>
+        Buton çalışmıyorsa aşağıdaki bağlantıyı tarayıcınıza kopyalayın:<br>
+        <a href="${resetUrl}" style="color: #4f46e5; word-break: break-all;">${resetUrl}</a>
+      </p>
+    </div>
+  `;
+
+  return queueEmail({
+    to: email,
+    subject: "QuizMaster - Şifre Sıfırlama İsteği",
+    body: html,
+    type: "password_reset",
   });
 };
+
+// Backwards compatibility alias
+export const sendEmail = sendDirectEmail;

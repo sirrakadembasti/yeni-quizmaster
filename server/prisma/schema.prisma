@@ -229,3 +229,22 @@ model Announcement {
   targetClassId String?
   createdAt     DateTime @default(now())
 }
+
+model EmailQueue {
+  id           String    @id @default(uuid())
+  to           String
+  subject      String
+  body         String
+  type         String    @default("notification") // password_reset, email_verification, notification, system_alert
+  status       String    @default("pending") // pending, sent, failed
+  attempts     Int       @default(0)
+  maxAttempts  Int       @default(3)
+  lastAttempt  DateTime?
+  errorMessage String?
+  createdAt    DateTime  @default(now())
+  sentAt       DateTime?
+
+  @@index([status])
+  @@index([createdAt])
+}
+

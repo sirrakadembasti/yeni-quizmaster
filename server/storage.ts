@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma, User, Quiz, Question, QuestionBank, StudentResult, Category, Class, ActionLog } from '@prisma/client';
+import { PrismaClient, Prisma, User, Quiz, Question, QuestionBank, StudentResult, Category, Class, ActionLog, EmailQueue } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -102,6 +102,16 @@ export interface IStorage {
   createLog(userId: string, action: string, details?: string): Promise<ActionLog>;
   // page ve limit filters nesnesine eklendi; total count pagination bilgisi için döndürülüyor.
   getLogs(filters?: { role?: string; userId?: string; action?: string; startDate?: Date; endDate?: Date; page?: number; limit?: number }): Promise<{ data: ActionLog[]; total: number }>;
+  getSystemLogs(filters?: { search?: string; startDate?: Date; endDate?: Date; page?: number; limit?: number }): Promise<{ data: ActionLog[]; total: number }>;
+
+  // Email Queue methods
+  enqueueEmail(data: { to: string; subject: string; body: string; type?: string; maxAttempts?: number }): Promise<EmailQueue>;
+  getEmailLogs(filters?: { status?: string; search?: string; startDate?: Date; endDate?: Date; page?: number; limit?: number }): Promise<{ data: EmailQueue[]; total: number; counts: { total: number; sent: number; pending: number; failed: number } }>;
+  retryEmail(id: string): Promise<EmailQueue | null>;
+  deleteEmailLog(id: string): Promise<boolean>;
+  getPendingEmails(limit?: number): Promise<EmailQueue[]>;
+  updateEmailStatus(id: string, status: string, errorMessage?: string | null): Promise<EmailQueue | null>;
+
   createAnnouncement(data: any): Promise<any>;
   getAllAnnouncements(): Promise<any[]>;
   deleteAnnouncement(id: string): Promise<void>;
@@ -1242,6 +1252,167 @@ export class PrismaStorage implements IStorage {
 
   async deleteAnnouncement(id: string): Promise<void> {
     await prisma.announcement.delete({ where: { id } });
+  }
+
+  async getSystemLogs(filters?: { search?: string; startDate?: Date; endDate?: Date; page?: number; limit?: number }): Promise<{ data: ActionLog[]; total: number }> {
+    const systemActions = ["ARCHIVE_YEAR", "PROMOTE_STUDENTS", "PURGE_ARCHIVED_DATA", "SYSTEM_BACKUP", "SYSTEM_ERROR", "SYSTEM_INIT"];
+    const where: Prisma.ActionLogWhereInput = {
+      OR: [
+        { action: { in: systemActions } },
+        { action: { startsWith: "SYSTEM_" } },
+        { details: { contains: "Hata" } },
+        { details: { contains: "Error" } },
+      ]
+    };
+    if (filters?.search) {
+      where.AND = [
+        {
+          OR: [
+            { action: { contains: filters.search } },
+            { details: { contains: filters.search } },
+          ]
+        }
+      ];
+    }
+    if (filters?.startDate || filters?.endDate) {
+      where.createdAt = {};
+      if (filters.startDate) where.createdAt.gte = filters.startDate;
+      if (filters.endDate) where.createdAt.lte = filters.endDate;
+    }
+
+    const page = filters?.page ?? 1;
+    const limit = filters?.limit ?? 100;
+    const skip = (page - 1) * limit;
+
+    const [logs, total] = await Promise.all([
+      prisma.actionLog.findMany({
+        where,
+        include: { user: true },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip,
+      }),
+      prisma.actionLog.count({ where }),
+    ]);
+
+    return {
+      data: logs.map(l => ({
+        ...l,
+        user: { name: l.user.name, email: l.user.email, role: l.user.role },
+      })) as unknown as ActionLog[],
+      total,
+    };
+  }
+
+  async enqueueEmail(data: { to: string; subject: string; body: string; type?: string; maxAttempts?: number }): Promise<EmailQueue> {
+    return await prisma.emailQueue.create({
+      data: {
+        to: data.to,
+        subject: data.subject,
+        body: data.body,
+        type: data.type || "notification",
+        status: "pending",
+        maxAttempts: data.maxAttempts || 3,
+      }
+    });
+  }
+
+  async getEmailLogs(filters?: { status?: string; search?: string; startDate?: Date; endDate?: Date; page?: number; limit?: number }): Promise<{ data: EmailQueue[]; total: number; counts: { total: number; sent: number; pending: number; failed: number } }> {
+    const where: Prisma.EmailQueueWhereInput = {};
+    if (filters?.status && filters.status !== 'all') {
+      where.status = filters.status;
+    }
+    if (filters?.search) {
+      where.OR = [
+        { to: { contains: filters.search } },
+        { subject: { contains: filters.search } },
+        { type: { contains: filters.search } },
+      ];
+    }
+    if (filters?.startDate || filters?.endDate) {
+      where.createdAt = {};
+      if (filters.startDate) where.createdAt.gte = filters.startDate;
+      if (filters.endDate) where.createdAt.lte = filters.endDate;
+    }
+
+    const page = filters?.page ?? 1;
+    const limit = filters?.limit ?? 100;
+    const skip = (page - 1) * limit;
+
+    const [data, total, totalAll, sentCount, pendingCount, failedCount] = await Promise.all([
+      prisma.emailQueue.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip,
+      }),
+      prisma.emailQueue.count({ where }),
+      prisma.emailQueue.count(),
+      prisma.emailQueue.count({ where: { status: 'sent' } }),
+      prisma.emailQueue.count({ where: { status: 'pending' } }),
+      prisma.emailQueue.count({ where: { status: 'failed' } }),
+    ]);
+
+    return {
+      data,
+      total,
+      counts: {
+        total: totalAll,
+        sent: sentCount,
+        pending: pendingCount,
+        failed: failedCount,
+      }
+    };
+  }
+
+  async retryEmail(id: string): Promise<EmailQueue | null> {
+    const email = await prisma.emailQueue.findUnique({ where: { id } });
+    if (!email) return null;
+    return await prisma.emailQueue.update({
+      where: { id },
+      data: {
+        status: 'pending',
+        attempts: 0,
+        errorMessage: null,
+      }
+    });
+  }
+
+  async deleteEmailLog(id: string): Promise<boolean> {
+    try {
+      await prisma.emailQueue.delete({ where: { id } });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async getPendingEmails(limit = 10): Promise<EmailQueue[]> {
+    return await prisma.emailQueue.findMany({
+      where: {
+        status: 'pending',
+      },
+      orderBy: { createdAt: 'asc' },
+      take: limit,
+    });
+  }
+
+  async updateEmailStatus(id: string, status: string, errorMessage?: string | null): Promise<EmailQueue | null> {
+    try {
+      return await prisma.emailQueue.update({
+        where: { id },
+        data: {
+          status,
+          errorMessage: errorMessage ?? null,
+          lastAttempt: new Date(),
+          sentAt: status === 'sent' ? new Date() : undefined,
+          attempts: { increment: 1 }
+        }
+      });
+    } catch (err: any) {
+      if (err?.code === 'P2025') return null;
+      throw err;
+    }
   }
 }
 

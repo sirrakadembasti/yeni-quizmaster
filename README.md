@@ -132,12 +132,46 @@ pnpm dev
 
 > Vite, `/api` ve `/socket.io` isteklerini otomatik olarak `localhost:5000`'e yönlendirir.
 
-### 5. Testleri Çalıştırma
+### 5. E-Posta Servisi Yapılandırması
+
+Quiz-Master, asenkron veritabanı destekli **Outbox Kuyruk Mimarisi** (`EmailQueue`) ile çalışır. Kullanıcı talepleri (şifre sıfırlama, bildirimler) kuyruğa yazılır ve arka plan işçisi tarafından sevk edilir.
+
+#### A) Yerel Geliştirme (Local Offline — Mailpit)
+Geliştirme ortamında test e-postalarını yakalamak ve tarayıcıda görselleştirmek için Mailpit kullanılır:
+- **Başlatma:** `tools/mailpit/start-mailpit.bat` dosyasını çalıştırın.
+- **Web Gelen Kutusu:** [http://127.0.0.1:8025](http://127.0.0.1:8025)
+- **SMTP Portu:** `127.0.0.1:1026` (Windows Hyper-V / port çakışmalarını önlemek üzere 1026 olarak atanmıştır)
+- `server/.env` ayarı:
+  ```env
+  EMAIL_HOST=127.0.0.1
+  EMAIL_PORT=1026
+  EMAIL_SECURE=false
+  EMAIL_USER=
+  EMAIL_PASS=
+  EMAIL_FROM=noreply@quizmaster.com
+  ```
+
+#### B) Canlı Ortam (Production Online — Brevo / Sendinblue)
+Canlıya çıkışta Brevo SMTP Relay servisi kullanılır:
+1. Brevo (brevo.com) hesabınızda *Transactional > Settings > Configuration* adımından yeni bir **SMTP Key** (`xsmtpsib-...`) oluşturun.
+2. Gönderici e-posta adresinizi (*Senders*) Brevo panelinde doğrulayın.
+3. Sunucu ortam değişkenlerini (`server/.env`) güncelleyin:
+  ```env
+  EMAIL_HOST=smtp-relay.brevo.com
+  EMAIL_PORT=587
+  EMAIL_SECURE=false
+  EMAIL_USER=hesap_epostaniz@domain.com
+  EMAIL_PASS=xsmtpsib-anahtariniz
+  EMAIL_FROM=noreply@dogrulanmis-domaininiz.com
+  ```
+> Sistem `EMAIL_USER` ve `EMAIL_PASS` alanlarının doluluğunu otomatik algılar; yerelde şifresiz Mailpit, canlıda kimlik doğrulamalı Brevo sıfır kod değişikliği ile şeffaf çalışır.
+
+### 6. Testleri Çalıştırma
 
 Quiz-Master kapsamlı unit, entegrasyon ve Playwright E2E test paketlerine sahiptir:
 
 ```bash
-# Backend testleri (Vitest: 7 test paketi, 29 test)
+# Backend testleri (Vitest: 8 test paketi, 36 test)
 pnpm --filter quiz-master-server test
 
 # Frontend testleri (Vitest: 5 test paketi, 22 test)

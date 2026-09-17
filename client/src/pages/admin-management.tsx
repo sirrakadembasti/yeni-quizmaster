@@ -25,7 +25,15 @@ import {
   AlertCircle,
   UserPlus,
   MoreHorizontal,
-  Printer
+  Printer,
+  Mail,
+  RotateCw,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Server,
+  Eye,
+  RefreshCw
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -103,10 +111,22 @@ export default function AdminManagementPage() {
     queryFn: () => userApi.getAllUsers(),
   });
 
-  // Filters for Logs
+  // Sub-tabs for Logs: 'users' | 'emails' | 'system'
+  const [logSubTab, setLogSubTab] = useState("users");
+
+  // Filters for User Logs
   const [logRoleFilter, setLogRoleFilter] = useState("all");
   const [logActionSearch, setLogActionSearch] = useState("");
   const [logDateFilter, setLogDateFilter] = useState("academic-year");
+
+  // Filters for Email Logs
+  const [emailStatusFilter, setEmailStatusFilter] = useState("all");
+  const [emailSearch, setEmailSearch] = useState("");
+  const [selectedEmail, setSelectedEmail] = useState<any>(null);
+  const [isEmailViewOpen, setIsEmailViewOpen] = useState(false);
+
+  // Filters for System Logs
+  const [systemLogSearch, setSystemLogSearch] = useState("");
 
   const logDateRange = useMemo(() => {
     const now = new Date();
@@ -131,6 +151,7 @@ export default function AdminManagementPage() {
     return { startDate: undefined, endDate: undefined };
   }, [logDateFilter]);
 
+  // Query: User Action Logs
   const { data: logsData, isLoading: logsLoading } = useQuery({
     queryKey: ['/api/admin/logs', logRoleFilter, logActionSearch, logDateRange],
     queryFn: () => adminApi.getLogs({
@@ -141,9 +162,60 @@ export default function AdminManagementPage() {
     }),
   });
 
+  // Query: Email Logs
+  const { data: emailLogsData, isLoading: emailLogsLoading } = useQuery({
+    queryKey: ['/api/admin/logs/emails', emailStatusFilter, emailSearch, logDateRange],
+    queryFn: () => adminApi.getEmailLogs({
+      status: emailStatusFilter === "all" ? undefined : emailStatusFilter,
+      search: emailSearch || undefined,
+      startDate: logDateRange.startDate,
+      endDate: logDateRange.endDate,
+    }),
+    enabled: logSubTab === "emails",
+    refetchInterval: logSubTab === "emails" ? 5000 : false,
+  });
+
+  // Query: System Logs
+  const { data: systemLogsData, isLoading: systemLogsLoading } = useQuery({
+    queryKey: ['/api/admin/logs/system', systemLogSearch, logDateRange],
+    queryFn: () => adminApi.getSystemLogs({
+      search: systemLogSearch || undefined,
+      startDate: logDateRange.startDate,
+      endDate: logDateRange.endDate,
+    }),
+    enabled: logSubTab === "system",
+  });
+
+  // Retry Email Mutation
+  const retryEmailMutation = useMutation({
+    mutationFn: (id: string) => adminApi.retryEmail(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/logs/emails'] });
+      toast({ title: "Başarılı", description: "E-posta tekrar gönderim kuyruğuna alındı." });
+    },
+    onError: (err: any) => {
+      toast({ title: "Hata", description: err?.message || "E-posta tekrar gönderilemedi.", variant: "destructive" });
+    }
+  });
+
+  // Delete Email Log Mutation
+  const deleteEmailMutation = useMutation({
+    mutationFn: (id: string) => adminApi.deleteEmailLog(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/logs/emails'] });
+      toast({ title: "Başarılı", description: "E-posta log kaydı silindi." });
+    },
+    onError: (err: any) => {
+      toast({ title: "Hata", description: err?.message || "E-posta kaydı silinemedi.", variant: "destructive" });
+    }
+  });
+
   const teachers = usersData?.users.filter(u => u.role === 'teacher') || [];
   const classes = classesData?.classes || [];
   const logs = logsData?.logs || [];
+  const emailLogs = emailLogsData?.emails || [];
+  const emailCounts = emailLogsData?.counts || { total: 0, sent: 0, pending: 0, failed: 0 };
+  const systemLogs = systemLogsData?.logs || [];
 
   // Mutations - User Management
   const createUserMutation = useMutation({
@@ -506,111 +578,500 @@ const deleteClassMutation = useMutation({
             </Tabs>
           </TabsContent>
           
-          {/* LOGS TAB - ADVANCED FILTERED TABLE */}
+          {/* LOGS TAB - 3 SUB-TABS (Kullanıcı Logları, E-Posta Logları, Sistem Hata & İşlemleri) */}
           <TabsContent value="logs" className="mt-6 space-y-6">
-            <div className="bg-card p-5 rounded-3xl border border-border flex flex-col md:flex-row justify-between items-center gap-6">
-               <div className="flex items-center gap-4 flex-1 w-full">
-                  <div className="relative flex-1 max-w-sm">
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input 
-                      placeholder="İşlem ara (örn: create, delete)..." 
-                      className="pl-10 rounded-xl bg-muted border-transparent focus:bg-background focus:border-input" 
-                      value={logActionSearch}
-                      onChange={e => setLogActionSearch(e.target.value)}
-                    />
-                  </div>
-                  <Select value={logRoleFilter} onValueChange={setLogRoleFilter}>
-                    <SelectTrigger className="w-40 rounded-xl border-border bg-muted/30">
-                      <SelectValue placeholder="Rol Filtrele" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      <SelectItem value="all">Tüm Roller</SelectItem>
-                      <SelectItem value="admin">Yöneticiler</SelectItem>
-                      <SelectItem value="teacher">Öğretmenler</SelectItem>
-                      <SelectItem value="student">Öğrenciler</SelectItem>
-                    </SelectContent>
-                  </Select>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border pb-4">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={logSubTab === "users" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setLogSubTab("users")}
+                  className={cn("rounded-xl font-bold text-xs gap-2 transition-all", logSubTab === "users" ? "shadow-sm" : "")}
+                >
+                  <Users className="h-3.5 w-3.5" />
+                  Kullanıcı Logları
+                </Button>
+                <Button
+                  variant={logSubTab === "emails" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setLogSubTab("emails")}
+                  className={cn("rounded-xl font-bold text-xs gap-2 transition-all", logSubTab === "emails" ? "shadow-sm" : "")}
+                >
+                  <Mail className="h-3.5 w-3.5" />
+                  E-Posta Logları
+                  {emailCounts.failed > 0 && (
+                    <Badge variant="destructive" className="ml-1 h-5 px-1.5 text-[10px] font-black rounded-full">
+                      {emailCounts.failed}
+                    </Badge>
+                  )}
+                </Button>
+                <Button
+                  variant={logSubTab === "system" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setLogSubTab("system")}
+                  className={cn("rounded-xl font-bold text-xs gap-2 transition-all", logSubTab === "system" ? "shadow-sm" : "")}
+                >
+                  <Server className="h-3.5 w-3.5" />
+                  Sistem Hata & İşlemleri
+                </Button>
+              </div>
 
-                  <Select value={logDateFilter} onValueChange={setLogDateFilter}>
-                    <SelectTrigger className="w-48 rounded-xl border-border bg-muted/30">
-                      <SelectValue placeholder="Tarih Aralığı" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      <SelectItem value="all">Tüm Zamanlar</SelectItem>
-                      <SelectItem value="academic-year">Bu Eğitim Yılı (1 Tem'den)</SelectItem>
-                      <SelectItem value="last-30">Son 30 Gün</SelectItem>
-                      <SelectItem value="last-year">Son 1 Yıl</SelectItem>
-                    </SelectContent>
-                  </Select>
-               </div>
-               <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-lg font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border-indigo-100">
-                    {logs.length} Kayıt Listeleniyor
-                  </Badge>
-               </div>
+              {/* Ortak Tarih Aralığı Filtresi */}
+              <div className="flex items-center gap-2">
+                <Select value={logDateFilter} onValueChange={setLogDateFilter}>
+                  <SelectTrigger className="w-48 h-9 rounded-xl border-border bg-muted/40 text-xs font-semibold">
+                    <SelectValue placeholder="Tarih Aralığı" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl">
+                    <SelectItem value="all">Tüm Zamanlar</SelectItem>
+                    <SelectItem value="academic-year">Bu Eğitim Yılı (1 Tem'den)</SelectItem>
+                    <SelectItem value="last-30">Son 30 Gün</SelectItem>
+                    <SelectItem value="last-year">Son 1 Yıl</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-             <Card className="rounded-3xl border border-border overflow-hidden bg-card shadow-sm">
-                <Table>
-                  <TableHeader className="bg-muted border-b border-border">
-                    <TableRow>
-                      <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4 pl-6">Zaman</TableHead>
-                      <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Kullanıcı & Rol</TableHead>
-                      <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">İşlem</TableHead>
-                      <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Detaylar</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {logsLoading ? (
-                      <TableRow><TableCell colSpan={4} className="h-32 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" /></TableCell></TableRow>
-                    ) : logs.length === 0 ? (
-                      <TableRow><TableCell colSpan={4} className="h-32 text-center text-muted-foreground italic font-medium">Kayıt bulunamadı.</TableCell></TableRow>
-                    ) : (
-                      logs.map((log: any) => (
-                        <TableRow key={log.id} className="hover:bg-muted/30 border-border transition-colors group">
-                          <TableCell className="pl-6 py-4">
-                            <div className="flex flex-col">
-                              <span className="text-sm font-bold text-foreground">{new Date(log.createdAt).toLocaleDateString('tr-TR')}</span>
-                              <span className="text-[10px] font-medium text-muted-foreground">{new Date(log.createdAt).toLocaleTimeString('tr-TR')}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
+            {/* TAB 1: KULLANICI LOGLARI */}
+            {logSubTab === "users" && (
+              <div className="space-y-4">
+                <div className="bg-card p-4 rounded-3xl border border-border flex flex-col md:flex-row justify-between items-center gap-4">
+                  <div className="flex items-center gap-3 flex-1 w-full">
+                    <div className="relative flex-1 max-w-sm">
+                      <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        placeholder="İşlem ara (örn: create, delete, login)..." 
+                        className="pl-10 rounded-xl bg-muted border-transparent focus:bg-background focus:border-input text-xs" 
+                        value={logActionSearch}
+                        onChange={e => setLogActionSearch(e.target.value)}
+                      />
+                    </div>
+                    <Select value={logRoleFilter} onValueChange={setLogRoleFilter}>
+                      <SelectTrigger className="w-36 rounded-xl border-border bg-muted/30 text-xs">
+                        <SelectValue placeholder="Rol Filtrele" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="all">Tüm Roller</SelectItem>
+                        <SelectItem value="admin">Yöneticiler</SelectItem>
+                        <SelectItem value="teacher">Öğretmenler</SelectItem>
+                        <SelectItem value="student">Öğrenciler</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="rounded-lg font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border-indigo-100">
+                      {logs.length} Kayıt Listeleniyor
+                    </Badge>
+                  </div>
+                </div>
+
+                <Card className="rounded-3xl border border-border overflow-hidden bg-card shadow-sm">
+                  <Table>
+                    <TableHeader className="bg-muted border-b border-border">
+                      <TableRow>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4 pl-6">Zaman</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Kullanıcı & Rol</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">İşlem</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Detaylar</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {logsLoading ? (
+                        <TableRow><TableCell colSpan={4} className="h-32 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" /></TableCell></TableRow>
+                      ) : logs.length === 0 ? (
+                        <TableRow><TableCell colSpan={4} className="h-32 text-center text-muted-foreground italic font-medium">Kayıt bulunamadı.</TableCell></TableRow>
+                      ) : (
+                        logs.map((log: any) => (
+                          <TableRow key={log.id} className="hover:bg-muted/30 border-border transition-colors group">
+                            <TableCell className="pl-6 py-4">
                               <div className="flex flex-col">
-                                <span className="text-sm font-bold text-foreground">{log.user?.name}</span>
-                                <span className={cn(
-                                  "text-[9px] font-black uppercase tracking-tighter",
-                                  log.user?.role === 'admin' ? "text-red-500" :
-                                  log.user?.role === 'teacher' ? "text-amber-500" : "text-emerald-500"
-                                )}>
-                                  {log.user?.role}
-                                </span>
+                                <span className="text-sm font-bold text-foreground">{new Date(log.createdAt).toLocaleDateString('tr-TR')}</span>
+                                <span className="text-[10px] font-medium text-muted-foreground">{new Date(log.createdAt).toLocaleTimeString('tr-TR')}</span>
                               </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge className={cn(
-                              "rounded-lg font-black text-[9px] px-2 py-0.5 border-none shadow-none uppercase tracking-widest",
-                              log.action.includes('delete') ? "bg-red-100 text-red-600 dark:bg-red-950/30 dark:text-red-400" :
-                              log.action.includes('create') || log.action.includes('add') ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400" :
-                              log.action.includes('update') ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-950/30 dark:text-indigo-400" :
-                              "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
-                            )}>
-                              {log.action}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-xs font-medium text-muted-foreground max-w-md truncate">
-                            {log.details || "-"}
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-             </Card>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <div className="flex flex-col">
+                                  <span className="text-sm font-bold text-foreground">{log.user?.name}</span>
+                                  <span className={cn(
+                                    "text-[9px] font-black uppercase tracking-tighter",
+                                    log.user?.role === 'admin' ? "text-red-500" :
+                                    log.user?.role === 'teacher' ? "text-amber-500" : "text-emerald-500"
+                                  )}>
+                                    {log.user?.role}
+                                  </span>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge className={cn(
+                                "rounded-lg font-black text-[9px] px-2 py-0.5 border-none shadow-none uppercase tracking-widest",
+                                log.action.includes('delete') ? "bg-red-100 text-red-600 dark:bg-red-950/30 dark:text-red-400" :
+                                log.action.includes('create') || log.action.includes('add') ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400" :
+                                log.action.includes('update') ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-950/30 dark:text-indigo-400" :
+                                "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+                              )}>
+                                {log.action}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-xs font-medium text-muted-foreground max-w-md truncate">
+                              {log.details || "-"}
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </Card>
+              </div>
+            )}
+
+            {/* TAB 2: E-POSTA LOGLARI */}
+            {logSubTab === "emails" && (
+              <div className="space-y-4">
+                {/* KPI İstatistik Kartları */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="bg-card border border-border rounded-2xl p-4 flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-indigo-50 dark:bg-indigo-950 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                      <Mail className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Toplam Gönderim</p>
+                      <p className="text-xl font-black text-foreground">{emailCounts.total}</p>
+                    </div>
+                  </div>
+                  <div className="bg-card border border-border rounded-2xl p-4 flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                      <CheckCircle2 className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Başarılı (İletilen)</p>
+                      <p className="text-xl font-black text-emerald-600 dark:text-emerald-400">{emailCounts.sent}</p>
+                    </div>
+                  </div>
+                  <div className="bg-card border border-border rounded-2xl p-4 flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-amber-50 dark:bg-amber-950 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                      <Clock className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Kuyrukta Bekleyen</p>
+                      <p className="text-xl font-black text-amber-600 dark:text-amber-400">{emailCounts.pending}</p>
+                    </div>
+                  </div>
+                  <div className="bg-card border border-border rounded-2xl p-4 flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-red-50 dark:bg-red-950 flex items-center justify-center text-red-600 dark:text-red-400">
+                      <XCircle className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Başarısız / Hata</p>
+                      <p className="text-xl font-black text-red-600 dark:text-red-400">{emailCounts.failed}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Filtreleme ve Arama */}
+                <div className="bg-card p-4 rounded-3xl border border-border flex flex-col md:flex-row justify-between items-center gap-4">
+                  <div className="flex items-center gap-3 flex-1 w-full">
+                    <div className="relative flex-1 max-w-sm">
+                      <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        placeholder="Alıcı e-posta veya konu ara..." 
+                        className="pl-10 rounded-xl bg-muted border-transparent focus:bg-background focus:border-input text-xs" 
+                        value={emailSearch}
+                        onChange={e => setEmailSearch(e.target.value)}
+                      />
+                    </div>
+                    <Select value={emailStatusFilter} onValueChange={setEmailStatusFilter}>
+                      <SelectTrigger className="w-40 rounded-xl border-border bg-muted/30 text-xs">
+                        <SelectValue placeholder="Durum Filtrele" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="all">Tüm Durumlar</SelectItem>
+                        <SelectItem value="sent">Başarılı (Sent)</SelectItem>
+                        <SelectItem value="pending">Kuyrukta (Pending)</SelectItem>
+                        <SelectItem value="failed">Hatalı (Failed)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="rounded-xl gap-1 text-xs"
+                      onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/admin/logs/emails'] })}
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" />
+                      Yenile
+                    </Button>
+                    <Badge variant="outline" className="rounded-lg font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border-indigo-100">
+                      {emailLogs.length} Kayıt Listeleniyor
+                    </Badge>
+                  </div>
+                </div>
+
+                {/* E-Posta Kayıtları Tablosu */}
+                <Card className="rounded-3xl border border-border overflow-hidden bg-card shadow-sm">
+                  <Table>
+                    <TableHeader className="bg-muted border-b border-border">
+                      <TableRow>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4 pl-6">Kayıt Zamanı</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Alıcı</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Konu & Tip</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Durum</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Deneme</TableHead>
+                        <TableHead className="text-right px-6 py-4 font-black text-[10px] text-muted-foreground uppercase tracking-widest">İşlemler</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {emailLogsLoading ? (
+                        <TableRow><TableCell colSpan={6} className="h-32 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" /></TableCell></TableRow>
+                      ) : emailLogs.length === 0 ? (
+                        <TableRow><TableCell colSpan={6} className="h-32 text-center text-muted-foreground italic font-medium">Henüz bir e-posta log kaydı bulunmuyor.</TableCell></TableRow>
+                      ) : (
+                        emailLogs.map((item: any) => (
+                          <TableRow key={item.id} className="hover:bg-muted/30 border-border transition-colors group">
+                            <TableCell className="pl-6 py-4">
+                              <div className="flex flex-col">
+                                <span className="text-sm font-bold text-foreground">{new Date(item.createdAt).toLocaleDateString('tr-TR')}</span>
+                                <span className="text-[10px] font-medium text-muted-foreground">{new Date(item.createdAt).toLocaleTimeString('tr-TR')}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <span className="text-sm font-bold text-foreground">{item.to}</span>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-col max-w-xs">
+                                <span className="text-xs font-bold text-foreground truncate">{item.subject}</span>
+                                <span className="text-[10px] text-muted-foreground font-mono">{item.type}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge className={cn(
+                                "rounded-lg font-bold text-[10px] px-2.5 py-0.5 border-none shadow-none uppercase tracking-wider flex items-center gap-1.5 w-fit",
+                                item.status === 'sent' ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400" :
+                                item.status === 'pending' ? "bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400" :
+                                "bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-400"
+                              )}>
+                                {item.status === 'sent' ? (
+                                  <><CheckCircle2 className="h-3 w-3" /> İletildi</>
+                                ) : item.status === 'pending' ? (
+                                  <><Clock className="h-3 w-3" /> Beklemede</>
+                                ) : (
+                                  <><XCircle className="h-3 w-3" /> Başarısız</>
+                                )}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <span className="text-xs font-semibold text-muted-foreground">
+                                {item.attempts} / {item.maxAttempts}
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-right px-6">
+                              <div className="flex justify-end gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-8 w-8 text-muted-foreground hover:text-indigo-600" 
+                                  title="Görüntüle"
+                                  onClick={() => { setSelectedEmail(item); setIsEmailViewOpen(true); }}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                {item.status !== 'sent' && (
+                                  <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="h-8 w-8 text-muted-foreground hover:text-amber-600" 
+                                    title="Tekrar Gönder"
+                                    disabled={retryEmailMutation.isPending}
+                                    onClick={() => retryEmailMutation.mutate(item.id)}
+                                  >
+                                    <RotateCw className={cn("h-4 w-4", retryEmailMutation.isPending && "animate-spin")} />
+                                  </Button>
+                                )}
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-8 w-8 text-muted-foreground hover:text-red-500" 
+                                  title="Sil"
+                                  disabled={deleteEmailMutation.isPending}
+                                  onClick={() => deleteEmailMutation.mutate(item.id)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </Card>
+              </div>
+            )}
+
+            {/* TAB 3: SİSTEM HATA & İŞLEMLERİ */}
+            {logSubTab === "system" && (
+              <div className="space-y-4">
+                <div className="bg-card p-4 rounded-3xl border border-border flex flex-col md:flex-row justify-between items-center gap-4">
+                  <div className="flex items-center gap-3 flex-1 w-full">
+                    <div className="relative flex-1 max-w-md">
+                      <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        placeholder="Sistem işlem veya hata ara (örn: archive, purge, hata)..." 
+                        className="pl-10 rounded-xl bg-muted border-transparent focus:bg-background focus:border-input text-xs" 
+                        value={systemLogSearch}
+                        onChange={e => setSystemLogSearch(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="rounded-lg font-bold bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 border-amber-100">
+                      {systemLogs.length} Sistem Kaydı
+                    </Badge>
+                  </div>
+                </div>
+
+                <Card className="rounded-3xl border border-border overflow-hidden bg-card shadow-sm">
+                  <Table>
+                    <TableHeader className="bg-muted border-b border-border">
+                      <TableRow>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4 pl-6">Zaman</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Tetikleyen</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Sistem Operasyonu</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">İşlem Detayları</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {systemLogsLoading ? (
+                        <TableRow><TableCell colSpan={4} className="h-32 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" /></TableCell></TableRow>
+                      ) : systemLogs.length === 0 ? (
+                        <TableRow><TableCell colSpan={4} className="h-32 text-center text-muted-foreground italic font-medium">Sistem işlemi veya hata kaydı bulunamadı.</TableCell></TableRow>
+                      ) : (
+                        systemLogs.map((log: any) => (
+                          <TableRow key={log.id} className="hover:bg-muted/30 border-border transition-colors group">
+                            <TableCell className="pl-6 py-4">
+                              <div className="flex flex-col">
+                                <span className="text-sm font-bold text-foreground">{new Date(log.createdAt).toLocaleDateString('tr-TR')}</span>
+                                <span className="text-[10px] font-medium text-muted-foreground">{new Date(log.createdAt).toLocaleTimeString('tr-TR')}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-col">
+                                <span className="text-sm font-bold text-foreground">{log.user?.name || "Sistem Servisi"}</span>
+                                <span className="text-[10px] text-muted-foreground">{log.user?.email || "internal"}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge className={cn(
+                                "rounded-lg font-black text-[9px] px-2 py-0.5 border-none shadow-none uppercase tracking-widest",
+                                log.action.includes('PURGE') || log.action.includes('ERROR') ? "bg-red-100 text-red-600 dark:bg-red-950/30 dark:text-red-400" :
+                                log.action.includes('ARCHIVE') ? "bg-purple-100 text-purple-600 dark:bg-purple-950/30 dark:text-purple-400" :
+                                log.action.includes('PROMOTE') ? "bg-blue-100 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400" :
+                                "bg-amber-100 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400"
+                              )}>
+                                {log.action}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-xs font-medium text-muted-foreground max-w-lg">
+                              {log.details || "-"}
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </Card>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* EMAIL PREVIEW DIALOG */}
+      <Dialog open={isEmailViewOpen} onOpenChange={setIsEmailViewOpen}>
+        <DialogContent className="rounded-3xl sm:max-w-2xl bg-card max-h-[85vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold flex items-center gap-2">
+              <Mail className="h-5 w-5 text-indigo-600" />
+              E-Posta Detayı ve Önizleme
+            </DialogTitle>
+            <DialogDescription>
+              {selectedEmail?.createdAt && new Date(selectedEmail.createdAt).toLocaleString('tr-TR')} tarihinde oluşturuldu
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedEmail && (
+            <div className="space-y-4 py-2 overflow-y-auto pr-1">
+              <div className="grid grid-cols-2 gap-3 bg-muted/40 p-3.5 rounded-2xl text-xs">
+                <div>
+                  <span className="font-bold text-muted-foreground block text-[10px] uppercase">Alıcı:</span>
+                  <span className="font-bold text-foreground">{selectedEmail.to}</span>
+                </div>
+                <div>
+                  <span className="font-bold text-muted-foreground block text-[10px] uppercase">Durum:</span>
+                  <span className={cn(
+                    "font-bold uppercase",
+                    selectedEmail.status === 'sent' ? "text-emerald-600" :
+                    selectedEmail.status === 'pending' ? "text-amber-600" : "text-red-600"
+                  )}>
+                    {selectedEmail.status}
+                  </span>
+                </div>
+                <div>
+                  <span className="font-bold text-muted-foreground block text-[10px] uppercase">Konu:</span>
+                  <span className="font-semibold text-foreground">{selectedEmail.subject}</span>
+                </div>
+                <div>
+                  <span className="font-bold text-muted-foreground block text-[10px] uppercase">Tip / Deneme:</span>
+                  <span className="font-mono text-muted-foreground">{selectedEmail.type} ({selectedEmail.attempts}/{selectedEmail.maxAttempts})</span>
+                </div>
+              </div>
+
+              {selectedEmail.errorMessage && (
+                <div className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-xl text-xs text-red-700 dark:text-red-400">
+                  <span className="font-bold block">Son Hata Mesajı:</span>
+                  <span className="font-mono text-[11px]">{selectedEmail.errorMessage}</span>
+                </div>
+              )}
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">E-Posta İçeriği (HTML Önizleme):</Label>
+                <div 
+                  className="p-4 bg-background border border-border rounded-2xl overflow-y-auto max-h-72 text-sm"
+                  dangerouslySetInnerHTML={{ __html: selectedEmail.body }}
+                />
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="gap-2">
+            {selectedEmail?.status !== 'sent' && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="rounded-xl gap-1 font-bold text-xs"
+                disabled={retryEmailMutation.isPending}
+                onClick={() => {
+                  retryEmailMutation.mutate(selectedEmail.id);
+                  setIsEmailViewOpen(false);
+                }}
+              >
+                <RotateCw className="h-3.5 w-3.5" />
+                Yeniden Gönder
+              </Button>
+            )}
+            <Button 
+              variant="default" 
+              size="sm" 
+              className="rounded-xl font-bold text-xs"
+              onClick={() => setIsEmailViewOpen(false)}
+            >
+              Kapat
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* USER DIALOG - FOR CREATE & ROLE CHANGE */}
       <Dialog open={isUserDialogOpen} onOpenChange={setIsUserDialogOpen}>

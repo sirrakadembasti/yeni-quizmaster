@@ -37,6 +37,10 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
+    include: ['tests/**/*.test.ts'],
+    env: {
+      DATABASE_URL: 'file:../data/quiz.db',
+    },
   },
   resolve: {
     alias: {

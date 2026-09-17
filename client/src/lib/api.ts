@@ -874,6 +874,47 @@ export const adminApi = {
       credentials: "include",
     });
     return handleResponse<{ message: string, totalPromoted: number }>(response);
+  },
+  async getEmailLogs(filters?: { status?: string; search?: string; startDate?: string; endDate?: string; page?: number; limit?: number }) {
+    const params = new URLSearchParams();
+    if (filters?.status) params.append('status', filters.status);
+    if (filters?.search) params.append('search', filters.search);
+    if (filters?.startDate) params.append('startDate', filters.startDate);
+    if (filters?.endDate) params.append('endDate', filters.endDate);
+    if (filters?.page) params.append('page', String(filters.page));
+    if (filters?.limit) params.append('limit', String(filters.limit));
+
+    const response = await apiFetch(`${API_BASE}/admin/logs/emails?${params.toString()}`, {
+      credentials: "include",
+    });
+    return handleResponse<{ emails: any[]; counts: { total: number; sent: number; pending: number; failed: number }; pagination: any }>(response);
+  },
+  async retryEmail(id: string) {
+    const response = await apiFetch(`${API_BASE}/admin/logs/emails/${id}/retry`, {
+      method: "POST",
+      credentials: "include",
+    });
+    return handleResponse<{ message: string; email: any }>(response);
+  },
+  async deleteEmailLog(id: string) {
+    const response = await apiFetch(`${API_BASE}/admin/logs/emails/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    return handleResponse<{ message: string }>(response);
+  },
+  async getSystemLogs(filters?: { search?: string; startDate?: string; endDate?: string; page?: number; limit?: number }) {
+    const params = new URLSearchParams();
+    if (filters?.search) params.append('search', filters.search);
+    if (filters?.startDate) params.append('startDate', filters.startDate);
+    if (filters?.endDate) params.append('endDate', filters.endDate);
+    if (filters?.page) params.append('page', String(filters.page));
+    if (filters?.limit) params.append('limit', String(filters.limit));
+
+    const response = await apiFetch(`${API_BASE}/admin/logs/system?${params.toString()}`, {
+      credentials: "include",
+    });
+    return handleResponse<{ logs: any[]; pagination: any }>(response);
   }
 };
 
