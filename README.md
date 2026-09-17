@@ -113,8 +113,8 @@ NODE_ENV="development"
 
 ```bash
 cd server
-pnpm dlx prisma db push      # Şemayı veritabanına uygula
-pnpm dlx prisma db seed      # Demo verilerini yükle
+pnpm db:migrate              # Prisma migrasyonlarını uygula (veya prisma migrate deploy)
+pnpm db:seed                 # Demo verilerini yükle (QuizMaster2026!)
 ```
 
 ### 4. Geliştirme Sunucusunu Başlat
@@ -131,6 +131,23 @@ pnpm dev
 | Frontend | http://localhost:5173 |
 
 > Vite, `/api` ve `/socket.io` isteklerini otomatik olarak `localhost:5000`'e yönlendirir.
+
+### 5. Testleri Çalıştırma
+
+Quiz-Master kapsamlı unit, entegrasyon ve Playwright E2E test paketlerine sahiptir:
+
+```bash
+# Backend testleri (Vitest: 7 test paketi, 29 test)
+pnpm --filter quiz-master-server test
+
+# Frontend testleri (Vitest: 5 test paketi, 22 test)
+pnpm --filter quiz-master-client test
+
+# Uçtan Uca (E2E) testleri (Playwright)
+pnpm test:e2e
+```
+
+> **Not (Windows & Kurumsal Ağ):** Vitest yapılandırmaları (`vitest.config.ts`), Windows ortamındaki Node `getaddrinfo ENOTFOUND localhost` hatasını önleyen dahili DNS çözümleyici hook'una sahiptir.
 
 ---
 

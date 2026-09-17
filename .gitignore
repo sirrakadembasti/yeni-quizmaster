@@ -52,5 +52,6 @@ vite.config.ts.*
 graphify-out/
 .npmrc
 .pnpm-store/
+.superpowers/
 
 
