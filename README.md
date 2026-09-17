@@ -199,7 +199,12 @@ Seed scripti aşağıdaki kullanıcıları oluşturur:
 
 ## Öne Çıkan Özellikler
 
-- **Modern Dashboard & RBAC Log Sistemi** — Adminler tüm sistem hareketlerini (`/management?tab=logs`), öğretmen ve öğrenciler ise yalnızca kendi aktivitelerini (`/settings?tab=logs`) modern bir liste görünümünde izleyebilir. Son 5 hareket dashboard'da doğrudan görüntülenir.
+- **3 Alt Sekmeli Gelişmiş Log ve Denetim Merkezi** — Admin yönetim panelinde (`/management?tab=logs`) tüm operasyonlar 3 ayrı alt sekmede tasnif edilir:
+  1. *Kullanıcı Logları:* Giriş, sınav, duyuru ve kullanıcı işlemleri (`ActionLog`).
+  2. *E-Posta Logları:* Gönderilen tüm e-postaların Outbox kuyruk takibi, KPI sayaçları (Toplam, Başarılı, Bekleyen, Hatalı), HTML şablon önizleme modalı, hata detayı, tek tıkla **Tekrar Gönder (Retry)** ve **Sil** yetenekleri.
+  3. *Sistem Hata & İşlemleri:* Yıl sonu arşivleme (`ARCHIVE_YEAR`), sınıf atlatma (`PROMOTE_STUDENTS`), arşiv tasfiyesi (`PURGE_ARCHIVED_DATA`) ve sistem hata kayıtları.
+  Öğretmen ve öğrenciler ise kişisel hareketlerini Profil ayarlarından (`/settings?tab=logs`) izler.
+- **Asenkron E-Posta Outbox Mimarisi** — Kullanıcı parola sıfırlama talepleri ana işlem akışını geciktirmeden `<10ms` içinde veritabanı kuyruğuna (`EmailQueue`) alınır. Arka plan işçisi e-postaları güvenle sırayla sevk eder. Yerel geliştirme için Mailpit (`tools/mailpit/start-mailpit.bat` - Port 1026), canlı üretim için Brevo SMTP Relay (`smtp-relay.brevo.com` - Port 587) şeffaf entegre edilmiştir.
 - **Öğrenci & Veli Bilgileri Yönetimi** — Öğrenci detay ekranında (`/students/:id`) yöneticilere özel 3 sekmeli yapı: *Sınav Bilgileri*, *Öğrenci Bilgileri* ve *Veli Bilgileri* (Veli Adı, Yakınlık, Telefon, E-posta, Adres). Öğretmenler yalnızca sınav sonuçlarını görebilir; öğrenciler kendi veli bilgilerini Profil ayarlarında salt okunur olarak inceler.
 - **Öğretmen Detay Sayfası** (`/teachers/:id`) — Öğretmen profil bilgileri, branş atamaları, sorumlu olduğu sınıflar ve oluşturduğu sınavların tek sayfada kapsamlı özeti.
 - **Öğretmen Dashboard'u** — Dashboard başlık alanında branş badge'leri ve sorumlu sınıflar dinamik olarak gösterilir. Eğitmen ilgili sınıf detay sayfasına tek tıkla erişebilir.
@@ -224,10 +229,10 @@ Seed scripti aşağıdaki kullanıcıları oluşturur:
 - **SSRF Koruması:** AI modülünde sadece güvenli IP ve domain'lere izin veren filtreleme sistemi.
 - **Çevrimdışı Sınav Güvenliği:** Çevrimdışı pakette cevap anahtarı bulunmaz; sınıf/yayın yetkisi hazırlama sırasında doğrulanır, puanlama sunucuda yapılır ve süreli sınavlar çevrimdışı başlatılmaz.
 
-### Log Yönetimi
-- Sistemdeki her önemli işlem (`CREATE`, `UPDATE`, `DELETE`, `LOGIN` vb.) veritabanına kaydedilir.
-- `/api/admin/logs` (Admin) ve `/api/admin/logs/me` (Teacher/Student) endpoint'leri ile rol bazlı log erişimi sağlanır.
-- Dashboard'da her rol için son 5 log liste görünümünde gösterilir; "Tümünü Gör" linki rolün ilgili sayfasına yönlendirir.
+### Log ve Kuyruk Yönetimi
+- Sistemdeki tüm önemli işlemler (`CREATE`, `UPDATE`, `DELETE`, `LOGIN`, `ARCHIVE_YEAR`, `PROMOTE_STUDENTS`, `PURGE_ARCHIVED_DATA` vb.) veritabanına kaydedilir.
+- `/api/admin/logs` (Admin kullanıcı logları), `/api/admin/logs/emails` (E-posta Outbox kuyruğu), `/api/admin/logs/system` (Sistem operasyonları) ve `/api/admin/logs/me` (Bireysel geçmiş) endpoint'leri ile rol ve domain bazlı log ayrımı sağlanır.
+- Dashboard'da her rol için son 5 hareket liste görünümünde gösterilir; "Tümünü Gör" linki ilgili denetim ekranına yönlendirir.
 
 ### Sayfa Yapısı (Önemli Rotalar)
 | Rota | Erişim | Açıklama |

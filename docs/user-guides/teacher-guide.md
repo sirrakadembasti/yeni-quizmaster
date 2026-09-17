@@ -6,7 +6,7 @@ Bu kılavuz, `teacher` rolündeki kullanıcıların kendi sınıfları için sı
 
 E-posta ve şifrenizle giriş yaptığınızda öğretmen dashboard'u açılır. Ana ekranda branşlarınız, sorumlu olduğunuz sınıflar, özet bilgiler ve son hareketler gösterilebilir.
 
-Şifrenizi unuttuysanız **Şifremi Unuttum** akışını kullanın. Ortak cihazlarda sağ üst menüden **Güvenli Çıkış** yapın.
+Şifrenizi unuttuysanız **Şifremi Unuttum** bağlantısını kullanın. Kayıtlı e-posta adresinize 1 saat geçerli tek kullanımlık şifre belirleme bağlantısı iletilir. Ortak cihazlarda sağ üst menüden **Güvenli Çıkış** yapın.
 
 ## 2. Öğretmen menüsü
 

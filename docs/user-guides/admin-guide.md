@@ -19,7 +19,7 @@ Bu kılavuz, `admin` rolündeki kullanıcıların okul yapısını, kullanıcıl
 - **Öğrenciler:** Öğrenci hesabı oluşturma, güncelleme ve silme.
 - **Eğitmenler:** Öğretmen hesabı ve öğretmen detayları.
 - **Sınıflar:** Sınıf listesi, öğrenci ve öğretmen atamaları.
-- **Yönetim:** Dersler, sınıflar, kullanıcılar ve sistem logları.
+- **Yönetim:** Dersler, sınıflar, kullanıcılar ve 3 alt sekmeli denetim/e-posta logları.
 - **Arşiv:** Arşivlenmiş kayıtlar.
 - **Duyurular:** Okul, rol veya sınıf hedefli duyurular.
 - **Ayarlar:** Profil, bildirim, işlem geçmişi ve şifre işlemleri.
@@ -111,3 +111,4 @@ PWA çevrimdışı sınav altyapısı süresiz sınavlarda etkindir. Öğrenci, 
 - **İstek reddedildi:** Sayfayı yenileyip tekrar giriş yapın; güvenlik belirteci otomatik yenilenir.
 - **Bağlantı sorunu:** İşlemi tekrarlamadan önce internet erişimini doğrulayın.
 - **Çevrimdışı teslim bekliyor:** Öğrencinin aynı cihaz ve tarayıcıda sınavı yeniden açıp bağlantının geri gelmesini beklemesini sağlayın.
+- **E-posta kullanıcılara ulaşmıyor:** **Yönetim > Loglar > E-Posta Logları** sekmesinden gönderim durumunu kontrol edin. Hata mesajını inceleyin ve gerekirse **Tekrar Gönder (Retry)** butonuna tıklayın. Yerel geliştirme ortamındaysanız Mailpit'in (`tools/mailpit/start-mailpit.bat` - Port: 1026), canlı ortamdaysanız Brevo SMTP ayarlarının (`server/.env` - Port: 587) doğruluğunu kontrol edin.

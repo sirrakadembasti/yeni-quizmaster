@@ -6,7 +6,7 @@ Bu kılavuz, `student` rolündeki kullanıcıların hesap, sınav ve sonuç işl
 
 Yeni hesap oluştururken adınızı, geçerli e-posta adresinizi ve şifrenizi girin. Açık kayıtla oluşturulan hesap öğrenci rolü alır; güvenlik nedeniyle kayıt formundan doğrudan bir sınıfa katılım yapılamaz. Sınıfınızı yönetici veya yetkili öğretmen atar.
 
-Şifrenizi unuttuysanız giriş ekranındaki **Şifremi Unuttum** seçeneğini kullanın. Ortak cihazlarda işiniz bittiğinde sağ üst kullanıcı menüsünden **Güvenli Çıkış** yapın.
+Şifrenizi unuttuysanız giriş ekranındaki **Şifremi Unuttum** seçeneğini kullanın. Sisteme kayıtlı e-posta adresinize 1 saat boyunca geçerli tek kullanımlık şifre belirleme bağlantısı gönderilecektir. Ortak cihazlarda işiniz bittiğinde sağ üst kullanıcı menüsünden **Güvenli Çıkış** yapın.
 
 ## 2. Öğrenci menüsü
 
