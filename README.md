@@ -10,12 +10,16 @@ Rolünüze uygun ayrıntılı kullanım kılavuzunu açın:
 - [Öğretmen Kullanıcı Kılavuzu](docs/user-guides/teacher-guide.md)
 - [Öğrenci Kullanıcı Kılavuzu](docs/user-guides/student-guide.md)
 
-### Güncel güvenlik davranışları
+### Güncel güvenlik ve kullanıcı davranışları
 
 - API yanıtlarında parola ve hesap kurtarma belirteçleri merkezi olarak filtrelenir.
 - Giriş ve kayıt sonrasında oturum kimliği yenilenir; tüm veri değiştiren istekler CSRF korumasından geçer.
 - Açık kayıtla oluşturulan öğrenci kendi sınıfını belirleyemez; sınıf üyeliği yetkili kullanıcı tarafından atanır.
-- Öğretmen yalnızca sorumlu olduğu sınıflara sınav ve duyuru atayabilir.
+- Öğrenci kendi profil sayfasında (`/settings`) kişisel ve iletişim bilgilerini değiştiremez (salt okunur koruması), değişiklik için okul yönetimine başvurmalıdır.
+- Yönetici, öğrenci analiz ekranında (`/students/:id`) doğrudan öğrenci ve veli sekmeleri üzerinden bilgi güncellemesi yapabilir.
+- Yönetici, öğretmen detay ekranında (`/teachers/:id`) doğrudan öğretmeni düzenleyebilir veya silebilir.
+- Sınıf mevcudu listesinde (`/classes/:id`) öğrenci avatar rozeti kaldırılarak temiz ve sade liste görünümü sağlanmıştır.
+- Öğretmen yalnızca sorumlu olduğu sınıflara sınav ve duyuru atayabilir; öğrenci veli veya özel bilgilerine erişemez.
 - Öğrenci yalnızca yayınlanmış ve kendisine atanmış sınavı başlatabilir.
 - Sınav süresi sayfa yenilendiğinde sıfırlanmaz ve sunucu tarafından da denetlenir.
 - Tamamlanmamış sınavlarda doğru cevap/cevap anahtarı öğrenciye gönderilmez.

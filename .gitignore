@@ -53,6 +53,7 @@ graphify-out/
 .npmrc
 .pnpm-store/
 .superpowers/
+.agents/
 *.exe
 tools/mailpit/*.exe
 

@@ -59,7 +59,9 @@ Tarayıcı saatini değiştirmek sınav süresini uzatmaz; süre sunucu tarafın
 
 ## 9. Profil ve veli bilgileri
 
-**Ayarlar > Profil** sekmesinde kişisel bilgilerinizi ve sisteme kayıtlı **Veli Bilgileri**nizi (Veli Adı, Yakınlık, Telefon, E-posta, Açık Adres) salt okunur (read-only) olarak inceleyebilirsiniz. Veli veya adres bilgilerinizde bir hata veya değişiklik varsa okul yönetimine (admin) başvurarak güncellenmesini talep edebilirsiniz.
+**Ayarlar > Profil** sekmesinde kişisel bilgilerinizi ve sisteme kayıtlı **Veli Bilgileri**nizi (Veli Adı, Yakınlık, Telefon, E-posta, Açık Adres) inceleyebilirsiniz. Öğrenci hesaplarında kişisel ve iletişim bilgileri güvenlik ve veri bütünlüğü gereği doğrudan düzenlenemez (salt okunurdur). Profilinizde yer alan bilgilendirme uyarısında belirtildiği gibi:
+> *"Kişisel ve iletişim bilgilerinizde değişiklik yapmak istiyorsanız lütfen okul yönetimi ile iletişime geçiniz."*
+Adres, telefon veya veli bilgilerinizde bir değişiklik olduğunda okul yönetimine başvurarak güncellenmesini sağlayabilirsiniz.
 
 ## 10. Çevrimdışı kullanım hakkında önemli bilgi
 

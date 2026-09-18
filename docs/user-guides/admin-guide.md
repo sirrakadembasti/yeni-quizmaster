@@ -36,11 +36,14 @@ Bu kılavuz, `admin` rolündeki kullanıcıların okul yapısını, kullanıcıl
 ### Öğrenci detay görünümü (`/students/:id`)
 Yöneticiler bir öğrencinin adına tıkladığında 3 sekmeli detaylı arayüze erişir:
 - **Sınav Bilgileri:** Öğrencinin tamamladığı sınavlar, puanlar, başarı trendi ve sınav detayına bağlantılar.
-- **Öğrenci Bilgileri:** Öğrencinin temel kimlik, iletişim, okul numarası ve hesap durum bilgileri.
-- **Veli Bilgileri:** Öğrenci velisine ait irtibat numaraları, yakınlık derecesi, e-posta ve açık adres bilgileri.
- 
-Önemli güvenlik davranışı: Herkese açık kayıt ekranından oluşturulan hesaplar yalnızca öğrenci rolü alır ve kendi isteğiyle bir sınıfa katılamaz. Sınıf ataması ve veli bilgisi tanımlamaları yetkili yönetim ekranından yapılmalıdır. Öğretmenler öğrencinin veli veya kişisel bilgilerine erişemez; yalnızca sınav sonuçlarını görebilir.
- 
+- **Öğrenci Bilgileri:** Öğrencinin temel kimlik, iletişim, okul numarası ve hesap durum bilgileri. Başlıktaki **Bilgileri Düzenle** butonu ile yönetici öğrencinin tüm bilgilerini doğrudan güncelleyebilir.
+- **Veli Bilgileri:** Öğrenci velisine ait irtibat numaraları, yakınlık derecesi, e-posta ve açık adres bilgileri. Başlıktaki **Veli Bilgilerini Düzenle** butonu ile veli irtibat ve adres detayları güncellenebilir.
+
+### Öğretmen detay görünümü (`/teachers/:id`)
+Yöneticiler öğretmen profil sayfasında sayfa başlığında yer alan **Öğretmeni Düzenle** ve **Öğretmeni Sil** butonları ile öğretmen bilgilerini doğrudan güncelleyebilir veya güvenli onay penceresiyle hesabı silebilir.
+
+Önemli güvenlik davranışı: Herkese açık kayıt ekranından oluşturulan hesaplar yalnızca öğrenci rolü alır ve kendi isteğiyle bir sınıfa katılamaz. Sınıf ataması ve veli bilgisi tanımlamaları yetkili yönetim ekranından yapılmalıdır. Öğretmenler öğrencinin veli veya kişisel bilgilerine erişemez; yalnızca sınav sonuçlarını görebilir. Öğrenci kendi profil sayfasında kişisel bilgilerini değiştiremez (salt okunurdur), değişiklik için yöneticiye başvurmalıdır.
+
 Kullanıcı silme kalıcı sonuç doğurabilir. Onay penceresinde doğru kullanıcıyı seçtiğinizi kontrol edin.
  
 ## 4. Ders ve sınıf yönetimi
@@ -55,7 +58,7 @@ Kullanıcı silme kalıcı sonuç doğurabilir. Onay penceresinde doğru kullan�
  
 1. **Yönetim > Sınıflar** sekmesini açın.
 2. Sınıf seviyesi, şubesi, açıklaması ve öğretmen bilgisini girin.
-3. Sınıf detayından öğrenci ve branş öğretmeni atamalarını yönetin.
+3. Sınıf detayından öğrenci ve branş öğretmeni atamalarını yönetin. Sınıf mevcudu tablosunda öğrenci adı ve okul numarası gereksiz ikonlar olmadan temiz ve sade bir şekilde listelenir.
  
 Seviyesi farklı bir öğrenciyi sınıfa taşırken uygulama ek onay isteyebilir. Sınıf silmeden önce bağlı öğrenci, öğretmen ve sınavları kontrol edin.
  
