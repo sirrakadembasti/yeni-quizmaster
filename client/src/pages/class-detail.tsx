@@ -173,12 +173,7 @@ export default function ClassDetailPage() {
                     <TableRow key={s.id} className="hover:bg-muted/30 border-border transition-colors group">
                       <TableCell className="pl-4 py-2 font-bold text-muted-foreground text-center text-xs">{index + 1}</TableCell>
                       <TableCell className="py-2">
-                        <div className="flex items-center gap-2.5">
-                          <div className="h-7 w-7 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black text-xs shadow-sm group-hover:scale-105 transition-transform print:hidden">
-                            {s.name[0].toUpperCase()}
-                          </div>
-                          <span className="font-bold text-sm text-foreground tracking-tight">{s.name}</span>
-                        </div>
+                        <span className="font-bold text-sm text-foreground tracking-tight">{s.name}</span>
                       </TableCell>
                       <TableCell className="text-right pr-4 py-2">
                         <Badge variant="outline" className="rounded-md font-black text-xs bg-background border px-2 py-0.5">{s.studentNo || "YOK"}</Badge>
