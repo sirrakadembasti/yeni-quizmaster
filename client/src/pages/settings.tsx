@@ -18,7 +18,8 @@ import {
   Printer,
   Trash2,
   Volume2,
-  VolumeX
+  VolumeX,
+  AlertTriangle
 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/context/auth-context";
@@ -157,6 +158,7 @@ export default function SettingsPage() {
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (user?.role === 'student') return;
     if (!isProfileChanged) {
        return toast({ title: "Bilgi", description: "Herhangi bir değişiklik yapmadınız." });
     }
@@ -237,15 +239,25 @@ export default function SettingsPage() {
                 </CardHeader>
                 <form onSubmit={handleProfileUpdate}>
                   <CardContent className="space-y-4 pt-6">
+                    {user?.role === 'student' && (
+                      <div className="mb-4 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-3 text-amber-900 dark:text-amber-200">
+                        <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+                        <div className="text-sm">
+                          <p className="font-bold">Bilgilendirme</p>
+                          <p className="font-medium text-xs mt-0.5">Kişisel ve iletişim bilgilerinizde değişiklik yapmak istiyorsanız lütfen okul yönetimi ile iletişime geçiniz.</p>
+                        </div>
+                      </div>
+                    )}
                     <div className="grid gap-4 sm:grid-cols-2">
                       <div className="space-y-2">
                         <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Ad Soyad</Label>
                         <div className="relative">
                           <UserIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                           <Input 
+                            disabled={user?.role === 'student'}
                             value={formData.name}
                             onChange={(e) => setFormData({...formData, name: e.target.value})}
-                            className="pl-10 rounded-xl" 
+                            className="pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30" 
                             placeholder="Ad Soyad" 
                           />
                         </div>
@@ -255,9 +267,10 @@ export default function SettingsPage() {
                         <div className="relative">
                           <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                           <Input 
+                            disabled={user?.role === 'student'}
                             value={formData.email}
                             onChange={(e) => setFormData({...formData, email: e.target.value})}
-                            className="pl-10 rounded-xl" 
+                            className="pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30" 
                             placeholder="email@example.com" 
                             type="email"
                           />
@@ -265,16 +278,18 @@ export default function SettingsPage() {
                       </div>
                     </div>
                   </CardContent>
-                  <CardFooter className="bg-muted/10 border-t border-border/50 py-4">
-                    <Button 
-                      type="submit" 
-                      disabled={loading || !isProfileChanged}
-                      className="rounded-xl font-bold ml-auto gap-2"
-                    >
-                      {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                      Değişiklikleri Kaydet
-                    </Button>
-                  </CardFooter>
+                  {user?.role !== 'student' && (
+                    <CardFooter className="bg-muted/10 border-t border-border/50 py-4">
+                      <Button 
+                        type="submit" 
+                        disabled={loading || !isProfileChanged}
+                        className="rounded-xl font-bold ml-auto gap-2"
+                      >
+                        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                        Değişiklikleri Kaydet
+                      </Button>
+                    </CardFooter>
+                  )}
                 </form>
               </Card>
 
