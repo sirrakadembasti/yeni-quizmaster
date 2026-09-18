@@ -14,15 +14,27 @@ import {
   Users,
   CalendarDays,
   ShieldAlert,
+  Pencil,
+  Trash2,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { userApi, quizApi, classApi } from "@/lib/api";
-import { Link, useParams } from "wouter";
-import { useMemo } from "react";
+import { Link, useParams, useLocation } from "wouter";
+import { useMemo, useState } from "react";
+import { useAuth } from "@/context/auth-context";
+import { useToast } from "@/hooks/use-toast";
+import { UserFormModal } from "@/components/management/UserFormModal";
+import { DeleteConfirmModal } from "@/components/management/DeleteConfirmModal";
 
 export default function TeacherDetailPage() {
   const params = useParams<{ id: string }>();
   const teacherId = params.id;
+  const { role } = useAuth();
+  const [, setLocation] = useLocation();
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const { data: usersData, isLoading: usersLoading } = useQuery({
     queryKey: ["users"],
@@ -43,6 +55,31 @@ export default function TeacherDetailPage() {
     () => usersData?.users.find((u) => u.id === teacherId),
     [usersData, teacherId]
   );
+
+  const updateMutation = useMutation({
+    mutationFn: (data: any) => userApi.updateUser(teacher!.id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      toast({ title: "Başarılı", description: "Öğretmen bilgileri güncellendi." });
+      setIsEditOpen(false);
+    },
+    onError: (err: any) => {
+      toast({ variant: "destructive", title: "Hata", description: err.message || "Güncelleme başarısız." });
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => userApi.deleteUser(teacher!.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      toast({ title: "Başarılı", description: "Öğretmen silindi." });
+      setIsDeleteOpen(false);
+      setLocation("/teachers");
+    },
+    onError: (err: any) => {
+      toast({ variant: "destructive", title: "Hata", description: err.message || "Silme işlemi başarısız." });
+    }
+  });
 
   const teacherQuizzes = useMemo(
     () => quizzesData?.quizzes?.filter((q: any) => q.createdBy === teacherId || q.creator?.id === teacherId) ?? [],
@@ -89,14 +126,36 @@ export default function TeacherDetailPage() {
     <DashboardLayout>
       <div className="space-y-8">
         {/* Header */}
-        <header className="flex items-center gap-4">
-          <Button variant="outline" size="icon" asChild className="rounded-xl border-2">
-            <Link href="/teachers"><ArrowLeft className="h-5 w-5" /></Link>
-          </Button>
-          <div>
-            <h1 className="text-3xl font-black tracking-tighter text-foreground">{teacher.name}</h1>
-            <p className="text-sm text-muted-foreground font-medium mt-0.5">Öğretmen Profili</p>
+        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <Button variant="outline" size="icon" asChild className="rounded-xl border-2">
+              <Link href="/teachers"><ArrowLeft className="h-5 w-5" /></Link>
+            </Button>
+            <div>
+              <h1 className="text-3xl font-black tracking-tighter text-foreground">{teacher.name}</h1>
+              <p className="text-sm text-muted-foreground font-medium mt-0.5">Öğretmen Profili</p>
+            </div>
           </div>
+          {role === 'admin' && (
+            <div className="flex items-center gap-2.5 ml-auto">
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl font-bold gap-2 border-border hover:bg-muted"
+                onClick={() => setIsEditOpen(true)}
+              >
+                <Pencil className="h-4 w-4" /> Öğretmeni Düzenle
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                className="rounded-xl font-bold gap-2"
+                onClick={() => setIsDeleteOpen(true)}
+              >
+                <Trash2 className="h-4 w-4" /> Öğretmeni Sil
+              </Button>
+            </div>
+          )}
         </header>
 
         <div className="grid gap-6 md:grid-cols-3">
@@ -261,6 +320,28 @@ export default function TeacherDetailPage() {
           </div>
         </div>
       </div>
+
+      {role === 'admin' && teacher && (
+        <>
+          <UserFormModal
+            isOpen={isEditOpen}
+            onOpenChange={setIsEditOpen}
+            mode="edit"
+            role="teacher"
+            initialData={teacher}
+            onSubmit={(data) => updateMutation.mutate(data)}
+            isPending={updateMutation.isPending}
+          />
+          <DeleteConfirmModal
+            isOpen={isDeleteOpen}
+            onOpenChange={setIsDeleteOpen}
+            onConfirm={() => deleteMutation.mutate()}
+            title="Öğretmeni Sil"
+            description={`"${teacher.name}" isimli öğretmeni silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`}
+            isPending={deleteMutation.isPending}
+          />
+        </>
+      )}
     </DashboardLayout>
   );
 }
