@@ -206,6 +206,27 @@
   border-radius: 1rem;
 }
 
+.dashboard-page [data-slot="card-header"] {
+  padding: 0.625rem 0.75rem;
+}
+
+.dashboard-page [data-slot="card-content"] {
+  padding: 0 0.75rem 0.625rem 0.75rem;
+}
+
+.dashboard-page [data-slot="card-footer"] {
+  padding: 0 0.75rem 0.625rem 0.75rem;
+}
+
+.dashboard-page [data-slot="card"] p,
+.dashboard-page [data-slot="card"] span,
+.dashboard-page [data-slot="card"] h1,
+.dashboard-page [data-slot="card"] h2,
+.dashboard-page [data-slot="card"] h3,
+.dashboard-page [data-slot="card"] h4 {
+  line-height: 1.35;
+}
+
 .dashboard-page .rounded-\[2rem\],
 .dashboard-page .rounded-\[2\.5rem\],
 .dashboard-page .rounded-\[3rem\] {
@@ -298,16 +319,16 @@
 }
 
 .data-panel-compact {
-  padding: 0.5rem;
+  padding: 0.375rem 0.5rem;
 }
 
 .data-panel {
-  padding: 1rem;
+  padding: 0.625rem 0.75rem;
 }
 
 @media (min-width: 640px) {
   .data-panel {
-    padding: 1.25rem;
+    padding: 0.75rem 1rem;
   }
 }
 
