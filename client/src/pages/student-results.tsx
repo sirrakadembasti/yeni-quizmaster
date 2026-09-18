@@ -29,10 +29,14 @@ import {
   Filter,
   X,
   Info,
-  Users
+  Users,
+  Pencil
 } from "lucide-react";
 import { resultApi, userApi, categoryApi } from "@/lib/api";
 import { useAuth } from "@/context/auth-context";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import { UserFormModal } from "@/components/management/UserFormModal";
 import { PrintButton, PrintMeta } from "@/components/print/PrintTools";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -47,6 +51,31 @@ export default function StudentResultsPage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [student, setStudent] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const updateMutation = useMutation({
+    mutationFn: async (data: any) => {
+      if (!student) throw new Error("Öğrenci verisi bulunamadı");
+      return userApi.updateUser(student.id, data);
+    },
+    onSuccess: async () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      if (studentId) {
+        try {
+          const fresh = await userApi.getUser(studentId);
+          if (fresh?.user) setStudent(fresh.user);
+        } catch {}
+      }
+      toast({ title: "Başarılı", description: "Öğrenci ve veli bilgileri güncellendi." });
+      setIsEditOpen(false);
+    },
+    onError: (err: any) => {
+      toast({ variant: "destructive", title: "Hata", description: err.message || "Güncelleme başarısız." });
+    }
+  });
 
   // Filter States
   const [searchTerm, setSearchTerm] = useState("");
@@ -149,7 +178,7 @@ export default function StudentResultsPage() {
     if (!student) return null;
     return (
       <Card className="rounded-2xl border-border/60 shadow-sm overflow-hidden">
-        <CardHeader className="bg-muted/20 border-b border-border/50 py-2.5 px-4">
+        <CardHeader className="bg-muted/20 border-b border-border/50 py-2.5 px-4 flex flex-row items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
               <UserIcon className="h-4 w-4" />
@@ -159,6 +188,16 @@ export default function StudentResultsPage() {
               <p className="text-[11px] text-muted-foreground font-medium">Öğrencinin temel kimlik, okul ve iletişim detayları.</p>
             </div>
           </div>
+          {role === 'admin' && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="ml-auto rounded-xl gap-2 font-bold"
+              onClick={() => setIsEditOpen(true)}
+            >
+              <Pencil className="h-3.5 w-3.5" /> Bilgileri Düzenle
+            </Button>
+          )}
         </CardHeader>
         <CardContent className="p-2.5 sm:p-3">
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -200,7 +239,7 @@ export default function StudentResultsPage() {
     if (!student) return null;
     return (
       <Card className="rounded-2xl border-border/60 shadow-sm overflow-hidden">
-        <CardHeader className="bg-muted/20 border-b border-border/50 py-2.5 px-4">
+        <CardHeader className="bg-muted/20 border-b border-border/50 py-2.5 px-4 flex flex-row items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-600">
               <Users className="h-4 w-4" />
@@ -210,6 +249,16 @@ export default function StudentResultsPage() {
               <p className="text-[11px] text-muted-foreground font-medium">Yalnızca yöneticilere açık veli iletişim detayları.</p>
             </div>
           </div>
+          {role === 'admin' && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="ml-auto rounded-xl gap-2 font-bold"
+              onClick={() => setIsEditOpen(true)}
+            >
+              <Pencil className="h-3.5 w-3.5" /> Veli Bilgilerini Düzenle
+            </Button>
+          )}
         </CardHeader>
         <CardContent className="p-2.5 sm:p-3">
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -557,6 +606,18 @@ export default function StudentResultsPage() {
         )}
       </>
     )}
+
+        {role === 'admin' && student && (
+          <UserFormModal
+            isOpen={isEditOpen}
+            onOpenChange={setIsEditOpen}
+            mode="edit"
+            role="student"
+            initialData={student}
+            onSubmit={(data) => updateMutation.mutate(data)}
+            isPending={updateMutation.isPending}
+          />
+        )}
       </div>
     </DashboardLayout>
   );
