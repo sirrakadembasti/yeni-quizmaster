@@ -271,7 +271,7 @@ export default function StatisticsPage() {
 
           <TabsContent value="overview" className="space-y-8 animate-in fade-in-50 duration-500">
             {/* Filters Bar */}
-            <div className="bg-card p-6 rounded-2xl border border-border/50 shadow-sm dark:shadow-none space-y-4">
+            <div className="bg-card p-3.5 rounded-xl border border-border/50 shadow-sm dark:shadow-none space-y-2.5">
               <div className="flex items-center gap-2 mb-2">
                 <Search className="h-4 w-4 text-primary" />
                 <span className="text-xs font-black uppercase tracking-widest opacity-60">Veri Filtreleme</span>

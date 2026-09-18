@@ -160,33 +160,33 @@ export default function StudentResultsPage() {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-3">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
               <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Adı Soyadı</Label>
               <p className="text-base font-bold text-foreground">{student.name || "-"}</p>
             </div>
-            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
               <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">E-Posta Adresi</Label>
               <p className="text-base font-bold text-foreground">{student.email || "-"}</p>
             </div>
-            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
               <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Kayıtlı Sınıf</Label>
               <p className="text-base font-bold text-foreground">{student.class?.name || "Atanmamış"}</p>
             </div>
-            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
               <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Okul No</Label>
               <p className="text-base font-bold text-foreground">{student.studentNo || student.classNo || "-"}</p>
             </div>
-            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
               <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Telefon Numarası</Label>
               <p className="text-base font-bold text-foreground">{student.phoneNumber || "Belirtilmemiş"}</p>
             </div>
-            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
               <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Kayıt Tarihi</Label>
               <p className="text-base font-bold text-foreground">{student.createdAt ? new Date(student.createdAt).toLocaleDateString('tr-TR') : "-"}</p>
             </div>
-            <div className="sm:col-span-2 lg:col-span-3 space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+            <div className="sm:col-span-2 lg:col-span-3 space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
               <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Adres</Label>
               <p className="text-base font-medium text-foreground">{student.address || "Belirtilmemiş"}</p>
             </div>
@@ -211,25 +211,25 @@ export default function StudentResultsPage() {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-3">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
               <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Veli Adı Soyadı</Label>
               <p className="text-base font-bold text-foreground">{student.parentName || "Belirtilmemiş"}</p>
             </div>
-            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
               <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Yakınlık Derecesi</Label>
               <p className="text-base font-bold text-foreground">{student.parentRelation || "Belirtilmemiş"}</p>
             </div>
-            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
               <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Veli Telefonu</Label>
               <p className="text-base font-bold text-foreground">{student.parentPhone || "Belirtilmemiş"}</p>
             </div>
-            <div className="space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
               <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Veli E-Postası</Label>
               <p className="text-base font-bold text-foreground">{student.parentEmail || "Belirtilmemiş"}</p>
             </div>
-            <div className="sm:col-span-2 space-y-1 bg-muted/20 p-4 rounded-2xl border border-border/40">
+            <div className="sm:col-span-2 space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
               <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Veli İkametgah Adresi</Label>
               <p className="text-base font-medium text-foreground">{student.parentAddress || "Belirtilmemiş"}</p>
             </div>
@@ -366,7 +366,7 @@ export default function StudentResultsPage() {
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="p-6">
+          <CardContent className="p-3">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               {/* Search */}
               <div className="space-y-2">

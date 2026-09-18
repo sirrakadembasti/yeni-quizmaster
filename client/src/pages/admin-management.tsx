@@ -366,7 +366,7 @@ const deleteClassMutation = useMutation({
 
           {/* CATEGORIES TAB */}
           <TabsContent value="categories" className="mt-6 space-y-6">
-            <div className="bg-card p-5 rounded-3xl border border-border flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="bg-card p-3 rounded-2xl border border-border flex flex-col md:flex-row justify-between items-center gap-4">
                <h2 className="text-xl font-black text-foreground">Ders Yönetimi</h2>
                <Button onClick={() => { setIsEditCategoryMode(false); setCategoryName(""); setCategoryDesc(""); setIsCategoryDialogOpen(true); }} className="rounded-xl font-bold gap-2 bg-primary text-primary-foreground hover:opacity-90">
                  <Plus className="h-4 w-4" /> Yeni Ders Ekle
@@ -425,7 +425,7 @@ const deleteClassMutation = useMutation({
 
           {/* CLASSES TAB - GRID ONLY */}
           <TabsContent value="classes" className="m-0 space-y-6">
-            <div className="flex items-center justify-between bg-card p-4 rounded-2xl border border-border">
+            <div className="flex items-center justify-between bg-card p-3 rounded-2xl border border-border">
               <div className="relative flex-1 max-w-sm">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input placeholder="Sınıf ara..." className="pl-10 rounded-xl bg-muted border-transparent focus:bg-background focus:border-input" />
@@ -440,7 +440,7 @@ const deleteClassMutation = useMutation({
                 <div 
                   key={cls.id} 
                   onClick={() => setLocation(`/admin/classes/${cls.id}`)}
-                  className="group p-6 rounded-3xl border-2 border-border hover:border-indigo-500 transition-all cursor-pointer bg-card relative overflow-hidden shadow-sm hover:shadow-indigo-100 dark:hover:shadow-none"
+                  className="group p-3.5 rounded-2xl border-2 border-border hover:border-indigo-500 transition-all cursor-pointer bg-card relative overflow-hidden shadow-sm hover:shadow-indigo-100 dark:hover:shadow-none"
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div className="bg-indigo-50 dark:bg-indigo-900/30 p-3 rounded-2xl text-indigo-600 dark:text-indigo-400 mb-2">
@@ -502,7 +502,7 @@ const deleteClassMutation = useMutation({
 
           {/* USERS TAB - WITH ROLE SPECIFIC TABS & DIRECT ROLE CHANGE */}
           <TabsContent value="users" className="mt-6 space-y-6">
-            <div className="bg-card p-5 rounded-3xl border border-border flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="bg-card p-3 rounded-2xl border border-border flex flex-col md:flex-row justify-between items-center gap-4">
                <h2 className="text-xl font-black text-foreground">Kullanıcı Yönetimi</h2>
                <Button onClick={() => { setIsEditUserMode(false); setSelectedUser({ name: "", email: "", role: "student", password: "password123" }); setIsUserDialogOpen(true); }} className="rounded-xl font-bold gap-2 bg-primary text-primary-foreground hover:opacity-90 transition-all">
                  <UserPlus className="h-4 w-4" /> Yeni Kullanıcı Oluştur
@@ -635,7 +635,7 @@ const deleteClassMutation = useMutation({
             {/* TAB 1: KULLANICI LOGLARI */}
             {logSubTab === "users" && (
               <div className="space-y-4">
-                <div className="bg-card p-4 rounded-3xl border border-border flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="bg-card p-3 rounded-2xl border border-border flex flex-col md:flex-row justify-between items-center gap-4">
                   <div className="flex items-center gap-3 flex-1 w-full">
                     <div className="relative flex-1 max-w-sm">
                       <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -731,7 +731,7 @@ const deleteClassMutation = useMutation({
               <div className="space-y-4">
                 {/* KPI İstatistik Kartları */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="bg-card border border-border rounded-2xl p-4 flex items-center gap-3">
+                  <div className="bg-card border border-border rounded-2xl p-2.5 sm:p-3 flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-indigo-50 dark:bg-indigo-950 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
                       <Mail className="h-5 w-5" />
                     </div>
@@ -740,7 +740,7 @@ const deleteClassMutation = useMutation({
                       <p className="text-xl font-black text-foreground">{emailCounts.total}</p>
                     </div>
                   </div>
-                  <div className="bg-card border border-border rounded-2xl p-4 flex items-center gap-3">
+                  <div className="bg-card border border-border rounded-2xl p-2.5 sm:p-3 flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                       <CheckCircle2 className="h-5 w-5" />
                     </div>
@@ -749,7 +749,7 @@ const deleteClassMutation = useMutation({
                       <p className="text-xl font-black text-emerald-600 dark:text-emerald-400">{emailCounts.sent}</p>
                     </div>
                   </div>
-                  <div className="bg-card border border-border rounded-2xl p-4 flex items-center gap-3">
+                  <div className="bg-card border border-border rounded-2xl p-2.5 sm:p-3 flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-amber-50 dark:bg-amber-950 flex items-center justify-center text-amber-600 dark:text-amber-400">
                       <Clock className="h-5 w-5" />
                     </div>
@@ -758,7 +758,7 @@ const deleteClassMutation = useMutation({
                       <p className="text-xl font-black text-amber-600 dark:text-amber-400">{emailCounts.pending}</p>
                     </div>
                   </div>
-                  <div className="bg-card border border-border rounded-2xl p-4 flex items-center gap-3">
+                  <div className="bg-card border border-border rounded-2xl p-2.5 sm:p-3 flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-red-50 dark:bg-red-950 flex items-center justify-center text-red-600 dark:text-red-400">
                       <XCircle className="h-5 w-5" />
                     </div>
@@ -770,7 +770,7 @@ const deleteClassMutation = useMutation({
                 </div>
 
                 {/* Filtreleme ve Arama */}
-                <div className="bg-card p-4 rounded-3xl border border-border flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="bg-card p-3 rounded-2xl border border-border flex flex-col md:flex-row justify-between items-center gap-4">
                   <div className="flex items-center gap-3 flex-1 w-full">
                     <div className="relative flex-1 max-w-sm">
                       <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -913,7 +913,7 @@ const deleteClassMutation = useMutation({
             {/* TAB 3: SİSTEM HATA & İŞLEMLERİ */}
             {logSubTab === "system" && (
               <div className="space-y-4">
-                <div className="bg-card p-4 rounded-3xl border border-border flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="bg-card p-3 rounded-2xl border border-border flex flex-col md:flex-row justify-between items-center gap-4">
                   <div className="flex items-center gap-3 flex-1 w-full">
                     <div className="relative flex-1 max-w-md">
                       <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />

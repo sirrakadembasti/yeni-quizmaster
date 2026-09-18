@@ -198,7 +198,7 @@ export default function AdminClassDetailPage() {
                   <GraduationCap className="h-5 w-5" /> Sorumlu Öğretmen
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
+              <CardContent className="p-3 space-y-2">
                 {/* Mevcut sorumlu öğretmeni göster */}
                 <div className="p-3 bg-muted/50 rounded-xl border border-border">
                   <p className="text-[10px] font-black uppercase text-muted-foreground tracking-wider mb-1">Şu An Atanmış</p>
@@ -244,7 +244,7 @@ export default function AdminClassDetailPage() {
                   <UserPlus className="h-5 w-5" /> Öğrenci Nakil / Atama
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
+              <CardContent className="p-3 space-y-2">
                 <div className="space-y-2">
                   <Label className="text-xs font-bold uppercase text-muted-foreground">Seviyeye Uygun Öğrenciler</Label>
                   <Select value={selectedStudentToAdd} onValueChange={setSelectedStudentToAdd}>
@@ -277,7 +277,7 @@ export default function AdminClassDetailPage() {
                   <Briefcase className="h-5 w-5" /> Branş Öğretmeni Ata
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
+              <CardContent className="p-3 space-y-2">
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label className="text-xs font-bold uppercase text-muted-foreground">Ders Seçin</Label>

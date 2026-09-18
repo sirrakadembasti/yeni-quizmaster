@@ -101,7 +101,7 @@ export default function AnnouncementsPage() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <section className="relative overflow-hidden rounded-2xl border border-border/70 bg-card p-6 shadow-sm sm:p-8">
+        <section className="relative overflow-hidden rounded-2xl border border-border/70 bg-card p-3.5 sm:p-4">
           <div className="relative z-10 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/15">
@@ -144,7 +144,7 @@ export default function AnnouncementsPage() {
           ) : (
             announcements.map((ann: any) => (
               <Card key={ann.id} className="group overflow-hidden transition-colors hover:border-primary/40">
-                <div className="p-5 sm:p-6 space-y-4">
+                <div className="p-3 sm:p-3.5 space-y-2">
                   <div className="flex items-start justify-between gap-4">
                     <AnnouncementAuthor creator={ann.creator} createdAt={ann.createdAt} />
                     {role === 'admin' && (
@@ -164,7 +164,7 @@ export default function AnnouncementsPage() {
                     <h3 className="text-xl font-bold tracking-tight text-foreground transition-colors group-hover:text-primary mb-2">
                       {ann.title}
                     </h3>
-                    <div className="rounded-xl border border-border/60 bg-muted/35 p-4 sm:p-5 text-sm font-medium leading-relaxed text-foreground whitespace-pre-wrap">
+                    <div className="rounded-xl border border-border/60 bg-muted/35 p-2.5 sm:p-3 text-sm font-medium leading-snug text-foreground whitespace-pre-wrap">
                       {ann.content}
                     </div>
                   </div>

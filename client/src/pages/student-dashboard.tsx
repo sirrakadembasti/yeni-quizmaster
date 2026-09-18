@@ -140,9 +140,9 @@ export default function StudentDashboard() {
         )}
 
         {/* Stats Grid - Modernized Cards */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Card className="relative overflow-hidden border border-border/50 shadow-sm dark:shadow-none hover:shadow-md hover:border-blue-500/30 transition-all duration-300 bg-card group">
-            <CardContent className="p-6">
+            <CardContent className="p-3.5">
               <div className="flex justify-between items-start">
                 <div className="space-y-2">
                   <p className="text-muted-foreground text-sm font-medium">Ortalama Başarı</p>
@@ -160,7 +160,7 @@ export default function StudentDashboard() {
           </Card>
           
           <Card className="relative overflow-hidden border border-border/50 shadow-sm dark:shadow-none hover:shadow-md hover:border-emerald-500/30 transition-all duration-300 bg-card group">
-            <CardContent className="p-6">
+            <CardContent className="p-3.5">
               <div className="flex justify-between items-start">
                 <div className="space-y-2">
                   <p className="text-muted-foreground text-sm font-medium">Tamamlanan</p>
@@ -177,7 +177,7 @@ export default function StudentDashboard() {
           </Card>
 
           <Card className="relative overflow-hidden border border-border/50 shadow-sm dark:shadow-none hover:shadow-md hover:border-amber-500/30 transition-all duration-300 bg-card group sm:col-span-2 lg:col-span-1">
-            <CardContent className="p-6">
+            <CardContent className="p-3.5">
               <div className="flex justify-between items-start">
                 <div className="space-y-2">
                   <p className="text-muted-foreground text-sm font-medium">Bekleyen</p>
@@ -271,7 +271,7 @@ export default function StudentDashboard() {
                   
                   return (
                     <Card key={result.id} className="hover:border-primary/30 transition-all hover:shadow-md group bg-card">
-                      <CardContent className="p-5 flex items-center gap-4">
+                      <CardContent className="p-3.5 flex items-center gap-4">
                         <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${isSuccess ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
                           {isSuccess ? <Trophy className="h-6 w-6" /> : <Target className="h-6 w-6" />}
                         </div>

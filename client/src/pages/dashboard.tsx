@@ -110,7 +110,7 @@ export default function DashboardPage() {
     <DashboardLayout>
       <div className="space-y-8 animate-in fade-in duration-700">
         {/* Modern Header */}
-        <div className="flex flex-col gap-6 bg-gradient-to-r from-primary/10 via-transparent to-transparent p-6 rounded-3xl border border-primary/10">
+        <div className="flex flex-col gap-3 bg-gradient-to-r from-primary/10 via-transparent to-transparent p-4 rounded-2xl border border-primary/10">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-foreground tracking-tight">
@@ -229,7 +229,7 @@ export default function DashboardPage() {
 
         {/* Dynamic Stats Grid */}
         {!isStudent && (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-4">
             <StatCard 
               title="Toplam Sınav" 
               value={stats?.totalQuizzes} 
@@ -356,7 +356,7 @@ export default function DashboardPage() {
               Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-20 w-full rounded-2xl" />)
             ) : logs.length > 0 ? (
               logs.map((log: any) => (
-                <div key={log.id} className="flex items-center justify-between p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 hover:border-indigo-200 hover:shadow-md transition-all group">
+                <div key={log.id} className="flex items-center justify-between p-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-indigo-200 hover:shadow-md transition-all group">
                   <div className="flex items-center gap-5">
                     <div className="h-12 w-12 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400 group-hover:scale-110 transition-transform">
                       {getLogIcon(log.action)}

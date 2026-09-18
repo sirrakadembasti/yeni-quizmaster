@@ -176,7 +176,7 @@ export default function QuizzesPage() {
 
         {/* Improved Filter Bar */}
         <Card className="border-primary/10 shadow-sm dark:shadow-none overflow-visible">
-          <CardContent className="p-6">
+          <CardContent className="p-3">
             <div className="flex flex-col space-y-4">
               <div className="relative w-full">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -289,7 +289,7 @@ export default function QuizzesPage() {
                     ))}
                   </div>
                 </CardContent>
-                <CardFooter className="flex justify-between items-center pt-2 bg-muted/10 border-t border-primary/5 p-4">
+                <CardFooter className="flex justify-between items-center pt-2 bg-muted/10 border-t border-primary/5 p-3">
                   <div className="flex items-center gap-2">
                     <div className={`h-2 w-2 rounded-full ${quiz.status === 'published' ? 'bg-emerald-500' : 'bg-amber-500'}`} />
                     <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{quiz.status === 'published' ? 'Yayında' : 'Taslak'}</span>
