@@ -351,38 +351,38 @@ export default function DashboardPage() {
             </Button>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-1.5 sm:space-y-2">
             {logsLoading ? (
-              Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-20 w-full rounded-2xl" />)
+              Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-14 w-full rounded-xl" />)
             ) : logs.length > 0 ? (
               logs.map((log: any) => (
-                <div key={log.id} className="flex items-center justify-between p-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-indigo-200 hover:shadow-md transition-all group">
-                  <div className="flex items-center gap-5">
-                    <div className="h-12 w-12 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400 group-hover:scale-110 transition-transform">
+                <div key={log.id} className="flex items-center justify-between px-3 py-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-indigo-200 hover:shadow-sm transition-all group">
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 bg-slate-50 dark:bg-slate-800 rounded-lg flex items-center justify-center text-slate-400 group-hover:scale-105 transition-transform shrink-0">
                       {getLogIcon(log.action)}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-black text-slate-900 dark:text-slate-50 tracking-tight">{log.action}</span>
+                        <span className="font-bold text-xs text-slate-900 dark:text-slate-50 tracking-tight">{log.action}</span>
                         {isAdmin && log.user && (
-                          <span className="text-[10px] font-black uppercase px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-md text-slate-500">
+                          <span className="text-[9px] font-bold uppercase px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 rounded text-slate-500">
                             {log.user.name}
                           </span>
                         )}
                       </div>
-                      <p className="text-sm font-medium text-slate-500 line-clamp-1">{log.details || 'Açıklama belirtilmemiş.'}</p>
+                      <p className="text-xs font-medium text-slate-500 line-clamp-1">{log.details || 'Açıklama belirtilmemiş.'}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-xs font-black text-slate-900 dark:text-slate-50">{format(new Date(log.createdAt), "HH:mm")}</div>
-                    <div className="text-[10px] font-bold text-slate-400 uppercase">{format(new Date(log.createdAt), "dd MMM yyyy", { locale: tr })}</div>
+                    <div className="text-[11px] font-bold text-slate-900 dark:text-slate-50">{format(new Date(log.createdAt), "HH:mm")}</div>
+                    <div className="text-[9px] font-medium text-slate-400 uppercase">{format(new Date(log.createdAt), "dd MMM yyyy", { locale: tr })}</div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="p-10 text-center bg-muted/30 rounded-2xl border border-dashed border-border">
-                <Activity className="h-12 w-12 mx-auto text-slate-300 mb-3" />
-                <p className="text-slate-400 font-bold italic">Henüz bir aktivite kaydı bulunmuyor.</p>
+              <div className="p-6 text-center bg-muted/30 rounded-xl border border-dashed border-border">
+                <Activity className="h-8 w-8 mx-auto text-slate-300 mb-2" />
+                <p className="text-slate-400 font-bold italic text-xs">Henüz bir aktivite kaydı bulunmuyor.</p>
               </div>
             )}
           </div>

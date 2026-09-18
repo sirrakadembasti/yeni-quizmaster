@@ -148,47 +148,47 @@ export default function StudentResultsPage() {
   const renderStudentContent = () => {
     if (!student) return null;
     return (
-      <Card className="rounded-3xl border-border/60 shadow-sm overflow-hidden">
-        <CardHeader className="bg-muted/20 border-b border-border/50 pb-4">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-              <UserIcon className="h-5 w-5" />
+      <Card className="rounded-2xl border-border/60 shadow-sm overflow-hidden">
+        <CardHeader className="bg-muted/20 border-b border-border/50 py-2.5 px-4">
+          <div className="flex items-center gap-2.5">
+            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+              <UserIcon className="h-4 w-4" />
             </div>
             <div>
-              <CardTitle className="text-xl font-black">Öğrenci Bilgileri</CardTitle>
-              <p className="text-xs text-muted-foreground font-medium mt-0.5">Öğrencinin temel kimlik, okul ve iletişim detayları.</p>
+              <CardTitle className="text-base font-black">Öğrenci Bilgileri</CardTitle>
+              <p className="text-[11px] text-muted-foreground font-medium">Öğrencinin temel kimlik, okul ve iletişim detayları.</p>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-3">
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
-              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Adı Soyadı</Label>
-              <p className="text-base font-bold text-foreground">{student.name || "-"}</p>
+        <CardContent className="p-2.5 sm:p-3">
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="space-y-0.5 bg-muted/20 p-2 rounded-lg border border-border/40">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Adı Soyadı</Label>
+              <p className="text-sm font-bold text-foreground">{student.name || "-"}</p>
             </div>
-            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
-              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">E-Posta Adresi</Label>
-              <p className="text-base font-bold text-foreground">{student.email || "-"}</p>
+            <div className="space-y-0.5 bg-muted/20 p-2 rounded-lg border border-border/40">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">E-Posta Adresi</Label>
+              <p className="text-sm font-bold text-foreground">{student.email || "-"}</p>
             </div>
-            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
-              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Kayıtlı Sınıf</Label>
-              <p className="text-base font-bold text-foreground">{student.class?.name || "Atanmamış"}</p>
+            <div className="space-y-0.5 bg-muted/20 p-2 rounded-lg border border-border/40">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Kayıtlı Sınıf</Label>
+              <p className="text-sm font-bold text-foreground">{student.class?.name || "Atanmamış"}</p>
             </div>
-            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
-              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Okul No</Label>
-              <p className="text-base font-bold text-foreground">{student.studentNo || student.classNo || "-"}</p>
+            <div className="space-y-0.5 bg-muted/20 p-2 rounded-lg border border-border/40">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Okul No</Label>
+              <p className="text-sm font-bold text-foreground">{student.studentNo || student.classNo || "-"}</p>
             </div>
-            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
-              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Telefon Numarası</Label>
-              <p className="text-base font-bold text-foreground">{student.phoneNumber || "Belirtilmemiş"}</p>
+            <div className="space-y-0.5 bg-muted/20 p-2 rounded-lg border border-border/40">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Telefon Numarası</Label>
+              <p className="text-sm font-bold text-foreground">{student.phoneNumber || "Belirtilmemiş"}</p>
             </div>
-            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
-              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Kayıt Tarihi</Label>
-              <p className="text-base font-bold text-foreground">{student.createdAt ? new Date(student.createdAt).toLocaleDateString('tr-TR') : "-"}</p>
+            <div className="space-y-0.5 bg-muted/20 p-2 rounded-lg border border-border/40">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Kayıt Tarihi</Label>
+              <p className="text-sm font-bold text-foreground">{student.createdAt ? new Date(student.createdAt).toLocaleDateString('tr-TR') : "-"}</p>
             </div>
-            <div className="sm:col-span-2 lg:col-span-3 space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
-              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Adres</Label>
-              <p className="text-base font-medium text-foreground">{student.address || "Belirtilmemiş"}</p>
+            <div className="sm:col-span-2 lg:col-span-3 space-y-0.5 bg-muted/20 p-2 rounded-lg border border-border/40">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Adres</Label>
+              <p className="text-sm font-medium text-foreground">{student.address || "Belirtilmemiş"}</p>
             </div>
           </div>
         </CardContent>
@@ -199,39 +199,39 @@ export default function StudentResultsPage() {
   const renderParentContent = () => {
     if (!student) return null;
     return (
-      <Card className="rounded-3xl border-border/60 shadow-sm overflow-hidden">
-        <CardHeader className="bg-muted/20 border-b border-border/50 pb-4">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600">
-              <Users className="h-5 w-5" />
+      <Card className="rounded-2xl border-border/60 shadow-sm overflow-hidden">
+        <CardHeader className="bg-muted/20 border-b border-border/50 py-2.5 px-4">
+          <div className="flex items-center gap-2.5">
+            <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-600">
+              <Users className="h-4 w-4" />
             </div>
             <div>
-              <CardTitle className="text-xl font-black">Veli Bilgileri</CardTitle>
-              <p className="text-xs text-muted-foreground font-medium mt-0.5">Yalnızca yöneticilere açık veli iletişim detayları.</p>
+              <CardTitle className="text-base font-black">Veli Bilgileri</CardTitle>
+              <p className="text-[11px] text-muted-foreground font-medium">Yalnızca yöneticilere açık veli iletişim detayları.</p>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-3">
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
-              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Veli Adı Soyadı</Label>
-              <p className="text-base font-bold text-foreground">{student.parentName || "Belirtilmemiş"}</p>
+        <CardContent className="p-2.5 sm:p-3">
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="space-y-0.5 bg-muted/20 p-2 rounded-lg border border-border/40">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Veli Adı Soyadı</Label>
+              <p className="text-sm font-bold text-foreground">{student.parentName || "Belirtilmemiş"}</p>
             </div>
-            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
-              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Yakınlık Derecesi</Label>
-              <p className="text-base font-bold text-foreground">{student.parentRelation || "Belirtilmemiş"}</p>
+            <div className="space-y-0.5 bg-muted/20 p-2 rounded-lg border border-border/40">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Yakınlık Derecesi</Label>
+              <p className="text-sm font-bold text-foreground">{student.parentRelation || "Belirtilmemiş"}</p>
             </div>
-            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
-              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Veli Telefonu</Label>
-              <p className="text-base font-bold text-foreground">{student.parentPhone || "Belirtilmemiş"}</p>
+            <div className="space-y-0.5 bg-muted/20 p-2 rounded-lg border border-border/40">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Veli Telefonu</Label>
+              <p className="text-sm font-bold text-foreground">{student.parentPhone || "Belirtilmemiş"}</p>
             </div>
-            <div className="space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
-              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Veli E-Postası</Label>
-              <p className="text-base font-bold text-foreground">{student.parentEmail || "Belirtilmemiş"}</p>
+            <div className="space-y-0.5 bg-muted/20 p-2 rounded-lg border border-border/40">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Veli E-Postası</Label>
+              <p className="text-sm font-bold text-foreground">{student.parentEmail || "Belirtilmemiş"}</p>
             </div>
-            <div className="sm:col-span-2 space-y-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
-              <Label className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">Veli İkametgah Adresi</Label>
-              <p className="text-base font-medium text-foreground">{student.parentAddress || "Belirtilmemiş"}</p>
+            <div className="sm:col-span-2 space-y-0.5 bg-muted/20 p-2 rounded-lg border border-border/40">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Veli İkametgah Adresi</Label>
+              <p className="text-sm font-medium text-foreground">{student.parentAddress || "Belirtilmemiş"}</p>
             </div>
           </div>
         </CardContent>
@@ -284,41 +284,41 @@ export default function StudentResultsPage() {
 
         {/* Student Mini Profile */}
         {student && (
-          <Card className="overflow-hidden border-primary/20 shadow-sm bg-gradient-to-br from-card to-primary/5">
-            <div className="px-6 py-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="flex items-center gap-5">
-                <div className="h-20 w-20 rounded-2xl bg-primary/10 flex items-center justify-center border-2 border-primary/20 shadow-inner rotate-3 hover:rotate-0 transition-transform duration-300">
-                  <UserIcon className="h-10 w-10 text-primary" />
+          <Card className="overflow-hidden border-primary/20 shadow-sm bg-gradient-to-br from-card to-primary/5 rounded-2xl">
+            <div className="px-4 py-3 sm:py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-inner">
+                  <UserIcon className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-foreground">{student.name}</h2>
-                  <div className="flex flex-wrap gap-x-6 gap-y-2 mt-2">
-                    <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                      <Mail className="h-4 w-4 text-primary/60" />
+                  <h2 className="text-lg font-bold text-foreground">{student.name}</h2>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
+                    <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                      <Mail className="h-3.5 w-3.5 text-primary/60" />
                       {student.email}
                     </div>
                     {student.class && (
-                      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                        <School className="h-4 w-4 text-primary/60" />
+                      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                        <School className="h-3.5 w-3.5 text-primary/60" />
                         Sınıf: <span className="text-foreground">{student.class.name}</span>
                       </div>
                     )}
                     {student.studentNo && (
-                      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                        <Info className="h-4 w-4 text-primary/60" />
+                      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                        <Info className="h-3.5 w-3.5 text-primary/60" />
                         No: <span className="text-foreground">{student.studentNo}</span>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="text-right hidden sm:block mr-2">
-                  <p className="text-[10px] uppercase tracking-widest font-black text-muted-foreground">Öğrenci Kodu</p>    
-                  <p className="font-mono text-sm font-bold">{student.id.substring(0, 8)}</p>
+              <div className="flex items-center gap-2.5">
+                <div className="text-right hidden sm:block mr-1">
+                  <p className="text-[9px] uppercase tracking-widest font-black text-muted-foreground">Öğrenci Kodu</p>    
+                  <p className="font-mono text-xs font-bold">{student.id.substring(0, 8)}</p>
                 </div>
-                <div className="h-12 w-[1px] bg-border mx-2 hidden sm:block" />
-                <Trophy className="h-8 w-8 text-amber-500 animate-bounce" />
+                <div className="h-8 w-[1px] bg-border mx-1 hidden sm:block" />
+                <Trophy className="h-6 w-6 text-amber-500" />
               </div>
             </div>
           </Card>

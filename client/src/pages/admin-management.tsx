@@ -377,32 +377,32 @@ const deleteClassMutation = useMutation({
               <Table>
                 <TableHeader className="bg-muted border-b border-border">
                   <TableRow>
-                    <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4 pl-6 w-[30%]">Ders Adı</TableHead>
-                    <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4 w-[40%]">Açıklama</TableHead>
-                    <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4 text-center">Oluşturulma</TableHead>
-                    <TableHead className="text-right px-6 py-4 font-black text-[10px] text-muted-foreground uppercase tracking-widest">İşlemler</TableHead>
+                    <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2 pl-4 w-[30%]">Ders Adı</TableHead>
+                    <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2 w-[40%]">Açıklama</TableHead>
+                    <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2 text-center">Oluşturulma</TableHead>
+                    <TableHead className="text-right px-4 py-2 font-black text-[10px] text-muted-foreground uppercase tracking-widest">İşlemler</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {categories.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={4} className="py-12 text-center text-muted-foreground font-medium">Kayıtlı ders bulunamadı.</TableCell>
+                      <TableCell colSpan={4} className="py-8 text-center text-muted-foreground font-medium text-xs">Kayıtlı ders bulunamadı.</TableCell>
                     </TableRow>
                   ) : (
                     categories.map((cat: any) => (
                       <TableRow key={cat.id} className="hover:bg-muted/30 transition-colors border-border group">
-                        <TableCell className="pl-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center rounded-xl border border-indigo-100 dark:border-indigo-900/50">
-                              <BookOpen className="h-5 w-5" />
+                        <TableCell className="pl-4 py-2">
+                          <div className="flex items-center gap-2.5">
+                            <div className="h-8 w-8 bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center rounded-lg border border-indigo-100 dark:border-indigo-900/50">
+                              <BookOpen className="h-4 w-4" />
                             </div>
-                            <span className="font-bold text-foreground text-sm">{cat.name}</span>
+                            <span className="font-bold text-foreground text-xs">{cat.name}</span>
                           </div>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="py-2">
                           <p className="text-xs font-medium text-muted-foreground line-clamp-1 max-w-sm">{cat.description || "Açıklama belirtilmemiş."}</p>
                         </TableCell>
-                        <TableCell className="text-center">
+                        <TableCell className="text-center py-2">
                           <span className="text-xs font-bold text-foreground">{new Date(cat.createdAt).toLocaleDateString('tr-TR')}</span>
                         </TableCell>
                         <TableCell className="text-right px-6">
@@ -521,28 +521,28 @@ const deleteClassMutation = useMutation({
                 <Table>
                   <TableHeader className="bg-muted border-b border-border">
                     <TableRow>
-                      <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4 pl-6">Kullanıcı Bilgileri</TableHead>
-                      <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Sistem Rolü</TableHead>
-                      <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">İletişim</TableHead>
-                      <TableHead className="text-right px-6 py-4 font-black text-[10px] text-muted-foreground uppercase tracking-widest">İşlemler</TableHead>
+                      <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2 pl-4">Kullanıcı Bilgileri</TableHead>
+                      <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2">Sistem Rolü</TableHead>
+                      <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2">İletişim</TableHead>
+                      <TableHead className="text-right px-4 py-2 font-black text-[10px] text-muted-foreground uppercase tracking-widest">İşlemler</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredUsers.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={4} className="py-12 text-center text-muted-foreground font-medium">Bu kategoride kullanıcı bulunamadı.</TableCell>
+                        <TableCell colSpan={4} className="py-8 text-center text-muted-foreground font-medium text-xs">Bu kategoride kullanıcı bulunamadı.</TableCell>
                       </TableRow>
                     ) : (
                       filteredUsers.map((u: any) => (
                         <TableRow key={u.id} className="hover:bg-muted/30 transition-colors border-border group">
-                          <TableCell className="pl-6 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="h-10 w-10 bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center rounded-xl font-black text-xs border border-indigo-100 dark:border-indigo-900/50">
+                          <TableCell className="pl-4 py-2">
+                            <div className="flex items-center gap-2.5">
+                              <div className="h-8 w-8 bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center rounded-lg font-black text-xs border border-indigo-100 dark:border-indigo-900/50">
                                 {u.name?.[0].toUpperCase()}
                               </div>
                               <div>
-                                <p className="font-bold text-foreground text-sm">{u.name}</p>
-                                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">{u.email}</p>
+                                <p className="font-bold text-foreground text-xs">{u.name}</p>
+                                <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">{u.email}</p>
                               </div>
                             </div>
                           </TableCell>
@@ -665,28 +665,28 @@ const deleteClassMutation = useMutation({
                   </div>
                 </div>
 
-                <Card className="rounded-3xl border border-border overflow-hidden bg-card shadow-sm">
+                <Card className="rounded-2xl border border-border overflow-hidden bg-card shadow-sm">
                   <Table>
                     <TableHeader className="bg-muted border-b border-border">
                       <TableRow>
-                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4 pl-6">Zaman</TableHead>
-                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Kullanıcı & Rol</TableHead>
-                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">İşlem</TableHead>
-                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Detaylar</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2 pl-4">Zaman</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2">Kullanıcı & Rol</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2">İşlem</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2">Detaylar</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {logsLoading ? (
-                        <TableRow><TableCell colSpan={4} className="h-32 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" /></TableCell></TableRow>
+                        <TableRow><TableCell colSpan={4} className="h-24 text-center"><Loader2 className="h-5 w-5 animate-spin mx-auto text-primary" /></TableCell></TableRow>
                       ) : logs.length === 0 ? (
-                        <TableRow><TableCell colSpan={4} className="h-32 text-center text-muted-foreground italic font-medium">Kayıt bulunamadı.</TableCell></TableRow>
+                        <TableRow><TableCell colSpan={4} className="h-24 text-center text-muted-foreground italic font-medium text-xs">Kayıt bulunamadı.</TableCell></TableRow>
                       ) : (
                         logs.map((log: any) => (
                           <TableRow key={log.id} className="hover:bg-muted/30 border-border transition-colors group">
-                            <TableCell className="pl-6 py-4">
+                            <TableCell className="pl-4 py-2">
                               <div className="flex flex-col">
-                                <span className="text-sm font-bold text-foreground">{new Date(log.createdAt).toLocaleDateString('tr-TR')}</span>
-                                <span className="text-[10px] font-medium text-muted-foreground">{new Date(log.createdAt).toLocaleTimeString('tr-TR')}</span>
+                                <span className="text-xs font-bold text-foreground">{new Date(log.createdAt).toLocaleDateString('tr-TR')}</span>
+                                <span className="text-[9px] font-medium text-muted-foreground">{new Date(log.createdAt).toLocaleTimeString('tr-TR')}</span>
                               </div>
                             </TableCell>
                             <TableCell>
@@ -810,30 +810,30 @@ const deleteClassMutation = useMutation({
                 </div>
 
                 {/* E-Posta Kayıtları Tablosu */}
-                <Card className="rounded-3xl border border-border overflow-hidden bg-card shadow-sm">
+                <Card className="rounded-2xl border border-border overflow-hidden bg-card shadow-sm">
                   <Table>
                     <TableHeader className="bg-muted border-b border-border">
                       <TableRow>
-                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4 pl-6">Kayıt Zamanı</TableHead>
-                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Alıcı</TableHead>
-                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Konu & Tip</TableHead>
-                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Durum</TableHead>
-                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Deneme</TableHead>
-                        <TableHead className="text-right px-6 py-4 font-black text-[10px] text-muted-foreground uppercase tracking-widest">İşlemler</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2 pl-4">Kayıt Zamanı</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2">Alıcı</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2">Konu & Tip</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2">Durum</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2">Deneme</TableHead>
+                        <TableHead className="text-right px-4 py-2 font-black text-[10px] text-muted-foreground uppercase tracking-widest">İşlemler</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {emailLogsLoading ? (
-                        <TableRow><TableCell colSpan={6} className="h-32 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" /></TableCell></TableRow>
+                        <TableRow><TableCell colSpan={6} className="h-24 text-center"><Loader2 className="h-5 w-5 animate-spin mx-auto text-primary" /></TableCell></TableRow>
                       ) : emailLogs.length === 0 ? (
-                        <TableRow><TableCell colSpan={6} className="h-32 text-center text-muted-foreground italic font-medium">Henüz bir e-posta log kaydı bulunmuyor.</TableCell></TableRow>
+                        <TableRow><TableCell colSpan={6} className="h-24 text-center text-muted-foreground italic font-medium text-xs">Henüz bir e-posta log kaydı bulunmuyor.</TableCell></TableRow>
                       ) : (
                         emailLogs.map((item: any) => (
                           <TableRow key={item.id} className="hover:bg-muted/30 border-border transition-colors group">
-                            <TableCell className="pl-6 py-4">
+                            <TableCell className="pl-4 py-2">
                               <div className="flex flex-col">
-                                <span className="text-sm font-bold text-foreground">{new Date(item.createdAt).toLocaleDateString('tr-TR')}</span>
-                                <span className="text-[10px] font-medium text-muted-foreground">{new Date(item.createdAt).toLocaleTimeString('tr-TR')}</span>
+                                <span className="text-xs font-bold text-foreground">{new Date(item.createdAt).toLocaleDateString('tr-TR')}</span>
+                                <span className="text-[9px] font-medium text-muted-foreground">{new Date(item.createdAt).toLocaleTimeString('tr-TR')}</span>
                               </div>
                             </TableCell>
                             <TableCell>
@@ -932,28 +932,28 @@ const deleteClassMutation = useMutation({
                   </div>
                 </div>
 
-                <Card className="rounded-3xl border border-border overflow-hidden bg-card shadow-sm">
+                <Card className="rounded-2xl border border-border overflow-hidden bg-card shadow-sm">
                   <Table>
                     <TableHeader className="bg-muted border-b border-border">
                       <TableRow>
-                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4 pl-6">Zaman</TableHead>
-                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Tetikleyen</TableHead>
-                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">Sistem Operasyonu</TableHead>
-                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-4">İşlem Detayları</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2 pl-4">Zaman</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2">Tetikleyen</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2">Sistem Operasyonu</TableHead>
+                        <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2">İşlem Detayları</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {systemLogsLoading ? (
-                        <TableRow><TableCell colSpan={4} className="h-32 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" /></TableCell></TableRow>
+                        <TableRow><TableCell colSpan={4} className="h-24 text-center"><Loader2 className="h-5 w-5 animate-spin mx-auto text-primary" /></TableCell></TableRow>
                       ) : systemLogs.length === 0 ? (
-                        <TableRow><TableCell colSpan={4} className="h-32 text-center text-muted-foreground italic font-medium">Sistem işlemi veya hata kaydı bulunamadı.</TableCell></TableRow>
+                        <TableRow><TableCell colSpan={4} className="h-24 text-center text-muted-foreground italic font-medium text-xs">Sistem işlemi veya hata kaydı bulunamadı.</TableCell></TableRow>
                       ) : (
                         systemLogs.map((log: any) => (
                           <TableRow key={log.id} className="hover:bg-muted/30 border-border transition-colors group">
-                            <TableCell className="pl-6 py-4">
+                            <TableCell className="pl-4 py-2">
                               <div className="flex flex-col">
-                                <span className="text-sm font-bold text-foreground">{new Date(log.createdAt).toLocaleDateString('tr-TR')}</span>
-                                <span className="text-[10px] font-medium text-muted-foreground">{new Date(log.createdAt).toLocaleTimeString('tr-TR')}</span>
+                                <span className="text-xs font-bold text-foreground">{new Date(log.createdAt).toLocaleDateString('tr-TR')}</span>
+                                <span className="text-[9px] font-medium text-muted-foreground">{new Date(log.createdAt).toLocaleTimeString('tr-TR')}</span>
                               </div>
                             </TableCell>
                             <TableCell>

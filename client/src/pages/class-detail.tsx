@@ -81,47 +81,47 @@ export default function ClassDetailPage() {
         </header>
 
         {/* TOP SECTION: TEACHERS (Rich View) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
           {/* Class Teacher Card */}
-          <Card className="rounded-[2rem] border-2 border-indigo-600 bg-indigo-600 text-white shadow-2xl shadow-indigo-200 dark:shadow-none overflow-hidden card-print">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-4">
-                <div className="h-14 w-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md no-print">
-                  <ShieldCheck className="h-8 w-8" />
+          <Card className="rounded-2xl border-2 border-indigo-600 bg-indigo-600 text-white shadow-md dark:shadow-none overflow-hidden card-print">
+            <CardHeader className="p-3 sm:p-3.5 pb-2">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-md no-print">
+                  <ShieldCheck className="h-5 w-5" />
                 </div>
                 <div>
-                  <CardTitle className="text-xs font-black uppercase tracking-[0.2em] opacity-80">Sorumlu Öğretmen</CardTitle>
-                  <h3 className="text-xl font-black mt-1 leading-tight">{cls.classTeacher?.name || "Atanmamış"}</h3>        
+                  <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80">Sorumlu Öğretmen</CardTitle>
+                  <h3 className="text-base font-black mt-0.5 leading-tight">{cls.classTeacher?.name || "Atanmamış"}</h3>        
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="bg-white/10 p-3 rounded-xl border border-white/10 backdrop-blur-sm flex items-center gap-2">    
-                <Mail className="h-4 w-4 opacity-70" />
-                <span className="text-sm font-bold truncate">{cls.classTeacher?.email || "E-posta belirtilmemiş"}</span>     
+            <CardContent className="p-3 sm:p-3.5 pt-0">
+              <div className="bg-white/10 p-2 rounded-lg border border-white/10 backdrop-blur-sm flex items-center gap-2">    
+                <Mail className="h-3.5 w-3.5 opacity-70" />
+                <span className="text-xs font-bold truncate">{cls.classTeacher?.email || "E-posta belirtilmemiş"}</span>     
               </div>
             </CardContent>
           </Card>
 
           {/* Subject Teachers Grid */}
-          <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             {cls.teacherAssignments && cls.teacherAssignments.length > 0 ? (
               cls.teacherAssignments.map((ta: any) => (
-                <Card key={ta.id} className="rounded-3xl border-2 border-border bg-card hover:border-indigo-500 transition-all group overflow-hidden card-print">
-                  <div className="p-5 flex items-center gap-4">
-                    <div className="h-12 w-12 bg-muted group-hover:bg-indigo-50 dark:group-hover:bg-indigo-950 rounded-2xl flex items-center justify-center border-2 border-border group-hover:border-indigo-200 transition-colors print:hidden">
-                      <BookOpen className="h-6 w-6 text-muted-foreground group-hover:text-indigo-600" />
+                <Card key={ta.id} className="rounded-2xl border border-border bg-card hover:border-indigo-500 transition-all group overflow-hidden card-print">
+                  <div className="p-2.5 sm:p-3 flex items-center gap-3">
+                    <div className="h-9 w-9 bg-muted group-hover:bg-indigo-50 dark:group-hover:bg-indigo-950 rounded-xl flex items-center justify-center border border-border group-hover:border-indigo-200 transition-colors print:hidden">
+                      <BookOpen className="h-4 w-4 text-muted-foreground group-hover:text-indigo-600" />
                     </div>
-                    <div className="flex-1">
-                      <p className="text-[10px] font-black uppercase text-indigo-600 tracking-widest">{ta.category?.name || ta.course?.name || "Ders Bilgisi"}</p>   
-                      <h4 className="text-base font-black text-foreground leading-tight mt-0.5">{ta.teacher?.name || "Bilinmeyen Öğretmen"}</h4>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[10px] font-black uppercase text-indigo-600 tracking-widest truncate">{ta.category?.name || ta.course?.name || "Ders Bilgisi"}</p>   
+                      <h4 className="text-sm font-black text-foreground leading-tight mt-0.5 truncate">{ta.teacher?.name || "Bilinmeyen Öğretmen"}</h4>
                     </div>
                   </div>
                 </Card>
               ))
             ) : (
-              <div className="col-span-full h-full flex flex-col items-center justify-center bg-muted/30 border-2 border-dashed border-border rounded-3xl p-8 text-muted-foreground font-bold italic">
-                <GraduationCap className="h-8 w-8 mb-2 opacity-20" />
+              <div className="col-span-full h-full flex flex-col items-center justify-center bg-muted/30 border border-dashed border-border rounded-2xl p-4 text-muted-foreground font-bold italic text-xs">
+                <GraduationCap className="h-6 w-6 mb-1 opacity-20" />
                 Henüz branş öğretmeni atanmamış.
               </div>
             )}
@@ -129,20 +129,20 @@ export default function ClassDetailPage() {
         </div>
 
         {/* BOTTOM SECTION: STUDENTS LIST TABLE */}
-        <Card className="rounded-[2.5rem] border-2 border-border bg-card shadow-sm overflow-hidden card-print">
-          <CardHeader className="bg-muted/30 border-b-2 border-border py-6 px-8 print:hidden">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center">       
-                  <Users className="h-6 w-6" />
+        <Card className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden card-print">
+          <CardHeader className="bg-muted/30 border-b border-border py-2.5 px-4 print:hidden">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <div className="h-8 w-8 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center">       
+                  <Users className="h-4 w-4" />
                 </div>
-                <CardTitle className="text-2xl font-black tracking-tight">Sınıf Mevcudu</CardTitle>
+                <CardTitle className="text-lg font-black tracking-tight">Sınıf Mevcudu</CardTitle>
               </div>
               <div className="relative w-full sm:w-72">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
                 <Input
                   placeholder="Öğrenci ismine göre filtrele..."
-                  className="pl-10 h-10 rounded-xl border-2 border-border bg-background focus:border-indigo-500"
+                  className="pl-9 h-8 rounded-lg border border-border bg-background focus:border-indigo-500 text-xs"
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
                 />
@@ -151,37 +151,37 @@ export default function ClassDetailPage() {
           </CardHeader>
           
           {/* Print Title (Visible only when printing) */}
-          <div className="hidden print:block p-8 text-center border-b-2 mb-6">
-            <h2 className="text-3xl font-black tracking-tighter uppercase">{cls.name} ÖĞRENCİ LİSTESİ</h2>
-            <p className="text-muted-foreground font-bold">{new Date().toLocaleDateString('tr-TR')} tarihinde oluşturuldu</p>
+          <div className="hidden print:block p-4 text-center border-b mb-3">
+            <h2 className="text-2xl font-black tracking-tighter uppercase">{cls.name} ÖĞRENCİ LİSTESİ</h2>
+            <p className="text-muted-foreground font-bold text-xs">{new Date().toLocaleDateString('tr-TR')} tarihinde oluşturuldu</p>
           </div>
 
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-muted/50 border-b-2 border-border">
+              <TableHeader className="bg-muted/50 border-b border-border">
                 <TableRow>
-                  <TableHead className="pl-8 font-black text-[11px] uppercase tracking-widest py-5 w-20 text-center">S.No</TableHead>
-                  <TableHead className="font-black text-[11px] uppercase tracking-widest py-5">Öğrenci Adı Soyadı</TableHead>
-                  <TableHead className="font-black text-[11px] uppercase tracking-widest py-5 text-right pr-8">Okul Numarası</TableHead>
+                  <TableHead className="pl-4 font-black text-[10px] uppercase tracking-widest py-2 w-16 text-center">S.No</TableHead>
+                  <TableHead className="font-black text-[10px] uppercase tracking-widest py-2">Öğrenci Adı Soyadı</TableHead>
+                  <TableHead className="font-black text-[10px] uppercase tracking-widest py-2 text-right pr-4">Okul Numarası</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredStudents.length === 0 ? (
-                  <TableRow><TableCell colSpan={3} className="h-48 text-center text-muted-foreground italic font-black text-lg">Bu sınıfta kayıtlı öğrenci bulunamadı.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={3} className="h-32 text-center text-muted-foreground italic font-black text-sm">Bu sınıfta kayıtlı öğrenci bulunamadı.</TableCell></TableRow>
                 ) : (
                   filteredStudents.map((s: any, index: number) => (
                     <TableRow key={s.id} className="hover:bg-muted/30 border-border transition-colors group">
-                      <TableCell className="pl-8 py-4 font-bold text-muted-foreground text-center">{index + 1}</TableCell>
-                      <TableCell className="py-4">
-                        <div className="flex items-center gap-4">
-                          <div className="h-9 w-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-xs shadow-md group-hover:scale-105 transition-transform print:hidden">
+                      <TableCell className="pl-4 py-2 font-bold text-muted-foreground text-center text-xs">{index + 1}</TableCell>
+                      <TableCell className="py-2">
+                        <div className="flex items-center gap-2.5">
+                          <div className="h-7 w-7 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black text-xs shadow-sm group-hover:scale-105 transition-transform print:hidden">
                             {s.name[0].toUpperCase()}
                           </div>
-                          <span className="font-bold text-base text-foreground tracking-tight">{s.name}</span>
+                          <span className="font-bold text-sm text-foreground tracking-tight">{s.name}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-right pr-8">
-                        <Badge variant="outline" className="rounded-lg font-black text-xs bg-background border-2 px-3 py-1">{s.studentNo || "YOK"}</Badge>
+                      <TableCell className="text-right pr-4 py-2">
+                        <Badge variant="outline" className="rounded-md font-black text-xs bg-background border px-2 py-0.5">{s.studentNo || "YOK"}</Badge>
                       </TableCell>
                     </TableRow>
                   ))

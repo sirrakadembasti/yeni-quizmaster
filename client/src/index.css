@@ -203,19 +203,19 @@
 }
 
 .dashboard-page [data-slot="card"] {
-  border-radius: 1rem;
+  border-radius: 0.875rem !important;
 }
 
 .dashboard-page [data-slot="card-header"] {
-  padding: 0.625rem 0.75rem;
+  padding: 0.5rem 0.75rem !important;
 }
 
 .dashboard-page [data-slot="card-content"] {
-  padding: 0 0.75rem 0.625rem 0.75rem;
+  padding: 0 0.75rem 0.5rem 0.75rem !important;
 }
 
 .dashboard-page [data-slot="card-footer"] {
-  padding: 0 0.75rem 0.625rem 0.75rem;
+  padding: 0 0.75rem 0.5rem 0.75rem !important;
 }
 
 .dashboard-page [data-slot="card"] p,
@@ -225,6 +225,19 @@
 .dashboard-page [data-slot="card"] h3,
 .dashboard-page [data-slot="card"] h4 {
   line-height: 1.35;
+}
+
+/* Global compact table padding for all dashboard pages */
+.dashboard-page table th,
+.dashboard-page table td {
+  padding-top: 0.45rem !important;
+  padding-bottom: 0.45rem !important;
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+}
+
+.dashboard-page table th {
+  height: 2rem !important;
 }
 
 .dashboard-page .rounded-\[2rem\],

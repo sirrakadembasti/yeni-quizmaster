@@ -97,87 +97,87 @@ export default function ArchivePage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-3">
         <div>
-          <h1 className="text-3xl font-black text-foreground tracking-tight">Yıl Sonu ve Arşiv İşlemleri</h1>
-          <p className="text-muted-foreground mt-1">Eğitim yılı sonu yedeklemeleri ve öğrenci sınıf atlatma işlemleri buradan yönetilir.</p>
+          <h1 className="text-2xl font-black text-foreground tracking-tight">Yıl Sonu ve Arşiv İşlemleri</h1>
+          <p className="text-muted-foreground text-xs mt-0.5">Eğitim yılı sonu yedeklemeleri ve öğrenci sınıf atlatma işlemleri buradan yönetilir.</p>
         </div>
 
         <Tabs defaultValue="archive" className="w-full">
-          <TabsList className="bg-muted p-1 rounded-xl mb-6">
-            <TabsTrigger value="archive" className="rounded-lg font-bold px-6">Sınav Arşivi</TabsTrigger>
-            <TabsTrigger value="promote" className="rounded-lg font-bold px-6">Sınıf Atlatma</TabsTrigger>
+          <TabsList className="bg-muted p-1 rounded-xl mb-3">
+            <TabsTrigger value="archive" className="rounded-lg font-bold px-4 py-1 text-xs">Sınav Arşivi</TabsTrigger>
+            <TabsTrigger value="promote" className="rounded-lg font-bold px-4 py-1 text-xs">Sınıf Atlatma</TabsTrigger>
           </TabsList>
 
           {/* ARCHIVE TAB */}
-          <TabsContent value="archive" className="space-y-6 m-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="rounded-3xl border-border bg-card shadow-sm">
+          <TabsContent value="archive" className="space-y-3 m-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+              <Card className="rounded-2xl border-border bg-card shadow-sm">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-xl font-black">
-                    <Archive className="h-5 w-5 text-primary" /> Yeni Arşiv Oluştur
+                  <CardTitle className="flex items-center gap-2 text-lg font-black">
+                    <Archive className="h-4 w-4 text-primary" /> Yeni Arşiv Oluştur
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-xs">
                     Aktif olan tüm sınavları ve sonuçları belirlediğiniz eğitim yılı altına arşivler.
                     Arşivlenen sınavlar öğretmen panellerinde salt okunur görünür.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="bg-amber-50 dark:bg-amber-950/30 p-4 rounded-xl border border-amber-100 dark:border-amber-900/50 flex items-start gap-3">
-                    <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-500 mt-0.5 shrink-0" />
-                    <p className="text-sm font-medium text-amber-800 dark:text-amber-400">
+                <CardContent className="space-y-2.5">
+                  <div className="bg-amber-50 dark:bg-amber-950/30 p-2.5 rounded-lg border border-amber-100 dark:border-amber-900/50 flex items-start gap-2.5">
+                    <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-500 mt-0.5 shrink-0" />
+                    <p className="text-xs font-medium text-amber-800 dark:text-amber-400">
                       Bu işlem sistemdeki <span className="font-black">{activeQuizzesCount}</span> aktif sınavı "Arşivlendi" statüsüne geçirecektir. İşlem geri alınamaz.
                     </p>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="font-bold">Eğitim Yılı Etiketi</Label>
+                  <div className="space-y-1.5">
+                    <Label className="font-bold text-xs">Eğitim Yılı Etiketi</Label>
                     <Input 
                       placeholder="Örn: 2025-2026 Eğitim Yılı" 
                       value={academicYear}
                       onChange={e => setAcademicYear(e.target.value)}
-                      className="rounded-xl border-border focus:border-primary"
+                      className="rounded-lg border-border focus:border-primary h-8 text-xs"
                     />
                   </div>
                   <Button 
-                    className="w-full rounded-xl font-bold bg-primary text-primary-foreground shadow-md dark:shadow-none"
+                    className="w-full rounded-lg font-bold bg-primary text-primary-foreground shadow-sm h-8 text-xs"
                     onClick={handleArchive}
                     disabled={archiveMutation.isPending}
                   >
-                    {archiveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Archive className="h-4 w-4 mr-2" />}
+                    {archiveMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <Archive className="h-3.5 w-3.5 mr-1.5" />}
                     Sistemi Arşivle
                   </Button>
                 </CardContent>
               </Card>
 
-              <Card className="rounded-3xl border-border bg-card shadow-sm">
+              <Card className="rounded-2xl border-border bg-card shadow-sm">
                 <CardHeader>
-                  <CardTitle className="text-xl font-black">Arşiv Durumu</CardTitle>
+                  <CardTitle className="text-lg font-black">Arşiv Durumu</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex flex-col gap-4">
-                    <div className="flex justify-between items-center p-4 bg-muted rounded-xl border border-border">
-                      <span className="font-bold text-muted-foreground">Aktif Sınavlar</span>
-                      <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 text-lg py-1 px-3 shadow-none border-none">{activeQuizzesCount}</Badge>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-between items-center p-2.5 bg-muted rounded-lg border border-border">
+                      <span className="font-bold text-xs text-muted-foreground">Aktif Sınavlar</span>
+                      <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 text-sm py-0.5 px-2.5 shadow-none border-none">{activeQuizzesCount}</Badge>
                     </div>
-                    <div className="flex justify-between items-center p-4 bg-muted rounded-xl border border-border">
-                      <span className="font-bold text-muted-foreground">Arşivlenmiş Sınavlar</span>
-                      <Badge className="bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 text-lg py-1 px-3 shadow-none border-none">{archivedQuizzesCount}</Badge>
+                    <div className="flex justify-between items-center p-2.5 bg-muted rounded-lg border border-border">
+                      <span className="font-bold text-xs text-muted-foreground">Arşivlenmiş Sınavlar</span>
+                      <Badge className="bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 text-sm py-0.5 px-2.5 shadow-none border-none">{archivedQuizzesCount}</Badge>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
 
-            <Card className="rounded-3xl border-border bg-card shadow-sm overflow-hidden">
-               <CardHeader className="bg-muted/50 border-b border-border">
-                 <CardTitle className="text-lg font-black">Geçmiş Arşiv Kayıtları</CardTitle>
+            <Card className="rounded-2xl border-border bg-card shadow-sm overflow-hidden">
+               <CardHeader className="bg-muted/50 border-b border-border py-2 px-4">
+                 <CardTitle className="text-base font-black">Geçmiş Arşiv Kayıtları</CardTitle>
                </CardHeader>
                <Table>
                   <TableHeader>
                     <TableRow className="border-border">
-                      <TableHead className="font-black text-xs uppercase tracking-widest pl-6">Sınav Adı</TableHead>
-                      <TableHead className="font-black text-xs uppercase tracking-widest">Eğitim Yılı</TableHead>
-                      <TableHead className="font-black text-xs uppercase tracking-widest text-center">Durum</TableHead>
+                      <TableHead className="font-black text-[10px] uppercase tracking-widest pl-4 py-2">Sınav Adı</TableHead>
+                      <TableHead className="font-black text-[10px] uppercase tracking-widest py-2">Eğitim Yılı</TableHead>
+                      <TableHead className="font-black text-[10px] uppercase tracking-widest text-center py-2">Durum</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
