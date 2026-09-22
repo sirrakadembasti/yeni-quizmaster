@@ -12,25 +12,35 @@ const router: Router = Router();
 
 async function notifyAdminsAboutTeacherQuiz(
   actor: NonNullable<AuthRequest["user"]>,
-  quiz: { title: string },
+  quiz: { title: string; contentType?: string },
   event: "created" | "published"
 ) {
   if (actor.role !== "teacher") return;
   try {
     const admins = (await storage.getAllUsers()).filter(user => shouldNotifyAdminAboutQuiz(actor.role, user.role));
-    const io = getIO();
-    const title = event === "created" ? "Öğretmen Sınav Oluşturdu" : "Öğretmen Sınav Yayınladı";
-    const message = `${actor.name}, "${quiz.title}" adlı sınavı ${event === "created" ? "oluşturdu" : "yayınladı"}.`;
+    if (admins.length === 0) return;
+    const contentLabel = quiz.contentType === "survey" ? "Anket" : "Sınav";
+    const title = `Öğretmen ${contentLabel} ${event === "created" ? "Oluşturdu" : "Yayınladı"}`;
+    const message = `${actor.name}, "${quiz.title}" adlı ${contentLabel.toLocaleLowerCase("tr-TR")} içeriğini ${event === "created" ? "oluşturdu" : "yayınladı"}.`;
 
-    await Promise.all(admins.map(async admin => {
-      const notification = await storage.createNotification({
+    const notifications = await Promise.all(admins.map(async admin => ({
+      userId: admin.id,
+      notification: await storage.createNotification({
         userId: admin.id,
         title,
         message,
-        type: "quiz"
+        type: "quiz",
+      }),
+    })));
+
+    try {
+      const io = getIO();
+      notifications.forEach(({ userId, notification }) => {
+        io.to(`user_${userId}`).emit("notification", notification);
       });
-      io.to(`user_${admin.id}`).emit("notification", notification);
-    }));
+    } catch (socketError) {
+      logger.warn({ err: socketError }, "[Quiz] Bildirimler kaydedildi ancak anlik iletim kullanilamadi.");
+    }
   } catch (notificationError) {
     logger.error({ err: notificationError }, "[Quiz] Admin bildirimleri gönderilemedi.");
   }
@@ -47,6 +57,7 @@ const quizSchema = z.object({
   timeLimit: z.number().int().positive().optional().nullable(),
   shuffleQuestions: z.boolean().default(false),
   status: z.enum(["draft", "published", "archived"]).default("draft"),
+  contentType: z.enum(["exam", "survey"]).default("exam"),
   assignedClassIds: z.array(z.string().uuid()).optional().default([]),
 });
 
@@ -89,7 +100,7 @@ router.get("/", requireAuth, async (req: AuthRequest, res: Response) => {
       quizzes = allQuizzes.filter(q => {
         const isPublished = q.status === "published";
         const isAssignedToMyClass = studentClassId && (q as any).assignedClasses?.some((c: any) => c.id === studentClassId);
-        return isPublished && isAssignedToMyClass;
+        return q.contentType !== "survey" && isPublished && isAssignedToMyClass;
       });
     } else {
       quizzes = await storage.getQuizzesByCreator(req.user!.id);
@@ -123,7 +134,7 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
       return res.status(400).json({ message: fromZodError(validation.error).message });
     }
 
-    const { title, description, category, categoryId, difficulty, timeLimit, shuffleQuestions, status, assignedClassIds } = validation.data;
+    const { title, description, category, categoryId, difficulty, timeLimit, shuffleQuestions, status, contentType, assignedClassIds } = validation.data;
 
     if (!await canAssignClasses(req.user!.role, req.user!.id, assignedClassIds)) {
       return res.status(403).json({ message: "Yalnızca sorumlu olduğunuz sınıflara sınav atayabilirsiniz." });
@@ -150,6 +161,7 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
       timeLimit,
       shuffleQuestions,
       status,
+      contentType,
       createdBy: req.user!.id,
       publishedAt: status === "published" ? new Date() : null,
       audienceSize: status === "published" ? assignedStudentIds.size : null,
@@ -174,6 +186,18 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
     if (!existingQuiz) return res.status(404).json({ message: "Icerik bulunamadi." });
     if (req.user!.role === "teacher" && existingQuiz.createdBy !== req.user!.id) {
       return res.status(403).json({ message: "Bu icerigi duzenleme yetkiniz yok." });
+    }
+
+    if (validation.data.contentType && validation.data.contentType !== existingQuiz.contentType) {
+      const [examResults, surveySubmissions] = await Promise.all([
+        storage.getResultsByQuiz(existingQuiz.id),
+        storage.getSurveySubmissions(existingQuiz.id),
+      ]);
+      if (existingQuiz.status !== "draft" || examResults.length > 0 || surveySubmissions.length > 0) {
+        return res.status(409).json({
+          message: "Yayimlanmis veya yanit alinmis bir icerigin turu degistirilemez.",
+        });
+      }
     }
 
     const assignedClassIds = validation.data.assignedClassIds;
@@ -213,7 +237,7 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
         for (const student of students) {
           const notification = await storage.createNotification({
             userId: student.id,
-            title: "Yeni Sınav",
+            title: quiz.contentType === "survey" ? "Yeni Anket" : "Yeni Sınav",
             message: `"${quiz.title}" yayımlandı.`,
             type: "info",
           });
@@ -240,7 +264,19 @@ router.post("/:id/questions", requireAuth, requireRole(["admin", "teacher"]), as
       return res.status(403).json({ message: "Bu içeriğe soru ekleme yetkiniz yok." });
     }
 
-    if (validation.data.some((question) => question.options.length < 2 || !question.correctAnswer)) {
+    const allowedSurveyTypes = new Set(["single-choice", "multiple-choice", "open-text", "rating", "likert"]);
+    if (quiz.contentType === "survey") {
+      const invalidSurveyQuestion = validation.data.some((question) => {
+        if (!allowedSurveyTypes.has(question.type)) return true;
+        if (["single-choice", "multiple-choice", "likert"].includes(question.type)) {
+          return question.options.length < 2 || question.options.some((option) => !option.trim());
+        }
+        return false;
+      });
+      if (invalidSurveyQuestion) {
+        return res.status(400).json({ message: "Anket soru türü veya seçenekleri geçersiz." });
+      }
+    } else if (validation.data.some((question) => question.options.length < 2 || !question.correctAnswer)) {
       return res.status(400).json({ message: "Sınav sorularında seçenekler ve doğru cevap zorunludur." });
     }
 

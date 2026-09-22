@@ -1,27 +1,27 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
   DialogFooter
 } from "@/components/ui/dialog";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { 
-  Loader2, 
-  Sparkles, 
-  CheckCircle2, 
+import {
+  Loader2,
+  Sparkles,
+  CheckCircle2,
   AlertCircle,
   Wand2,
   Settings2,
@@ -39,29 +39,31 @@ interface AIQuestionGeneratorProps {
   onGenerate: (questions: any[]) => void;
   quizTitle?: string;
   quizDescription?: string;
+  contentType?: 'exam' | 'survey';
 }
 
-export function AIQuestionGenerator({ 
-  onGenerate, 
-  quizTitle = "", 
-  quizDescription = "" 
+export function AIQuestionGenerator({
+  onGenerate,
+  quizTitle = "",
+  quizDescription = "",
+  contentType = 'exam'
 }: AIQuestionGeneratorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [difficulty, setDifficulty] = useState("medium");
   const [model, setModel] = useState("gemini-3.8-flash");
   const [count, setCount] = useState("3");
   const [isGenerating, setIsGenerating] = useState(false);
-  
+
   // Custom Config States
   const [showCustomConfig, setShowCustomConfig] = useState(false);
   const [customBaseUrl, setCustomBaseUrl] = useState("https://generativelanguage.googleapis.com/v1beta/openai/");
   const [customApiKey, setCustomApiKey] = useState("");
   const [customModel, setCustomModel] = useState("");
-  
+
   // Test States
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
-  
+
   const { toast } = useToast();
 
   // Combined topic from title and description
@@ -82,7 +84,7 @@ export function AIQuestionGenerator({
         apiKey: customApiKey || undefined,
         model: activeModel
       });
-      
+
       setTestResult({
         success: response.success,
         message: response.message
@@ -105,10 +107,10 @@ export function AIQuestionGenerator({
 
   const handleGenerate = async () => {
     if (!topic) {
-      toast({ 
-        title: "Hata", 
-        description: "Lütfen önce sınav başlığı veya açıklaması girin", 
-        variant: "destructive" 
+      toast({
+        title: "Hata",
+        description: "Lütfen önce sınav başlığı veya açıklaması girin",
+        variant: "destructive"
       });
       return;
     }
@@ -122,14 +124,15 @@ export function AIQuestionGenerator({
     try {
       const numCount = Math.min(Math.max(parseInt(count) || 3, 1), 10);
       const activeModel = model === "custom" ? customModel : model;
-      
+
       const response = await aiApi.generateQuestions(
-        topic, 
-        numCount, 
-        difficulty, 
+        topic,
+        numCount,
+        difficulty,
         activeModel,
         showCustomConfig ? customBaseUrl : undefined,
-        showCustomConfig ? customApiKey : undefined
+        showCustomConfig ? customApiKey : undefined,
+        contentType
       );
 
       const generatedQuestions = response.questions || [];
@@ -168,7 +171,7 @@ export function AIQuestionGenerator({
       <DialogTrigger asChild>
         <Button variant="outline" className="w-full gap-2 border-primary/20 text-primary hover:bg-primary/5 hover:text-primary shadow-sm dark:shadow-none h-12">
           <Sparkles className="h-4 w-4" />
-          AI ile Soruları Üret
+          AI ile {contentType === 'survey' ? 'Anket Soruları' : 'Soruları'} Üret
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
@@ -225,11 +228,11 @@ export function AIQuestionGenerator({
 
             <div className="space-y-3">
               <Label htmlFor="count" className="text-sm font-bold uppercase tracking-wider opacity-70">Soru Sayısı</Label>
-              <Input 
+              <Input
                 id="count"
-                type="number" 
-                min="1" 
-                max="10" 
+                type="number"
+                min="1"
+                max="10"
                 className="h-11"
                 value={count}
                 onChange={(e) => setCount(e.target.value)}
@@ -263,9 +266,9 @@ export function AIQuestionGenerator({
 
           {/* Custom Config Toggle */}
           <div className="pt-2 border-t border-border">
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               className="w-full justify-between hover:bg-primary/5 text-muted-foreground font-medium"
               onClick={() => setShowCustomConfig(!showCustomConfig)}
             >
@@ -280,19 +283,19 @@ export function AIQuestionGenerator({
               <div className="mt-4 p-4 rounded-xl border border-primary/10 bg-primary/5 space-y-4 animate-in slide-in-from-top-2 duration-300">
                 <div className="space-y-2">
                   <Label className="text-[11px] font-bold uppercase tracking-widest text-primary/70">Base URL</Label>
-                  <Input 
-                    value={customBaseUrl} 
+                  <Input
+                    value={customBaseUrl}
                     onChange={(e) => setCustomBaseUrl(e.target.value)}
                     placeholder="https://.../v1/"
                     className="bg-background"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label className="text-[11px] font-bold uppercase tracking-widest text-primary/70">API Anahtarı (Opsiyonel)</Label>
-                  <Input 
+                  <Input
                     type="password"
-                    value={customApiKey} 
+                    value={customApiKey}
                     onChange={(e) => setCustomApiKey(e.target.value)}
                     placeholder="Girilmezse sunucu anahtarı kullanılır"
                     className="bg-background"
@@ -301,8 +304,8 @@ export function AIQuestionGenerator({
 
                 <div className="space-y-2">
                   <Label className="text-[11px] font-bold uppercase tracking-widest text-primary/70">Model ID</Label>
-                  <Input 
-                    value={model === "custom" ? customModel : model} 
+                  <Input
+                    value={model === "custom" ? customModel : model}
                     onChange={(e) => {
                       if (model === "custom") setCustomModel(e.target.value);
                       else {
@@ -319,9 +322,9 @@ export function AIQuestionGenerator({
                 </div>
 
                 <div className="flex items-center justify-between gap-4 pt-2">
-                  <Button 
-                    variant="secondary" 
-                    size="sm" 
+                  <Button
+                    variant="secondary"
+                    size="sm"
                     className="flex-1 gap-2 bg-background border shadow-sm dark:shadow-none hover:shadow-md transition-all font-bold"
                     onClick={handleTestConfig}
                     disabled={isTesting || isGenerating}
@@ -329,7 +332,7 @@ export function AIQuestionGenerator({
                     {isTesting ? <Loader2 className="h-3 w-3 animate-spin" /> : <FlaskConical className="h-3 w-3 text-primary" />}
                     Yapılandırmayı Test Et
                   </Button>
-                  
+
                   {testResult && (
                     <div className={`flex items-center gap-1.5 text-xs font-black ${testResult.success ? 'text-emerald-600' : 'text-rose-600'}`}>
                       {testResult.success ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
@@ -343,16 +346,16 @@ export function AIQuestionGenerator({
         </div>
 
         <DialogFooter className="flex-col sm:flex-row gap-3">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => setIsOpen(false)}
             disabled={isGenerating}
             className="sm:flex-1"
           >
             İptal
           </Button>
-          <Button 
-            onClick={handleGenerate} 
+          <Button
+            onClick={handleGenerate}
             disabled={!topic || isGenerating || (showCustomConfig && !isConfigTested())}
             className="sm:flex-[2] gap-2 h-12 text-base shadow-lg shadow-primary/20 dark:shadow-none"
           >

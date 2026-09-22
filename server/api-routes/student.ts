@@ -38,7 +38,7 @@ router.get("/quizzes", requireAuth, async (req: AuthRequest, res: Response) => {
   const studentClassId = req.user!.classId;
   
   const quizzes = allQuizzes.filter(q => {
-    if (q.status !== "published") return false;
+    if (q.status !== "published" || q.contentType === "survey") return false;
     const assignedClasses = (q as any).assignedClasses || [];
     if (assignedClasses.length === 0) {
       // Herhangi bir sınıfa atanmamış sınav:
@@ -134,6 +134,7 @@ router.post("/quiz/:quizId/prepare-offline", quizActionLimiter, requireAuth, req
   try {
     const quiz = await storage.getQuiz(req.params.quizId);
     if (!quiz) return res.status(404).json({ message: "Quiz bulunamadı." });
+    if (quiz.contentType === "survey") return res.status(409).json({ message: "Anketler sınav akışıyla başlatılamaz." });
     if (quiz.status !== "published") return res.status(403).json({ message: "Bu sınav henüz yayında değil." });
     if (quiz.timeLimit) {
       return res.status(409).json({ message: "Süreli sınavlar güvenlik nedeniyle çevrimdışı başlatılamaz." });
@@ -182,6 +183,7 @@ router.post("/quiz/:quizId/start", quizActionLimiter, requireAuth, async (req: A
   try {
     const quiz = await storage.getQuiz(req.params.quizId);
     if (!quiz) return res.status(404).json({ message: "Quiz bulunamadı." });
+    if (quiz.contentType === "survey") return res.status(409).json({ message: "Anketler sınav akışıyla başlatılamaz." });
     
     if (req.user!.role === "student" && quiz.status !== "published") {
       return res.status(403).json({ message: "Bu sınav henüz yayında değil." });

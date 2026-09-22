@@ -26,6 +26,7 @@ import {
   Trash2,
   Volume2,
   VolumeX,
+  ClipboardList,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -118,6 +119,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
     { label: "Dashboard", href: role === 'student' ? "/student/dashboard" : "/", icon: LayoutDashboard },
     ...(role === 'student' ? [
       { label: "Sınavlarım", href: "/student/quizzes", icon: FileText },
+      { label: "Anketlerim", href: "/student/surveys", icon: ClipboardList },
       { label: "Sonuçlarım", href: "/student/results", icon: ListChecks },
       { label: "İstatistiklerim", href: "/my-stats", icon: BarChart3 },
     ] : []),
@@ -125,6 +127,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
       { label: "Sınavlarım", href: "/quizzes", icon: FileText },
       { label: "Sınıf İstatistikleri", href: "/statistics", icon: BarChart3 },
       { label: "Sınav Sonuçları", href: "/results", icon: ListChecks },
+      { label: "Anket Sonuçları", href: "/survey-results", icon: ClipboardList },
       { label: "Öğrenciler", href: "/students", icon: Users },
       { label: "Sınıflarım", href: "/classlist", icon: GraduationCap },
     ] : []),
@@ -133,6 +136,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
       { label: "Sınavlar", href: "/quizzes", icon: FileText },
       { label: "Sınıf İstatistikleri", href: "/statistics", icon: BarChart3 },
       { label: "Sınav Sonuçları", href: "/results", icon: ListChecks },
+      { label: "Anket Sonuçları", href: "/survey-results", icon: ClipboardList },
       { label: "Öğrenciler", href: "/students", icon: Users },
       { label: "Eğitmenler", href: "/teachers", icon: Briefcase },
       { label: "Sınıflar", href: "/classlist", icon: GraduationCap },

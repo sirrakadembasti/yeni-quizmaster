@@ -36,6 +36,9 @@ import AdminQuizzesPage from "@/pages/admin-quizzes";
 import ResetPasswordPage from "@/pages/reset-password";
 import ArchivePage from "@/pages/admin/archive";
 import AnnouncementsPage from "@/pages/announcements";
+import StudentSurveysPage from "@/pages/student-surveys";
+import TakeSurveyPage from "@/pages/take-survey";
+import SurveyResultsPage from "@/pages/survey-results";
 
 // =============================================================================
 // TYPES
@@ -88,6 +91,8 @@ const ROUTES: RouteConfig[] = [
   // ── Student only ─────────────────────────────────────────────────────────────
   { path: '/student/dashboard', component: StudentDashboard,   roles: ['student'] },
   { path: '/student/quizzes',   component: StudentQuizzesPage, roles: ['student'] },
+  { path: '/student/surveys',   component: StudentSurveysPage, roles: ['student'] },
+  { path: '/student/survey/:id', component: TakeSurveyPage, roles: ['student'] },
   { path: '/my-quizzes',        component: StudentQuizzesPage, roles: ['student'] },
   { path: '/my-results',        component: StudentResultsPage, roles: ['student'] },
 
@@ -97,6 +102,7 @@ const ROUTES: RouteConfig[] = [
   { path: '/quizzes/:id',   component: CreateQuizPage, roles: ['teacher', 'admin'] },
   { path: '/results',       component: StatisticsPage, roles: ['teacher', 'admin'] },
   { path: '/statistics',    component: ClassStatisticsPage, roles: ['teacher', 'admin'] },
+  { path: '/survey-results', component: SurveyResultsPage, roles: ['teacher', 'admin'] },
   { path: '/students',      component: StudentsPage,   roles: ['teacher', 'admin'] },
   { path: '/classlist',     component: ClassListPage,  roles: ['teacher', 'admin'] },
   { path: '/classes/:id',   component: ClassDetailPage, roles: ['teacher', 'admin'] },

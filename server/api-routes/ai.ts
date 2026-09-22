@@ -76,6 +76,17 @@ const QuestionSchema = z.object({
 const AIResponseSchema = z.array(QuestionSchema).or(z.object({
   questions: z.array(QuestionSchema)
 }));
+const SurveyQuestionSchema = z.object({
+  text: z.string().min(1, "Soru metni boş olamaz"),
+  type: z.enum(["single-choice", "multiple-choice", "open-text", "rating", "likert"]),
+  options: z.array(z.string()).default([]),
+  correctAnswer: z.null().optional(),
+  config: z.record(z.any()).optional().nullable(),
+});
+
+const SurveyResponseSchema = z.array(SurveyQuestionSchema).or(z.object({
+  questions: z.array(SurveyQuestionSchema),
+}));
 
 // ==================== AI UTILS ====================
 
@@ -179,8 +190,8 @@ router.post("/test-config", aiTestLimiter, requireAuth, requireRole(["admin", "t
     }
   } catch (error: any) {
     logger.error({ err: error }, "[AI] test-config bağlantı hatası");
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       message: "Bağlantı testi sırasında bir hata oluştu.",
       details: error?.message || (error?.cause ? error.cause.message : undefined)
     });
@@ -189,16 +200,18 @@ router.post("/test-config", aiTestLimiter, requireAuth, requireRole(["admin", "t
 
 router.post("/generate-questions", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
-    const { 
-      topic, 
-      count = 3, 
-      difficulty = "medium", 
+    const {
+      topic,
+      count = 3,
+      difficulty = "medium",
       model = "gemini-3.8-flash",
       customBaseUrl,
       customApiKey,
-      questionType = "multiple-choice"
+      questionType = "multiple-choice",
+      contentType: requestedContentType = "exam"
     } = req.body;
 
+    const contentType = requestedContentType === "survey" ? "survey" : "exam";
     const baseUrl = customBaseUrl || OFFICIAL_BASE_URL;
 
     // URL güvenlik kontrolü
@@ -219,15 +232,13 @@ router.post("/generate-questions", requireAuth, requireRole(["admin", "teacher"]
     // customApiKey asla log'a yazılmıyor — sadece topic ve model bilgisi loglanıyor
     logger.info({ topic, model, questionType, count, difficulty }, "[AI] Soru üretimi başlatılıyor.");
 
-    const prompt = `Generate ${count} ${questionType} questions about "${topic}" at a ${difficulty} difficulty level.
+    const prompt = contentType === "survey"
+      ? `Generate ${count} survey questions in Turkish about "${topic}". Use a useful mix of single-choice, multiple-choice, open-text, rating and likert types.
+Respond ONLY with a valid JSON array. Each item must follow: {"text":"...","type":"single-choice|multiple-choice|open-text|rating|likert","options":[],"correctAnswer":null,"config":null}.
+Use options for choice and likert questions. For rating use {"max":5} in config. Do not score answers and do not include a correct answer.`
+      : `Generate ${count} ${questionType} questions about "${topic}" at a ${difficulty} difficulty level.
 Respond ONLY with a valid JSON array of objects.
-Structure for ${questionType}:
-${questionType === "true-false" ? 
-  '{"text": "...", "type": "true-false", "options": ["Doğru", "Yanlış"], "correctAnswer": "Doğru"}' : 
-  questionType === "short-answer" ? 
-  '{"text": "...", "type": "short-answer", "options": [], "correctAnswer": "answer"}' : 
-  '{"text": "...", "type": "multiple-choice", "options": ["A", "B", "C", "D", "E"], "correctAnswer": "A"}'
-}
+Structure: {"text":"...","type":"multiple-choice","options":["A","B","C","D","E"],"correctAnswer":"A"}.
 Output ONLY raw JSON.`;
 
     const controller = new AbortController();
@@ -253,9 +264,9 @@ Output ONLY raw JSON.`;
     } catch (fetchError: any) {
       clearTimeout(timeoutId);
       logger.error({ err: fetchError }, "[AI] Dış servis bağlantı hatası (Fetch Error)");
-      return res.status(502).json({ 
-        message: fetchError.name === 'AbortError' 
-          ? "AI sağlayıcısı çok geç yanıt verdi (Timeout)." 
+      return res.status(502).json({
+        message: fetchError.name === 'AbortError'
+          ? "AI sağlayıcısı çok geç yanıt verdi (Timeout)."
           : "AI sağlayıcısına bağlanılamadı.",
         details: fetchError.message || (fetchError.cause ? fetchError.cause.message : undefined)
       });
@@ -274,23 +285,28 @@ Output ONLY raw JSON.`;
 
     const data = await response.json() as any;
     const content = data.choices?.[0]?.message?.content;
-    
+
     if (!content) {
       return res.status(500).json({ message: "AI sağlayıcısından boş içerik döndü." });
     }
 
     try {
       const rawData = extractJsonArray(content);
-      const validation = AIResponseSchema.safeParse(rawData);
-      
+      const responseSchema = contentType === "survey" ? SurveyResponseSchema : AIResponseSchema;
+      const validation = responseSchema.safeParse(rawData);
+
       if (!validation.success) {
         logger.error({ validationError: validation.error.format() }, "[AI] Yanıt şema doğrulaması başarısız.");
         return res.status(500).json({ message: "AI yanıtı beklenen formatta değil." });
       }
 
-      const validatedQuestions = Array.isArray(validation.data) 
-        ? validation.data 
+      const validatedQuestions: any[] = Array.isArray(validation.data)
+        ? validation.data
         : validation.data.questions;
+
+      if (contentType === "survey") {
+        return res.json({ questions: validatedQuestions });
+      }
 
       const questions = validatedQuestions.map((q) => {
         let options = [...q.options];

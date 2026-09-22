@@ -109,6 +109,7 @@ export interface Quiz {
   publishedAt?: string | null;
   audienceSize?: number | null;
   status: string;
+  contentType?: 'exam' | 'survey';
   createdAt: string;
   questionCount?: number;
   participantCount?: number;
@@ -186,10 +187,11 @@ export interface CreateQuizInput {
   timeLimit?: number;
   shuffleQuestions?: boolean;
   status?: 'draft' | 'published' | 'archived';
+  contentType?: 'exam' | 'survey';
   assignedClassIds?: string[];
   questions?: Array<{
     text: string;
-    type: 'multiple-choice' | 'true-false' | 'short-answer';
+    type: 'multiple-choice' | 'true-false' | 'short-answer' | 'single-choice' | 'open-text' | 'rating' | 'likert';
     options?: string[];
     correctAnswer?: string | null;
     config?: Record<string, any> | null;
@@ -259,9 +261,10 @@ export interface StudentStats {
 
 export interface AIQuestion {
   text: string;
-  type: 'multiple-choice';
+  type: 'multiple-choice' | 'single-choice' | 'open-text' | 'rating' | 'likert';
   options: string[];
-  correctAnswer: string;
+  correctAnswer?: string | null;
+  config?: Record<string, any> | null;
   correctAnswerIndex?: number;
 }
 
@@ -606,7 +609,8 @@ export const aiApi = {
     difficulty: string = "medium", 
     model: string = "gemini-3.8-flash",
     customBaseUrl?: string,
-    customApiKey?: string
+    customApiKey?: string,
+    contentType: 'exam' | 'survey' = 'exam'
   ) {
     const response = await apiFetch(`${API_BASE}/ai/generate-questions`, {
       method: 'POST',
@@ -617,7 +621,8 @@ export const aiApi = {
         difficulty, 
         model,
         customBaseUrl,
-        customApiKey
+        customApiKey,
+        contentType
       }),
       credentials: 'include',
     });
@@ -988,4 +993,54 @@ export const announcementApi = {
     return handleResponse<{ message: string }>(response);
   }
 };
+export interface SurveyQuestionResult {
+  id: string;
+  text: string;
+  type: string;
+  responseCount: number;
+  options?: string[];
+  config?: Record<string, unknown> | null;
+  totalSelections?: number;
+  averageValue?: number | null;
+  distribution?: Array<{ label: string; count: number }>;
+  openAnswers?: Array<{ value: string; studentName: string; submittedAt: string }>;
+}
 
+export interface SurveyResultSummary {
+  id: string;
+  title: string;
+  createdAt: string;
+  participantCount: number;
+  audienceSize: number;
+  participationRate: number;
+  questionResults: SurveyQuestionResult[];
+}
+
+export const surveyApi = {
+  async getSurveys() {
+    const response = await apiFetch(`${API_BASE}/surveys`, { credentials: 'include' });
+    return handleResponse<{ surveys: Array<Quiz & { submitted?: boolean }> }>(response);
+  },
+  async getSurvey(id: string) {
+    const response = await apiFetch(`${API_BASE}/surveys/${id}`, { credentials: 'include' });
+    return handleResponse<{ survey: Quiz; questions: Question[]; submitted: boolean }>(response);
+  },
+  async submitSurvey(id: string, answers: Record<string, unknown>) {
+    const response = await apiFetch(`${API_BASE}/surveys/${id}/submit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answers }),
+      credentials: 'include',
+    });
+    return handleResponse<{ submissionId: string; submittedAt: string }>(response);
+  },
+  async getResults(filters: { surveyId?: string; startDate?: string; endDate?: string } = {}) {
+    const params = new URLSearchParams();
+    if (filters.surveyId && filters.surveyId !== 'all') params.set('surveyId', filters.surveyId);
+    if (filters.startDate) params.set('startDate', filters.startDate);
+    if (filters.endDate) params.set('endDate', filters.endDate);
+    const query = params.toString();
+    const response = await apiFetch(`${API_BASE}/surveys/results${query ? `?${query}` : ''}`, { credentials: 'include' });
+    return handleResponse<{ surveys: SurveyResultSummary[] }>(response);
+  },
+};

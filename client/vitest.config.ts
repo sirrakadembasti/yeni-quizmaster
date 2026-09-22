@@ -35,11 +35,13 @@ if (dns.promises) {
 }
 
 export default defineConfig({
+  root: __dirname,
   plugins: [react()],
   test: {
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
+    include: ['src/**/*.test.{ts,tsx}'],
     css: true,
   },
   resolve: {

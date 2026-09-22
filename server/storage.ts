@@ -47,6 +47,9 @@ export interface IStorage {
   createQuiz(quiz: Prisma.QuizUncheckedCreateInput & { assignedClassIds?: string[], category?: string }): Promise<Quiz>;
   updateQuiz(id: string, quiz: Partial<Prisma.QuizUncheckedCreateInput> & { assignedClassIds?: string[] }): Promise<Quiz | undefined>;
   deleteQuiz(id: string): Promise<void>;
+  getSurveySubmissions(surveyId: string, startDate?: Date, endDate?: Date): Promise<any[]>;
+  getStudentSurveySubmission(surveyId: string, studentId: string): Promise<any | undefined>;
+  createSurveySubmission(surveyId: string, studentId: string, answers: Array<{ questionId: string; value: unknown }>): Promise<any>;
 
   // Question methods
   getQuestionsByQuiz(quizId: string): Promise<Question[]>;
@@ -626,7 +629,8 @@ export class PrismaStorage implements IStorage {
               where: {
                 student: { role: 'student' }
               }
-            }
+            },
+            surveySubmissions: true
           }
         },
         category: true, creator: true,
@@ -638,7 +642,7 @@ export class PrismaStorage implements IStorage {
       ...q, 
       category: q.category?.name || 'General',
       questionCount: q._count.questions,
-      participantCount: q._count.results
+      participantCount: q.contentType === 'survey' ? q._count.surveySubmissions : q._count.results
     })) as unknown as Quiz[];
   }
 
@@ -664,7 +668,8 @@ export class PrismaStorage implements IStorage {
               where: {
                 student: { role: 'student' }
               }
-            }
+            },
+            surveySubmissions: true
           }
         },
         category: true, creator: true,
@@ -676,7 +681,7 @@ export class PrismaStorage implements IStorage {
       ...q, 
       category: q.category?.name || 'General',
       questionCount: q._count.questions,
-      participantCount: q._count.results
+      participantCount: q.contentType === 'survey' ? q._count.surveySubmissions : q._count.results
     })) as unknown as Quiz[];
   }
 
@@ -690,6 +695,7 @@ export class PrismaStorage implements IStorage {
         timeLimit: quiz.timeLimit,
         shuffleQuestions: quiz.shuffleQuestions || false,
         status: quiz.status || 'draft',
+        contentType: quiz.contentType || 'exam',
         publishedAt: quiz.publishedAt,
         audienceSize: quiz.audienceSize,
         createdBy: quiz.createdBy,
@@ -716,6 +722,7 @@ export class PrismaStorage implements IStorage {
         timeLimit: quiz.timeLimit,
         shuffleQuestions: quiz.shuffleQuestions,
         status: quiz.status,
+        contentType: quiz.contentType,
         publishedAt: quiz.publishedAt,
         audienceSize: quiz.audienceSize,
         assignedClasses: quiz.assignedClassIds ? {
@@ -735,6 +742,55 @@ export class PrismaStorage implements IStorage {
     ]);
   }
 
+  async getSurveySubmissions(surveyId: string, startDate?: Date, endDate?: Date): Promise<any[]> {
+    return prisma.surveySubmission.findMany({
+      where: {
+        surveyId,
+        ...(startDate || endDate ? {
+          submittedAt: {
+            ...(startDate ? { gte: startDate } : {}),
+            ...(endDate ? { lte: endDate } : {}),
+          },
+        } : {}),
+      },
+      orderBy: { submittedAt: 'desc' },
+      include: {
+        student: { select: { id: true, name: true, classId: true } },
+        answers: {
+          include: { question: { select: { id: true, text: true, type: true, options: true, order: true } } },
+          orderBy: { question: { order: 'asc' } },
+        },
+      },
+    });
+  }
+
+  async getStudentSurveySubmission(surveyId: string, studentId: string): Promise<any | undefined> {
+    const submission = await prisma.surveySubmission.findUnique({
+      where: { surveyId_studentId: { surveyId, studentId } },
+      include: { answers: true },
+    });
+    return submission || undefined;
+  }
+
+  async createSurveySubmission(
+    surveyId: string,
+    studentId: string,
+    answers: Array<{ questionId: string; value: unknown }>,
+  ): Promise<any> {
+    return prisma.surveySubmission.create({
+      data: {
+        surveyId,
+        studentId,
+        answers: {
+          create: answers.map((answer) => ({
+            questionId: answer.questionId,
+            value: JSON.stringify(answer.value),
+          })),
+        },
+      },
+      include: { answers: true },
+    });
+  }
   // Question methods
   async getQuestionsByQuiz(quizId: string): Promise<Question[]> {
     const questions = await prisma.question.findMany({ where: { quizId }, orderBy: { order: 'asc' } });
@@ -1027,9 +1083,10 @@ export class PrismaStorage implements IStorage {
     const quizzes = await prisma.quiz.findMany({
       where: {
         status: 'published',
+        contentType: 'exam',
         ...(role === 'teacher' ? { createdBy: userId } : {}),
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ publishedAt: 'desc' }, { createdAt: 'desc' }],
       take: 5,
       include: {
         category: { select: { name: true } },
@@ -1048,10 +1105,8 @@ export class PrismaStorage implements IStorage {
     return quizzes.map((quiz) => {
       const assignedIds = new Set(quiz.assignedClasses.flatMap((classroom) => classroom.students.map((student) => student.id)));
       const participantIds = new Set(quiz.results.map((result) => result.studentId));
-      const participants = assignedIds.size > 0
-        ? [...participantIds].filter((studentId) => assignedIds.has(studentId)).length
-        : participantIds.size;
-      const assignedStudents = assignedIds.size > 0 ? assignedIds.size : participantIds.size;
+      const assignedStudents = quiz.audienceSize ?? assignedIds.size;
+      const participants = participantIds.size;
       return {
         id: quiz.id,
         title: quiz.title,
@@ -1059,7 +1114,7 @@ export class PrismaStorage implements IStorage {
         createdAt: quiz.createdAt,
         assignedStudents,
         participants,
-        participationRate: assignedStudents > 0 ? Math.round((participants / assignedStudents) * 100) : (participants > 0 ? 100 : 0),
+        participationRate: assignedStudents > 0 ? Math.min(100, Math.round((participants / assignedStudents) * 100)) : 0,
       };
     });
   }

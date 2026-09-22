@@ -34,6 +34,7 @@ if (dns.promises) {
 }
 
 export default defineConfig({
+  root: __dirname,
   test: {
     environment: 'node',
     globals: true,

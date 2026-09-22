@@ -5,158 +5,88 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
-import { Users, Clock } from "lucide-react";
+import { Users, Clock, ClipboardList } from "lucide-react";
 
 interface QuizSettingsProps {
-  title: string;
-  setTitle: (val: string) => void;
-  description: string;
-  setDescription: (val: string) => void;
-  category: string;
-  setCategory: (val: string) => void;
-  dbCategories: any[];
-  teacherClasses: any[];
-  assignedClassIds: string[];
+  contentType: 'exam' | 'survey'; setContentType: (value: 'exam' | 'survey') => void;
+  title: string; setTitle: (val: string) => void;
+  description: string; setDescription: (val: string) => void;
+  category: string; setCategory: (val: string) => void;
+  dbCategories: any[]; teacherClasses: any[]; assignedClassIds: string[];
   toggleClass: (classId: string) => void;
-  timeLimitEnabled: boolean;
-  setTimeLimitEnabled: (val: boolean) => void;
-  timeLimit?: number;
-  setTimeLimit: (val: number | undefined) => void;
-  shuffleQuestions: boolean;
-  setShuffleQuestions: (val: boolean) => void;
+  timeLimitEnabled: boolean; setTimeLimitEnabled: (val: boolean) => void;
+  timeLimit?: number; setTimeLimit: (val: number | undefined) => void;
+  shuffleQuestions: boolean; setShuffleQuestions: (val: boolean) => void;
 }
 
 export function QuizSettings({
-  title, setTitle,
-  description, setDescription,
-  category, setCategory,
-  dbCategories,
-  teacherClasses,
-  assignedClassIds, toggleClass,
-  timeLimitEnabled, setTimeLimitEnabled,
-  timeLimit, setTimeLimit,
-  shuffleQuestions, setShuffleQuestions
+  contentType, setContentType, title, setTitle, description, setDescription, category, setCategory,
+  dbCategories, teacherClasses, assignedClassIds, toggleClass, timeLimitEnabled, setTimeLimitEnabled,
+  timeLimit, setTimeLimit, shuffleQuestions, setShuffleQuestions,
 }: QuizSettingsProps) {
+  const isSurvey = contentType === 'survey';
+  const label = isSurvey ? 'Anket' : 'Sınav';
   return (
-    <div className="space-y-6 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
+    <div className="space-y-4 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
       <Card className="border-border/60 shadow-sm dark:shadow-none">
-        <CardHeader>
-          <CardTitle>Temel Bilgiler</CardTitle>
-          <CardDescription>Sınavınızın görünümünü ve detaylarını ayarlayın.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-
-          <div className="space-y-2">
-            <Label htmlFor="title">Sınav Başlığı <span className="text-destructive">*</span></Label>
-            <Input 
-              id="title" 
-              placeholder="Örn: 10. Sınıf Matematik 1. Dönem 1. Yazılı" 
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="text-lg font-medium"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="description">Açıklama (Opsiyonel)</Label>
-            <Textarea 
-              id="description" 
-              placeholder="Sınav hakkında kısa bir bilgi veya yönerge ekleyin..." 
-              className="min-h-[100px] resize-none"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t">
-            <div className="space-y-3">
-              <Label>Ders</Label>
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Ders seçin" />
-                </SelectTrigger>
-                <SelectContent>
-                  {dbCategories.map(cat => (
-                    <SelectItem key={cat.id} value={cat.name}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+        <CardHeader><CardTitle>Temel Bilgiler</CardTitle><CardDescription>{label} görünümünü, hedefini ve temel ayarlarını belirleyin.</CardDescription></CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-[220px_1fr]">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2"><ClipboardList className="h-4 w-4 text-primary" />İçerik Türü</Label>
+              <Select value={contentType} onValueChange={(value) => setContentType(value as 'exam' | 'survey')}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent><SelectItem value="exam">Sınav</SelectItem><SelectItem value="survey">Anket</SelectItem></SelectContent>
               </Select>
             </div>
-
-            <div className="space-y-3">
-              <Label className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-primary" />
-                Yayınlanacak Sınıflar
-              </Label>
-              <div className="grid grid-cols-2 gap-2 p-3 border rounded-lg bg-muted/20">
-                {teacherClasses.length > 0 ? (
-                  teacherClasses.map((cls) => (
-                    <div key={cls.id} className="flex items-center space-x-2">
-                      <Checkbox 
-                        id={`class-${cls.id}`} 
-                        checked={assignedClassIds.includes(cls.id)}
-                        onCheckedChange={() => toggleClass(cls.id)}
-                      />
-                      <label
-                        htmlFor={`class-${cls.id}`}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                      >
-                        {cls.name}
-                      </label>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-xs text-muted-foreground italic col-span-2">Henüz bir sınıfınız bulunmuyor.</p>
-                )}
+            <div className="space-y-2">
+              <Label htmlFor="title">{label} Başlığı <span className="text-destructive">*</span></Label>
+              <Input id="title" placeholder={isSurvey ? "Örn: Öğrenci Memnuniyet Anketi" : "Örn: 10. Sınıf Matematik Yazılısı"} value={title} onChange={(event) => setTitle(event.target.value)} className="font-medium" />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="description">Açıklama (Opsiyonel)</Label>
+            <Textarea id="description" placeholder={label + " hakkında kısa bir açıklama veya yönerge ekleyin..."} className="min-h-[88px] resize-none" value={description} onChange={(event) => setDescription(event.target.value)} />
+          </div>
+          <div className="grid grid-cols-1 gap-4 border-t pt-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label>Ders / Kategori</Label>
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger><SelectValue placeholder="Kategori seçin" /></SelectTrigger>
+                <SelectContent>{dbCategories.map((item) => <SelectItem key={item.id} value={item.name}>{item.name}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2"><Users className="h-4 w-4 text-primary" />Yayınlanacak Sınıflar</Label>
+              <div className="grid grid-cols-2 gap-2 rounded-lg border bg-muted/20 p-3">
+                {teacherClasses.length > 0 ? teacherClasses.map((classroom) => (
+                  <div key={classroom.id} className="flex items-center space-x-2">
+                    <Checkbox id={"class-" + classroom.id} checked={assignedClassIds.includes(classroom.id)} onCheckedChange={() => toggleClass(classroom.id)} />
+                    <label htmlFor={"class-" + classroom.id} className="cursor-pointer text-sm font-medium">{classroom.name}</label>
+                  </div>
+                )) : <p className="col-span-2 text-xs italic text-muted-foreground">Yetkili sınıf bulunmuyor.</p>}
               </div>
-              <p className="text-[10px] text-muted-foreground">Sınıf seçilmezse sınav tüm öğrencilere açık olacaktır.</p>
+              <p className="text-[11px] text-muted-foreground">Sınıfı bulunan öğrenciler için en az bir hedef sınıf seçilmelidir.</p>
             </div>
           </div>
         </CardContent>
       </Card>
-
-      <Card className="border-border/60 shadow-sm dark:shadow-none">
-        <CardHeader>
-          <CardTitle>Sınav Kuralları</CardTitle>
-          <CardDescription>Öğrencilerin sınav deneyimini şekillendirin.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-            <div className="space-y-0.5">
-              <Label className="text-base font-medium flex items-center gap-2">
-                <Clock className="h-4 w-4 text-primary" />
-                Süre Sınırı
-              </Label>
-              <p className="text-sm text-muted-foreground">Sınav için maksimum süre belirleyin</p>
+      {!isSurvey && (
+        <Card className="border-border/60 shadow-sm dark:shadow-none">
+          <CardHeader><CardTitle>Sınav Kuralları</CardTitle><CardDescription>Süre ve soru sıralaması ayarları yalnız sınavlarda uygulanır.</CardDescription></CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between rounded-lg border bg-card p-3">
+              <div><Label className="flex items-center gap-2 text-base font-medium"><Clock className="h-4 w-4 text-primary" />Süre Sınırı</Label><p className="text-sm text-muted-foreground">Sınav için maksimum süre belirleyin.</p></div>
+              <Switch checked={timeLimitEnabled} onCheckedChange={setTimeLimitEnabled} />
             </div>
-            <Switch checked={timeLimitEnabled} onCheckedChange={setTimeLimitEnabled} />
-          </div>
-          
-          {timeLimitEnabled && (
-            <div className="flex items-center gap-4 p-4 border rounded-lg bg-accent/20 animate-in fade-in zoom-in duration-300">
-              <Label htmlFor="timeLimit" className="whitespace-nowrap font-medium">Süre (Dakika):</Label>
-              <Input 
-                id="timeLimit" 
-                type="number" 
-                min="1" 
-                className="w-24 font-mono text-center" 
-                value={timeLimit || ''}
-                onChange={(e) => setTimeLimit(parseInt(e.target.value) || undefined)}
-              />
+            {timeLimitEnabled && <div className="flex items-center gap-4 rounded-lg border bg-accent/20 p-3"><Label htmlFor="timeLimit">Süre (Dakika)</Label><Input id="timeLimit" type="number" min="1" className="w-24 text-center font-mono" value={timeLimit || ''} onChange={(event) => setTimeLimit(parseInt(event.target.value) || undefined)} /></div>}
+            <div className="flex items-center justify-between rounded-lg border bg-card p-3">
+              <div><Label className="text-base font-medium">Soruları Karıştır</Label><p className="text-sm text-muted-foreground">Her öğrenciye soruları farklı sırada gösterin.</p></div>
+              <Switch checked={shuffleQuestions} onCheckedChange={setShuffleQuestions} />
             </div>
-          )}
-
-          <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-            <div className="space-y-0.5">
-              <Label className="text-base font-medium">Soruları Karıştır</Label>
-              <p className="text-sm text-muted-foreground">Her öğrenciye soruları farklı sırada gösterin</p>
-            </div>
-            <Switch checked={shuffleQuestions} onCheckedChange={setShuffleQuestions} />
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

@@ -434,8 +434,8 @@
   }
 
   [data-slot="card"] {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
+    break-inside: auto !important;
+    page-break-inside: auto !important;
     border: 1px solid #d7dde5 !important;
     border-radius: 4px !important;
     box-shadow: none !important;
@@ -510,6 +510,23 @@
     break-inside: avoid !important;
   }
 
+  .survey-chart-table {
+    grid-template-columns: minmax(0, 1.15fr) minmax(55mm, 0.85fr) !important;
+    align-items: start !important;
+    gap: 3mm !important;
+  }
+
+  .survey-chart-table > *,
+  .survey-question-card > :first-child {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .survey-question-card > :first-child {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+
   svg,
   img {
     max-width: 100% !important;
@@ -576,12 +593,21 @@
   .print-break-before {
     page-break-before: always;
   }
-  .print-break-avoid {
-    page-break-inside: avoid;
+  .print-break-avoid,
+  .break-inside-avoid {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
+
+  .print-landscape { page: landscape; }
 
   @page {
     margin: 8mm 10mm;
     size: A4;
+  }
+
+  @page landscape {
+    margin: 8mm 10mm;
+    size: A4 landscape;
   }
 }

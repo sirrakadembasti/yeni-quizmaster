@@ -9,7 +9,7 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import path from "path";
 import fs from "fs";
-import { fileURLToPath } from "url";
+import { getProjectRoot } from "./utils/project-paths";
 import * as dotenv from "dotenv";
 import pinoHttp from "pino-http";
 import { setupSocket } from "./socket";
@@ -22,12 +22,12 @@ import { startEmailWorker } from "./utils/email";
 // DNS Fallback: Windows/MEB ağında getaddrinfo ENOTFOUND hatalarını önler
 setupDnsFallback();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const projectRoot = getProjectRoot();
+const serverDirectory = path.join(projectRoot, "server");
 
 // Çevresel değişkenleri yükle
-dotenv.config({ path: path.resolve(__dirname, ".env") });
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
+dotenv.config({ path: path.resolve(serverDirectory, ".env") });
+dotenv.config({ path: path.resolve(projectRoot, ".env") });
 
 export { logger };
 
@@ -137,7 +137,7 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 
 // Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, "uploads");
+const uploadsDir = path.join(serverDirectory, "uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }

@@ -11,11 +11,11 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   name        String
-  email       String   @unique
+  email       String  @unique
   password    String
-  role        String   @default("student") // admin, teacher, student
+  role        String  @default("student") // admin, teacher, student
   phoneNumber String?
   address     String?
   studentNo   Int? // Student number (auto-incremented per class in code)
@@ -28,7 +28,7 @@ model User {
   parentEmail    String?
   parentAddress  String?
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
   // Password Reset Fields
   resetToken       String?
@@ -61,6 +61,7 @@ model User {
   // Quiz relations
   createdQuizzes    Quiz[]             @relation("QuizCreator")
   results           StudentResult[]
+  surveySubmissions SurveySubmission[]
   notifications     Notification[]
   logs              ActionLog[]        @relation("UserLogs")
   announcements     Announcement[]     @relation("AnnouncementCreator")
@@ -157,23 +158,26 @@ model Quiz {
   timeLimit        Int? // in minutes
   shuffleQuestions Boolean   @default(false)
   status           String    @default("draft") // draft, published, archived
+  contentType      String    @default("exam") // exam, survey
   publishedAt      DateTime?
   audienceSize     Int?
   academicYear     String?
   createdAt        DateTime  @default(now())
 
   // Relations
-  categoryId String?
-  category   Category?       @relation(fields: [categoryId], references: [id])
-  createdBy  String
-  creator    User            @relation("QuizCreator", fields: [createdBy], references: [id])
-  questions  Question[]
-  results    StudentResult[]
+  categoryId        String?
+  category          Category?          @relation(fields: [categoryId], references: [id])
+  createdBy         String
+  creator           User               @relation("QuizCreator", fields: [createdBy], references: [id])
+  questions         Question[]
+  results           StudentResult[]
+  surveySubmissions SurveySubmission[]
 
   // Classes this quiz is assigned to
-  assignedClasses   Class[]            @relation("ClassQuizzes")
+  assignedClasses Class[] @relation("ClassQuizzes")
 
   @@index([status, createdAt])
+  @@index([contentType, status, createdAt])
 }
 
 model Question {
@@ -188,6 +192,7 @@ model Question {
   imageUrl      String?
   order         Int
   createdAt     DateTime       @default(now())
+  surveyAnswers SurveyAnswer[]
 }
 
 model StudentResult {
@@ -206,6 +211,33 @@ model StudentResult {
   startedAt           DateTime  @default(now())
   submittedAt         DateTime?
   completedAt         DateTime?
+}
+
+model SurveySubmission {
+  id          String         @id @default(uuid())
+  surveyId    String
+  survey      Quiz           @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  studentId   String
+  student     User           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  submittedAt DateTime       @default(now())
+  answers     SurveyAnswer[]
+
+  @@unique([surveyId, studentId])
+  @@index([surveyId, submittedAt])
+  @@index([studentId])
+}
+
+model SurveyAnswer {
+  id           String           @id @default(uuid())
+  submissionId String
+  submission   SurveySubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  questionId   String
+  question     Question         @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  value        String
+  createdAt    DateTime         @default(now())
+
+  @@unique([submissionId, questionId])
+  @@index([questionId])
 }
 
 model Notification {
@@ -247,4 +279,3 @@ model EmailQueue {
   @@index([status])
   @@index([createdAt])
 }
-

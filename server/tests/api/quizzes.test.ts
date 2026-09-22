@@ -16,6 +16,9 @@ vi.mock('../../storage', () => ({
     getQuestionsByQuiz: vi.fn(),
     createLog: vi.fn(),
     getAllCategories: vi.fn(),
+    getAllUsers: vi.fn(),
+    getResultsByQuiz: vi.fn(),
+    getSurveySubmissions: vi.fn(),
   }
 }));
 
@@ -50,6 +53,9 @@ const createTestApp = (user: { id: string, role: string }) => {
 describe('Quizzes API Integration Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(storage.getAllUsers).mockResolvedValue([] as any);
+    vi.mocked(storage.getResultsByQuiz).mockResolvedValue([] as any);
+    vi.mocked(storage.getSurveySubmissions).mockResolvedValue([] as any);
   });
 
   describe('GET /api/quizzes/:id', () => {
@@ -145,6 +151,25 @@ describe('Quizzes API Integration Tests', () => {
         .send({ title: 'New Title' });
 
       expect(res.status).toBe(403);
+    });
+
+    it('should reject content type changes after publication', async () => {
+      const teacherUser = { id: 'teacher-1', role: 'teacher' };
+      const app = createTestApp(teacherUser);
+      vi.mocked(storage.getQuiz).mockResolvedValue({
+        id: 'quiz-1',
+        title: 'Published Exam',
+        createdBy: 'teacher-1',
+        contentType: 'exam',
+        status: 'published',
+      } as any);
+
+      const res = await request(app)
+        .patch('/api/quizzes/quiz-1')
+        .send({ contentType: 'survey' });
+
+      expect(res.status).toBe(409);
+      expect(storage.updateQuiz).not.toHaveBeenCalled();
     });
 
     it('should update quiz successfully if owner', async () => {

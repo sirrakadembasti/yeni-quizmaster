@@ -50,6 +50,7 @@ export default function CreateQuizPage() {
   const teacherClasses = classesData?.classes || [];
 
   // Quiz form state
+  const [contentType, setContentType] = useState<'exam' | 'survey'>('exam');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
@@ -57,6 +58,7 @@ export default function CreateQuizPage() {
   const [timeLimitEnabled, setTimeLimitEnabled] = useState(false);
   const [shuffleQuestions, setShuffleQuestions] = useState(false);
   const [assignedClassIds, setAssignedClassIds] = useState<string[]>([]);
+  const [loadedStatus, setLoadedStatus] = useState<'draft' | 'published' | 'archived'>('draft');
 
   const [questions, setQuestions] = useState<QuestionForm[]>([
     { id: 1, type: "multiple-choice", text: "", options: ["", "", "", "", ""], correctAnswer: 0 }
@@ -73,6 +75,8 @@ export default function CreateQuizPage() {
           const quiz = quizData.quiz;
           const quizQuestions = quizData.questions;
           
+          setContentType(quiz.contentType || 'exam');
+          setLoadedStatus(quiz.status === 'published' || quiz.status === 'archived' ? quiz.status : 'draft');
           setTitle(quiz.title);
           setDescription(quiz.description || '');
           setCategory(quiz.category || '');
@@ -99,6 +103,7 @@ export default function CreateQuizPage() {
                 options: opts,
                 correctAnswer: correctIdx !== -1 ? correctIdx : 0,
                 imageUrl: q.imageUrl,
+                config: q.config || undefined,
               };
             }));
           }
@@ -112,6 +117,16 @@ export default function CreateQuizPage() {
     }
   }, [editId, toast]);
 
+  const changeContentType = (value: 'exam' | 'survey') => {
+    setContentType(value);
+    setTimeLimitEnabled(value === 'exam' ? timeLimitEnabled : false);
+    setQuestions((current) => current.map((question) => ({
+      ...question,
+      type: value === 'survey' ? (question.type === 'multiple-choice' ? 'single-choice' : question.type) : 'multiple-choice',
+      options: question.options.length >= 2 ? question.options : ['', '', '', ''],
+      correctAnswer: value === 'exam' ? Math.max(0, question.correctAnswer || 0) : 0,
+    })));
+  };
   const toggleClass = (classId: string) => {
     setAssignedClassIds(prev => 
       prev.includes(classId) 
@@ -153,18 +168,21 @@ export default function CreateQuizPage() {
         category: category || 'General',
         categoryId: selectedCat?.id, 
         difficulty: 'medium',
-        timeLimit: timeLimitEnabled ? timeLimit : undefined,
-        shuffleQuestions,
+        contentType,
+        timeLimit: contentType === 'exam' && timeLimitEnabled ? timeLimit : undefined,
+        shuffleQuestions: contentType === 'exam' ? shuffleQuestions : false,
         status,
         assignedClassIds
       };
 
       let quizIdToUse = editId;
+      const currentStatus = editId ? loadedStatus : 'draft';
+      const settingsPayload = { ...payload, status: currentStatus };
 
       if (editId) {
-        await quizApi.updateQuiz(editId, payload);
+        await quizApi.updateQuiz(editId, settingsPayload);
       } else {
-        const quizResponse = await quizApi.createQuiz(payload);
+        const quizResponse = await quizApi.createQuiz(settingsPayload);
         quizIdToUse = quizResponse.quiz.id;
       }
 
@@ -174,11 +192,16 @@ export default function CreateQuizPage() {
           text: q.text,
           type: q.type as any,
           options: q.options.filter(o => o.trim() !== ''),
-          correctAnswer: q.options[q.correctAnswer] || q.options[0],
+          correctAnswer: contentType === 'survey' ? null : (q.options[q.correctAnswer] || q.options[0]),
+          config: q.config,
           imageUrl: q.imageUrl,
           order: index + 1,
         }));
         await quizApi.addQuestions(quizIdToUse as string, questionsToAdd);
+      }
+
+      if (status !== currentStatus) {
+        await quizApi.updateQuiz(quizIdToUse as string, { status });
       }
 
       return quizIdToUse;
@@ -186,14 +209,16 @@ export default function CreateQuizPage() {
     onSuccess: (_quizId, status) => {
       queryClient.invalidateQueries({ queryKey: ['quizzes'] });
       toast({
-        title: status === 'published' ? 'Sınav yayınlandı!' : 'Taslak kaydedildi!',
+        title: status === 'published'
+          ? (contentType === 'survey' ? 'Anket yayınlandı!' : 'Sınav yayınlandı!')
+          : 'Taslak kaydedildi!',
         description: `"${title}" başarıyla ${status === 'published' ? 'yayınlandı' : 'kaydedildi'}.`,
       });
       navigate('/quizzes');
     },
     onError: (error: Error) => {
       if (error.message !== "Doğrulama hatası") {
-        toast({ title: 'Hata', description: error.message || 'Sınav kaydedilirken bir hata oluştu.', variant: 'destructive' });
+        toast({ title: 'Hata', description: error.message || 'İçerik kaydedilirken bir hata oluştu.', variant: 'destructive' });
       }
     },
   });
@@ -201,7 +226,7 @@ export default function CreateQuizPage() {
   const addQuestion = () => {
     setQuestions([...questions, {
       id: Date.now(),
-      type: "multiple-choice",
+      type: contentType === 'survey' ? "single-choice" : "multiple-choice",
       text: "",
       options: ["", "", "", "", ""],
       correctAnswer: 0
@@ -212,13 +237,15 @@ export default function CreateQuizPage() {
     const formattedQuestions = newQuestions.map((q, i) => {
       const opts = Array.isArray(q.options) ? [...q.options] : ["", "", "", "", ""];
       while (opts.length < 5) opts.push("");
+      const fallbackType = contentType === 'survey' ? 'single-choice' : 'multiple-choice';
       
       return {
         id: Date.now() + i,
-        type: q.type || "multiple-choice",
+        type: q.type || fallbackType,
         text: q.text || '',
         options: opts,
         correctAnswer: q.correctAnswerIndex ?? 0,
+        config: q.config || undefined,
       };
     });
     
@@ -271,9 +298,9 @@ export default function CreateQuizPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-heading font-bold text-foreground">
-              {editId ? 'Sınavı Düzenle' : 'Yeni Sınav Oluştur'}
+              {editId ? (contentType === 'survey' ? 'Anketi Düzenle' : 'Sınavı Düzenle') : (contentType === 'survey' ? 'Yeni Anket Oluştur' : 'Yeni Sınav Oluştur')}
             </h1>
-            <p className="text-muted-foreground mt-2">Sınav detaylarını ve sorularını belirleyin.</p>
+            <p className="text-muted-foreground mt-2">{contentType === 'survey' ? 'Anket detaylarını ve sorularını belirleyin.' : 'Sınav detaylarını ve sorularını belirleyin.'}</p>
           </div>
           <div className="flex gap-2 w-full sm:w-auto">
             <Button 
@@ -302,7 +329,7 @@ export default function CreateQuizPage() {
             <TabsList className="grid w-full max-w-md grid-cols-2">
               <TabsTrigger value="settings" className="gap-2">
                 <Settings className="h-4 w-4" />
-                Sınav Ayarları
+                {contentType === 'survey' ? 'Anket Ayarları' : 'Sınav Ayarları'}
               </TabsTrigger>
               <TabsTrigger value="questions" className="gap-2">
                 <List className="h-4 w-4" />
@@ -312,6 +339,7 @@ export default function CreateQuizPage() {
             
             <TabsContent value="settings">
               <QuizSettings 
+                contentType={contentType} setContentType={changeContentType}
                 title={title} setTitle={setTitle}
                 description={description} setDescription={setDescription}
                 category={category} setCategory={setCategory}
@@ -345,6 +373,7 @@ export default function CreateQuizPage() {
                   index={index}
                   isFirst={index === 0}
                   totalQuestions={questions.length}
+                  contentType={contentType}
                   onUpdate={updateQuestion}
                   onRemove={removeQuestion}
                   onUpdateOption={updateOption}
@@ -376,6 +405,7 @@ export default function CreateQuizPage() {
                   onGenerate={handleAIGenerated} 
                   quizTitle={title}
                   quizDescription={description}
+                contentType={contentType}
                 />
               </CardContent>
             </Card>
