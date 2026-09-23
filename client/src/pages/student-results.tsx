@@ -30,7 +30,8 @@ import {
   X,
   Info,
   Users,
-  Pencil
+  Pencil,
+  Download
 } from "lucide-react";
 import { resultApi, userApi, categoryApi } from "@/lib/api";
 import { useAuth } from "@/context/auth-context";
@@ -39,6 +40,7 @@ import { useToast } from "@/hooks/use-toast";
 import { UserFormModal } from "@/components/management/UserFormModal";
 import { PrintButton, PrintMeta } from "@/components/print/PrintTools";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { downloadCsv } from "@/lib/export";
 
 export default function StudentResultsPage() {
   const [, setLocation] = useLocation();
@@ -137,9 +139,10 @@ export default function StudentResultsPage() {
     return baseResults
       .filter(result => {
         const title = (result.quiz?.title || result.quizTitle || '').toLowerCase();
-        const category = (result.quiz?.category || '').toLowerCase();
+        const category = (result.quiz?.category?.name || result.quiz?.category || '').toLowerCase();
+        const selectedCategoryName = (categories.find((item: any) => item.id === filterCategory)?.name || "").toLowerCase();
         const matchesSearch = title.includes(searchTerm.toLowerCase());
-        const matchesCategory = filterCategory === "all" || category === filterCategory.toLowerCase();
+        const matchesCategory = filterCategory === "all" || category === selectedCategoryName;
 
         let matchesScore = true;
         const score = result.score || 0;
@@ -158,8 +161,28 @@ export default function StudentResultsPage() {
           default: return 0;
         }
       });
-  }, [results, student, user, role, searchTerm, filterCategory, filterScore, sortBy]);
+  }, [results, student, user, role, searchTerm, filterCategory, filterScore, sortBy, categories]);
 
+  const exportResults = () => downloadCsv({
+    filename: `${student?.name || user?.name || "ogrenci"}-sinav-sonuclari.csv`,
+    title: studentId ? "Öğrenci Analizi" : "Sınav Sonuçlarım",
+    filters: [
+      { label: "Öğrenci", value: student?.name || user?.name },
+      { label: "Ders", value: categories.find((item: any) => item.id === filterCategory)?.name || "Tüm dersler" },
+      { label: "Kayıt sayısı", value: filteredResults.length },
+    ],
+    rows: filteredResults,
+    columns: [
+      { header: "Sınav", value: (row: any) => row.quiz?.title || row.quizTitle || row.quizId },
+      { header: "Ders", value: (row: any) => row.quiz?.category?.name || row.quiz?.category || "Genel" },
+      { header: "Puan", value: (row: any) => row.score ?? 0 },
+      { header: "Doğru", value: (row: any) => row.correctAnswersCount ?? 0 },
+      { header: "Toplam Soru", value: (row: any) => row.totalQuestions ?? 0 },
+      { header: "Süre (dk)", value: (row: any) => Math.round((row.timeTaken || 0) / 60) },
+      { header: "Durum", value: (row: any) => row.status === "completed" ? "Tamamlandı" : "Devam Ediyor" },
+      { header: "Tarih", value: (row: any) => row.submittedAt ? new Date(row.submittedAt).toLocaleString("tr-TR") : "-" },
+    ],
+  });
   const resetFilters = () => {
     setSearchTerm("");
     setFilterCategory("all");
@@ -322,7 +345,12 @@ export default function StudentResultsPage() {
                   : 'Tamamladığınız tüm sınavların gelişmiş dökümü.'}
               </p>
             </div>
-            <PrintButton className="rounded-xl" />
+            <div className="flex items-center gap-2">
+              <Button variant="outline" className="rounded-xl gap-2" onClick={exportResults}>
+                <Download className="h-4 w-4" /> Excel Uyumlu CSV
+              </Button>
+              <PrintButton className="rounded-xl" />
+            </div>
             {!loading && (
               <Badge variant="secondary" className="h-8 px-4 text-sm font-bold bg-primary/10 text-primary border-primary/20"> 
                 Toplam {filteredResults.length} Kayıt

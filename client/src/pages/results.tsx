@@ -47,6 +47,7 @@ import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import { PrintButton, PrintMeta } from "@/components/print/PrintTools";
+import { downloadCsv } from "@/lib/export";
 
 export default function StatisticsPage() {
   const { role, user: currentUser } = useAuth();
@@ -56,6 +57,7 @@ export default function StatisticsPage() {
   const [selectedClassId, setSelectedClassId] = useState<string>("all");
   const [categories, setCategories] = useState<any[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all");
+  const [selectedQuizId, setSelectedQuizId] = useState<string>("all");
   const [teachers, setTeachers] = useState<any[]>([]);
   const [selectedTeacherId, setSelectedTeacherId] = useState<string>("all");
   const [students, setStudents] = useState<any[]>([]);
@@ -81,10 +83,11 @@ export default function StatisticsPage() {
         quizApi.getAllQuizzes(),
         role === 'teacher' ? classApi.getTeacherClasses() : classApi.getAllClasses(),
         categoryApi.getAllCategories(),
-        userApi.getAllUsers()
+        userApi.getAllUsers(),
+        resultApi.getFilteredResults()
       ];
       
-      const [quizzesResp, classesResp, categoriesResp, usersResp] = await Promise.all(promises);
+      const [quizzesResp, classesResp, categoriesResp, usersResp, resultsResp] = await Promise.all(promises);
       
       const loadedQuizzes = quizzesResp.quizzes || [];
       const loadedClasses = classesResp.classes || [];
@@ -94,22 +97,13 @@ export default function StatisticsPage() {
       const loadedTeachers = loadedUsers.filter((u: any) => u.role === 'teacher');
       const loadedStudents = loadedUsers.filter((u: any) => u.role === 'student');
 
-      // Her quiz için sonuçları çek
-      const resultsPromises = loadedQuizzes.map((q: any) => 
-        resultApi.getQuizResults(q.id)
-          .then(r => (r.results || []).map((res: any) => ({ 
-            ...res, 
-            quizId: q.id, 
-            quizTitle: q.title,
-            categoryId: q.categoryId,
-            createdBy: q.createdBy 
-          })))
-          .catch(() => [])
-      );
-      
-      const resultsArrays = await Promise.all(resultsPromises);
-      const combinedResults = resultsArrays.flat();
-
+      const combinedResults = (resultsResp?.results || []).map((result: any) => ({
+        ...result,
+        quizId: result.quizId || result.quiz?.id,
+        quizTitle: result.quiz?.title || result.quizTitle,
+        categoryId: result.quiz?.categoryId || result.categoryId,
+        createdBy: result.quiz?.createdBy || result.createdBy,
+      }));
       setQuizzes(loadedQuizzes);
       setClasses(loadedClasses);
       setCategories(loadedCategories);
@@ -140,13 +134,16 @@ export default function StatisticsPage() {
     if (selectedCategoryId !== "all") {
       filtered = filtered.filter(r => r.categoryId === selectedCategoryId);
     }
+    if (selectedQuizId !== "all") {
+      filtered = filtered.filter(r => r.quizId === selectedQuizId);
+    }
 
     if (selectedStudentId !== "all") {
       filtered = filtered.filter(r => r.studentId === selectedStudentId);
     }
 
     return filtered;
-  }, [allResults, selectedClassId, selectedCategoryId, selectedTeacherId, selectedStudentId, role, currentUser]);
+  }, [allResults, selectedClassId, selectedCategoryId, selectedQuizId, selectedTeacherId, selectedStudentId, role, currentUser]);
 
   const mebStats = useMemo(() => {
     const grades = {
@@ -201,29 +198,34 @@ export default function StatisticsPage() {
   }, [filteredResults, quizzes, categories, tableSearch]);
 
   const handleExport = () => {
-    try {
-      const headers = ['Sınav Adı', 'Ders', 'Katılımcı Sayısı', 'Ortalama Puan'];
-      const rows = quizTableData.map(q => [
-        `"${q.title.replace(/"/g, '""')}"`,
-        `"${q.category}"`,
-        q.participants,
-        q.avgScore
-      ]);
-
-      const csvContent = "\uFEFF" + [headers, ...rows].map(e => e.join(";")).join("\n");
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute("download", `quiz_istatistikleri_${format(new Date(), "dd_MM_yyyy")}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (e) {
-      console.error("Export failed", e);
-    }
+    const categoryName = categories.find((category: any) => category.id === selectedCategoryId)?.name || "Tüm Dersler";
+    const quizName = quizzes.find((quiz: any) => quiz.id === selectedQuizId)?.title || "Tüm Sınavlar";
+    const className = classes.find((item: any) => item.id === selectedClassId)?.name || "Tüm Sınıflar";
+    downloadCsv({
+      filename: `sinav_sonuclari_${format(new Date(), "dd_MM_yyyy")}.csv`,
+      title: "Sınav Sonuçları",
+      filters: [
+        { label: "Ders", value: categoryName },
+        { label: "Sınav", value: quizName },
+        { label: "Sınıf", value: className },
+        { label: "Kayıt Sayısı", value: filteredResults.length },
+      ],
+      columns: [
+        { header: "Sınav Adı", value: (row: any) => row.quizTitle || row.quiz?.title },
+        { header: "Ders", value: (row: any) => row.quiz?.category?.name || categories.find((c: any) => c.id === row.categoryId)?.name || "Genel" },
+        { header: "Öğrenci", value: (row: any) => row.student?.name },
+        { header: "E-posta", value: (row: any) => row.student?.email },
+        { header: "Sınıf", value: (row: any) => row.student?.class?.name || row.student?.classNo },
+        { header: "Durum", value: (row: any) => row.status === "completed" ? "Tamamlandı" : "Devam Ediyor" },
+        { header: "Puan", value: (row: any) => row.score ?? "" },
+        { header: "Doğru", value: (row: any) => row.correctAnswersCount ?? row.correctAnswers ?? "" },
+        { header: "Toplam Soru", value: (row: any) => row.totalQuestions ?? "" },
+        { header: "Süre (sn)", value: (row: any) => row.timeTaken ?? "" },
+        { header: "Tamamlanma Tarihi", value: (row: any) => row.submittedAt ? new Date(row.submittedAt) : "" },
+      ],
+      rows: filteredResults,
+    });
   };
-
   if (loading) {
     return (
       <DashboardLayout>
@@ -244,6 +246,7 @@ export default function StatisticsPage() {
           filters={[
             { label: "Kategori", value: categories.find((c: any) => c.id === selectedCategoryId)?.name || "Tümü" },
             { label: "Sınıf", value: classes.find((c: any) => c.id === selectedClassId)?.name || "Tümü" },
+            { label: "Sınav", value: quizzes.find((q: any) => q.id === selectedQuizId)?.title || "Tümü" },
           ]}
         />
 
@@ -276,7 +279,7 @@ export default function StatisticsPage() {
                 <Search className="h-4 w-4 text-primary" />
                 <span className="text-xs font-black uppercase tracking-widest opacity-60">Veri Filtreleme</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-[10px] font-bold text-muted-foreground ml-1">Sınıf</Label>
                   <Select value={selectedClassId} onValueChange={(val) => { setSelectedClassId(val); setSelectedStudentId("all"); }}>
@@ -294,7 +297,7 @@ export default function StatisticsPage() {
 
                 <div className="space-y-1.5">
                   <Label className="text-[10px] font-bold text-muted-foreground ml-1">Ders/Kategori</Label>
-                  <Select value={selectedCategoryId} onValueChange={setSelectedCategoryId}>
+                  <Select value={selectedCategoryId} onValueChange={(value) => { setSelectedCategoryId(value); setSelectedQuizId("all"); }}>
                     <SelectTrigger className="rounded-xl bg-muted/30 border-transparent">
                       <SelectValue placeholder="Ders Seçin" />
                     </SelectTrigger>
@@ -307,6 +310,23 @@ export default function StatisticsPage() {
                   </Select>
                 </div>
 
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] font-bold text-muted-foreground ml-1">Sınav Adı</Label>
+                  <Select value={selectedQuizId} onValueChange={setSelectedQuizId}>
+                    <SelectTrigger className="rounded-xl bg-muted/30 border-transparent">
+                      <SelectValue placeholder="Sınav Seçin" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="all">Tüm Sınavlar</SelectItem>
+                      {quizzes
+                        .filter((quiz: any) => selectedCategoryId === "all" || quiz.categoryId === selectedCategoryId)
+                        .filter((quiz: any) => role !== "teacher" || quiz.createdBy === currentUser?.id)
+                        .map((quiz: any) => (
+                          <SelectItem key={quiz.id} value={quiz.id}>{quiz.title}</SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 {role === 'admin' && (
                   <div className="space-y-1.5">
                     <Label className="text-[10px] font-bold text-muted-foreground ml-1">Öğretmen</Label>
@@ -362,6 +382,7 @@ export default function StatisticsPage() {
                 <Button variant="link" onClick={() => {
                   setSelectedClassId("all");
                   setSelectedCategoryId("all");
+                  setSelectedQuizId("all");
                   setSelectedTeacherId("all");
                   setSelectedStudentId("all");
                 }}>Filtreleri Temizle</Button>

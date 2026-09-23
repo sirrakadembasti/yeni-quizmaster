@@ -2,6 +2,7 @@ import { Router, type Response } from "express";
 import { storage } from "../storage";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { logger } from "../utils/logger";
+import { getEmailStatus, sendDirectEmail, verifyEmailTransport } from "../utils/email";
 
 const router: Router = Router();
 
@@ -28,6 +29,42 @@ router.get("/logs/me", requireAuth, async (req: AuthRequest, res: Response) => {
 });
 
 // ==================== ADMIN ROUTES ====================
+
+// SMTP durumunu parolayı açığa çıkarmadan gösterir.
+router.get("/email-settings/status", requireAuth, requireRole(["admin"]), async (_req: AuthRequest, res: Response) => {
+  const settings = getEmailStatus();
+  res.json({
+    settings,
+    ready: settings.authConfigured || settings.host === "127.0.0.1" || settings.host === "localhost",
+  });
+});
+
+// Yönetici SMTP bağlantısını ve gerçek gönderimi tek adımda sınayabilir.
+router.post("/email-settings/test", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const recipient = typeof req.body?.email === "string" && req.body.email.trim()
+      ? req.body.email.trim()
+      : req.user!.email;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)) {
+      return res.status(400).json({ message: "Geçerli bir test e-posta adresi giriniz." });
+    }
+    const settings = await verifyEmailTransport();
+    const info = await sendDirectEmail({
+      to: recipient,
+      subject: "QuizMaster SMTP Bağlantı Testi",
+      text: "QuizMaster SMTP yapılandırması başarıyla çalışıyor.",
+      html: "<p><strong>QuizMaster</strong> SMTP yapılandırması başarıyla çalışıyor.</p>",
+    });
+    await storage.createLog(req.user!.id, "TEST_EMAIL", `SMTP test e-postası gönderildi: ${recipient}`);
+    res.json({ message: "Test e-postası gönderildi.", messageId: info.messageId, settings });
+  } catch (error: any) {
+    logger.warn({ err: error, adminId: req.user!.id }, "[SMTP] Bağlantı testi başarısız");
+    res.status(502).json({
+      message: "SMTP bağlantısı kurulamadı. Gmail uygulama şifresi ve sunucu ayarlarını kontrol edin.",
+      code: error?.code || "SMTP_ERROR",
+    });
+  }
+});
 
 router.get("/logs", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
   try {

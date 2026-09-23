@@ -64,6 +64,7 @@ export interface IStorage {
   
   // Student Result methods
   getResultsByStudent(studentId: string, teacherId?: string): Promise<StudentResult[]>;
+  getFilteredResults(filters: { quizId?: string; categoryId?: string; classId?: string; studentId?: string; createdBy?: string }): Promise<StudentResult[]>;
   getResultsByQuiz(quizId: string): Promise<StudentResult[]>;
   getLiveResults(quizId: string): Promise<StudentResult[]>;
   getStudentQuizResult(studentId: string, quizId: string): Promise<StudentResult | undefined>;
@@ -243,7 +244,15 @@ export class PrismaStorage implements IStorage {
         password: user.password,
         role: user.role || 'student',
         classId: user.classId,
-        classNo: user.classNo
+        classNo: user.classNo,
+        studentNo: user.studentNo,
+        phoneNumber: user.phoneNumber,
+        address: user.address,
+        parentName: user.parentName,
+        parentRelation: user.parentRelation,
+        parentPhone: user.parentPhone,
+        parentEmail: user.parentEmail,
+        parentAddress: user.parentAddress
       }
     });
   }
@@ -265,7 +274,11 @@ export class PrismaStorage implements IStorage {
     const prismaData: any = {};
     
     // List of allowed scalar fields for User
-    const allowedFields = ['name', 'email', 'password', 'role', 'studentNo', 'classNo', 'classId', 'resetToken', 'resetTokenExpiry', 'phoneNumber', 'address'];
+    const allowedFields = [
+      'name', 'email', 'password', 'role', 'studentNo', 'classNo', 'classId',
+      'resetToken', 'resetTokenExpiry', 'phoneNumber', 'address',
+      'parentName', 'parentRelation', 'parentPhone', 'parentEmail', 'parentAddress',
+    ];
     
     for (const key of allowedFields) {
       if (updateData[key] !== undefined) {
@@ -277,6 +290,11 @@ export class PrismaStorage implements IStorage {
     if (prismaData.role && ['teacher', 'admin'].includes(prismaData.role)) {
       prismaData.classId = null;
       prismaData.studentNo = null;
+      prismaData.parentName = null;
+      prismaData.parentRelation = null;
+      prismaData.parentPhone = null;
+      prismaData.parentEmail = null;
+      prismaData.parentAddress = null;
     }
 
     // Handle teacher categories if provided
@@ -909,6 +927,30 @@ export class PrismaStorage implements IStorage {
   }
 
   // Student Result methods
+  async getFilteredResults(filters: { quizId?: string; categoryId?: string; classId?: string; studentId?: string; createdBy?: string }): Promise<StudentResult[]> {
+    const where: Prisma.StudentResultWhereInput = {};
+    if (filters.quizId) where.quizId = filters.quizId;
+    if (filters.studentId) where.studentId = filters.studentId;
+    if (filters.classId) where.student = { classId: filters.classId };
+    if (filters.categoryId || filters.createdBy) {
+      where.quiz = {
+        ...(filters.categoryId ? { categoryId: filters.categoryId } : {}),
+        ...(filters.createdBy ? { createdBy: filters.createdBy } : {}),
+      };
+    }
+    const results = await prisma.studentResult.findMany({
+      where,
+      include: {
+        student: { include: { class: true } },
+        quiz: { include: { category: true, creator: { select: { id: true, name: true } } } },
+      },
+      orderBy: { submittedAt: 'desc' },
+    });
+    return results.map((result) => ({
+      ...result,
+      answers: result.answers ? JSON.parse(result.answers) : {},
+    })) as unknown as StudentResult[];
+  }
   async getResultsByStudent(studentId: string, teacherId?: string): Promise<StudentResult[]> {
     const where: any = { studentId };
     if (teacherId) {

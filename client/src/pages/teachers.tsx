@@ -1,7 +1,7 @@
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, UserPlus } from "lucide-react";
+import { Download, Search, UserPlus } from "lucide-react";
 import { useState, useMemo } from "react";
 import { userApi } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
@@ -10,6 +10,8 @@ import { UserFormModal } from "@/components/management/UserFormModal";
 import { DeleteConfirmModal } from "@/components/management/DeleteConfirmModal";
 import { useUserManagement } from "@/hooks/use-user-management";
 import { useLocation } from "wouter";
+import { PrintButton, PrintMeta } from "@/components/print/PrintTools";
+import { downloadCsv } from "@/lib/export";
 
 export default function TeachersPage() {
   const [, setLocation] = useLocation();
@@ -44,21 +46,37 @@ export default function TeachersPage() {
     );
   }, [usersData, searchTerm]);
 
+  const exportTeachers = () => downloadCsv({
+    filename: `ogretmen_listesi_${new Date().toISOString().slice(0, 10)}.csv`,
+    title: "Öğretmen Listesi",
+    filters: [{ label: "Arama", value: searchTerm || "Tümü" }, { label: "Kayıt Sayısı", value: teachers.length }],
+    columns: [
+      { header: "Ad Soyad", value: "name" },
+      { header: "E-posta", value: "email" },
+      { header: "Telefon", value: "phoneNumber" },
+      { header: "Dersler", value: (teacher: any) => teacher.assignedCategories?.map((item: any) => item.name).join(", ") || "" },
+      { header: "Dersine Girdiği Sınıflar", value: (teacher: any) => teacher.classes?.map((item: any) => item.name).join(", ") || "" },
+      { header: "Sorumlu Sınıflar", value: (teacher: any) => teacher.responsibleForClasses?.map((item: any) => item.name).join(", ") || "" },
+    ],
+    rows: teachers,
+  });
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <PrintMeta title="Öğretmen Listesi" filters={[{ label: "Arama", value: searchTerm || "Tümü" }]} />
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-heading font-bold">Öğretmen Yönetimi</h1>
             <p className="text-muted-foreground mt-1">Öğretmen hesaplarını oluşturun, düzenleyin ve silin.</p>
           </div>
-          <Button onClick={() => setIsCreateOpen(true)} className="gap-2">
-            <UserPlus className="h-4 w-4" />
-            Yeni Öğretmen
-          </Button>
+          <div className="flex gap-2 print:hidden no-print">
+            <Button variant="outline" onClick={exportTeachers} disabled={!teachers.length}><Download className="mr-2 h-4 w-4" />CSV</Button>
+            <PrintButton />
+            <Button onClick={() => setIsCreateOpen(true)} className="gap-2"><UserPlus className="h-4 w-4" />Yeni Öğretmen</Button>
+          </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-4 print:hidden no-print">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input

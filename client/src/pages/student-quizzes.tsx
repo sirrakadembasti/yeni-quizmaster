@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -13,8 +14,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Clock,
-  BookOpen,
   Play,
   Search,
   CheckCircle2,
@@ -45,6 +44,8 @@ export default function StudentQuizzesPage() {
   const [preparingId, setPreparingId] = useState<string | null>(null);
   const [preparedIds, setPreparedIds] = useState<Set<string>>(new Set());
   const [offlineView, setOfflineView] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -126,6 +127,9 @@ export default function StudentQuizzesPage() {
     return matchesSearch && matchesFilter;
   });
 
+  useEffect(() => setCurrentPage(1), [searchTerm, filterStatus]);
+  const totalPages = Math.max(1, Math.ceil(filteredQuizzes.length / pageSize));
+  const paginatedQuizzes = filteredQuizzes.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const pendingCount = quizzes.filter(q => getQuizStatus(q.id) === "pending").length;
   const completedCount = quizzes.filter(q => getQuizStatus(q.id) === "completed").length;
 
@@ -213,119 +217,66 @@ export default function StudentQuizzesPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-6">
-            {/* Pending Quizzes */}
-            {filteredQuizzes.filter(q => getQuizStatus(q.id) === "pending").length > 0 && (
-              <div className="space-y-4">
-                <h2 className="text-xl font-heading font-semibold">Yapılacak Sınavlar</h2>
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {filteredQuizzes.filter(q => getQuizStatus(q.id) === "pending").map((quiz) => (
-                    <Card key={quiz.id} className="group hover:border-primary/50 transition-colors flex flex-col">
-                      <CardHeader>
-                        <div className="flex justify-between items-start mb-2">
-                          <div className="flex flex-col gap-1"><Badge variant="secondary" className="w-fit font-normal">{quiz.category || 'Genel'}</Badge><span className="text-[10px] font-bold text-muted-foreground italic">ğr: {quiz.creator?.name || 'Bilinmiyor'}</span></div>
-                          <Badge 
-                            variant={quiz.difficulty === 'hard' || quiz.difficulty === 'Hard' ? 'destructive' : quiz.difficulty === 'medium' || quiz.difficulty === 'Medium' ? 'default' : 'secondary'}
-                            className="text-[10px]"
-                          >
-                            {quiz.difficulty === 'hard' || quiz.difficulty === 'Hard' ? 'Zor' : quiz.difficulty === 'medium' || quiz.difficulty === 'Medium' ? 'Orta' : 'Kolay'}
-                          </Badge>
-                        </div>
-                        <CardTitle className="text-lg group-hover:text-primary transition-colors">{quiz.title}</CardTitle>
-                        <CardDescription className="text-sm">{quiz.description}</CardDescription>
-                        <div className="flex items-center gap-4 text-xs mt-3 text-muted-foreground">
-                          {quiz.timeLimit && (
-                            <span className="flex items-center gap-1">
-                              <Clock className="h-3 w-3" /> {quiz.timeLimit} dk
-                            </span>
-                          )}
-                          <span className="flex items-center gap-1">
-                            <BookOpen className="h-3 w-3" /> {quiz.questionCount || 0} Soru
-                          </span>
-                        </div>
-                      </CardHeader>
-                      <CardFooter className="flex-1 flex flex-col justify-end gap-2 pt-4">
-                        {!quiz.timeLimit && (
-                          <Button
-                            variant="outline"
-                            className="w-full gap-2"
-                            disabled={preparingId === quiz.id || offlineView}
-                            onClick={() => prepareOffline(quiz.id)}
-                          >
-                            <Download className="h-4 w-4" />
-                            {preparedIds.has(quiz.id)
-                              ? "Çevrimdışı Hazır"
-                              : preparingId === quiz.id ? "Hazırlanıyor..." : "Çevrimdışı Hazırla"}
-                          </Button>
-                        )}
-                        <Button 
-                          className="w-full gap-2 shadow-sm dark:shadow-none"
-                          disabled={offlineView && !preparedIds.has(quiz.id)}
-                          onClick={() => setLocation(`/student/quiz/${quiz.id}`)}
-                        >
-                          <Play className="h-4 w-4" />
-                          Quize Başla
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Completed Quizzes */}
-            {filteredQuizzes.filter(q => getQuizStatus(q.id) === "completed").length > 0 && (
-              <div className="space-y-4">
-                <h2 className="text-xl font-heading font-semibold">Tamamlanan Sınavlar</h2>
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {filteredQuizzes.filter(q => getQuizStatus(q.id) === "completed").map((quiz) => {
-                    const result = results.find(r => r.quizId === quiz.id);
+          <Card className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-muted/40">
+                  <TableRow>
+                    <TableHead>Sınav</TableHead>
+                    <TableHead>Ders / Öğretmen</TableHead>
+                    <TableHead className="text-center">Zorluk</TableHead>
+                    <TableHead className="text-center">Soru</TableHead>
+                    <TableHead className="text-center">Süre</TableHead>
+                    <TableHead>Durum / Puan</TableHead>
+                    <TableHead className="text-right">İşlemler</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {paginatedQuizzes.map((quiz) => {
+                    const status = getQuizStatus(quiz.id);
+                    const result = results.find((item) => item.quizId === quiz.id);
+                    const difficulty = quiz.difficulty === "hard" || quiz.difficulty === "Hard"
+                      ? "Zor" : quiz.difficulty === "medium" || quiz.difficulty === "Medium" ? "Orta" : "Kolay";
                     return (
-                      <Card key={quiz.id} className="group hover:border-primary/50 transition-colors opacity-75 flex flex-col">
-                        <CardHeader>
-                          <div className="flex justify-between items-start mb-2">
-                            <div className="flex flex-col gap-1"><Badge variant="secondary" className="w-fit font-normal">{quiz.category || 'Genel'}</Badge><span className="text-[10px] font-bold text-muted-foreground italic">ğr: {quiz.creator?.name || 'Bilinmiyor'}</span></div>
-                            <Badge variant="outline" className="text-[10px] text-emerald-600">
-                              <CheckCircle2 className="h-3 w-3 mr-1" /> Tamamlandı
-                            </Badge>
+                      <TableRow key={quiz.id} className={status === "completed" ? "opacity-75" : ""}>
+                        <TableCell className="min-w-[230px]">
+                          <p className="font-bold">{quiz.title}</p>
+                          <p className="max-w-[320px] truncate text-xs text-muted-foreground">{quiz.description || "Açıklama yok."}</p>
+                        </TableCell>
+                        <TableCell><p className="font-medium">{quiz.category || "Genel"}</p><p className="text-xs text-muted-foreground">{quiz.creator?.name || "Bilinmiyor"}</p></TableCell>
+                        <TableCell className="text-center"><Badge variant={difficulty === "Zor" ? "destructive" : "secondary"}>{difficulty}</Badge></TableCell>
+                        <TableCell className="text-center tabular-nums">{quiz.questionCount || 0}</TableCell>
+                        <TableCell className="text-center tabular-nums">{quiz.timeLimit ? `${quiz.timeLimit} dk` : "Süresiz"}</TableCell>
+                        <TableCell>
+                          {status === "completed"
+                            ? <div><Badge variant="outline" className="text-emerald-600">Tamamlandı</Badge><p className="mt-1 text-sm font-bold text-emerald-600">%{result?.score?.toFixed(1) || "0"}</p></div>
+                            : <Badge variant="secondary">Yapılacak</Badge>}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex flex-wrap justify-end gap-2">
+                            {status === "pending" ? <>
+                              {!quiz.timeLimit && <Button variant="outline" size="sm" disabled={preparingId === quiz.id || offlineView} onClick={() => prepareOffline(quiz.id)}>
+                                <Download className="mr-1 h-4 w-4" />{preparedIds.has(quiz.id) ? "Çevrimdışı Hazır" : preparingId === quiz.id ? "Hazırlanıyor" : "Çevrimdışı Hazırla"}
+                              </Button>}
+                              <Button size="sm" disabled={offlineView && !preparedIds.has(quiz.id)} onClick={() => setLocation(`/student/quiz/${quiz.id}`)}><Play className="mr-1 h-4 w-4" />Başla</Button>
+                            </> : <Button variant="outline" size="sm" onClick={() => setLocation(`/student/result/${result?.id}`)}>Detayları Gör</Button>}
                           </div>
-                          <CardTitle className="text-lg group-hover:text-primary transition-colors">{quiz.title}</CardTitle>
-                          <CardDescription className="text-sm">{quiz.description}</CardDescription>
-                          {result && (
-                            <div className="flex items-center gap-2 mt-3">
-                              <div className="text-lg font-bold text-emerald-600">
-                                {result.score?.toFixed(1) || '0'}%
-                              </div>
-                            </div>
-                          )}
-                        </CardHeader>
-                        <CardFooter className="flex-1 flex flex-col justify-end pt-4">
-                          <Button 
-                            variant="outline" 
-                            className="w-full gap-2"
-                            onClick={() => setLocation(`/student/result/${result?.id}`)}
-                          >
-                            Detayları Gör
-                          </Button>
-                        </CardFooter>
-                      </Card>
+                        </TableCell>
+                      </TableRow>
                     );
                   })}
-                </div>
+                  {paginatedQuizzes.length === 0 && <TableRow><TableCell colSpan={7} className="h-32 text-center text-muted-foreground">Aradığınız sınav bulunamadı.</TableCell></TableRow>}
+                </TableBody>
+              </Table>
+            </div>
+            <div className="flex flex-col gap-2 border-t px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+              <span className="text-muted-foreground">{filteredQuizzes.length} kayıt · Sayfa {currentPage}/{totalPages}</span>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" disabled={currentPage <= 1} onClick={() => setCurrentPage((page) => page - 1)}>Önceki</Button>
+                <Button variant="outline" size="sm" disabled={currentPage >= totalPages} onClick={() => setCurrentPage((page) => page + 1)}>Sonraki</Button>
               </div>
-            )}
-
-            {filteredQuizzes.length === 0 && (
-              <Card className="text-center py-12">
-                <CardContent>
-                  <p className="text-muted-foreground mb-4">Aradığınız sınav bulunamadı.</p>
-                  <Button variant="outline" onClick={() => { setSearchTerm(""); setFilterStatus("all"); }}>
-                    Filtreleri Sıfırla
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+            </div>
+          </Card>
         )}
       </div>
     </DashboardLayout>

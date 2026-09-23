@@ -34,7 +34,7 @@ import {
   Edit2,
   FileText
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { quizApi, userApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -46,6 +46,8 @@ export default function AdminQuizzesPage() {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedQuiz, setSelectedQuiz] = useState<any | null>(null);
@@ -76,6 +78,10 @@ export default function AdminQuizzesPage() {
     q.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     q.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  useEffect(() => setCurrentPage(1), [searchTerm]);
+  const totalPages = Math.max(1, Math.ceil(filteredQuizzes.length / pageSize));
+  const paginatedQuizzes = filteredQuizzes.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   return (
     <DashboardLayout>
@@ -129,7 +135,7 @@ export default function AdminQuizzesPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredQuizzes.map((quiz) => {
+                paginatedQuizzes.map((quiz) => {
                   const creator = users.find(u => u.id === quiz.createdBy);
                   const assignedClasses = (quiz as any).assignedClasses || [];
                   
@@ -186,6 +192,15 @@ export default function AdminQuizzesPage() {
               )}
             </TableBody>
           </Table>
+          {!isQuizzesLoading && filteredQuizzes.length > 0 && (
+            <div className="flex flex-col gap-2 border-t px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+              <span className="text-muted-foreground">{filteredQuizzes.length} kayıt · Sayfa {currentPage}/{totalPages}</span>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" disabled={currentPage <= 1} onClick={() => setCurrentPage((page) => page - 1)}>Önceki</Button>
+                <Button variant="outline" size="sm" disabled={currentPage >= totalPages} onClick={() => setCurrentPage((page) => page + 1)}>Sonraki</Button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* DELETE MODAL */}

@@ -21,6 +21,7 @@ import {
   BarChart2
 } from "lucide-react";
 import { resultApi } from "@/lib/api";
+import { downloadCsv } from "@/lib/export";
 
 
 export default function StudentStats() {
@@ -80,36 +81,25 @@ export default function StudentStats() {
     averageScore: Math.round(stats.totalScore / stats.count)
   }));
 
-  const exportToExcel = () => {
-    // Create CSV content with BOM for UTF-8 Excel support
-    let csv = '\uFEFF';
-    csv += 'Quiz İstatistikleri\n\n';
-    csv += 'Genel İstatistikler\n';
-    csv += `Toplam Quiz,${totalQuizzes}\n`;
-    csv += `Ortalama Puan,${averageScore}%\n`;
-    csv += `Geçme Oranı,${passRate}%\n`;
-    csv += `Toplam Süre,${Math.round(totalTime / 60)} dakika\n\n`;
-    
-    csv += 'Quiz Sonuçları\n';
-    csv += 'Quiz Adı,Ders Adı,Skor,Durum,Tarih\n';
-    completedResults.forEach(r => {
-      const quizName = `"${(r.quizTitle || r.quiz?.title || r.quizId).replace(/"/g, '""')}"`;
-      const lessonName = `"${(r.quiz?.category || 'Genel').replace(/"/g, '""')}"`;
-      csv += `${quizName},${lessonName},${r.score}%,${r.status},${new Date(r.submittedAt).toLocaleDateString('tr-TR')}\n`;
-    });
-
-    // Download as CSV
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `istatistikler_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
+  const exportToExcel = () => downloadCsv({
+    filename: `ogrenci-istatistikleri-${new Date().toISOString().slice(0, 10)}.csv`,
+    title: "Öğrenci Sınav İstatistikleri",
+    filters: [
+      { label: "Tamamlanan sınav", value: totalQuizzes },
+      { label: "Ortalama puan", value: `${averageScore}%` },
+      { label: "Başarı oranı", value: `${passRate}%` },
+      { label: "Toplam süre", value: `${Math.round(totalTime / 60)} dakika` },
+    ],
+    rows: completedResults,
+    columns: [
+      { header: "Sınav Adı", value: (row: any) => row.quizTitle || row.quiz?.title || row.quizId },
+      { header: "Ders", value: (row: any) => row.quiz?.category?.name || row.quiz?.category || "Genel" },
+      { header: "Puan", value: (row: any) => row.score ?? 0 },
+      { header: "Durum", value: (row: any) => row.status === "completed" ? "Tamamlandı" : "Devam Ediyor" },
+      { header: "Süre (dk)", value: (row: any) => Math.round((row.timeTaken || 0) / 60) },
+      { header: "Tarih", value: (row: any) => row.submittedAt ? new Date(row.submittedAt).toLocaleString("tr-TR") : "-" },
+    ],
+  });
   const exportToPDF = () => {
     window.print();
   };

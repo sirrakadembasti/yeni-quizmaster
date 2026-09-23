@@ -14,7 +14,7 @@ import {
   Search,
   Eye,
   Users,
-  Printer
+  Download
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { classApi, userApi } from "@/lib/api";
@@ -23,6 +23,8 @@ import { useAuth } from "@/context/auth-context";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { PrintButton, PrintMeta } from "@/components/print/PrintTools";
+import { downloadCsv } from "@/lib/export";
 
 export default function ClassesPage() {
   const { role } = useAuth();
@@ -45,9 +47,23 @@ export default function ClassesPage() {
     return classes.filter(cls => cls.name.toLowerCase().includes(searchTerm.toLowerCase()));
   }, [classes, searchTerm]);
 
+  const exportClasses = () => downloadCsv({
+    filename: `sinif_listesi_${new Date().toISOString().slice(0, 10)}.csv`,
+    title: role === "admin" ? "Okul Sınıfları" : "Sınıflarım",
+    filters: [{ label: "Arama", value: searchTerm || "Tümü" }, { label: "Kayıt Sayısı", value: filteredClasses.length }],
+    columns: [
+      { header: "Sınıf", value: "name" },
+      { header: "Açıklama", value: "description" },
+      { header: "Öğrenci Sayısı", value: (item: any) => students.filter((student) => student.classId === item.id).length },
+      { header: "Sorumlu Öğretmen", value: (item: any) => item.classTeacher?.name || "Atanmamış" },
+      { header: "Sorumlu Öğretmen E-postası", value: (item: any) => item.classTeacher?.email || "" },
+    ],
+    rows: filteredClasses,
+  });
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <PrintMeta title={role === "admin" ? "Okul Sınıfları" : "Sınıflarım"} filters={[{ label: "Arama", value: searchTerm || "Tümü" }]} />
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="flex items-center gap-3 text-3xl font-heading font-bold tracking-tight text-foreground">
@@ -60,14 +76,9 @@ export default function ClassesPage() {
               {role === 'admin' ? 'Tüm akademik sınıfları ve atamaları izleyin.' : 'Sorumlu olduğunuz ve branş verdiğiniz derslikler.'}
             </p>
           </div>
-          <div className="flex gap-2 print:hidden">
-            <Button 
-              variant="outline" 
-              onClick={() => window.print()}
-              className="gap-2 rounded-xl font-semibold"
-            >
-              <Printer className="h-4 w-4" /> Yazdır
-            </Button>
+          <div className="flex gap-2 print:hidden no-print">
+            <Button variant="outline" onClick={exportClasses} disabled={!filteredClasses.length} className="gap-2 rounded-xl font-semibold"><Download className="h-4 w-4" />CSV</Button>
+            <PrintButton className="rounded-xl" />
           </div>
         </header>
 

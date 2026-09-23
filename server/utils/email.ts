@@ -2,33 +2,75 @@ import nodemailer from "nodemailer";
 import { storage } from "../storage";
 import { logger } from "./logger";
 
-// Configure email transporter
-const hasAuth = !!(process.env.EMAIL_USER && process.env.EMAIL_PASS);
+// SMTP ayarları dotenv yüklendikten sonra, ilk gönderim anında okunur.
+// Böylece ESM import sırası Gmail/SMTP ayarlarını varsayılan değerlere kilitlemez.
+export function getEmailConfiguration() {
+  const host = process.env.EMAIL_HOST?.trim() || "127.0.0.1";
+  const port = Number.parseInt(process.env.EMAIL_PORT || "1026", 10);
+  const secure = process.env.EMAIL_SECURE === "true" || port === 465;
+  const user = process.env.EMAIL_USER?.trim() || "";
+  const password = process.env.EMAIL_PASS || "";
+  const fromEmail = process.env.EMAIL_FROM?.trim() || user || "noreply@quizmaster.com";
+  const fromName = process.env.EMAIL_FROM_NAME?.trim() || "QuizMaster";
 
-export const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || "127.0.0.1",
-  port: parseInt(process.env.EMAIL_PORT || "1026", 10),
-  secure: process.env.EMAIL_SECURE === "true",
-  auth: hasAuth
-    ? {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      }
-    : undefined,
-});
+  return {
+    host,
+    port: Number.isFinite(port) ? port : 587,
+    secure,
+    user,
+    password,
+    fromEmail,
+    fromName,
+    authConfigured: Boolean(user && password),
+  };
+}
 
-/**
- * Direct email sender (underlying SMTP call)
- */
-export const sendDirectEmail = async (options: nodemailer.SendMailOptions) => {
-  const from = options.from || `"QuizMaster Support" <${process.env.EMAIL_FROM || "noreply@quizmaster.com"}>`;
-  const info = await transporter.sendMail({
-    ...options,
-    from,
-  });
-  return info;
+let transporter: nodemailer.Transporter | null = null;
+let transporterKey = "";
+
+function getTransporter() {
+  const config = getEmailConfiguration();
+  const nextKey = [config.host, config.port, config.secure, config.user, config.password].join("|");
+  if (!transporter || transporterKey !== nextKey) {
+    transporter = nodemailer.createTransport({
+      host: config.host,
+      port: config.port,
+      secure: config.secure,
+      requireTLS: process.env.EMAIL_REQUIRE_TLS === "true" || (config.port === 587 && !config.secure),
+      auth: config.authConfigured ? { user: config.user, pass: config.password } : undefined,
+      connectionTimeout: Number.parseInt(process.env.EMAIL_CONNECTION_TIMEOUT || "10000", 10),
+      greetingTimeout: Number.parseInt(process.env.EMAIL_GREETING_TIMEOUT || "10000", 10),
+      socketTimeout: Number.parseInt(process.env.EMAIL_SOCKET_TIMEOUT || "20000", 10),
+    });
+    transporterKey = nextKey;
+  }
+  return transporter;
+}
+
+export const getEmailStatus = () => {
+  const config = getEmailConfiguration();
+  return {
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    fromEmail: config.fromEmail,
+    fromName: config.fromName,
+    authConfigured: config.authConfigured,
+    provider: config.host === "smtp.gmail.com" ? "gmail" : "smtp",
+  };
 };
 
+export const verifyEmailTransport = async () => {
+  await getTransporter().verify();
+  return getEmailStatus();
+};
+
+/** Direct email sender (underlying SMTP call). */
+export const sendDirectEmail = async (options: nodemailer.SendMailOptions) => {
+  const config = getEmailConfiguration();
+  const from = options.from || `"${config.fromName.replace(/[\r\n"]/g, "")}" <${config.fromEmail}>`;
+  return getTransporter().sendMail({ ...options, from });
+};
 /**
  * Queue an email in database for asynchronous Outbox delivery
  */

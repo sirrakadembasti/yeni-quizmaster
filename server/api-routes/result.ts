@@ -4,7 +4,30 @@ import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 
 const router: Router = Router();
 
+const csvCell = (value: unknown) => {
+  const raw = value == null ? "" : String(value).replace(/\r?\n|\r/g, " ").trim();
+  const safe = /^[\t\r ]*[=+\-@]/.test(raw) ? `'${raw}` : raw;
+  return `"${safe.replace(/"/g, '""')}"`;
+};
+
 // ==================== RESULT ROUTES (Admin/Teacher) ====================
+
+// Filtered results for reporting. Teacher scope is enforced on the server.
+router.get("/", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const queryValue = (value: unknown) => typeof value === "string" && value !== "all" ? value : undefined;
+    const results = await storage.getFilteredResults({
+      quizId: queryValue(req.query.quizId),
+      categoryId: queryValue(req.query.categoryId),
+      classId: queryValue(req.query.classId),
+      studentId: queryValue(req.query.studentId),
+      createdBy: req.user!.role === "teacher" ? req.user!.id : queryValue(req.query.teacherId),
+    });
+    res.json({ results });
+  } catch (error) {
+    res.status(500).json({ message: "Sınav sonuçları alınamadı." });
+  }
+});
 
 // Get all results for a specific quiz
 router.get("/quiz/:quizId", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
@@ -37,9 +60,9 @@ router.get("/quiz/:quizId/live", requireAuth, requireRole(["admin", "teacher"]),
   try {
     const quiz = await storage.getQuiz(req.params.quizId);
 
-    if (req.user!.role === "teacher" && quiz?.createdBy !== req.user!.id) {
-    if (!quiz) return res.status(404).json({ message: "S?nav bulunamad?." });
-      return res.status(403).json({ message: "Bu quizi izleme yetkiniz yok." });
+    if (!quiz) return res.status(404).json({ message: "Sınav bulunamadı." });
+    if (req.user!.role === "teacher" && quiz.createdBy !== req.user!.id) {
+      return res.status(403).json({ message: "Bu sınavı izleme yetkiniz yok." });
     }
 
     const results = await storage.getLiveResults(req.params.quizId);
@@ -60,9 +83,9 @@ router.get("/quiz/:quizId/live", requireAuth, requireRole(["admin", "teacher"]),
 router.get("/quiz/:quizId/export", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
     const quiz = await storage.getQuiz(req.params.quizId);
-    
-    if (req.user!.role === "teacher" && quiz?.createdBy !== req.user!.id) {
-    if (!quiz) return res.status(404).json({ message: "S?nav bulunamad?." });
+
+    if (!quiz) return res.status(404).json({ message: "Sınav bulunamadı." });
+    if (req.user!.role === "teacher" && quiz.createdBy !== req.user!.id) {
       return res.status(403).json({ message: "Bu sınavın sonuçlarını indirme yetkiniz yok." });
     }
 
@@ -88,7 +111,12 @@ router.get("/quiz/:quizId/export", requireAuth, requireRole(["admin", "teacher"]
       ]);
     }
 
-    const csvContent = csvRows.map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(",")).join("\n");
+    const csvContent = [
+      "sep=;",
+      ["Sınav Sonuçları", quiz.title, ...Array(7).fill("")].map(csvCell).join(";"),
+      Array(9).fill("").map(csvCell).join(";"),
+      ...csvRows.map(row => row.map(csvCell).join(";")),
+    ].join("\r\n");
 
     res.setHeader("Content-Type", "text/csv");
     res.setHeader("Content-Disposition", `attachment; filename="sinav_sonuclari_${req.params.quizId}.csv"`);

@@ -9,8 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { PrintButton, PrintMeta } from "@/components/print/PrintTools";
 import { analyticsApi, classApi } from "@/lib/api";
 import { useAuth } from "@/context/auth-context";
-import { BarChart3, Users, CheckCircle2, TrendingUp, Award } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { BarChart3, Users, CheckCircle2, TrendingUp, Award, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { downloadCsv } from "@/lib/export";
 
 function dateInputValue(date: Date) {
   return date.toISOString().slice(0, 10);
@@ -57,6 +59,24 @@ export default function ClassStatisticsPage() {
     return { totalStudents, totalParticipants, avgParticipation, avgScore };
   }, [data]);
 
+  const exportCsv = () => downloadCsv({
+    filename: `sinif_istatistikleri_${startDate}_${endDate}.csv`,
+    title: "Sınıf İstatistikleri",
+    filters: [
+      { label: "Başlangıç", value: startDate },
+      { label: "Bitiş", value: endDate },
+      { label: "Sınıf", value: selectedClass || "Tüm sınıflar" },
+    ],
+    columns: [
+      { header: "Sınıf", value: "className" },
+      { header: "Öğrenci Sayısı", value: "studentCount" },
+      { header: "Katılımcı Sayısı", value: "participantCount" },
+      { header: "Katılım Oranı (%)", value: "participationRate" },
+      { header: "Ortalama Başarı (%)", value: "averageScore" },
+    ],
+    rows: data,
+  });
+
   return (
     <DashboardLayout>
       <div className="page-stack pb-8">
@@ -77,7 +97,10 @@ export default function ClassStatisticsPage() {
             </h1>
             <p className="text-sm text-muted-foreground">Yetkili sınıfların katılım ve başarı analizi.</p>
           </div>
-          <PrintButton />
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={exportCsv} disabled={!data.length}><Download className="mr-2 h-4 w-4" />CSV</Button>
+            <PrintButton />
+          </div>
         </div>
 
         {/* Filters */}
@@ -185,47 +208,41 @@ export default function ClassStatisticsPage() {
           </CardContent>
         </Card>
 
-        {/* Per-Class Detailed Breakdown */}
+        {/* Grafikle aynı veriyi sayısal olarak doğrulayan sınıf tablosu */}
         {data.length > 0 && (
-          <div className="space-y-3">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Sınıf Bazında Detaylar</h2>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {data.map((c) => (
-                <Card key={c.classId} className="border-border/60 hover:shadow-sm transition-shadow">
-                  <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-                    <CardTitle className="text-base font-bold text-foreground">{c.className}</CardTitle>
-                    <Badge variant="outline" className="text-xs font-semibold">
-                      {c.studentCount} Öğrenci
-                    </Badge>
-                  </CardHeader>
-                  <CardContent className="space-y-2.5 text-xs">
-                    <div className="flex justify-between items-center text-muted-foreground">
-                      <span>Sınava Katılan:</span>
-                      <span className="font-semibold text-foreground">{c.participantCount} öğrenci</span>
-                    </div>
-                    <div>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-muted-foreground">Katılım Oranı:</span>
-                        <span className="font-bold text-indigo-600 dark:text-indigo-400">%{c.participationRate}</span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
-                        <div className="bg-indigo-600 h-1.5 rounded-full" style={{ width: `${Math.min(c.participationRate, 100)}%` }} />
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-muted-foreground">Ortalama Başarı:</span>
-                        <span className="font-bold text-emerald-600 dark:text-emerald-400">%{c.averageScore}</span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
-                        <div className="bg-emerald-600 h-1.5 rounded-full" style={{ width: `${Math.min(c.averageScore, 100)}%` }} />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+          <Card className="overflow-hidden class-analysis-table">
+            <CardHeader className="border-b bg-muted/20 py-3">
+              <CardTitle className="text-base">Sınıf Bazında Ayrıntılı Sonuçlar</CardTitle>
+            </CardHeader>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Sınıf</TableHead>
+                    <TableHead className="text-right">Öğrenci</TableHead>
+                    <TableHead className="text-right">Katılımcı</TableHead>
+                    <TableHead className="min-w-[180px]">Katılım Oranı</TableHead>
+                    <TableHead className="min-w-[180px]">Ortalama Başarı</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.map((item) => (
+                    <TableRow key={item.classId}>
+                      <TableCell className="font-bold">{item.className}</TableCell>
+                      <TableCell className="text-right tabular-nums">{item.studentCount}</TableCell>
+                      <TableCell className="text-right tabular-nums">{item.participantCount}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3"><div className="h-2 flex-1 overflow-hidden rounded-full bg-muted"><div className="h-full bg-indigo-600" style={{ width: `${Math.min(item.participationRate, 100)}%` }} /></div><strong className="w-12 text-right tabular-nums">%{item.participationRate}</strong></div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3"><div className="h-2 flex-1 overflow-hidden rounded-full bg-muted"><div className="h-full bg-emerald-600" style={{ width: `${Math.min(item.averageScore, 100)}%` }} /></div><strong className="w-12 text-right tabular-nums">%{item.averageScore}</strong></div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
-          </div>
+          </Card>
         )}
       </div>
     </DashboardLayout>

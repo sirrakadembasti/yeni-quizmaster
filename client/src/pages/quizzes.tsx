@@ -2,19 +2,13 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { 
-  Card, 
-  CardContent, 
-  CardFooter, 
-  CardHeader
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   Search,
   Plus,
   MoreVertical,
-  Clock,
-  Users,
   FileQuestion,
   Filter,
   Loader2,
@@ -49,7 +43,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { quizApi, categoryApi, classApi } from "@/lib/api";
@@ -74,6 +68,8 @@ export default function QuizzesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState("all");
   const [selectedClassId, setSelectedClassId] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
   
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [quizToDelete, setQuizToDelete] = useState<string | null>(null);
@@ -142,6 +138,12 @@ export default function QuizzesPage() {
     });
   }, [quizzesData, searchTerm, selectedCategoryId, selectedClassId]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategoryId, selectedClassId]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredQuizzes.length / pageSize));
+  const paginatedQuizzes = filteredQuizzes.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const resetFilters = () => {
     setSearchTerm("");
     setSelectedCategoryId("all");
@@ -251,54 +253,64 @@ export default function QuizzesPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {filteredQuizzes.map((quiz) => (
-              <Card key={quiz.id} className="group hover:shadow-xl transition-all duration-300 border-primary/5 flex flex-col rounded-2xl overflow-hidden">
-                <CardHeader className="space-y-4 pb-4">
-                  <div className="flex justify-between items-start">
-                    <Badge variant="secondary" className={`${categoryColors[quiz.category] || "bg-muted text-muted-foreground"} border-none font-bold rounded-full`}>
-                      {quiz.category || 'Genel'}
-                    </Badge>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground rounded-full hover:bg-muted"><MoreVertical className="h-4 w-4" /></Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="rounded-xl">
-                        <DropdownMenuItem className="font-medium" onClick={() => setLocation(`/quizzes/${quiz.id}`)}><Edit className="mr-2 h-4 w-4" /> Düzenle</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive font-medium" onClick={() => openDeleteModal(quiz.id)}><Trash2 className="mr-2 h-4 w-4" /> Sil</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="font-black text-xl line-clamp-1 group-hover:text-primary transition-colors">{quiz.title}</h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px]">{quiz.description || "Açıklama yok."}</p>
-                  </div>
-                </CardHeader>
-                <CardContent className="pb-4 flex-1">
-                  <div className="grid grid-cols-3 gap-2 p-3 bg-muted/30 rounded-xl border border-border/50">
-                    <div className="flex flex-col items-center text-center"><FileQuestion className="h-4 w-4 text-blue-500 mb-1" /><span className="text-[10px] font-black uppercase text-muted-foreground">Soru</span><span className="font-bold text-sm">{quiz.questionCount || 0}</span></div>
-                    <div className="flex flex-col items-center text-center border-x border-border/50 px-2"><Clock className="h-4 w-4 text-emerald-500 mb-1" /><span className="text-[10px] font-black uppercase text-muted-foreground">Süre</span><span className="font-bold text-sm">{quiz.timeLimit ? `${quiz.timeLimit} dk` : "Yok"}</span></div>
-                    <div className="flex flex-col items-center text-center"><Users className="h-4 w-4 text-purple-500 mb-1" /><span className="text-[10px] font-black uppercase text-muted-foreground">Katılım</span><span className="font-bold text-sm">{quiz.participantCount || 0}</span></div>
-                  </div>
-                  {/* Atanan Sınıfları Göster */}
-                  <div className="mt-4 flex flex-wrap gap-1">
-                    {quiz.assignedClasses?.map((cls: any) => (
-                      <Badge key={cls.id} variant="outline" className="text-[9px] h-5 py-0 border-primary/20 bg-primary/5 text-primary">
-                        {cls.name}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between items-center pt-2 bg-muted/10 border-t border-primary/5 p-3">
-                  <div className="flex items-center gap-2">
-                    <div className={`h-2 w-2 rounded-full ${quiz.status === 'published' ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{quiz.status === 'published' ? 'Yayında' : 'Taslak'}</span>
-                  </div>
-                  <Button variant="outline" size="sm" className="font-bold rounded-lg h-9 px-4" onClick={() => setLocation(`/student/quiz/${quiz.id}`)}><Eye className="h-4 w-4 mr-2" /> Önizle</Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+          <Card className="overflow-hidden border-border/60">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-muted/40">
+                  <TableRow>
+                    <TableHead>Sınav</TableHead>
+                    <TableHead>Ders</TableHead>
+                    <TableHead>Sınıflar</TableHead>
+                    <TableHead className="text-center">Soru</TableHead>
+                    <TableHead className="text-center">Süre</TableHead>
+                    <TableHead className="text-center">Katılım</TableHead>
+                    <TableHead>Durum</TableHead>
+                    <TableHead className="text-right">İşlemler</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {paginatedQuizzes.map((quiz) => (
+                    <TableRow key={quiz.id}>
+                      <TableCell className="min-w-[220px]">
+                        <p className="font-bold">{quiz.title}</p>
+                        <p className="max-w-[300px] truncate text-xs text-muted-foreground">{quiz.description || "Açıklama yok."}</p>
+                      </TableCell>
+                      <TableCell><Badge variant="secondary" className={categoryColors[quiz.category] || ""}>{quiz.category || "Genel"}</Badge></TableCell>
+                      <TableCell className="min-w-[160px]">
+                        <div className="flex flex-wrap gap-1">{quiz.assignedClasses?.length
+                          ? quiz.assignedClasses.map((cls: any) => <Badge key={cls.id} variant="outline" className="text-[10px]">{cls.name}</Badge>)
+                          : <span className="text-xs text-muted-foreground">Atanmamış</span>}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center tabular-nums">{quiz.questionCount || 0}</TableCell>
+                      <TableCell className="text-center tabular-nums">{quiz.timeLimit ? `${quiz.timeLimit} dk` : "-"}</TableCell>
+                      <TableCell className="text-center tabular-nums">{quiz.participantCount || 0}</TableCell>
+                      <TableCell><Badge variant={quiz.status === "published" ? "default" : "outline"}>{quiz.status === "published" ? "Yayında" : "Taslak"}</Badge></TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-1">
+                          <Button variant="outline" size="sm" onClick={() => setLocation(`/student/quiz/${quiz.id}`)}><Eye className="mr-1 h-4 w-4" />Önizle</Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreVertical className="h-4 w-4" /></Button></DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => setLocation(`/quizzes/${quiz.id}`)}><Edit className="mr-2 h-4 w-4" />Düzenle</DropdownMenuItem>
+                              <DropdownMenuItem className="text-destructive" onClick={() => openDeleteModal(quiz.id)}><Trash2 className="mr-2 h-4 w-4" />Sil</DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            <div className="flex flex-col gap-2 border-t px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+              <span className="text-muted-foreground">{filteredQuizzes.length} kayıt · Sayfa {currentPage}/{totalPages}</span>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" disabled={currentPage <= 1} onClick={() => setCurrentPage((page) => page - 1)}>Önceki</Button>
+                <Button variant="outline" size="sm" disabled={currentPage >= totalPages} onClick={() => setCurrentPage((page) => page + 1)}>Sonraki</Button>
+              </div>
+            </div>
+          </Card>
         )}
       </div>
 

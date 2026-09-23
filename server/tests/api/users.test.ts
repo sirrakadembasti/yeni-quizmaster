@@ -136,3 +136,29 @@ describe('Users API Integration Tests', () => {
     });
   });
 });
+
+describe('Admin student and parent data updates', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('passes parent fields through the API when an admin updates a student', async () => {
+    const admin = { id: 'admin-1', role: 'admin', email: 'admin@example.com' };
+    const student = { id: 'student-1', role: 'student', email: 'student@example.com' };
+    const app = createTestApp(admin);
+    vi.mocked(storage.getUser).mockImplementation(async (id) => id === admin.id ? admin as any : student as any);
+    vi.mocked(storage.updateUser).mockImplementation(async (_id, data) => ({ ...student, ...data }) as any);
+
+    const payload = {
+      name: 'Updated Student',
+      parentName: 'Ayşe Veli',
+      parentRelation: 'Anne',
+      parentPhone: '05550000000',
+      parentEmail: 'veli@example.com',
+      parentAddress: 'Test adresi',
+    };
+    const response = await request(app).patch('/api/users/student-1').send(payload);
+
+    expect(response.status).toBe(200);
+    expect(storage.updateUser).toHaveBeenCalledWith('student-1', expect.objectContaining(payload));
+    expect(response.body.user.parentName).toBe('Ayşe Veli');
+  });
+});

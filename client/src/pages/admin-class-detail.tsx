@@ -13,7 +13,8 @@ import {
   Search,
   Briefcase,
   GraduationCap,
-  BookOpen
+  BookOpen,
+  Download
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -35,6 +36,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { PrintButton, PrintMeta } from "@/components/print/PrintTools";
+import { downloadCsv } from "@/lib/export";
 
 export default function AdminClassDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -77,6 +80,7 @@ export default function AdminClassDetailPage() {
   const classStudents = classData?.students || [];
   const students = useMemo(() => usersData?.users.filter(u => u.role === 'student') || [], [usersData]);
   const teachers = useMemo(() => usersData?.users.filter(u => u.role === 'teacher') || [], [usersData]);
+  const visibleStudents = useMemo(() => classStudents.filter((student: any) => student.name.toLowerCase().includes(searchTerm.toLowerCase())), [classStudents, searchTerm]);
 
   // FILTER & SORT: Unclassed + Same Level, Unclassed First
   const availableStudents = useMemo(() => {
@@ -169,12 +173,25 @@ export default function AdminClassDetailPage() {
     onError: () => toast({ variant: "destructive", title: "Hata", description: "Güncelleme başarısız." })
   });
 
+  const exportStudents = () => downloadCsv({
+    filename: `${cls?.name || "sinif"}-yonetim-ogrenci-listesi.csv`,
+    title: `${cls?.name || "Sınıf"} Öğrenci Listesi`,
+    filters: [{ label: "Kayıt sayısı", value: visibleStudents.length }, { label: "Arama", value: searchTerm || "Tümü" }],
+    rows: visibleStudents,
+    columns: [
+      { header: "Sıra", value: (_row: any, index: number) => index + 1 },
+      { header: "Öğrenci", value: (row: any) => row.name },
+      { header: "Okul Numarası", value: (row: any) => row.studentNo || "-" },
+      { header: "E-posta", value: (row: any) => row.email || "-" },
+    ],
+  });
   if (classLoading) return <div className="flex h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
   if (!cls) return <div className="p-8">Sınıf bulunamadı.</div>;
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <PrintMeta title="Sınıf Öğrenci Listesi" filters={[{ label: "Sınıf", value: cls.name }, { label: "Öğrenci sayısı", value: visibleStudents.length }]} />
         <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Button variant="outline" size="icon" asChild className="rounded-xl">
@@ -185,11 +202,15 @@ export default function AdminClassDetailPage() {
               <p className="text-muted-foreground font-medium">Bu sayfadan sınıfın tüm operasyonel atamalarını gerçekleştirebilirsiniz.</p>
             </div>
           </div>
+          <div className="flex items-center gap-2 no-print print:hidden">
+            <Button variant="outline" className="gap-2" onClick={exportStudents}><Download className="h-4 w-4" /> Excel Uyumlu CSV</Button>
+            <PrintButton />
+          </div>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Assignment Controls */}
-          <div className="space-y-6">
+          <div className="space-y-6 no-print print:hidden">
 
             {/* Sorumlu Öğretmen Kartı */}
             <Card className="rounded-3xl border-border bg-card shadow-sm overflow-hidden border-2 border-violet-100 dark:border-violet-950">
@@ -329,10 +350,10 @@ export default function AdminClassDetailPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {classStudents.length === 0 ? (
+                  {visibleStudents.length === 0 ? (
                     <TableRow><TableCell colSpan={2} className="h-32 text-center text-muted-foreground italic">Sınıf henüz boş.</TableCell></TableRow>
                   ) : (
-                    classStudents.filter((s:any) => s.name.toLowerCase().includes(searchTerm.toLowerCase())).map((s: any) => (
+                    visibleStudents.map((s: any) => (
                       <TableRow key={s.id} className="group hover:bg-muted/30">
                         <TableCell className="pl-6">
                           <div className="flex items-center gap-3">

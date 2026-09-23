@@ -1,11 +1,7 @@
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Search,
-  UserPlus,
-  Filter
-} from "lucide-react";
+import { Download, Filter, Search, UserPlus } from "lucide-react";
 import { useState, useMemo } from "react";
 import { userApi, classApi } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
@@ -17,6 +13,7 @@ import { DeleteConfirmModal } from "@/components/management/DeleteConfirmModal";
 import { useUserManagement } from "@/hooks/use-user-management";
 import { useLocation } from "wouter";
 import { PrintButton, PrintMeta } from "@/components/print/PrintTools";
+import { downloadCsv, type CsvColumn } from "@/lib/export";
 
 export default function StudentsPage() {
   const { role, user: currentUser } = useAuth();
@@ -71,6 +68,34 @@ export default function StudentsPage() {
     setLocation(`/student/results?studentId=${user.id}`);
   };
 
+  const exportStudents = () => {
+    const columns: Array<CsvColumn<any>> = [
+      { header: "Ad Soyad", value: "name" },
+      { header: "E-posta", value: "email" },
+      { header: "Sınıf", value: (student: any) => classesData?.classes?.find((item: any) => item.id === student.classId)?.name || "Atanmamış" },
+      { header: "Öğrenci No", value: (student: any) => student.studentNo || student.classNo || "" },
+      { header: "Telefon", value: "phoneNumber" },
+      { header: "Adres", value: "address" },
+    ];
+    if (role === "admin") columns.push(
+      { header: "Veli Adı", value: "parentName" },
+      { header: "Yakınlık", value: "parentRelation" },
+      { header: "Veli Telefonu", value: "parentPhone" },
+      { header: "Veli E-postası", value: "parentEmail" },
+      { header: "Veli Adresi", value: "parentAddress" },
+    );
+    downloadCsv({
+      filename: `ogrenci_listesi_${new Date().toISOString().slice(0, 10)}.csv`,
+      title: "Öğrenci Listesi",
+      filters: [
+        { label: "Arama", value: searchTerm || "Tümü" },
+        { label: "Sınıf", value: classesData?.classes?.find((item: any) => item.id === selectedClassFilter)?.name || "Tüm sınıflar" },
+        { label: "Kayıt Sayısı", value: students.length },
+      ],
+      columns,
+      rows: students,
+    });
+  };
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -93,7 +118,10 @@ export default function StudentsPage() {
               <UserPlus className="h-4 w-4" /> Yeni Öğrenci
             </Button>
           )}
-          <PrintButton className="rounded-xl" />
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={exportStudents} disabled={!students.length} className="rounded-xl"><Download className="mr-2 h-4 w-4" />CSV</Button>
+            <PrintButton className="rounded-xl" />
+          </div>
         </div>
 
         <div className="flex flex-col md:flex-row gap-4 print:hidden no-print">

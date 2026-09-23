@@ -642,6 +642,16 @@ export const aiApi = {
 
 // Result APIs
 export const resultApi = {
+  async getFilteredResults(filters: { quizId?: string; categoryId?: string; classId?: string; studentId?: string; teacherId?: string } = {}) {
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value && value !== "all") params.set(key, value);
+    });
+    const response = await apiFetch(`${API_BASE}/results${params.size ? `?${params.toString()}` : ""}`, {
+      credentials: 'include',
+    });
+    return handleResponse<{ results: StudentResult[] }>(response);
+  },
   async getStudentResults(studentId?: string) {
     const url = studentId ? `${API_BASE}/student/results?studentId=${studentId}` : `${API_BASE}/student/results`;
     const response = await apiFetch(url, {

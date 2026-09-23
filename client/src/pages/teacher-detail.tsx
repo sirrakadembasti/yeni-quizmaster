@@ -16,6 +16,7 @@ import {
   ShieldAlert,
   Pencil,
   Trash2,
+  Download
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { userApi, quizApi, classApi } from "@/lib/api";
@@ -25,6 +26,8 @@ import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/hooks/use-toast";
 import { UserFormModal } from "@/components/management/UserFormModal";
 import { DeleteConfirmModal } from "@/components/management/DeleteConfirmModal";
+import { PrintButton, PrintMeta } from "@/components/print/PrintTools";
+import { downloadCsv } from "@/lib/export";
 
 export default function TeacherDetailPage() {
   const params = useParams<{ id: string }>();
@@ -97,6 +100,27 @@ export default function TeacherDetailPage() {
     [classesData, teacherId]
   );
 
+  const exportTeacher = () => {
+    if (!teacher) return;
+    downloadCsv({
+      filename: `${teacher.name}-ogretmen-detayi.csv`,
+      title: "Öğretmen Detayı",
+      filters: [
+        { label: "Öğretmen", value: teacher.name },
+        { label: "E-posta", value: teacher.email },
+        { label: "Oluşturduğu sınav", value: teacherQuizzes.length },
+      ],
+      rows: [
+        ...teacherClasses.map((item: any) => ({ type: "Sınıf", name: item.name, detail: item.classTeacherId === teacherId ? "Sorumlu öğretmen" : "Dersine girdiği sınıf" })),
+        ...teacherQuizzes.map((item: any) => ({ type: "Sınav", name: item.title, detail: item.status || "-" })),
+      ],
+      columns: [
+        { header: "Kayıt Türü", value: (row: any) => row.type },
+        { header: "Ad", value: (row: any) => row.name },
+        { header: "Açıklama", value: (row: any) => row.detail },
+      ],
+    });
+  };
   if (usersLoading) {
     return (
       <DashboardLayout>
@@ -125,6 +149,7 @@ export default function TeacherDetailPage() {
   return (
     <DashboardLayout>
       <div className="space-y-8">
+        <PrintMeta title="Öğretmen Detayı" filters={[{ label: "Öğretmen", value: teacher.name }, { label: "E-posta", value: teacher.email }]} />
         {/* Header */}
         <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -138,6 +163,8 @@ export default function TeacherDetailPage() {
           </div>
           {role === 'admin' && (
             <div className="flex items-center gap-2.5 ml-auto">
+              <Button variant="outline" size="sm" className="rounded-xl font-bold gap-2" onClick={exportTeacher}><Download className="h-4 w-4" /> Excel Uyumlu CSV</Button>
+              <PrintButton className="rounded-xl" />
               <Button
                 variant="outline"
                 size="sm"

@@ -155,7 +155,27 @@ Geliştirme ortamında test e-postalarını yakalamak ve tarayıcıda görselle�
   EMAIL_FROM=noreply@quizmaster.com
   ```
 
-#### B) Canlı Ortam (Production Online — Brevo / Sendinblue)
+#### B) Gmail SMTP
+
+Gmail ile parola sıfırlama ve test e-postası göndermek için Google hesabında iki adımlı doğrulamayı açın ve normal hesap parolası yerine bir **Uygulama Parolası** üretin. `server/.env` dosyasına aşağıdaki değerleri ekleyin:
+
+```env
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_SECURE=false
+EMAIL_REQUIRE_TLS=true
+EMAIL_USER=your-smtp-email@gmail.com
+EMAIL_PASS=your-16-character-app-password
+EMAIL_FROM=your-smtp-email@gmail.com
+EMAIL_FROM_NAME=QuizMaster
+FRONTEND_URL=http://localhost:5173
+```
+
+> `EMAIL_PASS` kaynak koda veya Git'e eklenmemelidir. Depodaki `server/.env.gmail.example` şablon olarak kullanılabilir. Sunucu yeniden başlatıldıktan sonra yönetici API'sindeki `GET /api/admin/email-settings/status` ayarların hazır olup olmadığını parolayı göstermeden bildirir; `POST /api/admin/email-settings/test` ise SMTP bağlantısını ve gerçek gönderimi sınar.
+
+Parola sıfırlama isteği tek kullanımlık ham bağlantıyı e-postaya koyar; veritabanında yalnızca SHA-256 özeti ve bir saatlik son kullanma zamanı tutulur. Gönderim başarısız olursa kayıt e-posta kuyruğunda hata bilgisiyle izlenebilir ve yönetici tarafından yeniden gönderilebilir.
+
+#### C) Canlı Ortam (Production Online — Brevo / Sendinblue)
 Canlıya çıkışta Brevo SMTP Relay servisi kullanılır:
 1. Brevo (brevo.com) hesabınızda *Transactional > Settings > Configuration* adımından yeni bir **SMTP Key** (`xsmtpsib-...`) oluşturun.
 2. Gönderici e-posta adresinizi (*Senders*) Brevo panelinde doğrulayın.

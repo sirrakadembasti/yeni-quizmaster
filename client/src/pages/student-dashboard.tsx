@@ -16,7 +16,6 @@ import {
   Loader2,
   TrendingUp,
   Target,
-  Printer
 } from "lucide-react";
 import { quizApi, resultApi, authApi } from "@/lib/api";
 
@@ -109,13 +108,6 @@ export default function StudentDashboard() {
               )}
             </div>
             <div className="flex-shrink-0 flex gap-3 print:hidden">
-              <Button
-                variant="outline"
-                onClick={() => window.print()}
-                className="gap-2 border-2 bg-background/50 backdrop-blur-sm hover:bg-background h-14 px-6 rounded-xl font-bold"
-              >
-                <Printer className="h-5 w-5" /> Yazdır
-              </Button>
               <Button
                 size="lg"
                 onClick={() => setLocation('/student/quizzes')}

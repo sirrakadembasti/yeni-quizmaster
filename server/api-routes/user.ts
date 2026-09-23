@@ -11,7 +11,7 @@ router.get("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Auth
   try {
     let users: any[];
     const userRole = String(req.user!.role).toLowerCase();
-    
+
     if (userRole === 'admin') {
       // Admins see everyone
       users = await storage.getAllUsers();
@@ -68,10 +68,10 @@ router.get("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
       if (!teacherClasses.some(c => c.id === targetUser.classId)) {
         return res.status(403).json({ message: "Bu öğrenciyi görüntüleme yetkiniz yok." });
       }
-      const { 
-        password, resetToken, resetTokenExpiry, 
-        parentName, parentRelation, parentPhone, parentEmail, parentAddress, 
-        ...safeUser 
+      const {
+        password, resetToken, resetTokenExpiry,
+        parentName, parentRelation, parentPhone, parentEmail, parentAddress,
+        ...safeUser
       } = targetUser as any;
       return res.json({ user: safeUser });
     }
@@ -93,11 +93,18 @@ router.get("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
 
 router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
-    const { 
-      name, email, password, role, classNo, classId,
+    const {
+      name, email, password, role, classNo, classId, studentNo, phoneNumber, address,
       parentName, parentRelation, parentPhone, parentEmail, parentAddress
     } = req.body;
-    
+
+    if (typeof name !== "string" || name.trim().length < 2 || typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) || typeof password !== "string" || password.length < 6) {
+      return res.status(400).json({ message: "Ad, geçerli e-posta ve en az 6 karakterli parola gereklidir." });
+    }
+    if (parentEmail && (typeof parentEmail !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parentEmail.trim()))) {
+      return res.status(400).json({ message: "Geçerli bir veli e-posta adresi giriniz." });
+    }
+
     if (req.user!.role === 'teacher') {
       if (role !== 'student') {
         return res.status(403).json({ message: "Öğretmenler sadece öğrenci oluşturabilir." });
@@ -112,12 +119,13 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
       }
     }
 
-    const existingUser = await storage.getUserByEmail(email);
+    const normalizedEmail = email.trim().toLowerCase();
+    const existingUser = await storage.getUserByEmail(normalizedEmail);
     if (existingUser) return res.status(400).json({ message: "Bu e-posta adresi zaten kullanımda." });
-    
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const userPayload: any = { 
-      name, email, password: hashedPassword, role: role || 'student', classNo, classId 
+    const userPayload: any = {
+      name: name.trim(), email: normalizedEmail, password: hashedPassword, role: role || 'student', classNo, classId, studentNo, phoneNumber, address
     };
 
     // Only admin can set parent information
@@ -130,7 +138,7 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
     }
 
     const user = await storage.createUser(userPayload);
-    
+
     const { password: _, ...userWithoutPassword } = user;
     res.status(201).json({ user: userWithoutPassword });
   } catch (error) {
@@ -220,6 +228,27 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
       delete filteredBody.parentAddress;
     }
 
+    if (typeof filteredBody.email === "string") {
+      filteredBody.email = filteredBody.email.trim().toLowerCase();
+      const emailOwner = await storage.getUserByEmail(filteredBody.email);
+      if (emailOwner && emailOwner.id !== targetUserId) {
+        return res.status(409).json({ message: "Bu e-posta adresi başka bir kullanıcı tarafından kullanılıyor." });
+      }
+    }
+
+    const nullableProfileFields = [
+      "classId", "classNo", "studentNo", "phoneNumber", "address",
+      "parentName", "parentRelation", "parentPhone", "parentEmail", "parentAddress",
+    ];
+    for (const field of nullableProfileFields) {
+      if (typeof filteredBody[field] === "string") {
+        const value = filteredBody[field].trim();
+        filteredBody[field] = value || null;
+      }
+    }
+    if (filteredBody.parentEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(filteredBody.parentEmail)) {
+      return res.status(400).json({ message: "Geçerli bir veli e-posta adresi giriniz." });
+    }
     if (filteredBody.password) {
       filteredBody.password = await bcrypt.hash(filteredBody.password, 10);
     } else {
@@ -235,6 +264,7 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
     res.json({ user: userWithoutPassword });
   } catch (error) {
     console.error("[PATCH /api/users/:id] Error:", error);
+    if ((error as any)?.code === "P2002") return res.status(409).json({ message: "Bu e-posta adresi zaten kullanılıyor." });
     res.status(500).json({ message: "Kullanıcı güncellenemedi." });
   }
 });

@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { resultApi } from '@/lib/api';
+import { downloadCsv } from '@/lib/export';
+import { PrintMeta } from '@/components/print/PrintTools';
 import { ArrowLeft, CheckCircle2, XCircle, AlertCircle, Printer, Download, HelpCircle } from 'lucide-react';
 
 interface Question {
@@ -98,10 +100,30 @@ export default function QuizResultDetail() {
   const correctCount = result.correctAnswersCount ?? result.correctAnswers ?? 0;
   const totalCount = result.totalQuestions ?? 0;
   const wrongAnswers = Math.max(0, totalCount - correctCount);
+  const exportCsv = () => downloadCsv({
+    filename: `${quiz.title || "sinav-sonucu"}.csv`,
+    title: "Sınav Sonuç Detayı",
+    filters: [
+      { label: "Sınav", value: quiz.title },
+      { label: "Puan", value: result.score ?? 0 },
+      { label: "Doğru", value: `${correctCount}/${totalCount}` },
+      { label: "Tamamlanma", value: result.submittedAt ? new Date(result.submittedAt) : "" },
+    ],
+    columns: [
+      { header: "Soru No", value: (_question: Question, index: number) => index + 1 },
+      { header: "Soru", value: "text" },
+      { header: "Soru Türü", value: "type" },
+      { header: "Öğrencinin Cevabı", value: (question: Question) => question.studentAnswer ?? "Boş" },
+      { header: "Doğru Cevap", value: "correctAnswer" },
+      { header: "Durum", value: (question: Question) => question.isCorrect ? "Doğru" : "Yanlış" },
+    ],
+    rows: questions,
+  });
 
   return (
     <DashboardLayout>
       <div className="max-w-4xl mx-auto space-y-6" id="print-area">
+        <PrintMeta title="Sınav Sonuç Detayı" filters={[{ label: "Sınav", value: quiz.title }, { label: "Puan", value: result.score ?? 0 }]} />
         {/* Header */}
         <div className="flex justify-between items-center print:hidden">
           <Button
@@ -120,42 +142,9 @@ export default function QuizResultDetail() {
               <Printer className="h-4 w-4 mr-2" />
               Yazdır / PDF
             </Button>
-            <Button
-              onClick={() => {
-                try {
-                  const csvHeaders = ['Soru No', 'Soru', 'Öğrencinin Cevabı', 'Doğru Cevap', 'Durum'];
-                  const csvData = questions.map((q, idx) => [
-                    idx + 1,
-                    `"${q.text.replace(/"/g, '""')}"`,
-                    `"${(q.studentAnswer || '').replace(/"/g, '""')}"`,
-                    `"${q.correctAnswer.replace(/"/g, '""')}"`,
-                    q.isCorrect ? 'Doğru' : 'Yanlış',
-                  ]);
-                  
-                  let csv = '\uFEFF'; // BOM
-                  csv += `Sınav Adı:;"${quiz.title.replace(/"/g, '""')}"\n`;
-                  csv += `Puan:;${(result.score || 0).toFixed(0)}\n`;
-                  csv += `Doğru Sayısı:;${correctCount}/${totalCount}\n\n`;
-                  csv += csvHeaders.join(';') + '\n';
-                  csv += csvData.map(row => row.join(';')).join('\n');
-
-                  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                  const link = document.createElement('a');
-                  const url = URL.createObjectURL(blob);
-                  link.setAttribute('href', url);
-                  link.setAttribute('download', `${quiz.title || 'quiz-result'}.csv`);
-                  link.style.visibility = 'hidden';
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
-                } catch (e) {
-                  console.error(e);
-                  alert('CSV oluşturulurken hata oluştu');
-                }
-              }}
-            >
+            <Button onClick={exportCsv}>
               <Download className="h-4 w-4 mr-2" />
-              Excel (CSV) İndir
+              Excel Uyumlu CSV İndir
             </Button>
           </div>
         </div>

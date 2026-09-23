@@ -12,7 +12,8 @@ import {
   ShieldCheck,
   Search,
   GraduationCap,
-  Printer
+  Printer,
+  Download
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +26,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { downloadCsv } from "@/lib/export";
 
 export default function ClassDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -44,6 +46,22 @@ export default function ClassDetailPage() {
     [initialStudents, searchTerm]
   );
 
+  const exportStudents = () => downloadCsv({
+    filename: `${cls?.name || "sinif"}-ogrenci-listesi.csv`,
+    title: `${cls?.name || "Sınıf"} Öğrenci Listesi`,
+    filters: [
+      { label: "Sorumlu öğretmen", value: cls?.classTeacher?.name || "Atanmamış" },
+      { label: "Öğrenci sayısı", value: filteredStudents.length },
+      { label: "Arama", value: searchTerm || "Tümü" },
+    ],
+    rows: filteredStudents,
+    columns: [
+      { header: "Sıra", value: (_row: any, index: number) => index + 1 },
+      { header: "Öğrenci Adı Soyadı", value: (row: any) => row.name },
+      { header: "Okul Numarası", value: (row: any) => row.studentNo || "-" },
+      { header: "E-posta", value: (row: any) => row.email || "-" },
+    ],
+  });
   const handlePrint = () => {
     window.print();
   };
@@ -66,6 +84,13 @@ export default function ClassDetailPage() {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <Button
+              onClick={exportStudents}
+              variant="outline"
+              className="rounded-xl border-2 border-emerald-600 text-emerald-700 font-black gap-2"
+            >
+              <Download className="h-4 w-4" /> Excel Uyumlu CSV
+            </Button>
             <Button 
               onClick={handlePrint}
               variant="outline" 

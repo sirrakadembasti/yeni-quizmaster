@@ -23,7 +23,6 @@ import {
   RefreshCw,
   Trash2,
   ShieldCheck,
-  Printer
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useLocation } from "wouter";
@@ -130,13 +129,6 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="flex gap-3 shrink-0 print:hidden">
-              <Button 
-                variant="outline" 
-                onClick={() => window.print()}
-                className="rounded-xl font-semibold gap-2 transition-all active:scale-95 print:hidden"
-              >
-                <Printer className="h-4 w-4" /> Yazdır
-              </Button>
               {isAdmin ? (
                 <>
                   <Button onClick={() => setLocation("/management")} variant="outline" className="rounded-xl font-semibold gap-2">

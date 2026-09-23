@@ -13,6 +13,7 @@ import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { PrintButton, PrintMeta } from "@/components/print/PrintTools";
 import { surveyApi, type SurveyQuestionResult, type SurveyResultSummary } from "@/lib/api";
+import { downloadCsv } from "@/lib/export";
 
 const COLORS = ["#6366f1", "#06b6d4", "#10b981", "#f59e0b", "#f43f5e", "#8b5cf6"];
 const TYPE_LABELS: Record<string, string> = {
@@ -208,34 +209,62 @@ export default function SurveyResultsPage() {
   };
 
   const exportCsv = () => {
-    const rows: Array<Array<string | number>> = [
-      ["Anket", "Soru", "Tür", "Seçenek / Yanıt", "Adet", "Oran", "Katılımcı", "Tarih"],
-    ];
+    const rows: Array<{
+      survey: string; question: string; type: string; option: string;
+      count: number; rate: string; participant: string; responseDate: string; average: string;
+    }> = [];
     results.forEach((survey) => survey.questionResults.forEach((question) => {
       if (question.type === "open-text") {
-        (question.openAnswers || []).forEach((answer) => rows.push([
-          survey.title, question.text, TYPE_LABELS[question.type], String(answer.value),
-          1, "", answer.studentName, new Date(answer.submittedAt).toLocaleString("tr-TR"),
-        ]));
+        (question.openAnswers || []).forEach((answer) => rows.push({
+          survey: survey.title,
+          question: question.text,
+          type: TYPE_LABELS[question.type],
+          option: String(answer.value),
+          count: 1,
+          rate: "",
+          participant: answer.studentName,
+          responseDate: new Date(answer.submittedAt).toLocaleString("tr-TR"),
+          average: "",
+        }));
       } else {
-        (question.distribution || []).forEach((item) => rows.push([
-          survey.title, question.text, TYPE_LABELS[question.type] || question.type,
-          item.label, item.count, "%" + percent(item.count, question.responseCount),
-          question.responseCount, "",
-        ]));
+        (question.distribution || []).forEach((item) => rows.push({
+          survey: survey.title,
+          question: question.text,
+          type: TYPE_LABELS[question.type] || question.type,
+          option: item.label,
+          count: item.count,
+          rate: "%" + percent(item.count, question.responseCount),
+          participant: `${question.responseCount} yanıtlayan`,
+          responseDate: "",
+          average: question.averageValue == null ? "" : String(question.averageValue),
+        }));
       }
     }));
-    const csv = "\uFEFF" + rows
-      .map((row) => row.map((cell) => '"' + String(cell).replace(/"/g, '""') + '"').join(";"))
-      .join("\n");
-    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "anket_sonuclari_" + today + ".csv";
-    link.click();
-    URL.revokeObjectURL(url);
-  };
 
+    downloadCsv({
+      filename: `anket_sonuclari_${today}.csv`,
+      title: "Anket Sonuçları",
+      filters: [
+        { label: "Anket", value: selectedTitle },
+        { label: "Başlangıç", value: startDate },
+        { label: "Bitiş", value: endDate },
+        { label: "Toplam Katılım", value: totals.participants },
+        { label: "Genel Katılım Oranı", value: `%${totals.rate}` },
+      ],
+      columns: [
+        { header: "Anket", value: "survey" },
+        { header: "Soru", value: "question" },
+        { header: "Soru Türü", value: "type" },
+        { header: "Seçenek / Yanıt", value: "option" },
+        { header: "Yanıt Sayısı", value: "count" },
+        { header: "Oran", value: "rate" },
+        { header: "Ortalama", value: "average" },
+        { header: "Katılımcı / Yanıtlayan", value: "participant" },
+        { header: "Yanıt Tarihi", value: "responseDate" },
+      ],
+      rows,
+    });
+  };
   return (
     <DashboardLayout>
       <div className="page-stack print-landscape">
