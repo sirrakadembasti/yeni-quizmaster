@@ -10,6 +10,7 @@ QuizMaster; yöneticiler, öğretmenler, öğrenciler ve veliler için rol taban
 - [Veli kullanıcı kılavuzu](docs/parent-guide.md)
 - [Gmail e-posta ve parola sıfırlama yapılandırması](docs/e-posta-yapilandirma.md)
 - [Graphify mimari haritası ve geliştirici kılavuzu](docs/graphify.md)
+- [SQLite'tan PostgreSQL'e geçiş kılavuzu](docs/postgresql-gecis-rehberi.md)
 
 ## Güncel özellikler
 
@@ -30,7 +31,7 @@ QuizMaster; yöneticiler, öğretmenler, öğrenciler ve veliler için rol taban
 |---|---|
 | Frontend | React, TypeScript, Vite, TanStack Query, Wouter, Tailwind CSS, shadcn/ui |
 | Backend | Node.js, Express, TypeScript, Socket.IO, Pino |
-| Veri | Prisma ORM, SQLite (yerel geliştirme) |
+| Veri | Prisma ORM, SQLite (mevcut sağlayıcı) |
 | Kimlik ve güvenlik | `express-session`, `connect-sqlite3`, bcrypt, CSRF, Zod |
 | E-posta | Nodemailer, Gmail SMTP, veritabanı Outbox kuyruğu |
 | Test | Vitest, Supertest, Playwright |
@@ -225,6 +226,40 @@ pnpm test:e2e
 - Veli hesabı öğrenciyle açık bir ilişki kurulmadan hiçbir öğrenci verisine erişemez.
 - Tamamlanmamış sınavlarda cevap anahtarı öğrenciye gönderilmez.
 - Görsel yüklemeleri dosya türü, boyut ve piksel sınırlarıyla doğrulanır.
+
+## SQLite'tan PostgreSQL'e geçiş
+
+Uygulama şu anda **SQLite** ile çalışır. Prisma veri modeli PostgreSQL'e büyük ölçüde uyumludur: 
+kimlikler uygulama tarafından UUID olarak üretilir, ilişkiler Prisma üzerinden tanımlıdır ve çalışan uygulama kodunda SQLite'a özel ham SQL sorgusu yoktur.
+ Anket cevapları ve soru ayarları ilk geçişte `String` içinde JSON metni olarak kalabilir; böylece veri modeli değiştirilmeden taşınabilir.
+ Bunların daha sonra PostgreSQL `Json`/`jsonb` alanlarına dönüştürülmesi ayrı ve kontrollü bir iyileştirmedir.
+
+Ancak geçiş **yalnızca** `provider = "postgresql"` ve `DATABASE_URL` değişikliği değildir:
+
+| Alan | Durum | Geçişte yapılacak işlem |
+|---|---|---|
+| Prisma modelleri ve ilişkiler | Uyumlu | PostgreSQL sağlayıcısıyla yeni başlangıç migration'ı üret |
+| Mevcut `prisma/migrations` geçmişi | SQLite'a özel | PostgreSQL için ayrı ve temiz migration geçmişi oluştur |
+| Mevcut uygulama verileri | Otomatik taşınmaz | Denenmiş bir ETL/aktarım aracıyla kimlik ve ilişkileri koruyarak taşı |
+| Oturum deposu | `connect-sqlite3` kullanıyor | Çok sunuculu üretimden önce PostgreSQL veya merkezi bir oturum deposuna geçir |
+| JSON benzeri alanlar | PostgreSQL'de metin olarak çalışır | İlk geçişte koru; gerekirse daha sonra `jsonb` için ayrı migration yap |
+| Yüklenen görseller | Veritabanı dışında | `uploads` içeriğini ayrıca yedekle ve hedef ortama taşı |
+
+Özet güvenli geçiş sırası:
+
+1. Ayrı bir Git dalında çalışın; uygulama sürümünü sabitleyin.
+2. `quiz.db`, `sessions.db` ve yüklenen dosyaların doğrulanmış yedeğini alın.
+3. UTF-8 kodlamalı boş bir PostgreSQL geliştirme/veri aktarım veritabanı hazırlayın.
+4. SQLite migration geçmişini silmeyin; arşivleyin. PostgreSQL için yeni bir migration geçmişi başlatın.
+5. `schema.prisma` sağlayıcısını `postgresql` yapın ve PostgreSQL bağlantı adresini yalnız `.env`/secret yöneticisinde tutun.
+6. Boş PostgreSQL üzerinde yeni başlangıç migration'ını üretip uygulayın.
+7. Verileri, UUID değerleri ve yabancı anahtar ilişkileri korunacak biçimde taşıyın. Prisma migration komutlarının veriyi kendiliğinden taşımadığını unutmayın.
+8. Model bazında kayıt sayılarını, ilişkileri ve sınav/anket örneklerini kaynak SQLite ile karşılaştırın.
+9. Oturum deposunu merkezi hale getirip rol, sınav, anket, bildirim, parola sıfırlama ve çevrimdışı teslim regresyon testlerini çalıştırın.
+10. Üretimde şema uygulamak için `prisma migrate deploy` kullanın; üretimde `migrate dev` çalıştırmayın. Kesinti ve geri dönüş planı olmadan geçiş yapmayın.
+
+Komutlar, veri doğrulama sorguları, oturum deposu kararı, geri dönüş planı ve ayrıntılı kontrol listesi için [PostgreSQL geçiş kılavuzuna](docs/postgresql-gecis-rehberi.md) bakın.
+ PostgreSQL'e geçildikten sonra geliştirme, test ve üretimde aynı veritabanı sağlayıcısının kullanılması önerilir; SQLite ve PostgreSQL için aynı migration klasörü paylaşılmamalıdır.
 
 ## Sorun giderme
 
