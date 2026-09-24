@@ -70,7 +70,7 @@ export default function TeachersPage() {
             <p className="text-muted-foreground mt-1">Öğretmen hesaplarını oluşturun, düzenleyin ve silin.</p>
           </div>
           <div className="flex gap-2 print:hidden no-print">
-            <Button variant="outline" onClick={exportTeachers} disabled={!teachers.length}><Download className="mr-2 h-4 w-4" />CSV</Button>
+            <Button variant="outline" onClick={exportTeachers} disabled={!teachers.length}><Download className="mr-2 h-4 w-4" />Excel</Button>
             <PrintButton />
             <Button onClick={() => setIsCreateOpen(true)} className="gap-2"><UserPlus className="h-4 w-4" />Yeni Öğretmen</Button>
           </div>
@@ -112,6 +112,7 @@ export default function TeachersPage() {
           onOpenChange={setIsEditOpen}
           mode="edit"
           role="teacher"
+          teacherEditScope="assignments"
           initialData={selectedUser}
           onSubmit={(data) => updateMutation.mutate(data)}
           isPending={updateMutation.isPending}

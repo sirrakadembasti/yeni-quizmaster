@@ -77,7 +77,7 @@ export default function ClassesPage() {
             </p>
           </div>
           <div className="flex gap-2 print:hidden no-print">
-            <Button variant="outline" onClick={exportClasses} disabled={!filteredClasses.length} className="gap-2 rounded-xl font-semibold"><Download className="h-4 w-4" />CSV</Button>
+            <Button variant="outline" onClick={exportClasses} disabled={!filteredClasses.length} className="gap-2 rounded-xl font-semibold"><Download className="h-4 w-4" />Excel</Button>
             <PrintButton className="rounded-xl" />
           </div>
         </header>

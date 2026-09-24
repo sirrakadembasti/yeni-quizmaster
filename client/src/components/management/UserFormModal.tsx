@@ -33,6 +33,7 @@ interface UserFormModalProps {
   mode: 'create' | 'edit';
   role: 'teacher' | 'student';
   isPending: boolean;
+  teacherEditScope?: 'all' | 'assignments' | 'profile';
 }
 
 export function UserFormModal({
@@ -42,11 +43,14 @@ export function UserFormModal({
   initialData,
   mode,
   role,
-  isPending
+  isPending,
+  teacherEditScope = 'all'
 }: UserFormModalProps) {
   const [formData, setFormData] = useState({ 
     name: "", 
     email: "", 
+    phoneNumber: "",
+    address: "",
     password: "", 
     classNo: "", 
     classId: "", 
@@ -76,10 +80,12 @@ export function UserFormModal({
       setFormData({ 
         name: initialData.name, 
         email: initialData.email, 
+        phoneNumber: initialData.phoneNumber || "",
+        address: initialData.address || "",
         password: "", 
         classNo: initialData.classNo || "",
         classId: initialData.classId || "",
-        classIds: (initialData as any).classes?.map((c: any) => c.id) || (initialData as any).classIds || [],
+        classIds: initialData.managedClasses?.map((c) => c.id) || (initialData as any).classIds || [],
         assignedCategoryIds: initialData.assignedCategories?.map(c => c.id) || (initialData as any).assignedCategoryIds || [],
         parentName: initialData.parentName || "",
         parentRelation: initialData.parentRelation || "",
@@ -91,6 +97,8 @@ export function UserFormModal({
       setFormData({ 
         name: "", 
         email: "", 
+        phoneNumber: "",
+        address: "",
         password: "", 
         classNo: "", 
         classId: "", 
@@ -125,6 +133,8 @@ export function UserFormModal({
 
   const allCategories = categoriesData || [];
   const allClasses = classesData?.classes || [];
+  const showTeacherProfile = role !== 'teacher' || mode === 'create' || teacherEditScope !== 'assignments';
+  const showTeacherAssignments = role !== 'teacher' || mode === 'create' || teacherEditScope !== 'profile';
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -135,7 +145,7 @@ export function UserFormModal({
               <div className="bg-white dark:bg-slate-900/10 p-2 rounded-xl">
                 {role === 'teacher' ? <Book className="h-6 w-6" /> : <School className="h-6 w-6" />}
               </div>
-              {mode === 'create' ? `Yeni ${role === 'teacher' ? 'Eğitmen' : 'Öğrenci'}` : `${role === 'teacher' ? 'Eğitmen' : 'Öğrenci'} Düzenle`}
+              {mode === 'create' ? `Yeni ${role === 'teacher' ? 'Öğretmen' : 'Öğrenci'}` : `${role === 'teacher' ? 'Öğretmen' : 'Öğrenci'} Düzenle`}
             </DialogTitle>
             <DialogDescription className="text-slate-300 font-medium">
               {mode === 'create' 
@@ -147,11 +157,22 @@ export function UserFormModal({
 
         <form id="user-form" onSubmit={(e) => {
           e.preventDefault();
-          const submissionData = { ...formData };
+          let submissionData: any = { ...formData };
+          if (role === 'teacher' && mode === 'edit' && teacherEditScope === 'assignments') {
+            submissionData = { assignedCategoryIds: formData.assignedCategoryIds, classIds: formData.classIds };
+          } else if (role === 'teacher' && mode === 'edit' && teacherEditScope === 'profile') {
+            submissionData = {
+              name: formData.name,
+              email: formData.email,
+              phoneNumber: formData.phoneNumber,
+              address: formData.address,
+              ...(formData.password ? { password: formData.password } : {}),
+            };
+          }
           if (submissionData.classId === "none") submissionData.classId = "";
           onSubmit(submissionData);
         }} className="p-6 space-y-6 bg-white dark:bg-slate-900 flex-1 overflow-y-auto min-h-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {showTeacherProfile && <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="text-xs font-black uppercase tracking-widest opacity-60">Tam İsim</Label>
               <Input 
@@ -171,13 +192,26 @@ export function UserFormModal({
                 className="rounded-xl border-slate-200 dark:border-slate-700"
               />
             </div>
-          </div>
+          </div>}
+
+          {role === 'teacher' && showTeacherProfile && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-xs font-black uppercase tracking-widest opacity-60">Telefon</Label>
+                <Input value={formData.phoneNumber} onChange={e => setFormData({ ...formData, phoneNumber: e.target.value })} placeholder="05xx xxx xx xx" className="rounded-xl" />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label className="text-xs font-black uppercase tracking-widest opacity-60">Adres</Label>
+                <Input value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} placeholder="İletişim adresi" className="rounded-xl" />
+              </div>
+            </div>
+          )}
 
           {role === 'student' ? (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-widest opacity-60">Öğrenci No</Label>
+                  <Label className="text-xs font-black uppercase tracking-widest opacity-60">Sınıf No</Label>
                   <Input 
                     value={formData.classNo} 
                     onChange={e => setFormData({ ...formData, classNo: e.target.value })} 
@@ -263,7 +297,7 @@ export function UserFormModal({
                 </div>
               </div>
             </div>
-          ) : (
+          ) : showTeacherAssignments ? (
             <div className="space-y-6">
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
@@ -337,11 +371,13 @@ export function UserFormModal({
                 </ScrollArea>
               </div>
             </div>
-          )}
+          ) : null}
 
-          <div className="space-y-2">
+          {showTeacherProfile && <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <Label className="text-xs font-black uppercase tracking-widest opacity-60">{mode === 'create' ? 'Güvenli Şifre' : 'Şifreyi Güncelle'}</Label>
+              <Label className="text-xs font-black uppercase tracking-widest opacity-60">
+                {role === 'student' ? (mode === 'create' ? 'Öğrenci Hesabı Şifresi' : 'Öğrenci Hesabı Şifresini Güncelle') : (mode === 'create' ? 'Güvenli Şifre' : 'Şifreyi Güncelle')}
+              </Label>
               {mode === 'edit' && (
                 <div className="group relative">
                   <Info className="h-3 w-3 text-muted-foreground" />
@@ -358,7 +394,7 @@ export function UserFormModal({
               onChange={e => setFormData({ ...formData, password: e.target.value })} 
               className="rounded-xl border-slate-200 dark:border-slate-700"
             />
-          </div>
+          </div>}
         </form>
 
         <DialogFooter className="bg-slate-50 dark:bg-slate-900/80 dark:bg-slate-900/50 p-6 rounded-b-3xl border-t border-slate-100 dark:border-slate-800">

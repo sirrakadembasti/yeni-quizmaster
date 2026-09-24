@@ -18,6 +18,7 @@ import { secureJsonReplacer } from "./utils/json-security";
 import { logger } from "./utils/logger";
 import { setupDnsFallback } from "./utils/dns-fallback";
 import { startEmailWorker } from "./utils/email";
+import { uploadsDirectory } from "./utils/upload-paths";
 
 // DNS Fallback: Windows/MEB ağında getaddrinfo ENOTFOUND hatalarını önler
 setupDnsFallback();
@@ -137,13 +138,12 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 
 // Ensure uploads directory exists
-const uploadsDir = path.join(serverDirectory, "uploads");
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+if (!fs.existsSync(uploadsDirectory)) {
+  fs.mkdirSync(uploadsDirectory, { recursive: true });
 }
 
 // Serve uploads as static
-app.use("/uploads", express.static(uploadsDir));
+app.use("/uploads", express.static(uploadsDirectory));
 
 app.use(httpLogger);
 

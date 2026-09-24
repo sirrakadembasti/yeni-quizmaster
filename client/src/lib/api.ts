@@ -32,6 +32,19 @@ export async function refreshCsrfToken() {
   return await getCsrfToken();
 }
 
+export const uploadApi = {
+  async uploadQuestionImage(file: File) {
+    const body = new FormData();
+    body.append('image', file);
+    const response = await apiFetch(`${API_BASE}/upload`, {
+      method: 'POST',
+      body,
+      credentials: 'include',
+    });
+    return handleResponse<{ imageUrl: string }>(response);
+  },
+};
+
 async function apiFetch(url: string, options: RequestInit = {}) {
   const method = options.method || 'GET';
   
@@ -80,7 +93,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'admin' | 'teacher' | 'student';
+  role: 'admin' | 'teacher' | 'student' | 'parent';
   classId?: string | null;
   createdAt: string;
   classNo?: string | null;
@@ -335,11 +348,11 @@ export const authApi = {
     });
     return handleResponse<{ user: User }>(response);
   },
-  async updateProfile(name?: string, email?: string) {
+  async updateProfile(profile: { name?: string; email?: string; phoneNumber?: string; address?: string }) {
     const response = await apiFetch(`${API_BASE}/auth/me`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email }),
+      body: JSON.stringify(profile),
       credentials: 'include',
     });
     return handleResponse<{ user: User }>(response);
@@ -424,6 +437,63 @@ export const userApi = {
     const response = await apiFetch(`${API_BASE}/users/${teacherId}/categories/${categoryId}`, {
       method: 'DELETE',
       credentials: 'include',
+    });
+    return handleResponse<{ message: string }>(response);
+  },
+};
+
+export interface GuardianLink {
+  id: string;
+  guardianId: string;
+  studentId: string;
+  relation?: string | null;
+  guardian?: User;
+}
+
+export interface ParentStudent extends User {
+  relation?: string | null;
+}
+
+export const parentApi = {
+  async getStudents() {
+    const response = await apiFetch(`${API_BASE}/parents/students`, { credentials: 'include' });
+    return handleResponse<{ students: ParentStudent[] }>(response);
+  },
+
+  async getStudentOverview(studentId: string) {
+    const response = await apiFetch(`${API_BASE}/parents/students/${studentId}/overview`, { credentials: 'include' });
+    return handleResponse<{ student: User; results: StudentResult[]; quizzes: Array<Quiz & { completed: boolean }> }>(response);
+  },
+
+  async getParents() {
+    const response = await apiFetch(`${API_BASE}/parents`, { credentials: 'include' });
+    return handleResponse<{ parents: User[] }>(response);
+  },
+
+  async getStudentGuardians(studentId: string) {
+    const response = await apiFetch(`${API_BASE}/parents/student/${studentId}`, { credentials: 'include' });
+    return handleResponse<{ guardians: GuardianLink[] }>(response);
+  },
+
+  async createParent(data: { name: string; email: string; password: string; phoneNumber?: string; address?: string; studentId: string; relation?: string }) {
+    const response = await apiFetch(`${API_BASE}/parents`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data), credentials: 'include',
+    });
+    return handleResponse<{ parent: User }>(response);
+  },
+
+  async linkParent(data: { guardianId: string; studentId: string; relation?: string }) {
+    const response = await apiFetch(`${API_BASE}/parents/link`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data), credentials: 'include',
+    });
+    return handleResponse<{ link: GuardianLink }>(response);
+  },
+
+  async unlinkParent(guardianId: string, studentId: string) {
+    const response = await apiFetch(`${API_BASE}/parents/link/${guardianId}/${studentId}`, {
+      method: 'DELETE', credentials: 'include',
     });
     return handleResponse<{ message: string }>(response);
   },
@@ -918,6 +988,27 @@ export const adminApi = {
     });
     return handleResponse<{ message: string }>(response);
   },
+  async getPasswordResetRequests(filters?: { status?: string; search?: string; page?: number; limit?: number }) {
+    const params = new URLSearchParams();
+    if (filters?.status) params.set('status', filters.status);
+    if (filters?.search) params.set('search', filters.search);
+    if (filters?.page) params.set('page', String(filters.page));
+    if (filters?.limit) params.set('limit', String(filters.limit));
+    const response = await apiFetch(`${API_BASE}/admin/password-reset-requests?${params}`, { credentials: 'include' });
+    return handleResponse<{ requests: any[]; counts: Record<string, number>; pagination: any }>(response);
+  },
+  async createPasswordResetRequest(email: string) {
+    const response = await apiFetch(`${API_BASE}/admin/password-reset-requests`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }), credentials: 'include' });
+    return handleResponse<{ request: any }>(response);
+  },
+  async resendPasswordResetRequest(id: string) {
+    const response = await apiFetch(`${API_BASE}/admin/password-reset-requests/${id}/resend`, { method: 'POST', credentials: 'include' });
+    return handleResponse<{ message: string; request: any }>(response);
+  },
+  async cancelPasswordResetRequest(id: string) {
+    const response = await apiFetch(`${API_BASE}/admin/password-reset-requests/${id}/cancel`, { method: 'POST', credentials: 'include' });
+    return handleResponse<{ message: string }>(response);
+  },
   async getSystemLogs(filters?: { search?: string; startDate?: string; endDate?: string; page?: number; limit?: number }) {
     const params = new URLSearchParams();
     if (filters?.search) params.append('search', filters.search);
@@ -1027,6 +1118,18 @@ export interface SurveyResultSummary {
 }
 
 export const surveyApi = {
+  async createSurvey(survey: Omit<CreateQuizInput, 'contentType' | 'timeLimit' | 'shuffleQuestions'>) {
+    const response = await apiFetch(`${API_BASE}/surveys`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(survey), credentials: 'include' });
+    return handleResponse<{ survey: Quiz }>(response);
+  },
+  async updateSurvey(id: string, survey: Partial<CreateQuizInput>) {
+    const response = await apiFetch(`${API_BASE}/surveys/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(survey), credentials: 'include' });
+    return handleResponse<{ survey: Quiz }>(response);
+  },
+  async syncQuestions(id: string, questions: Partial<Question>[]) {
+    const response = await apiFetch(`${API_BASE}/surveys/${id}/questions`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(questions), credentials: 'include' });
+    return handleResponse<{ questions: Question[] }>(response);
+  },
   async getSurveys() {
     const response = await apiFetch(`${API_BASE}/surveys`, { credentials: 'include' });
     return handleResponse<{ surveys: Array<Quiz & { submitted?: boolean }> }>(response);

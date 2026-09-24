@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { Button } from "./button";
 import { ImagePlus, X, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { uploadApi } from "@/lib/api";
 
 interface ImageUploadProps {
   value?: string;
@@ -45,27 +46,17 @@ export function ImageUpload({
 
     try {
       setIsUploading(true);
-      const formData = new FormData();
-      formData.append('image', file);
-
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error('Yükleme başarısız');
-
-      const data = await response.json();
+      const data = await uploadApi.uploadQuestionImage(file);
       onChange(data.imageUrl);
       
       toast({
         title: "Başarılı",
         description: "Görsel yüklendi."
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Hata",
-        description: "Görsel yüklenirken bir sorun oluştu.",
+        description: error?.message || "Görsel yüklenirken bir sorun oluştu.",
         variant: "destructive"
       });
     } finally {

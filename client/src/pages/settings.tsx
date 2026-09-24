@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { 
   User as UserIcon, 
   Mail, 
+  Phone,
+  MapPin,
   Shield, 
   Key, 
   Loader2, 
@@ -153,7 +155,9 @@ export default function SettingsPage() {
   const isProfileChanged = useMemo(() => {
     if (!user) return false;
     return formData.name !== user.name || 
-           formData.email !== user.email;
+           formData.email !== user.email ||
+           formData.phoneNumber !== (user.phoneNumber || "") ||
+           formData.address !== (user.address || "");
   }, [formData, user]);
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
@@ -165,7 +169,7 @@ export default function SettingsPage() {
     
     setLoading(true);
     try {
-      await authApi.updateProfile(formData.name, formData.email);
+      await authApi.updateProfile(formData);
       queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
       toast({ title: "Başarılı", description: "Profil bilgileriniz güncellendi." });
     } catch (error: any) {
@@ -276,6 +280,20 @@ export default function SettingsPage() {
                           />
                         </div>
                       </div>
+                      <div className="space-y-2">
+                        <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Telefon</Label>
+                        <div className="relative">
+                          <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                          <Input disabled={user?.role === 'student'} value={formData.phoneNumber} onChange={(e) => setFormData({...formData, phoneNumber: e.target.value})} className="pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30" placeholder="05xx xxx xx xx" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Adres</Label>
+                        <div className="relative">
+                          <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                          <Input disabled={user?.role === 'student'} value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} className="pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30" placeholder="İletişim adresi" />
+                        </div>
+                      </div>
                     </div>
                   </CardContent>
                   {user?.role !== 'student' && (
@@ -304,7 +322,7 @@ export default function SettingsPage() {
                     </div>
                     <div>
                       <h4 className="font-black text-lg">{user?.name}</h4>
-                      <Badge variant="secondary" className="capitalize">{user?.role === 'teacher' ? 'Öğretmen' : user?.role === 'admin' ? 'Yönetici' : 'Öğrenci'}</Badge>
+                      <Badge variant="secondary" className="capitalize">{user?.role === 'teacher' ? 'Öğretmen' : user?.role === 'admin' ? 'Yönetici' : user?.role === 'parent' ? 'Veli' : 'Öğrenci'}</Badge>
                     </div>
                   </div>
                   
@@ -316,7 +334,7 @@ export default function SettingsPage() {
                     {user?.role === 'student' && (
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-muted-foreground font-medium">Sınıf No</span>
-                        <span className="font-bold">{user?.classNo || "-"}</span>
+                        <span className="font-bold">{user?.studentNo ?? user?.classNo ?? "-"}</span>
                       </div>
                     )}
                   </div>

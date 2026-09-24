@@ -11,6 +11,10 @@ const mocks = vi.hoisted(() => ({
   updateUser: vi.fn(),
   createLog: vi.fn(),
   sendResetPasswordEmail: vi.fn(),
+  cancelPendingPasswordResetRequests: vi.fn(),
+  createPasswordResetRequest: vi.fn(),
+  updatePasswordResetRequest: vi.fn(),
+  getPasswordResetRequestByToken: vi.fn(),
 }));
 
 vi.mock("../storage", () => ({
@@ -19,6 +23,10 @@ vi.mock("../storage", () => ({
     getUserByResetToken: mocks.getUserByResetToken,
     updateUser: mocks.updateUser,
     createLog: mocks.createLog,
+    cancelPendingPasswordResetRequests: mocks.cancelPendingPasswordResetRequests,
+    createPasswordResetRequest: mocks.createPasswordResetRequest,
+    updatePasswordResetRequest: mocks.updatePasswordResetRequest,
+    getPasswordResetRequestByToken: mocks.getPasswordResetRequestByToken,
   },
 }));
 vi.mock("../utils/email", () => ({ sendResetPasswordEmail: mocks.sendResetPasswordEmail }));
@@ -37,6 +45,8 @@ describe("Password reset flow", () => {
     mocks.getUserByEmail.mockResolvedValue({ id: "admin-1", email: "admin@example.com" });
     mocks.updateUser.mockResolvedValue({ id: "admin-1" });
     mocks.sendResetPasswordEmail.mockResolvedValue({ id: "mail-1" });
+    mocks.createPasswordResetRequest.mockImplementation(async (data) => ({ id: "request-1", ...data }));
+    mocks.updatePasswordResetRequest.mockResolvedValue({ id: "request-1", status: "pending" });
 
     const response = await request(app).post("/auth/forgot-password").send({ email: "admin@example.com" });
 
@@ -56,6 +66,7 @@ describe("Password reset flow", () => {
   });
 
   it("accepts a valid token, hashes the password and invalidates the token", async () => {
+    mocks.getPasswordResetRequestByToken.mockResolvedValue(undefined);
     mocks.getUserByResetToken.mockResolvedValue({
       id: "admin-1",
       resetTokenExpiry: new Date(Date.now() + 60_000),

@@ -58,7 +58,7 @@ export default function ClassDetailPage() {
     columns: [
       { header: "Sıra", value: (_row: any, index: number) => index + 1 },
       { header: "Öğrenci Adı Soyadı", value: (row: any) => row.name },
-      { header: "Okul Numarası", value: (row: any) => row.studentNo || "-" },
+      { header: "Sınıf No", value: (row: any) => row.studentNo || row.classNo || "-" },
       { header: "E-posta", value: (row: any) => row.email || "-" },
     ],
   });
@@ -89,7 +89,7 @@ export default function ClassDetailPage() {
               variant="outline"
               className="rounded-xl border-2 border-emerald-600 text-emerald-700 font-black gap-2"
             >
-              <Download className="h-4 w-4" /> Excel Uyumlu CSV
+              <Download className="h-4 w-4" /> Excel
             </Button>
             <Button 
               onClick={handlePrint}
@@ -187,7 +187,7 @@ export default function ClassDetailPage() {
                 <TableRow>
                   <TableHead className="pl-4 font-black text-[10px] uppercase tracking-widest py-2 w-16 text-center">S.No</TableHead>
                   <TableHead className="font-black text-[10px] uppercase tracking-widest py-2">Öğrenci Adı Soyadı</TableHead>
-                  <TableHead className="font-black text-[10px] uppercase tracking-widest py-2 text-right pr-4">Okul Numarası</TableHead>
+                  <TableHead className="font-black text-[10px] uppercase tracking-widest py-2 text-right pr-4">Sınıf No</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

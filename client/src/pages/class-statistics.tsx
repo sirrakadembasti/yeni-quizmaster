@@ -98,7 +98,7 @@ export default function ClassStatisticsPage() {
             <p className="text-sm text-muted-foreground">Yetkili sınıfların katılım ve başarı analizi.</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={exportCsv} disabled={!data.length}><Download className="mr-2 h-4 w-4" />CSV</Button>
+            <Button variant="outline" onClick={exportCsv} disabled={!data.length}><Download className="mr-2 h-4 w-4" />Excel</Button>
             <PrintButton />
           </div>
         </div>

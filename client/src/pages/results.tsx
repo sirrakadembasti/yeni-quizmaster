@@ -89,7 +89,7 @@ export default function StatisticsPage() {
       
       const [quizzesResp, classesResp, categoriesResp, usersResp, resultsResp] = await Promise.all(promises);
       
-      const loadedQuizzes = quizzesResp.quizzes || [];
+      const loadedQuizzes = (quizzesResp.quizzes || []).filter((quiz: any) => quiz.contentType !== 'survey');
       const loadedClasses = classesResp.classes || [];
       const loadedCategories = categoriesResp || [];
       const loadedUsers = usersResp?.users || [];
@@ -122,24 +122,24 @@ export default function StatisticsPage() {
     
     // Rol bazlı kısıtlama
     if (role === 'teacher') {
-      filtered = filtered.filter(r => r.createdBy === currentUser?.id);
+      filtered = filtered.filter(r => (r.createdBy || r.quiz?.createdBy) === currentUser?.id);
     } else if (role === 'admin' && selectedTeacherId !== "all") {
-      filtered = filtered.filter(r => r.createdBy === selectedTeacherId);
+      filtered = filtered.filter(r => (r.createdBy || r.quiz?.createdBy) === selectedTeacherId);
     }
 
     if (selectedClassId !== "all") {
-      filtered = filtered.filter(r => r.student?.classId === selectedClassId);
+      filtered = filtered.filter(r => (r.student?.classId || r.student?.class?.id) === selectedClassId);
     }
     
     if (selectedCategoryId !== "all") {
-      filtered = filtered.filter(r => r.categoryId === selectedCategoryId);
+      filtered = filtered.filter(r => (r.categoryId || r.quiz?.categoryId || r.quiz?.category?.id) === selectedCategoryId);
     }
     if (selectedQuizId !== "all") {
-      filtered = filtered.filter(r => r.quizId === selectedQuizId);
+      filtered = filtered.filter(r => (r.quizId || r.quiz?.id) === selectedQuizId);
     }
 
     if (selectedStudentId !== "all") {
-      filtered = filtered.filter(r => r.studentId === selectedStudentId);
+      filtered = filtered.filter(r => (r.studentId || r.student?.id) === selectedStudentId);
     }
 
     return filtered;
@@ -319,6 +319,7 @@ export default function StatisticsPage() {
                     <SelectContent className="rounded-xl">
                       <SelectItem value="all">Tüm Sınavlar</SelectItem>
                       {quizzes
+                        .filter((quiz: any) => quiz.contentType !== 'survey')
                         .filter((quiz: any) => selectedCategoryId === "all" || quiz.categoryId === selectedCategoryId)
                         .filter((quiz: any) => role !== "teacher" || quiz.createdBy === currentUser?.id)
                         .map((quiz: any) => (
@@ -332,10 +333,10 @@ export default function StatisticsPage() {
                     <Label className="text-[10px] font-bold text-muted-foreground ml-1">Öğretmen</Label>
                     <Select value={selectedTeacherId} onValueChange={setSelectedTeacherId}>
                       <SelectTrigger className="rounded-xl bg-muted/30 border-transparent">
-                        <SelectValue placeholder="Eğitmen Seçin" />
+                        <SelectValue placeholder="Öğretmen Seçin" />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl">
-                        <SelectItem value="all">Tüm Eğitmenler</SelectItem>
+                        <SelectItem value="all">Tüm Öğretmenler</SelectItem>
                         {teachers.map((t) => (
                           <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
                         ))}
@@ -363,7 +364,7 @@ export default function StatisticsPage() {
 
                 <div className="flex items-end">
                   <Button onClick={handleExport} variant="outline" className="w-full gap-2 font-bold rounded-xl border-dashed">
-                    <Download className="h-4 w-4" /> CSV Dışa Aktar
+                    <Download className="h-4 w-4" /> Excel
                   </Button>
                 </div>
               </div>

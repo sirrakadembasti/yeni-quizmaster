@@ -113,7 +113,7 @@ export default function DashboardPage() {
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-foreground tracking-tight">
-                {isAdmin ? 'Yönetim Paneli' : isTeacher ? 'Eğitmen Paneli' : 'Öğrenci Paneli'}
+                {isAdmin ? 'Yönetim Paneli' : isTeacher ? 'Öğretmen Paneli' : 'Öğrenci Paneli'}
               </h1>
               <div className="flex items-center gap-3 mt-3">
                 <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-xs ring-1 ring-primary/15">
@@ -135,7 +135,7 @@ export default function DashboardPage() {
                     <Settings className="h-4 w-4" /> Sistem Ayarları
                   </Button>
                   <Button onClick={() => setLocation("/teachers")} className="rounded-xl font-semibold gap-2 shadow-sm">
-                    <UserCheck className="h-4 w-4" /> Eğitmenleri Yönet
+                    <UserCheck className="h-4 w-4" /> Öğretmenleri Yönet
                   </Button>
                 </>
               ) : isTeacher ? (
@@ -247,12 +247,12 @@ export default function DashboardPage() {
               description="Tamamlanan sınav sayısı"
             />
             <StatCard 
-              title={isAdmin ? "Eğitmen Sayısı" : "Başarı Oranı"} 
+              title={isAdmin ? "Öğretmen Sayısı" : "Başarı Oranı"}
               value={isAdmin ? stats?.totalTeachers : `${stats?.averageStudentScore || 0}%`} 
               loading={statsLoading}
               icon={isAdmin ? <ShieldAlert className="h-6 w-6 text-orange-600" /> : <TrendingUp className="h-6 w-6 text-rose-600" />}
               color={isAdmin ? "bg-orange-50" : "bg-rose-50"}
-              description={isAdmin ? "Aktif yetkili eğitmenler" : "Genel başarı ortalaması"}
+              description={isAdmin ? "Aktif yetkili öğretmenler" : "Genel başarı ortalaması"}
             />
           </div>
         )}

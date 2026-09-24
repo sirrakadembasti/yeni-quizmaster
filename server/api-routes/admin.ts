@@ -3,6 +3,7 @@ import { storage } from "../storage";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { logger } from "../utils/logger";
 import { getEmailStatus, sendDirectEmail, verifyEmailTransport } from "../utils/email";
+import { issuePasswordReset } from "../services/password-reset";
 
 const router: Router = Router();
 
@@ -35,7 +36,7 @@ router.get("/email-settings/status", requireAuth, requireRole(["admin"]), async 
   const settings = getEmailStatus();
   res.json({
     settings,
-    ready: settings.authConfigured || settings.host === "127.0.0.1" || settings.host === "localhost",
+    ready: settings.authConfigured,
   });
 });
 
@@ -63,6 +64,65 @@ router.post("/email-settings/test", requireAuth, requireRole(["admin"]), async (
       message: "SMTP bağlantısı kurulamadı. Gmail uygulama şifresi ve sunucu ayarlarını kontrol edin.",
       code: error?.code || "SMTP_ERROR",
     });
+  }
+});
+
+router.get("/password-reset-requests", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const page = Math.max(1, Number(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 50));
+    const result = await storage.getPasswordResetRequests({ status: String(req.query.status || "all"), search: String(req.query.search || ""), page, limit });
+    res.json({ requests: result.data, counts: result.counts, pagination: { page, limit, total: result.total, totalPages: Math.ceil(result.total / limit) } });
+  } catch (error) {
+    logger.error({ err: error }, "[PasswordResetAdmin] Talepler getirilemedi");
+    res.status(500).json({ message: "Şifre sıfırlama talepleri getirilemedi." });
+  }
+});
+
+router.post("/password-reset-requests", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ message: "Geçerli bir kullanıcı e-postası giriniz." });
+    const user = await storage.getUserByEmail(email);
+    if (!user) return res.status(404).json({ message: "Bu e-posta ile kayıtlı kullanıcı bulunamadı." });
+    const resetRequest = await issuePasswordReset(user, { requestedBy: req.user!.id, requestIp: req.ip });
+    await storage.createLog(req.user!.id, "ADMIN_PASSWORD_RESET_REQUEST", `Şifre sıfırlama e-postası istendi: ${user.id}`);
+    res.status(201).json({ request: resetRequest });
+  } catch (error: any) {
+    logger.warn({ err: error, adminId: req.user!.id }, "[PasswordResetAdmin] Talep oluşturulamadı");
+    res.status(502).json({ message: "Gmail gönderim kuyruğu oluşturulamadı.", code: error?.code || "EMAIL_QUEUE_ERROR" });
+  }
+});
+
+router.post("/password-reset-requests/:id/resend", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const current = await storage.getPasswordResetRequest(req.params.id);
+    if (!current) return res.status(404).json({ message: "Şifre sıfırlama talebi bulunamadı." });
+    const user = await storage.getUser(current.userId);
+    if (!user) return res.status(404).json({ message: "Kullanıcı bulunamadı." });
+    const resetRequest = await issuePasswordReset(user, { requestedBy: req.user!.id, requestIp: req.ip });
+    await storage.createLog(req.user!.id, "RESEND_PASSWORD_RESET", `Şifre sıfırlama e-postası yenilendi: ${user.id}`);
+    res.json({ message: "Yeni şifre sıfırlama bağlantısı Gmail kuyruğuna alındı.", request: resetRequest });
+  } catch (error: any) {
+    res.status(502).json({ message: "Şifre sıfırlama e-postası yeniden oluşturulamadı.", code: error?.code || "EMAIL_QUEUE_ERROR" });
+  }
+});
+
+router.post("/password-reset-requests/:id/cancel", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const current = await storage.getPasswordResetRequest(req.params.id);
+    if (!current) return res.status(404).json({ message: "Şifre sıfırlama talebi bulunamadı." });
+    if (current.status !== "pending") return res.status(409).json({ message: "Yalnızca bekleyen talepler iptal edilebilir." });
+    await storage.updatePasswordResetRequest(current.id, { status: "cancelled", cancelledAt: new Date() });
+    const user = await storage.getUser(current.userId);
+    if (user && user.resetToken === current.tokenHash) {
+      const userId = user.id;
+      await storage.updateUser(userId, { resetToken: null, resetTokenExpiry: null });
+    }
+    await storage.createLog(req.user!.id, "CANCEL_PASSWORD_RESET", `Şifre sıfırlama talebi iptal edildi: ${current.id}`);
+    res.json({ message: "Şifre sıfırlama talebi iptal edildi." });
+  } catch (error) {
+    res.status(500).json({ message: "Şifre sıfırlama talebi iptal edilemedi." });
   }
 });
 
@@ -107,7 +167,9 @@ router.get("/logs/emails", requireAuth, requireRole(["admin"]), async (req: Auth
     });
 
     res.json({
-      emails: result.data,
+      // Log ekranı yalnız teslimat metadatasıdır. Sıfırlama bağlantısı içeren
+      // e-posta gövdesi API üzerinden yönetici arayüzüne dahi gönderilmez.
+      emails: result.data.map(({ body: _body, ...email }) => email),
       counts: result.counts,
       pagination: {
         page: pageNum,

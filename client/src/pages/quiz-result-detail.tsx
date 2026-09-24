@@ -144,7 +144,7 @@ export default function QuizResultDetail() {
             </Button>
             <Button onClick={exportCsv}>
               <Download className="h-4 w-4 mr-2" />
-              Excel Uyumlu CSV İndir
+              Excel
             </Button>
           </div>
         </div>
@@ -292,4 +292,3 @@ export default function QuizResultDetail() {
     </DashboardLayout>
   );
 }
-

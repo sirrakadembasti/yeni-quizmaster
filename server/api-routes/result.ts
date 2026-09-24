@@ -91,7 +91,7 @@ router.get("/quiz/:quizId/export", requireAuth, requireRole(["admin", "teacher"]
 
     const results = await storage.getResultsByQuiz(req.params.quizId);
     const csvRows = [
-      ["Öğrenci Adı", "Öğrenci Email", "Sınıf/No", "Durum", "Skor", "Doğru Sayısı", "Toplam Soru", "Süre (sn)", "Tarih"]
+      ["Öğrenci Adı", "Öğrenci Email", "Sınıf No", "Durum", "Skor", "Doğru Sayısı", "Toplam Soru", "Süre (sn)", "Tarih"]
     ];
 
     // getResultsByQuiz include: { student: true } ile student'ı önceden getiriyor;
@@ -101,7 +101,7 @@ router.get("/quiz/:quizId/export", requireAuth, requireRole(["admin", "teacher"]
       csvRows.push([
         student?.name || "Bilinmiyor",
         student?.email || "Bilinmiyor",
-        student?.classNo || "-",
+        student?.studentNo ?? student?.classNo ?? "-",
         r.status === "completed" ? "Tamamlandı" : "Devam Ediyor",
         (r.score !== null && r.score !== undefined) ? r.score.toString() : "-",
         r.correctAnswersCount.toString(),

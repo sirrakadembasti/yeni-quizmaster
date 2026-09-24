@@ -181,7 +181,7 @@ export default function AdminClassDetailPage() {
     columns: [
       { header: "Sıra", value: (_row: any, index: number) => index + 1 },
       { header: "Öğrenci", value: (row: any) => row.name },
-      { header: "Okul Numarası", value: (row: any) => row.studentNo || "-" },
+      { header: "Sınıf No", value: (row: any) => row.studentNo || row.classNo || "-" },
       { header: "E-posta", value: (row: any) => row.email || "-" },
     ],
   });
@@ -203,7 +203,7 @@ export default function AdminClassDetailPage() {
             </div>
           </div>
           <div className="flex items-center gap-2 no-print print:hidden">
-            <Button variant="outline" className="gap-2" onClick={exportStudents}><Download className="h-4 w-4" /> Excel Uyumlu CSV</Button>
+            <Button variant="outline" className="gap-2" onClick={exportStudents}><Download className="h-4 w-4" /> Excel</Button>
             <PrintButton />
           </div>
         </header>

@@ -153,7 +153,7 @@ describe('Quizzes API Integration Tests', () => {
       expect(res.status).toBe(403);
     });
 
-    it('should reject content type changes after publication', async () => {
+    it('should reject survey payloads on the exam endpoint', async () => {
       const teacherUser = { id: 'teacher-1', role: 'teacher' };
       const app = createTestApp(teacherUser);
       vi.mocked(storage.getQuiz).mockResolvedValue({
@@ -168,7 +168,7 @@ describe('Quizzes API Integration Tests', () => {
         .patch('/api/quizzes/quiz-1')
         .send({ contentType: 'survey' });
 
-      expect(res.status).toBe(409);
+      expect(res.status).toBe(400);
       expect(storage.updateQuiz).not.toHaveBeenCalled();
     });
 

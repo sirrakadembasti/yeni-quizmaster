@@ -10,6 +10,7 @@ import dashboardRouter from "./dashboard";
 import aiRouter from "./ai";
 import adminRouter from "./admin";
 import uploadRouter from "./upload";
+import parentRouter from "./parent";
 import questionBankRouter from "./question-bank";
 import notificationRouter from "./notification";
 import announcementRouter from "./announcement";
@@ -30,6 +31,7 @@ export async function registerRoutes(_httpServer: Server, app: Express) {
   router.use("/ai", aiRouter);
   router.use("/admin", adminRouter);
   router.use("/upload", uploadRouter);
+  router.use("/parents", parentRouter);
   router.use("/question-bank", questionBankRouter);
   router.use("/notifications", notificationRouter);
   router.use("/announcements", announcementRouter);

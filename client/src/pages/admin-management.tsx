@@ -33,7 +33,8 @@ import {
   Clock,
   Server,
   Eye,
-  RefreshCw
+  RefreshCw,
+  KeyRound
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -124,6 +125,9 @@ export default function AdminManagementPage() {
   const [emailSearch, setEmailSearch] = useState("");
   const [selectedEmail, setSelectedEmail] = useState<any>(null);
   const [isEmailViewOpen, setIsEmailViewOpen] = useState(false);
+  const [resetStatusFilter, setResetStatusFilter] = useState("all");
+  const [resetSearch, setResetSearch] = useState("");
+  const [resetEmail, setResetEmail] = useState("");
 
   // Filters for System Logs
   const [systemLogSearch, setSystemLogSearch] = useState("");
@@ -175,6 +179,13 @@ export default function AdminManagementPage() {
     refetchInterval: logSubTab === "emails" ? 5000 : false,
   });
 
+  const { data: resetRequestsData, isLoading: resetRequestsLoading } = useQuery({
+    queryKey: ['/api/admin/password-reset-requests', resetStatusFilter, resetSearch],
+    queryFn: () => adminApi.getPasswordResetRequests({ status: resetStatusFilter, search: resetSearch || undefined }),
+    enabled: logSubTab === "password-resets",
+    refetchInterval: logSubTab === "password-resets" ? 5000 : false,
+  });
+
   // Query: System Logs
   const { data: systemLogsData, isLoading: systemLogsLoading } = useQuery({
     queryKey: ['/api/admin/logs/system', systemLogSearch, logDateRange],
@@ -210,11 +221,30 @@ export default function AdminManagementPage() {
     }
   });
 
+  const refreshResetRequests = () => queryClient.invalidateQueries({ queryKey: ['/api/admin/password-reset-requests'] });
+  const createResetMutation = useMutation({
+    mutationFn: () => adminApi.createPasswordResetRequest(resetEmail),
+    onSuccess: () => { refreshResetRequests(); setResetEmail(""); toast({ title: "Bağlantı hazırlandı", description: "Şifre sıfırlama e-postası Gmail kuyruğuna alındı." }); },
+    onError: (err: any) => toast({ title: "Gönderilemedi", description: err.message, variant: "destructive" }),
+  });
+  const resendResetMutation = useMutation({
+    mutationFn: (id: string) => adminApi.resendPasswordResetRequest(id),
+    onSuccess: () => { refreshResetRequests(); toast({ title: "Yeni bağlantı gönderildi" }); },
+    onError: (err: any) => toast({ title: "Gönderilemedi", description: err.message, variant: "destructive" }),
+  });
+  const cancelResetMutation = useMutation({
+    mutationFn: (id: string) => adminApi.cancelPasswordResetRequest(id),
+    onSuccess: () => { refreshResetRequests(); toast({ title: "Talep iptal edildi" }); },
+    onError: (err: any) => toast({ title: "İptal edilemedi", description: err.message, variant: "destructive" }),
+  });
+
   const teachers = usersData?.users.filter(u => u.role === 'teacher') || [];
   const classes = classesData?.classes || [];
   const logs = logsData?.logs || [];
   const emailLogs = emailLogsData?.emails || [];
   const emailCounts = emailLogsData?.counts || { total: 0, sent: 0, pending: 0, failed: 0 };
+  const resetRequests = resetRequestsData?.requests || [];
+  const resetCounts = resetRequestsData?.counts || { pending: 0, completed: 0, cancelled: 0, failed: 0 };
   const systemLogs = systemLogsData?.logs || [];
 
   // Mutations - User Management
@@ -515,6 +545,7 @@ const deleteClassMutation = useMutation({
                 <TabsTrigger value="admin" className="rounded-lg text-xs font-bold px-4 py-1.5 data-[state=active]:bg-background data-[state=active]:text-primary">Yöneticiler</TabsTrigger>
                 <TabsTrigger value="teacher" className="rounded-lg text-xs font-bold px-4 py-1.5 data-[state=active]:bg-background data-[state=active]:text-primary">Öğretmenler</TabsTrigger>
                 <TabsTrigger value="student" className="rounded-lg text-xs font-bold px-4 py-1.5 data-[state=active]:bg-background data-[state=active]:text-primary">Öğrenciler</TabsTrigger>
+                <TabsTrigger value="parent" className="rounded-lg text-xs font-bold px-4 py-1.5 data-[state=active]:bg-background data-[state=active]:text-primary">Veliler</TabsTrigger>
               </TabsList>
 
               <div className="bg-card rounded-3xl border border-border overflow-hidden">
@@ -551,9 +582,10 @@ const deleteClassMutation = useMutation({
                               "rounded-lg font-bold text-[10px] px-3 py-1 border-2 uppercase tracking-widest",
                               u.role === 'admin' ? "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border-red-100 dark:border-red-900/50" :
                               u.role === 'teacher' ? "bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-900/50" :
+                              u.role === 'parent' ? "bg-violet-50 dark:bg-violet-950/30 text-violet-600 dark:text-violet-400 border-violet-100 dark:border-violet-900/50" :
                               "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/50"
                             )}>
-                              {u.role === 'admin' ? 'Yönetici' : u.role === 'teacher' ? 'Öğretmen' : 'Öğrenci'}
+                              {u.role === 'admin' ? 'Yönetici' : u.role === 'teacher' ? 'Öğretmen' : u.role === 'parent' ? 'Veli' : 'Öğrenci'}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-xs font-medium text-muted-foreground italic">
@@ -606,6 +638,16 @@ const deleteClassMutation = useMutation({
                   )}
                 </Button>
                 <Button
+                  variant={logSubTab === "password-resets" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setLogSubTab("password-resets")}
+                  className={cn("rounded-xl font-bold text-xs gap-2 transition-all", logSubTab === "password-resets" ? "shadow-sm" : "")}
+                >
+                  <KeyRound className="h-3.5 w-3.5" />
+                  Şifre Talepleri
+                  {resetCounts.pending > 0 && <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-[10px]">{resetCounts.pending}</Badge>}
+                </Button>
+                <Button
                   variant={logSubTab === "system" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setLogSubTab("system")}
@@ -655,6 +697,7 @@ const deleteClassMutation = useMutation({
                         <SelectItem value="admin">Yöneticiler</SelectItem>
                         <SelectItem value="teacher">Öğretmenler</SelectItem>
                         <SelectItem value="student">Öğrenciler</SelectItem>
+                        <SelectItem value="parent">Veliler</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -722,6 +765,30 @@ const deleteClassMutation = useMutation({
                       )}
                     </TableBody>
                   </Table>
+                </Card>
+              </div>
+            )}
+
+            {logSubTab === "password-resets" && (
+              <div className="space-y-4">
+                <Card className="rounded-2xl border-primary/20 p-4">
+                  <div className="flex flex-col gap-3 md:flex-row md:items-end">
+                    <div className="flex-1 space-y-2"><Label>Kullanıcı E-postası</Label><Input type="email" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} placeholder="kullanici@okul.com" /></div>
+                    <Button disabled={!resetEmail || createResetMutation.isPending} onClick={() => createResetMutation.mutate()} className="gap-2"><Mail className="h-4 w-4" /> Sıfırlama Bağlantısı Gönder</Button>
+                  </div>
+                  <p className="mt-2 text-xs text-muted-foreground">Gönderimler yalnızca Gmail SMTP üzerinden yapılır. E-posta logları sadece teknik gönderim takibi içindir.</p>
+                </Card>
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                  {[['Bekleyen', resetCounts.pending], ['Tamamlanan', resetCounts.completed], ['İptal', resetCounts.cancelled], ['Hatalı', resetCounts.failed]].map(([label, value]) => <Card key={String(label)} className="p-3"><p className="text-xs font-bold text-muted-foreground">{label}</p><p className="text-xl font-black">{value}</p></Card>)}
+                </div>
+                <div className="flex flex-col gap-3 rounded-2xl border bg-card p-3 md:flex-row">
+                  <Input value={resetSearch} onChange={(e) => setResetSearch(e.target.value)} placeholder="Ad veya e-posta ara..." className="md:max-w-sm" />
+                  <Select value={resetStatusFilter} onValueChange={setResetStatusFilter}><SelectTrigger className="md:w-48"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Tüm Durumlar</SelectItem><SelectItem value="pending">Bekleyen</SelectItem><SelectItem value="completed">Tamamlanan</SelectItem><SelectItem value="cancelled">İptal</SelectItem><SelectItem value="expired">Süresi Dolan</SelectItem><SelectItem value="failed">Hatalı</SelectItem></SelectContent></Select>
+                </div>
+                <Card className="overflow-hidden rounded-2xl">
+                  <Table><TableHeader><TableRow><TableHead>Kullanıcı</TableHead><TableHead>Talep Zamanı</TableHead><TableHead>Son Geçerlilik</TableHead><TableHead>Gönderim</TableHead><TableHead>Durum</TableHead><TableHead className="text-right">İşlemler</TableHead></TableRow></TableHeader><TableBody>
+                    {resetRequestsLoading ? <TableRow><TableCell colSpan={6} className="h-24 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin" /></TableCell></TableRow> : resetRequests.length === 0 ? <TableRow><TableCell colSpan={6} className="h-24 text-center text-muted-foreground">Şifre sıfırlama talebi bulunmuyor.</TableCell></TableRow> : resetRequests.map((item: any) => <TableRow key={item.id}><TableCell><div className="font-bold">{item.user?.name || '-'}</div><div className="text-xs text-muted-foreground">{item.email}</div></TableCell><TableCell>{new Date(item.createdAt).toLocaleString('tr-TR')}</TableCell><TableCell>{new Date(item.expiresAt).toLocaleString('tr-TR')}</TableCell><TableCell><Badge variant="outline">{item.emailQueue?.status || 'kayıt yok'}</Badge></TableCell><TableCell><Badge variant={item.status === 'pending' ? 'default' : 'secondary'}>{item.status === 'pending' ? 'Bekliyor' : item.status === 'completed' ? 'Tamamlandı' : item.status === 'cancelled' ? 'İptal' : item.status === 'expired' ? 'Süresi doldu' : 'Hatalı'}</Badge></TableCell><TableCell className="text-right"><div className="flex justify-end gap-1">{item.status !== 'completed' && <Button size="sm" variant="outline" disabled={resendResetMutation.isPending} onClick={() => resendResetMutation.mutate(item.id)}><RotateCw className="mr-1 h-3.5 w-3.5" /> Yenile</Button>}{item.status === 'pending' && <Button size="sm" variant="destructive" disabled={cancelResetMutation.isPending} onClick={() => cancelResetMutation.mutate(item.id)}>İptal</Button>}</div></TableCell></TableRow>)}
+                  </TableBody></Table>
                 </Card>
               </div>
             )}
@@ -1036,11 +1103,10 @@ const deleteClassMutation = useMutation({
               )}
 
               <div className="space-y-1.5">
-                <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">E-Posta İçeriği (HTML Önizleme):</Label>
-                <div 
-                  className="p-4 bg-background border border-border rounded-2xl overflow-y-auto max-h-72 text-sm"
-                  dangerouslySetInnerHTML={{ __html: selectedEmail.body }}
-                />
+                <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">İçerik Güvenliği</Label>
+                <div className="p-4 bg-muted/40 border border-border rounded-2xl text-sm text-muted-foreground">
+                  E-posta gövdesi ve şifre sıfırlama bağlantısı güvenlik nedeniyle log ekranına aktarılmaz.
+                </div>
               </div>
             </div>
           )}

@@ -4,7 +4,7 @@ import { authApi, refreshCsrfToken, type User } from '../lib/api';
 import { clearOfflineUser, getOfflineUser, saveOfflineUser } from '../lib/offline-quiz';
 import { queryClient } from '../lib/queryClient';
 
-type UserRole = 'admin' | 'teacher' | 'student';
+type UserRole = 'admin' | 'teacher' | 'student' | 'parent';
 
 interface AuthContextType {
   role: UserRole;

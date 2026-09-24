@@ -140,30 +140,12 @@ pnpm dev
 
 Quiz-Master, asenkron veritabanı destekli **Outbox Kuyruk Mimarisi** (`EmailQueue`) ile çalışır. Kullanıcı talepleri (şifre sıfırlama, bildirimler) kuyruğa yazılır ve arka plan işçisi tarafından sevk edilir.
 
-#### A) Yerel Geliştirme (Local Offline — Mailpit)
-Geliştirme ortamında test e-postalarını yakalamak ve tarayıcıda görselleştirmek için Mailpit kullanılır:
-- **Başlatma:** `tools/mailpit/start-mailpit.bat` dosyasını çalıştırın.
-- **Web Gelen Kutusu:** [http://127.0.0.1:8025](http://127.0.0.1:8025)
-- **SMTP Portu:** `127.0.0.1:1026` (Windows Hyper-V / port çakışmalarını önlemek üzere 1026 olarak atanmıştır)
-- `server/.env` ayarı:
-  ```env
-  EMAIL_HOST=127.0.0.1
-  EMAIL_PORT=1026
-  EMAIL_SECURE=false
-  EMAIL_USER=
-  EMAIL_PASS=
-  EMAIL_FROM=noreply@quizmaster.com
-  ```
-
-#### B) Gmail SMTP
+#### Gmail SMTP
 
 Gmail ile parola sıfırlama ve test e-postası göndermek için Google hesabında iki adımlı doğrulamayı açın ve normal hesap parolası yerine bir **Uygulama Parolası** üretin. `server/.env` dosyasına aşağıdaki değerleri ekleyin:
 
 ```env
-EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
-EMAIL_SECURE=false
-EMAIL_REQUIRE_TLS=true
 EMAIL_USER=your-smtp-email@gmail.com
 EMAIL_PASS=your-16-character-app-password
 EMAIL_FROM=your-smtp-email@gmail.com
@@ -171,24 +153,9 @@ EMAIL_FROM_NAME=QuizMaster
 FRONTEND_URL=http://localhost:5173
 ```
 
-> `EMAIL_PASS` kaynak koda veya Git'e eklenmemelidir. Depodaki `server/.env.gmail.example` şablon olarak kullanılabilir. Sunucu yeniden başlatıldıktan sonra yönetici API'sindeki `GET /api/admin/email-settings/status` ayarların hazır olup olmadığını parolayı göstermeden bildirir; `POST /api/admin/email-settings/test` ise SMTP bağlantısını ve gerçek gönderimi sınar.
+> Sistem yalnız `smtp.gmail.com` kullanır. Alternatif `EMAIL_HOST`, `EMAIL_SECURE` ve üçüncü taraf SMTP sağlayıcı ayarları yok sayılır. `EMAIL_PORT` yalnızca Gmail'in 587 veya 465 portunu seçebilir; diğer değerler 587'ye düşer. `EMAIL_PASS` kaynak koda veya Git'e eklenmemelidir.
 
-Parola sıfırlama isteği tek kullanımlık ham bağlantıyı e-postaya koyar; veritabanında yalnızca SHA-256 özeti ve bir saatlik son kullanma zamanı tutulur. Gönderim başarısız olursa kayıt e-posta kuyruğunda hata bilgisiyle izlenebilir ve yönetici tarafından yeniden gönderilebilir.
-
-#### C) Canlı Ortam (Production Online — Brevo / Sendinblue)
-Canlıya çıkışta Brevo SMTP Relay servisi kullanılır:
-1. Brevo (brevo.com) hesabınızda *Transactional > Settings > Configuration* adımından yeni bir **SMTP Key** (`xsmtpsib-...`) oluşturun.
-2. Gönderici e-posta adresinizi (*Senders*) Brevo panelinde doğrulayın.
-3. Sunucu ortam değişkenlerini (`server/.env`) güncelleyin:
-  ```env
-  EMAIL_HOST=smtp-relay.brevo.com
-  EMAIL_PORT=587
-  EMAIL_SECURE=false
-  EMAIL_USER=hesap_epostaniz@domain.com
-  EMAIL_PASS=xsmtpsib-anahtariniz
-  EMAIL_FROM=noreply@dogrulanmis-domaininiz.com
-  ```
-> Sistem `EMAIL_USER` ve `EMAIL_PASS` alanlarının doluluğunu otomatik algılar; yerelde şifresiz Mailpit, canlıda kimlik doğrulamalı Brevo sıfır kod değişikliği ile şeffaf çalışır.
+Parola sıfırlama isteği tek kullanımlık ham bağlantıyı e-postaya koyar; veritabanında yalnızca SHA-256 özeti ve bir saatlik son kullanma zamanı tutulur. Yönetici, **Yönetim > Loglar > Şifre Talepleri** alanından talepleri izleyebilir, yenileyebilir veya iptal edebilir. **E-posta Logları** yalnızca teknik teslimat izlemesi içindir ve e-posta gövdesini/token bağlantısını API üzerinden göstermez.
 
 ### 6. Testleri Çalıştırma
 
@@ -228,7 +195,7 @@ Seed scripti aşağıdaki kullanıcıları oluşturur:
   2. *E-Posta Logları:* Gönderilen tüm e-postaların Outbox kuyruk takibi, KPI sayaçları (Toplam, Başarılı, Bekleyen, Hatalı), HTML şablon önizleme modalı, hata detayı, tek tıkla **Tekrar Gönder (Retry)** ve **Sil** yetenekleri.
   3. *Sistem Hata & İşlemleri:* Yıl sonu arşivleme (`ARCHIVE_YEAR`), sınıf atlatma (`PROMOTE_STUDENTS`), arşiv tasfiyesi (`PURGE_ARCHIVED_DATA`) ve sistem hata kayıtları.
   Öğretmen ve öğrenciler ise kişisel hareketlerini Profil ayarlarından (`/settings?tab=logs`) izler.
-- **Asenkron E-Posta Outbox Mimarisi** — Kullanıcı parola sıfırlama talepleri ana işlem akışını geciktirmeden `<10ms` içinde veritabanı kuyruğuna (`EmailQueue`) alınır. Arka plan işçisi e-postaları güvenle sırayla sevk eder. Yerel geliştirme için Mailpit (`tools/mailpit/start-mailpit.bat` - Port 1026), canlı üretim için Brevo SMTP Relay (`smtp-relay.brevo.com` - Port 587) şeffaf entegre edilmiştir.
+- **Asenkron Gmail Outbox Mimarisi** — Kullanıcı parola sıfırlama talepleri veritabanı kuyruğuna (`EmailQueue`) alınır ve arka plan işçisi tarafından yalnız Gmail SMTP üzerinden gönderilir. Talepler ayrı `PasswordResetRequest` kayıtlarıyla yönetilir.
 - **Öğrenci & Veli Bilgileri Yönetimi** — Öğrenci detay ekranında (`/students/:id`) yöneticilere özel 3 sekmeli yapı: *Sınav Bilgileri*, *Öğrenci Bilgileri* ve *Veli Bilgileri* (Veli Adı, Yakınlık, Telefon, E-posta, Adres). Öğretmenler yalnızca sınav sonuçlarını görebilir; öğrenciler kendi veli bilgilerini Profil ayarlarında salt okunur olarak inceler.
 - **Öğretmen Detay Sayfası** (`/teachers/:id`) — Öğretmen profil bilgileri, branş atamaları, sorumlu olduğu sınıflar ve oluşturduğu sınavların tek sayfada kapsamlı özeti.
 - **Öğretmen Dashboard'u** — Dashboard başlık alanında branş badge'leri ve sorumlu sınıflar dinamik olarak gösterilir. Eğitmen ilgili sınıf detay sayfasına tek tıkla erişebilir.

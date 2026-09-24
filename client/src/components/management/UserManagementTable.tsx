@@ -32,7 +32,10 @@ export interface User {
   classId?: string | null;
   classNo?: string | null;
   studentNo?: number | null;
+  phoneNumber?: string | null;
+  address?: string | null;
   assignedCategories?: { id: string; name: string }[];
+  managedClasses?: { id: string; name: string }[];
   classes?: { id: string; name: string }[];
   // Öğretmenin classTeacherId üzerinden sorumlu olduğu sınıflar
   responsibleForClasses?: { id: string; name: string }[];
@@ -75,7 +78,7 @@ export function UserManagementTable({
             {role === 'student' ? (
               <>
                 <TableHead>Sınıf</TableHead>
-                <TableHead>Numara</TableHead>
+                <TableHead>Sınıf No</TableHead>
               </>
             ) : (
               <>

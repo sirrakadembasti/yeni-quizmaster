@@ -73,7 +73,7 @@ export default function StudentsPage() {
       { header: "Ad Soyad", value: "name" },
       { header: "E-posta", value: "email" },
       { header: "Sınıf", value: (student: any) => classesData?.classes?.find((item: any) => item.id === student.classId)?.name || "Atanmamış" },
-      { header: "Öğrenci No", value: (student: any) => student.studentNo || student.classNo || "" },
+      { header: "Sınıf No", value: (student: any) => student.studentNo || student.classNo || "" },
       { header: "Telefon", value: "phoneNumber" },
       { header: "Adres", value: "address" },
     ];
@@ -119,7 +119,7 @@ export default function StudentsPage() {
             </Button>
           )}
           <div className="flex gap-2">
-            <Button variant="outline" onClick={exportStudents} disabled={!students.length} className="rounded-xl"><Download className="mr-2 h-4 w-4" />CSV</Button>
+            <Button variant="outline" onClick={exportStudents} disabled={!students.length} className="rounded-xl"><Download className="mr-2 h-4 w-4" />Excel</Button>
             <PrintButton className="rounded-xl" />
           </div>
         </div>

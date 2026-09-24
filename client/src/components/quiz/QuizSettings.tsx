@@ -5,10 +5,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
-import { Users, Clock, ClipboardList } from "lucide-react";
+import { Users, Clock } from "lucide-react";
 
 interface QuizSettingsProps {
-  contentType: 'exam' | 'survey'; setContentType: (value: 'exam' | 'survey') => void;
+  contentType: 'exam' | 'survey';
   title: string; setTitle: (val: string) => void;
   description: string; setDescription: (val: string) => void;
   category: string; setCategory: (val: string) => void;
@@ -20,7 +20,7 @@ interface QuizSettingsProps {
 }
 
 export function QuizSettings({
-  contentType, setContentType, title, setTitle, description, setDescription, category, setCategory,
+  contentType, title, setTitle, description, setDescription, category, setCategory,
   dbCategories, teacherClasses, assignedClassIds, toggleClass, timeLimitEnabled, setTimeLimitEnabled,
   timeLimit, setTimeLimit, shuffleQuestions, setShuffleQuestions,
 }: QuizSettingsProps) {
@@ -31,14 +31,7 @@ export function QuizSettings({
       <Card className="border-border/60 shadow-sm dark:shadow-none">
         <CardHeader><CardTitle>Temel Bilgiler</CardTitle><CardDescription>{label} görünümünü, hedefini ve temel ayarlarını belirleyin.</CardDescription></CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-[220px_1fr]">
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2"><ClipboardList className="h-4 w-4 text-primary" />İçerik Türü</Label>
-              <Select value={contentType} onValueChange={(value) => setContentType(value as 'exam' | 'survey')}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent><SelectItem value="exam">Sınav</SelectItem><SelectItem value="survey">Anket</SelectItem></SelectContent>
-              </Select>
-            </div>
+          <div className="grid gap-4">
             <div className="space-y-2">
               <Label htmlFor="title">{label} Başlığı <span className="text-destructive">*</span></Label>
               <Input id="title" placeholder={isSurvey ? "Örn: Öğrenci Memnuniyet Anketi" : "Örn: 10. Sınıf Matematik Yazılısı"} value={title} onChange={(event) => setTitle(event.target.value)} className="font-medium" />

@@ -2,21 +2,21 @@ import nodemailer from "nodemailer";
 import { storage } from "../storage";
 import { logger } from "./logger";
 
-// SMTP ayarları dotenv yüklendikten sonra, ilk gönderim anında okunur.
-// Böylece ESM import sırası Gmail/SMTP ayarlarını varsayılan değerlere kilitlemez.
+// Yalnızca Gmail SMTP kullanılır. EMAIL_HOST/PORT/SECURE gibi alternatif SMTP
+// değişkenleri bilinçli olarak yok sayılır; böylece yanlışlıkla başka bir sunucuya
+// kimlik bilgisi gönderilemez.
 export function getEmailConfiguration() {
-  const host = process.env.EMAIL_HOST?.trim() || "127.0.0.1";
-  const port = Number.parseInt(process.env.EMAIL_PORT || "1026", 10);
-  const secure = process.env.EMAIL_SECURE === "true" || port === 465;
   const user = process.env.EMAIL_USER?.trim() || "";
   const password = process.env.EMAIL_PASS || "";
-  const fromEmail = process.env.EMAIL_FROM?.trim() || user || "noreply@quizmaster.com";
+  const fromEmail = process.env.EMAIL_FROM?.trim() || user;
   const fromName = process.env.EMAIL_FROM_NAME?.trim() || "QuizMaster";
+  const requestedPort = Number.parseInt(process.env.EMAIL_PORT || "587", 10);
+  const port = requestedPort === 465 ? 465 : 587;
 
   return {
-    host,
-    port: Number.isFinite(port) ? port : 587,
-    secure,
+    host: "smtp.gmail.com",
+    port,
+    secure: port === 465,
     user,
     password,
     fromEmail,
@@ -36,8 +36,8 @@ function getTransporter() {
       host: config.host,
       port: config.port,
       secure: config.secure,
-      requireTLS: process.env.EMAIL_REQUIRE_TLS === "true" || (config.port === 587 && !config.secure),
-      auth: config.authConfigured ? { user: config.user, pass: config.password } : undefined,
+      requireTLS: !config.secure,
+      auth: { user: config.user, pass: config.password },
       connectionTimeout: Number.parseInt(process.env.EMAIL_CONNECTION_TIMEOUT || "10000", 10),
       greetingTimeout: Number.parseInt(process.env.EMAIL_GREETING_TIMEOUT || "10000", 10),
       socketTimeout: Number.parseInt(process.env.EMAIL_SOCKET_TIMEOUT || "20000", 10),
@@ -56,11 +56,13 @@ export const getEmailStatus = () => {
     fromEmail: config.fromEmail,
     fromName: config.fromName,
     authConfigured: config.authConfigured,
-    provider: config.host === "smtp.gmail.com" ? "gmail" : "smtp",
+    provider: "gmail",
   };
 };
 
 export const verifyEmailTransport = async () => {
+  const config = getEmailConfiguration();
+  if (!config.authConfigured) throw Object.assign(new Error("Gmail kullanıcı adı veya uygulama parolası eksik."), { code: "GMAIL_NOT_CONFIGURED" });
   await getTransporter().verify();
   return getEmailStatus();
 };

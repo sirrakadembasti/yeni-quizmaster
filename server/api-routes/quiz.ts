@@ -57,7 +57,7 @@ const quizSchema = z.object({
   timeLimit: z.number().int().positive().optional().nullable(),
   shuffleQuestions: z.boolean().default(false),
   status: z.enum(["draft", "published", "archived"]).default("draft"),
-  contentType: z.enum(["exam", "survey"]).default("exam"),
+  contentType: z.literal("exam").default("exam"),
   assignedClassIds: z.array(z.string().uuid()).optional().default([]),
 });
 
@@ -79,9 +79,9 @@ router.get("/admin/quizzes", requireAuth, requireRole(["admin", "teacher"]), asy
   try {
     let quizzes;
     if (req.user!.role === "admin") {
-      quizzes = await storage.getAllQuizzes();
+      quizzes = (await storage.getAllQuizzes()).filter((quiz) => quiz.contentType !== "survey");
     } else {
-      quizzes = await storage.getQuizzesByCreator(req.user!.id);
+      quizzes = (await storage.getQuizzesByCreator(req.user!.id)).filter((quiz) => quiz.contentType !== "survey");
     }
     res.json({ quizzes });
   } catch (error) {
@@ -103,7 +103,7 @@ router.get("/", requireAuth, async (req: AuthRequest, res: Response) => {
         return q.contentType !== "survey" && isPublished && isAssignedToMyClass;
       });
     } else {
-      quizzes = await storage.getQuizzesByCreator(req.user!.id);
+      quizzes = (await storage.getQuizzesByCreator(req.user!.id)).filter((quiz) => quiz.contentType !== "survey");
     }
     res.json({ quizzes });
   } catch (error) {
@@ -114,7 +114,7 @@ router.get("/", requireAuth, async (req: AuthRequest, res: Response) => {
 router.get("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
     const quiz = await storage.getQuiz(req.params.id);
-    if (!quiz) return res.status(404).json({ message: "Sınav bulunamadı." });
+    if (!quiz || quiz.contentType === "survey") return res.status(404).json({ message: "Sınav bulunamadı." });
 
     if (req.user!.role === "teacher" && quiz.createdBy !== req.user!.id) {
       return res.status(403).json({ message: "Bu sınavı görüntüleme yetkiniz yok." });
@@ -183,7 +183,7 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
     if (!validation.success) return res.status(400).json({ message: fromZodError(validation.error).message });
 
     const existingQuiz = await storage.getQuiz(req.params.id);
-    if (!existingQuiz) return res.status(404).json({ message: "Icerik bulunamadi." });
+    if (!existingQuiz || existingQuiz.contentType === "survey") return res.status(404).json({ message: "Sınav bulunamadı." });
     if (req.user!.role === "teacher" && existingQuiz.createdBy !== req.user!.id) {
       return res.status(403).json({ message: "Bu icerigi duzenleme yetkiniz yok." });
     }
@@ -259,7 +259,7 @@ router.post("/:id/questions", requireAuth, requireRole(["admin", "teacher"]), as
     if (!validation.success) return res.status(400).json({ message: fromZodError(validation.error).message });
 
     const quiz = await storage.getQuiz(req.params.id);
-    if (!quiz) return res.status(404).json({ message: "İçerik bulunamadı." });
+    if (!quiz || quiz.contentType === "survey") return res.status(404).json({ message: "Sınav bulunamadı." });
     if (req.user!.role === "teacher" && quiz.createdBy !== req.user!.id) {
       return res.status(403).json({ message: "Bu içeriğe soru ekleme yetkiniz yok." });
     }

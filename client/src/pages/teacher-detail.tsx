@@ -163,7 +163,7 @@ export default function TeacherDetailPage() {
           </div>
           {role === 'admin' && (
             <div className="flex items-center gap-2.5 ml-auto">
-              <Button variant="outline" size="sm" className="rounded-xl font-bold gap-2" onClick={exportTeacher}><Download className="h-4 w-4" /> Excel Uyumlu CSV</Button>
+              <Button variant="outline" size="sm" className="rounded-xl font-bold gap-2" onClick={exportTeacher}><Download className="h-4 w-4" /> Excel</Button>
               <PrintButton className="rounded-xl" />
               <Button
                 variant="outline"
@@ -355,6 +355,7 @@ export default function TeacherDetailPage() {
             onOpenChange={setIsEditOpen}
             mode="edit"
             role="teacher"
+            teacherEditScope="profile"
             initialData={teacher}
             onSubmit={(data) => updateMutation.mutate(data)}
             isPending={updateMutation.isPending}

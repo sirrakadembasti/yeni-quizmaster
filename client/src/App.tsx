@@ -39,12 +39,13 @@ import AnnouncementsPage from "@/pages/announcements";
 import StudentSurveysPage from "@/pages/student-surveys";
 import TakeSurveyPage from "@/pages/take-survey";
 import SurveyResultsPage from "@/pages/survey-results";
+import ParentDashboardPage from "@/pages/parent-dashboard";
 
 // =============================================================================
 // TYPES
 // =============================================================================
 
-type Role = 'admin' | 'teacher' | 'student';
+type Role = 'admin' | 'teacher' | 'student' | 'parent';
 
 interface RouteConfig {
   path: string;
@@ -65,6 +66,7 @@ function HomeRoute() {
   const { isAuthenticated, role } = useAuth();
   if (!isAuthenticated) return <HomePage />;
   if (role === 'student') return <StudentDashboard />;
+  if (role === 'parent') return <ParentDashboardPage />;
   return <DashboardPage />;
 }
 
@@ -72,7 +74,7 @@ function HomeRoute() {
 // ROUTE REGISTRY — single source of truth for every path + its allowed roles
 // =============================================================================
 
-const ALL: Role[] = ['admin', 'teacher', 'student'];
+const ALL: Role[] = ['admin', 'teacher', 'student', 'parent'];
 
 const ROUTES: RouteConfig[] = [
   // ── Public ──────────────────────────────────────────────────────────────────
@@ -83,10 +85,13 @@ const ROUTES: RouteConfig[] = [
   // ── All authenticated roles ──────────────────────────────────────────────────
   { path: '/settings',                  component: SettingsPage,       roles: ALL },
   { path: '/announcements',             component: AnnouncementsPage,  roles: ALL },
-  { path: '/my-stats',                  component: StudentStatsPage,   roles: ALL },
-  { path: '/student/quiz/:quizId',      component: StudentQuizPage,    roles: ALL },
-  { path: '/student/result/:resultId',  component: QuizResultDetailPage, roles: ALL },
-  { path: '/student/results',           component: StudentResultsPage, roles: ALL },
+  { path: '/my-stats',                  component: StudentStatsPage,   roles: ['student'] },
+  { path: '/student/quiz/:quizId',      component: StudentQuizPage,    roles: ['student', 'teacher', 'admin'] },
+  { path: '/student/result/:resultId',  component: QuizResultDetailPage, roles: ['student', 'teacher', 'admin'] },
+  { path: '/student/results',           component: StudentResultsPage, roles: ['student', 'teacher', 'admin'] },
+
+  // Parent only — linked students are read-only and enforced again by the API.
+  { path: '/parent/dashboard', component: ParentDashboardPage, roles: ['parent'] },
 
   // ── Student only ─────────────────────────────────────────────────────────────
   { path: '/student/dashboard', component: StudentDashboard,   roles: ['student'] },

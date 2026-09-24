@@ -2,8 +2,10 @@ import { Router, type Request, type Response, type NextFunction } from "express"
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import crypto from "crypto";
 import { requireAuth, requireRole } from "../middleware/auth";
 import sharp from "sharp";
+import { uploadsDirectory } from "../utils/upload-paths";
 
 const router: Router = Router();
 
@@ -14,12 +16,9 @@ const upload = multer({
   storage: uploadStorage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: (req, file, cb) => {
-    // Only accept JPEG as requested
-    const allowedTypes = /jpeg|jpg/;
-    const mimetype = allowedTypes.test(file.mimetype);
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    if (mimetype && extname) return cb(null, true);
-    cb(new Error("Sadece JPEG resim dosyaları yüklenebilir (jpg, jpeg)."));
+    const allowedMimeTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
+    if (allowedMimeTypes.has(file.mimetype)) return cb(null, true);
+    cb(new Error("Yalnızca JPEG, PNG veya WEBP görselleri yüklenebilir."));
   }
 });
 
@@ -42,18 +41,25 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), (req: Request, 
     if (!req.file) return res.status(400).json({ message: "Dosya seçilmedi." });
     
     try {
-      const dir = 'uploads/';
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
+      if (!fs.existsSync(uploadsDirectory)) {
+        fs.mkdirSync(uploadsDirectory, { recursive: true });
       }
-      
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      const filename = uniqueSuffix + '.jpg';
-      const filepath = path.join(dir, filename);
-      
-      // Compress and save as JPEG
-      await sharp(req.file.buffer)
-        .jpeg({ quality: 70 }) // Görüntü sıkıştırma (Compression)
+
+      const image = sharp(req.file.buffer, { failOn: "warning" });
+      const metadata = await image.metadata();
+      if (!metadata.width || !metadata.height || !["jpeg", "png", "webp"].includes(metadata.format || "")) {
+        return res.status(400).json({ message: "Dosya geçerli bir JPEG, PNG veya WEBP görseli değil." });
+      }
+      if (metadata.width > 10000 || metadata.height > 10000) {
+        return res.status(400).json({ message: "Görsel boyutları en fazla 10000 × 10000 piksel olabilir." });
+      }
+
+      const filename = `${crypto.randomUUID()}.webp`;
+      const filepath = path.join(uploadsDirectory, filename);
+      await image
+        .rotate()
+        .resize({ width: 2400, height: 2400, fit: "inside", withoutEnlargement: true })
+        .webp({ quality: 82 })
         .toFile(filepath);
 
       const imageUrl = `/uploads/${filename}`;

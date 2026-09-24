@@ -19,6 +19,10 @@ export interface IStorage {
   updateUserRole(userId: string, role: string): Promise<void>;
   getAllUsers(): Promise<User[]>;
   deleteUser(id: string): Promise<void>;
+  getGuardianStudents(guardianId: string): Promise<any[]>;
+  getStudentGuardians(studentId: string): Promise<any[]>;
+  linkGuardianStudent(guardianId: string, studentId: string, relation?: string | null): Promise<any>;
+  unlinkGuardianStudent(guardianId: string, studentId: string): Promise<void>;
 
   // Class methods
   getAllClasses(): Promise<Class[]>;
@@ -115,6 +119,12 @@ export interface IStorage {
   deleteEmailLog(id: string): Promise<boolean>;
   getPendingEmails(limit?: number): Promise<EmailQueue[]>;
   updateEmailStatus(id: string, status: string, errorMessage?: string | null): Promise<EmailQueue | null>;
+  createPasswordResetRequest(data: { userId: string; email: string; tokenHash: string; expiresAt: Date; requestedBy?: string | null; requestIp?: string | null }): Promise<any>;
+  updatePasswordResetRequest(id: string, data: Record<string, unknown>): Promise<any>;
+  getPasswordResetRequest(id: string): Promise<any | undefined>;
+  getPasswordResetRequestByToken(tokenHash: string): Promise<any | undefined>;
+  getPasswordResetRequests(filters?: { status?: string; search?: string; page?: number; limit?: number }): Promise<{ data: any[]; total: number; counts: Record<string, number> }>;
+  cancelPendingPasswordResetRequests(userId: string): Promise<void>;
 
   createAnnouncement(data: any): Promise<any>;
   getAllAnnouncements(): Promise<any[]>;
@@ -298,14 +308,14 @@ export class PrismaStorage implements IStorage {
     }
 
     // Handle teacher categories if provided
-    if (assignedCategoryIds) {
+    if (Array.isArray(assignedCategoryIds)) {
       prismaData.assignedCategories = {
         set: assignedCategoryIds.map((catId: string) => ({ id: catId }))
       };
     }
 
     // Handle teacher classes if provided
-    if (classIds) {
+    if (Array.isArray(classIds)) {
       prismaData.managedClasses = {
         set: classIds.map((classId: string) => ({ id: classId }))
       };
@@ -366,6 +376,34 @@ export class PrismaStorage implements IStorage {
 
   async deleteUser(id: string): Promise<void> {
     await prisma.user.delete({ where: { id } });
+  }
+
+  async getGuardianStudents(guardianId: string): Promise<any[]> {
+    return prisma.guardianStudent.findMany({
+      where: { guardianId },
+      include: { student: { include: { class: true } } },
+      orderBy: { student: { name: 'asc' } },
+    });
+  }
+
+  async getStudentGuardians(studentId: string): Promise<any[]> {
+    return prisma.guardianStudent.findMany({
+      where: { studentId },
+      include: { guardian: { select: { id: true, name: true, email: true, phoneNumber: true, address: true, role: true } } },
+      orderBy: { guardian: { name: 'asc' } },
+    });
+  }
+
+  async linkGuardianStudent(guardianId: string, studentId: string, relation?: string | null): Promise<any> {
+    return prisma.guardianStudent.upsert({
+      where: { guardianId_studentId: { guardianId, studentId } },
+      create: { guardianId, studentId, relation: relation || null },
+      update: { relation: relation || null },
+    });
+  }
+
+  async unlinkGuardianStudent(guardianId: string, studentId: string): Promise<void> {
+    await prisma.guardianStudent.delete({ where: { guardianId_studentId: { guardianId, studentId } } });
   }
 
   // Class methods
@@ -932,12 +970,11 @@ export class PrismaStorage implements IStorage {
     if (filters.quizId) where.quizId = filters.quizId;
     if (filters.studentId) where.studentId = filters.studentId;
     if (filters.classId) where.student = { classId: filters.classId };
-    if (filters.categoryId || filters.createdBy) {
-      where.quiz = {
-        ...(filters.categoryId ? { categoryId: filters.categoryId } : {}),
-        ...(filters.createdBy ? { createdBy: filters.createdBy } : {}),
-      };
-    }
+    where.quiz = {
+      contentType: 'exam',
+      ...(filters.categoryId ? { categoryId: filters.categoryId } : {}),
+      ...(filters.createdBy ? { createdBy: filters.createdBy } : {}),
+    };
     const results = await prisma.studentResult.findMany({
       where,
       include: {
@@ -1510,6 +1547,43 @@ export class PrismaStorage implements IStorage {
       if (err?.code === 'P2025') return null;
       throw err;
     }
+  }
+
+  async createPasswordResetRequest(data: { userId: string; email: string; tokenHash: string; expiresAt: Date; requestedBy?: string | null; requestIp?: string | null }): Promise<any> {
+    return prisma.passwordResetRequest.create({ data: { ...data, requestedBy: data.requestedBy || null, requestIp: data.requestIp || null } });
+  }
+
+  async updatePasswordResetRequest(id: string, data: Record<string, unknown>): Promise<any> {
+    return prisma.passwordResetRequest.update({ where: { id }, data: data as any, include: { user: { select: { id: true, name: true, email: true, role: true } }, emailQueue: true } });
+  }
+
+  async getPasswordResetRequest(id: string): Promise<any | undefined> {
+    return (await prisma.passwordResetRequest.findUnique({ where: { id }, include: { user: { select: { id: true, name: true, email: true, role: true } }, emailQueue: true } })) || undefined;
+  }
+
+  async getPasswordResetRequestByToken(tokenHash: string): Promise<any | undefined> {
+    return (await prisma.passwordResetRequest.findUnique({ where: { tokenHash }, include: { user: true, emailQueue: true } })) || undefined;
+  }
+
+  async getPasswordResetRequests(filters?: { status?: string; search?: string; page?: number; limit?: number }): Promise<{ data: any[]; total: number; counts: Record<string, number> }> {
+    const where: Prisma.PasswordResetRequestWhereInput = {};
+    if (filters?.status && filters.status !== 'all') where.status = filters.status;
+    if (filters?.search) where.OR = [{ email: { contains: filters.search } }, { user: { name: { contains: filters.search } } }];
+    const page = filters?.page || 1;
+    const limit = filters?.limit || 100;
+    const [data, total, pending, completed, cancelled, failed] = await Promise.all([
+      prisma.passwordResetRequest.findMany({ where, include: { user: { select: { id: true, name: true, email: true, role: true } }, emailQueue: true }, orderBy: { createdAt: 'desc' }, skip: (page - 1) * limit, take: limit }),
+      prisma.passwordResetRequest.count({ where }),
+      prisma.passwordResetRequest.count({ where: { status: 'pending' } }),
+      prisma.passwordResetRequest.count({ where: { status: 'completed' } }),
+      prisma.passwordResetRequest.count({ where: { status: 'cancelled' } }),
+      prisma.passwordResetRequest.count({ where: { status: 'failed' } }),
+    ]);
+    return { data, total, counts: { pending, completed, cancelled, failed } };
+  }
+
+  async cancelPendingPasswordResetRequests(userId: string): Promise<void> {
+    await prisma.passwordResetRequest.updateMany({ where: { userId, status: 'pending' }, data: { status: 'cancelled', cancelledAt: new Date() } });
   }
 }
 

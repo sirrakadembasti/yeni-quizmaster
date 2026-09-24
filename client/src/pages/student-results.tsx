@@ -41,6 +41,7 @@ import { UserFormModal } from "@/components/management/UserFormModal";
 import { PrintButton, PrintMeta } from "@/components/print/PrintTools";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { downloadCsv } from "@/lib/export";
+import { GuardianAccounts } from "@/components/management/GuardianAccounts";
 
 export default function StudentResultsPage() {
   const [, setLocation] = useLocation();
@@ -237,7 +238,7 @@ export default function StudentResultsPage() {
               <p className="text-sm font-bold text-foreground">{student.class?.name || "Atanmamış"}</p>
             </div>
             <div className="space-y-0.5 bg-muted/20 p-2 rounded-lg border border-border/40">
-              <Label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Okul No</Label>
+              <Label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Sınıf No</Label>
               <p className="text-sm font-bold text-foreground">{student.studentNo || student.classNo || "-"}</p>
             </div>
             <div className="space-y-0.5 bg-muted/20 p-2 rounded-lg border border-border/40">
@@ -306,6 +307,7 @@ export default function StudentResultsPage() {
               <p className="text-sm font-medium text-foreground">{student.parentAddress || "Belirtilmemiş"}</p>
             </div>
           </div>
+          <GuardianAccounts studentId={student.id} />
         </CardContent>
       </Card>
     );
@@ -347,7 +349,7 @@ export default function StudentResultsPage() {
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" className="rounded-xl gap-2" onClick={exportResults}>
-                <Download className="h-4 w-4" /> Excel Uyumlu CSV
+                <Download className="h-4 w-4" /> Excel
               </Button>
               <PrintButton className="rounded-xl" />
             </div>

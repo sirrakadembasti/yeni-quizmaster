@@ -16,7 +16,7 @@ export function RoleSwitcher() {
         <DropdownMenuTrigger asChild>
           <Button variant="default" size="sm" className="shadow-lg rounded-full h-10 px-4 bg-slate-900 text-white hover:bg-slate-800 border-2 border-slate-700">
             <UserCog className="h-4 w-4 mr-2" />
-            Rol: {role === 'admin' ? 'Yönetici' : role === 'teacher' ? 'Öğretmen' : 'Öğrenci'}
+            Rol: {role === 'admin' ? 'Yönetici' : role === 'teacher' ? 'Öğretmen' : role === 'parent' ? 'Veli' : 'Öğrenci'}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">

@@ -5,7 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { GripVertical, Trash2, Image as ImageIcon, X, PlusCircle } from "lucide-react";
+import { ChevronDown, GripVertical, Trash2, Image as ImageIcon, X, PlusCircle } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useState } from "react";
 
 export interface QuestionForm {
   id: number | string;
@@ -34,6 +36,7 @@ const surveyTypes = [
 ];
 
 export function QuestionItem({ question, index, totalQuestions, contentType, onUpdate, onRemove, onUpdateOption }: QuestionItemProps) {
+  const [isImageOpen, setIsImageOpen] = useState(false);
   const isSurvey = contentType === 'survey';
   const needsOptions = isSurvey ? ['single-choice', 'multiple-choice', 'likert'].includes(question.type) : true;
   const changeType = (type: string) => {
@@ -45,7 +48,7 @@ export function QuestionItem({ question, index, totalQuestions, contentType, onU
   };
 
   return (
-    <Card className="relative group border-border/60 hover:border-primary/40 transition-colors">
+    <Card data-question-id={String(question.id)} className="relative group border-border/60 hover:border-primary/40 transition-colors">
       <div className="absolute inset-y-0 left-0 w-1 rounded-l-xl bg-primary/20 group-hover:bg-primary" />
       <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
         <div className="flex items-center gap-2"><div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">{index + 1}</div><CardTitle className="text-base">{isSurvey ? 'Anket Sorusu' : 'Sınav Sorusu'}</CardTitle></div>
@@ -54,7 +57,17 @@ export function QuestionItem({ question, index, totalQuestions, contentType, onU
       <CardContent className="space-y-3">
         {isSurvey && <div className="space-y-1.5"><Label>Soru Türü</Label><Select value={question.type} onValueChange={changeType}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{surveyTypes.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectContent></Select></div>}
         <div className="space-y-1.5"><Label>Soru Metni</Label><Textarea value={question.text} onChange={(event) => onUpdate(question.id, 'text', event.target.value)} className="min-h-[80px] resize-none" /></div>
-        <div className="space-y-2 border-t pt-3"><Label className="flex items-center gap-2 text-muted-foreground"><ImageIcon className="h-4 w-4" />Soru Görseli (Opsiyonel)</Label><ImageUpload value={question.imageUrl} onChange={(url) => onUpdate(question.id, 'imageUrl', url)} onRemove={() => onUpdate(question.id, 'imageUrl', undefined)} /></div>
+        <Collapsible open={isImageOpen} onOpenChange={setIsImageOpen} className="border-t pt-3">
+          <CollapsibleTrigger asChild>
+            <Button type="button" variant="ghost" className="flex w-full justify-between px-2">
+              <span className="flex items-center gap-2 text-muted-foreground"><ImageIcon className="h-4 w-4" />Soru Görseli (Opsiyonel){question.imageUrl && <span className="text-xs font-medium text-emerald-600">Görsel eklendi</span>}</span>
+              <ChevronDown className={`h-4 w-4 transition-transform ${isImageOpen ? 'rotate-180' : ''}`} />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pt-3">
+            <ImageUpload value={question.imageUrl} onChange={(url) => onUpdate(question.id, 'imageUrl', url)} onRemove={() => onUpdate(question.id, 'imageUrl', undefined)} />
+          </CollapsibleContent>
+        </Collapsible>
         {question.type === 'rating' && <div className="space-y-1.5 border-t pt-3"><Label htmlFor={"rating-" + question.id}>En Yüksek Değer</Label><Input id={"rating-" + question.id} type="number" min={3} max={10} value={question.config?.max || 5} onChange={(event) => onUpdate(question.id, 'config', { max: Math.min(10, Math.max(3, Number(event.target.value) || 5)) })} /></div>}
         {needsOptions && (
           <div className="space-y-2 border-t pt-3">

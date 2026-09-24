@@ -116,7 +116,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
   const notificationsMuted = notificationPreferences?.muted ?? false;
 
   const menuItems = [
-    { label: "Dashboard", href: role === 'student' ? "/student/dashboard" : "/", icon: LayoutDashboard },
+    { label: "Dashboard", href: role === 'student' ? "/student/dashboard" : role === 'parent' ? "/parent/dashboard" : "/", icon: LayoutDashboard },
     ...(role === 'student' ? [
       { label: "Sınavlarım", href: "/student/quizzes", icon: FileText },
       { label: "Anketlerim", href: "/student/surveys", icon: ClipboardList },
@@ -127,7 +127,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
       { label: "Sınavlarım", href: "/quizzes", icon: FileText },
       { label: "Sınıf İstatistikleri", href: "/statistics", icon: BarChart3 },
       { label: "Sınav Sonuçları", href: "/results", icon: ListChecks },
-      { label: "Anket Sonuçları", href: "/survey-results", icon: ClipboardList },
+      { label: "Anket Yönetimi", href: "/survey-results", icon: ClipboardList },
       { label: "Öğrenciler", href: "/students", icon: Users },
       { label: "Sınıflarım", href: "/classlist", icon: GraduationCap },
     ] : []),
@@ -136,9 +136,9 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
       { label: "Sınavlar", href: "/quizzes", icon: FileText },
       { label: "Sınıf İstatistikleri", href: "/statistics", icon: BarChart3 },
       { label: "Sınav Sonuçları", href: "/results", icon: ListChecks },
-      { label: "Anket Sonuçları", href: "/survey-results", icon: ClipboardList },
+      { label: "Anket Yönetimi", href: "/survey-results", icon: ClipboardList },
       { label: "Öğrenciler", href: "/students", icon: Users },
-      { label: "Eğitmenler", href: "/teachers", icon: Briefcase },
+      { label: "Öğretmenler", href: "/teachers", icon: Briefcase },
       { label: "Sınıflar", href: "/classlist", icon: GraduationCap },
       { label: "Yönetim", href: "/management", icon: Settings },
       { label: "Arşiv", href: "/archive", icon: Archive },
@@ -335,7 +335,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
                 </div>
                 <div className="hidden sm:flex flex-col items-start">
                   <span className="text-xs font-black text-slate-700 dark:text-slate-200 leading-none">{user?.name}</span>
-                  <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-0.5">{role === 'admin' ? 'Yönetici' : role === 'teacher' ? 'Eğitmen' : 'Öğrenci'}</span>
+                  <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-0.5">{role === 'admin' ? 'Yönetici' : role === 'teacher' ? 'Öğretmen' : role === 'parent' ? 'Veli' : 'Öğrenci'}</span>
                 </div>
                 <ChevronDown className="h-3.5 w-3.5 text-slate-400 ml-1" />
               </Button>
@@ -372,7 +372,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
               <strong>QuizMaster</strong>
               <span> Yönetim ve Sınav Sistemi</span>
             </div>
-            <div>{user?.name} · {role === 'admin' ? 'Yönetici' : role === 'teacher' ? 'Öğretmen' : 'Öğrenci'}</div>
+            <div>{user?.name} · {role === 'admin' ? 'Yönetici' : role === 'teacher' ? 'Öğretmen' : role === 'parent' ? 'Veli' : 'Öğrenci'}</div>
           </div>
           <div className="dashboard-page mx-auto w-full max-w-[1600px]">
             {children}

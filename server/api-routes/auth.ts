@@ -1,12 +1,11 @@
 import { Router, type Request, type Response } from "express";
 import { storage } from "../storage";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
 import { requireAuth, type AuthRequest } from "../middleware/auth";
 import { logger } from "../utils/logger";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
-import { sendResetPasswordEmail } from "../utils/email";
+import { hashResetToken, issuePasswordReset } from "../services/password-reset";
 
 const router: Router = Router();
 
@@ -18,9 +17,6 @@ function regenerateSession(req: Request): Promise<void> {
     });
   });
 }
-
-const hashResetToken = (token: string) =>
-  crypto.createHash("sha256").update(token).digest("hex");
 
 // ==================== AUTH SCHEMAS ====================
 
@@ -134,10 +130,23 @@ router.get("/me", requireAuth, (req: AuthRequest, res: Response) => {
 
 router.patch("/me", requireAuth, async (req: AuthRequest, res: Response) => {
   try {
-    const { name, email } = req.body;
+    if (req.user!.role === "student") {
+      return res.status(403).json({ message: "Öğrenci profil bilgileri yalnızca okul yönetimi tarafından güncellenebilir." });
+    }
+    const profileSchema = z.object({
+      name: z.string().trim().min(2).max(100).optional(),
+      email: z.string().trim().email().optional(),
+      phoneNumber: z.string().trim().max(30).optional(),
+      address: z.string().trim().max(500).optional(),
+    }).strict();
+    const validation = profileSchema.safeParse(req.body);
+    if (!validation.success) return res.status(400).json({ message: fromZodError(validation.error).message });
+    const { name, email, phoneNumber, address } = validation.data;
     const updateData: any = {};
 
-    if (name) updateData.name = name;
+    if (name !== undefined) updateData.name = name;
+    if (phoneNumber !== undefined) updateData.phoneNumber = phoneNumber || null;
+    if (address !== undefined) updateData.address = address || null;
 
     if (email) {
       const trimmedEmail = email.trim();
@@ -213,23 +222,10 @@ router.post("/forgot-password", async (req: Request, res: Response) => {
       return res.json({ message: "E-posta başarıyla gönderildi." });
     }
 
-    // Generate token
-    const token = crypto.randomBytes(32).toString("hex");
-    const expiry = new Date(Date.now() + 3600000); // 1 hour
-
-    await storage.updateUser(user.id, {
-      resetToken: hashResetToken(token),
-      resetTokenExpiry: expiry,
-    });
-
-    // "Altyapı hazır, özellik kapalı" prensibi:
-    // SMTP konfigürasyonu yoksa e-posta gönderimi sessizce başarısız olur;
-    // kullanıcıya hata gösterilmez (güvenlik: e-posta sisteminin durumunu dışa sızdırmamak).
     try {
-      await sendResetPasswordEmail(user.email, token);
+      await issuePasswordReset(user, { requestedBy: "self", requestIp: req.ip });
     } catch (emailErr) {
-      logger.warn({ err: emailErr, userId: user.id }, "[Auth] Şifre sıfırlama e-postası gönderilemedi; SMTP konfigürasyonunu kontrol edin.");
-      // E-posta hatası akışı durdurmamalı; kullanıcıya her koşulda başarı mesajı dönülür.
+      logger.warn({ err: emailErr, userId: user.id }, "[Auth] Şifre sıfırlama e-postası Gmail kuyruğuna alınamadı.");
     }
 
     await storage.createLog(user.id, "FORGOT_PASSWORD", "Password reset requested");
@@ -249,9 +245,15 @@ router.post("/reset-password", async (req: Request, res: Response) => {
     }
 
     const { token, password } = validation.data;
-    const user = await storage.getUserByResetToken(hashResetToken(token));
+    const tokenHash = hashResetToken(token);
+    const resetRequest = await storage.getPasswordResetRequestByToken(tokenHash);
+    const user = resetRequest?.user || await storage.getUserByResetToken(tokenHash);
+    const expiry = resetRequest?.expiresAt || user?.resetTokenExpiry;
 
-    if (!user || !user.resetTokenExpiry || user.resetTokenExpiry < new Date()) {
+    if (!user || !expiry || expiry < new Date() || (resetRequest && resetRequest.status !== "pending")) {
+      if (resetRequest?.status === "pending" && expiry && expiry < new Date()) {
+        await storage.updatePasswordResetRequest(resetRequest.id, { status: "expired" });
+      }
       return res.status(400).json({ message: "Geçersiz veya süresi dolmuş token." });
     }
 
@@ -261,6 +263,7 @@ router.post("/reset-password", async (req: Request, res: Response) => {
       resetToken: null,
       resetTokenExpiry: null,
     });
+    if (resetRequest) await storage.updatePasswordResetRequest(resetRequest.id, { status: "completed", completedAt: new Date() });
 
     await storage.createLog(user.id, "RESET_PASSWORD", "Password reset successfully");
 

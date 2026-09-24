@@ -279,7 +279,7 @@ router.delete("/:id", requireAuth, requireRole(["admin"]), async (req: AuthReque
 
 router.patch("/:id/role", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
   const { role } = req.body;
-  if (!['admin', 'teacher', 'student'].includes(role)) {
+  if (!['admin', 'teacher', 'student', 'parent'].includes(role)) {
     return res.status(400).json({ message: "Geçersiz rol." });
   }
   await storage.updateUserRole(req.params.id, role);

@@ -17,6 +17,10 @@ vi.mock('../../storage', () => ({
     createLog: vi.fn(),
     getClassesByTeacher: vi.fn(),
     getAllClasses: vi.fn(),
+    getStudentsByClass: vi.fn(),
+    createQuiz: vi.fn(),
+    updateQuiz: vi.fn(),
+    syncQuestions: vi.fn(),
   },
 }));
 
@@ -58,6 +62,16 @@ describe('Survey API', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(storage.getStudentSurveySubmission).mockResolvedValue(undefined);
+  });
+
+  it('creates surveys through the dedicated survey endpoint with a fixed content type', async () => {
+    vi.mocked(storage.createQuiz).mockResolvedValue({ ...survey, status: 'draft' } as any);
+    const response = await request(createApp({ id: 'admin-1', role: 'admin' }))
+      .post('/api/surveys')
+      .send({ title: 'Yeni Memnuniyet Anketi', status: 'draft', assignedClassIds: [] });
+
+    expect(response.status).toBe(201);
+    expect(storage.createQuiz).toHaveBeenCalledWith(expect.objectContaining({ contentType: 'survey', timeLimit: null, shuffleQuestions: false }));
   });
 
   it('lists only surveys assigned to the student class', async () => {

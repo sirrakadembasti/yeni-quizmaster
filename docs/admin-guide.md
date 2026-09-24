@@ -114,4 +114,4 @@ PWA çevrimdışı sınav altyapısı süresiz sınavlarda etkindir. Öğrenci, 
 - **İstek reddedildi:** Sayfayı yenileyip tekrar giriş yapın; güvenlik belirteci otomatik yenilenir.
 - **Bağlantı sorunu:** İşlemi tekrarlamadan önce internet erişimini doğrulayın.
 - **Çevrimdışı teslim bekliyor:** Öğrencinin aynı cihaz ve tarayıcıda sınavı yeniden açıp bağlantının geri gelmesini beklemesini sağlayın.
-- **E-posta kullanıcılara ulaşmıyor:** **Yönetim > Loglar > E-Posta Logları** sekmesinden gönderim durumunu kontrol edin. Hata mesajını inceleyin ve gerekirse **Tekrar Gönder (Retry)** butonuna tıklayın. Yerel geliştirme ortamındaysanız Mailpit'in (`tools/mailpit/start-mailpit.bat` - Port: 1026), canlı ortamdaysanız Brevo SMTP ayarlarının (`server/.env` - Port: 587) doğruluğunu kontrol edin.
+- **E-posta kullanıcıya ulaşmıyor:** Önce **Yönetim > Loglar > Şifre Talepleri** sekmesinden talebi kontrol edin; gerekirse bağlantıyı yenileyin. Teknik teslimat durumu **E-posta Logları** alanındadır. Sistem yalnız Gmail SMTP kullanır; `server/.env` içindeki Gmail hesabını, uygulama parolasını ve iş ağının 587/465 çıkışını kontrol edin.

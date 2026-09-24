@@ -14,22 +14,29 @@ import {
   PlusCircle,
   Loader2
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AIQuestionGenerator } from "@/components/quiz/AIQuestionGenerator";
 import { QuizSettings } from "@/components/quiz/QuizSettings";
 import { QuestionItem, type QuestionForm } from "@/components/quiz/QuestionItem";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { quizApi, categoryApi, classApi } from "@/lib/api";
+import { quizApi, surveyApi, categoryApi, classApi } from "@/lib/api";
 import { useLocation, useParams } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function CreateQuizPage() {
+interface QuizBuilderProps {
+  contentTypeMode?: 'exam' | 'survey';
+  embedded?: boolean;
+  onSaved?: () => void;
+  editIdOverride?: string | null;
+}
+
+export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSaved, editIdOverride }: QuizBuilderProps) {
   const [, navigate] = useLocation();
   const { id: paramId } = useParams<{ id: string }>();
   const searchParams = new URLSearchParams(window.location.search);
   const queryId = searchParams.get("id");
-  const editId = paramId || queryId;
+  const editId = editIdOverride || paramId || queryId;
 
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -50,7 +57,7 @@ export default function CreateQuizPage() {
   const teacherClasses = classesData?.classes || [];
 
   // Quiz form state
-  const [contentType, setContentType] = useState<'exam' | 'survey'>('exam');
+  const contentType = contentTypeMode;
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
@@ -61,21 +68,35 @@ export default function CreateQuizPage() {
   const [loadedStatus, setLoadedStatus] = useState<'draft' | 'published' | 'archived'>('draft');
 
   const [questions, setQuestions] = useState<QuestionForm[]>([
-    { id: 1, type: "multiple-choice", text: "", options: ["", "", "", "", ""], correctAnswer: 0 }
+    { id: 1, type: contentTypeMode === 'survey' ? "single-choice" : "multiple-choice", text: "", options: ["", "", "", "", ""], correctAnswer: 0 }
   ]);
 
   const [isLoadingQuiz, setIsLoadingQuiz] = useState(false);
+  const pendingFocusQuestionId = useRef<number | string | null>(null);
+
+  useEffect(() => {
+    const id = pendingFocusQuestionId.current;
+    if (id == null) return;
+    pendingFocusQuestionId.current = null;
+    requestAnimationFrame(() => {
+      const card = document.querySelector<HTMLElement>(`[data-question-id="${CSS.escape(String(id))}"]`);
+      card?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      card?.querySelector<HTMLTextAreaElement>('textarea')?.focus({ preventScroll: true });
+    });
+  }, [questions]);
 
   useEffect(() => {
     if (editId) {
       const loadQuiz = async () => {
         setIsLoadingQuiz(true);
         try {
-          const quizData = await quizApi.getQuiz(editId);
-          const quiz = quizData.quiz;
+          const quizData: any = contentTypeMode === 'survey' ? await surveyApi.getSurvey(editId) : await quizApi.getQuiz(editId);
+          const quiz = quizData.quiz || quizData.survey;
           const quizQuestions = quizData.questions;
           
-          setContentType(quiz.contentType || 'exam');
+          if ((quiz.contentType || 'exam') !== contentTypeMode) {
+            throw new Error('İçerik türü bu düzenleyiciyle uyumlu değil.');
+          }
           setLoadedStatus(quiz.status === 'published' || quiz.status === 'archived' ? quiz.status : 'draft');
           setTitle(quiz.title);
           setDescription(quiz.description || '');
@@ -115,18 +136,7 @@ export default function CreateQuizPage() {
       };
       loadQuiz();
     }
-  }, [editId, toast]);
-
-  const changeContentType = (value: 'exam' | 'survey') => {
-    setContentType(value);
-    setTimeLimitEnabled(value === 'exam' ? timeLimitEnabled : false);
-    setQuestions((current) => current.map((question) => ({
-      ...question,
-      type: value === 'survey' ? (question.type === 'multiple-choice' ? 'single-choice' : question.type) : 'multiple-choice',
-      options: question.options.length >= 2 ? question.options : ['', '', '', ''],
-      correctAnswer: value === 'exam' ? Math.max(0, question.correctAnswer || 0) : 0,
-    })));
-  };
+  }, [editId, toast, contentTypeMode]);
   const toggleClass = (classId: string) => {
     setAssignedClassIds(prev => 
       prev.includes(classId) 
@@ -180,10 +190,17 @@ export default function CreateQuizPage() {
       const settingsPayload = { ...payload, status: currentStatus };
 
       if (editId) {
-        await quizApi.updateQuiz(editId, settingsPayload);
+        if (contentType === 'survey') await surveyApi.updateSurvey(editId, settingsPayload);
+        else await quizApi.updateQuiz(editId, settingsPayload);
       } else {
-        const quizResponse = await quizApi.createQuiz(settingsPayload);
-        quizIdToUse = quizResponse.quiz.id;
+        if (contentType === 'survey') {
+          const { contentType: _contentType, timeLimit: _timeLimit, shuffleQuestions: _shuffle, ...surveyPayload } = settingsPayload;
+          const surveyResponse = await surveyApi.createSurvey(surveyPayload);
+          quizIdToUse = surveyResponse.survey.id;
+        } else {
+          const quizResponse = await quizApi.createQuiz(settingsPayload);
+          quizIdToUse = quizResponse.quiz.id;
+        }
       }
 
       const validQuestions = questions.filter(q => q.text.trim() !== '');
@@ -197,11 +214,13 @@ export default function CreateQuizPage() {
           imageUrl: q.imageUrl,
           order: index + 1,
         }));
-        await quizApi.addQuestions(quizIdToUse as string, questionsToAdd);
+        if (contentType === 'survey') await surveyApi.syncQuestions(quizIdToUse as string, questionsToAdd);
+        else await quizApi.addQuestions(quizIdToUse as string, questionsToAdd);
       }
 
       if (status !== currentStatus) {
-        await quizApi.updateQuiz(quizIdToUse as string, { status });
+        if (contentType === 'survey') await surveyApi.updateSurvey(quizIdToUse as string, { status });
+        else await quizApi.updateQuiz(quizIdToUse as string, { status });
       }
 
       return quizIdToUse;
@@ -214,7 +233,8 @@ export default function CreateQuizPage() {
           : 'Taslak kaydedildi!',
         description: `"${title}" başarıyla ${status === 'published' ? 'yayınlandı' : 'kaydedildi'}.`,
       });
-      navigate('/quizzes');
+      if (onSaved) onSaved();
+      else navigate(contentType === 'survey' ? '/survey-results' : '/quizzes');
     },
     onError: (error: Error) => {
       if (error.message !== "Doğrulama hatası") {
@@ -224,13 +244,15 @@ export default function CreateQuizPage() {
   });
 
   const addQuestion = () => {
-    setQuestions([...questions, {
-      id: Date.now(),
+    const id = Date.now();
+    pendingFocusQuestionId.current = id;
+    setQuestions((current) => [{
+      id,
       type: contentType === 'survey' ? "single-choice" : "multiple-choice",
       text: "",
       options: ["", "", "", "", ""],
       correctAnswer: 0
-    }]);
+    }, ...current]);
   };
 
   const handleAIGenerated = (newQuestions: any[]) => {
@@ -283,17 +305,11 @@ export default function CreateQuizPage() {
   };
 
   if (isLoadingQuiz) {
-    return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center min-h-screen">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      </DashboardLayout>
-    );
+    const loading = <div className="flex items-center justify-center min-h-[50vh]"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
+    return embedded ? loading : <DashboardLayout>{loading}</DashboardLayout>;
   }
 
-  return (
-    <DashboardLayout>
+  const builder = (
       <div className="space-y-8 max-w-5xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -339,7 +355,7 @@ export default function CreateQuizPage() {
             
             <TabsContent value="settings">
               <QuizSettings 
-                contentType={contentType} setContentType={changeContentType}
+                contentType={contentType}
                 title={title} setTitle={setTitle}
                 description={description} setDescription={setDescription}
                 category={category} setCategory={setCategory}
@@ -412,6 +428,10 @@ export default function CreateQuizPage() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
   );
+  return embedded ? builder : <DashboardLayout>{builder}</DashboardLayout>;
+}
+
+export default function CreateQuizPage() {
+  return <QuizBuilder contentTypeMode="exam" />;
 }

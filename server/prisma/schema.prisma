@@ -15,7 +15,7 @@ model User {
   name        String
   email       String  @unique
   password    String
-  role        String  @default("student") // admin, teacher, student
+  role        String  @default("student") // admin, teacher, student, parent
   phoneNumber String?
   address     String?
   studentNo   Int? // Student number (auto-incremented per class in code)
@@ -66,6 +66,23 @@ model User {
   logs              ActionLog[]        @relation("UserLogs")
   announcements     Announcement[]     @relation("AnnouncementCreator")
   questionBank      QuestionBank[]     @relation("TeacherQuestionBank")
+  guardianLinks     GuardianStudent[]  @relation("GuardianUser")
+  studentGuardians  GuardianStudent[]  @relation("GuardianStudent")
+  passwordResetRequests PasswordResetRequest[]
+}
+
+model GuardianStudent {
+  id         String   @id @default(uuid())
+  guardianId String
+  studentId  String
+  relation   String?
+  createdAt  DateTime @default(now())
+  guardian   User     @relation("GuardianUser", fields: [guardianId], references: [id], onDelete: Cascade)
+  student    User     @relation("GuardianStudent", fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([guardianId, studentId])
+  @@index([guardianId])
+  @@index([studentId])
 }
 
 model QuestionBank {
@@ -275,7 +292,30 @@ model EmailQueue {
   errorMessage String?
   createdAt    DateTime  @default(now())
   sentAt       DateTime?
+  passwordResetRequest PasswordResetRequest?
 
   @@index([status])
   @@index([createdAt])
+}
+
+model PasswordResetRequest {
+  id           String    @id @default(uuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email        String
+  tokenHash    String    @unique
+  status       String    @default("pending") // pending, completed, cancelled, expired, failed
+  emailQueueId String?   @unique
+  emailQueue   EmailQueue? @relation(fields: [emailQueueId], references: [id], onDelete: SetNull)
+  requestedBy  String?   // self or admin user id
+  requestIp    String?
+  expiresAt    DateTime
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  completedAt  DateTime?
+  cancelledAt  DateTime?
+
+  @@index([userId, status])
+  @@index([status, createdAt])
+  @@index([email])
 }

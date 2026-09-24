@@ -132,7 +132,7 @@ export default function StudentStats() {
               className="gap-2 border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-900/20"
             >
               <Download className="h-4 w-4" />
-              CSV İndir
+              Excel
             </Button>
             <Button 
               variant="outline" 

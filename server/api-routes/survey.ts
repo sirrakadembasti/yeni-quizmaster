@@ -1,7 +1,7 @@
 import { Router, type Response } from "express";
 import { z } from "zod";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
-import { getAuthorizedClassIds } from "../utils/class-authorization";
+import { canAssignClasses, getAuthorizedClassIds } from "../utils/class-authorization";
 import { storage } from "../storage";
 
 const router: Router = Router();
@@ -15,6 +15,24 @@ const resultQuerySchema = z.object({
 const submissionSchema = z.object({
   answers: z.record(z.unknown()),
 });
+
+const surveyWriteSchema = z.object({
+  title: z.string().trim().min(3).max(100),
+  description: z.string().max(500).optional().nullable(),
+  categoryId: z.string().uuid().optional().nullable(),
+  difficulty: z.enum(["easy", "medium", "hard"]).optional().default("medium"),
+  status: z.enum(["draft", "published", "archived"]).optional().default("draft"),
+  assignedClassIds: z.array(z.string().uuid()).optional().default([]),
+});
+
+const surveyQuestionSchema = z.array(z.object({
+  text: z.string().trim().min(1),
+  type: z.enum(["single-choice", "multiple-choice", "open-text", "rating", "likert"]),
+  options: z.array(z.string()).default([]),
+  config: z.record(z.any()).optional().nullable(),
+  imageUrl: z.string().url().optional().nullable(),
+  order: z.number().int().default(0),
+}));
 
 function parseDateRange(query: z.infer<typeof resultQuerySchema>) {
   const startDate = query.startDate ? new Date(`${query.startDate}T00:00:00`) : undefined;
@@ -205,6 +223,80 @@ router.get("/", requireAuth, async (req: AuthRequest, res: Response) => {
     res.json({ surveys: enriched });
   } catch (error) {
     res.status(500).json({ message: "Anketler getirilemedi." });
+  }
+});
+
+router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const parsed = surveyWriteSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ message: "Geçersiz anket bilgileri." });
+    const { assignedClassIds, ...data } = parsed.data;
+    if (!await canAssignClasses(req.user!.role, req.user!.id, assignedClassIds)) {
+      return res.status(403).json({ message: "Yalnızca yetkili olduğunuz sınıflara anket atayabilirsiniz." });
+    }
+    const audience = new Set<string>();
+    for (const classId of assignedClassIds) {
+      (await storage.getStudentsByClass(classId)).forEach((student) => audience.add(student.id));
+    }
+    const survey = await storage.createQuiz({
+      ...data,
+      contentType: "survey",
+      timeLimit: null,
+      shuffleQuestions: false,
+      createdBy: req.user!.id,
+      publishedAt: data.status === "published" ? new Date() : null,
+      audienceSize: data.status === "published" ? audience.size : null,
+      assignedClassIds,
+    });
+    res.status(201).json({ survey });
+  } catch (error) {
+    res.status(500).json({ message: "Anket oluşturulamadı." });
+  }
+});
+
+router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const existing = await storage.getQuiz(req.params.id);
+    if (!existing || existing.contentType !== "survey") return res.status(404).json({ message: "Anket bulunamadı." });
+    if (req.user!.role === "teacher" && existing.createdBy !== req.user!.id) return res.status(403).json({ message: "Bu anketi düzenleme yetkiniz yok." });
+    const parsed = surveyWriteSchema.partial().safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ message: "Geçersiz anket bilgileri." });
+    const assignedClassIds = parsed.data.assignedClassIds;
+    if (assignedClassIds && !await canAssignClasses(req.user!.role, req.user!.id, assignedClassIds)) {
+      return res.status(403).json({ message: "Yalnızca yetkili olduğunuz sınıflara anket atayabilirsiniz." });
+    }
+    const publicationFields: { publishedAt?: Date; audienceSize?: number } = {};
+    if (parsed.data.status === "published" && existing.status !== "published") {
+      const questions = await storage.getQuestionsByQuiz(existing.id);
+      if (questions.length === 0) return res.status(400).json({ message: "Yayınlamak için en az bir anket sorusu gereklidir." });
+      const effectiveClassIds = assignedClassIds || ((existing as any).assignedClasses || []).map((item: any) => item.id);
+      const audience = new Set<string>();
+      for (const classId of effectiveClassIds) {
+        (await storage.getStudentsByClass(classId)).forEach((student) => audience.add(student.id));
+      }
+      publicationFields.publishedAt = new Date();
+      publicationFields.audienceSize = audience.size;
+    }
+    const survey = await storage.updateQuiz(req.params.id, { ...parsed.data, ...publicationFields, contentType: "survey", timeLimit: null, shuffleQuestions: false, assignedClassIds });
+    res.json({ survey });
+  } catch (error) {
+    res.status(500).json({ message: "Anket güncellenemedi." });
+  }
+});
+
+router.post("/:id/questions", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const survey = await storage.getQuiz(req.params.id);
+    if (!survey || survey.contentType !== "survey") return res.status(404).json({ message: "Anket bulunamadı." });
+    if (req.user!.role === "teacher" && survey.createdBy !== req.user!.id) return res.status(403).json({ message: "Bu ankete soru ekleme yetkiniz yok." });
+    const parsed = surveyQuestionSchema.safeParse(req.body);
+    if (!parsed.success || parsed.data.some((question) => ["single-choice", "multiple-choice", "likert"].includes(question.type) && (question.options.length < 2 || question.options.some((option) => !option.trim())))) {
+      return res.status(400).json({ message: "Anket soruları veya seçenekleri geçersiz." });
+    }
+    const questions = await storage.syncQuestions(req.params.id, parsed.data.map((question) => ({ ...question, quizId: req.params.id, correctAnswer: null })));
+    res.status(201).json({ questions });
+  } catch (error) {
+    res.status(500).json({ message: "Anket soruları kaydedilemedi." });
   }
 });
 

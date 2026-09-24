@@ -93,6 +93,19 @@ describe('Users API Integration Tests', () => {
   });
 
   describe('PATCH /api/users/:id', () => {
+    it('persists teacher course and class assignments, including explicit empty lists', async () => {
+      const admin = { id: 'admin-1', role: 'admin' };
+      const teacher = { id: 'teacher-1', role: 'teacher', email: 'teacher@example.com' };
+      const app = createTestApp(admin);
+      vi.mocked(storage.getUser).mockImplementation(async (id) => id === admin.id ? admin as any : teacher as any);
+      vi.mocked(storage.updateUser).mockResolvedValue(teacher as any);
+
+      const response = await request(app).patch('/api/users/teacher-1').send({ assignedCategoryIds: [], classIds: [] });
+
+      expect(response.status).toBe(200);
+      expect(storage.updateUser).toHaveBeenCalledWith('teacher-1', expect.objectContaining({ assignedCategoryIds: [], classIds: [] }));
+    });
+
     it('should allow student to update their own profile', async () => {
       const studentUser = { id: 'student-1', role: 'student' };
       const app = createTestApp(studentUser);

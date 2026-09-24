@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { AlertCircle, BarChart3, CalendarDays, ClipboardList, Download, FileQuestion, ListChecks, Loader2, MessageSquareText, RefreshCcw, Star, Target, Users } from "lucide-react";
+import { AlertCircle, BarChart3, CalendarDays, ClipboardList, Download, FileQuestion, ListChecks, Loader2, MessageSquareText, Pencil, RefreshCcw, Star, Target, Users } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { PrintButton, PrintMeta } from "@/components/print/PrintTools";
 import { surveyApi, type SurveyQuestionResult, type SurveyResultSummary } from "@/lib/api";
 import { downloadCsv } from "@/lib/export";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { QuizBuilder } from "@/pages/create-quiz";
 
 const COLORS = ["#6366f1", "#06b6d4", "#10b981", "#f59e0b", "#f43f5e", "#8b5cf6"];
 const TYPE_LABELS: Record<string, string> = {
@@ -142,7 +144,7 @@ function QuestionCard({ question, index }: { question: SurveyQuestionResult; ind
   );
 }
 
-function SurveyCard({ survey }: { survey: SurveyResultSummary }) {
+function SurveyCard({ survey, onEdit }: { survey: SurveyResultSummary; onEdit: (id: string) => void }) {
   return (
     <Card className="survey-result-card overflow-hidden">
       <CardHeader className="border-b bg-gradient-to-r from-primary/[0.08] via-transparent to-transparent">
@@ -156,7 +158,10 @@ function SurveyCard({ survey }: { survey: SurveyResultSummary }) {
             <div className="mt-3 max-w-xl"><div className="mb-1 flex justify-between text-xs"><span>Katılım ilerlemesi</span><strong>%{survey.participationRate}</strong></div>
               <Progress value={survey.participationRate} className="h-2.5" /></div>
           </div>
-          <ParticipationDonut survey={survey} />
+          <div className="flex items-center gap-3">
+            <Button className="no-print print:hidden" variant="outline" size="sm" onClick={() => onEdit(survey.id)}><Pencil className="mr-2 h-4 w-4" />Düzenle</Button>
+            <ParticipationDonut survey={survey} />
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4 p-3">{survey.questionResults.map((question, index) =>
@@ -176,6 +181,8 @@ export default function SurveyResultsPage() {
   const [surveyId, setSurveyId] = useState("all");
   const [startDate, setStartDate] = useState(initialStart);
   const [endDate, setEndDate] = useState(today);
+  const [activeTab, setActiveTab] = useState<'results' | 'create'>(() => new URLSearchParams(window.location.search).get('tab') === 'create' ? 'create' : 'results');
+  const [editingSurveyId, setEditingSurveyId] = useState<string | null>(null);
 
   const listQuery = useQuery({ queryKey: ["survey-list"], queryFn: () => surveyApi.getSurveys() });
   const resultsQuery = useQuery({
@@ -268,6 +275,24 @@ export default function SurveyResultsPage() {
   return (
     <DashboardLayout>
       <div className="page-stack print-landscape">
+        <Tabs value={activeTab} onValueChange={(value) => {
+          setActiveTab(value as 'results' | 'create');
+          if (value === 'create') setEditingSurveyId(null);
+        }} className="no-print print:hidden">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="results">Sonuçlar</TabsTrigger>
+            <TabsTrigger value="create">Anket Oluştur</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
+        {activeTab === 'create' ? (
+          <QuizBuilder key={editingSurveyId || 'new-survey'} contentTypeMode="survey" embedded editIdOverride={editingSurveyId} onSaved={() => {
+            setActiveTab('results');
+            setEditingSurveyId(null);
+            listQuery.refetch();
+            resultsQuery.refetch();
+          }} />
+        ) : <>
         <PrintMeta title="Anket Sonuçları" filters={[
           { label: "Anket", value: selectedTitle },
           { label: "Başlangıç", value: startDate },
@@ -276,11 +301,11 @@ export default function SurveyResultsPage() {
 
         <div className="page-toolbar no-print print:hidden">
           <div>
-            <h1 className="flex items-center gap-2 text-2xl font-bold"><ClipboardList className="h-7 w-7 text-primary" />Anket Sonuçları</h1>
+            <h1 className="flex items-center gap-2 text-2xl font-bold"><ClipboardList className="h-7 w-7 text-primary" />Anket Yönetimi</h1>
             <p className="text-sm text-muted-foreground">Katılımı karşılaştırın; her soruyu grafik ve tabloyla birlikte inceleyin.</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={exportCsv} disabled={!results.length}><Download className="mr-2 h-4 w-4" />CSV</Button>
+            <Button variant="outline" onClick={exportCsv} disabled={!results.length}><Download className="mr-2 h-4 w-4" />Excel</Button>
             <PrintButton />
           </div>
         </div>
@@ -361,9 +386,10 @@ export default function SurveyResultsPage() {
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <MessageSquareText className="h-4 w-4" />Grafiklerde adet ve oran birlikte gösterilir; ayrıntılı değerler yan tablodadır.
             </div>
-            {results.map((survey) => <SurveyCard key={survey.id} survey={survey} />)}
+            {results.map((survey) => <SurveyCard key={survey.id} survey={survey} onEdit={(id) => { setEditingSurveyId(id); setActiveTab('create'); }} />)}
           </>
         )}
+        </>}
       </div>
     </DashboardLayout>
   );
