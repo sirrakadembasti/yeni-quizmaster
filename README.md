@@ -9,6 +9,7 @@ QuizMaster; yöneticiler, öğretmenler, öğrenciler ve veliler için rol taban
 - [Öğrenci kullanıcı kılavuzu](docs/student-guide.md)
 - [Veli kullanıcı kılavuzu](docs/parent-guide.md)
 - [Gmail e-posta ve parola sıfırlama yapılandırması](docs/e-posta-yapilandirma.md)
+- [Graphify mimari haritası ve geliştirici kılavuzu](docs/graphify.md)
 
 ## Güncel özellikler
 
@@ -52,7 +53,7 @@ Quiz-Master/
 │   ├── services/                 # Parola sıfırlama gibi iş servisleri
 │   └── utils/                    # E-posta, loglama ve yetki yardımcıları
 ├── docs/                         # Kullanıcı ve işletim belgeleri
-├── graphify-out/                 # Kod bilgi grafiği çıktıları
+├── graphify-out/                 # Paylaşılan mimari harita, rapor ve sorgu grafiği
 └── package.json                  # pnpm workspace komutları
 ```
 
