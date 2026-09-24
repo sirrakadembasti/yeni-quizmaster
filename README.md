@@ -1,263 +1,234 @@
-# Quiz-Master
+# QuizMaster
 
-Quiz-Master, okul ortamları için geliştirilmiş, rol tabanlı bir çevrimiçi sınav yönetim platformudur. Yöneticiler okul yapısını (sınıf, öğretmen, ders) tanımlar; öğretmenler sınav oluşturur, yayınlar ve AI yardımıyla soru üretir; öğrenciler kendilerine atanan sınavları çözer ve sonuçlarını anlık olarak görür. Temel amacı, sınav sürecinin tüm aşamalarını (oluşturma, atama, çözme, değerlendirme) tek bir platformda güvenli biçimde yönetmektir.
+QuizMaster; yöneticiler, öğretmenler, öğrenciler ve veliler için rol tabanlı çalışan bir sınav, anket ve okul takip uygulamasıdır. Sınav oluşturma, sınıfa atama, çevrimiçi/çevrimdışı çözme, sonuç analizi, anket yönetimi, duyuru-bildirim, Excel dışa aktarma ve Gmail üzerinden parola sıfırlama süreçlerini tek uygulamada toplar.
 
-## Kullanıcı Kılavuzları
+## Kullanıcı kılavuzları
 
-Rolünüze uygun ayrıntılı kullanım kılavuzunu açın:
+- [Yönetici kullanıcı kılavuzu](docs/admin-guide.md)
+- [Öğretmen kullanıcı kılavuzu](docs/teacher-guide.md)
+- [Öğrenci kullanıcı kılavuzu](docs/student-guide.md)
+- [Veli kullanıcı kılavuzu](docs/parent-guide.md)
+- [Gmail e-posta ve parola sıfırlama yapılandırması](docs/e-posta-yapilandirma.md)
 
-- [Yönetici Kullanıcı Kılavuzu](docs/user-guides/admin-guide.md)
-- [Öğretmen Kullanıcı Kılavuzu](docs/user-guides/teacher-guide.md)
-- [Öğrenci Kullanıcı Kılavuzu](docs/user-guides/student-guide.md)
+## Güncel özellikler
 
-### Güncel güvenlik ve kullanıcı davranışları
+- **Dört rol:** `admin`, `teacher`, `student` ve `parent`.
+- **Sınav yönetimi:** Sınav oluşturma, soru ekleme, görsel yükleme, sınıfa atama, yayınlama ve sonuç analizi.
+- **Anket Yönetimi:** Sınavdan ayrılmış oluşturma ve sonuç akışı; tek seçim, çoklu seçim, açık uçlu, derecelendirme ve Likert soru türleri.
+- **Yetkilendirme:** Öğretmen yalnız yetkili olduğu sınıfları, öğrencileri, sınavları ve anketleri görür. Veli yalnız kendisiyle ilişkilendirilen öğrencilerin salt okunur sınav özetlerine erişir.
+- **Raporlama:** Anket, sınav sonucu, sınıf istatistiği, öğrenci, öğretmen ve sınıf ekranlarında A4 uyumlu yazdırma; uygun ekranlarda biçimlendirilmiş `.xlsx` Excel çıktısı.
+- **Türkçe Excel desteği:** Dışa aktarımlar gerçek Excel çalışma kitabı üretir; Türkçe karakter, sütun genişliği, başlık, filtre bilgisi ve sabit başlık satırı korunur.
+- **Duyuru ve bildirim:** Rol/sınıf hedefleme, gönderen adı ve rolü, son beş bildirim, tekil silme ve ses açma/kapatma.
+- **Gmail parola sıfırlama:** Tek kullanımlık bağlantı, SHA-256 token özeti, `PasswordResetRequest` takibi ve veritabanı tabanlı `EmailQueue` Outbox kuyruğu.
+- **Çevrimdışı sınav:** Süresiz sınavı önceden cihaza hazırlama, cevapları yerelde tutma ve bağlantı geldiğinde sunucuya gönderme.
+- **Güvenlik:** Oturum yenileme, CSRF koruması, hız sınırı, rol tabanlı API denetimi, parola/token alanlarının yanıtlardan temizlenmesi ve sunucu taraflı sınav süresi doğrulaması.
 
-- API yanıtlarında parola ve hesap kurtarma belirteçleri merkezi olarak filtrelenir.
-- Giriş ve kayıt sonrasında oturum kimliği yenilenir; tüm veri değiştiren istekler CSRF korumasından geçer.
-- Açık kayıtla oluşturulan öğrenci kendi sınıfını belirleyemez; sınıf üyeliği yetkili kullanıcı tarafından atanır.
-- Öğrenci kendi profil sayfasında (`/settings`) kişisel ve iletişim bilgilerini değiştiremez (salt okunur koruması), değişiklik için okul yönetimine başvurmalıdır.
-- Yönetici, öğrenci analiz ekranında (`/students/:id`) doğrudan öğrenci ve veli sekmeleri üzerinden bilgi güncellemesi yapabilir.
-- Yönetici, öğretmen detay ekranında (`/teachers/:id`) doğrudan öğretmeni düzenleyebilir veya silebilir.
-- Sınıf mevcudu listesinde (`/classes/:id`) öğrenci avatar rozeti kaldırılarak temiz ve sade liste görünümü sağlanmıştır.
-- Öğretmen yalnızca sorumlu olduğu sınıflara sınav ve duyuru atayabilir; öğrenci veli veya özel bilgilerine erişemez.
-- Öğrenci yalnızca yayınlanmış ve kendisine atanmış sınavı başlatabilir.
-- Sınav süresi sayfa yenilendiğinde sıfırlanmaz ve sunucu tarafından da denetlenir.
-- Tamamlanmamış sınavlarda doğru cevap/cevap anahtarı öğrenciye gönderilmez.
-- Parola sıfırlama belirteçleri veritabanında açık metin yerine özetlenmiş olarak saklanır.
+## Teknoloji yığını
 
-> **Çevrimdışı kullanım:** Süresiz sınavlar öğrenci tarafından önceden **Çevrimdışı Hazırla** ile bu cihaza alınabilir. Cevaplar cihazda saklanır ve teslim bağlantı geri geldiğinde otomatik senkronize edilir. Süreli sınavlar güvenlik nedeniyle çevrimdışı başlatılamaz; sunucu süresi dolduktan sonra gelen yeni cevaplar kabul edilmez.
-
----
-
-## Teknoloji Yığını
-
-### Backend
 | Katman | Teknoloji |
-|--------|-----------|
-| Çalışma ortamı | Node.js |
-| Web çerçevesi | Express |
-| ORM | Prisma |
-| Veritabanı | SQLite (geliştirme) |
-| Gerçek zamanlı | Socket.IO |
-| Loglama | Pino |
-| Oturum | express-session + connect-sqlite3 |
-| Şifreleme | bcrypt |
-| Doğrulama | Zod |
+|---|---|
+| Frontend | React, TypeScript, Vite, TanStack Query, Wouter, Tailwind CSS, shadcn/ui |
+| Backend | Node.js, Express, TypeScript, Socket.IO, Pino |
+| Veri | Prisma ORM, SQLite (yerel geliştirme) |
+| Kimlik ve güvenlik | `express-session`, `connect-sqlite3`, bcrypt, CSRF, Zod |
+| E-posta | Nodemailer, Gmail SMTP, veritabanı Outbox kuyruğu |
+| Test | Vitest, Supertest, Playwright |
+| Paket yönetimi | pnpm workspaces |
 
-### Frontend
-| Katman | Teknoloji |
-|--------|-----------|
-| Çerçeve | React + TypeScript |
-| Derleme aracı | Vite |
-| Sunucu durumu | TanStack Query (React Query) |
-| Yönlendirme | Wouter |
-| Stil | Tailwind CSS + shadcn/ui |
-| İkonlar | lucide-react |
-| Çevrimdışı çalışma | Service Worker + tarayıcı yerel depolaması |
+## Proje yapısı
 
-### Monorepo
-- **pnpm workspaces** — `server/` ve `client/` ayrı paket olarak yönetilir.
-
----
-
-## Proje Yapısı
-
-```
+```text
 Quiz-Master/
-├── client/                  # React frontend (Vite)
-│   ├── src/
-│   │   ├── components/      # Yeniden kullanılabilir UI bileşenleri
-│   │   ├── hooks/           # Özel React hook'ları
-│   │   ├── lib/             # API istemcisi ve yardımcı araçlar
-│   │   └── pages/           # Sayfa bileşenleri (admin, teacher, student)
-│   ├── public/sw.js         # Üretim PWA uygulama kabuğu önbelleği
-│   └── vite.config.ts       # Vite yapılandırması (proxy kuralları dahil)
-│
-├── server/                  # Express backend
-│   ├── api-routes/          # Endpoint grupları (auth, quiz, class, ai …)
-│   ├── middleware/          # Auth, rol kontrolü
-│   ├── prisma/
-│   │   ├── schema.prisma    # Veri modeli
-│   │   └── seed.ts          # Demo verisi
-│   ├── data/
-│   │   └── quiz.db          # SQLite veritabanı (aktif)
-│   ├── storage.ts           # Prisma veri erişim katmanı
-│   ├── socket.ts            # Socket.IO kurulumu
-│   └── index.ts             # Uygulama giriş noktası
-│
-├── package.json             # Kök pnpm workspace tanımı
-└── README.md
+├── client/                       # React istemcisi
+│   ├── public/sw.js              # Üretim service worker'ı
+│   └── src/
+│       ├── components/           # Ortak arayüz bileşenleri
+│       ├── lib/                  # API, çevrimdışı sınav ve Excel yardımcıları
+│       └── pages/                # Rol bazlı sayfalar
+├── server/                       # Express API
+│   ├── api-routes/               # API rota grupları
+│   ├── middleware/               # Kimlik, rol ve CSRF kontrolleri
+│   ├── prisma/                   # Şema, migrasyonlar ve seed
+│   ├── services/                 # Parola sıfırlama gibi iş servisleri
+│   └── utils/                    # E-posta, loglama ve yetki yardımcıları
+├── docs/                         # Kullanıcı ve işletim belgeleri
+├── graphify-out/                 # Kod bilgi grafiği çıktıları
+└── package.json                  # pnpm workspace komutları
 ```
 
----
+## Gereksinimler
 
-## Kurulum ve Çalıştırma
+- Node.js 22 veya 24 LTS uyumlu çalışma ortamı
+- pnpm `9.15.1` (projedeki `packageManager` alanıyla sabitlenmiştir)
 
-### Gereksinimler
-- Node.js >= 18
-- pnpm >= 8 (`npm install -g pnpm`)
+Kurumsal bilgisayarda global PATH kullanmak istemiyorsanız proje için hazırlanmış yerel Node başlatıcısını kullanabilirsiniz. Normal bir Node kurulumu olan ortamda aşağıdaki standart pnpm komutları yeterlidir.
 
-### 1. Bağımlılıkları Kur
+## Kurulum
+
+### 1. Bağımlılıkları kurun
 
 ```bash
-pnpm install
+pnpm install --frozen-lockfile
 ```
 
-### 2. Ortam Değişkenlerini Ayarla
+### 2. Ortam değişkenlerini hazırlayın
 
-`server/.env` dosyasını oluştur (örnek değerler aşağıda):
+`server/.env` oluşturun. Gizli anahtarları Git'e eklemeyin.
 
 ```env
 DATABASE_URL="file:../data/quiz.db"
-SESSION_SECRET="gizli-ve-uzun-bir-anahtar"
+SESSION_SECRET="uzun-ve-rastgele-bir-deger"
 NODE_ENV="development"
+PORT=5000
+FRONTEND_URL=http://localhost:5173
+
+# Gmail SMTP
+EMAIL_USER=your-smtp-email@gmail.com
+EMAIL_PASS=your-google-app-password
+EMAIL_FROM=your-smtp-email@gmail.com
+EMAIL_FROM_NAME=QuizMaster
+EMAIL_PORT=587
+
+# İsteğe bağlı AI üretimi
+GEMINI_API_KEY=
 ```
 
-### 3. Veritabanını Hazırla
+E-posta ayarları ve ağ sorunları için [e-posta yapılandırma belgesine](docs/e-posta-yapilandirma.md) bakın.
+
+### 3. Veritabanını hazırlayın
 
 ```bash
-cd server
-pnpm db:migrate              # Prisma migrasyonlarını uygula (veya prisma migrate deploy)
-pnpm db:seed                 # Demo verilerini yükle (QuizMaster2026!)
+pnpm --filter quiz-master-server db:migrate
+pnpm --filter quiz-master-server db:seed
 ```
 
-### 4. Geliştirme Sunucusunu Başlat
+Mevcut bir veritabanını güncelliyorsanız seed komutunu yalnız örnek veriyi yeniden oluşturmak istediğinizde kullanın.
 
-Proje kökünden:
+### 4. Uygulamayı başlatın
 
 ```bash
 pnpm dev
 ```
 
 | Servis | Adres |
-|--------|-------|
-| Backend API | http://localhost:5000 |
+|---|---|
 | Frontend | http://localhost:5173 |
+| Backend API | http://localhost:5000 |
 
-> Vite, `/api` ve `/socket.io` isteklerini otomatik olarak `localhost:5000`'e yönlendirir.
+Vite, `/api` ve `/socket.io` isteklerini backend'e yönlendirir.
 
-### 5. E-Posta Servisi Yapılandırması
+## Temel kullanım akışları
 
-Quiz-Master, asenkron veritabanı destekli **Outbox Kuyruk Mimarisi** (`EmailQueue`) ile çalışır. Kullanıcı talepleri (şifre sıfırlama, bildirimler) kuyruğa yazılır ve arka plan işçisi tarafından sevk edilir.
+### Sınav
 
-#### Gmail SMTP
+1. Yönetici ders, sınıf, öğrenci ve öğretmen atamalarını oluşturur.
+2. Yönetici veya öğretmen **Sınavlar > Yeni Sınav** üzerinden sınavı hazırlar.
+3. Sorular elle, AI yardımıyla veya isteğe bağlı soru görseliyle eklenir.
+4. Sınav yetkili sınıflara atanıp yayınlanır.
+5. Öğrenci sınavı çözer; puanlama sunucuda yapılır.
+6. Sonuçlar sınıf, ders, sınav, öğretmen ve tarih filtreleriyle incelenir.
 
-Gmail ile parola sıfırlama ve test e-postası göndermek için Google hesabında iki adımlı doğrulamayı açın ve normal hesap parolası yerine bir **Uygulama Parolası** üretin. `server/.env` dosyasına aşağıdaki değerleri ekleyin:
+### Anket
 
-```env
-EMAIL_PORT=587
-EMAIL_USER=your-smtp-email@gmail.com
-EMAIL_PASS=your-16-character-app-password
-EMAIL_FROM=your-smtp-email@gmail.com
-EMAIL_FROM_NAME=QuizMaster
-FRONTEND_URL=http://localhost:5173
-```
+1. Yönetici veya öğretmen **Anket Yönetimi > Anket Oluştur** sekmesini açar.
+2. Anket ayarları, hedef sınıflar ve puansız soru türleri belirlenir.
+3. Yayınlanan anket öğrencinin **Anketlerim** ekranında görünür.
+4. Sonuçlarda katılım, cevap dağılımları, açık uçlu yanıtlar, grafikler ve tablolar birlikte gösterilir.
 
-> Sistem yalnız `smtp.gmail.com` kullanır. Alternatif `EMAIL_HOST`, `EMAIL_SECURE` ve üçüncü taraf SMTP sağlayıcı ayarları yok sayılır. `EMAIL_PORT` yalnızca Gmail'in 587 veya 465 portunu seçebilir; diğer değerler 587'ye düşer. `EMAIL_PASS` kaynak koda veya Git'e eklenmemelidir.
+### Veli
 
-Parola sıfırlama isteği tek kullanımlık ham bağlantıyı e-postaya koyar; veritabanında yalnızca SHA-256 özeti ve bir saatlik son kullanma zamanı tutulur. Yönetici, **Yönetim > Loglar > Şifre Talepleri** alanından talepleri izleyebilir, yenileyebilir veya iptal edebilir. **E-posta Logları** yalnızca teknik teslimat izlemesi içindir ve e-posta gövdesini/token bağlantısını API üzerinden göstermez.
+1. Yönetici öğrenci detayındaki **Veli Hesapları** alanından veli hesabı oluşturur veya mevcut veliyi öğrenciye bağlar.
+2. Veli kendi hesabıyla giriş yapar.
+3. Yalnız bağlı öğrencileri seçebilir; tamamlanan ve bekleyen sınavları salt okunur biçimde görür.
 
-### 6. Testleri Çalıştırma
+## Rol ve erişim özeti
 
-Quiz-Master kapsamlı unit, entegrasyon ve Playwright E2E test paketlerine sahiptir:
+| İşlem | Yönetici | Öğretmen | Öğrenci | Veli |
+|---|:---:|:---:|:---:|:---:|
+| Tüm okul yapısını yönetme | ✓ | — | — | — |
+| Yetkili sınıfta sınav/anket oluşturma | ✓ | ✓ | — | — |
+| Sınav/anket çözme | — | — | ✓ | — |
+| Tüm sonuçları görme | ✓ | — | — | — |
+| Yetkili sınıf sonuçlarını görme | ✓ | ✓ | — | — |
+| Kendi sonuçlarını görme | — | — | ✓ | — |
+| Bağlı öğrenci özetini görme | — | — | — | ✓ |
+| Veli hesabı oluşturma/bağlama | ✓ | — | — | — |
+| Şifre taleplerini yönetme | ✓ | — | — | — |
+
+Arayüzde bir alanın gizlenmesi tek güvenlik katmanı değildir; aynı erişim sınırları API ve veri sorgularında da uygulanır.
+
+## E-posta ve parola sıfırlama
+
+- Sistem yalnız `smtp.gmail.com` kullanır; alternatif SMTP sağlayıcı ayarları bilinçli olarak devre dışıdır.
+- `EMAIL_PORT` yalnız `587` veya `465` kabul eder; diğer değerler `587` olarak değerlendirilir.
+- Kullanıcı **Şifremi Unuttum** formunu gönderdiğinde e-posta Outbox kuyruğuna alınır.
+- Ham token yalnız e-postadaki bağlantıda bulunur; veritabanında özeti tutulur ve bağlantı bir saat geçerlidir.
+- Yönetici **Yönetim > Loglar > Şifre Talepleri** alanından talep oluşturabilir, yenileyebilir veya bekleyen talebi iptal edebilir.
+- **E-posta Logları** teknik teslimat durumunu gösterir; token içeren e-posta gövdesi istemciye açılmaz.
+
+## Çevrimdışı sınav davranışı
+
+- Yalnız süresiz, yayınlanmış ve öğrenci sınıfına atanmış sınavlar çevrimdışı hazırlanabilir.
+- Çevrimdışı pakette cevap anahtarı bulunmaz.
+- Cevaplar kullanıcı+sınav bazında aynı tarayıcıda saklanır.
+- Bağlantı geldiğinde teslim sunucuya aktarılır ve kesin puan sunucuda hesaplanır.
+- Süreli sınav çevrimdışı başlatılamaz; çevrimiçi başladıktan sonra bağlantı kesilirse sunucudaki süre sınırı geçerliliğini korur.
+
+## Excel ve yazdırma
+
+- **Excel** düğmeleri `.xlsx` dosyası üretir; CSV uzantısı kullanılmaz.
+- Çalışma kitabında rapor başlığı, seçili filtreler, otomatik sütun genişliği, tablo kenarlıkları, filtre ve sabit başlık satırı bulunur.
+- Yazdırma görünümü navigasyon, buton ve gereksiz kontrolleri gizler; içerik A4 ve siyah-beyaz çıktıya göre düzenlenir.
+- Dashboard ekranlarında yazdırma kaldırılmıştır; yalnız anlamlı liste, detay, sonuç ve rapor sayfalarında sunulur.
+
+## Test ve doğrulama
 
 ```bash
-# Backend testleri (Vitest: 8 test paketi, 36 test)
+# Backend
 pnpm --filter quiz-master-server test
 
-# Frontend testleri (Vitest: 5 test paketi, 22 test)
+# Frontend
 pnpm --filter quiz-master-client test
 
-# Uçtan Uca (E2E) testleri (Playwright)
+# Üretim derlemesi
+pnpm build
+
+# Uçtan uca testler
 pnpm test:e2e
 ```
 
-> **Not (Windows & Kurumsal Ağ):** Vitest yapılandırmaları (`vitest.config.ts`), Windows ortamındaki Node `getaddrinfo ENOTFOUND localhost` hatasını önleyen dahili DNS çözümleyici hook'una sahiptir.
+## Önemli rotalar
 
----
+| Rota | Roller | Açıklama |
+|---|---|---|
+| `/` | Herkes / role göre | Ana sayfa veya rol dashboard'u |
+| `/quizzes` | Yönetici, öğretmen | Sınav listesi |
+| `/create-quiz` | Yönetici, öğretmen | Yalnız sınav oluşturma |
+| `/survey-results` | Yönetici, öğretmen | Anket Yönetimi: oluşturma ve sonuçlar |
+| `/results` | Yönetici, öğretmen | Sınav Sonuçları |
+| `/statistics` | Yönetici, öğretmen | Sınıf İstatistikleri |
+| `/students` | Yönetici, öğretmen | Yetkiye göre öğrenci listesi |
+| `/teachers` | Yönetici | Öğretmenler |
+| `/management` | Yönetici | Ders, sınıf, kullanıcı ve log yönetimi |
+| `/student/quizzes` | Öğrenci | Sınavlarım |
+| `/student/surveys` | Öğrenci | Anketlerim |
+| `/parent/dashboard` | Veli | Bağlı öğrenci sınav takibi |
+| `/settings` | Tüm giriş yapmış roller | Profil, bildirim ve güvenlik |
 
-## Demo Hesapları
+## Veri ve güvenlik notları
 
-Seed scripti aşağıdaki kullanıcıları oluşturur:
+- SQLite geliştirme ve düşük eşzamanlı kullanım için uygundur; yüksek trafikli üretimde PostgreSQL değerlendirilmelidir.
+- Öğrenci açık kayıt sırasında sınıf seçemez; sınıf üyeliğini yetkili kullanıcı atar.
+- Öğretmen öğrenci veli/özel iletişim alanlarına erişemez ve yalnız dersine girdiği sınıflardaki öğrencileri görür.
+- Öğrenci kişisel ve veli bilgilerini salt okunur görür; değişiklik için okul yönetimine başvurur.
+- Veli hesabı öğrenciyle açık bir ilişki kurulmadan hiçbir öğrenci verisine erişemez.
+- Tamamlanmamış sınavlarda cevap anahtarı öğrenciye gönderilmez.
+- Görsel yüklemeleri dosya türü, boyut ve piksel sınırlarıyla doğrulanır.
 
-| Rol | E-posta | Şifre |
-|-----|---------|-------|
-| Yönetici | admin@quizmaster.com | QuizMaster2026! |
-| Öğretmen | teacher@quizmaster.com | QuizMaster2026! |
-| Öğrenci | student@quizmaster.com | QuizMaster2026! |
+## Sorun giderme
 
----
-
-## Öne Çıkan Özellikler
-
-- **3 Alt Sekmeli Gelişmiş Log ve Denetim Merkezi** — Admin yönetim panelinde (`/management?tab=logs`) tüm operasyonlar 3 ayrı alt sekmede tasnif edilir:
-  1. *Kullanıcı Logları:* Giriş, sınav, duyuru ve kullanıcı işlemleri (`ActionLog`).
-  2. *E-Posta Logları:* Gönderilen tüm e-postaların Outbox kuyruk takibi, KPI sayaçları (Toplam, Başarılı, Bekleyen, Hatalı), HTML şablon önizleme modalı, hata detayı, tek tıkla **Tekrar Gönder (Retry)** ve **Sil** yetenekleri.
-  3. *Sistem Hata & İşlemleri:* Yıl sonu arşivleme (`ARCHIVE_YEAR`), sınıf atlatma (`PROMOTE_STUDENTS`), arşiv tasfiyesi (`PURGE_ARCHIVED_DATA`) ve sistem hata kayıtları.
-  Öğretmen ve öğrenciler ise kişisel hareketlerini Profil ayarlarından (`/settings?tab=logs`) izler.
-- **Asenkron Gmail Outbox Mimarisi** — Kullanıcı parola sıfırlama talepleri veritabanı kuyruğuna (`EmailQueue`) alınır ve arka plan işçisi tarafından yalnız Gmail SMTP üzerinden gönderilir. Talepler ayrı `PasswordResetRequest` kayıtlarıyla yönetilir.
-- **Öğrenci & Veli Bilgileri Yönetimi** — Öğrenci detay ekranında (`/students/:id`) yöneticilere özel 3 sekmeli yapı: *Sınav Bilgileri*, *Öğrenci Bilgileri* ve *Veli Bilgileri* (Veli Adı, Yakınlık, Telefon, E-posta, Adres). Öğretmenler yalnızca sınav sonuçlarını görebilir; öğrenciler kendi veli bilgilerini Profil ayarlarında salt okunur olarak inceler.
-- **Öğretmen Detay Sayfası** (`/teachers/:id`) — Öğretmen profil bilgileri, branş atamaları, sorumlu olduğu sınıflar ve oluşturduğu sınavların tek sayfada kapsamlı özeti.
-- **Öğretmen Dashboard'u** — Dashboard başlık alanında branş badge'leri ve sorumlu sınıflar dinamik olarak gösterilir. Eğitmen ilgili sınıf detay sayfasına tek tıkla erişebilir.
-- **Sınıf İstatistikleri & Sınav Sonuçları** (`/class-statistics`, `/results`) — Sınıf bazlı KPI metrik kartları (Toplam Öğrenci, Katılımcı Sayısı, Katılım Oranı, Ortalama Başarı %) ve sınıf bazında detaylandırılmış performans grafikleri.
-- **Global ve Optimize Yazdırma (Print) Desteği** — Duyurular, Sınıf listeleri, Sınavlar ve Sonuç/İstatistik sayfalarında A4 dikey/yatay optimize edilmiş "Yazdır" altyapısı. İlk sayfa boş çıkma sorunu giderilmiş olup, filtre panelleri, Sidebar ve Navbar otomatik gizlenir.
-- **AI Destekli Soru Üretimi (Gemini 3.8 Flash)** — Google Gemini API entegrasyonu (varsayılan: `gemini-3.8-flash`) ile konu bazlı, zorluk seviyesi ve soru tipi ayarlanabilir sorular saniyeler içinde üretilir. Hem standart Bearer hem de Google `x-goog-api-key` formatları tam desteklenir.
-- **Duyuru Merkezi** — Tüm okul geneline veya spesifik bir sınıfa/role yönelik zengin içerikli duyuru yayınlama sistemi (Admin ve Öğretmen).
-- **Çevrimdışı Sınav Desteği** — Süresiz sınavları önceden cihaza hazırlama, cevapları kullanıcı+sınav bazında yerelde saklama ve bağlantı geri geldiğinde atomik teslim senkronizasyonu.
-- **Güvenlik ve Performans**
-  - **CSRF Koruması:** Sayfa mount'unda otomatik token yenileme + başarısız mutasyonlarda şeffaf retry mekanizması.
-  - **RBAC (Rol Tabanlı Erişim):** Backend seviyesinde `requireAuth` + `requireRole` middleware'leri; frontend'de rol bazlı UI kontrolü.
-  - **Real-time:** Socket.IO ile sınav anında anlık iletişim ve bildirimler.
-  - **Atomik İşlemler:** Prisma transaksiyonları ile veri bütünlüğü koruması.
-
----
-
-## Teknik Detaylar
-
-### Güvenlik Katmanı
-- **CSRF Token:** Uygulama yüklendiğinde ve kritik sayfalara girildiğinde otomatik olarak taze token alınır. Her mutasyon isteğine `x-csrf-token` başlığı eklenir; token geçersizse şeffaf biçimde yenilenerek istek yeniden denenir (`csrf-sync` v4 + `apiFetch` retry logic).
-- **Rate Limiting:** Kaba kuvvet (brute-force) saldırılarına ve AI API kötüye kullanımına karşı endpoint bazlı limitler (15 dk / 1000 istek genel, 20 istek auth).
-- **SSRF Koruması:** AI modülünde sadece güvenli IP ve domain'lere izin veren filtreleme sistemi.
-- **Çevrimdışı Sınav Güvenliği:** Çevrimdışı pakette cevap anahtarı bulunmaz; sınıf/yayın yetkisi hazırlama sırasında doğrulanır, puanlama sunucuda yapılır ve süreli sınavlar çevrimdışı başlatılmaz.
-
-### Log ve Kuyruk Yönetimi
-- Sistemdeki tüm önemli işlemler (`CREATE`, `UPDATE`, `DELETE`, `LOGIN`, `ARCHIVE_YEAR`, `PROMOTE_STUDENTS`, `PURGE_ARCHIVED_DATA` vb.) veritabanına kaydedilir.
-- `/api/admin/logs` (Admin kullanıcı logları), `/api/admin/logs/emails` (E-posta Outbox kuyruğu), `/api/admin/logs/system` (Sistem operasyonları) ve `/api/admin/logs/me` (Bireysel geçmiş) endpoint'leri ile rol ve domain bazlı log ayrımı sağlanır.
-- Dashboard'da her rol için son 5 hareket liste görünümünde gösterilir; "Tümünü Gör" linki ilgili denetim ekranına yönlendirir.
-
-### Sayfa Yapısı (Önemli Rotalar)
-| Rota | Erişim | Açıklama |
-|------|--------|----------|
-| `/` | Herkese açık | Ana sayfa / giriş yönlendirme |
-| `/dashboard` | Admin, Teacher, Student | Rol bazlı dashboard |
-| `/management?tab=logs` | Admin | Yönetim paneli — Log sekmesi |
-| `/settings?tab=logs` | Teacher, Student | Ayarlar — Kişisel log sekmesi |
-| `/teachers/:id` | Admin | Öğretmen detay sayfası |
-| `/classes/:id` | Admin, Teacher | Sınıf detay sayfası |
-
-### Yazdırma Optimizasyonu
-- Tailwind v4 `print:hidden` / `print:block` sınıfları kullanılarak temiz çıktı düzeni.
-- Duyurular, Sınıflar, Sınavlar, Sonuçlar, Öğretmen Detay sayfalarında hazır "Yazdır" butonları mevcut.
-
----
-
-## Ortam Değişkenleri
-
-`server/.env` dosyasında tanımlanması gereken değişkenler:
-
-| Değişken | Zorunlu | Açıklama |
-|----------|---------|----------|
-| `DATABASE_URL` | ✅ | Prisma bağlantı dizesi. SQLite için `file:../data/quiz.db` |
-| `SESSION_SECRET` | ✅ (prod) | Express session imzalama anahtarı. Üretimde eksikse uygulama başlamaz. |
-| `NODE_ENV` | — | `development` veya `production`. Varsayılan: `development` |
-| `PORT` | — | Backend portu. Varsayılan: `5000` |
-| `GEMINI_API_KEY` | — | Google Gemini API anahtarı. Yalnızca resmi Google endpoint'lerine gönderilir. |
-
----
-
-## Notlar ve Kısıtlamalar
-
-- **Çevrimdışı çalışma:** Service worker yalnızca üretim derlemesinde kaydedilir. Yerel doğrulama için önce `pnpm build`, ardından istemci önizleme komutu kullanılmalıdır. Çevrimdışı veri tarayıcıya ve cihaza özeldir.
-- **JSON alanları:** Prisma'nın `Json` tipi SQLite tarafından desteklenmediğinden `Question.options`, `QuestionBank.options` ve `StudentResult.answers` alanları şemada `String?` olarak tutulmaktadır. PostgreSQL'e geçişte bu alanlar `Json?` tipine dönüştürülecek ve `storage.ts`'deki manuel `JSON.stringify`/`JSON.parse` çağrıları kaldırılacaktır.
-- **E-posta doğrulama:** `User` modeline `emailVerified` ve `emailVerificationToken` alanları eklendi; aktivasyon akışı (token oluşturma → e-posta gönderme → doğrulama endpoint'i) altyapı olarak hazır ancak henüz devreye alınmamıştır.
-- **SQLite eş zamanlılığı:** Yüksek trafikli üretim ortamları için PostgreSQL'e geçiş önerilir. Geçiş için `schema.prisma` içindeki `provider = "sqlite"` satırını `"postgresql"` olarak değiştirmek yeterlidir.
+- `concurrently bulunamadı`: proje kökünde `pnpm install --frozen-lockfile` çalıştırın.
+- Prisma istemcisi hazır değil: `pnpm --filter quiz-master-server exec prisma generate` çalıştırın.
+- Vite API için `ECONNREFUSED`: backend'in `5000` portunda çalıştığını kontrol edin.
+- Gmail zaman aşımı: kurumsal ağın `587/465` çıkışını engelleyip engellemediğini kontrol edin; DNS/proxy değiştirmeden izinli bir ağda deneyin.
+- Çevrimdışı teslim bekliyor: aynı cihaz ve tarayıcıyla sınavı açıp bağlantının geri gelmesini bekleyin.

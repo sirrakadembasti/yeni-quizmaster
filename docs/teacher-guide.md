@@ -1,88 +1,108 @@
-# Quiz Master Öğretmen Kullanıcı Kılavuzu
+# QuizMaster Öğretmen Kullanıcı Kılavuzu
 
-Bu kılavuz, `teacher` rolündeki kullanıcıların kendi sınıfları için sınav, öğrenci sonucu ve duyuru süreçlerini yönetmesi içindir.
+Bu kılavuz `teacher` rolündeki kullanıcıların yetkili oldukları ders ve sınıflarda sınav, anket, öğrenci sonucu ve duyuru süreçlerini yönetmesi içindir.
 
-## 1. Giriş ve ana ekran
+## 1. Giriş ve profil
 
-E-posta ve şifrenizle giriş yaptığınızda öğretmen dashboard'u açılır. Ana ekranda branşlarınız, sorumlu olduğunuz sınıflar, özet bilgiler ve son hareketler gösterilebilir.
+E-posta ve şifrenizle giriş yaptığınızda öğretmen dashboard'u açılır. Branşlarınız, sorumlu sınıflarınız ve dersine girdiğiniz sınıflar yetki kapsamınızı belirler.
 
-Şifrenizi unuttuysanız **Şifremi Unuttum** bağlantısını kullanın. Kayıtlı e-posta adresinize 1 saat geçerli tek kullanımlık şifre belirleme bağlantısı iletilir. Ortak cihazlarda sağ üst menüden **Güvenli Çıkış** yapın.
+- **Şifremi Unuttum** bağlantısı Gmail üzerinden bir saat geçerli parola belirleme bağlantısı gönderir.
+- **Ayarlar > Profil** alanından telefon, adres ve kişisel iletişim bilgilerinizi güncelleyebilirsiniz.
+- Ders, branş, rol ve sınıf atamalarını yalnız yönetici değiştirebilir.
 
 ## 2. Öğretmen menüsü
 
-- **Sınavlarım:** Oluşturduğunuz sınavlar.
-- **İstatistikler:** Kişisel/sınav bazlı başarı özetleri.
-- **Sınav Sonuçları:** Öğrenci teslimleri ve raporlar.
-- **Öğrenciler:** Yetkiniz kapsamındaki öğrenci listeleri.
-- **Sınıflarım:** Sorumlu olduğunuz sınıflar ve sınıf detayları.
-- **Duyurular:** Sınıfa yönelik duyuru oluşturma ve görüntüleme.
-- **Ayarlar:** Profil, bildirimler, kişisel işlem geçmişi ve şifre.
+- **Sınavlarım:** Tablo ve sayfalama ile sınavlarınız; yeni sınav oluşturma.
+- **Sınıf İstatistikleri:** Yetkili sınıfların tarih aralıklı analizleri.
+- **Sınav Sonuçları:** Yetkili sınavların öğrenci sonuçları.
+- **Anket Yönetimi:** Anket oluşturma/düzenleme ve sonuçlar.
+- **Öğrenciler:** Yalnız dersine girdiğiniz veya yetkili olduğunuz sınıflardaki öğrenciler.
+- **Sınıflarım:** Yetkili sınıflar ve sınıf detayları.
+- **Duyurular:** Yalnız dersine girdiğiniz sınıflardaki öğrencilere duyuru.
+- **Ayarlar:** Profil, bildirim, işlem geçmişi ve parola.
 
-## 3. Sınav oluşturma ve AI soru üretimi
+Bu sınırlar yalnız arayüzde değil API ve veritabanı sorgularında da uygulanır.
 
-1. **Sınavlarım** ekranından yeni sınav oluşturun.
-2. **Ayarlar** sekmesinde başlık, açıklama, ders, zorluk, süre, soru karıştırma ve sınıf atamalarını belirleyin.
-3. **Sorular** sekmesinde soru metnini, seçenekleri ve doğru cevabı girin.
-4. **AI ile Soru Üret:** Google Gemini (`gemini-3.8-flash`) desteği ile istediğiniz konu ve zorlukta çoktan seçmeli veya açık uçlu soruları saniyeler içinde oluşturabilir, eklemeden önce düzenleyebilirsiniz.
-5. Sınavı taslak kaydedin; son kontrolden sonra yayınlayın.
+## 3. Sınav oluşturma
 
-En az bir soru eklenmeden sınav yayınlanamaz. Öğretmen yalnızca sorumlu olduğu sınıflara sınav atayabilir; başka bir sınıf kimliği API üzerinden gönderilse bile sunucu isteği reddeder.
+1. **Sınavlarım > Yeni Sınav** ekranını açın.
+2. Başlık, açıklama, ders, zorluk, süre, karıştırma ve hedef sınıfları girin.
+3. Soruyu, seçenekleri ve doğru cevabı ekleyin.
+4. Gerekirse varsayılan olarak kapalı **Soru Görseli (Opsiyonel)** alanını açıp görsel yükleyin.
+5. **Soru Ekle** sonrası yeni soru listenin en üstünde görünür.
+6. Gemini AI ile konu, zorluk ve adet belirleyerek soru üretebilir; soruları eklemeden önce düzenleyebilirsiniz.
+7. Önce taslak kaydedin, kontrol ettikten sonra yayınlayın.
 
-## 4. Sınavı yayınlama ve öğrenci erişimi
+**Yeni Sınav** yalnız sınav oluşturur; anket işlemleri **Anket Yönetimi** içindedir. Yetkiniz olmayan sınıf kimliği gönderilirse sunucu işlemi reddeder.
 
-Yayınlamadan önce şunları kontrol edin:
+## 4. Sınav yayını ve güvenlik
 
-- Doğru ders ve sınıf seçildi mi?
-- Süre dakika cinsinden doğru mu?
-- Her sorunun doğru cevabı işaretli mi?
-- Soru metni ve seçeneklerde hata var mı?
+- En az bir geçerli soru olmadan sınav yayınlanamaz.
+- Öğrenci yalnız yayınlanmış ve kendi sınıfına atanmış sınava erişir.
+- Cevap kaydında doğru/yanlış bilgisi gösterilmez.
+- Sayfa yenileme süreyi sıfırlamaz; süre sunucu başlangıcına göre hesaplanır.
+- Sunucudaki süre dolduktan sonra yeni cevap kabul edilmez.
+- Tamamlanmamış sınavın cevap anahtarı öğrenciye gönderilmez.
 
-Öğrenci yalnızca yayınlanmış ve kendi sınıfına atanmış sınavı başlatabilir. Taslak veya başka sınıfa ait bir sınav doğrudan bağlantıyla açılamaz.
+## 5. Anket Yönetimi
 
-Süre alanı çevrimdışı kullanımı da belirler:
+**Anket Yönetimi** sayfasında:
 
-- **Süresiz sınav:** Öğrenci bağlantısı varken sınavı cihazına hazırlayıp daha sonra çevrimdışı çözebilir.
-- **Süreli sınav:** Güvenlik ve sunucu zamanı denetimi nedeniyle çevrimdışı hazırlanamaz veya başlatılamaz.
+- **Anket Oluştur** sekmesinden hedef sınıf ve soruları belirleyin.
+- Tek seçim, çoklu seçim, açık uçlu, derecelendirme ve Likert türlerini kullanın.
+- Puan ve doğru cevap tanımlamayın; anketler notlandırılmaz.
+- İsteğe bağlı görsel alanını açıp soru görseli ekleyin.
+- **Anket Sonuçları** sekmesinde tarih/anket filtresi, katılım oranı, cevap dağılımı, açık uçlu cevap, grafik ve tabloları inceleyin.
 
-## 5. Sınav sırasında güvenlik davranışı
+Yalnız kendi oluşturduğunuz veya yetkili sınıflarınıza atanmış anketlere erişebilirsiniz. **Excel** ayrıntılı `.xlsx`, **Yazdır** A4 uyumlu rapor üretir.
 
-- Öğrencinin seçimi sunucuya otomatik kaydedilir.
-- Cevap kaydından sonra doğru/yanlış bilgisi öğrenciye verilmez.
-- Sayfa yenilendiğinde sınav süresi baştan başlamaz; kalan süre sunucudaki başlangıç zamanına göre hesaplanır.
-- Süre bittikten sonra sunucu yeni cevap kabul etmez.
-- Öğrenci tamamlanmamış sınavın cevap anahtarını sonuç ekranından görüntüleyemez.
+## 6. Sonuçlar ve sınıf istatistikleri
 
-## 6. Sonuçları inceleme ve yazdırma
+- **Sınav Sonuçları** ekranında ders, sınav ve sınıf filtrelerini kullanın. Anketler sınav filtresinde görünmez.
+- **Sınıf İstatistikleri** ekranında başlangıç/bitiş tarihi ile yetkili sınıfların katılım ve başarı grafiklerini karşılaştırın.
+- Öğrenci detayında yalnız sınav bilgisi ve sonuçları gösterilir; kişisel veli alanları gösterilmez.
+- Filtrelenmiş listeyi **Excel** ile indirin veya **Yazdır** ile A4/PDF çıktısı alın.
 
-**Sınav Sonuçları** ekranında sınavı seçerek katılım, puan ve öğrenci bazlı sonuçları inceleyin. Filtreleri kullanabilir, "Yazdır" butonu ile ilk sayfa boşluğu olmadan doğrudan optimize edilmiş A4 çıktısı alabilirsiniz.
+## 7. Öğrenciler ve sınıflar
 
-## 7. Sınıflar ve öğrenciler
+**Öğrenciler** ve **Sınıflarım** ekranları yalnız yetkili olduğunuz sınıfları temel alır. Doğrudan URL veya API isteği kullanarak başka sınıfın öğrencilerine erişemezsiniz.
 
-**Sınıflarım** ekranında yalnızca sorumlu olduğunuz sınıflar görüntülenir. Sınıf detayından öğrenci listesini inceleyebilirsiniz. Bir öğrencinin detayına girildiğinde öğretmenlere KVKK ve güvenlik gereği yalnızca **Sınav Bilgileri** ve sonuçları sunulur; Veli Bilgileri ve özel kimlik sekmeleri gizlenir. Yetkiniz dışında bir sınıfa sınav veya duyuru atamaya çalışırsanız işlem güvenlik nedeniyle reddedilir.
+Liste ve sınıf detayında **Excel** ve **Yazdır** seçenekleri; rapor başlığı, tarih, filtre ve tabloyu korur.
 
-## 8. Duyuru oluşturma
+## 8. Duyuru ve bildirim
 
-1. **Duyurular** ekranını açın.
-2. Başlık ve içeriği girin.
-3. Sorumlu olduğunuz hedef sınıfı seçin.
-4. Duyuruyu yayımlayın.
+1. **Duyurular > Yeni Duyuru** alanını açın.
+2. Başlık ve içeriği yazın.
+3. Dersine girdiğiniz hedef sınıfı seçin.
+4. Yayımlayın.
 
-Öğretmen duyurularında hedef sınıf zorunludur. Sınıfa özel duyuru yalnızca o sınıftaki öğrencilere görünür. Okul geneline duyuru yetkisi yöneticidedir.
+Öğretmen başka öğretmenlere veya okul geneline duyuru gönderemez. Duyuru yalnız seçilen sınıfın öğrencilerine ulaşır ve alıcıda gönderen adı/rolü görünür.
 
-## 9. Hesap ve bildirimler
+- Üst menü son 5 bildirimi gösterir.
+- Bildirim tek tek silinebilir.
+- **Tüm Bildirimleri Gör** Ayarlar bildirim sekmesini açar.
+- Bildirim sesi zil alanından veya Ayarlardan kapatılıp açılabilir.
+- Sınavı tamamlayan ilgili öğrencilerin bildirimleri sınavın öğretmenine yönlendirilir.
 
-Sağ üst zil simgesinden bildirimleri okuyabilir ve tümünü okundu işaretleyebilirsiniz. **Ayarlar** ekranında profilinizi güncelleyebilir, işlem geçmişinizi inceleyebilir ve şifrenizi değiştirebilirsiniz.
+## 9. Excel ve yazdırma
 
-## 10. Çevrimdışı kullanım
+- **Excel** düğmesi gerçek `.xlsx` dosyası indirir ve Türkçe karakterleri korur.
+- Başlık, seçili filtreler, tablo başlığı, otomatik sütun genişliği ve filtre satırı Excel dosyasına eklenir.
+- Yazdırmada yan menü, üst menü, düğmeler ve filtre kontrolleri gizlenir.
+- Dashboard'da yazdırma yoktur; rapor ve detay sayfalarında bulunur.
 
-Öğrenci, süresiz sınavı internet bağlantısı varken **Çevrimdışı Hazırla** ile kullandığı cihaza alabilir. Cevaplar bağlantı yokken cihazda tutulur; teslim bağlantı geri geldiğinde sunucuya aktarılır ve puanlama sunucuda yapılır. Çevrimdışı pakette doğru cevaplar bulunmaz.
+## 10. Çevrimdışı sınav
 
-Süreli sınavlar çevrimdışı başlatılamaz. Çevrimiçi başlayan süreli sınavda bağlantı kesilirse öğrenci cevaplamaya devam edebilir; ancak sunucudaki süre dolduktan sonra ulaşan yeni cevaplar güvenlik nedeniyle kabul edilmez.
+- Süresiz sınav öğrencinin cihazına bağlantı varken hazırlanabilir.
+- Cevaplar aynı cihaz/tarayıcıda yerel olarak saklanır.
+- Bağlantı geldiğinde teslim sunucuya aktarılır ve puanlama sunucuda yapılır.
+- Süreli sınav çevrimdışı başlatılamaz; çevrimiçi başladıktan sonra bağlantı kesilse de sunucu süresi işlemeye devam eder.
 
 ## 11. Sorun giderme
 
-- **Sınıf seçilemiyor:** Yöneticiden öğretmen–sınıf atamasını kontrol etmesini isteyin.
-- **Sınav yayınlanmıyor:** En az bir geçerli soru bulunduğunu kontrol edin.
-- **Öğrenci sınavı göremiyor:** Yayın durumunu ve sınıf atamasını doğrulayın.
-- **Cevap sunucuya ulaşmadı:** Öğrencinin aynı cihaz ve tarayıcıyı kullandığını, bekleyen teslim ekranını yeniden açtığını ve internet bağlantısının geri geldiğini kontrol edin.
-- **403/yetki hatası:** Hedef sınıfın sorumluluğunuzda olduğundan emin olun.
+- **Sınıf/öğrenci görünmüyor:** Yöneticiden ders-sınıf yetkinizi kontrol etmesini isteyin.
+- **Sınav/anket yayınlanmıyor:** Geçerli soru ve hedef sınıf bulunduğunu doğrulayın.
+- **Görsel yüklenmiyor:** Desteklenen görsel türü, 5 MB istemci sınırı ve bağlantıyı kontrol edin.
+- **Sonuç filtresi boş:** Seçilen ders-sınav ilişkisinin ve tarih aralığının uyumlu olduğunu kontrol edin.
+- **403 hatası:** Hedef kaydın yetki alanınızda olduğundan emin olun.
+- **Çevrimdışı teslim bekliyor:** Öğrencinin aynı cihaz/tarayıcıyla bağlantıya dönmesini sağlayın.

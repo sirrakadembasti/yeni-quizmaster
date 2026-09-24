@@ -1,117 +1,146 @@
-# Quiz Master Yönetici Kullanıcı Kılavuzu
+# QuizMaster Yönetici Kullanıcı Kılavuzu
 
-Bu kılavuz, `admin` rolündeki kullanıcıların okul yapısını, kullanıcıları, sınavları ve sistem kayıtlarını yönetmesi içindir.
+Bu kılavuz `admin` rolündeki kullanıcıların okul yapısını, hesapları, sınavları, anketleri, raporları ve sistem kayıtlarını yönetmesi içindir.
 
-## 1. Giriş ve hesap güvenliği
+## 1. Giriş ve güvenlik
 
-1. Ana sayfadaki **Giriş Yap** alanını açın.
-2. Yönetici e-posta adresinizi ve şifrenizi girin.
-3. Girişten sonra yönetici paneline yönlendirilirsiniz.
+1. **Giriş Yap** ekranında yönetici e-postanızı ve şifrenizi kullanın.
+2. Şifrenizi bilmiyorsanız **Şifremi Unuttum** ile kayıtlı e-postanıza bağlantı isteyin.
+3. Ortak cihazda işiniz bittiğinde kullanıcı menüsünden **Güvenli Çıkış** yapın.
 
-Şifrenizi unuttuysanız giriş penceresindeki **Şifremi Unuttum** bağlantısını kullanın. Gelen bağlantı tek kullanımlık ve süreli bir parola sıfırlama belirteci taşır. Ortak cihazlarda işiniz bittiğinde sağ üst kullanıcı menüsünden **Güvenli Çıkış** yapın.
+Parola sıfırlama bağlantısı tek kullanımlıktır ve bir saat geçerlidir. Bağlantıyı başka biriyle paylaşmayın.
 
 ## 2. Yönetici menüsü
 
-- **Dashboard:** Sistem özeti ve son hareketler.
-- **Sınav Yönetimi:** Sistemdeki sınavları yönetme ve gerektiğinde silme.
-- **Sınavlar:** Sınav oluşturma ve düzenleme ekranı.
-- **İstatistikler / Sınav Sonuçları:** Başarı, katılım ve sınav raporları.
-- **Öğrenciler:** Öğrenci hesabı oluşturma, güncelleme ve silme.
-- **Eğitmenler:** Öğretmen hesabı ve öğretmen detayları.
-- **Sınıflar:** Sınıf listesi, öğrenci ve öğretmen atamaları.
-- **Yönetim:** Dersler, sınıflar, kullanıcılar ve 3 alt sekmeli denetim/e-posta logları.
-- **Arşiv:** Arşivlenmiş kayıtlar.
+- **Dashboard:** Sistem özeti, sınav katılımı, son sınavlar ve son hareketler.
+- **Sınav Yönetimi:** Sistemdeki sınavların yönetim görünümü.
+- **Sınavlar:** Tablo ve sayfalama ile sınav listesi; yeni sınav oluşturma/düzenleme.
+- **Sınıf İstatistikleri:** Tarih ve sınıf bazlı katılım/başarı analizi.
+- **Sınav Sonuçları:** Ders, sınav, sınıf, öğretmen ve diğer filtrelerle sonuç raporu.
+- **Anket Yönetimi:** Anket oluşturma/düzenleme ve anket sonuçları.
+- **Öğrenciler:** Öğrenci listesi, detay, Excel ve yazdırma.
+- **Öğretmenler:** Öğretmen hesabı, iletişim, branş ve sınıf atamaları.
+- **Sınıflar:** Sınıf listesi, mevcudu ve öğretmen atamaları.
+- **Yönetim:** Dersler, sınıflar, kullanıcılar ve loglar.
+- **Arşiv:** Arşivlenmiş dönem kayıtları.
 - **Duyurular:** Okul, rol veya sınıf hedefli duyurular.
-- **Ayarlar:** Profil, bildirim, işlem geçmişi ve şifre işlemleri.
+- **Ayarlar:** Profil, bildirim sesi, bildirim silme, kişisel hareketler ve parola.
 
-## 3. Kullanıcı ve veli yönetimi
- 
-**Yönetim > Kullanıcılar** veya ilgili **Öğrenciler/Eğitmenler** ekranından:
- 
-1. **Yeni Kullanıcı** düğmesini seçin.
-2. Ad, e-posta, rol ve gerekli başlangıç bilgilerini girin.
-3. Öğrenci hesabı eklenirken veya düzenlenirken **Veli Bilgileri** sekmesinden Veli Adı, Yakınlık Derecesi (Anne, Baba vb.), Telefon, E-posta ve Adres bilgilerini kaydedebilirsiniz.
-4. Kaydı tamamladıktan sonra öğrenciyi sınıfa, öğretmeni sorumlu olduğu sınıf ve branşa atayın.
- 
-### Öğrenci detay görünümü (`/students/:id`)
-Yöneticiler bir öğrencinin adına tıkladığında 3 sekmeli detaylı arayüze erişir:
-- **Sınav Bilgileri:** Öğrencinin tamamladığı sınavlar, puanlar, başarı trendi ve sınav detayına bağlantılar.
-- **Öğrenci Bilgileri:** Öğrencinin temel kimlik, iletişim, okul numarası ve hesap durum bilgileri. Başlıktaki **Bilgileri Düzenle** butonu ile yönetici öğrencinin tüm bilgilerini doğrudan güncelleyebilir.
-- **Veli Bilgileri:** Öğrenci velisine ait irtibat numaraları, yakınlık derecesi, e-posta ve açık adres bilgileri. Başlıktaki **Veli Bilgilerini Düzenle** butonu ile veli irtibat ve adres detayları güncellenebilir.
+## 3. Öğrenci yönetimi
 
-### Öğretmen detay görünümü (`/teachers/:id`)
-Yöneticiler öğretmen profil sayfasında sayfa başlığında yer alan **Öğretmeni Düzenle** ve **Öğretmeni Sil** butonları ile öğretmen bilgilerini doğrudan güncelleyebilir veya güvenli onay penceresiyle hesabı silebilir.
+**Öğrenciler** veya **Yönetim > Kullanıcılar** ekranından hesap oluşturabilir, güncelleyebilir ve silebilirsiniz.
 
-Önemli güvenlik davranışı: Herkese açık kayıt ekranından oluşturulan hesaplar yalnızca öğrenci rolü alır ve kendi isteğiyle bir sınıfa katılamaz. Sınıf ataması ve veli bilgisi tanımlamaları yetkili yönetim ekranından yapılmalıdır. Öğretmenler öğrencinin veli veya kişisel bilgilerine erişemez; yalnızca sınav sonuçlarını görebilir. Öğrenci kendi profil sayfasında kişisel bilgilerini değiştiremez (salt okunurdur), değişiklik için yöneticiye başvurmalıdır.
+- Öğrencinin adı, e-postası, sınıfı ve **Sınıf No** bilgisi yönetilebilir.
+- Açık kayıtla gelen öğrenci kendi sınıfını seçemez; sınıf atamasını yetkili kullanıcı yapar.
+- Öğrenci detayında sınav geçmişi, kişisel bilgiler ve veli bilgileri ayrı alanlarda gösterilir.
+- Öğrenci kendi kişisel/veli bilgilerini salt okunur görür; değişiklikleri yönetici yapar.
+- Öğretmenler veli ve özel iletişim bilgilerini göremez.
 
-Kullanıcı silme kalıcı sonuç doğurabilir. Onay penceresinde doğru kullanıcıyı seçtiğinizi kontrol edin.
- 
-## 4. Ders ve sınıf yönetimi
- 
-### Ders oluşturma
- 
-1. **Yönetim > Dersler** sekmesini açın.
-2. **Yeni Ders** seçeneğini kullanın.
-3. Ders adı ve açıklamasını girip kaydedin.
- 
-### Sınıf oluşturma ve düzenleme
- 
-1. **Yönetim > Sınıflar** sekmesini açın.
-2. Sınıf seviyesi, şubesi, açıklaması ve öğretmen bilgisini girin.
-3. Sınıf detayından öğrenci ve branş öğretmeni atamalarını yönetin. Sınıf mevcudu tablosunda öğrenci adı ve okul numarası gereksiz ikonlar olmadan temiz ve sade bir şekilde listelenir.
- 
-Seviyesi farklı bir öğrenciyi sınıfa taşırken uygulama ek onay isteyebilir. Sınıf silmeden önce bağlı öğrenci, öğretmen ve sınavları kontrol edin.
- 
-## 5. Sınav yönetimi ve yapay zeka ile soru üretimi
- 
-1. **Sınavlar > Yeni Sınav** ekranını açın.
-2. Başlık, açıklama, ders, zorluk ve süreyi belirleyin.
-3. Sınavın atanacağı sınıfları seçin.
-4. **Sorular** sekmesinde seçenekleri ve doğru cevabı ekleyin.
-5. **Yapay Zeka ile Soru Üret:** Google Gemini (`gemini-3.8-flash`) modeli kullanılarak belirtilen konu, zorluk ve soru adedine göre otomatik soru setleri oluşturabilirsiniz.
-6. Önce taslak olarak kaydedin; kontrol tamamlanınca **Yayınlandı** durumuna alın.
- 
-En az bir sorusu olmayan sınav yayınlanamaz. Öğrenciler yalnızca yayınlanmış ve kendilerine atanmış sınavları görebilir. Taslak sınavlar öğrenci tarafından doğrudan bağlantı kullanılarak da başlatılamaz.
- 
-## 6. Sonuçlar, istatistikler ve yazdırma
- 
-- **Sınav Sonuçları (`/results`):** Sınav veya öğrenci bazında sonuçları filtreleyebilir, detayları inceleyebilirsiniz.
-- **Sınıf İstatistikleri (`/class-statistics`):** Sınıf bazlı KPI metrikleri (Toplam Öğrenci, Katılımcı Sayısı, Katılım Oranı, Ortalama Başarı %) ve sınıf karşılaştırma grafiklerini içerir.
-- **Yazdırma (Print):** Ekrandaki "Yazdır" butonu A4 sayfa yapısına ve dikey/yatay yönlendirmeye tam uyumludur. İlk sayfanın boş çıkması engellenmiş, arama ve filtreleme panelleri yazdırma çıktısında otomatik gizlenmiştir.
+Öğrenci listesi ve detay ekranındaki **Yazdır** temiz A4 görünümü, **Excel** ise filtre ve tablo yapısını koruyan `.xlsx` çalışma kitabı üretir.
 
-## 7. Duyurular ve bildirimler
+## 4. Veli hesabı ve öğrenci ilişkisi
 
-Yönetici; okul geneline, belirli bir role veya sınıfa duyuru gönderebilir. Başlık, içerik ve hedefi kontrol ederek yayımlayın. Sağ üstteki zil simgesi okunmamış bildirimleri gösterir; **Hepsini Oku** ile bildirimleri topluca işaretleyebilirsiniz.
+Öğrenci detayındaki **Veli Hesapları** bölümünde iki yöntem bulunur:
 
-## 8. Loglar ve denetim (3 Alt Sekmeli Yapı)
+1. **Yeni Veli Hesabı:** Ad, e-posta, ilk şifre, telefon, adres ve yakınlık girilerek hesap oluşturulur ve öğrenciye bağlanır.
+2. **Mevcut Veliyi Bağla:** Daha önce oluşturulmuş veli hesabı seçilen öğrenciyle ilişkilendirilir.
 
-**Yönetim > Loglar** bölümünde sistem hareketleri ve haberleşme kayıtları 3 ayrı alt sekmede tasnif edilerek sunulur:
+Aynı veli birden fazla öğrenciye bağlanabilir. **Bağlantıyı Kaldır** yalnız öğrenci-veli ilişkisini siler; veli hesabının kendisini otomatik silmez. Veli kendi panelinde yalnız bağlı öğrencilerin sınav özetini salt okunur görür.
 
-1. **Kullanıcı Logları:** Kullanıcıların gerçekleştirdiği operasyonlar (Giriş, Sınav oluşturma/güncelleme/silme vb.). Rol filtresi, işlem araması ve eğitim yılı/tarih aralığı ile filtrelenebilir.
-2. **E-Posta Logları:** Sistemden kullanıcılara gönderilen tüm e-postaların Outbox kuyruk durumu:
-   - **KPI Sayaçları:** Toplam Gönderim, Başarılı (İletilen), Kuyrukta Bekleyen ve Başarısız/Hatalı sayaçları anlık güncellenir.
-   - **Arama & Filtreleme:** Alıcı e-posta veya konuya göre anında arama, duruma göre (Sent, Pending, Failed) filtreleme.
-   - **Detay & HTML Önizleme:** Göz simgesi ile gönderilen e-postanın şablonu, parametreleri ve varsa hata detayları incelenebilir.
-   - **Tekrar Gönderim (Retry):** Gönderilememiş veya hatalı e-postalar tek tıkla yeniden kuyruğa alınabilir.
-   - **Silme:** Gereksiz veya test amaçlı kuyruk logları tablodan silinebilir.
-3. **Sistem Hata & İşlemleri:** Yıl sonu arşivleme (`ARCHIVE_YEAR`), öğrenci sınıf atlatma (`PROMOTE_STUDENTS`), arşiv verisi kalıcı temizleme (`PURGE_ARCHIVED_DATA`) ve sistem hatalarının izlendiği denetim günlüğü.
+Öğrenci kaydındaki eski tip veli iletişim alanları ile giriş yapabilen `parent` hesabı farklı amaçlara sahiptir: iletişim alanları okul kaydıdır; veli hesabı uygulamaya giriş ve takip içindir.
 
-## 9. Çevrimdışı sınav yönetimi
+## 5. Öğretmen yönetimi
 
-PWA çevrimdışı sınav altyapısı süresiz sınavlarda etkindir. Öğrenci, bağlantısı varken yayınlanmış ve sınıfına atanmış sınavı cihazına hazırlayabilir; çevrimdışı cevaplar aynı tarayıcıda saklanır ve bağlantı geri geldiğinde teslim sunucuya aktarılır.
+**Öğretmenler** sayfasından öğretmen hesabı oluşturun veya düzenleyin. Öğretmen detayında:
 
-- Doğru cevaplar cihazdaki çevrimdışı pakete eklenmez.
-- Yetki ve sınıf ataması çevrimdışı paket hazırlanırken sunucuda denetlenir.
-- Puanlama ve kesin teslim durumu yalnızca sunucuda oluşturulur.
-- Süreli sınavlar güvenlik nedeniyle çevrimdışı hazırlanamaz veya başlatılamaz.
-- Tarayıcı verilerinin temizlenmesi, cihaz değişimi veya gizli pencere kullanımı yerel cevapların kaybına neden olabilir.
+- ad, e-posta, telefon ve adres gibi kişisel/iletişim bilgilerini,
+- branş/ders yetkilerini,
+- sorumlu olduğu sınıfları ve dersine girdiği sınıfları,
+- oluşturduğu sınavları
 
-## 10. Sorun giderme
+inceleyebilirsiniz. Atama değişikliklerini kaydettikten sonra ilgili öğretmen yalnız yeni yetki kapsamındaki öğrenci, sınıf, sınav ve anket verilerine erişir. Öğretmen kendi **Ayarlar > Profil** ekranından iletişim ve adres bilgilerini güncelleyebilir; rol ve ders/sınıf atamalarını değiştiremez.
 
-- **Yetkisiz erişim:** Hesabın rolünü ve oturum durumunu kontrol edin.
-- **Sınav öğrencide görünmüyor:** Sınavın yayın durumunu ve sınıf atamasını kontrol edin.
-- **Duyuru yanlış grupta görünmüyor:** Rol ve sınıf hedefinin birlikte doğru seçildiğini doğrulayın.
-- **İstek reddedildi:** Sayfayı yenileyip tekrar giriş yapın; güvenlik belirteci otomatik yenilenir.
-- **Bağlantı sorunu:** İşlemi tekrarlamadan önce internet erişimini doğrulayın.
-- **Çevrimdışı teslim bekliyor:** Öğrencinin aynı cihaz ve tarayıcıda sınavı yeniden açıp bağlantının geri gelmesini beklemesini sağlayın.
-- **E-posta kullanıcıya ulaşmıyor:** Önce **Yönetim > Loglar > Şifre Talepleri** sekmesinden talebi kontrol edin; gerekirse bağlantıyı yenileyin. Teknik teslimat durumu **E-posta Logları** alanındadır. Sistem yalnız Gmail SMTP kullanır; `server/.env` içindeki Gmail hesabını, uygulama parolasını ve iş ağının 587/465 çıkışını kontrol edin.
+## 6. Ders ve sınıf yönetimi
+
+1. **Yönetim > Dersler** alanından ders adı ve açıklamasını oluşturun.
+2. **Yönetim > Sınıflar** veya **Sınıflar** sayfasından sınıfı oluşturun.
+3. Öğrencileri sınıfa, öğretmenleri sorumlu sınıfa ve branş derslerine atayın.
+4. Sınıf detayında mevcudu ve branş öğretmenlerini doğrulayın.
+
+Sınıf silmeden önce bağlı öğrenci, öğretmen, sınav ve anketleri kontrol edin. Liste ve detay ekranlarında **Excel** ve **Yazdır** seçeneklerini kullanabilirsiniz.
+
+## 7. Sınav oluşturma ve yönetme
+
+**Sınavlar > Yeni Sınav** yalnız sınav oluşturur; anket seçeneği bu ekranda bulunmaz.
+
+1. Başlık, açıklama, ders, zorluk, süre ve soru karıştırma ayarlarını belirleyin.
+2. Hedef sınıfları seçin.
+3. Soruları ve doğru cevapları ekleyin.
+4. İsterseniz **Soru Görseli (Opsiyonel)** alanını açıp görsel yükleyin. Alan varsayılan olarak kapalıdır.
+5. **Soru Ekle** ile oluşturulan yeni soru listenin en üstünde görünür.
+6. İsterseniz Gemini AI ile soru üretin ve sonuçları eklemeden önce kontrol edin.
+7. Taslak kaydedin; en az bir geçerli soru bulunduğunda yayınlayın.
+
+Görsel yüklemede yalnız desteklenen görsel dosyaları kullanın; istemci dosya boyutunu, sunucu dosya türünü ve piksel sınırını doğrular.
+
+## 8. Anket Yönetimi
+
+**Anket Yönetimi** iki sekmeli çalışır:
+
+- **Anket Oluştur:** Anket başlığı, açıklama, sınıf ataması ve sorular.
+- **Anket Sonuçları:** Tarih ve anket filtresi, katılım, dağılımlar, açık uçlu cevaplar, grafikler ve tablolar.
+
+Anketlerde puan, doğru cevap, başarı notu veya sınav süresi kullanılmaz. Desteklenen türler tek seçim, çoklu seçim, açık uçlu, derecelendirme ve Likert ölçeğidir. Görsel soru alanı sınavdaki gibi açılır/kapanır ve yeni eklenen soru en üstte gösterilir.
+
+Sonuç görünümünde grafik ve tablo birlikte okunabilir. **Excel** ayrıntılı `.xlsx`, **Yazdır** ise A4 uyumlu sonuç raporu üretir.
+
+## 9. Sınav sonuçları ve sınıf istatistikleri
+
+- **Sınav Sonuçları:** Anketler bu filtrede gösterilmez. Ders seçimine göre sınav filtresi daralır; sınıf, öğretmen ve diğer filtreler backend sorgusuna uygulanır.
+- **Sınıf İstatistikleri:** Başlangıç/bitiş tarihi ve sınıf filtresiyle katılım, ortalama başarı ve sınıf karşılaştırmalarını gösterir.
+- Sonuç ve istatistik ekranlarında tablo/grafik verileri gerçek veritabanı sonuçlarından üretilir.
+
+Filtre seçiminiz yazdırma başlığında ve Excel dosyasında rapor bilgisi olarak yer alır.
+
+## 10. Duyurular ve bildirimler
+
+Yönetici okul geneline, role veya sınıfa duyuru gönderebilir. Duyuruda gönderen adı ve rolü alıcıya gösterilir.
+
+- Üst menü en fazla son 5 bildirimi gösterir.
+- **Tüm Bildirimleri Gör** ile Ayarlar bildirim sekmesine geçilir.
+- Bildirim tek tek silinebilir.
+- Zil alanından veya **Ayarlar > Bildirimler** üzerinden ses açılıp kapatılabilir.
+- Gerçek zamanlı bağlantı varsa duyuru/bildirim anında; bağlantı yeniden kurulduğunda önbellek yenilenerek gösterilir.
+
+## 11. Loglar, e-posta ve şifre talepleri
+
+**Yönetim > Loglar** dört alt sekmeden oluşur:
+
+1. **Kullanıcı Logları:** Giriş ve kullanıcı/sınav/duyuru işlemleri.
+2. **E-Posta Logları:** Outbox teslimat durumu, alıcı, konu, deneme sayısı ve hata bilgisi. Token içeren gövde istemciye verilmez.
+3. **Şifre Talepleri:** Kullanıcı adına talep oluşturma, durum/arama filtresi, yeni bağlantı gönderme ve bekleyen talebi iptal etme.
+4. **Sistem Hata & İşlemleri:** Arşivleme, sınıf atlatma, tasfiye ve sistem operasyonları.
+
+Şifre talebi oluşturulduğunda eski bekleyen bağlantı iptal edilir ve yeni bağlantı Gmail Outbox kuyruğuna alınır. **Yenile** yeni token üretir; **İptal** bekleyen tokeni geçersiz kılar. Ayrıntılı kurulum için [Gmail e-posta belgesine](e-posta-yapilandirma.md) bakın.
+
+## 12. Excel ve yazdırma
+
+- **Excel** gerçek `.xlsx` dosyası indirir; Türkçe karakterler Unicode olarak korunur.
+- Rapor başlığı, aktif filtreler, başlık biçimi, kenarlıklar, otomatik genişlik ve sabit başlık satırı çalışma kitabına eklenir.
+- **Yazdır** menüleri, düğmeleri ve filtre kontrollerini gizler; tarih, başlık, filtre özeti ve tabloyu A4'e sığdırır.
+- Dashboard sayfalarında yazdırma bulunmaz; anlamlı rapor/listelerde kullanılır.
+
+## 13. Çevrimdışı sınav
+
+Yalnız süresiz sınavlar öğrenci tarafından bağlantı varken cihaza hazırlanabilir. Cevap anahtarı pakete girmez; teslim ve puanlama sunucuda tamamlanır. Süreli sınavlar çevrimdışı başlatılamaz.
+
+Tarayıcı verilerini temizlemek veya cihaz değiştirmek bekleyen yerel cevapları kaybettirebilir.
+
+## 14. Sorun giderme
+
+- **Öğretmen bir sınıfı/öğrenciyi göremiyor:** Ders-sınıf ve öğretmen atamalarını kontrol edin.
+- **Öğrenci sınavı/anketi göremiyor:** Yayın durumunu ve sınıf atamasını kontrol edin.
+- **Excel eski veriyi içeriyor:** Aktif filtreleri temizleyin veya sorgunun tamamlanmasını bekleyip yeniden indirin.
+- **Görsel yüklenmiyor:** Dosya türü/boyutu, piksel sınırı ve sunucu erişimini kontrol edin.
+- **Gmail gönderilmiyor:** Şifre Talepleri ve E-posta Loglarını kontrol edin; Gmail uygulama parolası ile 587/465 ağ erişimini doğrulayın.
+- **Bildirim geç görünüyor:** Oturumu ve Socket.IO bağlantısını kontrol edin; sayfayı yenileyerek sunucu listesini tekrar alın.
