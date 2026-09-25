@@ -32,6 +32,7 @@ export interface User {
   classId?: string | null;
   classNo?: string | null;
   studentNo?: number | null;
+  isActive?: boolean;
   phoneNumber?: string | null;
   address?: string | null;
   assignedCategories?: { id: string; name: string }[];
@@ -51,7 +52,7 @@ interface UserManagementTableProps {
   isLoading: boolean;
   role: 'teacher' | 'student';
   classes?: any[];
-  onEdit: (user: User) => void;
+  onEdit?: (user: User) => void;
   onDelete: (user: User) => void;
   onDetails?: (user: User) => void;
   canManage: boolean;
@@ -132,7 +133,7 @@ export function UserManagementTable({
                       </Badge>
                     </TableCell>
                     <TableCell className="font-bold text-indigo-600">
-                      {user.studentNo ? `#${user.studentNo}` : (user.classNo || '-')}
+                      {user.studentNo || '-'}
                     </TableCell>
                   </>
                 ) : (
@@ -187,11 +188,11 @@ export function UserManagementTable({
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>İşlemler</DropdownMenuLabel>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => onEdit(user)} className="cursor-pointer">
+                          {onEdit && <DropdownMenuItem onClick={() => onEdit(user)} className="cursor-pointer">
                             <Edit2 className="h-4 w-4 mr-2" /> Düzenle
-                          </DropdownMenuItem>
+                          </DropdownMenuItem>}
                           <DropdownMenuItem onClick={() => onDelete(user)} className="cursor-pointer text-destructive focus:text-destructive">
-                            <Trash2 className="h-4 w-4 mr-2" /> Sil
+                            <Trash2 className="h-4 w-4 mr-2" /> {role === 'student' ? 'Pasife Al' : 'Sil'}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

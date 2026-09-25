@@ -175,6 +175,8 @@ Manuel olarak tüm rollerde şu akışları doğrulayın:
 - Anket oluşturma, katılım ve sonuç grafikleri,
 - Bildirim, duyuru, silme ve sessize alma,
 - Veli-öğrenci bağlantıları,
+- `User.isActive` / `deactivatedAt` ile öğrenci pasiflik durumu,
+- sınıf içinde benzersiz otomatik öğrenci numarası için `User(classId, studentNo)` birleşik benzersizliği,
 - Gmail parola sıfırlama Outbox akışı,
 - Excel ve yazdırma çıktıları,
 - Görsel yükleme ve mevcut görsellere erişim.

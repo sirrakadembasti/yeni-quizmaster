@@ -1,22 +1,21 @@
-# Graph Report - Quiz-Master  (2026-09-25)
+# Graph Report - .  (2026-09-25)
 
 ## Corpus Check
-- 227 files · ~117,995 words
-- Verdict: corpus is large enough that graph structure adds value.
+- cluster-only mode — file stats not available
 
 ## Summary
-- 1564 nodes · 3361 edges · 148 communities (78 shown, 70 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 47 edges (avg confidence: 0.77)
+- 1579 nodes · 3431 edges · 145 communities (76 shown, 69 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 49 edges (avg confidence: 0.78)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `27fc0bef`
+- Built from commit: `07c0d4f3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- ai.ts
 - routes.ts
+- storage.ts
 - IStorage
 - PrismaStorage
 - deployment.ts
@@ -47,7 +46,7 @@
 - server/package.json
 - scripts
 - form.tsx
-- storage.ts
+- api-routes/auth.ts
 - breadcrumb.tsx
 - drawer.tsx
 - empty.tsx
@@ -69,7 +68,7 @@
 - seed.ts
 - deployment-config.ts
 - upload.ts
-- cmdk
+- class-variance-authority
 - date-fns
 - embla-carousel-react
 - framer-motion
@@ -124,7 +123,7 @@
 - README.md
 - config.ts
 - student-quiz.tsx
-- sheet.tsx
+- toggle-group.tsx
 - SurveyResultsPage
 - Q: uygulamayı önce incele tüm yönü. fronten backend api entegrasyonu login register ve güvenlik yönleri ile. kısaca bilgi ve sonra faz faz yapılacakalrı kritik önceliğine göre listele. kodlamaya başlama
 - Q: bir öğrenci internet bağlantısı olmadığında sınavları çözebilecek mi ve uygulamada bu altyapı mevcut mu
@@ -142,29 +141,28 @@
 - data/README.md
 - supertest
 - @types/nodemailer
-- alert.tsx
+- clsx
 - vitest
 - @types/express-session
-- accordion.tsx
-- json-security.ts
-- class-variance-authority
-- cross-env
+- dotenv-cli
 - @types/connect-sqlite3
 - @types/node
 
 ## God Nodes (most connected - your core abstractions)
 1. `cn()` - 150 edges
-2. `PrismaStorage` - 98 edges
-3. `IStorage` - 95 edges
-4. `Button` - 48 edges
-5. `useToast()` - 41 edges
+2. `PrismaStorage` - 99 edges
+3. `IStorage` - 96 edges
+4. `Button` - 51 edges
+5. `useToast()` - 43 edges
 6. `useAuth()` - 40 edges
-7. `storage` - 33 edges
-8. `DashboardLayout()` - 31 edges
-9. `Card` - 31 edges
-10. `CardContent` - 29 edges
+7. `DashboardLayout()` - 33 edges
+8. `Card` - 33 edges
+9. `storage` - 33 edges
+10. `CardContent` - 31 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `RoleSwitcher()` --calls--> `useAuth()`  [EXTRACTED]
+  client/src/components/layout/RoleSwitcher.tsx → client/src/context/auth-context.tsx
 - `BreadcrumbSeparator()` --calls--> `cn()`  [EXTRACTED]
   client/src/components/ui/breadcrumb.tsx → client/src/lib/utils.ts
 - `BreadcrumbEllipsis()` --calls--> `cn()`  [EXTRACTED]
@@ -173,37 +171,35 @@
   client/src/components/ui/button-group.tsx → client/src/lib/utils.ts
 - `ButtonGroupSeparator()` --calls--> `cn()`  [EXTRACTED]
   client/src/components/ui/button-group.tsx → client/src/lib/utils.ts
-- `CommandShortcut()` --calls--> `cn()`  [EXTRACTED]
-  client/src/components/ui/command.tsx → client/src/lib/utils.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (148 total, 70 thin omitted)
+## Communities (145 total, 69 thin omitted)
 
-### Community 0 - "ai.ts"
-Cohesion: 0.20
-Nodes (6): AIResponseSchema, aiTestLimiter, QuestionSchema, router, SurveyQuestionSchema, SurveyResponseSchema
+### Community 0 - "routes.ts"
+Cohesion: 0.12
+Nodes (12): AIResponseSchema, aiTestLimiter, QuestionSchema, router, SurveyQuestionSchema, SurveyResponseSchema, router, router (+4 more)
 
-### Community 1 - "routes.ts"
-Cohesion: 0.14
-Nodes (18): router, querySchema, router, categorySchema, router, classSchema, router, router (+10 more)
+### Community 1 - "storage.ts"
+Cohesion: 0.17
+Nodes (14): querySchema, categorySchema, classSchema, questionBankSchema, PARENT_RELATIONS, router, validParentContact(), AuthRequest (+6 more)
 
 ### Community 4 - "deployment.ts"
-Cohesion: 0.17
-Nodes (13): requireRuntimeChanges(), router, runtimeDeploymentChangesAllowed(), router, retentionCutoffs(), RetentionPolicy, runDataRetention(), startDataRetentionWorker() (+5 more)
+Cohesion: 0.21
+Nodes (10): detectedOrigin(), requireRuntimeChanges(), router, runtimeDeploymentChangesAllowed(), router, retentionCutoffs(), RetentionPolicy, runDataRetention() (+2 more)
 
 ### Community 5 - "cn"
-Cohesion: 0.10
-Nodes (34): Kbd(), KbdGroup(), ResizableHandle(), ResizablePanelGroup(), SheetHeader(), Sidebar(), SidebarContent(), SidebarContext (+26 more)
+Cohesion: 0.08
+Nodes (41): Kbd(), KbdGroup(), ResizableHandle(), ResizablePanelGroup(), SheetContent, SheetContentProps, SheetDescription, SheetFooter() (+33 more)
 
 ### Community 6 - "index.ts"
 Cohesion: 0.10
-Nodes (19): app, authLimiter, deploymentConfig, httpLogger, httpServer, limiter, projectRoot, serverDirectory (+11 more)
+Nodes (21): app, authLimiter, deploymentConfig, httpLogger, httpServer, limiter, projectRoot, serverDirectory (+13 more)
 
 ### Community 7 - "utils.ts"
-Cohesion: 0.07
-Nodes (18): Avatar, AvatarFallback, AvatarImage, HoverCardContent, InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot (+10 more)
+Cohesion: 0.06
+Nodes (20): AccordionContent, AccordionItem, AccordionTrigger, Alert, AlertDescription, AlertTitle, alertVariants, Avatar (+12 more)
 
 ### Community 8 - "compilerOptions"
 Cohesion: 0.07
@@ -211,7 +207,7 @@ Nodes (26): compilerOptions, allowImportingTsExtensions, allowJs, baseUrl, esMod
 
 ### Community 9 - "devDependencies"
 Cohesion: 0.13
-Nodes (15): dotenv, dotenv-cli, devDependencies, dotenv, dotenv-cli, tsx, @types/cors, @types/express (+7 more)
+Nodes (15): cross-env, dotenv, devDependencies, cross-env, dotenv, tsx, @types/cors, @types/express (+7 more)
 
 ### Community 10 - "devDependencies"
 Cohesion: 0.04
@@ -226,8 +222,8 @@ Cohesion: 0.08
 Nodes (23): dist, node_modules, tests, **/*.ts, compilerOptions, allowJs, declaration, declarationMap (+15 more)
 
 ### Community 13 - "App.tsx"
-Cohesion: 0.09
-Nodes (34): ALL, AppRouter(), HomeRoute(), Role, RouteConfig, RouteGuard(), ROUTES, RoleSwitcher() (+26 more)
+Cohesion: 0.10
+Nodes (34): ALL, AppRouter(), HomeRoute(), Role, RouteConfig, RouteGuard(), ROUTES, useAuth() (+26 more)
 
 ### Community 14 - "field.tsx"
 Cohesion: 0.13
@@ -242,8 +238,8 @@ Cohesion: 0.12
 Nodes (11): Menubar, MenubarCheckboxItem, MenubarContent, MenubarItem, MenubarLabel, MenubarRadioItem, MenubarSeparator, MenubarShortcut() (+3 more)
 
 ### Community 17 - "api.ts"
-Cohesion: 0.06
-Nodes (118): AnnouncementAuthor(), AnnouncementAuthorProps, Props, State, DashboardLayout(), DashboardLayoutProps, ThemeToggle(), DeleteConfirmModal() (+110 more)
+Cohesion: 0.05
+Nodes (123): AnnouncementAuthor(), AnnouncementAuthorProps, Props, State, DashboardLayout(), DashboardLayoutProps, RoleSwitcher(), ThemeToggle() (+115 more)
 
 ### Community 18 - "use-toast.ts"
 Cohesion: 0.20
@@ -290,12 +286,12 @@ Cohesion: 0.14
 Nodes (14): scripts, build, db:create-admin, db:deploy, db:generate, db:migrate, db:seed, db:status (+6 more)
 
 ### Community 31 - "form.tsx"
-Cohesion: 0.11
-Nodes (16): react, useCarousel(), useChart(), FormControl, FormDescription, FormFieldContext, FormFieldContextValue, FormItem (+8 more)
+Cohesion: 0.18
+Nodes (9): FormControl, FormDescription, FormFieldContext, FormFieldContextValue, FormItem, FormItemContext, FormItemContextValue, FormLabel (+1 more)
 
-### Community 32 - "storage.ts"
-Cohesion: 0.15
-Nodes (14): changePasswordSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, router, hashResetToken(), issuePasswordReset() (+6 more)
+### Community 32 - "api-routes/auth.ts"
+Cohesion: 0.18
+Nodes (9): changePasswordSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, router, app, app (+1 more)
 
 ### Community 33 - "breadcrumb.tsx"
 Cohesion: 0.25
@@ -346,8 +342,8 @@ Cohesion: 0.18
 Nodes (11): UnauthorizedRedirect(), ImageUpload(), ImageUploadProps, useToast(), uploadApi, ArchivePage(), AdminManagementPage(), AdminQuizzesPage() (+3 more)
 
 ### Community 52 - "deployment-config.ts"
-Cohesion: 0.20
-Nodes (14): publicAppUrl(), toDeploymentConfig(), applySetup(), fixedPnpm(), buildDeploymentArtifacts(), defaultRetention, DeploymentConfig, deploymentConfigPath (+6 more)
+Cohesion: 0.18
+Nodes (17): publicAppUrl(), toDeploymentConfig(), applySetup(), fixedPnpm(), setupSocket(), buildDeploymentArtifacts(), defaultRetention, deploymentConfigPath (+9 more)
 
 ### Community 53 - "upload.ts"
 Cohesion: 0.29
@@ -355,7 +351,7 @@ Nodes (7): router, upload, uploadStorage, serveStatic(), getProjectRoot(), isPro
 
 ### Community 58 - "dependencies"
 Cohesion: 0.15
-Nodes (13): dependencies, clsx, @hookform/resolvers, jspdf, @radix-ui/react-avatar, @radix-ui/react-toggle-group, wouter, clsx (+5 more)
+Nodes (13): dependencies, cmdk, @hookform/resolvers, jspdf, @radix-ui/react-avatar, @radix-ui/react-toggle-group, wouter, cmdk (+5 more)
 
 ### Community 60 - "survey.ts"
 Cohesion: 0.15
@@ -366,8 +362,8 @@ Cohesion: 0.22
 Nodes (14): columnName(), crc32(), createCsvBytes(), createCsvContent(), createExcelBytes(), CsvColumn, CsvExportOptions, CsvValue (+6 more)
 
 ### Community 84 - "email.ts"
-Cohesion: 0.28
-Nodes (11): originalEnv, original, getEmailConfiguration(), getEmailStatus(), getTransporter(), processEmailQueue(), queueEmail(), sendDirectEmail() (+3 more)
+Cohesion: 0.20
+Nodes (15): router, hashResetToken(), issuePasswordReset(), originalEnv, original, getEmailConfiguration(), getEmailStatus(), getTransporter() (+7 more)
 
 ### Community 85 - "QuizMaster Yönetici Kullanıcı Kılavuzu"
 Cohesion: 0.12
@@ -394,24 +390,24 @@ Cohesion: 0.24
 Nodes (10): Toast, ToastAction, ToastActionElement, ToastClose, ToastDescription, ToastProps, ToastTitle, toastVariants (+2 more)
 
 ### Community 106 - "chart.tsx"
-Cohesion: 0.20
-Nodes (7): ChartConfig, ChartContainer, ChartContext, ChartContextProps, ChartLegendContent, ChartTooltipContent, THEMES
+Cohesion: 0.12
+Nodes (14): react, useCarousel(), ChartConfig, ChartContainer, ChartContext, ChartContextProps, ChartLegendContent, ChartTooltipContent (+6 more)
 
 ### Community 107 - "README.md"
 Cohesion: 0.15
 Nodes (7): 1. Veli hesabının oluşturulması, 2. Giriş ve şifre, 3. Veli paneli, 4. Erişim sınırları, 5. Ayarlar ve bildirimler, 6. Sorun giderme, QuizMaster Veli Kullanıcı Kılavuzu
 
 ### Community 108 - "config.ts"
-Cohesion: 0.27
-Nodes (6): buildServerEnv(), envValue(), gmailAddress, SetupPayload, setupPayloadSchema, payload
+Cohesion: 0.24
+Nodes (7): buildServerEnv(), envValue(), gmailAddress, SetupPayload, setupPayloadSchema, payload, DeploymentConfig
 
 ### Community 109 - "student-quiz.tsx"
 Cohesion: 0.08
 Nodes (45): AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter(), AlertDialogHeader(), AlertDialogOverlay, AlertDialogTitle (+37 more)
 
-### Community 110 - "sheet.tsx"
-Cohesion: 0.25
-Nodes (7): SheetContent, SheetContentProps, SheetDescription, SheetFooter(), SheetOverlay, SheetTitle, sheetVariants
+### Community 110 - "toggle-group.tsx"
+Cohesion: 0.33
+Nodes (5): ToggleGroup, ToggleGroupContext, ToggleGroupItem, Toggle, toggleVariants
 
 ### Community 111 - "SurveyResultsPage"
 Cohesion: 0.50
@@ -426,8 +422,8 @@ Cohesion: 0.40
 Nodes (4): Answer, Outcome, Q: bir öğrenci internet bağlantısı olmadığında sınavları çözebilecek mi ve uygulamada bu altyapı mevcut mu, Source Nodes
 
 ### Community 114 - "parent.ts"
-Cohesion: 0.29
-Nodes (4): createParentSchema, guardianStudentsSchema, linkSchema, router
+Cohesion: 0.22
+Nodes (6): createParentSchema, guardianStudentsSchema, linkSchema, relationSchema, router, updateParentSchema
 
 ### Community 115 - "express"
 Cohesion: 0.29
@@ -437,33 +433,25 @@ Nodes (6): express, registerRoutes(), express, setupVite(), viteConfig, viteLogg
 Cohesion: 0.33
 Nodes (6): 1. Bağımlılıkları kurun, 2. Ortam değişkenlerini hazırlayın, 3. Veritabanını hazırlayın, 4. Uygulamayı başlatın, Kurulum, Sunucuya ilk kurulum sihirbazı
 
-### Community 139 - "alert.tsx"
-Cohesion: 0.40
-Nodes (4): Alert, AlertDescription, AlertTitle, alertVariants
-
-### Community 142 - "accordion.tsx"
-Cohesion: 0.50
-Nodes (3): AccordionContent, AccordionItem, AccordionTrigger
-
 ## Knowledge Gaps
-- **574 isolated node(s):** `name`, `version`, `type`, `description`, `dev` (+569 more)
+- **577 isolated node(s):** `name`, `version`, `type`, `description`, `dev` (+572 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **70 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **69 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `cn()` connect `cn` to `utils.ts`, `alert.tsx`, `App.tsx`, `accordion.tsx`, `field.tsx`, `menubar.tsx`, `api.ts`, `pagination.tsx`, `item.tsx`, `context-menu.tsx`, `command.tsx`, `input-group.tsx`, `form.tsx`, `breadcrumb.tsx`, `drawer.tsx`, `empty.tsx`, `navigation-menu.tsx`, `carousel.tsx`, `useToast`, `toast.tsx`, `chart.tsx`, `student-quiz.tsx`, `sheet.tsx`?**
-  _High betweenness centrality (0.096) - this node is a cross-community bridge._
-- **Why does `dependencies` connect `dependencies` to `@radix-ui/react-tabs`, `@radix-ui/react-toast`, `react-day-picker`, `devDependencies`, `class-variance-authority`, `html2canvas`, `@radix-ui/react-tooltip`, `form.tsx`, `zod-validation-error`, `cmdk`, `date-fns`, `embla-carousel-react`, `framer-motion`, `input-otp`, `next-themes`, `@radix-ui/react-accordion`, `@radix-ui/react-alert-dialog`, `@radix-ui/react-aspect-ratio`, `@radix-ui/react-checkbox`, `@radix-ui/react-context-menu`, `@radix-ui/react-dialog`, `@radix-ui/react-dropdown-menu`, `@radix-ui/react-hover-card`, `@radix-ui/react-label`, `@radix-ui/react-menubar`, `@radix-ui/react-navigation-menu`, `@radix-ui/react-popover`, `@radix-ui/react-progress`, `@radix-ui/react-radio-group`, `@radix-ui/react-scroll-area`, `@radix-ui/react-select`, `@radix-ui/react-separator`, `@radix-ui/react-slider`, `@radix-ui/react-slot`, `@radix-ui/react-switch`, `@radix-ui/react-toggle`, `react-dom`, `react-hook-form`, `react-resizable-panels`, `recharts`, `socket.io-client`, `sonner`, `tailwind-merge`, `tailwindcss-animate`, `@tanstack/react-query`, `tw-animate-css`, `vaul`, `zod`, `lucide-react`, `@radix-ui/react-collapsible`?**
+- **Why does `cn()` connect `cn` to `utils.ts`, `App.tsx`, `field.tsx`, `menubar.tsx`, `api.ts`, `pagination.tsx`, `item.tsx`, `context-menu.tsx`, `command.tsx`, `input-group.tsx`, `form.tsx`, `breadcrumb.tsx`, `drawer.tsx`, `empty.tsx`, `navigation-menu.tsx`, `carousel.tsx`, `useToast`, `toast.tsx`, `chart.tsx`, `student-quiz.tsx`, `toggle-group.tsx`?**
+  _High betweenness centrality (0.094) - this node is a cross-community bridge._
+- **Why does `dependencies` connect `dependencies` to `@radix-ui/react-tabs`, `@radix-ui/react-toast`, `react-day-picker`, `devDependencies`, `clsx`, `html2canvas`, `@radix-ui/react-tooltip`, `zod-validation-error`, `class-variance-authority`, `date-fns`, `embla-carousel-react`, `framer-motion`, `input-otp`, `next-themes`, `@radix-ui/react-accordion`, `@radix-ui/react-alert-dialog`, `@radix-ui/react-aspect-ratio`, `@radix-ui/react-checkbox`, `@radix-ui/react-context-menu`, `@radix-ui/react-dialog`, `@radix-ui/react-dropdown-menu`, `@radix-ui/react-hover-card`, `@radix-ui/react-label`, `@radix-ui/react-menubar`, `@radix-ui/react-navigation-menu`, `@radix-ui/react-popover`, `@radix-ui/react-progress`, `@radix-ui/react-radio-group`, `@radix-ui/react-scroll-area`, `@radix-ui/react-select`, `@radix-ui/react-separator`, `@radix-ui/react-slider`, `@radix-ui/react-slot`, `@radix-ui/react-switch`, `@radix-ui/react-toggle`, `react-dom`, `react-hook-form`, `react-resizable-panels`, `recharts`, `socket.io-client`, `sonner`, `tailwind-merge`, `tailwindcss-animate`, `@tanstack/react-query`, `tw-animate-css`, `vaul`, `zod`, `chart.tsx`, `lucide-react`, `@radix-ui/react-collapsible`?**
+  _High betweenness centrality (0.083) - this node is a cross-community bridge._
+- **Why does `react` connect `chart.tsx` to `useToast`, `dependencies`, `pagination.tsx`, `cn`?**
   _High betweenness centrality (0.080) - this node is a cross-community bridge._
-- **Why does `react` connect `form.tsx` to `useToast`, `dependencies`, `pagination.tsx`, `cn`?**
-  _High betweenness centrality (0.077) - this node is a cross-community bridge._
 - **What connects `name`, `version`, `type` to the rest of the system?**
-  _574 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _577 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `routes.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.13978494623655913 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.125 - nodes in this community are weakly interconnected._
 - **Should `IStorage` be split into smaller, more focused modules?**
-  _Cohesion score 0.02127659574468085 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.021052631578947368 - nodes in this community are weakly interconnected._
 - **Should `PrismaStorage` be split into smaller, more focused modules?**
-  _Cohesion score 0.022988505747126436 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.022727272727272728 - nodes in this community are weakly interconnected._

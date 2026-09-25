@@ -239,7 +239,7 @@ export default function StudentResultsPage() {
             </div>
             <div className="space-y-0.5 bg-muted/20 p-2 rounded-lg border border-border/40">
               <Label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Sınıf No</Label>
-              <p className="text-sm font-bold text-foreground">{student.studentNo || student.classNo || "-"}</p>
+              <p className="text-sm font-bold text-foreground">{student.studentNo || "-"}</p>
             </div>
             <div className="space-y-0.5 bg-muted/20 p-2 rounded-lg border border-border/40">
               <Label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Telefon Numarası</Label>

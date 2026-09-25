@@ -23,13 +23,10 @@ export default function StudentsPage() {
 
   const {
     isCreateOpen, setIsCreateOpen,
-    isEditOpen, setIsEditOpen,
     isDeleteOpen, setIsDeleteOpen,
     selectedUser,
     createMutation,
-    updateMutation,
     deleteMutation,
-    handleEdit,
     handleDelete
   } = useUserManagement('student');
 
@@ -73,7 +70,7 @@ export default function StudentsPage() {
       { header: "Ad Soyad", value: "name" },
       { header: "E-posta", value: "email" },
       { header: "Sınıf", value: (student: any) => classesData?.classes?.find((item: any) => item.id === student.classId)?.name || "Atanmamış" },
-      { header: "Sınıf No", value: (student: any) => student.studentNo || student.classNo || "" },
+      { header: "Sınıf No", value: (student: any) => student.studentNo || "" },
       { header: "Telefon", value: "phoneNumber" },
       { header: "Adres", value: "address" },
     ];
@@ -158,7 +155,6 @@ export default function StudentsPage() {
           isLoading={usersLoading}
           role="student"
           classes={classesData?.classes}
-          onEdit={handleEdit}
           onDelete={handleDelete}
           onDetails={openDetails}
           canManage={role === 'admin'}
@@ -173,22 +169,12 @@ export default function StudentsPage() {
           isPending={createMutation.isPending}
         />
 
-        <UserFormModal
-          isOpen={isEditOpen}
-          onOpenChange={setIsEditOpen}
-          mode="edit"
-          role="student"
-          initialData={selectedUser}
-          onSubmit={(data) => updateMutation.mutate(data)}
-          isPending={updateMutation.isPending}
-        />
-
         <DeleteConfirmModal
           isOpen={isDeleteOpen}
           onOpenChange={setIsDeleteOpen}
           onConfirm={() => deleteMutation.mutate()}
-          title="Öğrenciyi Sil"
-          description={`"${selectedUser?.name}" isimli öğrenciyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`}
+          title="Öğrenciyi Pasife Al"
+          description={`"${selectedUser?.name}" isimli öğrenciyi pasife almak istediğinize emin misiniz? Sınıf ve sınav geçmişi korunacaktır.`}
           isPending={deleteMutation.isPending}
         />
       </div>

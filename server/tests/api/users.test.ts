@@ -17,6 +17,8 @@ vi.mock('../../storage', () => ({
     getUser: vi.fn(),
     updateUser: vi.fn(),
     deleteUser: vi.fn(),
+    deactivateStudent: vi.fn(),
+    createLog: vi.fn(),
     updateUserRole: vi.fn(),
   }
 }));
@@ -159,13 +161,25 @@ describe('Users API Integration Tests', () => {
       vi.mocked(storage.createUser).mockImplementation(async (data: any) => ({ id: 'parent-1', createdAt: new Date(), ...data }) as any);
 
       const response = await request(app).post('/api/users').send({
-        name: 'Ayşe Veli', email: 'veli@example.com', password: 'Parola123', role: 'parent', guardianStudentIds: [studentId],
+        name: 'Ayşe Veli', email: 'veli@example.com', password: 'Parola123', role: 'parent', phoneNumber: '05550000000', address: 'Test adresi', guardianStudentIds: [studentId],
       });
 
       expect(response.status).toBe(201);
-      expect(storage.createUser).toHaveBeenCalledWith(expect.objectContaining({ role: 'parent', classId: null, studentNo: null, guardianStudentIds: [studentId] }));
+      expect(storage.createUser).toHaveBeenCalledWith(expect.objectContaining({ role: 'parent', classId: null, guardianStudentIds: [studentId] }));
       expect(response.body.user.password).toBeUndefined();
     });
+  });
+
+  it('soft-deletes a student without physically deleting the user', async () => {
+    const admin = { id: 'admin-1', role: 'admin' };
+    const student = { id: 'student-1', role: 'student', isActive: true };
+    const app = createTestApp(admin);
+    vi.mocked(storage.getUser).mockImplementation(async (id) => id === admin.id ? admin as any : student as any);
+    vi.mocked(storage.deactivateStudent).mockResolvedValue({ ...student, isActive: false } as any);
+    const response = await request(app).delete('/api/users/student-1');
+    expect(response.status).toBe(200);
+    expect(storage.deactivateStudent).toHaveBeenCalledWith(student.id);
+    expect(storage.deleteUser).not.toHaveBeenCalled();
   });
 });
 

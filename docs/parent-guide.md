@@ -6,7 +6,7 @@ Bu kılavuz `parent` rolündeki kullanıcıların kendileriyle ilişkilendirilmi
 
 Veli hesabını okul yöneticisi oluşturur. Yönetici ad, e-posta, ilk şifre, telefon, adres ve öğrenciyle yakınlık bilgilerini kaydeder; ardından hesabı bir veya daha fazla öğrenciyle ilişkilendirir.
 
-Yönetici bu işlemi iki yerden yapabilir: öğrenci detayındaki **Giriş Yapabilen Veli Hesapları** alanından hesap oluşturup bağlayabilir veya **Yönetim > Kullanıcılar** ekranında kullanıcı rolünü **Veli** yaparak **Bağlı Öğrenciler** listesini seçebilir. Her iki yol da aynı güvenli veli–öğrenci ilişki tablosunu kullanır.
+Yönetici hesabı oluşturduktan sonra ayrı **Veli Eşleştirme** sayfasında arama yaparak öğrenciyi bağlar. Öğrenci detayındaki **Giriş Yapabilen Veli Hesapları** alanı da aynı güvenli ilişki tablosunu kullanır. Yakınlık **Anne / Baba / Diğer** seçeneklerinden biridir.
 
 Öğrencinin kayıtlarında yazan veli e-postası tek başına giriş hesabı oluşturmaz. Uygulamaya giriş için ayrıca `parent` rolündeki hesabın oluşturulmuş ve öğrenciyle bağlanmış olması gerekir.
 
@@ -18,6 +18,8 @@ Yönetici bu işlemi iki yerden yapabilir: öğrenci detayındaki **Giriş Yapab
 4. Ortak cihazda **Güvenli Çıkış** yapın.
 
 ## 3. Veli paneli
+
+Sol menüdeki **Sınav Sonuçları** sayfasında bağlı öğrenci seçilir. Tamamlanan sınavlar puan ve tarih ile listelenir; **Detay** düğmesi soru bazında öğrencinin cevabını ve doğru cevabı salt okunur gösterir. Başka bir veliye veya öğrenciye ait sonuç doğrudan adresle açılamaz.
 
 Birden fazla öğrenci hesabınıza bağlıysa sağ üstteki öğrenci seçicisinden izlemek istediğiniz öğrenciyi seçin. Panelde:
 
@@ -35,7 +37,7 @@ gösterilir.
 - Panel salt okunurdur; veli sınav başlatamaz, cevap değiştiremez veya öğrenci bilgisi güncelleyemez.
 - Yalnız yönetici tarafından hesabınıza bağlanan öğrencileri görebilirsiniz.
 - Başka bir öğrenci kimliğine doğrudan bağlantı veya API isteğiyle erişim sunucu tarafından engellenir.
-- Anket cevapları ve öğrencinin özel sınav cevapları veli panelinde gösterilmez.
+- Anket cevapları veli panelinde gösterilmez. Tamamlanan sınavlarda soru, öğrencinin cevabı ve doğru cevap yalnız salt okunur sonuç detayı olarak gösterilir.
 
 Bağlantı eksik veya yanlışsa okul yönetimiyle iletişime geçin.
 

@@ -334,7 +334,7 @@ export default function SettingsPage() {
                     {user?.role === 'student' && (
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-muted-foreground font-medium">Sınıf No</span>
-                        <span className="font-bold">{user?.studentNo ?? user?.classNo ?? "-"}</span>
+                        <span className="font-bold">{user?.studentNo ?? "-"}</span>
                       </div>
                     )}
                   </div>

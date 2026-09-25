@@ -19,6 +19,7 @@ export interface IStorage {
   updateUserRole(userId: string, role: string): Promise<void>;
   getAllUsers(): Promise<User[]>;
   deleteUser(id: string): Promise<void>;
+  deactivateStudent(id: string): Promise<User>;
   getGuardianStudents(guardianId: string): Promise<any[]>;
   getStudentGuardians(studentId: string): Promise<any[]>;
   replaceGuardianStudents(guardianId: string, studentIds: string[]): Promise<any[]>;
@@ -257,15 +258,21 @@ export class PrismaStorage implements IStorage {
   async createUser(user: Prisma.UserUncheckedCreateInput & { guardianStudentIds?: string[] }): Promise<User> {
     const guardianStudentIds = [...new Set(user.guardianStudentIds || [])];
     return prisma.$transaction(async (tx) => {
+      const role = user.role || 'student';
+      const classId = role === 'student' ? user.classId : null;
+      const highest = classId ? await tx.user.aggregate({
+        where: { role: 'student', classId },
+        _max: { studentNo: true },
+      }) : null;
       const created = await tx.user.create({
         data: {
         name: user.name,
         email: user.email,
         password: user.password,
-        role: user.role || 'student',
-        classId: user.classId,
-        classNo: user.classNo,
-        studentNo: user.studentNo,
+        role,
+        classId,
+        classNo: null,
+        studentNo: classId ? (highest?._max.studentNo || 0) + 1 : null,
         phoneNumber: user.phoneNumber,
         address: user.address,
         parentName: user.parentName,
@@ -277,7 +284,7 @@ export class PrismaStorage implements IStorage {
       });
       if (created.role === 'parent' && guardianStudentIds.length > 0) {
         await tx.guardianStudent.createMany({
-          data: guardianStudentIds.map((studentId) => ({ guardianId: created.id, studentId })),
+          data: guardianStudentIds.map((studentId) => ({ guardianId: created.id, studentId, relation: 'Diğer' })),
         });
       }
       return created;
@@ -303,7 +310,7 @@ export class PrismaStorage implements IStorage {
     
     // List of allowed scalar fields for User
     const allowedFields = [
-      'name', 'email', 'password', 'role', 'studentNo', 'classNo', 'classId',
+      'name', 'email', 'password', 'role', 'classId',
       'resetToken', 'resetTokenExpiry', 'phoneNumber', 'address',
       'parentName', 'parentRelation', 'parentPhone', 'parentEmail', 'parentAddress',
     ];
@@ -340,7 +347,7 @@ export class PrismaStorage implements IStorage {
       };
     }
 
-    const currentUser = prismaData.role ? await prisma.user.findUnique({ where: { id }, select: { role: true } }) : null;
+    const currentUser = await prisma.user.findUnique({ where: { id }, select: { role: true, classId: true } });
     const updated = await prisma.$transaction(async (tx) => {
       if (currentUser && currentUser.role !== prismaData.role) {
         if (currentUser.role === 'parent') {
@@ -357,6 +364,20 @@ export class PrismaStorage implements IStorage {
         }
       }
 
+      const resultingRole = prismaData.role || currentUser?.role;
+      if (resultingRole === 'student' && prismaData.classId !== undefined && prismaData.classId !== currentUser?.classId) {
+        if (prismaData.classId) {
+          const highest = await tx.user.aggregate({
+            where: { role: 'student', classId: prismaData.classId, id: { not: id } },
+            _max: { studentNo: true },
+          });
+          prismaData.studentNo = (highest._max.studentNo || 0) + 1;
+        } else {
+          prismaData.studentNo = null;
+        }
+        prismaData.classNo = null;
+      }
+
       const user = await tx.user.update({
         where: { id },
         data: prismaData,
@@ -367,7 +388,7 @@ export class PrismaStorage implements IStorage {
         await tx.guardianStudent.deleteMany({ where: { guardianId: id } });
         if (uniqueStudentIds.length > 0) {
           await tx.guardianStudent.createMany({
-            data: uniqueStudentIds.map((studentId) => ({ guardianId: id, studentId })),
+            data: uniqueStudentIds.map((studentId) => ({ guardianId: id, studentId, relation: 'Diğer' })),
           });
         }
       }
@@ -383,6 +404,7 @@ export class PrismaStorage implements IStorage {
 
   async getAllUsers(): Promise<User[]> {
     const users = await prisma.user.findMany({
+      where: { OR: [{ role: { not: 'student' } }, { isActive: true }] },
       include: {
         class: true,
         assignedCategories: true,
@@ -419,9 +441,16 @@ export class PrismaStorage implements IStorage {
     await prisma.user.delete({ where: { id } });
   }
 
+  async deactivateStudent(id: string): Promise<User> {
+    return prisma.user.update({
+      where: { id },
+      data: { isActive: false, deactivatedAt: new Date() },
+    });
+  }
+
   async getGuardianStudents(guardianId: string): Promise<any[]> {
     return prisma.guardianStudent.findMany({
-      where: { guardianId },
+      where: { guardianId, student: { isActive: true } },
       include: { student: { include: { class: true } } },
       orderBy: { student: { name: 'asc' } },
     });
@@ -441,7 +470,7 @@ export class PrismaStorage implements IStorage {
       await tx.guardianStudent.deleteMany({ where: { guardianId } });
       if (uniqueStudentIds.length > 0) {
         await tx.guardianStudent.createMany({
-          data: uniqueStudentIds.map((studentId) => ({ guardianId, studentId })),
+          data: uniqueStudentIds.map((studentId) => ({ guardianId, studentId, relation: 'Diğer' })),
         });
       }
     });
@@ -451,8 +480,8 @@ export class PrismaStorage implements IStorage {
   async linkGuardianStudent(guardianId: string, studentId: string, relation?: string | null): Promise<any> {
     return prisma.guardianStudent.upsert({
       where: { guardianId_studentId: { guardianId, studentId } },
-      create: { guardianId, studentId, relation: relation || null },
-      update: { relation: relation || null },
+      create: { guardianId, studentId, relation: relation || 'Diğer' },
+      update: { relation: relation || 'Diğer' },
     });
   }
 
@@ -476,7 +505,7 @@ export class PrismaStorage implements IStorage {
         _count: { 
           select: { 
             students: {
-              where: { role: 'student' }
+              where: { role: 'student', isActive: true }
             } 
           } 
         }
@@ -633,7 +662,7 @@ export class PrismaStorage implements IStorage {
   async assignStudentToClass(studentId: string, classId: string): Promise<void> {
     // Find the highest student number in this class
     const highestStudentNoUser = await prisma.user.findFirst({
-      where: { classId },
+      where: { classId, role: 'student' },
       orderBy: { studentNo: 'desc' },
       select: { studentNo: true }
     });
@@ -644,14 +673,15 @@ export class PrismaStorage implements IStorage {
       where: { id: studentId },
       data: { 
         classId,
-        studentNo: nextNo
+        studentNo: nextNo,
+        classNo: null,
       }
     });
   }
 
 
   async removeStudentFromClass(studentId: string): Promise<void> {
-    await prisma.user.update({ where: { id: studentId }, data: { classId: null } });
+    await prisma.user.update({ where: { id: studentId }, data: { classId: null, studentNo: null, classNo: null } });
   }
 
   async assignTeacherToClass(teacherId: string, classId: string): Promise<void> {
@@ -672,7 +702,8 @@ export class PrismaStorage implements IStorage {
     return await prisma.user.findMany({ 
       where: { 
         classId,
-        role: 'student'
+        role: 'student',
+        isActive: true,
       } 
     });
   }
@@ -681,6 +712,7 @@ export class PrismaStorage implements IStorage {
     return await prisma.user.findMany({
       where: {
         role: 'student',
+        isActive: true,
         class: {
           is: {
             OR: [
@@ -1178,7 +1210,7 @@ export class PrismaStorage implements IStorage {
       orderBy: { name: 'asc' },
       include: {
         students: {
-          where: { role: 'student' },
+          where: { role: 'student', isActive: true },
           select: {
             id: true,
             results: {
@@ -1225,7 +1257,7 @@ export class PrismaStorage implements IStorage {
         category: { select: { name: true } },
         assignedClasses: {
           select: {
-            students: { where: { role: 'student' }, select: { id: true } },
+            students: { where: { role: 'student', isActive: true }, select: { id: true } },
           },
         },
         results: {

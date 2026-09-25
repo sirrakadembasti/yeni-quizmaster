@@ -67,6 +67,8 @@ Yalnız kendi oluşturduğunuz veya yetkili sınıflarınıza atanmış anketler
 
 **Öğrenciler** ve **Sınıflarım** ekranları yalnız yetkili olduğunuz sınıfları temel alır. Doğrudan URL veya API isteği kullanarak başka sınıfın öğrencilerine erişemezsiniz.
 
+Yönetici tarafından pasife alınmış öğrenci aktif listelerde gösterilmez. Öğrencinin sınıf numarası sistem tarafından atanır; öğretmen bu numarayı elle değiştiremez.
+
 Liste ve sınıf detayında **Excel** ve **Yazdır** seçenekleri; rapor başlığı, tarih, filtre ve tabloyu korur.
 
 ## 8. Duyuru ve bildirim

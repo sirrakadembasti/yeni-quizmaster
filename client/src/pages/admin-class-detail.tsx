@@ -181,7 +181,7 @@ export default function AdminClassDetailPage() {
     columns: [
       { header: "Sıra", value: (_row: any, index: number) => index + 1 },
       { header: "Öğrenci", value: (row: any) => row.name },
-      { header: "Sınıf No", value: (row: any) => row.studentNo || row.classNo || "-" },
+      { header: "Sınıf No", value: (row: any) => row.studentNo || "-" },
       { header: "E-posta", value: (row: any) => row.email || "-" },
     ],
   });

@@ -1,5 +1,7 @@
 # QuizMaster Öğrenci Kullanıcı Kılavuzu
 
+> Sınıf numaranız sınıfa atandığınızda sistem tarafından otomatik verilir. Bu numara kullanıcılar tarafından değiştirilemez. Hesabınız yönetici tarafından pasife alınırsa giriş yapamazsınız; önceki sınav ve sınıf kayıtlarınız silinmez.
+
 Bu kılavuz `student` rolündeki kullanıcıların sınav, anket, sonuç, duyuru ve hesap işlemleri içindir.
 
 ## 1. Kayıt ve giriş

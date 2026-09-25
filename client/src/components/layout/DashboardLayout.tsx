@@ -124,6 +124,9 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
       { label: "Sonuçlarım", href: "/student/results", icon: ListChecks },
       { label: "İstatistiklerim", href: "/my-stats", icon: BarChart3 },
     ] : []),
+    ...(role === 'parent' ? [
+      { label: "Sınav Sonuçları", href: "/parent/results", icon: ListChecks },
+    ] : []),
     ...(role === 'teacher' ? [
       { label: "Sınavlarım", href: "/quizzes", icon: FileText },
       { label: "Sınıf İstatistikleri", href: "/statistics", icon: BarChart3 },
@@ -140,6 +143,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
       { label: "Anket Yönetimi", href: "/survey-results", icon: ClipboardList },
       { label: "Öğrenciler", href: "/students", icon: Users },
       { label: "Öğretmenler", href: "/teachers", icon: Briefcase },
+      { label: "Veli Eşleştirme", href: "/guardian-management", icon: UserCircle },
       { label: "Sınıflar", href: "/classlist", icon: GraduationCap },
       { label: "Yönetim", href: "/management", icon: Settings },
       { label: "Arşiv", href: "/archive", icon: Archive },

@@ -10,6 +10,10 @@ import bcrypt from 'bcryptjs';
 vi.mock('../storage', () => ({
   storage: {
     getUser: vi.fn(),
+    getUserByEmail: vi.fn(),
+    getAllUsers: vi.fn(),
+    createUser: vi.fn(),
+    createNotification: vi.fn(),
     updateUser: vi.fn(),
     createLog: vi.fn()
   }
@@ -61,5 +65,19 @@ describe('Auth Routes - Change Password', () => {
     // Verify it is a bcrypt hash
     const isHashed = await bcrypt.compare('newPassword123', updateCallArg.password as string);
     expect(isHashed).toBe(true);
+  });
+});
+
+describe('Auth Routes - Registration notifications', () => {
+  it('creates an admin notification after a new registration', async () => {
+    vi.mocked(storage.getUserByEmail).mockResolvedValue(undefined);
+    vi.mocked(storage.createUser).mockImplementation(async (data: any) => ({ id: 'new-student', createdAt: new Date(), isActive: true, ...data }) as any);
+    vi.mocked(storage.getAllUsers).mockResolvedValue([{ id: 'admin-1', role: 'admin' }] as any);
+    vi.mocked(storage.createNotification).mockResolvedValue({ id: 'notification-1' } as any);
+    vi.mocked(storage.createLog).mockResolvedValue({} as any);
+
+    const response = await request(app).post('/auth/register').send({ name: 'Yeni Öğrenci', email: 'yeni@example.com', password: 'Parola123' });
+    expect(response.status).toBe(200);
+    expect(storage.createNotification).toHaveBeenCalledWith(expect.objectContaining({ userId: 'admin-1', type: 'registration', title: 'Yeni Üye Kaydı' }));
   });
 });

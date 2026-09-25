@@ -101,7 +101,7 @@ router.get("/quiz/:quizId/export", requireAuth, requireRole(["admin", "teacher"]
       csvRows.push([
         student?.name || "Bilinmiyor",
         student?.email || "Bilinmiyor",
-        student?.studentNo ?? student?.classNo ?? "-",
+        student?.studentNo ?? "-",
         r.status === "completed" ? "Tamamlandı" : "Devam Ediyor",
         (r.score !== null && r.score !== undefined) ? r.score.toString() : "-",
         r.correctAnswersCount.toString(),

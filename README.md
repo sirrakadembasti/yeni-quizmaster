@@ -18,7 +18,8 @@ QuizMaster; yöneticiler, öğretmenler, öğrenciler ve veliler için rol taban
 - **Dört rol:** `admin`, `teacher`, `student` ve `parent`.
 - **Sınav yönetimi:** Sınav oluşturma, soru ekleme, görsel yükleme, sınıfa atama, yayınlama ve sonuç analizi.
 - **Anket Yönetimi:** Sınavdan ayrılmış oluşturma ve sonuç akışı; tek seçim, çoklu seçim, açık uçlu, derecelendirme ve Likert soru türleri.
-- **Yetkilendirme:** Öğretmen yalnız yetkili olduğu sınıfları, öğrencileri, sınavları ve anketleri görür. Veli yalnız kendisiyle ilişkilendirilen öğrencilerin salt okunur sınav özetlerine erişir.
+- **Yetkilendirme:** Öğretmen yalnız yetkili olduğu sınıfları, öğrencileri, sınavları ve anketleri görür. Veli yalnız kendisiyle ilişkilendirilen öğrencilerin salt okunur sınav sonuçlarına ve soru/cevap detaylarına erişir.
+- **Öğrenci yaşam döngüsü:** Sınıf içinde benzersiz otomatik öğrenci numarası, manuel değişikliğe kapalı alan ve sınav/sınıf geçmişini koruyan pasife alma.
 - **Raporlama:** Anket, sınav sonucu, sınıf istatistiği, öğrenci, öğretmen ve sınıf ekranlarında A4 uyumlu yazdırma; uygun ekranlarda biçimlendirilmiş `.xlsx` Excel çıktısı.
 - **Türkçe Excel desteği:** Dışa aktarımlar gerçek Excel çalışma kitabı üretir; Türkçe karakter, sütun genişliği, başlık, filtre bilgisi ve sabit başlık satırı korunur.
 - **Duyuru ve bildirim:** Rol/sınıf hedefleme, gönderen adı ve rolü, son beş bildirim, tekil silme ve ses açma/kapatma.
@@ -158,10 +159,11 @@ Vite, `/api` ve `/socket.io` isteklerini backend'e yönlendirir.
 
 ### Veli
 
-1. Yönetici öğrenci detayındaki **Veli Hesapları** alanından veli hesabı oluşturur veya mevcut veliyi öğrenciye bağlar.
-   Alternatif olarak **Yönetim > Kullanıcılar** ekranında rolü **Veli** seçip aynı pencerede bağlı öğrencileri işaretleyebilir.
-2. Veli kendi hesabıyla giriş yapar.
-3. Yalnız bağlı öğrencileri seçebilir; tamamlanan ve bekleyen sınavları salt okunur biçimde görür.
+1. Yönetici veli hesabını oluşturur; telefon ve adres veli hesaplarında zorunludur.
+2. **Veli Eşleştirme** sayfasında öğrenci adı, e-posta, sınıf veya sınıf numarasıyla arama yaparak veliyi bir ya da daha fazla öğrenciye bağlar. Yakınlık yalnız **Anne / Baba / Diğer** olabilir.
+3. Veli kendi hesabıyla giriş yapar.
+4. **Sınav Sonuçları** sayfasından bağlı öğrencinin sonuç listesini ve soru/cevap detayını salt okunur görüntüler.
+5. Yalnız bağlı öğrencileri seçebilir; tamamlanan ve bekleyen sınavları salt okunur biçimde görür.
 
 ## Rol ve erişim özeti
 
@@ -173,8 +175,9 @@ Vite, `/api` ve `/socket.io` isteklerini backend'e yönlendirir.
 | Tüm sonuçları görme | ✓ | — | — | — |
 | Yetkili sınıf sonuçlarını görme | ✓ | ✓ | — | — |
 | Kendi sonuçlarını görme | — | — | ✓ | — |
-| Bağlı öğrenci özetini görme | — | — | — | ✓ |
+| Bağlı öğrenci sonucunu ve soru/cevap detayını görme | — | — | — | ✓ |
 | Veli hesabı oluşturma/bağlama | ✓ | — | — | — |
+| Öğrenciyi pasife alma (geçmişi korur) | ✓ | — | — | — |
 | Şifre taleplerini yönetme | ✓ | — | — | — |
 
 Arayüzde bir alanın gizlenmesi tek güvenlik katmanı değildir; aynı erişim sınırları API ve veri sorgularında da uygulanır.
@@ -208,10 +211,10 @@ Arayüzde bir alanın gizlenmesi tek güvenlik katmanı değildir; aynı erişim
 
 ```bash
 # Backend
-pnpm --filter quiz-master-server test
+pnpm --filter quiz-master-server exec vitest run
 
 # Frontend
-pnpm --filter quiz-master-client test
+pnpm --filter quiz-master-client exec vitest run
 
 # Üretim derlemesi
 pnpm build
@@ -236,6 +239,8 @@ pnpm test:e2e
 | `/student/quizzes` | Öğrenci | Sınavlarım |
 | `/student/surveys` | Öğrenci | Anketlerim |
 | `/parent/dashboard` | Veli | Bağlı öğrenci sınav takibi |
+| `/parent/results` | Veli | Bağlı öğrenci sonuç listesi ve detayları |
+| `/guardian-management` | Yönetici | Aramalı veli-öğrenci eşleştirme |
 | `/settings` | Tüm giriş yapmış roller | Profil, bildirim ve güvenlik |
 | `/server-setup` | Yönetici | Salt okunur sunucu/sağlık durumu; açıkça etkinleştirilirse dağıtım profili ve saklama bakımı |
 
@@ -246,6 +251,9 @@ pnpm test:e2e
 - Öğretmen öğrenci veli/özel iletişim alanlarına erişemez ve yalnız dersine girdiği sınıflardaki öğrencileri görür.
 - Öğrenci kişisel ve veli bilgilerini salt okunur görür; değişiklik için okul yönetimine başvurur.
 - Veli hesabı öğrenciyle açık bir ilişki kurulmadan hiçbir öğrenci verisine erişemez.
+- Öğrenci sınıf numarası sınıfa atama sırasında sistem tarafından otomatik üretilir, sınıf içinde benzersizdir ve hiçbir rol tarafından elle değiştirilemez.
+- Öğrenci kaldırma işlemi fiziksel silme değildir: hesap pasife alınır; sınıf ve sınav geçmişi korunur, aktif listelerden ve girişten çıkarılır.
+- Yeni kullanıcı kaydında yöneticilere kalıcı ve anlık bildirim oluşturulur.
 - Tamamlanmamış sınavlarda cevap anahtarı öğrenciye gönderilmez.
 - Görsel yüklemeleri dosya türü, boyut ve piksel sınırlarıyla doğrulanır.
 

@@ -29,9 +29,11 @@ Parola sıfırlama bağlantısı tek kullanımlıktır ve bir saat geçerlidir. 
 
 ## 3. Öğrenci yönetimi
 
-**Öğrenciler** veya **Yönetim > Kullanıcılar** ekranından hesap oluşturabilir, güncelleyebilir ve silebilirsiniz.
+**Öğrenciler** veya **Yönetim > Kullanıcılar** ekranından hesap oluşturabilirsiniz. Öğrenci listesindeki **Detaylar** düğmesi düzenleme sekmelerine açılır; ayrı hızlı düzenleme kaldırılmıştır. Öğrenci kaldırıldığında kayıt fiziksel olarak silinmez, pasife alınır ve sınav/sınıf geçmişi korunur.
 
-- Öğrencinin adı, e-postası, sınıfı ve **Sınıf No** bilgisi yönetilebilir.
+Sınıf numarası sınıfa atama anında sistemce otomatik verilir. Sınıf içinde benzersizdir; yönetici dahil hiçbir kullanıcı bu değeri elle değiştiremez.
+
+- Öğrencinin adı, e-postası, iletişim bilgileri ve sınıfı yönetilebilir; **Sınıf No** yalnız görüntülenir ve sistem tarafından otomatik yönetilir.
 - Açık kayıtla gelen öğrenci kendi sınıfını seçemez; sınıf atamasını yetkili kullanıcı yapar.
 - Öğrenci detayında sınav geçmişi, kişisel bilgiler ve veli bilgileri ayrı alanlarda gösterilir.
 - Öğrenci kendi kişisel/veli bilgilerini salt okunur görür; değişiklikleri yönetici yapar.
@@ -41,16 +43,20 @@ Parola sıfırlama bağlantısı tek kullanımlıktır ve bir saat geçerlidir. 
 
 ## 4. Veli hesabı ve öğrenci ilişkisi
 
-Öğrenci detayındaki **Veli Hesapları** bölümünde iki yöntem bulunur:
+Ana menüdeki **Veli Eşleştirme** sayfası yüzlerce öğrenci için aramalı ilişki yönetimi sunar. Öğrenci adı, e-posta, sınıf ve numara ile arama yapılabilir. Öğrenci detayındaki **Veli Hesapları** bölümünde de iki yöntem bulunur:
 
-1. **Yeni Veli Hesabı:** Ad, e-posta, ilk şifre, telefon, adres ve yakınlık girilerek hesap oluşturulur ve öğrenciye bağlanır.
-2. **Mevcut Veliyi Bağla:** Daha önce oluşturulmuş veli hesabı seçilen öğrenciyle ilişkilendirilir.
+1. **Yeni Veli Hesabı:** Ad, e-posta, ilk şifre, telefon, adres ve yakınlık eksiksiz girilerek hesap oluşturulur ve öğrenciye bağlanır.
+2. **Mevcut Veliyi Bağla:** Daha önce oluşturulmuş veli hesabı seçilen öğrenciyle ilişkilendirilir. Yakınlık değeri her iki yöntemde de **Anne / Baba / Diğer** listesinden seçilir.
 
-Aynı veli birden fazla öğrenciye bağlanabilir. **Bağlantıyı Kaldır** yalnız öğrenci-veli ilişkisini siler; veli hesabının kendisini otomatik silmez. Veli kendi panelinde yalnız bağlı öğrencilerin sınav özetini salt okunur görür.
+Aynı veli birden fazla öğrenciye bağlanabilir. Bağlı veli satırındaki **Düzenle** ile ad, e-posta, telefon, adres ve yakınlık güncellenir. **Bağlantıyı Kaldır** yalnız öğrenci-veli ilişkisini siler; veli hesabının kendisini otomatik silmez.
 
 Öğrenci kaydındaki eski tip veli iletişim alanları ile giriş yapabilen `parent` hesabı farklı amaçlara sahiptir: iletişim alanları okul kaydıdır; veli hesabı uygulamaya giriş ve takip içindir.
 
-**Yönetim > Kullanıcılar** ekranında bir kullanıcıyı düzenlerken **Sistem Rolü > Veli** seçilebilir. Veli rolü seçildiğinde aynı penceredeki **Bağlı Öğrenciler** listesinden en az bir öğrenci işaretlenir. Kaydetme işlemi kullanıcı rolünü ve `GuardianStudent` erişim bağlarını birlikte günceller. Rol daha sonra öğrenci, öğretmen veya yöneticiye çevrilirse eski veli bağları kaldırılır; böylece önceki öğrencilerin verilerine erişim devam etmez.
+**Yönetim > Kullanıcılar** ekranında **Sistem Rolü > Veli** seçilebilir. Hesap bilgileri burada kaydedilir; öğrenci bağları modal yerine ayrı **Veli Eşleştirme** sayfasında yönetilir. Rol daha sonra öğrenci, öğretmen veya yöneticiye çevrilirse eski veli bağları kaldırılır.
+
+Yeni bir kullanıcı kendi kaydını tamamladığında yöneticilere **Yeni Üye Kaydı** bildirimi gelir.
+
+Pasife alınan öğrenci giriş yapamaz; aktif öğrenci, sınıf ve veli eşleştirme listelerinde gösterilmez. Kayıt fiziksel olarak durduğu için eski sınav sonuçları ve sınıf ilişkisi raporlama/veri bütünlüğü amacıyla korunur.
 
 ## 5. Öğretmen yönetimi
 

@@ -36,10 +36,10 @@ import {
   RefreshCw,
   KeyRound
 } from "lucide-react";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { categoryApi, classApi, userApi, adminApi, parentApi, type Category } from "@/lib/api";
+import { categoryApi, classApi, userApi, adminApi, type Category } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Dialog, 
@@ -93,8 +93,6 @@ export default function AdminManagementPage() {
   const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
   const [isEditUserMode, setIsEditUserMode] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
-  const [selectedGuardianStudentIds, setSelectedGuardianStudentIds] = useState<string[]>([]);
-  const [editingOriginalRole, setEditingOriginalRole] = useState<string | null>(null);
   const [isDeleteUserOpen, setIsDeleteUserOpen] = useState(false);
   const [userRoleFilter, setUserRoleFilter] = useState("all");
 
@@ -113,18 +111,6 @@ export default function AdminManagementPage() {
     queryKey: ['users'],
     queryFn: () => userApi.getAllUsers(),
   });
-
-  const guardianStudentsQuery = useQuery({
-    queryKey: ['guardian-students', selectedUser?.id],
-    queryFn: () => parentApi.getParentStudents(selectedUser.id),
-    enabled: isUserDialogOpen && isEditUserMode && editingOriginalRole === 'parent' && selectedUser?.role === 'parent' && Boolean(selectedUser?.id),
-  });
-
-  useEffect(() => {
-    if (guardianStudentsQuery.data) {
-      setSelectedGuardianStudentIds(guardianStudentsQuery.data.students.map((link) => link.studentId));
-    }
-  }, [guardianStudentsQuery.data]);
 
   // Sub-tabs for Logs: 'users' | 'emails' | 'system'
   const [logSubTab, setLogSubTab] = useState("users");
@@ -253,7 +239,6 @@ export default function AdminManagementPage() {
   });
 
   const teachers = usersData?.users.filter(u => u.role === 'teacher') || [];
-  const students = usersData?.users.filter(u => u.role === 'student') || [];
   const classes = classesData?.classes || [];
   const logs = logsData?.logs || [];
   const emailLogs = emailLogsData?.emails || [];
@@ -265,9 +250,7 @@ export default function AdminManagementPage() {
   // Mutations - User Management
   const createUserMutation = useMutation({
     mutationFn: async (data: any) => {
-      return userApi.createUser(data.role === 'parent'
-        ? { ...data, guardianStudentIds: selectedGuardianStudentIds }
-        : data);
+      return userApi.createUser(data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
@@ -279,9 +262,7 @@ export default function AdminManagementPage() {
 
   const updateUserMutation = useMutation({
     mutationFn: async (data: any) => {
-      return userApi.updateUser(data.id, data.role === 'parent'
-        ? { ...data, guardianStudentIds: selectedGuardianStudentIds }
-        : data);
+      return userApi.updateUser(data.id, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
@@ -557,7 +538,7 @@ const deleteClassMutation = useMutation({
           <TabsContent value="users" className="mt-6 space-y-6">
             <div className="bg-card p-3 rounded-2xl border border-border flex flex-col md:flex-row justify-between items-center gap-4">
                <h2 className="text-xl font-black text-foreground">Kullanıcı Yönetimi</h2>
-               <Button onClick={() => { setIsEditUserMode(false); setEditingOriginalRole(null); setSelectedGuardianStudentIds([]); setSelectedUser({ name: "", email: "", role: "student", password: "password123" }); setIsUserDialogOpen(true); }} className="rounded-xl font-bold gap-2 bg-primary text-primary-foreground hover:opacity-90 transition-all">
+               <Button onClick={() => { setIsEditUserMode(false); setSelectedUser({ name: "", email: "", role: "student", password: "password123" }); setIsUserDialogOpen(true); }} className="rounded-xl font-bold gap-2 bg-primary text-primary-foreground hover:opacity-90 transition-all">
                  <UserPlus className="h-4 w-4" /> Yeni Kullanıcı Oluştur
                </Button>
             </div>
@@ -616,7 +597,7 @@ const deleteClassMutation = useMutation({
                           </TableCell>
                           <TableCell className="text-right px-6">
                             <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-indigo-600" onClick={() => { setEditingOriginalRole(u.role); setSelectedGuardianStudentIds([]); setSelectedUser(u); setIsEditUserMode(true); setIsUserDialogOpen(true); }}>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-indigo-600" onClick={() => { setSelectedUser(u); setIsEditUserMode(true); setIsUserDialogOpen(true); }}>
                                 <Edit2 className="h-4 w-4" />
                               </Button>
                               <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-red-500" onClick={() => { setSelectedUser(u); setIsDeleteUserOpen(true); }}>
@@ -1204,36 +1185,15 @@ const deleteClassMutation = useMutation({
 
             {selectedUser?.role === 'parent' && (
               <div className="space-y-3 rounded-2xl border border-violet-200 bg-violet-50/70 p-4 dark:border-violet-900/60 dark:bg-violet-950/20">
-                <div>
-                  <Label className="font-bold text-foreground">Bağlı Öğrenciler</Label>
-                  <p className="mt-1 text-xs text-muted-foreground">Veli yalnızca burada işaretlenen öğrencilerin sınav sonuçlarını kendi panelinde görebilir. Bu seçim, öğrenci kaydındaki iletişim amaçlı veli alanlarından ayrıdır.</p>
-                </div>
-                <div className="max-h-44 space-y-2 overflow-y-auto pr-1">
-                  {guardianStudentsQuery.isLoading && <p className="text-xs text-muted-foreground">Bağlantılar yükleniyor...</p>}
-                  {!guardianStudentsQuery.isLoading && students.length === 0 && <p className="text-xs text-muted-foreground">Bağlanabilecek öğrenci hesabı bulunamadı.</p>}
-                  {students.map((student) => {
-                    const checked = selectedGuardianStudentIds.includes(student.id);
-                    return (
-                      <label key={student.id} className="flex cursor-pointer items-center gap-3 rounded-xl border bg-card p-3 text-sm">
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={(event) => setSelectedGuardianStudentIds((current) => event.target.checked
-                            ? [...new Set([...current, student.id])]
-                            : current.filter((id) => id !== student.id))}
-                          className="h-4 w-4 rounded border-input text-violet-600"
-                        />
-                        <span className="min-w-0"><strong>{student.name}</strong><span className="block truncate text-xs text-muted-foreground">{student.email}{student.class?.name ? ` · ${student.class.name}` : ''}</span></span>
-                      </label>
-                    );
-                  })}
-                </div>
-                {selectedGuardianStudentIds.length === 0 && <p className="text-xs font-medium text-amber-700 dark:text-amber-400">Veli hesabını kaydetmek için en az bir öğrenci seçin.</p>}
+                <div className="grid gap-3"><div className="space-y-2"><Label className="font-bold">Telefon *</Label><Input value={selectedUser?.phoneNumber || ""} onChange={(event) => setSelectedUser({ ...selectedUser, phoneNumber: event.target.value })} /></div><div className="space-y-2"><Label className="font-bold">Adres *</Label><Input value={selectedUser?.address || ""} onChange={(event) => setSelectedUser({ ...selectedUser, address: event.target.value })} /></div></div>
+                <Label className="font-bold text-foreground">Öğrenci Eşleştirmeleri</Label>
+                <p className="text-xs text-muted-foreground">Çok sayıda öğrencide hızlı arama ve güvenli ilişki yönetimi için eşleştirmeler ayrı sayfadan yapılır.</p>
+                <Button type="button" variant="outline" className="w-full" onClick={() => { setIsUserDialogOpen(false); setLocation('/guardian-management'); }}>Veli-Öğrenci Eşleştirme Sayfasını Aç</Button>
               </div>
             )}
           </div>
           <DialogFooter>
-            <Button disabled={(selectedUser?.role === 'parent' && selectedGuardianStudentIds.length === 0) || createUserMutation.isPending || updateUserMutation.isPending} onClick={() => isEditUserMode ? updateUserMutation.mutate(selectedUser) : createUserMutation.mutate(selectedUser)} className="rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700 w-full shadow-lg dark:shadow-none">
+            <Button disabled={(selectedUser?.role === 'parent' && ((selectedUser?.phoneNumber || '').trim().length < 7 || (selectedUser?.address || '').trim().length < 5)) || createUserMutation.isPending || updateUserMutation.isPending} onClick={() => isEditUserMode ? updateUserMutation.mutate(selectedUser) : createUserMutation.mutate(selectedUser)} className="rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700 w-full shadow-lg dark:shadow-none">
               {isEditUserMode ? "Değişiklikleri Kaydet" : "Kullanıcıyı Kaydet"}
             </Button>
           </DialogFooter>

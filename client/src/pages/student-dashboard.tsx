@@ -99,9 +99,9 @@ export default function StudentDashboard() {
                   <Badge variant="outline" className="text-sm font-medium border-primary/20 bg-background/50 backdrop-blur-sm">
                     Sınıf: {className}
                   </Badge>
-                  {user?.classNo && (
+                  {user?.studentNo && (
                     <Badge variant="outline" className="text-sm font-medium border-primary/20 bg-background/50 backdrop-blur-sm">
-                      Sınıf No: {user.classNo}
+                      Sınıf No: {user.studentNo}
                     </Badge>
                   )}
                 </div>

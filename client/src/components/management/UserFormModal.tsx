@@ -52,7 +52,6 @@ export function UserFormModal({
     phoneNumber: "",
     address: "",
     password: "", 
-    classNo: "", 
     classId: "", 
     classIds: [] as string[],
     assignedCategoryIds: [] as string[],
@@ -83,7 +82,6 @@ export function UserFormModal({
         phoneNumber: initialData.phoneNumber || "",
         address: initialData.address || "",
         password: "", 
-        classNo: initialData.classNo || "",
         classId: initialData.classId || "",
         classIds: initialData.managedClasses?.map((c) => c.id) || (initialData as any).classIds || [],
         assignedCategoryIds: initialData.assignedCategories?.map(c => c.id) || (initialData as any).assignedCategoryIds || [],
@@ -100,7 +98,6 @@ export function UserFormModal({
         phoneNumber: "",
         address: "",
         password: "", 
-        classNo: "", 
         classId: "", 
         classIds: [],
         assignedCategoryIds: [],
@@ -135,6 +132,11 @@ export function UserFormModal({
   const allClasses = classesData?.classes || [];
   const showTeacherProfile = role !== 'teacher' || mode === 'create' || teacherEditScope !== 'assignments';
   const showTeacherAssignments = role !== 'teacher' || mode === 'create' || teacherEditScope !== 'profile';
+  const hasParentContact = [formData.parentName, formData.parentRelation, formData.parentPhone, formData.parentEmail, formData.parentAddress].some((value) => value.trim());
+  const parentContactComplete = !hasParentContact || (
+    formData.parentName.trim().length >= 2 && ["Anne", "Baba", "Diğer"].includes(formData.parentRelation) &&
+    formData.parentPhone.trim().length >= 7 && /.+@.+\..+/.test(formData.parentEmail) && formData.parentAddress.trim().length >= 5
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -170,6 +172,8 @@ export function UserFormModal({
             };
           }
           if (submissionData.classId === "none") submissionData.classId = "";
+          delete submissionData.classNo;
+          delete submissionData.studentNo;
           onSubmit(submissionData);
         }} className="p-6 space-y-6 bg-white dark:bg-slate-900 flex-1 overflow-y-auto min-h-0">
           {showTeacherProfile && <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -211,13 +215,8 @@ export function UserFormModal({
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-widest opacity-60">Sınıf No</Label>
-                  <Input 
-                    value={formData.classNo} 
-                    onChange={e => setFormData({ ...formData, classNo: e.target.value })} 
-                    placeholder="Örn: 1234"
-                    className="rounded-xl"
-                  />
+                  <Label className="text-xs font-black uppercase tracking-widest opacity-60">Sınıf Numarası</Label>
+                  <Input value={initialData?.studentNo || "Sınıfa atanınca otomatik verilir"} disabled className="rounded-xl" />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-xs font-black uppercase tracking-widest opacity-60">Kayıtlı Sınıf</Label>
@@ -233,6 +232,10 @@ export function UserFormModal({
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="space-y-2"><Label className="text-xs font-black uppercase tracking-widest opacity-60">Öğrenci Telefonu</Label><Input value={formData.phoneNumber} onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })} className="rounded-xl" /></div>
+                <div className="space-y-2"><Label className="text-xs font-black uppercase tracking-widest opacity-60">Öğrenci Adresi</Label><Input value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} className="rounded-xl" /></div>
               </div>
               
               <div className="bg-amber-50 border border-amber-100 p-4 rounded-2xl flex gap-3 items-start">
@@ -262,12 +265,7 @@ export function UserFormModal({
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-[11px] font-bold uppercase text-muted-foreground">Yakınlık Derecesi</Label>
-                    <Input
-                      value={formData.parentRelation}
-                      onChange={e => setFormData({ ...formData, parentRelation: e.target.value })}
-                      placeholder="Örn: Anne / Baba / Vasi"
-                      className="rounded-xl"
-                    />
+                    <Select value={formData.parentRelation || "none"} onValueChange={(value) => setFormData({ ...formData, parentRelation: value === "none" ? "" : value })}><SelectTrigger className="rounded-xl"><SelectValue placeholder="Yakınlık seçin" /></SelectTrigger><SelectContent><SelectItem value="none">Belirtilmemiş</SelectItem><SelectItem value="Anne">Anne</SelectItem><SelectItem value="Baba">Baba</SelectItem><SelectItem value="Diğer">Diğer</SelectItem></SelectContent></Select>
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-[11px] font-bold uppercase text-muted-foreground">Veli Telefonu</Label>
@@ -405,7 +403,7 @@ export function UserFormModal({
           <Button 
             type="submit"
             form="user-form"
-            disabled={isPending || !formData.name || !formData.email || (mode === 'create' && !formData.password)}
+            disabled={isPending || !formData.name || !formData.email || (mode === 'create' && !formData.password) || !parentContactComplete}
             className="rounded-xl font-black px-8 shadow-xl shadow-indigo-500/20 bg-indigo-600 hover:bg-indigo-700 text-white"
           >
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

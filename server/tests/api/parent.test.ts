@@ -14,7 +14,11 @@ vi.mock('../../storage', () => ({
     getResultsByStudent: vi.fn(),
     getAllQuizzes: vi.fn(),
     getAllUsers: vi.fn(),
+    getResult: vi.fn(),
+    getQuiz: vi.fn(),
+    getQuestionsByQuiz: vi.fn(),
     createUser: vi.fn(),
+    updateUser: vi.fn(),
     linkGuardianStudent: vi.fn(),
     replaceGuardianStudents: vi.fn(),
     unlinkGuardianStudent: vi.fn(),
@@ -54,6 +58,14 @@ describe('Parent API', () => {
     expect(storage.getResultsByStudent).not.toHaveBeenCalled();
   });
 
+  it('blocks a parent from opening an unlinked exam result detail', async () => {
+    vi.mocked(storage.getResult).mockResolvedValue({ id: 'result-1', studentId, quizId: 'quiz-1', status: 'completed' } as any);
+    vi.mocked(storage.getGuardianStudents).mockResolvedValue([]);
+    const response = await request(createApp({ id: parentId, role: 'parent' })).get('/api/parents/results/result-1');
+    expect(response.status).toBe(403);
+    expect(storage.getQuestionsByQuiz).not.toHaveBeenCalled();
+  });
+
   it('creates a parent account with a hashed password and links the student', async () => {
     const admin = { id: adminId, role: 'admin' };
     const student = { id: studentId, role: 'student' };
@@ -65,7 +77,7 @@ describe('Parent API', () => {
     vi.mocked(storage.createLog).mockResolvedValue({} as any);
 
     const response = await request(app).post('/api/parents').send({
-      name: 'Ayşe Veli', email: 'veli@example.com', password: 'Parola123', studentId, relation: 'Anne',
+      name: 'Ayşe Veli', email: 'veli@example.com', password: 'Parola123', phoneNumber: '05550000000', address: 'Test adresi', studentId, relation: 'Anne',
     });
     expect(response.status).toBe(201);
     const created = vi.mocked(storage.createUser).mock.calls[0][0] as any;

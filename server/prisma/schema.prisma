@@ -22,6 +22,8 @@ model User {
   address     String?
   studentNo   Int? // Student number (auto-incremented per class in code)
   classNo     String? // Legacy/Optional student class code
+  isActive    Boolean @default(true)
+  deactivatedAt DateTime?
 
   // Veli (Parent) Bilgileri
   parentName     String?
@@ -71,6 +73,10 @@ model User {
   guardianLinks     GuardianStudent[]  @relation("GuardianUser")
   studentGuardians  GuardianStudent[]  @relation("GuardianStudent")
   passwordResetRequests PasswordResetRequest[]
+
+  @@unique([classId, studentNo])
+  @@index([role, isActive])
+  @@index([classId, isActive])
 }
 
 model GuardianStudent {

@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { BookOpenCheck, Clock3, GraduationCap, ShieldCheck, Trophy, Users } from "lucide-react";
+import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
 
 export default function ParentDashboardPage() {
   const [studentId, setStudentId] = useState("");
@@ -61,7 +63,7 @@ export default function ParentDashboardPage() {
               <Metric icon={Clock3} label="Bekleyen Sınav" value={pending.length} />
             </div>
             <Card>
-              <CardHeader><CardTitle className="text-lg">Sınav Sonuçları</CardTitle></CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between"><CardTitle className="text-lg">Sınav Sonuçları</CardTitle><Button asChild size="sm" variant="outline"><Link href="/parent/results">Tümünü ve detayları gör</Link></Button></CardHeader>
               <CardContent className="overflow-x-auto p-0">
                 <Table><TableHeader><TableRow><TableHead>Sınav</TableHead><TableHead>Ders</TableHead><TableHead>Puan</TableHead><TableHead>Tarih</TableHead></TableRow></TableHeader><TableBody>
                   {completed.length === 0 ? <TableRow><TableCell colSpan={4} className="h-24 text-center text-muted-foreground">Tamamlanmış sınav bulunmuyor.</TableCell></TableRow> : completed.map((result) => <TableRow key={result.id}><TableCell className="font-semibold">{result.quiz?.title || result.quizTitle || "Sınav"}</TableCell><TableCell>{typeof result.quiz?.category === "string" ? result.quiz.category : (result.quiz?.category as any)?.name || "-"}</TableCell><TableCell><Badge variant="secondary">%{result.score ?? 0}</Badge></TableCell><TableCell>{result.submittedAt ? new Date(result.submittedAt).toLocaleDateString("tr-TR") : "-"}</TableCell></TableRow>)}

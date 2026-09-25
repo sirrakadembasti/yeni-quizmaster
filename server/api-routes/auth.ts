@@ -6,6 +6,7 @@ import { logger } from "../utils/logger";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { hashResetToken, issuePasswordReset } from "../services/password-reset";
+import { getIO } from "../socket";
 
 const router: Router = Router();
 
@@ -69,6 +70,23 @@ router.post("/register", async (req: Request, res: Response) => {
     
     req.session.userId = user.id;
     await storage.createLog(user.id, "REGISTER", `User registered as student`);
+    try {
+      const admins = (await storage.getAllUsers()).filter((candidate) => candidate.role === "admin");
+      const notifications = await Promise.all(admins.map((admin) => storage.createNotification({
+        userId: admin.id,
+        title: "Yeni Üye Kaydı",
+        message: `${user.name} (${user.email}) öğrenci hesabı ile kayıt oldu.`,
+        type: "registration",
+      })));
+      try {
+        const io = getIO();
+        admins.forEach((admin, index) => io.to(`user_${admin.id}`).emit("notification", notifications[index]));
+      } catch (socketError) {
+        logger.warn({ err: socketError }, "[Auth] Kayıt bildirimi saklandı; anlık bağlantı kullanılamadı.");
+      }
+    } catch (notificationError) {
+      logger.error({ err: notificationError }, "[Auth] Yeni kayıt admin bildirimi oluşturulamadı.");
+    }
     const { password: _, ...userWithoutPassword } = user;
     res.json({ user: userWithoutPassword });
   } catch (error) {
@@ -86,7 +104,7 @@ router.post("/login", async (req: Request, res: Response) => {
 
     const { email, password } = validation.data;
     const user = await storage.getUserByEmail(email.trim());
-    if (!user) {
+    if (!user || (user as any).isActive === false) {
       return res.status(401).json({ message: "Geçersiz e-posta veya şifre." });
     }
     

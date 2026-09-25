@@ -156,6 +156,8 @@ export interface User {
   createdAt: string;
   classNo?: string | null;
   studentNo?: number | null;
+  isActive?: boolean;
+  deactivatedAt?: string | null;
   phoneNumber?: string | null;
   address?: string | null;
   parentName?: string | null;
@@ -524,6 +526,11 @@ export const parentApi = {
     return handleResponse<{ student: User; results: StudentResult[]; quizzes: Array<Quiz & { completed: boolean }> }>(response);
   },
 
+  async getResult(resultId: string) {
+    const response = await apiFetch(`${API_BASE}/parents/results/${resultId}`, { credentials: 'include' });
+    return handleResponse<StudentResultDetail>(response);
+  },
+
   async getParents() {
     const response = await apiFetch(`${API_BASE}/parents`, { credentials: 'include' });
     return handleResponse<{ parents: User[] }>(response);
@@ -547,7 +554,7 @@ export const parentApi = {
     return handleResponse<{ students: GuardianLink[] }>(response);
   },
 
-  async createParent(data: { name: string; email: string; password: string; phoneNumber?: string; address?: string; studentId: string; relation?: string }) {
+  async createParent(data: { name: string; email: string; password: string; phoneNumber: string; address: string; studentId: string; relation: 'Anne' | 'Baba' | 'Diğer' }) {
     const response = await apiFetch(`${API_BASE}/parents`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data), credentials: 'include',
@@ -555,7 +562,7 @@ export const parentApi = {
     return handleResponse<{ parent: User }>(response);
   },
 
-  async linkParent(data: { guardianId: string; studentId: string; relation?: string }) {
+  async linkParent(data: { guardianId: string; studentId: string; relation: 'Anne' | 'Baba' | 'Diğer' }) {
     const response = await apiFetch(`${API_BASE}/parents/link`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data), credentials: 'include',
@@ -568,6 +575,20 @@ export const parentApi = {
       method: 'DELETE', credentials: 'include',
     });
     return handleResponse<{ message: string }>(response);
+  },
+
+  async updateParent(guardianId: string, data: { name: string; email: string; phoneNumber: string; address: string }) {
+    const response = await apiFetch(`${API_BASE}/parents/guardian/${guardianId}`, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), credentials: 'include',
+    });
+    return handleResponse<{ guardian: User }>(response);
+  },
+
+  async updateRelation(guardianId: string, studentId: string, relation: 'Anne' | 'Baba' | 'Diğer') {
+    const response = await apiFetch(`${API_BASE}/parents/link/${guardianId}/${studentId}`, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ relation }), credentials: 'include',
+    });
+    return handleResponse<{ link: GuardianLink }>(response);
   },
 };
 

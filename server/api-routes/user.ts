@@ -5,13 +5,25 @@ import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 
 const router: Router = Router();
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const PARENT_RELATIONS = new Set(["Anne", "Baba", "Diğer"]);
+
+function validParentContact(data: Record<string, unknown>) {
+  const fields = [data.parentName, data.parentRelation, data.parentPhone, data.parentEmail, data.parentAddress];
+  if (!fields.some((value) => typeof value === "string" && value.trim())) return true;
+  return typeof data.parentName === "string" && data.parentName.trim().length >= 2
+    && typeof data.parentRelation === "string" && PARENT_RELATIONS.has(data.parentRelation)
+    && typeof data.parentPhone === "string" && data.parentPhone.trim().length >= 7
+    && typeof data.parentEmail === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.parentEmail.trim())
+    && typeof data.parentAddress === "string" && data.parentAddress.trim().length >= 5;
+}
 
 async function validateGuardianStudentIds(input: unknown) {
-  if (!Array.isArray(input) || input.length < 1 || input.length > 1000) return null;
+  if (input === undefined) return [];
+  if (!Array.isArray(input) || input.length > 1000) return null;
   const ids = [...new Set(input)];
   if (ids.some((id) => typeof id !== 'string' || !UUID_PATTERN.test(id))) return null;
   const users = await Promise.all(ids.map((id) => storage.getUser(id)));
-  if (users.some((user) => !user || user.role !== 'student')) return null;
+  if (users.some((user) => !user || user.role !== 'student' || (user as any).isActive === false)) return null;
   return ids as string[];
 }
 
@@ -104,9 +116,11 @@ router.get("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
 router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
     const {
-      name, email, password, role, classNo, classId, studentNo, phoneNumber, address,
+      name, email, password, role, classId, phoneNumber, address,
       parentName, parentRelation, parentPhone, parentEmail, parentAddress
     } = req.body;
+
+    if (!validParentContact(req.body)) return res.status(400).json({ message: "Veli iletişim kaydı girilecekse ad, yakınlık, telefon, e-posta ve adres eksiksiz olmalıdır." });
 
     if (typeof name !== "string" || name.trim().length < 2 || typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) || typeof password !== "string" || password.length < 6) {
       return res.status(400).json({ message: "Ad, geçerli e-posta ve en az 6 karakterli parola gereklidir." });
@@ -118,11 +132,14 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
     if (!['admin', 'teacher', 'student', 'parent'].includes(requestedRole)) {
       return res.status(400).json({ message: "Geçersiz rol." });
     }
+    if (requestedRole === 'parent' && (typeof phoneNumber !== 'string' || phoneNumber.trim().length < 7 || typeof address !== 'string' || address.trim().length < 5)) {
+      return res.status(400).json({ message: "Veli hesabı için telefon ve adres zorunludur." });
+    }
     const guardianStudentIds = requestedRole === 'parent'
       ? await validateGuardianStudentIds(req.body.guardianStudentIds)
       : undefined;
     if (requestedRole === 'parent' && !guardianStudentIds) {
-      return res.status(400).json({ message: "Veli hesabı için en az bir geçerli öğrenci seçilmelidir." });
+      return res.status(400).json({ message: "Geçersiz öğrenci seçimi." });
     }
 
     if (req.user!.role === 'teacher') {
@@ -145,13 +162,11 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const userPayload: any = {
-      name: name.trim(), email: normalizedEmail, password: hashedPassword, role: requestedRole, classNo, classId, studentNo, phoneNumber, address
+      name: name.trim(), email: normalizedEmail, password: hashedPassword, role: requestedRole, classId, phoneNumber, address
     };
     if (guardianStudentIds) userPayload.guardianStudentIds = guardianStudentIds;
     if (requestedRole !== 'student') {
-      userPayload.classNo = null;
       userPayload.classId = null;
-      userPayload.studentNo = null;
     }
 
     // Only admin can set parent information
@@ -241,7 +256,7 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
       delete filteredBody.parentAddress;
     } else if (isTeacher) {
       // Teacher updating a student
-      const allowedFieldsForTeacherOnStudent = ['name', 'email', 'phoneNumber', 'address', 'password', 'classId', 'classNo', 'studentNo'];
+      const allowedFieldsForTeacherOnStudent = ['name', 'email', 'phoneNumber', 'address', 'password', 'classId'];
       for (const field of allowedFieldsForTeacherOnStudent) {
         if (req.body[field] !== undefined) {
           filteredBody[field] = req.body[field];
@@ -254,13 +269,19 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
       delete filteredBody.parentAddress;
     }
 
+    // Sınıf numarası yalnızca sunucu tarafından atanır.
+    delete filteredBody.studentNo;
+    delete filteredBody.classNo;
+    delete filteredBody.isActive;
+    delete filteredBody.deactivatedAt;
+
     if (isAdmin && req.body.guardianStudentIds !== undefined) {
       if ((filteredBody.role || targetUser.role) !== 'parent') {
         delete filteredBody.guardianStudentIds;
       } else {
         const guardianStudentIds = await validateGuardianStudentIds(req.body.guardianStudentIds);
         if (!guardianStudentIds) {
-          return res.status(400).json({ message: "Veli hesabı için en az bir geçerli öğrenci seçilmelidir." });
+          return res.status(400).json({ message: "Geçersiz öğrenci seçimi." });
         }
         filteredBody.guardianStudentIds = guardianStudentIds;
       }
@@ -275,7 +296,7 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
     }
 
     const nullableProfileFields = [
-      "classId", "classNo", "studentNo", "phoneNumber", "address",
+      "classId", "phoneNumber", "address",
       "parentName", "parentRelation", "parentPhone", "parentEmail", "parentAddress",
     ];
     for (const field of nullableProfileFields) {
@@ -286,6 +307,11 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
     }
     if (filteredBody.parentEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(filteredBody.parentEmail)) {
       return res.status(400).json({ message: "Geçerli bir veli e-posta adresi giriniz." });
+    }
+    const mergedParentContact = { ...targetUser, ...filteredBody } as any;
+    if (!validParentContact(mergedParentContact)) return res.status(400).json({ message: "Veli iletişim kaydı girilecekse ad, yakınlık, telefon, e-posta ve adres eksiksiz olmalıdır." });
+    if ((filteredBody.role || targetUser.role) === 'parent' && (typeof mergedParentContact.phoneNumber !== 'string' || mergedParentContact.phoneNumber.trim().length < 7 || typeof mergedParentContact.address !== 'string' || mergedParentContact.address.trim().length < 5)) {
+      return res.status(400).json({ message: "Veli hesabı için telefon ve adres zorunludur." });
     }
     if (filteredBody.password) {
       filteredBody.password = await bcrypt.hash(filteredBody.password, 10);
@@ -308,7 +334,14 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
 });
 router.delete("/:id", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
   try {
-    await storage.deleteUser(req.params.id);
+    const target = await storage.getUser(req.params.id);
+    if (!target) return res.status(404).json({ message: "Kullanıcı bulunamadı." });
+    if (target.role === "student") {
+      await storage.deactivateStudent(target.id);
+      await storage.createLog(req.user!.id, "DEACTIVATE_STUDENT", `Öğrenci pasife alındı: ${target.id}`);
+      return res.json({ message: "Öğrenci pasife alındı; sınıf ve sınav geçmişi korundu." });
+    }
+    await storage.deleteUser(target.id);
     res.json({ message: "Kullanıcı silindi." });
   } catch (error) {
     res.status(500).json({ message: "Kullanıcı silinemedi." });

@@ -22,7 +22,8 @@ export const requireAuth = async (req: AuthRequest, res: Response, next: NextFun
       return res.status(401).json({ message: "Oturum açmanız gerekiyor." });
     }
     const user = await storage.getUser(req.session.userId);
-    if (!user) {
+    if (!user || (user as any).isActive === false) {
+      if ((user as any)?.isActive === false) req.session.destroy(() => undefined);
       return res.status(401).json({ message: "Kullanıcı bulunamadı." });
     }
     req.user = user;

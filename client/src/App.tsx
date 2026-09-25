@@ -40,6 +40,8 @@ import StudentSurveysPage from "@/pages/student-surveys";
 import TakeSurveyPage from "@/pages/take-survey";
 import SurveyResultsPage from "@/pages/survey-results";
 import ParentDashboardPage from "@/pages/parent-dashboard";
+import ParentResultsPage from "@/pages/parent-results";
+import GuardianManagementPage from "@/pages/guardian-management";
 import ServerSetupPage from "@/pages/server-setup";
 
 // =============================================================================
@@ -93,6 +95,7 @@ const ROUTES: RouteConfig[] = [
 
   // Parent only — linked students are read-only and enforced again by the API.
   { path: '/parent/dashboard', component: ParentDashboardPage, roles: ['parent'] },
+  { path: '/parent/results', component: ParentResultsPage, roles: ['parent'] },
 
   // ── Student only ─────────────────────────────────────────────────────────────
   { path: '/student/dashboard', component: StudentDashboard,   roles: ['student'] },
@@ -121,6 +124,7 @@ const ROUTES: RouteConfig[] = [
   { path: '/management',        component: AdminManagementPage,  roles: ['admin'] },
   { path: '/archive',           component: ArchivePage,          roles: ['admin'] },
   { path: '/server-setup',      component: ServerSetupPage,      roles: ['admin'] },
+  { path: '/guardian-management', component: GuardianManagementPage, roles: ['admin'] },
 ];
 
 // =============================================================================
