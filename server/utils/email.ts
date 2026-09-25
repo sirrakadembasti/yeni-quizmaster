@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import { storage } from "../storage";
 import { logger } from "./logger";
+import { getPublicAppUrl } from "./deployment-config";
 
 // Yalnızca Gmail SMTP kullanılır. EMAIL_HOST/PORT/SECURE gibi alternatif SMTP
 // değişkenleri bilinçli olarak yok sayılır; böylece yanlışlıkla başka bir sunucuya
@@ -159,7 +160,7 @@ export const stopEmailWorker = () => {
  * Send reset password email via Outbox queue
  */
 export const sendResetPasswordEmail = async (email: string, token: string) => {
-  const resetUrl = `${process.env.FRONTEND_URL || "http://localhost:5173"}/reset-password?token=${token}`;
+  const resetUrl = `${getPublicAppUrl()}/reset-password?token=${token}`;
 
   const html = `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 25px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; color: #1e293b;">

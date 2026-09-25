@@ -6,6 +6,8 @@ Bu kılavuz `parent` rolündeki kullanıcıların kendileriyle ilişkilendirilmi
 
 Veli hesabını okul yöneticisi oluşturur. Yönetici ad, e-posta, ilk şifre, telefon, adres ve öğrenciyle yakınlık bilgilerini kaydeder; ardından hesabı bir veya daha fazla öğrenciyle ilişkilendirir.
 
+Yönetici bu işlemi iki yerden yapabilir: öğrenci detayındaki **Giriş Yapabilen Veli Hesapları** alanından hesap oluşturup bağlayabilir veya **Yönetim > Kullanıcılar** ekranında kullanıcı rolünü **Veli** yaparak **Bağlı Öğrenciler** listesini seçebilir. Her iki yol da aynı güvenli veli–öğrenci ilişki tablosunu kullanır.
+
 Öğrencinin kayıtlarında yazan veli e-postası tek başına giriş hesabı oluşturmaz. Uygulamaya giriş için ayrıca `parent` rolündeki hesabın oluşturulmuş ve öğrenciyle bağlanmış olması gerekir.
 
 ## 2. Giriş ve şifre

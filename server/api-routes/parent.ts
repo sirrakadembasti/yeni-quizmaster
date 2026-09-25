@@ -22,6 +22,10 @@ const linkSchema = z.object({
   relation: z.string().trim().max(50).optional(),
 });
 
+const guardianStudentsSchema = z.object({
+  studentIds: z.array(z.string().uuid()).max(1000).transform((ids) => [...new Set(ids)]),
+});
+
 async function isLinked(guardianId: string, studentId: string) {
   return (await storage.getGuardianStudents(guardianId)).some((link) => link.studentId === studentId);
 }
@@ -60,6 +64,26 @@ router.get("/", requireAuth, requireRole(["admin"]), async (_req: AuthRequest, r
 
 router.get("/student/:studentId", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
   res.json({ guardians: await storage.getStudentGuardians(req.params.studentId) });
+});
+
+router.get("/guardian/:guardianId/students", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+  const guardian = await storage.getUser(req.params.guardianId);
+  if (!guardian || guardian.role !== "parent") return res.status(404).json({ message: "Veli hesabı bulunamadı." });
+  res.json({ students: await storage.getGuardianStudents(guardian.id) });
+});
+
+router.put("/guardian/:guardianId/students", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+  const parsed = guardianStudentsSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ message: "Geçerli öğrenci seçimleri gönderiniz." });
+  const guardian = await storage.getUser(req.params.guardianId);
+  if (!guardian || guardian.role !== "parent") return res.status(404).json({ message: "Veli hesabı bulunamadı." });
+  const students = await Promise.all(parsed.data.studentIds.map((studentId) => storage.getUser(studentId)));
+  if (students.some((student) => !student || student.role !== "student")) {
+    return res.status(400).json({ message: "Seçimlerde geçersiz veya öğrenci olmayan bir hesap var." });
+  }
+  const links = await storage.replaceGuardianStudents(guardian.id, parsed.data.studentIds);
+  await storage.createLog(req.user!.id, "SYNC_PARENT_STUDENTS", `Veli-öğrenci bağları güncellendi: ${guardian.id} (${parsed.data.studentIds.length} öğrenci)`);
+  res.json({ students: links });
 });
 
 router.post("/", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {

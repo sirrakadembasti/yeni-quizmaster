@@ -89,6 +89,63 @@ async function apiFetch(url: string, options: RequestInit = {}) {
   return response;
 }
 
+export interface DeploymentConfig {
+  mode: 'subdomain' | 'subpath';
+  publicUrl: string;
+  basePath: string;
+  allowedOrigins: string[];
+  trustProxyHops: number;
+  retention: {
+    enabled: boolean;
+    actionLogDays: number;
+    readNotificationDays: number;
+    emailLogDays: number;
+    passwordResetDays: number;
+  };
+}
+
+export interface DeploymentStatus {
+  config: DeploymentConfig;
+  source: 'web-profile' | 'environment';
+  restartRequiredForSavedChanges: boolean;
+  detected: Record<string, string | boolean | null>;
+  checks: {
+    databaseReady: boolean;
+    uploadsWritable: boolean;
+    sessionSecretConfigured: boolean;
+    productionMode: boolean;
+    httpsDetected: boolean;
+    email: { host: string; port: number; secure: boolean; fromEmail: string; fromName: string; authConfigured: boolean; provider: string };
+  };
+  secrets: Record<string, 'configured' | 'missing'>;
+  artifacts: { envText: string; nginxText: string; buildCommand: string; restartRequired: boolean };
+}
+
+export const deploymentApi = {
+  async getStatus(): Promise<DeploymentStatus> {
+    const response = await apiFetch(`${API_BASE}/admin/deployment/status`, { credentials: 'include' });
+    return handleResponse<DeploymentStatus>(response);
+  },
+  async saveConfiguration(config: DeploymentConfig) {
+    const response = await apiFetch(`${API_BASE}/admin/deployment/configuration`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(config),
+    });
+    return handleResponse<{ message: string; config: DeploymentConfig; artifacts: DeploymentStatus['artifacts']; restartRequired: boolean }>(response);
+  },
+  async runRetention() {
+    const response = await apiFetch(`${API_BASE}/admin/deployment/retention/run`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ confirm: true }),
+    });
+    return handleResponse<{ message: string; result: Record<string, number> }>(response);
+  },
+};
+
 export interface User {
   id: string;
   name: string;
@@ -385,7 +442,7 @@ export const userApi = {
     return handleResponse<{ user: User }>(response);
   },
 
-  async createUser(data: Partial<User> & { password?: string }) {
+  async createUser(data: Partial<User> & { password?: string; guardianStudentIds?: string[] }) {
     const response = await apiFetch(`${API_BASE}/users`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -395,7 +452,7 @@ export const userApi = {
     return handleResponse<{ user: User }>(response);
   },
 
-  async updateUser(userId: string, data: Partial<User> & { password?: string }) {
+  async updateUser(userId: string, data: Partial<User> & { password?: string; guardianStudentIds?: string[] }) {
     const response = await apiFetch(`${API_BASE}/users/${userId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -448,6 +505,7 @@ export interface GuardianLink {
   studentId: string;
   relation?: string | null;
   guardian?: User;
+  student?: User;
 }
 
 export interface ParentStudent extends User {
@@ -473,6 +531,19 @@ export const parentApi = {
   async getStudentGuardians(studentId: string) {
     const response = await apiFetch(`${API_BASE}/parents/student/${studentId}`, { credentials: 'include' });
     return handleResponse<{ guardians: GuardianLink[] }>(response);
+  },
+
+  async getParentStudents(guardianId: string) {
+    const response = await apiFetch(`${API_BASE}/parents/guardian/${guardianId}/students`, { credentials: 'include' });
+    return handleResponse<{ students: GuardianLink[] }>(response);
+  },
+
+  async syncParentStudents(guardianId: string, studentIds: string[]) {
+    const response = await apiFetch(`${API_BASE}/parents/guardian/${guardianId}/students`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ studentIds }), credentials: 'include',
+    });
+    return handleResponse<{ students: GuardianLink[] }>(response);
   },
 
   async createParent(data: { name: string; email: string; password: string; phoneNumber?: string; address?: string; studentId: string; relation?: string }) {

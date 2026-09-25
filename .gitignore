@@ -22,6 +22,10 @@ client/.env
 /server/prisma/dev.db-journal
 /server/data/*.db
 /server/data/*.db-journal
+/server/data/deployment-config.json
+/server/data/deployment-config.json.tmp
+/server/backups/*
+!/server/backups/README.md
 
 # File Uploads
 /server/uploads/*
@@ -60,5 +64,4 @@ graphify-out/*
 .agents/
 *.exe
 tools/mailpit/*.exe
-
 

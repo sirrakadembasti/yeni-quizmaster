@@ -269,8 +269,8 @@ export default function StudentResultsPage() {
               <Users className="h-4 w-4" />
             </div>
             <div>
-              <CardTitle className="text-base font-black">Veli Bilgileri</CardTitle>
-              <p className="text-[11px] text-muted-foreground font-medium">Yalnızca yöneticilere açık veli iletişim detayları.</p>
+              <CardTitle className="text-base font-black">Veli İletişim Kaydı</CardTitle>
+              <p className="text-[11px] text-muted-foreground font-medium">Okulun iletişim kaydıdır; uygulamaya giriş yetkisi vermez. Giriş hesabı aşağıdaki Veli Hesapları alanından bağlanır.</p>
             </div>
           </div>
           {role === 'admin' && (
@@ -280,7 +280,7 @@ export default function StudentResultsPage() {
               className="ml-auto rounded-xl gap-2 font-bold"
               onClick={() => setIsEditOpen(true)}
             >
-              <Pencil className="h-3.5 w-3.5" /> Veli Bilgilerini Düzenle
+              <Pencil className="h-3.5 w-3.5" /> İletişim Kaydını Düzenle
             </Button>
           )}
         </CardHeader>

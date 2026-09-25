@@ -1,6 +1,7 @@
 import { Server as SocketIOServer } from "socket.io";
 import { type Server as HTTPServer } from "http";
 import type { RequestHandler } from "express";
+import { getEffectiveDeploymentConfig } from "./utils/deployment-config";
 
 let io: SocketIOServer;
 
@@ -12,9 +13,10 @@ let io: SocketIOServer;
  *   Böylece joinUserRoom olayında bağlanan kullanıcının session'daki userId'si doğrulanabilir.
  */
 export function setupSocket(httpServer: HTTPServer, sessionMiddleware: RequestHandler) {
+  const deploymentConfig = getEffectiveDeploymentConfig();
   io = new SocketIOServer(httpServer, {
     cors: {
-      origin: process.env.ALLOWED_ORIGINS?.split(",") || ["http://localhost:5173", "http://127.0.0.1:5173"],
+      origin: deploymentConfig.allowedOrigins,
       methods: ["GET", "POST"],
       credentials: true,
     },

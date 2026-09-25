@@ -49,6 +49,8 @@ Aynı veli birden fazla öğrenciye bağlanabilir. **Bağlantıyı Kaldır** yal
 
 Öğrenci kaydındaki eski tip veli iletişim alanları ile giriş yapabilen `parent` hesabı farklı amaçlara sahiptir: iletişim alanları okul kaydıdır; veli hesabı uygulamaya giriş ve takip içindir.
 
+**Yönetim > Kullanıcılar** ekranında bir kullanıcıyı düzenlerken **Sistem Rolü > Veli** seçilebilir. Veli rolü seçildiğinde aynı penceredeki **Bağlı Öğrenciler** listesinden en az bir öğrenci işaretlenir. Kaydetme işlemi kullanıcı rolünü ve `GuardianStudent` erişim bağlarını birlikte günceller. Rol daha sonra öğrenci, öğretmen veya yöneticiye çevrilirse eski veli bağları kaldırılır; böylece önceki öğrencilerin verilerine erişim devam etmez.
+
 ## 5. Öğretmen yönetimi
 
 **Öğretmenler** sayfasından öğretmen hesabı oluşturun veya düzenleyin. Öğretmen detayında:
@@ -126,6 +128,7 @@ Yönetici okul geneline, role veya sınıfa duyuru gönderebilir. Duyuruda gönd
 ## 12. Excel ve yazdırma
 
 - **Excel** gerçek `.xlsx` dosyası indirir; Türkçe karakterler Unicode olarak korunur.
+- Excel dosyaları standart OpenXML öğe sırasıyla üretilir ve Microsoft Excel masaüstü uygulamasında onarım uyarısı vermeden açılacak şekilde doğrulanır.
 - Rapor başlığı, aktif filtreler, başlık biçimi, kenarlıklar, otomatik genişlik ve sabit başlık satırı çalışma kitabına eklenir.
 - **Yazdır** menüleri, düğmeleri ve filtre kontrollerini gizler; tarih, başlık, filtre özeti ve tabloyu A4'e sığdırır.
 - Dashboard sayfalarında yazdırma bulunmaz; anlamlı rapor/listelerde kullanılır.

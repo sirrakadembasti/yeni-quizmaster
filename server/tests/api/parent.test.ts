@@ -16,6 +16,7 @@ vi.mock('../../storage', () => ({
     getAllUsers: vi.fn(),
     createUser: vi.fn(),
     linkGuardianStudent: vi.fn(),
+    replaceGuardianStudents: vi.fn(),
     unlinkGuardianStudent: vi.fn(),
     createLog: vi.fn(),
   },
@@ -72,5 +73,28 @@ describe('Parent API', () => {
     expect(created.password).not.toBe('Parola123');
     expect(response.body.parent.password).toBeUndefined();
     expect(storage.linkGuardianStudent).toHaveBeenCalledWith(parentId, studentId, 'Anne');
+  });
+
+  it('lets an admin replace a parent student list after validating every student', async () => {
+    const admin = { id: adminId, role: 'admin' };
+    const parent = { id: parentId, role: 'parent' };
+    const student = { id: studentId, role: 'student' };
+    const app = createApp(admin);
+    vi.mocked(storage.getUser).mockImplementation(async (id) => {
+      if (id === adminId) return admin as any;
+      if (id === parentId) return parent as any;
+      if (id === studentId) return student as any;
+      return undefined;
+    });
+    vi.mocked(storage.replaceGuardianStudents).mockResolvedValue([{ guardianId: parentId, studentId }] as any);
+    vi.mocked(storage.createLog).mockResolvedValue({} as any);
+
+    const response = await request(app)
+      .put(`/api/parents/guardian/${parentId}/students`)
+      .send({ studentIds: [studentId, studentId] });
+
+    expect(response.status).toBe(200);
+    expect(storage.replaceGuardianStudents).toHaveBeenCalledWith(parentId, [studentId]);
+    expect(storage.createLog).toHaveBeenCalledWith(adminId, 'SYNC_PARENT_STUDENTS', expect.any(String));
   });
 });

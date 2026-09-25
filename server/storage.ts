@@ -14,13 +14,14 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByResetToken(token: string): Promise<User | undefined>;
-  createUser(user: Prisma.UserUncheckedCreateInput): Promise<User>;
+  createUser(user: Prisma.UserUncheckedCreateInput & { guardianStudentIds?: string[] }): Promise<User>;
   updateUser(id: string, data: Partial<User>): Promise<User>;
   updateUserRole(userId: string, role: string): Promise<void>;
   getAllUsers(): Promise<User[]>;
   deleteUser(id: string): Promise<void>;
   getGuardianStudents(guardianId: string): Promise<any[]>;
   getStudentGuardians(studentId: string): Promise<any[]>;
+  replaceGuardianStudents(guardianId: string, studentIds: string[]): Promise<any[]>;
   linkGuardianStudent(guardianId: string, studentId: string, relation?: string | null): Promise<any>;
   unlinkGuardianStudent(guardianId: string, studentId: string): Promise<void>;
 
@@ -111,6 +112,13 @@ export interface IStorage {
   // page ve limit filters nesnesine eklendi; total count pagination bilgisi için döndürülüyor.
   getLogs(filters?: { role?: string; userId?: string; action?: string; startDate?: Date; endDate?: Date; page?: number; limit?: number }): Promise<{ data: ActionLog[]; total: number }>;
   getSystemLogs(filters?: { search?: string; startDate?: Date; endDate?: Date; page?: number; limit?: number }): Promise<{ data: ActionLog[]; total: number }>;
+  databaseHealth(): Promise<boolean>;
+  pruneOperationalData(cutoffs: {
+    actionLogsBefore: Date;
+    readNotificationsBefore: Date;
+    emailLogsBefore: Date;
+    passwordResetsBefore: Date;
+  }): Promise<{ actionLogs: number; readNotifications: number; emailLogs: number; passwordResets: number }>;
 
   // Email Queue methods
   enqueueEmail(data: { to: string; subject: string; body: string; type?: string; maxAttempts?: number }): Promise<EmailQueue>;
@@ -246,9 +254,11 @@ export class PrismaStorage implements IStorage {
     return user || undefined;
   }
 
-  async createUser(user: Prisma.UserUncheckedCreateInput): Promise<User> {
-    return await prisma.user.create({
-      data: {
+  async createUser(user: Prisma.UserUncheckedCreateInput & { guardianStudentIds?: string[] }): Promise<User> {
+    const guardianStudentIds = [...new Set(user.guardianStudentIds || [])];
+    return prisma.$transaction(async (tx) => {
+      const created = await tx.user.create({
+        data: {
         name: user.name,
         email: user.email,
         password: user.password,
@@ -262,8 +272,15 @@ export class PrismaStorage implements IStorage {
         parentRelation: user.parentRelation,
         parentPhone: user.parentPhone,
         parentEmail: user.parentEmail,
-        parentAddress: user.parentAddress
+          parentAddress: user.parentAddress
+        }
+      });
+      if (created.role === 'parent' && guardianStudentIds.length > 0) {
+        await tx.guardianStudent.createMany({
+          data: guardianStudentIds.map((studentId) => ({ guardianId: created.id, studentId })),
+        });
       }
+      return created;
     });
   }
 
@@ -277,6 +294,7 @@ export class PrismaStorage implements IStorage {
       class: studentClass,
       classes,
       classIds,
+      guardianStudentIds,
       ...updateData 
     } = data;
     
@@ -296,10 +314,11 @@ export class PrismaStorage implements IStorage {
       }
     }
 
-    // Role transition logic: if role is changed to teacher or admin, clear student fields
-    if (prismaData.role && ['teacher', 'admin'].includes(prismaData.role)) {
+    // A non-student account must not retain enrollment/contact-only student data.
+    if (prismaData.role && ['teacher', 'admin', 'parent'].includes(prismaData.role)) {
       prismaData.classId = null;
       prismaData.studentNo = null;
+      prismaData.classNo = null;
       prismaData.parentName = null;
       prismaData.parentRelation = null;
       prismaData.parentPhone = null;
@@ -321,23 +340,45 @@ export class PrismaStorage implements IStorage {
       };
     }
 
-    const updated = await prisma.user.update({
-      where: { id },
-      data: prismaData,
-      include: { class: true, assignedCategories: true, managedClasses: true }
+    const currentUser = prismaData.role ? await prisma.user.findUnique({ where: { id }, select: { role: true } }) : null;
+    const updated = await prisma.$transaction(async (tx) => {
+      if (currentUser && currentUser.role !== prismaData.role) {
+        if (currentUser.role === 'parent') {
+          await tx.guardianStudent.deleteMany({ where: { guardianId: id } });
+        }
+        if (currentUser.role === 'student') {
+          await tx.guardianStudent.deleteMany({ where: { studentId: id } });
+        }
+        if (currentUser.role === 'teacher') {
+          await tx.class.updateMany({ where: { classTeacherId: id }, data: { classTeacherId: null } });
+          await tx.classTeacherCourse.deleteMany({ where: { teacherId: id } });
+          prismaData.assignedCategories = { set: [] };
+          prismaData.managedClasses = { set: [] };
+        }
+      }
+
+      const user = await tx.user.update({
+        where: { id },
+        data: prismaData,
+        include: { class: true, assignedCategories: true, managedClasses: true }
+      });
+      if (user.role === 'parent' && Array.isArray(guardianStudentIds)) {
+        const uniqueStudentIds = [...new Set(guardianStudentIds as string[])];
+        await tx.guardianStudent.deleteMany({ where: { guardianId: id } });
+        if (uniqueStudentIds.length > 0) {
+          await tx.guardianStudent.createMany({
+            data: uniqueStudentIds.map((studentId) => ({ guardianId: id, studentId })),
+          });
+        }
+      }
+      return user;
     });
     
     return { ...updated, classes: (updated as any).managedClasses } as unknown as User;
   }
 
   async updateUserRole(userId: string, role: string): Promise<void> {
-    const data: any = { role };
-    // Clear student-specific fields if transitioning to teacher or admin
-    if (['teacher', 'admin'].includes(role)) {
-      data.classId = null;
-      data.studentNo = null;
-    }
-    await prisma.user.update({ where: { id: userId }, data });
+    await this.updateUser(userId, { role } as any);
   }
 
   async getAllUsers(): Promise<User[]> {
@@ -392,6 +433,19 @@ export class PrismaStorage implements IStorage {
       include: { guardian: { select: { id: true, name: true, email: true, phoneNumber: true, address: true, role: true } } },
       orderBy: { guardian: { name: 'asc' } },
     });
+  }
+
+  async replaceGuardianStudents(guardianId: string, studentIds: string[]): Promise<any[]> {
+    const uniqueStudentIds = [...new Set(studentIds)];
+    await prisma.$transaction(async (tx) => {
+      await tx.guardianStudent.deleteMany({ where: { guardianId } });
+      if (uniqueStudentIds.length > 0) {
+        await tx.guardianStudent.createMany({
+          data: uniqueStudentIds.map((studentId) => ({ guardianId, studentId })),
+        });
+      }
+    });
+    return this.getGuardianStudents(guardianId);
   }
 
   async linkGuardianStudent(guardianId: string, studentId: string, relation?: string | null): Promise<any> {
@@ -1436,6 +1490,50 @@ export class PrismaStorage implements IStorage {
       })) as unknown as ActionLog[],
       total,
     };
+  }
+
+  async databaseHealth(): Promise<boolean> {
+    await prisma.user.findFirst({ select: { id: true } });
+    return true;
+  }
+
+  async pruneOperationalData(cutoffs: {
+    actionLogsBefore: Date;
+    readNotificationsBefore: Date;
+    emailLogsBefore: Date;
+    passwordResetsBefore: Date;
+  }): Promise<{ actionLogs: number; readNotifications: number; emailLogs: number; passwordResets: number }> {
+    return prisma.$transaction(async (tx) => {
+      const passwordResets = await tx.passwordResetRequest.deleteMany({
+        where: {
+          status: { in: ["completed", "cancelled", "expired", "failed"] },
+          updatedAt: { lt: cutoffs.passwordResetsBefore },
+        },
+      });
+      const emailLogs = await tx.emailQueue.deleteMany({
+        where: {
+          status: { in: ["sent", "failed"] },
+          createdAt: { lt: cutoffs.emailLogsBefore },
+          passwordResetRequest: null,
+        },
+      });
+      const readNotifications = await tx.notification.deleteMany({
+        where: {
+          isRead: true,
+          createdAt: { lt: cutoffs.readNotificationsBefore },
+        },
+      });
+      const actionLogs = await tx.actionLog.deleteMany({
+        where: { createdAt: { lt: cutoffs.actionLogsBefore } },
+      });
+
+      return {
+        actionLogs: actionLogs.count,
+        readNotifications: readNotifications.count,
+        emailLogs: emailLogs.count,
+        passwordResets: passwordResets.count,
+      };
+    });
   }
 
   async enqueueEmail(data: { to: string; subject: string; body: string; type?: string; maxAttempts?: number }): Promise<EmailQueue> {

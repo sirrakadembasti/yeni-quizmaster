@@ -1,4 +1,4 @@
-import { Switch, Route, Redirect, useLocation } from "wouter";
+import { Switch, Route, Redirect, Router as WouterRouter, useLocation } from "wouter";
 import { useEffect } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -40,6 +40,7 @@ import StudentSurveysPage from "@/pages/student-surveys";
 import TakeSurveyPage from "@/pages/take-survey";
 import SurveyResultsPage from "@/pages/survey-results";
 import ParentDashboardPage from "@/pages/parent-dashboard";
+import ServerSetupPage from "@/pages/server-setup";
 
 // =============================================================================
 // TYPES
@@ -119,6 +120,7 @@ const ROUTES: RouteConfig[] = [
   { path: '/teachers/:id',      component: TeacherDetailPage,    roles: ['admin'] },
   { path: '/management',        component: AdminManagementPage,  roles: ['admin'] },
   { path: '/archive',           component: ArchivePage,          roles: ['admin'] },
+  { path: '/server-setup',      component: ServerSetupPage,      roles: ['admin'] },
 ];
 
 // =============================================================================
@@ -201,7 +203,7 @@ function RouteGuard({ component: Component, roles }: RouteConfig) {
 // ROUTER — maps the ROUTES config to <Route> elements
 // =============================================================================
 
-function Router() {
+function AppRouter() {
   const { loading } = useAuth();
 
   if (loading) {
@@ -238,13 +240,19 @@ function Router() {
 }
 
 function App() {
+  const basePath = import.meta.env.BASE_URL === '/'
+    ? ''
+    : import.meta.env.BASE_URL.replace(/\/$/, '');
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
           <Toaster />
           <NotificationListener />
-          <Router />
+          <WouterRouter base={basePath}>
+            <AppRouter />
+          </WouterRouter>
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>

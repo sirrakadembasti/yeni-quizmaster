@@ -108,6 +108,9 @@ model ActionLog {
   action    String // e.g., "CREATE_QUIZ", "SUBMIT_QUIZ", "LOGIN"
   details   String? // JSON or descriptive text
   createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
 }
 
 model Class {
@@ -268,6 +271,9 @@ model Notification {
   type      String   @default("info")
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
+
+  @@index([isRead, createdAt])
+  @@index([userId, createdAt])
 }
 
 model Announcement {
@@ -298,6 +304,7 @@ model EmailQueue {
 
   @@index([status])
   @@index([createdAt])
+  @@index([status, createdAt])
 }
 
 model PasswordResetRequest {
@@ -319,5 +326,6 @@ model PasswordResetRequest {
 
   @@index([userId, status])
   @@index([status, createdAt])
+  @@index([status, updatedAt])
   @@index([email])
 }

@@ -19,6 +19,8 @@ import { logger } from "./utils/logger";
 import { setupDnsFallback } from "./utils/dns-fallback";
 import { startEmailWorker } from "./utils/email";
 import { uploadsDirectory } from "./utils/upload-paths";
+import { getEffectiveDeploymentConfig } from "./utils/deployment-config";
+import { startDataRetentionWorker } from "./services/data-retention";
 
 // DNS Fallback: Windows/MEB ağında getaddrinfo ENOTFOUND hatalarını önler
 setupDnsFallback();
@@ -29,6 +31,8 @@ const serverDirectory = path.join(projectRoot, "server");
 // Çevresel değişkenleri yükle
 dotenv.config({ path: path.resolve(serverDirectory, ".env") });
 dotenv.config({ path: path.resolve(projectRoot, ".env") });
+
+const deploymentConfig = getEffectiveDeploymentConfig();
 
 export { logger };
 
@@ -104,7 +108,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // CORS configuration
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || ["http://localhost:5173", "http://127.0.0.1:5173"];
+const allowedOrigins = deploymentConfig.allowedOrigins;
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin) || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
@@ -118,7 +122,7 @@ app.use(cors({
 
 // Session configuration
 // sessionMiddleware değişken olarak tanımlanıyor — Socket.IO ile paylaşmak için gerekli (bkz. socket.ts)
-app.set("trust proxy", 1); // Trust first proxy (e.g. Nginx, Heroku)
+app.set("trust proxy", deploymentConfig.trustProxyHops);
 const sessionMiddleware = session({
   store: new SQLiteStore({
     db: "sessions.db",
@@ -197,18 +201,20 @@ app.use(httpLogger);
 
     // In production, serve static files from the built client
     if (process.env.NODE_ENV === "production") {
-      serveStatic(app);
+      serveStatic(app, deploymentConfig.basePath);
     }
 
     const port = parseInt(process.env.PORT || "5000", 10);
+    const host = process.env.HOST || "0.0.0.0";
     httpServer.listen(
       {
         port,
-        host: "0.0.0.0", // Listen on all interfaces
+        host,
       },
       () => {
-        logger.info(`Server serving on port ${port}`);
+        logger.info({ host, port, basePath: deploymentConfig.basePath }, "Server serving");
         startEmailWorker();
+        startDataRetentionWorker();
       },
     );
   } catch (error) {

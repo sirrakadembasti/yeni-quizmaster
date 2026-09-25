@@ -28,7 +28,7 @@ export function GuardianAccounts({ studentId }: { studentId: string }) {
 
   return <div className="mt-4 space-y-4">
     <Card className="border-primary/15">
-      <CardHeader className="pb-3"><CardTitle className="text-base">Veli Hesapları</CardTitle></CardHeader>
+      <CardHeader className="pb-3"><CardTitle className="text-base">Giriş Yapabilen Veli Hesapları</CardTitle><p className="text-xs text-muted-foreground">Bu bağlar veli panelinde hangi öğrencilerin görülebileceğini belirler.</p></CardHeader>
       <CardContent className="space-y-3">
         {(linksQuery.data?.guardians ?? []).length === 0 && <p className="text-sm text-muted-foreground">Bu öğrenciye bağlı giriş yapabilen veli hesabı yok.</p>}
         {(linksQuery.data?.guardians ?? []).map((link) => <div key={link.id} className="flex flex-col gap-2 rounded-xl border p-3 sm:flex-row sm:items-center sm:justify-between"><div><div className="font-bold">{link.guardian?.name}</div><div className="text-xs text-muted-foreground">{link.guardian?.email} {link.relation && <Badge variant="outline" className="ml-2">{link.relation}</Badge>}</div></div><Button size="sm" variant="destructive" onClick={() => unlinkMutation.mutate(link.guardianId)}><Trash2 className="mr-2 h-4 w-4" /> Bağlantıyı Kaldır</Button></div>)}

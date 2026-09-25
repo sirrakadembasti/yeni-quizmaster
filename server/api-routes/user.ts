@@ -4,6 +4,16 @@ import bcrypt from "bcryptjs";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 
 const router: Router = Router();
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+async function validateGuardianStudentIds(input: unknown) {
+  if (!Array.isArray(input) || input.length < 1 || input.length > 1000) return null;
+  const ids = [...new Set(input)];
+  if (ids.some((id) => typeof id !== 'string' || !UUID_PATTERN.test(id))) return null;
+  const users = await Promise.all(ids.map((id) => storage.getUser(id)));
+  if (users.some((user) => !user || user.role !== 'student')) return null;
+  return ids as string[];
+}
 
 // ==================== USER MANAGEMENT ====================
 
@@ -104,6 +114,16 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
     if (parentEmail && (typeof parentEmail !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parentEmail.trim()))) {
       return res.status(400).json({ message: "Geçerli bir veli e-posta adresi giriniz." });
     }
+    const requestedRole = role || 'student';
+    if (!['admin', 'teacher', 'student', 'parent'].includes(requestedRole)) {
+      return res.status(400).json({ message: "Geçersiz rol." });
+    }
+    const guardianStudentIds = requestedRole === 'parent'
+      ? await validateGuardianStudentIds(req.body.guardianStudentIds)
+      : undefined;
+    if (requestedRole === 'parent' && !guardianStudentIds) {
+      return res.status(400).json({ message: "Veli hesabı için en az bir geçerli öğrenci seçilmelidir." });
+    }
 
     if (req.user!.role === 'teacher') {
       if (role !== 'student') {
@@ -125,8 +145,14 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const userPayload: any = {
-      name: name.trim(), email: normalizedEmail, password: hashedPassword, role: role || 'student', classNo, classId, studentNo, phoneNumber, address
+      name: name.trim(), email: normalizedEmail, password: hashedPassword, role: requestedRole, classNo, classId, studentNo, phoneNumber, address
     };
+    if (guardianStudentIds) userPayload.guardianStudentIds = guardianStudentIds;
+    if (requestedRole !== 'student') {
+      userPayload.classNo = null;
+      userPayload.classId = null;
+      userPayload.studentNo = null;
+    }
 
     // Only admin can set parent information
     if (req.user!.role === 'admin') {
@@ -226,6 +252,18 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
       delete filteredBody.parentPhone;
       delete filteredBody.parentEmail;
       delete filteredBody.parentAddress;
+    }
+
+    if (isAdmin && req.body.guardianStudentIds !== undefined) {
+      if ((filteredBody.role || targetUser.role) !== 'parent') {
+        delete filteredBody.guardianStudentIds;
+      } else {
+        const guardianStudentIds = await validateGuardianStudentIds(req.body.guardianStudentIds);
+        if (!guardianStudentIds) {
+          return res.status(400).json({ message: "Veli hesabı için en az bir geçerli öğrenci seçilmelidir." });
+        }
+        filteredBody.guardianStudentIds = guardianStudentIds;
+      }
     }
 
     if (typeof filteredBody.email === "string") {

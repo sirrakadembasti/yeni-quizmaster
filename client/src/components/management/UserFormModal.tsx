@@ -242,10 +242,13 @@ export function UserFormModal({
                 </div>
               </div>
 
-              {/* Veli Bilgileri Bölümü */}
+              {/* İletişim amaçlı veli kaydı; giriş hesabı değildir. */}
               <div className="border-t border-slate-100 dark:border-slate-800 pt-4 space-y-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-black uppercase tracking-wider text-primary">Veli Bilgileri (İsteğe Bağlı)</span>
+                  <span className="text-xs font-black uppercase tracking-wider text-primary">Veli İletişim Bilgileri (Giriş Hesabı Değildir)</span>
+                </div>
+                <div className="rounded-xl border border-blue-200 bg-blue-50 p-3 text-xs font-medium text-blue-800 dark:border-blue-900/60 dark:bg-blue-950/30 dark:text-blue-200">
+                  Bu alanlar yalnızca okulun iletişim kaydıdır. Uygulamaya giriş yapıp öğrenciyi takip edecek veli hesabını, öğrenci detayındaki <strong>Veli Hesapları</strong> bölümünden oluşturun veya bağlayın.
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">

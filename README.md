@@ -11,6 +11,7 @@ QuizMaster; yöneticiler, öğretmenler, öğrenciler ve veliler için rol taban
 - [Gmail e-posta ve parola sıfırlama yapılandırması](docs/e-posta-yapilandirma.md)
 - [Graphify mimari haritası ve geliştirici kılavuzu](docs/graphify.md)
 - [SQLite'tan PostgreSQL'e geçiş kılavuzu](docs/postgresql-gecis-rehberi.md)
+- [Sunucu, domain ve reverse proxy kurulum kılavuzu](docs/sunucu-kurulum-kilavuzu.md)
 
 ## Güncel özellikler
 
@@ -140,6 +141,7 @@ Vite, `/api` ve `/socket.io` isteklerini backend'e yönlendirir.
 ### Veli
 
 1. Yönetici öğrenci detayındaki **Veli Hesapları** alanından veli hesabı oluşturur veya mevcut veliyi öğrenciye bağlar.
+   Alternatif olarak **Yönetim > Kullanıcılar** ekranında rolü **Veli** seçip aynı pencerede bağlı öğrencileri işaretleyebilir.
 2. Veli kendi hesabıyla giriş yapar.
 3. Yalnız bağlı öğrencileri seçebilir; tamamlanan ve bekleyen sınavları salt okunur biçimde görür.
 
@@ -179,6 +181,7 @@ Arayüzde bir alanın gizlenmesi tek güvenlik katmanı değildir; aynı erişim
 ## Excel ve yazdırma
 
 - **Excel** düğmeleri `.xlsx` dosyası üretir; CSV uzantısı kullanılmaz.
+- Üretilen paket, Microsoft Excel'in beklediği OpenXML öğe sırasını kullanır; Türkçe karakterler UTF-8/Unicode olarak korunur ve dosya Microsoft Excel 16 ile açma testinden geçirilmiştir.
 - Çalışma kitabında rapor başlığı, seçili filtreler, otomatik sütun genişliği, tablo kenarlıkları, filtre ve sabit başlık satırı bulunur.
 - Yazdırma görünümü navigasyon, buton ve gereksiz kontrolleri gizler; içerik A4 ve siyah-beyaz çıktıya göre düzenlenir.
 - Dashboard ekranlarında yazdırma kaldırılmıştır; yalnız anlamlı liste, detay, sonuç ve rapor sayfalarında sunulur.
@@ -216,6 +219,7 @@ pnpm test:e2e
 | `/student/surveys` | Öğrenci | Anketlerim |
 | `/parent/dashboard` | Veli | Bağlı öğrenci sınav takibi |
 | `/settings` | Tüm giriş yapmış roller | Profil, bildirim ve güvenlik |
+| `/server-setup` | Yönetici | Sunucu algılama, domain/proxy profili ve veri saklama politikası |
 
 ## Veri ve güvenlik notları
 

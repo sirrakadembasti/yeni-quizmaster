@@ -148,6 +148,25 @@ describe('Users API Integration Tests', () => {
       expect(res.status).toBe(403);
     });
   });
+
+  describe('POST /api/users', () => {
+    it('allows an admin to create a parent role account', async () => {
+      const admin = { id: 'admin-1', role: 'admin' };
+      const studentId = '22222222-2222-4222-8222-222222222222';
+      const app = createTestApp(admin);
+      vi.mocked(storage.getUser).mockImplementation(async (id) => id === admin.id ? admin as any : id === studentId ? { id: studentId, role: 'student' } as any : undefined);
+      vi.mocked(storage.getUserByEmail).mockResolvedValue(undefined);
+      vi.mocked(storage.createUser).mockImplementation(async (data: any) => ({ id: 'parent-1', createdAt: new Date(), ...data }) as any);
+
+      const response = await request(app).post('/api/users').send({
+        name: 'Ayşe Veli', email: 'veli@example.com', password: 'Parola123', role: 'parent', guardianStudentIds: [studentId],
+      });
+
+      expect(response.status).toBe(201);
+      expect(storage.createUser).toHaveBeenCalledWith(expect.objectContaining({ role: 'parent', classId: null, studentNo: null, guardianStudentIds: [studentId] }));
+      expect(response.body.user.password).toBeUndefined();
+    });
+  });
 });
 
 describe('Admin student and parent data updates', () => {

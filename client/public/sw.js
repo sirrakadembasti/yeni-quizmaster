@@ -1,5 +1,8 @@
-const CACHE_NAME = 'quiz-master-app-v1';
-const APP_SHELL = ['/', '/index.html'];
+const CACHE_NAME = 'quiz-master-app-v2';
+const APP_BASE = new URL(self.registration.scope).pathname.replace(/\/$/, '') || '';
+const APP_HOME = `${APP_BASE}/`;
+const APP_INDEX = `${APP_BASE}/index.html`;
+const APP_SHELL = [APP_HOME, APP_INDEX];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
@@ -21,9 +24,9 @@ self.addEventListener('fetch', event => {
   if (request.mode === 'navigate') {
     event.respondWith(fetch(request).then(response => {
       const copy = response.clone();
-      caches.open(CACHE_NAME).then(cache => cache.put('/index.html', copy));
+      caches.open(CACHE_NAME).then(cache => cache.put(APP_INDEX, copy));
       return response;
-    }).catch(() => caches.match('/index.html')));
+    }).catch(() => caches.match(APP_INDEX)));
     return;
   }
   event.respondWith(caches.match(request).then(cached => cached || fetch(request).then(response => {
