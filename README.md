@@ -68,6 +68,24 @@ Kurumsal bilgisayarda global PATH kullanmak istemiyorsanız proje için hazırla
 
 ## Kurulum
 
+### Sunucuya ilk kurulum sihirbazı
+
+Üretim/VPS kurulumunda bağımlılıklardan sonra WordPress benzeri, tek kullanımlık sihirbaz başlatılabilir:
+
+```bash
+pnpm setup
+```
+
+Sihirbaz yalnız `127.0.0.1:5050` üzerinde dinler ve terminalde tek kullanımlık, rastgele anahtarlı adres gösterir. Uzak VPS için portu internete açmayın; SSH tüneli kullanın:
+
+```bash
+ssh -L 5050:127.0.0.1:5050 kullanici@sunucu
+```
+
+Arayüz; sunucu ön kontrolü, domain/alt yol, SQLite, saklama politikası, ilk yönetici ve Gmail ayarlarını adım adım toplar. Ardından `.env` dosyasını güvenli biçimde yazar, migration'ları uygular, ilk yöneticiyi oluşturur ve üretim derlemesini alır. Tamamlanınca `server/data/installation.lock` oluşturup kapanır. Nginx/IIS, TLS, DNS ve güvenlik duvarı ayarlarını otomatik değiştirmez; bunlar kurum/sunucu yöneticisinin kontrolünde kalır. Ayrıntılar için [sunucu kurulum kılavuzuna](docs/sunucu-kurulum-kilavuzu.md) bakın.
+
+Yerel geliştirme kurulumu için aşağıdaki elle kurulum adımları geçerlidir.
+
 ### 1. Bağımlılıkları kurun
 
 ```bash
@@ -219,7 +237,7 @@ pnpm test:e2e
 | `/student/surveys` | Öğrenci | Anketlerim |
 | `/parent/dashboard` | Veli | Bağlı öğrenci sınav takibi |
 | `/settings` | Tüm giriş yapmış roller | Profil, bildirim ve güvenlik |
-| `/server-setup` | Yönetici | Sunucu algılama, domain/proxy profili ve veri saklama politikası |
+| `/server-setup` | Yönetici | Salt okunur sunucu/sağlık durumu; açıkça etkinleştirilirse dağıtım profili ve saklama bakımı |
 
 ## Veri ve güvenlik notları
 

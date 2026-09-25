@@ -143,7 +143,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
       { label: "Sınıflar", href: "/classlist", icon: GraduationCap },
       { label: "Yönetim", href: "/management", icon: Settings },
       { label: "Arşiv", href: "/archive", icon: Archive },
-      { label: "Sunucu Kurulumu", href: "/server-setup", icon: ServerCog },
+      { label: "Sunucu Durumu", href: "/server-setup", icon: ServerCog },
     ] : []),
     { label: "Duyurular", href: "/announcements", icon: Megaphone },
     { label: "Ayarlar", href: "/settings", icon: Settings },

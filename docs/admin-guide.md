@@ -23,6 +23,7 @@ Parola sıfırlama bağlantısı tek kullanımlıktır ve bir saat geçerlidir. 
 - **Sınıflar:** Sınıf listesi, mevcudu ve öğretmen atamaları.
 - **Yönetim:** Dersler, sınıflar, kullanıcılar ve loglar.
 - **Arşiv:** Arşivlenmiş dönem kayıtları.
+- **Sunucu Durumu:** Veritabanı, yükleme alanı, HTTPS, reverse proxy ve e-posta yapılandırmasının güvenli sağlık özeti.
 - **Duyurular:** Okul, rol veya sınıf hedefli duyurular.
 - **Ayarlar:** Profil, bildirim sesi, bildirim silme, kişisel hareketler ve parola.
 
@@ -140,6 +141,12 @@ Yalnız süresiz sınavlar öğrenci tarafından bağlantı varken cihaza hazır
 Tarayıcı verilerini temizlemek veya cihaz değiştirmek bekleyen yerel cevapları kaybettirebilir.
 
 ## 14. Sorun giderme
+
+### Sunucu durumu ve ilk kurulum
+
+İlk sunucu kurulumu yönetici panelinden yapılmaz. Yeni ve temiz bir sunucuda, ana uygulama başlatılmadan önce sunucu yöneticisi `pnpm setup` komutuyla tek kullanımlık kurulum sihirbazını çalıştırır. Sihirbaz yalnız `127.0.0.1` üzerinde açılır; uzak VPS için internete port açmak yerine SSH tüneli kullanılmalıdır. Ayrıntılar için [Sunucu Kurulum Kılavuzu](sunucu-kurulum-kilavuzu.md) izlenmelidir.
+
+Paneldeki **Sunucu Durumu** ekranı normal kullanımda salt okunurdur. Profil kaydetme ve kalıcı saklama temizliği yalnız sunucu yöneticisinin bakım sırasında `ALLOW_RUNTIME_DEPLOYMENT_CHANGES=true` ayarını açıkça etkinleştirmesiyle açılır. Bu ayarı sürekli açık bırakmayın. Gizli anahtarlar ve Gmail uygulama parolası bu ekranda gösterilmez.
 
 - **Öğretmen bir sınıfı/öğrenciyi göremiyor:** Ders-sınıf ve öğretmen atamalarını kontrol edin.
 - **Öğrenci sınavı/anketi göremiyor:** Yayın durumunu ve sınıf atamasını kontrol edin.

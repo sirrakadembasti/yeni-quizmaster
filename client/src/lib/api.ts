@@ -107,6 +107,7 @@ export interface DeploymentConfig {
 export interface DeploymentStatus {
   config: DeploymentConfig;
   source: 'web-profile' | 'environment';
+  runtimeChangesAllowed: boolean;
   restartRequiredForSavedChanges: boolean;
   detected: Record<string, string | boolean | null>;
   checks: {

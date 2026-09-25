@@ -6,6 +6,7 @@
   "main": "dist/index.cjs",
   "scripts": {
     "dev": "tsx watch --exclude \"../node_modules/**\" --exclude \"node_modules/**\" index.ts",
+    "setup": "tsx setup-wizard/server.ts",
     "build": "esbuild index.ts --bundle --platform=node --target=node20 --outfile=../dist/index.cjs --external:sqlite3",
     "start": "cross-env NODE_ENV=production node ../dist/index.cjs",
     "postinstall": "prisma generate",

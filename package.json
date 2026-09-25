@@ -7,6 +7,7 @@
   ],
   "scripts": {
     "dev": "concurrently --kill-others-on-fail --prefix-colors \"blue,green\" --names \"server,client\" \"pnpm --filter quiz-master-server dev\" \"pnpm --filter quiz-master-client dev\"",
+    "setup": "pnpm --filter quiz-master-server setup",
     "build": "pnpm --filter quiz-master-server build && pnpm --filter quiz-master-client build",
     "install-all": "pnpm install && cd client && pnpm install && cd ../server && pnpm install",
     "test:e2e": "playwright test"

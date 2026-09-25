@@ -86,6 +86,7 @@ export default function ServerSetupPage() {
 
   const origins = useMemo(() => originsText.split(/[\n,]/).map((value) => value.trim()).filter(Boolean), [originsText]);
   const artifacts = statusQuery.data?.artifacts;
+  const changesAllowed = statusQuery.data?.runtimeChangesAllowed === true;
 
   const save = () => {
     if (form.mode === "subdomain" && form.basePath !== "/") {
@@ -114,7 +115,7 @@ export default function ServerSetupPage() {
       <div className="mx-auto max-w-7xl space-y-6 p-4 md:p-6">
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
           <div>
-            <h1 className="flex items-center gap-3 text-3xl font-black"><ServerCog className="h-8 w-8 text-primary" />Sunucu Kurulumu</h1>
+            <h1 className="flex items-center gap-3 text-3xl font-black"><ServerCog className="h-8 w-8 text-primary" />Sunucu Durumu</h1>
             <p className="mt-1 text-muted-foreground">Domain, reverse proxy, alt yol ve veri saklama yapılandırmasını denetleyin.</p>
           </div>
           <Button variant="outline" onClick={() => statusQuery.refetch()} disabled={statusQuery.isFetching}>
@@ -128,6 +129,14 @@ export default function ServerSetupPage() {
             <p>Bu ekran gizli anahtarları göstermez veya değiştirmez. `DATABASE_URL`, `SESSION_SECRET` ve Gmail uygulama parolası sunucunun `.env`/secret yöneticisinde tutulmalıdır. Kaydedilen ağ ayarları yeniden başlatmada; alt yol ise ayrıca frontend yeniden derlendiğinde etkinleşir.</p>
           </CardContent>
         </Card>
+
+        {!changesAllowed && (
+          <Card className="border-sky-200 bg-sky-50/60 dark:border-sky-900 dark:bg-sky-950/20">
+            <CardContent className="p-4 text-sm text-sky-900 dark:text-sky-200">
+              Bu ekran salt okunur durumdadır. İlk kurulum ayrı ve tek kullanımlık <code>pnpm setup</code> sihirbazıyla yapılır. Çalışan sistemde profil yazma ve kalıcı temizlik yalnız sunucu yöneticisi <code>ALLOW_RUNTIME_DEPLOYMENT_CHANGES=true</code> değerini bilinçli olarak etkinleştirirse açılır.
+            </CardContent>
+          </Card>
+        )}
 
         {statusQuery.data && (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -149,7 +158,7 @@ export default function ServerSetupPage() {
               <div className="space-y-2"><Label>Herkese açık kurum adresi</Label><Input value={form.publicUrl} onChange={(event) => setForm((current) => ({ ...current, publicUrl: event.target.value }))} placeholder="https://sinav.kurum.gov.tr" /></div>
               <div className="space-y-2"><Label>Uygulama alt yolu</Label><Input value={form.basePath} disabled={form.mode === 'subdomain'} onChange={(event) => setForm((current) => ({ ...current, basePath: event.target.value }))} placeholder="/quizmaster" /></div>
               <div className="space-y-2"><Label>İzinli origin adresleri</Label><Textarea value={originsText} onChange={(event) => setOriginsText(event.target.value)} rows={4} placeholder="Her satıra bir https:// adresi" /></div>
-              <Button onClick={save} disabled={saveMutation.isPending}><Save className="mr-2 h-4 w-4" />Profili Kaydet</Button>
+              <Button onClick={save} disabled={saveMutation.isPending || !changesAllowed}><Save className="mr-2 h-4 w-4" />Profili Kaydet</Button>
             </CardContent>
           </Card>
 
@@ -177,7 +186,7 @@ export default function ServerSetupPage() {
                 ['passwordResetDays', 'Parola talebi (gün)'],
               ] as const).map(([key, label]) => <div className="space-y-2" key={key}><Label>{label}</Label><Input type="number" min={key === 'actionLogDays' ? 30 : 7} max={3650} value={form.retention[key]} onChange={(event) => setForm((current) => ({ ...current, retention: { ...current.retention, [key]: Number(event.target.value) } }))} /></div>)}
             </div>
-            <div className="flex flex-wrap gap-3"><Button onClick={save} disabled={saveMutation.isPending}><Save className="mr-2 h-4 w-4" />Politikayı Kaydet</Button><Button variant="destructive" onClick={runRetention} disabled={retentionMutation.isPending || !form.retention.enabled}>Şimdi Temizle</Button></div>
+            <div className="flex flex-wrap gap-3"><Button onClick={save} disabled={saveMutation.isPending || !changesAllowed}><Save className="mr-2 h-4 w-4" />Politikayı Kaydet</Button><Button variant="destructive" onClick={runRetention} disabled={retentionMutation.isPending || !form.retention.enabled || !changesAllowed}>Şimdi Temizle</Button></div>
           </CardContent>
         </Card>
 

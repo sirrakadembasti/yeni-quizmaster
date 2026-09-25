@@ -24,6 +24,8 @@ Kurumsal Google Workspace hesabında Uygulama Parolası seçeneği görünmüyor
 
 ## 3. Ortam değişkenleri
 
+Yeni ve temiz bir sunucuda `pnpm setup` kurulum sihirbazı Gmail alanlarını güvenli form üzerinden alıp `server/.env` dosyasına yazabilir. Sihirbaz yalnız Gmail adresi ve Google Uygulama Parolası kabul eder; parolayı kurulum profiline, kilit dosyasına veya üretilen Nginx örneğine eklemez. Mevcut kurulumlarda veya elle yapılandırmada aşağıdaki alanları kullanın.
+
 `server/.env` dosyasına aşağıdaki alanları ekleyin:
 
 ```env

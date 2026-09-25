@@ -298,9 +298,42 @@ location /socket.io/ {
 5. WebSocket Protocol özelliği etkinleştirilir ve `/socket.io/` upgrade başlıkları geçirilir.
 6. İstek gövdesi limiti soru görseli üst sınırından büyük fakat gereksiz derecede yüksek olmayacak şekilde ayarlanır.
 
-Kurulumdan sonra **Sunucu Kurulumu** ekranında HTTPS, forwarded header ve algılanan origin doğrulanmalıdır.
+Kurulumdan sonra **Sunucu Durumu** ekranında HTTPS, forwarded header ve algılanan origin doğrulanmalıdır.
 
-## 13. Web tabanlı Sunucu Kurulumu ekranı
+## 13. Tek kullanımlık web kurulum sihirbazı
+
+Bağımlılıkları kurduktan sonra, ana uygulama henüz başlamamışken çalıştırın:
+
+```bash
+pnpm setup
+```
+
+Sihirbaz yalnız `127.0.0.1:5050` adresine bağlanır. Terminalde rastgele ve tek kullanımlık anahtar içeren URL gösterilir. VPS üzerinde 5050 portunu internete veya yerel ağa açmayın. Yönetici bilgisayarından SSH tüneli kurun:
+
+```bash
+ssh -L 5050:127.0.0.1:5050 kullanici@sunucu
+```
+
+Ardından terminalde gösterilen `/setup?token=...` yolunu kendi bilgisayarınızdaki `http://127.0.0.1:5050` adresinde açın. URL anahtarı doğrulanınca HttpOnly/SameSite oturum çerezine çevrilir ve tarayıcı temiz URL'ye yönlendirilir.
+
+Sihirbazın beş adımı:
+
+1. İşletim sistemi, Node.js, CPU/bellek, ağ adresleri ve yazma izinleri ön kontrolü.
+2. Subdomain/alt yol, herkese açık URL, origin, uygulama portu ve proxy sayısı.
+3. SQLite ve operasyon kaydı saklama politikası. Bu sürüm PostgreSQL'i varmış gibi göstermez; geçiş için ayrı PostgreSQL rehberi kullanılır.
+4. İlk yönetici ve isteğe bağlı Gmail uygulama parolası.
+5. Doğrulama; `.env` yazımı, migration, ilk yönetici ve üretim derlemesi.
+
+Kurulum tamamlanınca `server/data/installation.lock` yazılır ve sihirbaz otomatik kapanır. Var olan yönetici hesabı bulunan veritabanı devralınmaz. Var olan `.env` ancak kullanıcı açıkça onaylarsa önce `server/backups` altına yedeklenerek değiştirilir. Yönetici parolası kurulum kilidine, profile veya üretilen örneklere yazılmaz.
+
+Sihirbazın bilinçli sınırları:
+
+- VPS/cloud sağlayıcısını kesin olarak tespit etmez; çalışma ortamını ve ağ arayüzlerini raporlar.
+- Serbest kabuk komutu çalıştırmaz; yalnız sabit migration ve build komutlarını kullanır.
+- DNS, TLS sertifikası, Nginx/IIS, systemd/Windows Service ve güvenlik duvarını değiştirmez.
+- Sihirbaz ana uygulamanın içine gömülü veya internetten sürekli erişilebilir değildir.
+
+### Kurulum sonrası `/server-setup` Sunucu Durumu ekranı
 
 İlk yöneticiyle giriş yaptıktan sonra `/server-setup` adresini açın.
 
@@ -308,10 +341,17 @@ Ekran şunları yapar:
 
 - İstekten origin, HTTPS ve reverse proxy başlıklarını algılar,
 - Node/platform/çalışma modu, veritabanı erişimi ve uploads yazma iznini gösterir,
-- Subdomain veya alt yol profilini kaydeder,
-- `ALLOWED_ORIGINS`, proxy sayısı ve herkese açık URL'yi yönetir,
+- Subdomain/alt yol profili ile `ALLOWED_ORIGINS`, proxy sayısı ve herkese açık URL'yi gösterir,
 - `.env.production`, Nginx ve derleme komutu örneği üretir,
-- Kontrollü log saklama politikasını etkinleştirir.
+- Kontrollü log saklama politikasını gösterir.
+
+Bu ekran yalnız bilgi sayfası değildir: profil yazma ve kalıcı veri saklama temizliğini tetikleme yeteneği vardır. Risk nedeniyle iki işlem de varsayılan olarak kapalıdır. Sunucu yöneticisi bakım penceresinde bilinçli olarak aşağıdaki değeri ayarlayıp uygulamayı yeniden başlatırsa düğmeler açılır:
+
+```env
+ALLOW_RUNTIME_DEPLOYMENT_CHANGES=true
+```
+
+Bakım bittiğinde değer yeniden `false` yapılmalıdır. Sayfa her durumda admin oturumu, rol kontrolü ve CSRF koruması altındadır; bu korumalar varsayılan kapalı olma ilkesinin yerine geçmez.
 
 Kaydedilen gizli olmayan profil `server/data/deployment-config.json` dosyasındadır ve Git tarafından yok sayılır. Ağ ayarlarının etkinleşmesi için uygulamayı yeniden başlatın. Alt yol değiştiyse frontend'i yeni `VITE_BASE_PATH` ile yeniden derleyin.
 
@@ -369,7 +409,7 @@ Her gün en az şunları yedekleyin:
 9. Sınav oluşturma, çözme ve sonuç; anket oluşturma, katılım ve rapor akışları tamamlanıyor.
 10. Yazdırma ve Excel çıktıları deneniyor.
 11. Yedek alınıp ayrı konuma geri yükleme provası yapılıyor.
-12. `/server-setup` tüm kritik kontrolleri yeşil gösteriyor.
+12. `/server-setup` Sunucu Durumu ekranı tüm kritik kontrolleri yeşil gösteriyor.
 
 ## 17. Güncelleme ve geri dönüş
 

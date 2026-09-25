@@ -19,6 +19,19 @@ import { logger } from "../utils/logger";
 const router: Router = Router();
 router.use(requireAuth, requireRole(["admin"]));
 
+export function runtimeDeploymentChangesAllowed() {
+  return process.env.ALLOW_RUNTIME_DEPLOYMENT_CHANGES === "true";
+}
+
+function requireRuntimeChanges(_req: AuthRequest, res: Response, next: () => void) {
+  if (!runtimeDeploymentChangesAllowed()) {
+    return res.status(403).json({
+      message: "Çalışan uygulamada sunucu ayarı değiştirme kapalıdır. Değişiklik için sunucu yöneticisiyle görüşün.",
+    });
+  }
+  next();
+}
+
 function detectedOrigin(req: AuthRequest) {
   const forwardedProto = String(req.headers["x-forwarded-proto"] || "").split(",")[0].trim();
   const protocol = forwardedProto || req.protocol;
@@ -44,6 +57,7 @@ router.get("/status", async (req: AuthRequest, res: Response) => {
       config,
       artifacts: buildDeploymentArtifacts(config),
       source: saved ? "web-profile" : "environment",
+      runtimeChangesAllowed: runtimeDeploymentChangesAllowed(),
       restartRequiredForSavedChanges: true,
       detected: {
         origin: detectedOrigin(req),
@@ -77,7 +91,7 @@ router.get("/status", async (req: AuthRequest, res: Response) => {
   }
 });
 
-router.put("/configuration", async (req: AuthRequest, res: Response) => {
+router.put("/configuration", requireRuntimeChanges, async (req: AuthRequest, res: Response) => {
   try {
     const config = saveDeploymentConfig(req.body, req.user!.id);
     await storage.createLog(
@@ -100,7 +114,7 @@ router.put("/configuration", async (req: AuthRequest, res: Response) => {
   }
 });
 
-router.post("/retention/run", async (req: AuthRequest, res: Response) => {
+router.post("/retention/run", requireRuntimeChanges, async (req: AuthRequest, res: Response) => {
   if (req.body?.confirm !== true) {
     return res.status(400).json({ message: "Temizleme için açık onay gereklidir." });
   }
