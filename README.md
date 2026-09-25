@@ -69,64 +69,77 @@ Kurumsal bilgisayarda global PATH kullanmak istemiyorsanız proje için hazırla
 
 ## Kurulum
 
-### Sunucuya ilk kurulum sihirbazı
+Gerçek parolalar, Gmail uygulama parolası, oturum anahtarı ve veritabanı bağlantı bilgileri GitHub deposunda bulunmaz. Kurulumu yapan kişi veya kurum bunları kendi `server/.env` dosyasında ya da secret yöneticisinde tanımlar. `.env` dosyasını Git'e eklemeyin.
 
-Üretim/VPS kurulumunda bağımlılıklardan sonra WordPress benzeri, tek kullanımlık sihirbaz başlatılabilir:
+### Kişisel veya yerel bilgisayara kurulum
+
+Bu akış geliştirme, değerlendirme ve yerel ağda deneme içindir.
+
+#### 1. Depoyu indirin
+
+Özel depoda GitHub hesabınızın erişim yetkisi bulunmalıdır.
 
 ```bash
-pnpm setup
+git clone https://github.com/sirrakadembasti/yeni-quizmaster.git
+cd yeni-quizmaster
 ```
 
-Sihirbaz yalnız `127.0.0.1:5050` üzerinde dinler ve terminalde tek kullanımlık, rastgele anahtarlı adres gösterir. Uzak VPS için portu internete açmayın; SSH tüneli kullanın:
-
-```bash
-ssh -L 5050:127.0.0.1:5050 kullanici@sunucu
-```
-
-Arayüz; sunucu ön kontrolü, domain/alt yol, SQLite, saklama politikası, ilk yönetici ve Gmail ayarlarını adım adım toplar. Ardından `.env` dosyasını güvenli biçimde yazar, migration'ları uygular, ilk yöneticiyi oluşturur ve üretim derlemesini alır. Tamamlanınca `server/data/installation.lock` oluşturup kapanır. Nginx/IIS, TLS, DNS ve güvenlik duvarı ayarlarını otomatik değiştirmez; bunlar kurum/sunucu yöneticisinin kontrolünde kalır. Ayrıntılar için [sunucu kurulum kılavuzuna](docs/sunucu-kurulum-kilavuzu.md) bakın.
-
-Yerel geliştirme kurulumu için aşağıdaki elle kurulum adımları geçerlidir.
-
-### 1. Bağımlılıkları kurun
+#### 2. Bağımlılıkları kurun
 
 ```bash
 pnpm install --frozen-lockfile
 ```
 
-### 2. Ortam değişkenlerini hazırlayın
+#### 3. Yerel ortam dosyasını oluşturun
 
-`server/.env` oluşturun. Gizli anahtarları Git'e eklemeyin.
+Windows PowerShell:
 
-```env
-DATABASE_URL="file:../data/quiz.db"
-SESSION_SECRET="uzun-ve-rastgele-bir-deger"
-NODE_ENV="development"
-PORT=5000
-FRONTEND_URL=http://localhost:5173
-
-# Gmail SMTP
-EMAIL_USER=your-smtp-email@gmail.com
-EMAIL_PASS=your-google-app-password
-EMAIL_FROM=your-smtp-email@gmail.com
-EMAIL_FROM_NAME=QuizMaster
-EMAIL_PORT=587
-
-# İsteğe bağlı AI üretimi
-GEMINI_API_KEY=
+```powershell
+Copy-Item server/.env.example server/.env
 ```
 
-E-posta ayarları ve ağ sorunları için [e-posta yapılandırma belgesine](docs/e-posta-yapilandirma.md) bakın.
+Linux/macOS:
 
-### 3. Veritabanını hazırlayın
+```bash
+cp server/.env.example server/.env
+```
+
+`server/.env` içindeki yer tutucuları değiştirin. En azından `SESSION_SECRET`, `DATABASE_URL`, `FRONTEND_URL` ve kullanılacaksa Gmail/AI değerlerini kontrol edin. Güçlü bir oturum anahtarı üretmek için:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+Bu komutun ürettiği değeri `SESSION_SECRET` olarak kaydedin. E-posta ayarları için [e-posta yapılandırma belgesine](docs/e-posta-yapilandirma.md) bakın.
+
+#### 4. Yerel veritabanını hazırlayın
 
 ```bash
 pnpm --filter quiz-master-server db:migrate
-pnpm --filter quiz-master-server db:seed
 ```
 
-Mevcut bir veritabanını güncelliyorsanız seed komutunu yalnız örnek veriyi yeniden oluşturmak istediğinizde kullanın.
+Gerçek bir ilk yönetici oluşturmak için PowerShell oturumunda geçici değişkenler kullanın:
 
-### 4. Uygulamayı başlatın
+```powershell
+$env:BOOTSTRAP_ADMIN_NAME="Sistem Yöneticisi"
+$env:BOOTSTRAP_ADMIN_EMAIL="yonetici@kurum.example"
+$env:BOOTSTRAP_ADMIN_PASSWORD="en-az-12-karakter-guclu-parola"
+pnpm --filter quiz-master-server db:create-admin
+Remove-Item Env:BOOTSTRAP_ADMIN_NAME, Env:BOOTSTRAP_ADMIN_EMAIL, Env:BOOTSTRAP_ADMIN_PASSWORD
+```
+
+Linux/macOS karşılığı:
+
+```bash
+BOOTSTRAP_ADMIN_NAME="Sistem Yöneticisi" \
+BOOTSTRAP_ADMIN_EMAIL="yonetici@kurum.example" \
+BOOTSTRAP_ADMIN_PASSWORD="en-az-12-karakter-guclu-parola" \
+pnpm --filter quiz-master-server db:create-admin
+```
+
+Yalnız geliştirme amacıyla örnek kullanıcılar gerekiyorsa bunun yerine `pnpm --filter quiz-master-server db:seed` çalıştırılabilir. Seed komutunu gerçek/üretim veritabanında kullanmayın.
+
+#### 5. Uygulamayı başlatın
 
 ```bash
 pnpm dev
@@ -137,7 +150,63 @@ pnpm dev
 | Frontend | http://localhost:5173 |
 | Backend API | http://localhost:5000 |
 
-Vite, `/api` ve `/socket.io` isteklerini backend'e yönlendirir.
+Vite, `/api` ve `/socket.io` isteklerini backend'e yönlendirir. Sonraki yerel çalıştırmalarda proje dizininde yalnız `pnpm dev` yeterlidir.
+
+### Kurum sunucusuna veya VPS'e kurulum
+
+Üretimde önerilen yöntem, tek kullanımlık güvenli kurulum sihirbazıdır.
+
+#### 1. Sunucuyu hazırlayın ve depoyu indirin
+
+Node.js 22/24 LTS, Git ve pnpm `9.15.1` kurulu olmalıdır. Ardından özel depoya erişebilen bir hesap veya deploy key ile:
+
+```bash
+git clone https://github.com/sirrakadembasti/yeni-quizmaster.git
+cd yeni-quizmaster
+pnpm install --frozen-lockfile
+```
+
+#### 2. Tek kullanımlık kurulum sihirbazını başlatın
+
+```bash
+pnpm setup
+```
+
+Sihirbaz yalnız `127.0.0.1:5050` üzerinde dinler ve terminalde rastgele anahtar içeren tek kullanımlık bir adres gösterir. `5050` portunu internete açmayın.
+
+Uzak Linux/VPS kurulumu için yönetici bilgisayarından SSH tüneli açın:
+
+```bash
+ssh -L 5050:127.0.0.1:5050 kullanici@sunucu
+```
+
+Ardından terminalde gösterilen `/setup?token=...` adresini yerel tarayıcıda `http://127.0.0.1:5050` üzerinden açın.
+
+#### 3. Sihirbaz adımlarını tamamlayın
+
+Sihirbaz sırasıyla sunucu ön kontrolünü, domain/alt yolu, SQLite ve saklama politikasını, ilk yönetici hesabını ve isteğe bağlı Gmail ayarlarını toplar. Onaydan sonra:
+
+- `server/.env` dosyasını güvenli biçimde yazar,
+- production migration'larını uygular,
+- ilk yönetici hesabını oluşturur,
+- frontend ve backend üretim derlemesini alır,
+- `server/data/installation.lock` oluşturarak kendisini kapatır.
+
+#### 4. Uygulamayı servis olarak çalıştırın
+
+Elle kısa bir canlılık kontrolü için:
+
+```bash
+pnpm --filter quiz-master-server start
+```
+
+Kalıcı kullanımda bu komutu doğrudan açık terminalde bırakmayın. Linux'ta `systemd`, Windows Server'da uygun bir Windows Service yöneticisi kullanın; Node.js servisini yalnız `127.0.0.1` üzerinde çalıştırıp Nginx/IIS reverse proxy arkasından yayınlayın.
+
+#### 5. Domain, HTTPS ve canlılık kontrollerini tamamlayın
+
+DNS, TLS sertifikası, Nginx/IIS, servis hesabı, güvenlik duvarı ve yedekleme sihirbaz tarafından değiştirilmez. Bunları kurum politikasına göre yapılandırın ve uygulamadaki **Sunucu Durumu** ekranından origin/proxy/HTTPS algılamasını doğrulayın.
+
+Eksiksiz production yapılandırması, örnek `systemd`, Nginx/IIS, alt yol, güncelleme, yedekleme ve geri dönüş adımları için [Sunucu Kurulum Kılavuzu](docs/sunucu-kurulum-kilavuzu.md) zorunlu başvuru belgesidir.
 
 ## Temel kullanım akışları
 
