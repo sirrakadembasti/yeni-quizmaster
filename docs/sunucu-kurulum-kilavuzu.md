@@ -83,12 +83,13 @@ Windows Server'da aynı ayrımı ayrı servis hesabı ve NTFS ACL ile uygulayın
 ```bash
 git clone https://github.com/sirrakadembasti/yeni-quizmaster.git /opt/quizmaster/app
 cd /opt/quizmaster/app
-corepack enable
-corepack prepare pnpm@9.15.1 --activate
-pnpm install --frozen-lockfile
+chmod +x kurulum.sh
+./kurulum.sh
 ```
 
-Kurumsal ağ internete çıkmıyorsa bağımlılıkları onaylı bir build sunucusunda kurup artefact üretin. `node_modules` klasörünü farklı işletim sistemi veya CPU mimarisinden kopyalamayın; Prisma, Sharp ve SQLite native bileşenleri hedef ortamla aynı olmalıdır.
+`kurulum.sh` Node.js 22/24 LTS ve pnpm 9.15.1 sürümlerini doğrular. Eksik veya uyumsuz bileşen varsa resmî bağlantıları ve uygulanacak komutu gösterip hiçbir dosyayı değiştirmeden durur. Gereksinimler tamamsa bağımlılıksız bootstrap arayüzünü açar; paket kurulumu kullanıcı onayından sonra bu arayüzden yürütülür.
+
+Kurumsal ağ internete çıkmıyorsa bağımlılıkları onaylı bir build sunucusunda hedef işletim sistemi ve CPU mimarisiyle kurup artefact üretin. `node_modules` klasörünü farklı işletim sistemi veya CPU mimarisinden kopyalamayın; Prisma, Sharp ve SQLite native bileşenleri hedef ortamla aynı olmalıdır.
 
 ## 6. Üretim ortam değişkenleri
 
@@ -300,21 +301,23 @@ location /socket.io/ {
 
 Kurulumdan sonra **Sunucu Durumu** ekranında HTTPS, forwarded header ve algılanan origin doğrulanmalıdır.
 
-## 13. Tek kullanımlık web kurulum sihirbazı
+## 13. Bootstrap ve tek kullanımlık web kurulum sihirbazı
 
-Bağımlılıkları kurduktan sonra, ana uygulama henüz başlamamışken çalıştırın:
+Windows'ta `kurulum.bat`, Linux/macOS'ta `./kurulum.sh` önerilir. Node.js ve pnpm zaten doğru sürümdeyse eşdeğer doğrudan komut:
 
 ```bash
 pnpm setup
 ```
 
-Sihirbaz yalnız `127.0.0.1:5050` adresine bağlanır. Terminalde rastgele ve tek kullanımlık anahtar içeren URL gösterilir. VPS üzerinde 5050 portunu internete veya yerel ağa açmayın. Yönetici bilgisayarından SSH tüneli kurun:
+İlk aşama yalnız Node.js yerleşik modüllerini kullanır ve `127.0.0.1:5049` adresine bağlanır. Kurulum durumunu gösterir, `pnpm install --frozen-lockfile` işlemini başlatır ve gerçek işlem çıktısını ekranda sunar. Paketler hazır olduğunda mevcut ana sihirbaz `127.0.0.1:5050` üzerinde başlatılır.
+
+VPS üzerinde iki portu da internete veya yerel ağa açmayın. Yönetici bilgisayarından SSH tüneli kurun:
 
 ```bash
-ssh -L 5050:127.0.0.1:5050 kullanici@sunucu
+ssh -L 5049:127.0.0.1:5049 -L 5050:127.0.0.1:5050 kullanici@sunucu
 ```
 
-Ardından terminalde gösterilen `/setup?token=...` yolunu kendi bilgisayarınızdaki `http://127.0.0.1:5050` adresinde açın. URL anahtarı doğrulanınca HttpOnly/SameSite oturum çerezine çevrilir ve tarayıcı temiz URL'ye yönlendirilir.
+Önce terminalde gösterilen `http://127.0.0.1:5049/setup?token=...` adresini açın. Bootstrap tamamlanınca tarayıcı ana sihirbazın `5050` adresine yönlendirilir. Her iki URL anahtarı da HttpOnly/SameSite oturum çerezine çevrilir ve paylaşılmamalıdır.
 
 Sihirbazın beş adımı:
 
@@ -325,6 +328,8 @@ Sihirbazın beş adımı:
 5. Doğrulama; `.env` yazımı, migration, ilk yönetici ve üretim derlemesi.
 
 Kurulum tamamlanınca `server/data/installation.lock` yazılır ve sihirbaz otomatik kapanır. Var olan yönetici hesabı bulunan veritabanı devralınmaz. Var olan `.env` ancak kullanıcı açıkça onaylarsa önce `server/backups` altına yedeklenerek değiştirilir. Yönetici parolası kurulum kilidine, profile veya üretilen örneklere yazılmaz.
+
+Bootstrap yeniden çalıştırıldığında tamamlanmış ve yarım kurulumları ayırır. Temiz kurulum yalnız servis duruyorsa ve standart SQLite kullanılıyorsa açılır. Kullanıcı açık veri kaybı uyarısını kabul edip `QUIZMASTER VERİLERİNİ SİL` yazmadan işlem başlamaz. `.env`, veritabanı/oturum dosyaları ve SQLite yan dosyaları, dağıtım profili, kurulum çıktıları ve yüklemeler önce `server/backups/reinstall-...` altına kopyalanır; SHA-256 özetleri `manifest.json` içinde doğrulanır. Bu yerel yedeği üretimde sunucu dışına taşıyın.
 
 Sihirbazın bilinçli sınırları:
 

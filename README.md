@@ -73,7 +73,7 @@ Gerçek parolalar, Gmail uygulama parolası, oturum anahtarı ve veritabanı ba�
 
 ### Kişisel veya yerel bilgisayara kurulum
 
-Bu akış geliştirme, değerlendirme ve yerel ağda deneme içindir.
+Bu akış uygulamayı bağımsız bir bilgisayara kurup kullanmak içindir.
 
 #### 1. Depoyu indirin
 
@@ -84,73 +84,59 @@ git clone https://github.com/sirrakadembasti/yeni-quizmaster.git
 cd yeni-quizmaster
 ```
 
-#### 2. Bağımlılıkları kurun
+#### 2. Kurulum başlatıcısını çalıştırın
+
+Windows'ta dosyaya çift tıklayın veya terminalden çalıştırın:
+
+```powershell
+.\kurulum.bat
+```
+
+Linux/macOS'ta:
+
+```bash
+chmod +x kurulum.sh
+./kurulum.sh
+```
+
+Başlatıcı, herhangi bir uygulama verisini değiştirmeden önce Node.js ve pnpm sürümlerini denetler. Eksik veya uyumsuz bileşen varsa gereken sürümü, resmî indirme bağlantılarını ve tekrar çalıştırma adımını gösterir; proxy, DNS veya sistem `PATH` ayarlarını değiştirmez.
+
+Node.js 22/24 ve pnpm 9.15.1 zaten doğru kuruluysa başlatıcı yerine doğrudan şu komut da kullanılabilir:
+
+```bash
+pnpm setup
+```
+
+#### 3. Grafik kurulum akışını tamamlayın
+
+İlk ekran yalnız `127.0.0.1:5049` üzerinde açılır. Burada:
+
+- uygulamanın bulunduğu dizin ve çalışma ortamı gösterilir,
+- `pnpm install --frozen-lockfile` arka planda çalıştırılır,
+- gerçek pnpm çıktısı ve hata bilgisi ekranda izlenir,
+- paket kurulumu tamamlanınca ana kurulum sihirbazına geçilir.
+
+Ana sihirbaz `127.0.0.1:5050` üzerinde açılır; domain/yerel adres, SQLite, saklama politikası, ilk yönetici ve isteğe bağlı Gmail ayarlarını toplar. Ardından `.env`, migration, ilk yönetici ve production build işlemlerini tamamlar.
+
+#### 4. Uygulamayı başlatın
+
+Kurulum sonrasında kısa bir yerel çalıştırma için:
+
+```bash
+pnpm --filter quiz-master-server start
+```
+
+Geliştirme yapmak isteyenler production sihirbazı yerine manuel geliştirme akışını kullanabilir:
 
 ```bash
 pnpm install --frozen-lockfile
-```
-
-#### 3. Yerel ortam dosyasını oluşturun
-
-Windows PowerShell:
-
-```powershell
-Copy-Item server/.env.example server/.env
-```
-
-Linux/macOS:
-
-```bash
-cp server/.env.example server/.env
-```
-
-`server/.env` içindeki yer tutucuları değiştirin. En azından `SESSION_SECRET`, `DATABASE_URL`, `FRONTEND_URL` ve kullanılacaksa Gmail/AI değerlerini kontrol edin. Güçlü bir oturum anahtarı üretmek için:
-
-```bash
-node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
-```
-
-Bu komutun ürettiği değeri `SESSION_SECRET` olarak kaydedin. E-posta ayarları için [e-posta yapılandırma belgesine](docs/e-posta-yapilandirma.md) bakın.
-
-#### 4. Yerel veritabanını hazırlayın
-
-```bash
+# server/.env.example dosyasını server/.env olarak kopyalayıp yer tutucuları değiştirin
 pnpm --filter quiz-master-server db:migrate
-```
-
-Gerçek bir ilk yönetici oluşturmak için PowerShell oturumunda geçici değişkenler kullanın:
-
-```powershell
-$env:BOOTSTRAP_ADMIN_NAME="Sistem Yöneticisi"
-$env:BOOTSTRAP_ADMIN_EMAIL="yonetici@kurum.example"
-$env:BOOTSTRAP_ADMIN_PASSWORD="en-az-12-karakter-guclu-parola"
-pnpm --filter quiz-master-server db:create-admin
-Remove-Item Env:BOOTSTRAP_ADMIN_NAME, Env:BOOTSTRAP_ADMIN_EMAIL, Env:BOOTSTRAP_ADMIN_PASSWORD
-```
-
-Linux/macOS karşılığı:
-
-```bash
-BOOTSTRAP_ADMIN_NAME="Sistem Yöneticisi" \
-BOOTSTRAP_ADMIN_EMAIL="yonetici@kurum.example" \
-BOOTSTRAP_ADMIN_PASSWORD="en-az-12-karakter-guclu-parola" \
-pnpm --filter quiz-master-server db:create-admin
-```
-
-Yalnız geliştirme amacıyla örnek kullanıcılar gerekiyorsa bunun yerine `pnpm --filter quiz-master-server db:seed` çalıştırılabilir. Seed komutunu gerçek/üretim veritabanında kullanmayın.
-
-#### 5. Uygulamayı başlatın
-
-```bash
+pnpm --filter quiz-master-server db:seed   # yalnız geliştirme/demo verisi
 pnpm dev
 ```
 
-| Servis | Adres |
-|---|---|
-| Frontend | http://localhost:5173 |
-| Backend API | http://localhost:5000 |
-
-Vite, `/api` ve `/socket.io` isteklerini backend'e yönlendirir. Sonraki yerel çalıştırmalarda proje dizininde yalnız `pnpm dev` yeterlidir.
+Seed komutunu gerçek veya üretim veritabanında kullanmayın. Manuel `.env` ve Gmail ayrıntıları için [e-posta yapılandırma belgesine](docs/e-posta-yapilandirma.md) bakın.
 
 ### Kurum sunucusuna veya VPS'e kurulum
 
@@ -158,29 +144,29 @@ Vite, `/api` ve `/socket.io` isteklerini backend'e yönlendirir. Sonraki yerel �
 
 #### 1. Sunucuyu hazırlayın ve depoyu indirin
 
-Node.js 22/24 LTS, Git ve pnpm `9.15.1` kurulu olmalıdır. Ardından özel depoya erişebilen bir hesap veya deploy key ile:
+Özel depoya erişebilen bir hesap veya deploy key ile:
 
 ```bash
 git clone https://github.com/sirrakadembasti/yeni-quizmaster.git
 cd yeni-quizmaster
-pnpm install --frozen-lockfile
 ```
 
-#### 2. Tek kullanımlık kurulum sihirbazını başlatın
+#### 2. Güvenli ön kontrolü ve bootstrap ekranını başlatın
 
 ```bash
-pnpm setup
+chmod +x kurulum.sh
+./kurulum.sh
 ```
 
-Sihirbaz yalnız `127.0.0.1:5050` üzerinde dinler ve terminalde rastgele anahtar içeren tek kullanımlık bir adres gösterir. `5050` portunu internete açmayın.
+Başlatıcı Node.js 22/24 LTS ve pnpm `9.15.1` denetimini yapar. Eksikse yalnız resmî bağlantı ve komutları göstererek durur. Gereksinimler tamamsa bağımlılıksız bootstrap ekranı açılır ve paketler kullanıcı onayından sonra kurulur.
 
-Uzak Linux/VPS kurulumu için yönetici bilgisayarından SSH tüneli açın:
+Uzak Linux/VPS kurulumu için hem bootstrap hem ana sihirbaz portunu SSH tüneline alın; bu portları internete açmayın:
 
 ```bash
-ssh -L 5050:127.0.0.1:5050 kullanici@sunucu
+ssh -L 5049:127.0.0.1:5049 -L 5050:127.0.0.1:5050 kullanici@sunucu
 ```
 
-Ardından terminalde gösterilen `/setup?token=...` adresini yerel tarayıcıda `http://127.0.0.1:5050` üzerinden açın.
+Terminalde gösterilen `http://127.0.0.1:5049/setup?token=...` adresini kendi bilgisayarınızdaki tarayıcıda açın. Paketler tamamlandığında ekran ana sihirbaza yönlendirir.
 
 #### 3. Sihirbaz adımlarını tamamlayın
 
@@ -207,6 +193,21 @@ Kalıcı kullanımda bu komutu doğrudan açık terminalde bırakmayın. Linux't
 DNS, TLS sertifikası, Nginx/IIS, servis hesabı, güvenlik duvarı ve yedekleme sihirbaz tarafından değiştirilmez. Bunları kurum politikasına göre yapılandırın ve uygulamadaki **Sunucu Durumu** ekranından origin/proxy/HTTPS algılamasını doğrulayın.
 
 Eksiksiz production yapılandırması, örnek `systemd`, Nginx/IIS, alt yol, güncelleme, yedekleme ve geri dönüş adımları için [Sunucu Kurulum Kılavuzu](docs/sunucu-kurulum-kilavuzu.md) zorunlu başvuru belgesidir.
+
+### Kurulum başlatıcısını yeniden çalıştırma ve temiz kurulum
+
+Başlatıcı `installation.lock`, `.env`, SQLite dosyaları, dağıtım profili ve yüklenen dosyaları birlikte denetler. Tamamlanmış sistemde **Uygulama zaten kurulu**, eksik kilit veya kalıntı bulunan sistemde **Yarım/eski kurulum** bilgisini verir.
+
+**Temiz kurulum** normal güncelleme değildir ve tüm kullanıcı, sınav, anket, sonuç, oturum, yapılandırma ve yüklenen dosyaları aktif sistemden kaldırır. Bu işlem:
+
+1. uygulama servisi durdurulmadan başlamaz,
+2. yalnız standart yerel SQLite kurulumunda kullanılabilir,
+3. `.env`, SQLite dosyaları, yüklemeler ve dağıtım profilini `server/backups/reinstall-...` altına kopyalar,
+4. her yedek dosyasını SHA-256 ile doğrular ve `manifest.json` üretir,
+5. kullanıcının `QUIZMASTER VERİLERİNİ SİL` metnini eksiksiz yazmasını ister,
+6. kaynak kodu, migration'ları ve oluşturulan yedeği silmez.
+
+Üretimde yerel yedeği ayrıca sunucu dışındaki erişimi sınırlı yedek alanına taşıyın. Harici/PostgreSQL veritabanı otomatik temizlenmez.
 
 ## Temel kullanım akışları
 

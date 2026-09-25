@@ -189,7 +189,7 @@ export function createSetupApp(token: string, onComplete?: () => void) {
     const networks = Object.values(os.networkInterfaces()).flat().filter((item) => item && !item.internal).map((item) => item!.address);
     res.json({
       detected: { hostname: os.hostname(), platform: `${process.platform}/${process.arch}`, node: process.version, cpus: os.cpus().length, memoryGb: Math.round(os.totalmem() / 1024 ** 3), addresses: networks },
-      checks: { nodeSupported: Number(process.versions.node.split(".")[0]) >= 20, dataWritable: writable(dataRoot), uploadsWritable: writable(path.join(serverRoot, "uploads")), notInstalled: !fs.existsSync(lockPath), envAbsent: !fs.existsSync(envPath) },
+      checks: { nodeSupported: [22, 24].includes(Number(process.versions.node.split(".")[0])), dataWritable: writable(dataRoot), uploadsWritable: writable(path.join(serverRoot, "uploads")), notInstalled: !fs.existsSync(lockPath), envAbsent: !fs.existsSync(envPath) },
     });
   });
 

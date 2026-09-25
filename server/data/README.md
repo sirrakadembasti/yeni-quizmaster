@@ -9,3 +9,5 @@ Bu dizin uygulamanın yerel çalışma verilerini barındırır ve veritabanı d
 - `setup-artifacts/`: Sihirbazın ürettiği gizli bilgi içermeyen reverse proxy ve ortam örnekleridir.
 
 Yedekleri bu dizinde biriktirmeyin. Yedekler `server/backups` veya tercihen uygulama sunucusu dışındaki şifreli/yetkili bir yedek deposunda tutulmalıdır.
+
+Kurulum bootstrap ekranındaki **Temiz kurulum**, uygulama servisi durdurulduktan sonra bu çalışma verilerini ve `server/uploads` içeriğini aktif sistemden kaldırır. İşlem öncesinde `server/backups/reinstall-...` altında SHA-256 doğrulamalı yedek ve `manifest.json` oluşturulması zorunludur. `README.md`, migration dosyaları ve kaynak kod temizlenmez.
