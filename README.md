@@ -128,12 +128,13 @@ Ana sihirbaz `127.0.0.1:5050` üzerinde açılır; kurulum biçimi, adres, SQLit
 
 Ardından `.env`, migration, ilk yönetici ve production build işlemleri canlı adımlarla izlenir.
 
-**Bitiş ekranı (önemli):** Sihirbaz, kurulum biter bitmez tarayıcıyı giriş adresine **kör yönlendirmez**. Uygulama sunucusu ayakta değilse `sayfaya ulaşılamıyor` hatası alınır. Bunun yerine:
+**Bitiş ekranı (önemli):** Sihirbaz, kurulum biter bitmez tarayıcıyı giriş adresine **kör yönlendirmez**. Bitişte üç düğme vardır:
 
-1. `/api/app-health` ile uygulama portu denetlenir,
-2. **Uygulamayı başlat** (yerel kurulum) düğmesi `dist/index.cjs` sürecini ayağa kaldırır,
-3. Port açıldığında **Giriş sayfasına git** sizi `/auth` adresine götürür,
-4. Kurum (subdomain/alt yol) kurulumunda önce Nginx + DNS tamamlanmalıdır; sihirbaz bunu değiştirmez.
+1. **Uygulamayı başlat** — yerel kurulumda `pnpm dev` arka planda başlar (terminal penceresi açılmaz); kurum kurulumunda üretim servisi ayağa kalkar,
+2. **Giriş sayfasına git** — port/domain denetlenerek `/auth` açılır,
+3. **Uygulamayı aç** — yapılandırılan adres.
+
+Yerel (localhost) kurulumda giriş adresi `http://127.0.0.1:5173/auth` (Vite) şeklindedir. Kurum (subdomain/alt yol) kurulumunda Nginx + DNS hazır olmadan adres açılmaz; örn: `server/data/setup-artifacts/nginx.conf.example`.
 
 > **Terminali sihirbaz bitene kadar kapatmayın.** Sihirbaz kurulum başlatıcısının alt sürecidir; terminal kapanırsa kurulum yarıda kalır. Başarıyla biterse başlatıcı otomatik kapanır.
 

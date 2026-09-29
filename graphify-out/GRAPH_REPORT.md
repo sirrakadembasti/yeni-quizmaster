@@ -1,17 +1,17 @@
-# Graph Report - yeni-quizmaster-main  (2026-09-29)
+# Graph Report - yeni-quizmaster-main  (2026-09-30)
 
 ## Corpus Check
-- 236 files · ~128,975 words
+- 236 files · ~129,287 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 10 file(s) not represented in the graph (top: (none) 3, .bat 2, .example 2)
 
 ## Summary
-- 1680 nodes · 4978 edges · 73 communities (56 shown, 17 thin omitted)
+- 1681 nodes · 4980 edges · 74 communities (56 shown, 18 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 57 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d2fb55e1`
+- Built from commit: `70d50c53`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -20,7 +20,7 @@
 - routes.ts
 - IStorage
 - PrismaStorage
-- quiz.ts
+- student.ts
 - sidebar.tsx
 - index.ts
 - utils.ts
@@ -32,7 +32,7 @@
 - command.tsx
 - item.tsx
 - package.json
-- menubar.tsx
+- student-quiz.tsx
 - Button
 - use-toast.ts
 - pagination.tsx
@@ -47,28 +47,29 @@
 - server/package.json
 - scripts
 - form.tsx
-- ref_vitest
+- api-routes/auth.ts
 - drawer.tsx
-- ai.ts
+- auth-context.tsx
 - navigation-menu.tsx
 - server.ts
 - survey.ts
 - scripts
 - NotificationListener.tsx
-- App
+- offline-quiz.ts
 - SQLite'tan PostgreSQL'e Geçiş Rehberi
 - types.d.ts
-- input-otp.tsx
+- empty.tsx
 - carousel.tsx
 - client/vitest.config.ts
 - api.ts
 - collapsible.tsx
 - @testing-library/jest-dom
-- deployment.ts
+- sonner
+- @radix-ui/react-aspect-ratio
 - QuizMaster Veli Kullanıcı Kılavuzu
 - dependencies
 - export.ts
-- email.ts
+- ref_vitest
 - QuizMaster Yönetici Kullanıcı Kılavuzu
 - QuizMaster Gmail E-Posta ve Parola Sıfırlama Kılavuzu
 - QuizMaster
@@ -109,31 +110,31 @@
 ## Import Cycles
 - None detected.
 
-## Communities (73 total, 17 thin omitted)
+## Communities (74 total, 18 thin omitted)
 
 ### Community 0 - "setup-bootstrap.mjs"
 Cohesion: 0.06
 Nodes (54): holder, finder, scriptDir, appendLog(), authenticated(), authorizeMutation(), cookies(), csrfValue (+46 more)
 
 ### Community 1 - "routes.ts"
-Cohesion: 0.11
-Nodes (30): express, querySchema, router, categorySchema, router, classSchema, router, router (+22 more)
+Cohesion: 0.07
+Nodes (45): express, express-session, router, AIResponseSchema, aiTestLimiter, QuestionSchema, router, SurveyQuestionSchema (+37 more)
 
-### Community 4 - "quiz.ts"
-Cohesion: 0.19
-Nodes (13): socket.io, router, notifyAdminsAboutTeacherQuiz(), questionsArraySchema, questionSchema, quizSchema, getIO(), setupSocket() (+5 more)
+### Community 4 - "student.ts"
+Cohesion: 0.14
+Nodes (13): express-rate-limit, socket.io, notifyAdminsAboutTeacherQuiz(), answerSchema, quizActionLimiter, router, submitSchema, getIO() (+5 more)
 
 ### Community 5 - "sidebar.tsx"
 Cohesion: 0.06
-Nodes (37): SheetContent, SheetContentProps, SheetDescription, SheetFooter(), SheetHeader(), SheetOverlay, SheetTitle, sheetVariants (+29 more)
+Nodes (38): SheetContent, SheetContentProps, SheetDescription, SheetFooter(), SheetHeader(), SheetOverlay, SheetTitle, sheetVariants (+30 more)
 
 ### Community 6 - "index.ts"
 Cohesion: 0.06
-Nodes (36): connect-sqlite3, cors, csrf-sync, helmet, pino-http, sharp, router, upload (+28 more)
+Nodes (37): connect-sqlite3, cors, csrf-sync, helmet, pino-http, sharp, router, upload (+29 more)
 
 ### Community 7 - "utils.ts"
-Cohesion: 0.10
-Nodes (14): Calendar(), CalendarDayButton(), HoverCardContent, ScrollArea, ScrollBar, Slider, Spinner(), clsx (+6 more)
+Cohesion: 0.06
+Nodes (23): Calendar(), CalendarDayButton(), HoverCardContent, InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, PopoverContent (+15 more)
 
 ### Community 8 - "compilerOptions"
 Cohesion: 0.09
@@ -156,28 +157,28 @@ Cohesion: 0.11
 Nodes (18): compilerOptions, allowJs, declaration, declarationMap, esModuleInterop, forceConsistentCasingInFileNames, lib, module (+10 more)
 
 ### Community 13 - "command.tsx"
-Cohesion: 0.18
-Nodes (11): Command, CommandDialog(), CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator (+3 more)
+Cohesion: 0.20
+Nodes (10): Command, CommandDialog(), CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator (+2 more)
 
 ### Community 14 - "item.tsx"
-Cohesion: 0.08
-Nodes (27): Breadcrumb, BreadcrumbEllipsis(), BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator(), ButtonGroup() (+19 more)
+Cohesion: 0.11
+Nodes (21): ButtonGroup(), ButtonGroupSeparator(), ButtonGroupText(), buttonGroupVariants, FieldSeparator(), Item(), ItemActions(), ItemContent() (+13 more)
 
 ### Community 15 - "package.json"
 Cohesion: 0.08
 Nodes (19): devDependencies, concurrently, playwright, @playwright/test, name, packageManager, private, scripts (+11 more)
 
-### Community 16 - "menubar.tsx"
-Cohesion: 0.11
-Nodes (12): Menubar, MenubarCheckboxItem, MenubarContent, MenubarItem, MenubarLabel, MenubarRadioItem, MenubarSeparator, MenubarShortcut() (+4 more)
+### Community 16 - "student-quiz.tsx"
+Cohesion: 0.21
+Nodes (19): AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter(), AlertDialogHeader(), AlertDialogOverlay, AlertDialogTitle (+11 more)
 
 ### Community 17 - "Button"
-Cohesion: 0.07
-Nodes (162): ALL, AppRouter(), HomeRoute(), RedirectToAuth(), Role, RouteConfig, RouteGuard(), ROUTES (+154 more)
+Cohesion: 0.08
+Nodes (155): ALL, HomeRoute(), Role, RouteConfig, ROUTES, AnnouncementAuthor(), AnnouncementAuthorProps, Props (+147 more)
 
 ### Community 18 - "use-toast.ts"
-Cohesion: 0.12
-Nodes (24): Toast, ToastAction, ToastActionElement, ToastClose, ToastDescription, ToastProps, ToastTitle, toastVariants (+16 more)
+Cohesion: 0.08
+Nodes (31): App(), AppRouter(), RedirectToAuth(), RouteGuard(), UnauthorizedRedirect(), ErrorBoundary, Toast, ToastAction (+23 more)
 
 ### Community 19 - "pagination.tsx"
 Cohesion: 0.24
@@ -188,16 +189,16 @@ Cohesion: 0.10
 Nodes (21): dependencies, bcryptjs, connect-sqlite3, cors, csrf-sync, express, express-rate-limit, express-session (+13 more)
 
 ### Community 21 - "queryClient.ts"
-Cohesion: 0.60
-Nodes (4): apiRequest(), getQueryFn(), throwIfResNotOk(), UnauthorizedBehavior
+Cohesion: 0.47
+Nodes (5): apiRequest(), getQueryFn(), queryClient, throwIfResNotOk(), UnauthorizedBehavior
 
 ### Community 22 - "field.tsx"
-Cohesion: 0.18
-Nodes (11): Field(), FieldContent(), FieldDescription(), FieldError(), FieldGroup(), FieldLabel(), FieldLegend(), FieldSeparator() (+3 more)
+Cohesion: 0.20
+Nodes (10): Field(), FieldContent(), FieldDescription(), FieldError(), FieldGroup(), FieldLabel(), FieldLegend(), FieldSet() (+2 more)
 
 ### Community 23 - "cn"
-Cohesion: 0.07
-Nodes (43): AccordionContent, AccordionItem, AccordionTrigger, Avatar, AvatarFallback, AvatarImage, ContextMenuCheckboxItem, ContextMenuContent (+35 more)
+Cohesion: 0.05
+Nodes (49): AccordionContent, AccordionItem, AccordionTrigger, Avatar, AvatarFallback, AvatarImage, Breadcrumb, BreadcrumbEllipsis() (+41 more)
 
 ### Community 25 - "QuizMaster Graphify Mimari Haritası"
 Cohesion: 0.20
@@ -213,7 +214,7 @@ Nodes (7): compilerOptions, allowSyntheticDefaultImports, composite, module, mod
 
 ### Community 29 - "server/package.json"
 Cohesion: 0.05
-Nodes (34): cross-env, dotenv, dotenv-cli, esbuild, multer, nodemailer, pino, pino-pretty (+26 more)
+Nodes (33): cross-env, dotenv, dotenv-cli, esbuild, multer, pino, pino-pretty, prisma (+25 more)
 
 ### Community 30 - "scripts"
 Cohesion: 0.14
@@ -223,41 +224,41 @@ Nodes (14): scripts, build, db:create-admin, db:deploy, db:generate, db:migrate,
 Cohesion: 0.19
 Nodes (12): FormControl, FormDescription, FormFieldContext, FormFieldContextValue, FormItem, FormItemContext, FormItemContextValue, FormLabel (+4 more)
 
-### Community 32 - "ref_vitest"
-Cohesion: 0.09
-Nodes (17): bcryptjs, express-session, supertest, changePasswordSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema (+9 more)
+### Community 32 - "api-routes/auth.ts"
+Cohesion: 0.13
+Nodes (13): bcryptjs, changePasswordSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, router, prisma (+5 more)
 
 ### Community 34 - "drawer.tsx"
 Cohesion: 0.25
 Nodes (7): DrawerContent, DrawerDescription, DrawerFooter(), DrawerHeader(), DrawerOverlay, DrawerTitle, vaul
 
-### Community 35 - "ai.ts"
-Cohesion: 0.18
-Nodes (7): express-rate-limit, AIResponseSchema, aiTestLimiter, QuestionSchema, router, SurveyQuestionSchema, SurveyResponseSchema
+### Community 35 - "auth-context.tsx"
+Cohesion: 0.26
+Nodes (10): AuthContext, AuthContextType, AuthProvider(), UserRole, authApi, ParentStudent, refreshCsrfToken(), User (+2 more)
 
 ### Community 36 - "navigation-menu.tsx"
 Cohesion: 0.28
 Nodes (8): NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle, NavigationMenuViewport, @radix-ui/react-navigation-menu
 
 ### Community 37 - "server.ts"
-Cohesion: 0.08
-Nodes (37): buildServerEnv(), envValue(), gmailAddress, publicAppUrl(), SetupPayload, setupPayloadSchema, toDeploymentConfig(), APPLY_STEPS (+29 more)
+Cohesion: 0.05
+Nodes (54): supertest, requireRuntimeChanges(), router, runtimeDeploymentChangesAllowed(), retentionCutoffs(), RetentionPolicy, runDataRetention(), startDataRetentionWorker() (+46 more)
 
 ### Community 38 - "survey.ts"
 Cohesion: 0.15
-Nodes (13): canAccessSurvey(), getAccessibleSurveys(), isAssignedToStudent(), resultQuerySchema, router, submissionSchema, surveyQuestionSchema, surveyWriteSchema (+5 more)
+Nodes (10): canAccessSurvey(), getAccessibleSurveys(), isAssignedToStudent(), resultQuerySchema, router, submissionSchema, surveyQuestionSchema, surveyWriteSchema (+2 more)
 
 ### Community 39 - "scripts"
 Cohesion: 0.25
 Nodes (8): scripts, build, dev, preview, test, test:coverage, test:ui, type-check
 
 ### Community 40 - "NotificationListener.tsx"
-Cohesion: 0.24
-Nodes (7): NotificationListener(), ToasterProps, NotificationPage, prependNotification(), next-themes, socket.io-client, sonner
+Cohesion: 0.43
+Nodes (5): NotificationListener(), notificationApi, NotificationPage, prependNotification(), socket.io-client
 
-### Community 42 - "App"
-Cohesion: 0.29
-Nodes (3): App(), ErrorBoundary, react-dom
+### Community 42 - "offline-quiz.ts"
+Cohesion: 0.27
+Nodes (9): getOfflineQuizList(), getOfflineRemainingSeconds(), OfflineQuestion, OfflineQuizSession, readJson(), saveOfflineQuizList(), saveOfflineUser(), session (+1 more)
 
 ### Community 43 - "SQLite'tan PostgreSQL'e Geçiş Rehberi"
 Cohesion: 0.15
@@ -267,9 +268,9 @@ Nodes (13): 10. Geçiş sonrası büyüme ve bakım, 11. Resmî başvuru kaynakl
 Cohesion: 0.50
 Nodes (3): nanoid, vite, */vite.config
 
-### Community 45 - "input-otp.tsx"
-Cohesion: 0.33
-Nodes (5): InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, input-otp
+### Community 45 - "empty.tsx"
+Cohesion: 0.29
+Nodes (7): Empty(), EmptyContent(), EmptyDescription(), EmptyHeader(), EmptyMedia(), emptyMediaVariants, EmptyTitle()
 
 ### Community 46 - "carousel.tsx"
 Cohesion: 0.17
@@ -280,12 +281,12 @@ Cohesion: 0.33
 Nodes (4): origLookup, @tailwindcss/vite, vite, @vitejs/plugin-react
 
 ### Community 48 - "api.ts"
-Cohesion: 0.05
-Nodes (65): AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter(), AlertDialogHeader(), AlertDialogOverlay, AlertDialogTitle (+57 more)
+Cohesion: 0.08
+Nodes (29): aiApi, AIQuestion, analyticsApi, announcementApi, apiFetch(), Category, Class, ClassAnalyticsItem (+21 more)
 
-### Community 52 - "deployment.ts"
-Cohesion: 0.17
-Nodes (15): requireRuntimeChanges(), router, runtimeDeploymentChangesAllowed(), retentionCutoffs(), RetentionPolicy, runDataRetention(), startDataRetentionWorker(), defaultRetention (+7 more)
+### Community 51 - "sonner"
+Cohesion: 0.40
+Nodes (3): ToasterProps, next-themes, sonner
 
 ### Community 54 - "QuizMaster Veli Kullanıcı Kılavuzu"
 Cohesion: 0.25
@@ -299,9 +300,9 @@ Nodes (56): dependencies, class-variance-authority, clsx, cmdk, date-fns, embla-
 Cohesion: 0.21
 Nodes (14): columnName(), crc32(), createCsvBytes(), createCsvContent(), createExcelBytes(), CsvColumn, CsvExportOptions, CsvValue (+6 more)
 
-### Community 84 - "email.ts"
-Cohesion: 0.19
-Nodes (16): router, hashResetToken(), issuePasswordReset(), originalEnv, original, getEmailConfiguration(), getEmailStatus(), getTransporter() (+8 more)
+### Community 84 - "ref_vitest"
+Cohesion: 0.21
+Nodes (14): nodemailer, originalEnv, original, getPublicAppUrl(), getEmailConfiguration(), getEmailStatus(), getTransporter(), processEmailQueue() (+6 more)
 
 ### Community 85 - "QuizMaster Yönetici Kullanıcı Kılavuzu"
 Cohesion: 0.12
@@ -338,12 +339,12 @@ Nodes (12): Alert, AlertDescription, AlertTitle, alertVariants, ToggleGroup, Tog
 ## Knowledge Gaps
 - **540 isolated node(s):** `name`, `version`, `type`, `description`, `dev` (+535 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 798 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **17 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **18 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `cn()` connect `cn` to `drawer.tsx`, `navigation-menu.tsx`, `sidebar.tsx`, `utils.ts`, `chart.tsx`, `command.tsx`, `item.tsx`, `class-variance-authority`, `api.ts`, `Button`, `carousel.tsx`, `input-otp.tsx`, `menubar.tsx`, `pagination.tsx`, `field.tsx`, `use-toast.ts`, `input-group.tsx`, `form.tsx`?**
+- **Why does `cn()` connect `cn` to `drawer.tsx`, `navigation-menu.tsx`, `sidebar.tsx`, `utils.ts`, `chart.tsx`, `command.tsx`, `item.tsx`, `class-variance-authority`, `student-quiz.tsx`, `Button`, `carousel.tsx`, `empty.tsx`, `pagination.tsx`, `use-toast.ts`, `field.tsx`, `input-group.tsx`, `form.tsx`?**
   _High betweenness centrality (0.218) - this node is a cross-community bridge._
 - **Why does `SQLite'tan PostgreSQL'e Geçiş Rehberi` connect `SQLite'tan PostgreSQL'e Geçiş Rehberi` to `api.ts`, `README.md`?**
   _High betweenness centrality (0.144) - this node is a cross-community bridge._
@@ -352,7 +353,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `setup-bootstrap.mjs` be split into smaller, more focused modules?**
   _Cohesion score 0.06237424547283702 - nodes in this community are weakly interconnected._
 - **Should `routes.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.10885341074020319 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07286961758506474 - nodes in this community are weakly interconnected._
 - **Should `IStorage` be split into smaller, more focused modules?**
   _Cohesion score 0.021052631578947368 - nodes in this community are weakly interconnected._
 - **Should `PrismaStorage` be split into smaller, more focused modules?**

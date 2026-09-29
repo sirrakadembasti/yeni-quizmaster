@@ -163,6 +163,15 @@ function isPortOpen(port: number, timeoutMs = 700): Promise<boolean> {
   });
 }
 
+async function readJson(req: any): Promise<any> {
+  let body = "";
+  for await (const chunk of req) {
+    body += chunk;
+    if (body.length > 16_384) throw new Error("İstek gövdesi çok büyük.");
+  }
+  return body ? JSON.parse(body) : {};
+}
+
 function markStep(applyJob: ApplyJobState, id: string, status: ApplyStepState["status"], detail?: string) {
   applyJob.steps = applyJob.steps.map((step) =>
     step.id === id ? { ...step, status, detail: detail ?? step.detail } : step,
@@ -300,63 +309,119 @@ export function createSetupApp(token: string, onComplete?: () => void) {
   });
 
   app.get("/api/app-health", async (_req, res) => {
-    const port = applyJob.appPort ?? 5000;
     const mode = applyJob.mode ?? "localhost";
-    const reachable = await isPortOpen(port);
+    const appPort = applyJob.appPort ?? 5000;
+    const devPort = 5173;
+    const isLocal = mode === "localhost";
+    // Yerel pnpm dev: arayüz 5173, API appPort. Üretim: her ikisi appPort.
+    const uiPort = isLocal ? devPort : appPort;
+    const apiReachable = await isPortOpen(appPort);
+    const uiReachable = isLocal ? await isPortOpen(uiPort) : apiReachable;
+    const reachable = isLocal ? uiReachable : apiReachable;
+    const loginUrl = isLocal && uiReachable
+      ? `http://127.0.0.1:${devPort}/auth`
+      : applyJob.loginUrl;
     res.json({
       reachable,
-      port,
+      apiReachable,
+      uiReachable,
+      port: appPort,
+      uiPort,
       mode,
-      loginUrl: applyJob.loginUrl,
+      loginUrl,
       publicUrl: applyJob.publicUrl,
       hint: reachable
         ? "Uygulama ayakta görünüyor; giriş sayfasına gidebilirsiniz."
-        : mode === "localhost"
-          ? `Uygulama ${port} portunda dinlemiyor. Önce sunucuyu başlatın.`
-          : "Alan adı / reverse proxy henüz doğrulanamadı. Nginx ve DNS ayarlarını tamamlayın.",
+        : isLocal
+          ? `Uygulama henüz ayakta değil (API: ${appPort}, arayüz: ${devPort}).`
+          : `Uygulama ${appPort} portunda dinlemiyor veya alan adı çözümlenmiyor. Nginx + DNS'i kontrol edin.`,
     });
   });
 
-  app.post("/api/start-app", async (_req, res) => {
-    const port = applyJob.appPort ?? 5000;
-    if (await isPortOpen(port)) {
+  app.post("/api/start-app", async (req, res) => {
+    const body = await readJson(req).catch(() => ({}));
+    const mode = applyJob.mode ?? "localhost";
+    const isLocal = mode === "localhost";
+    const preferDev = isLocal && body?.mode !== "production";
+    const appPort = applyJob.appPort ?? 5000;
+    const projectRoot = path.join(serverRoot, "..");
+
+    const alreadyUp = await isPortOpen(appPort) || (preferDev && await isPortOpen(5173));
+    if (alreadyUp) {
+      const loginUrl = preferDev
+        ? `http://127.0.0.1:5173/auth`
+        : applyJob.loginUrl;
       return res.json({
         message: "Uygulama zaten ayakta.",
         reachable: true,
-        loginUrl: applyJob.loginUrl,
+        loginUrl,
         publicUrl: applyJob.publicUrl,
       });
     }
-    const distEntry = path.join(serverRoot, "..", "dist", "index.cjs");
-    if (!fs.existsSync(distEntry)) {
-      return res.status(409).json({
-        message: "Üretim derlemesi bulunamadı. Kurulumda 'Uygulamayı üretim için derle' seçeneğini kullanın veya pnpm build çalıştırın.",
-      });
+
+    let command: string;
+    let args: string[];
+    let cwd = projectRoot;
+    if (preferDev) {
+      // Arka planda pnpm dev: görünür terminal açılmaz.
+      command = process.platform === "win32"
+        ? (process.env.ComSpec || "cmd.exe")
+        : "pnpm";
+      args = process.platform === "win32"
+        ? ["/d", "/s", "/c", "pnpm", "run", "dev"]
+        : ["run", "dev"];
+    } else {
+      const distEntry = path.join(projectRoot, "dist", "index.cjs");
+      if (!fs.existsSync(distEntry)) {
+        return res.status(409).json({
+          message: "Üretim derlemesi bulunamadı. 'Uygulamayı üretim için derle' seçeneğini kullanın veya pnpm build çalıştırın.",
+        });
+      }
+      command = process.execPath;
+      args = [distEntry];
+      cwd = projectRoot;
     }
-    const child = spawn(process.execPath, [distEntry], {
-      cwd: path.join(serverRoot, ".."),
-      env: { ...process.env, NODE_ENV: "production", FORCE_COLOR: "0" },
+
+    const child = spawn(command, args, {
+      cwd,
+      env: {
+        ...process.env,
+        NODE_ENV: preferDev ? "development" : "production",
+        FORCE_COLOR: "0",
+      },
       detached: true,
       stdio: "ignore",
-      windowsHide: true,
+      windowsHide: true, // Terminal penceresi açma
     });
     child.unref();
 
-    // Sunucunun portu almasını bekle
+    const watchPort = preferDev ? 5173 : appPort;
     let reachable = false;
-    for (let i = 0; i < 20; i += 1) {
+    for (let i = 0; i < 30; i += 1) {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      if (await isPortOpen(port)) {
+      if (await isPortOpen(watchPort)) {
         reachable = true;
         break;
       }
+      if (preferDev && await isPortOpen(appPort) && i > 8) {
+        // API ayağa kalktı; arayüz biraz gecikebilir
+        if (await isPortOpen(5173)) {
+          reachable = true;
+          break;
+        }
+      }
     }
+
+    const loginUrl = preferDev
+      ? `http://127.0.0.1:5173/auth`
+      : applyJob.loginUrl;
+
     return res.status(reachable ? 200 : 202).json({
       message: reachable
-        ? "Uygulama başlatıldı."
-        : "Uygulama başlatıldı ancak port henüz doğrulanamadı. Birkaç saniye sonra yeniden denetleyin.",
+        ? (preferDev ? "Geliştirme sunucusu (pnpm dev) arka planda başlatıldı." : "Uygulama başlatıldı.")
+        : "Başlatıldı ancak port henüz açılmadı. Birkaç saniye sonra tekrar denetleyin.",
       reachable,
-      loginUrl: applyJob.loginUrl,
+      loginUrl,
       publicUrl: applyJob.publicUrl,
     });
   });
