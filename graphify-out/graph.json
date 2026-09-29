@@ -1312,7 +1312,7 @@
       "file_type": "code",
       "norm_label": "describeportconflict()",
       "source_file": "scripts/setup-bootstrap-lib.mjs",
-      "source_location": "L377"
+      "source_location": "L392"
     },
     {
       "id": "scripts_setup_bootstrap_lib_findlisteningprocess",
@@ -1324,7 +1324,7 @@
       "file_type": "code",
       "norm_label": "findlisteningprocess()",
       "source_file": "scripts/setup-bootstrap-lib.mjs",
-      "source_location": "L331"
+      "source_location": "L346"
     },
     {
       "id": "scripts_setup_bootstrap_lib_getsetuppaths",
@@ -1432,7 +1432,7 @@
       "file_type": "code",
       "norm_label": "runcapture()",
       "source_file": "scripts/setup-bootstrap-lib.mjs",
-      "source_location": "L322"
+      "source_location": "L337"
     },
     {
       "id": "scripts_setup_bootstrap_lib_stopportprocess",
@@ -18525,7 +18525,7 @@
       "node_kind": "heading",
       "norm_label": "1. sunucuyu haz\u0131rlay\u0131n ve depoyu indirin",
       "source_file": "README.md",
-      "source_location": "L167"
+      "source_location": "L176"
     },
     {
       "id": "readme_2_g\u00fcvenli_\u00f6n_kontrol\u00fc_ve_bootstrap_ekran\u0131n\u0131_ba\u015flat\u0131n",
@@ -18537,7 +18537,7 @@
       "node_kind": "heading",
       "norm_label": "2. guvenli on kontrolu ve bootstrap ekran\u0131n\u0131 baslat\u0131n",
       "source_file": "README.md",
-      "source_location": "L176"
+      "source_location": "L185"
     },
     {
       "id": "readme_2_kurulum_ba\u015flat\u0131c\u0131s\u0131n\u0131_\u00e7al\u0131\u015ft\u0131r\u0131n",
@@ -18573,7 +18573,7 @@
       "node_kind": "heading",
       "norm_label": "3. sihirbaz ad\u0131mlar\u0131n\u0131 tamamlay\u0131n",
       "source_file": "README.md",
-      "source_location": "L193"
+      "source_location": "L202"
     },
     {
       "id": "readme_4_uygulamay\u0131_ba\u015flat\u0131n",
@@ -18585,7 +18585,7 @@
       "node_kind": "heading",
       "norm_label": "4. uygulamay\u0131 baslat\u0131n",
       "source_file": "README.md",
-      "source_location": "L141"
+      "source_location": "L143"
     },
     {
       "id": "readme_4_uygulamay\u0131_servis_olarak_\u00e7al\u0131\u015ft\u0131r\u0131n",
@@ -18597,7 +18597,7 @@
       "node_kind": "heading",
       "norm_label": "4. uygulamay\u0131 servis olarak cal\u0131st\u0131r\u0131n",
       "source_file": "README.md",
-      "source_location": "L203"
+      "source_location": "L212"
     },
     {
       "id": "readme_5_domain_https_ve_canl\u0131l\u0131k_kontrollerini_tamamlay\u0131n",
@@ -18609,7 +18609,7 @@
       "node_kind": "heading",
       "norm_label": "5. domain, https ve canl\u0131l\u0131k kontrollerini tamamlay\u0131n",
       "source_file": "README.md",
-      "source_location": "L213"
+      "source_location": "L222"
     },
     {
       "id": "readme_anket",
@@ -18621,7 +18621,7 @@
       "node_kind": "heading",
       "norm_label": "anket",
       "source_file": "README.md",
-      "source_location": "L268"
+      "source_location": "L277"
     },
     {
       "id": "readme_e_posta_ve_parola_s\u0131f\u0131rlama",
@@ -18633,7 +18633,7 @@
       "node_kind": "heading",
       "norm_label": "e-posta ve parola s\u0131f\u0131rlama",
       "source_file": "README.md",
-      "source_location": "L300"
+      "source_location": "L309"
     },
     {
       "id": "readme_excel_ve_yazd\u0131rma",
@@ -18645,7 +18645,7 @@
       "node_kind": "heading",
       "norm_label": "excel ve yazd\u0131rma",
       "source_file": "README.md",
-      "source_location": "L317"
+      "source_location": "L326"
     },
     {
       "id": "readme_gereksinimler",
@@ -18717,7 +18717,7 @@
       "node_kind": "heading",
       "norm_label": "kurulum baslat\u0131c\u0131s\u0131n\u0131 yeniden cal\u0131st\u0131rma ve temiz kurulum",
       "source_file": "README.md",
-      "source_location": "L219"
+      "source_location": "L228"
     },
     {
       "id": "readme_kurulum_yeniden_a\u00e7\u0131ld\u0131\u011f\u0131nda_port_\u00e7ak\u0131\u015fmas\u0131_eaddrinuse",
@@ -18729,7 +18729,7 @@
       "node_kind": "heading",
       "norm_label": "kurulum yeniden ac\u0131ld\u0131g\u0131nda port cak\u0131smas\u0131 (eaddrinuse)",
       "source_file": "README.md",
-      "source_location": "L234"
+      "source_location": "L243"
     },
     {
       "id": "readme_kurum_sunucusuna_veya_vps_e_kurulum",
@@ -18741,7 +18741,7 @@
       "node_kind": "heading",
       "norm_label": "kurum sunucusuna veya vps'e kurulum",
       "source_file": "README.md",
-      "source_location": "L163"
+      "source_location": "L172"
     },
     {
       "id": "readme_proje_yap\u0131s\u0131",
@@ -18777,7 +18777,7 @@
       "node_kind": "heading",
       "norm_label": "rol ve erisim ozeti",
       "source_file": "README.md",
-      "source_location": "L283"
+      "source_location": "L292"
     },
     {
       "id": "readme_sorun_giderme",
@@ -18789,7 +18789,7 @@
       "node_kind": "heading",
       "norm_label": "sorun giderme",
       "source_file": "README.md",
-      "source_location": "L409"
+      "source_location": "L418"
     },
     {
       "id": "readme_sqlite_tan_postgresql_e_ge\u00e7i\u015f",
@@ -18801,7 +18801,7 @@
       "node_kind": "heading",
       "norm_label": "sqlite'tan postgresql'e gecis",
       "source_file": "README.md",
-      "source_location": "L375"
+      "source_location": "L384"
     },
     {
       "id": "readme_s\u0131nav",
@@ -18813,7 +18813,7 @@
       "node_kind": "heading",
       "norm_label": "s\u0131nav",
       "source_file": "README.md",
-      "source_location": "L259"
+      "source_location": "L268"
     },
     {
       "id": "readme_teknoloji_y\u0131\u011f\u0131n\u0131",
@@ -18837,7 +18837,7 @@
       "node_kind": "heading",
       "norm_label": "temel kullan\u0131m ak\u0131slar\u0131",
       "source_file": "README.md",
-      "source_location": "L257"
+      "source_location": "L266"
     },
     {
       "id": "readme_test_ve_do\u011frulama",
@@ -18849,7 +18849,7 @@
       "node_kind": "heading",
       "norm_label": "test ve dogrulama",
       "source_file": "README.md",
-      "source_location": "L325"
+      "source_location": "L334"
     },
     {
       "id": "readme_veli",
@@ -18861,7 +18861,7 @@
       "node_kind": "heading",
       "norm_label": "veli",
       "source_file": "README.md",
-      "source_location": "L275"
+      "source_location": "L284"
     },
     {
       "id": "readme_veri_ve_g\u00fcvenlik_notlar\u0131",
@@ -18873,7 +18873,7 @@
       "node_kind": "heading",
       "norm_label": "veri ve guvenlik notlar\u0131",
       "source_file": "README.md",
-      "source_location": "L362"
+      "source_location": "L371"
     },
     {
       "id": "readme_\u00e7evrimd\u0131\u015f\u0131_s\u0131nav_davran\u0131\u015f\u0131",
@@ -18885,7 +18885,7 @@
       "node_kind": "heading",
       "norm_label": "cevrimd\u0131s\u0131 s\u0131nav davran\u0131s\u0131",
       "source_file": "README.md",
-      "source_location": "L309"
+      "source_location": "L318"
     },
     {
       "id": "readme_\u00f6nemli_rotalar",
@@ -18897,7 +18897,7 @@
       "node_kind": "heading",
       "norm_label": "onemli rotalar",
       "source_file": "README.md",
-      "source_location": "L341"
+      "source_location": "L350"
     },
     {
       "id": "ref_node_assert",
@@ -32362,7 +32362,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/setup-bootstrap-lib.mjs",
-      "source_location": "L378",
+      "source_location": "L393",
       "weight": 1.0
     },
     {
@@ -32374,7 +32374,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/setup-bootstrap-lib.mjs",
-      "source_location": "L337",
+      "source_location": "L352",
       "weight": 1.0
     },
     {
@@ -71141,7 +71141,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L141",
+      "source_location": "L143",
       "weight": 1.0
     },
     {
@@ -71174,7 +71174,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L163",
+      "source_location": "L172",
       "weight": 1.0
     },
     {
@@ -71185,7 +71185,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L219",
+      "source_location": "L228",
       "weight": 1.0
     },
     {
@@ -71196,7 +71196,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L234",
+      "source_location": "L243",
       "weight": 1.0
     },
     {
@@ -71218,7 +71218,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L167",
+      "source_location": "L176",
       "weight": 1.0
     },
     {
@@ -71229,7 +71229,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L176",
+      "source_location": "L185",
       "weight": 1.0
     },
     {
@@ -71240,7 +71240,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L193",
+      "source_location": "L202",
       "weight": 1.0
     },
     {
@@ -71251,7 +71251,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L203",
+      "source_location": "L212",
       "weight": 1.0
     },
     {
@@ -71262,7 +71262,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L213",
+      "source_location": "L222",
       "weight": 1.0
     },
     {
@@ -71284,7 +71284,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L257",
+      "source_location": "L266",
       "weight": 1.0
     },
     {
@@ -71295,7 +71295,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L283",
+      "source_location": "L292",
       "weight": 1.0
     },
     {
@@ -71317,7 +71317,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L300",
+      "source_location": "L309",
       "weight": 1.0
     },
     {
@@ -71328,7 +71328,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L309",
+      "source_location": "L318",
       "weight": 1.0
     },
     {
@@ -71339,7 +71339,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L317",
+      "source_location": "L326",
       "weight": 1.0
     },
     {
@@ -71350,7 +71350,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L325",
+      "source_location": "L334",
       "weight": 1.0
     },
     {
@@ -71361,7 +71361,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L341",
+      "source_location": "L350",
       "weight": 1.0
     },
     {
@@ -71372,7 +71372,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L362",
+      "source_location": "L371",
       "weight": 1.0
     },
     {
@@ -71383,7 +71383,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L375",
+      "source_location": "L384",
       "weight": 1.0
     },
     {
@@ -71394,7 +71394,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L409",
+      "source_location": "L418",
       "weight": 1.0
     },
     {
@@ -71449,7 +71449,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L259",
+      "source_location": "L268",
       "weight": 1.0
     },
     {
@@ -71460,7 +71460,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L268",
+      "source_location": "L277",
       "weight": 1.0
     },
     {
@@ -71471,7 +71471,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L275",
+      "source_location": "L284",
       "weight": 1.0
     },
     {
@@ -71955,7 +71955,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/setup-bootstrap-lib.mjs",
-      "source_location": "L322",
+      "source_location": "L337",
       "weight": 1.0
     },
     {
@@ -71966,7 +71966,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/setup-bootstrap-lib.mjs",
-      "source_location": "L331",
+      "source_location": "L346",
       "weight": 1.0
     },
     {
@@ -71977,7 +71977,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/setup-bootstrap-lib.mjs",
-      "source_location": "L377",
+      "source_location": "L392",
       "weight": 1.0
     },
     {
@@ -77112,7 +77112,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/admin-guide.md",
-      "source_location": "L153",
+      "source_location": "L160",
       "weight": 1.0
     },
     {
@@ -77900,5 +77900,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "70d50c53def502dc50be0406324a9b1705942973"
+  "built_at_commit": "f42e2a87e03dbec0b938d2a6c0cec891df7a7c56"
 }

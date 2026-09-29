@@ -1,7 +1,7 @@
 # Graph Report - yeni-quizmaster-main  (2026-09-30)
 
 ## Corpus Check
-- 236 files · ~129,287 words
+- 236 files · ~129,430 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 10 file(s) not represented in the graph (top: (none) 3, .bat 2, .example 2)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `70d50c53`
+- Built from commit: `f42e2a87`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

@@ -302,11 +302,26 @@ export function stopPortProcess(port) {
     });
     killed = result.status === 0;
   } else {
+    const pid = holder.pid;
     try {
-      process.kill(holder.pid, "SIGTERM");
+      process.kill(pid, "SIGTERM");
       killed = true;
+      // SIGTERM yanıt vermezse SIGKILL
+      setTimeout(() => {
+        try {
+          process.kill(pid, 0);
+          process.kill(pid, "SIGKILL");
+        } catch {
+          /* zaten kapandı */
+        }
+      }, 800);
     } catch {
-      killed = false;
+      try {
+        process.kill(pid, "SIGKILL");
+        killed = true;
+      } catch {
+        killed = false;
+      }
     }
   }
   return {

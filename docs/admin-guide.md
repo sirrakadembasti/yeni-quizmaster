@@ -150,7 +150,14 @@ Tarayıcı verilerini temizlemek veya cihaz değiştirmek bekleyen yerel cevapla
 
 ### Sunucu durumu ve ilk kurulum
 
-İlk sunucu kurulumu yönetici panelinden yapılmaz. Yeni ve temiz bir sunucuda, ana uygulama başlatılmadan önce sunucu yöneticisi `pnpm run setup` komutuyla tek kullanımlık kurulum sihirbazını çalıştırır. Sihirbaz yalnız `127.0.0.1` üzerinde açılır; uzak VPS için internete port açmak yerine SSH tüneli kullanılmalıdır. Ayrıntılar için [Sunucu Kurulum Kılavuzu](sunucu-kurulum-kilavuzu.md) izlenmelidir.
+İlk sunucu kurulumu yönetici panelinden yapılmaz. Yeni ve temiz bir sunucuda, ana uygulama başlatılmadan önce sunucu yöneticisi `pnpm run setup` (veya Windows `kurulum.bat` / Linux `./kurulum.sh`) komutuyla tek kullanımlık kurulum sihirbazını çalıştırır. Sihirbaz yalnız `127.0.0.1` üzerinde açılır; uzak VPS için internete port açmak yerine SSH tüneli kullanılmalıdır.
+
+Kurulum sihirbazı son adımda **Uygulamayı başlat** düğmesi sunar:
+
+- **Yerel / localhost:** `pnpm dev` arka planda başlar (terminal penceresi açılmaz); giriş `http://127.0.0.1:5173/auth`
+- **Kurum (subdomain/alt yol):** üretim servisi başlatılır; Nginx + DNS sonrası `https://.../auth`
+
+Kör yönlendirme yoktur; uygulama ayakta değilse “sayfaya ulaşılamıyor” yerine düğme ve açıklama gösterilir. Ayrıntılar için [Sunucu Kurulum Kılavuzu](sunucu-kurulum-kilavuzu.md) izlenmelidir.
 
 Paneldeki **Sunucu Durumu** ekranı normal kullanımda salt okunurdur. Profil kaydetme ve kalıcı saklama temizliği yalnız sunucu yöneticisinin bakım sırasında `ALLOW_RUNTIME_DEPLOYMENT_CHANGES=true` ayarını açıkça etkinleştirmesiyle açılır. Bu ayarı sürekli açık bırakmayın. Gizli anahtarlar ve Gmail uygulama parolası bu ekranda gösterilmez.
 

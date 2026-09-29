@@ -133,6 +133,8 @@ fi
 printf '\n%s\n\n' '[TAMAM] Gerekli çalışma ortamı hazır. Grafik kurulum başlangıcı açılıyor...'
 printf '%s\n' 'Bu terminali sihirbaz bitene kadar KAPATMAYIN; sihirbaz bu sürecin altındadır.'
 printf '%s\n' 'Portlar: başlatıcı '"$CHECK_PORT"' · sihirbaz '"$WIZARD_PORT"
+printf '%s\n' 'Bitişte "Uygulamayı başlat" → yerelde pnpm dev (arka plan), kurumda üretim servisi.'
+printf '%s\n' 'Yerel giriş: http://127.0.0.1:5173/auth'
 printf '\n'
 pnpm run setup
 setup_exit=$?

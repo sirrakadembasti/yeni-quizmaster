@@ -128,7 +128,7 @@ Ana sihirbaz `127.0.0.1:5050` üzerinde açılır; kurulum biçimi, adres, SQLit
 
 Ardından `.env`, migration, ilk yönetici ve production build işlemleri canlı adımlarla izlenir.
 
-**Bitiş ekranı (önemli):** Sihirbaz, kurulum biter bitmez tarayıcıyı giriş adresine **kör yönlendirmez**. Bitişte üç düğme vardır:
+**Bitiş ekranı (önemli):** Sihirbaz, kurulum biter bitmez tarayıcıyı giriş adresine **kör yönlendirmez**. Bitişte üç düğme vardır (Windows ve Linux aynıdır):
 
 1. **Uygulamayı başlat** — yerel kurulumda `pnpm dev` arka planda başlar (terminal penceresi açılmaz); kurum kurulumunda üretim servisi ayağa kalkar,
 2. **Giriş sayfasına git** — port/domain denetlenerek `/auth` açılır,
@@ -136,17 +136,26 @@ Ardından `.env`, migration, ilk yönetici ve production build işlemleri canlı
 
 Yerel (localhost) kurulumda giriş adresi `http://127.0.0.1:5173/auth` (Vite) şeklindedir. Kurum (subdomain/alt yol) kurulumunda Nginx + DNS hazır olmadan adres açılmaz; örn: `server/data/setup-artifacts/nginx.conf.example`.
 
+Linux/macOS’ta sihirbaz aynıdır; yalnız başlatıcı `./kurulum.sh` ve süreç durdurma `kill <PID>` ile yapılır.
+
 > **Terminali sihirbaz bitene kadar kapatmayın.** Sihirbaz kurulum başlatıcısının alt sürecidir; terminal kapanırsa kurulum yarıda kalır. Başarıyla biterse başlatıcı otomatik kapanır.
 
 #### 4. Uygulamayı başlatın
 
-Kurulum sonrasında kısa bir yerel çalıştırma için:
+Sihirbaz bitişindeki **Uygulamayı başlat** düğmesi:
+
+- Yerelde: `pnpm dev` (API 5000 + arayüz 5173) → `http://127.0.0.1:5173/auth`
+- Kurumda: üretim servisi (`dist/index.cjs` / `pnpm start`) → yapılandırılan `https://.../auth`
+
+Elle çalıştırmak için:
 
 ```bash
+# Yerel geliştirme / demo
+pnpm run dev
+
+# Üretim (derleme sonrası)
 pnpm --filter quiz-master-server start
 ```
-
-Sihirbaz bitişinde **Uygulamayı başlat** düğmesi de aynı üretim sürecini başlatır. Ardından `http://localhost:5000/auth` (veya seçtiğiniz adresteki `/auth`) üzerinden yönetici girişi yapın.
 
 Geliştirme yapmak isteyenler production sihirbazı yerine manuel geliştirme akışını kullanabilir:
 
