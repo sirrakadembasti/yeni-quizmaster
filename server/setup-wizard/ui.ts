@@ -137,6 +137,7 @@ export function renderSetupPage(csrfToken: string) {
     <h3 style="margin:0 0 8px">Sonraki adımlar</h3>
     <ol id="nextSteps" style="margin:0;padding-left:18px;line-height:1.7"></ol>
     <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+      <button type="button" class="primary" id="startApp" hidden>Uygulamayı başlat</button>
       <button type="button" class="primary" id="goLogin">Giriş sayfasına git</button>
       <button type="button" class="secondary" id="goApp">Uygulamayı aç</button>
     </div>
@@ -334,25 +335,71 @@ function finishApplySuccess(applyJob){
   result.textContent=(applyJob.message||'Kurulum tamamlandı.')+(summary.length?'\\n\\n'+summary.join('\\n'):'');
   result.className='ok';
   list.innerHTML=[
-    isLocal?'Yerel denemede servis: <code>pnpm start</code> veya <code>start-local.ps1</code>':'Uygulama servisini başlatın: <code>pnpm start</code> / systemd',
+    isLocal?'Uygulama sunucusunu başlatın: aşağıdaki <strong>Uygulamayı başlat</strong> düğmesi veya <code>pnpm start</code>':'Uygulama servisini başlatın: <code>pnpm start</code> / systemd',
+    isLocal?'Reverse proxy gerekmez; tarayıcıdan doğrudan açılır.':'Nginx + DNS ayarlarını yapın: <code>server/data/setup-artifacts/nginx.conf.example</code>',
     'Yönetici bilgilerinizle giriş yapın: <a href="'+loginUrl+'" id="loginLink">'+loginUrl+'</a>',
-    isLocal?'Reverse proxy gerekmez; tarayıcıdan doğrudan açabilirsiniz.':'Nginx/reverse proxy örneği: <code>server/data/setup-artifacts/nginx.conf.example</code>',
     'Gizli değerler yalnız <code>server/.env</code> içindedir; Git’e eklemeyin.',
     publicUrl?'Adres: <code>'+publicUrl+'</code>':'',
   ].filter(Boolean).map(x=>'<li>'+x+'</li>').join('');
   doneBox.classList.remove('hidden');
   const goLogin=document.getElementById('goLogin');
   const goApp=document.getElementById('goApp');
-  if(goLogin)goLogin.onclick=()=>{location.href=loginUrl};
-  if(goApp)goApp.onclick=()=>{location.href=publicUrl||loginUrl};
-  let left=12;
   const note=document.getElementById('redirectNote');
-  note.textContent=left+' saniye içinde giriş sayfasına yönlendirileceksiniz.';
-  const timer=setInterval(()=>{
-    left-=1;
-    if(left<=0){clearInterval(timer);location.href=loginUrl;return}
-    note.textContent=left+' saniye içinde giriş sayfasına yönlendirileceksiniz.';
-  },1000);
+  const startBtn=document.getElementById('startApp');
+  if(startBtn&&isLocal){
+    startBtn.classList.remove('hidden');
+    startBtn.onclick=async()=>{
+      startBtn.disabled=true;
+      note.textContent='Uygulama başlatılıyor…';
+      try{
+        const {data}=await fetchJson('/api/start-app',{method:'POST',headers:{'x-setup-csrf':window.__SETUP__.csrfToken},body:'{}'});
+        if(data&&data.reachable){
+          note.textContent='Uygulama ayakta. Giriş sayfasına gidiliyor…';
+          location.href=loginUrl;
+          return;
+        }
+        note.textContent=(data&&data.message)||'Uygulama başlatıldı; port bekleniyor. Az sonra “Girişe git” ile deneyin.';
+        await watchAppHealth(loginUrl,note,isLocal);
+      }catch(err){
+        note.textContent=err.message||'Uygulama başlatılamadı.';
+        startBtn.disabled=false;
+      }
+    };
+  }
+  if(goLogin)goLogin.onclick=async()=>{
+    goLogin.disabled=true;
+    note.textContent='Uygulama denetleniyor…';
+    try{
+      const {data}=await fetchJson('/api/app-health');
+      if(data&&data.reachable){location.href=loginUrl;return}
+      note.textContent=(data&&data.hint)||'Uygulama henüz ayakta değil. Önce sunucuyu başlatın.';
+      if(isLocal&&startBtn){startBtn.classList.remove('hidden')}
+    }catch(err){
+      note.textContent=err.message||'Denetim başarısız.';
+    }
+    goLogin.disabled=false;
+  };
+  if(goApp)goApp.onclick=()=>{
+    note.textContent='Adres tarayıcıda açılıyor. Uygulama ayakta değilse “sayfaya ulaşılamıyor” alırsınız — önce sunucuyu başlatın.';
+    location.href=publicUrl||loginUrl;
+  };
+  note.textContent=isLocal
+    ? 'Otomatik yönlendirme yok: uygulama sunucusu ayakta değilse sayfa açılmaz. “Uygulamayı başlat” ile devam edin.'
+    : 'Otomatik yönlendirme yok: Nginx/DNS hazır olmadan adres açılmaz. Yapılandırmadan sonra “Girişe git” ile devam edin.';
+  watchAppHealth(loginUrl,note,isLocal).catch(()=>{});
+}
+async function watchAppHealth(loginUrl,note,isLocal){
+  for(let i=0;i<30;i++){
+    try{
+      const {data}=await fetchJson('/api/app-health');
+      if(data&&data.reachable){
+        note.textContent='Uygulama ayakta. Giriş sayfasına yönlendiriliyorsunuz…';
+        setTimeout(()=>{location.href=loginUrl},1200);
+        return;
+      }
+    }catch{/* yoksay */}
+    await new Promise(r=>setTimeout(r,2000));
+  }
 }
 async function pollApplyProgress(){
   let failures=0;

@@ -317,6 +317,8 @@ Sihirbazda **kurulum biçimi** seçenekleri:
 - **Subdomain** — üretim önerilen (bu kılavuzun ana senaryosu)
 - **Subpath** — kurum sitesi alt yol
 
+Kurulum uygulandıktan sonra sihirbaz **kör yönlendirme yapmaz**. `server/.env` ve lock yazılır; uygulama süreci ayrıca başlatılmalıdır (`pnpm start` veya bitişteki **Uygulamayı başlat**). Alan adı `/auth` adresi ancak Nginx + DNS + TLS hazır ve uygulama ayaktaysa açılır. Aksi halde tarayıcıda “sayfaya ulaşılamıyor” görünür; bu bir kurulum hatası değildir.
+
 VPS üzerinde iki portu da internete veya yerel ağa açmayın. Yönetici bilgisayarından SSH tüneli kurun:
 
 ```bash

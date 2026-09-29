@@ -1,5 +1,6 @@
 import crypto, { timingSafeEqual } from "crypto";
 import fs from "fs";
+import net from "net";
 import os from "os";
 import path from "path";
 import { spawn } from "child_process";
@@ -126,6 +127,8 @@ type ApplyJobState = {
   summary: string[];
   loginUrl: string | null;
   publicUrl: string | null;
+  appPort: number | null;
+  mode: string | null;
   startedAt: string | null;
   finishedAt: string | null;
 };
@@ -138,9 +141,26 @@ function createApplyState(): ApplyJobState {
     summary: [],
     loginUrl: null,
     publicUrl: null,
+    appPort: null,
+    mode: null,
     startedAt: null,
     finishedAt: null,
   };
+}
+
+function isPortOpen(port: number, timeoutMs = 700): Promise<boolean> {
+  return new Promise((resolve) => {
+    const socket = net.createConnection({ host: "127.0.0.1", port });
+    const done = (value: boolean) => {
+      socket.removeAllListeners();
+      socket.destroy();
+      resolve(value);
+    };
+    socket.setTimeout(timeoutMs);
+    socket.once("connect", () => done(true));
+    socket.once("timeout", () => done(false));
+    socket.once("error", () => done(false));
+  });
 }
 
 function markStep(applyJob: ApplyJobState, id: string, status: ApplyStepState["status"], detail?: string) {
@@ -167,6 +187,8 @@ async function applySetup(payload: SetupPayload, applyJob: ApplyJobState) {
   const appUrl = publicAppUrl(payload);
   applyJob.publicUrl = appUrl;
   applyJob.loginUrl = `${appUrl.replace(/\/$/, "")}/auth`;
+  applyJob.appPort = payload.server.port;
+  applyJob.mode = payload.deployment.mode;
 
   try {
     markStep(applyJob, "prepare", "running");
@@ -277,6 +299,68 @@ export function createSetupApp(token: string, onComplete?: () => void) {
     });
   });
 
+  app.get("/api/app-health", async (_req, res) => {
+    const port = applyJob.appPort ?? 5000;
+    const mode = applyJob.mode ?? "localhost";
+    const reachable = await isPortOpen(port);
+    res.json({
+      reachable,
+      port,
+      mode,
+      loginUrl: applyJob.loginUrl,
+      publicUrl: applyJob.publicUrl,
+      hint: reachable
+        ? "Uygulama ayakta görünüyor; giriş sayfasına gidebilirsiniz."
+        : mode === "localhost"
+          ? `Uygulama ${port} portunda dinlemiyor. Önce sunucuyu başlatın.`
+          : "Alan adı / reverse proxy henüz doğrulanamadı. Nginx ve DNS ayarlarını tamamlayın.",
+    });
+  });
+
+  app.post("/api/start-app", async (_req, res) => {
+    const port = applyJob.appPort ?? 5000;
+    if (await isPortOpen(port)) {
+      return res.json({
+        message: "Uygulama zaten ayakta.",
+        reachable: true,
+        loginUrl: applyJob.loginUrl,
+        publicUrl: applyJob.publicUrl,
+      });
+    }
+    const distEntry = path.join(serverRoot, "..", "dist", "index.cjs");
+    if (!fs.existsSync(distEntry)) {
+      return res.status(409).json({
+        message: "Üretim derlemesi bulunamadı. Kurulumda 'Uygulamayı üretim için derle' seçeneğini kullanın veya pnpm build çalıştırın.",
+      });
+    }
+    const child = spawn(process.execPath, [distEntry], {
+      cwd: path.join(serverRoot, ".."),
+      env: { ...process.env, NODE_ENV: "production", FORCE_COLOR: "0" },
+      detached: true,
+      stdio: "ignore",
+      windowsHide: true,
+    });
+    child.unref();
+
+    // Sunucunun portu almasını bekle
+    let reachable = false;
+    for (let i = 0; i < 20; i += 1) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      if (await isPortOpen(port)) {
+        reachable = true;
+        break;
+      }
+    }
+    return res.status(reachable ? 200 : 202).json({
+      message: reachable
+        ? "Uygulama başlatıldı."
+        : "Uygulama başlatıldı ancak port henüz doğrulanamadı. Birkaç saniye sonra yeniden denetleyin.",
+      reachable,
+      loginUrl: applyJob.loginUrl,
+      publicUrl: applyJob.publicUrl,
+    });
+  });
+
   app.post("/api/apply", async (req, res) => {
     if (applyJob.status === "running") {
       return res.status(409).json({ message: "Kurulum zaten uygulanıyor; pencereyi kapatmayın." });
@@ -291,6 +375,8 @@ export function createSetupApp(token: string, onComplete?: () => void) {
       applyJob.finishedAt = null;
       applyJob.loginUrl = null;
       applyJob.publicUrl = null;
+      applyJob.appPort = null;
+      applyJob.mode = null;
       res.status(202).json({
         message: "Kurulum başladı. Aşağıdaki adımlar tamamlandıkça güncellenir.",
         steps: applyJob.steps,

@@ -126,7 +126,14 @@ Ana sihirbaz `127.0.0.1:5050` üzerinde açılır; kurulum biçimi, adres, SQLit
 | **Subdomain** | `https://sinav.kurum.gov.tr` | Üretim önerilen |
 | **Subpath** | `https://okul.gov.tr/quizmaster` | Kurum sitesi altı |
 
-Ardından `.env`, migration, ilk yönetici ve production build işlemleri canlı adımlarla izlenir; bitişte giriş sayfasına yönlendirme yapılır.
+Ardından `.env`, migration, ilk yönetici ve production build işlemleri canlı adımlarla izlenir.
+
+**Bitiş ekranı (önemli):** Sihirbaz, kurulum biter bitmez tarayıcıyı giriş adresine **kör yönlendirmez**. Uygulama sunucusu ayakta değilse `sayfaya ulaşılamıyor` hatası alınır. Bunun yerine:
+
+1. `/api/app-health` ile uygulama portu denetlenir,
+2. **Uygulamayı başlat** (yerel kurulum) düğmesi `dist/index.cjs` sürecini ayağa kaldırır,
+3. Port açıldığında **Giriş sayfasına git** sizi `/auth` adresine götürür,
+4. Kurum (subdomain/alt yol) kurulumunda önce Nginx + DNS tamamlanmalıdır; sihirbaz bunu değiştirmez.
 
 > **Terminali sihirbaz bitene kadar kapatmayın.** Sihirbaz kurulum başlatıcısının alt sürecidir; terminal kapanırsa kurulum yarıda kalır. Başarıyla biterse başlatıcı otomatik kapanır.
 
@@ -137,6 +144,8 @@ Kurulum sonrasında kısa bir yerel çalıştırma için:
 ```bash
 pnpm --filter quiz-master-server start
 ```
+
+Sihirbaz bitişinde **Uygulamayı başlat** düğmesi de aynı üretim sürecini başlatır. Ardından `http://localhost:5000/auth` (veya seçtiğiniz adresteki `/auth`) üzerinden yönetici girişi yapın.
 
 Geliştirme yapmak isteyenler production sihirbazı yerine manuel geliştirme akışını kullanabilir:
 
