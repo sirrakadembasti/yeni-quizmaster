@@ -123,6 +123,14 @@ app.use(cors({
 // Session configuration
 // sessionMiddleware değişken olarak tanımlanıyor — Socket.IO ile paylaşmak için gerekli (bkz. socket.ts)
 app.set("trust proxy", deploymentConfig.trustProxyHops);
+
+// HTTP (pnpm dev / localhost) üzerinde Secure çerez yazılmaz → CSRF/login kırılır.
+// Yalnızca gerçek HTTPS üretiminde secure + sameSite=none kullan.
+const frontendUrl = process.env.FRONTEND_URL || deploymentConfig.publicUrl || "";
+const isHttpsDeploy =
+  process.env.NODE_ENV === "production" &&
+  (String(frontendUrl).startsWith("https://") || process.env.FORCE_SECURE_COOKIES === "1");
+
 const sessionMiddleware = session({
   store: new SQLiteStore({
     db: "sessions.db",
@@ -133,8 +141,8 @@ const sessionMiddleware = session({
   saveUninitialized: false,
   name: "quizmaster.sid", // Custom cookie name for better security
   cookie: {
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    secure: isHttpsDeploy,
+    sameSite: isHttpsDeploy ? "none" : "lax",
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
   },

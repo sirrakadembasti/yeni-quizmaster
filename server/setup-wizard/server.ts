@@ -195,9 +195,12 @@ async function applySetup(payload: SetupPayload, applyJob: ApplyJobState) {
   const summary: string[] = [];
   const appUrl = publicAppUrl(payload);
   applyJob.publicUrl = appUrl;
-  applyJob.loginUrl = `${appUrl.replace(/\/$/, "")}/auth`;
   applyJob.appPort = payload.server.port;
   applyJob.mode = payload.deployment.mode;
+  // Yerelde pnpm dev arayüzü 5173'te; üretim/tek port 5000.
+  applyJob.loginUrl = payload.deployment.mode === "localhost"
+    ? "http://127.0.0.1:5173/auth"
+    : `${appUrl.replace(/\/$/, "")}/auth`;
 
   try {
     markStep(applyJob, "prepare", "running");

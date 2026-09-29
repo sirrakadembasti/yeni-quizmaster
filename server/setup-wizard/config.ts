@@ -53,17 +53,30 @@ export function buildServerEnv(payload: SetupPayload, sessionSecret = createSess
   const deployment = payload.deployment;
   const basePath = normalizeBasePath(deployment.basePath);
   const publicAppUrl = `${deployment.publicUrl}${basePath === "/" ? "" : basePath}`;
+  const isLocal = deployment.mode === "localhost";
+  // Yerelde pnpm dev: arayüz 5173, API 5000. Cookie secure olmamalı → NODE_ENV=development.
+  const origins = isLocal
+    ? Array.from(new Set([
+        ...deployment.allowedOrigins,
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        `http://localhost:${payload.server.port}`,
+        `http://127.0.0.1:${payload.server.port}`,
+      ]))
+    : deployment.allowedOrigins;
+  const frontendUrl = isLocal ? "http://127.0.0.1:5173" : deployment.publicUrl;
+  const nodeEnv = isLocal ? "development" : "production";
   const lines = [
     "# QuizMaster kurulum sihirbazı tarafından oluşturuldu.",
     "# Gizli değerleri Git'e eklemeyin.",
     `DATABASE_URL=${envValue("file:../data/quiz.db")}`,
     `SESSION_SECRET=${envValue(sessionSecret)}`,
-    "NODE_ENV=production",
+    `NODE_ENV=${nodeEnv}`,
     `HOST=${envValue(payload.server.host)}`,
     `PORT=${payload.server.port}`,
-    `FRONTEND_URL=${envValue(deployment.publicUrl)}`,
+    `FRONTEND_URL=${envValue(frontendUrl)}`,
     `APP_BASE_PATH=${envValue(basePath)}`,
-    `ALLOWED_ORIGINS=${envValue(deployment.allowedOrigins.join(","))}`,
+    `ALLOWED_ORIGINS=${envValue(origins.join(","))}`,
     `TRUST_PROXY_HOPS=${deployment.trustProxyHops}`,
     "ALLOW_RUNTIME_DEPLOYMENT_CHANGES=false",
     "EMAIL_PORT=587",

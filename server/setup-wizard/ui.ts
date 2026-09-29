@@ -36,8 +36,8 @@ export function renderSetupPage(csrfToken: string) {
       </select>
     </div>
     <div class="full">
-      <div class="lbl-row"><label for="publicUrl">Herkese açık adres</label><span class="help" tabindex="0" data-tip="Kullanıcıların tarayıcıya yazacağı adrestir. Üretimde HTTPS zorunludur. Yerelde http://localhost:5000 yeterlidir.">?</span></div>
-      <input name="publicUrl" id="publicUrl" type="url" required placeholder="http://localhost:5000">
+      <div class="lbl-row"><label for="publicUrl">Herkese açık adres</label><span class="help" tabindex="0" data-tip="Kullanıcıların tarayıcıya yazacağı adrestir. Üretimde HTTPS zorunludur. Yerelde (pnpm dev) arayüz http://127.0.0.1:5173, API 5000'dir.">?</span></div>
+      <input name="publicUrl" id="publicUrl" type="url" required placeholder="http://127.0.0.1:5173">
     </div>
     <div>
       <div class="lbl-row"><label for="basePath">Alt yol</label><span class="help" tabindex="0" data-tip="Uygulamanın kök altındaki yolu. Yerel ve subdomain kurulumunda / kalır. Subpath örn: /quizmaster">?</span></div>
@@ -48,8 +48,8 @@ export function renderSetupPage(csrfToken: string) {
       <input name="port" id="port" type="number" min="1024" max="65535" value="5000" required>
     </div>
     <div class="full">
-      <div class="lbl-row"><label for="origins">İzinli origin adresleri</label><span class="help" tabindex="0" data-tip="CORS / CSRF için virgülle ayrılmış tam adresler. Tarayıcıdan hangi kaynaktan istek atılabileceğini sınırlar. Yerelde http://localhost:5000 ve http://127.0.0.1:5000 yazın.">?</span></div>
-      <input name="origins" id="origins" required placeholder="http://localhost:5000">
+      <div class="lbl-row"><label for="origins">İzinli origin adresleri</label><span class="help" tabindex="0" data-tip="CORS / CSRF için virgülle ayrılmış tam adresler. Yerelde arayüz 5173 ve API 5000 birlikte yazılır.">?</span></div>
+      <input name="origins" id="origins" required placeholder="http://127.0.0.1:5173, http://localhost:5173">
     </div>
     <div>
       <div class="lbl-row"><label for="proxy">Güvenilir proxy sayısı</label><span class="help" tabindex="0" data-tip="Önünüzdeki reverse proxy (Nginx/IIS) sayısı. Yerelde 0. Nginx varsa 1. Zincirde 2+ proxy varsa artırın.">?</span></div>
@@ -180,15 +180,17 @@ function applyModeDefaults(){
     setVal('basePath','/');
     setVal('host','127.0.0.1');
     setVal('proxy',0);
+    // pnpm dev: tarayıcı Vite (5173), API 5000. Adres/origin tarayıcı tarafını gösterir.
+    const uiPort=5173;
     if(!wizard.elements.namedItem('publicUrl').value||wizard.elements.namedItem('publicUrl').dataset.auto!=='0'){
-      setVal('publicUrl','http://localhost:'+port);
+      setVal('publicUrl','http://127.0.0.1:'+uiPort);
       wizard.elements.namedItem('publicUrl').dataset.auto='1';
     }
     if(wizard.elements.namedItem('origins').dataset.auto!=='0'){
-      setVal('origins','http://localhost:'+port+', http://127.0.0.1:'+port);
+      setVal('origins','http://127.0.0.1:'+uiPort+', http://localhost:'+uiPort+', http://127.0.0.1:'+port+', http://localhost:'+port);
       wizard.elements.namedItem('origins').dataset.auto='1';
     }
-    if(note)note.textContent='Yerel kurulum: http://localhost:'+port + ' — reverse proxy/TLS gerekmez. Yalnız deneme içindir.';
+    if(note)note.textContent='Yerel kurulum (pnpm dev): arayüz http://127.0.0.1:'+uiPort+' · API http://127.0.0.1:'+port+' — reverse proxy/TLS gerekmez.';
   }else if(mode==='subdomain'){
     if(wizard.elements.namedItem('basePath').value==='/'||wizard.elements.namedItem('basePath').dataset.auto!=='0'){
       setVal('basePath','/');

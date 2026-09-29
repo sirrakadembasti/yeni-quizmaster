@@ -122,7 +122,7 @@ Ana sihirbaz `127.0.0.1:5050` üzerinde açılır; kurulum biçimi, adres, SQLit
 
 | Biçim | Adres örneği | Not |
 |---|---|---|
-| **Yerel / localhost** | `http://localhost:5000` | Deneme; reverse proxy/TLS gerekmez |
+| **Yerel / localhost** | `http://127.0.0.1:5173` | `pnpm dev`: arayüz 5173, API 5000; reverse proxy/TLS gerekmez |
 | **Subdomain** | `https://sinav.kurum.gov.tr` | Üretim önerilen |
 | **Subpath** | `https://okul.gov.tr/quizmaster` | Kurum sitesi altı |
 

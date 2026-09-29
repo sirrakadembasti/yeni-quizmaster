@@ -313,7 +313,7 @@ pnpm run setup
 
 Sihirbazda **kurulum biçimi** seçenekleri:
 
-- **Yerel / localhost** — yalnız deneme (`http://localhost:5000`); reverse proxy/TLS gerekmez
+- **Yerel / localhost** — deneme (`pnpm dev`: arayüz `http://127.0.0.1:5173`, API `:5000`); reverse proxy/TLS gerekmez
 - **Subdomain** — üretim önerilen (bu kılavuzun ana senaryosu)
 - **Subpath** — kurum sitesi alt yol
 
