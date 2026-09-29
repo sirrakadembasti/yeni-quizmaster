@@ -1,0 +1,337 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // Mevcut çalışma sağlayıcısı SQLite'tır. PostgreSQL'e geçerken yalnız bu alanı
+  // değiştirmek yeterli değildir; docs/postgresql-gecis-rehberi.md dosyasını izleyin.
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String  @id @default(uuid())
+  name        String
+  email       String  @unique
+  password    String
+  role        String  @default("student") // admin, teacher, student, parent
+  phoneNumber String?
+  address     String?
+  studentNo   Int? // Student number (auto-incremented per class in code)
+  classNo     String? // Legacy/Optional student class code
+  isActive    Boolean @default(true)
+  deactivatedAt DateTime?
+
+  // Veli (Parent) Bilgileri
+  parentName     String?
+  parentRelation String? // Anne, Baba, Vasi vb.
+  parentPhone    String?
+  parentEmail    String?
+  parentAddress  String?
+
+  createdAt DateTime @default(now())
+
+  // Password Reset Fields
+  resetToken       String?
+  resetTokenExpiry DateTime?
+
+  // E-posta Doğrulama Alanları
+  // TODO: E-posta doğrulama akışı — bkz. Zafiyet 6
+  // Aktif akış henüz eklenmedi; altyapı hazır tutulmaktadır.
+  // Aktivasyon: kayıt sonrası token oluştur → e-posta gönder → /verify-email?token=... endpoint'i ekle
+  emailVerified          Boolean @default(false)
+  emailVerificationToken String?
+  notificationMuted      Boolean @default(false)
+
+  // Student relation: A student belongs to exactly one class
+  classId String?
+  class   Class?  @relation("ClassStudents", fields: [classId], references: [id])
+
+  // Teacher relation: A teacher can manage multiple classes (assistant/subject teacher)
+  managedClasses Class[] @relation("ClassTeachers")
+
+  // Teacher relation: A teacher can be a primary responsible teacher for many classes
+  responsibleForClasses Class[] @relation("ClassTeacher")
+
+  // Teacher relation: Categories (Courses) assigned to this teacher
+  assignedCategories Category[] @relation("TeacherCategories")
+
+  // Triple relationship assignments for this teacher
+  teacherAssignments ClassTeacherCourse[]
+
+  // Quiz relations
+  createdQuizzes    Quiz[]             @relation("QuizCreator")
+  results           StudentResult[]
+  surveySubmissions SurveySubmission[]
+  notifications     Notification[]
+  logs              ActionLog[]        @relation("UserLogs")
+  announcements     Announcement[]     @relation("AnnouncementCreator")
+  questionBank      QuestionBank[]     @relation("TeacherQuestionBank")
+  guardianLinks     GuardianStudent[]  @relation("GuardianUser")
+  studentGuardians  GuardianStudent[]  @relation("GuardianStudent")
+  passwordResetRequests PasswordResetRequest[]
+
+  @@unique([classId, studentNo])
+  @@index([role, isActive])
+  @@index([classId, isActive])
+}
+
+model GuardianStudent {
+  id         String   @id @default(uuid())
+  guardianId String
+  studentId  String
+  relation   String?
+  createdAt  DateTime @default(now())
+  guardian   User     @relation("GuardianUser", fields: [guardianId], references: [id], onDelete: Cascade)
+  student    User     @relation("GuardianStudent", fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([guardianId, studentId])
+  @@index([guardianId])
+  @@index([studentId])
+}
+
+model QuestionBank {
+  id            String    @id @default(uuid())
+  teacherId     String
+  teacher       User      @relation("TeacherQuestionBank", fields: [teacherId], references: [id])
+  text          String
+  type          String // multiple-choice, true-false, short-answer
+  options       String? // Sağlayıcıdan bağımsız JSON metni; ilk PostgreSQL geçişinde String olarak korunur
+  correctAnswer String
+  imageUrl      String?
+  categoryId    String?
+  category      Category? @relation(fields: [categoryId], references: [id])
+  createdAt     DateTime  @default(now())
+}
+
+model ActionLog {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation("UserLogs", fields: [userId], references: [id])
+  action    String // e.g., "CREATE_QUIZ", "SUBMIT_QUIZ", "LOGIN"
+  details   String? // JSON or descriptive text
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
+}
+
+model Class {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  maxStudents Int?
+  createdAt   DateTime @default(now())
+
+  // Students in this class
+  students User[] @relation("ClassStudents")
+
+  // Primary Responsible Teacher (Sorumlu Öğretmen)
+  classTeacherId String?
+  classTeacher   User?   @relation("ClassTeacher", fields: [classTeacherId], references: [id])
+
+  // All teacher-course assignments for this class
+  teacherAssignments ClassTeacherCourse[]
+
+  // Legacy/Secondary All teachers managing this class (Many-to-Many)
+  teachers User[] @relation("ClassTeachers")
+
+  // Categories (Courses) assigned to this class
+  assignedCategories Category[] @relation("ClassCategories")
+
+  // Quizzes assigned to this class
+  quizzes Quiz[] @relation("ClassQuizzes")
+}
+
+model ClassTeacherCourse {
+  id         String   @id @default(uuid())
+  classId    String
+  class      Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacherId  String
+  teacher    User     @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  assignedAt DateTime @default(now())
+
+  @@unique([classId, teacherId, categoryId])
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  quizzes     Quiz[]
+
+  // Teachers assigned to this category
+  teachers User[] @relation("TeacherCategories")
+
+  // Classes assigned to this category
+  classes Class[] @relation("ClassCategories")
+
+  // Triple relationship assignments for this category
+  teacherAssignments ClassTeacherCourse[]
+
+  questionBank QuestionBank[]
+}
+
+model Quiz {
+  id               String    @id @default(uuid())
+  title            String
+  description      String?
+  difficulty       String    @default("medium")
+  timeLimit        Int? // in minutes
+  shuffleQuestions Boolean   @default(false)
+  status           String    @default("draft") // draft, published, archived
+  contentType      String    @default("exam") // exam, survey
+  publishedAt      DateTime?
+  audienceSize     Int?
+  academicYear     String?
+  createdAt        DateTime  @default(now())
+
+  // Relations
+  categoryId        String?
+  category          Category?          @relation(fields: [categoryId], references: [id])
+  createdBy         String
+  creator           User               @relation("QuizCreator", fields: [createdBy], references: [id])
+  questions         Question[]
+  results           StudentResult[]
+  surveySubmissions SurveySubmission[]
+
+  // Classes this quiz is assigned to
+  assignedClasses Class[] @relation("ClassQuizzes")
+
+  @@index([status, createdAt])
+  @@index([contentType, status, createdAt])
+}
+
+model Question {
+  id            String         @id @default(uuid())
+  quizId        String
+  quiz          Quiz           @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  text          String
+  type          String // multiple-choice, true-false, short-answer
+  options       String? // Sağlayıcıdan bağımsız JSON metni; ilk PostgreSQL geçişinde String olarak korunur
+  correctAnswer String?
+  config        String? // JSON settings
+  imageUrl      String?
+  order         Int
+  createdAt     DateTime       @default(now())
+  surveyAnswers SurveyAnswer[]
+}
+
+model StudentResult {
+  id                  String    @id @default(uuid())
+  studentId           String
+  student             User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  quizId              String
+  quiz                Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  status              String    @default("in_progress") // in_progress, completed, abandoned
+  answers             String? // Sağlayıcıdan bağımsız JSON metni; ilk PostgreSQL geçişinde String olarak korunur
+  score               Int?
+  correctAnswersCount Int       @default(0)
+  totalQuestions      Int       @default(0)
+  timeTaken           Int? // in seconds
+  academicYear        String?
+  startedAt           DateTime  @default(now())
+  submittedAt         DateTime?
+  completedAt         DateTime?
+}
+
+model SurveySubmission {
+  id          String         @id @default(uuid())
+  surveyId    String
+  survey      Quiz           @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  studentId   String
+  student     User           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  submittedAt DateTime       @default(now())
+  answers     SurveyAnswer[]
+
+  @@unique([surveyId, studentId])
+  @@index([surveyId, submittedAt])
+  @@index([studentId])
+}
+
+model SurveyAnswer {
+  id           String           @id @default(uuid())
+  submissionId String
+  submission   SurveySubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  questionId   String
+  question     Question         @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  value        String
+  createdAt    DateTime         @default(now())
+
+  @@unique([submissionId, questionId])
+  @@index([questionId])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  message   String
+  type      String   @default("info")
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([isRead, createdAt])
+  @@index([userId, createdAt])
+}
+
+model Announcement {
+  id            String   @id @default(uuid())
+  title         String
+  content       String
+  createdBy     String
+  creator       User     @relation("AnnouncementCreator", fields: [createdBy], references: [id])
+  targetRole    String? // all, teacher, student
+  targetClassId String?
+  createdAt     DateTime @default(now())
+}
+
+model EmailQueue {
+  id           String    @id @default(uuid())
+  to           String
+  subject      String
+  body         String
+  type         String    @default("notification") // password_reset, email_verification, notification, system_alert
+  status       String    @default("pending") // pending, sent, failed
+  attempts     Int       @default(0)
+  maxAttempts  Int       @default(3)
+  lastAttempt  DateTime?
+  errorMessage String?
+  createdAt    DateTime  @default(now())
+  sentAt       DateTime?
+  passwordResetRequest PasswordResetRequest?
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([status, createdAt])
+}
+
+model PasswordResetRequest {
+  id           String    @id @default(uuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email        String
+  tokenHash    String    @unique
+  status       String    @default("pending") // pending, completed, cancelled, expired, failed
+  emailQueueId String?   @unique
+  emailQueue   EmailQueue? @relation(fields: [emailQueueId], references: [id], onDelete: SetNull)
+  requestedBy  String?   // self or admin user id
+  requestIp    String?
+  expiresAt    DateTime
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  completedAt  DateTime?
+  cancelledAt  DateTime?
+
+  @@index([userId, status])
+  @@index([status, createdAt])
+  @@index([status, updatedAt])
+  @@index([email])
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+
+    <title>QuizMaster - Admin Dashboard</title>
+    <meta property="og:title" content="QuizMaster - Admin Dashboard" />
+    <meta property="og:description" content="Manage your online quizzes, track student performance, and analyze results." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://replit.com/public/images/opengraph.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@replit" />
+    <meta name="twitter:title" content="QuizMaster - Admin Dashboard" />
+    <meta name="twitter:description" content="Manage your online quizzes, track student performance, and analyze results." />
+    <meta name="twitter:image" content="https://replit.com/public/images/opengraph.png" />
+
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <script>
+      // Load Google Fonts only if online to avoid console errors in offline environments
+      if (typeof navigator !== 'undefined' && navigator.onLine) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap';
+        document.head.appendChild(link);
+      }
+    </script>
+    <style>
+      :root {
+        --background: 0 0% 100%;
+        --foreground: 0 0% 3.6%;
+        --card: 0 0% 100%;
+        --card-foreground: 0 0% 3.6%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 0 0% 3.6%;
+        --primary: 0 0% 9%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 0 0% 96.1%;
+        --secondary-foreground: 0 0% 9%;
+        --muted: 0 0% 89.5%;
+        --muted-foreground: 0 0% 45.1%;
+        --accent: 0 0% 9%;
+        --accent-foreground: 0 0% 100%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 0 0% 89.5%;
+        --input: 0 0% 89.5%;
+        --ring: 0 0% 9%;
+        --chart-1: 12 76% 61%;
+        --chart-2: 173 58% 39%;
+        --chart-3: 197 37% 48%;
+        --chart-4: 43 74% 66%;
+        --chart-5: 27 87% 67%;
+        --radius: 0.5rem;
+        --sidebar: 0 0% 9%;
+        --sidebar-foreground: 0 0% 100%;
+      }
+      .dark {
+        --background: 0 0% 3.6%;
+        --foreground: 0 0% 98.2%;
+        --card: 0 0% 9%;
+        --card-foreground: 0 0% 98.2%;
+        --popover: 0 0% 9%;
+        --popover-foreground: 0 0% 98.2%;
+        --primary: 0 0% 98.2%;
+        --primary-foreground: 0 0% 9%;
+        --secondary: 0 0% 14.9%;
+        --secondary-foreground: 0 0% 98.2%;
+        --muted: 0 0% 14.9%;
+        --muted-foreground: 0 0% 63.9%;
+        --accent: 0 0% 98.2%;
+        --accent-foreground: 0 0% 9%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98.2%;
+        --border: 0 0% 14.9%;
+        --input: 0 0% 14.9%;
+        --ring: 0 0% 83.1%;
+        --chart-1: 220 13% 91%;
+        --chart-2: 217 33% 17%;
+        --chart-3: 12 76% 61%;
+        --chart-4: 172 58% 39%;
+        --chart-5: 142 71% 45%;
+        --sidebar: 0 0% 9%;
+        --sidebar-foreground: 0 0% 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
