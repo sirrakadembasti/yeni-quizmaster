@@ -90,6 +90,8 @@ Sınıf silmeden önce bağlı öğrenci, öğretmen, sınav ve anketleri kontro
 6. İsterseniz Gemini AI ile soru üretin ve sonuçları eklemeden önce kontrol edin.
 7. Taslak kaydedin; en az bir geçerli soru bulunduğunda yayınlayın.
 
+Ayarlar, sorular ve yayın durumu birlikte kaydedilir. Kayıt yanıtı bağlantı nedeniyle alınamazsa aynı açık düzenleyicide yeniden deneyin; tekrar deneme ikinci bir taslak oluşturmaz. Katılım başladıktan sonra sorular değiştirilemez; reddedilen soru değişikliği ayarları da değiştirmez. Açıklamayı boşaltmak ve süreyi kapatmak kaydedildiğinde eski değerler kaldırılır.
+
 Görsel yüklemede yalnız desteklenen görsel dosyaları kullanın; istemci dosya boyutunu, sunucu dosya türünü ve piksel sınırını doğrular.
 
 ## 8. Anket Yönetimi
@@ -108,6 +110,8 @@ Sonuç görünümünde grafik ve tablo birlikte okunabilir. **Excel** ayrıntıl
 - **Sınav Sonuçları:** Anketler bu filtrede gösterilmez. Ders seçimine göre sınav filtresi daralır; sınıf, öğretmen ve diğer filtreler backend sorgusuna uygulanır.
 - **Sınıf İstatistikleri:** Başlangıç/bitiş tarihi ve sınıf filtresiyle katılım, ortalama başarı ve sınıf karşılaştırmalarını gösterir.
 - Sonuç ve istatistik ekranlarında tablo/grafik verileri gerçek veritabanı sonuçlarından üretilir.
+
+Yönetici sınav seçicisinde öğretmenlerin sınavları da görünür. Sonuç ekranında katılım ve notlandırılan kayıt sayıları ayrı gösterilir. Başarı dağılımı ve ortalama yalnız tamamlanan, puanı bulunan kayıtlarla hesaplanır; devam eden ve puansız kayıtlar sıfır sayılmaz. Tamamlanmış gerçek sıfır puan hesaba katılır. Henüz notlandırılmamış sınavın ortalaması “Henüz yok” olarak gösterilir.
 
 Filtre seçiminiz yazdırma başlığında ve Excel dosyasında rapor bilgisi olarak yer alır.
 

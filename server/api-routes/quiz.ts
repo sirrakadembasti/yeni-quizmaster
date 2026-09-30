@@ -1,4 +1,5 @@
 import { questionImageUrlSchema } from "../utils/upload-paths";
+import { saveContentHandler } from './content-save';
 import { Router, type Response, type Request } from "express";
 import { storage } from "../storage";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
@@ -10,6 +11,7 @@ import { canAssignClasses } from "../utils/class-authorization";
 import { shouldNotifyAdminAboutQuiz } from "../utils/notification-policy";
 
 const router: Router = Router();
+router.put('/:id/content', requireAuth, requireRole(['admin', 'teacher']), saveContentHandler('exam'));
 
 async function notifyAdminsAboutTeacherQuiz(
   actor: NonNullable<AuthRequest["user"]>,

@@ -80,7 +80,7 @@ export default function StatisticsPage() {
     try {
       setLoading(true);
       const promises: any[] = [
-        quizApi.getAllQuizzes(),
+        role === 'admin' ? quizApi.getAllAdminQuizzes() : quizApi.getAllQuizzes(),
         role === 'teacher' ? classApi.getTeacherClasses() : classApi.getAllClasses(),
         categoryApi.getAllCategories(),
         userApi.getAllUsers(),
@@ -145,6 +145,10 @@ export default function StatisticsPage() {
     return filtered;
   }, [allResults, selectedClassId, selectedCategoryId, selectedQuizId, selectedTeacherId, selectedStudentId, role, currentUser]);
 
+  const gradedResults = useMemo(() => filteredResults.filter(
+    r => r.status === 'completed' && typeof r.score === 'number' && Number.isFinite(r.score)
+  ), [filteredResults]);
+
   const mebStats = useMemo(() => {
     const grades = {
       pekiyi: { name: 'Pekiyi (85-100)', value: 0, color: '#10b981' },
@@ -154,8 +158,8 @@ export default function StatisticsPage() {
       gecmez: { name: 'Geçmez (0-44)', value: 0, color: '#ef4444' }
     };
 
-    filteredResults.forEach(r => {
-      const score = r.score || 0;
+    gradedResults.forEach(r => {
+      const score = r.score;
       if (score >= 85) grades.pekiyi.value++;
       else if (score >= 70) grades.iyi.value++;
       else if (score >= 55) grades.orta.value++;
@@ -164,7 +168,7 @@ export default function StatisticsPage() {
     });
 
     return Object.values(grades);
-  }, [filteredResults]);
+  }, [gradedResults]);
 
   const quizTableData = useMemo(() => {
     // Sadece mevcut filtrelere uygun quizi olan sonuçları grupla
@@ -178,17 +182,21 @@ export default function StatisticsPage() {
           title: r.quizTitle || quizObj?.title || 'Bilinmeyen Sınav',
           category: categories.find(c => c.id === r.categoryId)?.name || 'Genel',
           participants: 0,
+          graded: 0,
           totalScore: 0
         };
       }
       quizStats[r.quizId].participants++;
-      quizStats[r.quizId].totalScore += (r.score || 0);
+      if (r.status === 'completed' && typeof r.score === 'number' && Number.isFinite(r.score)) {
+        quizStats[r.quizId].graded++;
+        quizStats[r.quizId].totalScore += r.score;
+      }
     });
 
     return Object.values(quizStats)
       .map(q => ({
         ...q,
-        avgScore: Math.round(q.totalScore / q.participants)
+        avgScore: q.graded > 0 ? Math.round(q.totalScore / q.graded) : null
       }))
       .filter(q => 
         q.title.toLowerCase().includes(tableSearch.toLowerCase()) || 
@@ -390,13 +398,18 @@ export default function StatisticsPage() {
               </div>
             ) : (
               <>
+                <p className="text-sm text-muted-foreground" role="status">
+                  Notlandırılan: {gradedResults.length} · Devam eden: {filteredResults.filter(r => r.status === 'in_progress').length} ·
+                  {' '}Diğer / puanı bulunmayan: {filteredResults.length - gradedResults.length - filteredResults.filter(r => r.status === 'in_progress').length}.
+                  {' '}Başarı dağılımı ve ortalamalar yalnız puanı bulunan tamamlanmış sınavlardan hesaplanır.
+                </p>
                 <div className="grid gap-6 md:grid-cols-2">
                   <Card className="rounded-3xl border-border/50 shadow-sm dark:shadow-none overflow-hidden">
                     <CardHeader className="bg-muted/20 border-b border-border/50">
                       <CardTitle className="text-lg font-bold flex items-center gap-2">
                         <Trophy className="h-5 w-5 text-amber-500" /> Başarı Dağılımı (MEB)
                       </CardTitle>
-                      <CardDescription>Puan aralıklarına göre öğrenci sayısı</CardDescription>
+                      <CardDescription>Tamamlanan ve notlandırılan sınavların puan dağılımı</CardDescription>
                     </CardHeader>
                     <CardContent className="pt-6">
                       <div className="h-[300px]">
@@ -430,7 +443,7 @@ export default function StatisticsPage() {
                     <CardContent className="pt-6">
                       <div className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
-                          <BarChart data={quizTableData.slice(0, 10)}>
+                          <BarChart data={quizTableData.filter(q => q.avgScore !== null).slice(0, 10)}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
                             <XAxis 
                               dataKey="title" 
@@ -486,6 +499,7 @@ export default function StatisticsPage() {
                           <TableHead className="font-bold py-4 px-6">Sınav Adı</TableHead>
                           <TableHead className="font-bold">Ders</TableHead>
                           <TableHead className="text-center font-bold">Katılımcı</TableHead>
+                          <TableHead className="text-center font-bold">Notlandırılan</TableHead>
                           <TableHead className="text-right py-4 px-6 font-bold">Genel Ortalama</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -499,8 +513,9 @@ export default function StatisticsPage() {
                                 <Users className="h-3.5 w-3.5 opacity-40" /> {q.participants}
                               </span>
                             </TableCell>
+                            <TableCell className="text-center font-bold">{q.graded}</TableCell>
                             <TableCell className="text-right py-4 px-6 font-black text-indigo-600 text-lg">
-                              %{q.avgScore}
+                              {q.avgScore === null ? 'Henüz yok' : `%${q.avgScore}`}
                             </TableCell>
                           </TableRow>
                         ))}

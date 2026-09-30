@@ -7,7 +7,9 @@
       "--config",
       "playwright.admin-audit.config.ts",
       "--grep",
-      "people: teacher creation must retain selected course and class"
+      "admin content:|results selector includes teacher exams",
+      "--timeout",
+      "360000"
     ],
     "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.admin-audit.config.ts",
     "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
@@ -39,9 +41,10 @@
         "testMatch": [
           "admin-audit.spec.ts",
           "admin-audit-people-flows.spec.ts",
-          "admin-audit-system-flows.spec.ts"
+          "admin-audit-system-flows.spec.ts",
+          "admin-results-regression.spec.ts"
         ],
-        "timeout": 120000
+        "timeout": 360000
       }
     ],
     "quiet": false,
@@ -78,18 +81,18 @@
   },
   "suites": [
     {
-      "title": "admin-audit-people-flows.spec.ts",
-      "file": "admin-audit-people-flows.spec.ts",
+      "title": "admin-audit.spec.ts",
+      "file": "admin-audit.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
         {
-          "title": "people: teacher creation must retain selected course and class",
+          "title": "results selector includes teacher exams",
           "ok": true,
           "tags": [],
           "tests": [
             {
-              "timeout": 240000,
+              "timeout": 360000,
               "annotations": [],
               "expectedStatus": "passed",
               "projectId": "",
@@ -99,28 +102,64 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 143373,
+                  "duration": 141120,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-30T16:04:54.816Z",
+                  "startTime": "2026-09-30T18:21:42.782Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "teacher-selected-assignments",
-                      "contentType": "application/json",
-                      "body": "ewogICJwZXJzaXN0ZWQiOiB7CiAgICAiaWQiOiAiNjIxMGU4ZDYtNzAzYi00OTI3LTk2NzUtNGZkZmZiMDVkYzFmIiwKICAgICJuYW1lIjogIlBlb3BsZSBUZWFjaGVyIDE3OTA3ODQzNzc2MDEtMzQ5ZmIiLAogICAgImVtYWlsIjogInBlb3BsZS11aS10ZWFjaGVyLTE3OTA3ODQzNzc2MDEtMzQ5ZmJAZXhhbXBsZS50ZXN0IiwKICAgICJyb2xlIjogInRlYWNoZXIiLAogICAgInBob25lTnVtYmVyIjogIiIsCiAgICAiYWRkcmVzcyI6ICIiLAogICAgInN0dWRlbnRObyI6IG51bGwsCiAgICAiY2xhc3NObyI6IG51bGwsCiAgICAiaXNBY3RpdmUiOiB0cnVlLAogICAgImRlYWN0aXZhdGVkQXQiOiBudWxsLAogICAgInBhcmVudE5hbWUiOiAiIiwKICAgICJwYXJlbnRSZWxhdGlvbiI6ICIiLAogICAgInBhcmVudFBob25lIjogIiIsCiAgICAicGFyZW50RW1haWwiOiAiIiwKICAgICJwYXJlbnRBZGRyZXNzIjogIiIsCiAgICAiY3JlYXRlZEF0IjogIjIwMjYtMDktMzBUMTY6MDc6MTAuNzYyWiIsCiAgICAiZW1haWxWZXJpZmllZCI6IGZhbHNlLAogICAgIm5vdGlmaWNhdGlvbk11dGVkIjogZmFsc2UsCiAgICAiY2xhc3NJZCI6IG51bGwsCiAgICAiY2xhc3MiOiBudWxsLAogICAgImFzc2lnbmVkQ2F0ZWdvcmllcyI6IFsKICAgICAgewogICAgICAgICJpZCI6ICJiN2FkYWI1Yi04MDk0LTQ4MmYtYWQwNS01Yzg4OTEwYmZhYzEiLAogICAgICAgICJuYW1lIjogIlBlb3BsZSBDb3Vyc2UgMTc5MDc4NDM3NzYwMS0zNDlmYiIsCiAgICAgICAgImRlc2NyaXB0aW9uIjogbnVsbCwKICAgICAgICAiY3JlYXRlZEF0IjogIjIwMjYtMDktMzBUMTY6MDY6MzguNDcwWiIKICAgICAgfQogICAgXSwKICAgICJtYW5hZ2VkQ2xhc3NlcyI6IFsKICAgICAgewogICAgICAgICJpZCI6ICJhODQ2ZDhmMi0zYjI4LTRiMDQtYjVlZC1jZDJlNjcwYjJlMWMiLAogICAgICAgICJuYW1lIjogIjkwLUEtMTc5MDc4NDM3NzYwMS0zNDlmYiIsCiAgICAgICAgImRlc2NyaXB0aW9uIjogbnVsbCwKICAgICAgICAibWF4U3R1ZGVudHMiOiBudWxsLAogICAgICAgICJjcmVhdGVkQXQiOiAiMjAyNi0wOS0zMFQxNjowNjozNC42NzBaIiwKICAgICAgICAiY2xhc3NUZWFjaGVySWQiOiBudWxsCiAgICAgIH0KICAgIF0sCiAgICAicmVzcG9uc2libGVGb3JDbGFzc2VzIjogW10sCiAgICAidGVhY2hlckFzc2lnbm1lbnRzIjogW10sCiAgICAiY2xhc3NlcyI6IFsKICAgICAgewogICAgICAgICJpZCI6ICJhODQ2ZDhmMi0zYjI4LTRiMDQtYjVlZC1jZDJlNjcwYjJlMWMiLAogICAgICAgICJuYW1lIjogIjkwLUEtMTc5MDc4NDM3NzYwMS0zNDlmYiIsCiAgICAgICAgImRlc2NyaXB0aW9uIjogbnVsbCwKICAgICAgICAibWF4U3R1ZGVudHMiOiBudWxsLAogICAgICAgICJjcmVhdGVkQXQiOiAiMjAyNi0wOS0zMFQxNjowNjozNC42NzBaIiwKICAgICAgICAiY2xhc3NUZWFjaGVySWQiOiBudWxsCiAgICAgIH0KICAgIF0KICB9LAogICJleHBlY3RlZENsYXNzSWQiOiAiYTg0NmQ4ZjItM2IyOC00YjA0LWI1ZWQtY2QyZTY3MGIyZTFjIiwKICAiZXhwZWN0ZWRDYXRlZ29yeUlkIjogImI3YWRhYjViLTgwOTQtNDgyZi1hZDA1LTVjODg5MTBiZmFjMSIKfQ=="
-                    }
-                  ]
+                  "attachments": []
                 }
               ],
               "status": "expected"
             }
           ],
-          "id": "8f4bbfe3ef2be4ed8b2c-912b4c81314bf79c9595",
-          "file": "admin-audit-people-flows.spec.ts",
-          "line": 80,
+          "id": "1e4164cbcd7d7052b193-7c1ad7bf16078191ed2f",
+          "file": "admin-audit.spec.ts",
+          "line": 18,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "admin-results-regression.spec.ts",
+      "file": "admin-results-regression.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "admin content: retry after a lost save response keeps one published exam and its question",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 34887,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T18:24:18.441Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec832937f131c6c8c297-b426fdec9742d811f678",
+          "file": "admin-results-regression.spec.ts",
+          "line": 92,
           "column": 5
         }
       ]
@@ -128,9 +167,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-09-30T16:04:51.343Z",
-    "duration": 158802.44100000002,
-    "expected": 1,
+    "startTime": "2026-09-30T18:21:38.713Z",
+    "duration": 197791.484,
+    "expected": 2,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

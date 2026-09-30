@@ -275,6 +275,8 @@ Sihirbaz 5050, kurulum başlatıcısı 5049 portunu kullanır. `SETUP_PORT` orta
 5. Öğrenci sınavı çözer; puanlama sunucuda yapılır.
 6. Sonuçlar sınıf, ders, sınav, öğretmen ve tarih filtreleriyle incelenir.
 
+Sınav/anket düzenleyicisi ayarları, soruları ve yayın durumunu birlikte kaydeder. Yanıt alınamayan kaydı aynı düzenleyicide yeniden denemek ikinci bir taslak oluşturmaz. Sonuç ekranındaki başarı hesapları yalnız tamamlanan ve puanı bulunan kayıtları kullanır; devam eden katılım ayrıca gösterilir.
+
 ### Anket
 
 1. Yönetici veya öğretmen **Anket Yönetimi > Anket Oluştur** sekmesini açar.

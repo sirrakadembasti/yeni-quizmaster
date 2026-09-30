@@ -1,4 +1,5 @@
 import { questionImageUrlSchema } from "../utils/upload-paths";
+import { saveContentHandler } from './content-save';
 import { Router, type Response } from "express";
 import { z } from "zod";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
@@ -6,6 +7,7 @@ import { canAssignClasses, getAuthorizedClassIds } from "../utils/class-authoriz
 import { storage } from "../storage";
 
 const router: Router = Router();
+router.put('/:id/content', requireAuth, requireRole(['admin', 'teacher']), saveContentHandler('survey'));
 
 const resultQuerySchema = z.object({
   surveyId: z.string().uuid().optional(),

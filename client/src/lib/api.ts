@@ -46,7 +46,7 @@ export const uploadApi = {
   },
 };
 
-async function apiFetch(url: string, options: RequestInit = {}) {
+export async function apiFetch(url: string, options: RequestInit = {}) {
   const method = options.method || 'GET';
   
   if (!['GET', 'HEAD', 'OPTIONS'].includes(method.toUpperCase())) {
@@ -342,7 +342,7 @@ export interface AIQuestion {
   correctAnswerIndex?: number;
 }
 
-async function handleResponse<T>(response: Response): Promise<T> {
+export async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'İstek başarısız oldu.' }));
     const errorMsg = error.details 

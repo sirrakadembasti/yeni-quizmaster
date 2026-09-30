@@ -18,6 +18,8 @@ Güncel düğüm, kenar ve topluluk sayıları her üretimde [`GRAPH_REPORT.md`]
 
 Graphify raporundaki `Built from commit` alanı, komutun başladığı andaki HEAD'i gösterir. Bu üretimde commit öncesi çalışma ağacındaki yeni kod da çıkarıldı; bu nedenle yalnız HEAD karşılaştırması grafiğin bu düzeltmeler açısından eski olduğunu göstermez.
 
+İkinci admin onarım paketinden sonra kod AST haritası tekrar üretildi: **1906 düğüm, 5393 kenar, 94 topluluk**. Yeni atomik içerik handler'ı, transaction kaydı, HTTP taşıması ve ilişkisel cache yenilemesi haritadadır. Multigraph tanısı eksik/sarkan uç0 ve yinelenen kenar0 raporladı; iki self-loop kaldı. Topluluk yapısı değiştiğinden önceki semantik topluluk etiketlerinin bir kısmı merkez düğüm adıyla yenilendi; LLM etiketleme çalıştırılmadı. 14 SQL dosyası için ayrıştırıcı eksikliği ve Markdown semantik çıkarımı sınırı sürer. Bu görsel harita çalışma zamanı/E2E doğrulamasının yerine geçmez.
+
 ## Görsel haritayı açma
 
 GitHub HTML dosyasını uygulama olarak çalıştırmaz. Depoyu indirdikten sonra `graphify-out/graph.html` dosyasını tarayıcıda açın.

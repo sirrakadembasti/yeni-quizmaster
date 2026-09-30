@@ -1,3 +1,4 @@
+import { invalidateAdminRelations } from '@/lib/admin-cache';
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -61,8 +62,8 @@ export default function TeacherDetailPage() {
 
   const updateMutation = useMutation({
     mutationFn: (data: any) => userApi.updateUser(teacher!.id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       toast({ title: "Başarılı", description: "Öğretmen bilgileri güncellendi." });
       setIsEditOpen(false);
     },
@@ -73,8 +74,8 @@ export default function TeacherDetailPage() {
 
   const deleteMutation = useMutation({
     mutationFn: () => userApi.deleteUser(teacher!.id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       toast({ title: "Başarılı", description: "Öğretmen silindi." });
       setIsDeleteOpen(false);
       setLocation("/teachers");

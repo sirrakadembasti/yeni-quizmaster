@@ -4,6 +4,9 @@ import { PrismaClient, Prisma, User, Quiz, Question, QuestionBank, StudentResult
 const prisma = new PrismaClient();
 export const closeStorage = () => prisma.$disconnect();
 
+export type ContentQuestionInput = Omit<Prisma.QuestionUncheckedCreateInput, 'options' | 'config' | 'correctAnswer'> & { options?: any; config?: any; correctAnswer?: string | null };
+export type ContentSettingsInput = Prisma.QuizUncheckedCreateInput & { assignedClassIds: string[] };
+
 async function writeTransaction<T>(operation: (tx: Prisma.TransactionClient) => Promise<T>): Promise<T> {
   for (let attempt = 0; ; attempt++) {
     try { return await prisma.$transaction(operation, { maxWait: 10000, timeout: 10000 }); }
@@ -69,6 +72,7 @@ export interface IStorage {
   getQuizzesByCreator(teacherId: string): Promise<Quiz[]>;
   createQuiz(quiz: Prisma.QuizUncheckedCreateInput & { assignedClassIds?: string[], category?: string }): Promise<Quiz>;
   updateQuiz(id: string, quiz: Partial<Prisma.QuizUncheckedCreateInput> & { assignedClassIds?: string[] }): Promise<Quiz | undefined>;
+  saveContent(id: string, settings: ContentSettingsInput, questions: ContentQuestionInput[], actor: { id: string; role: string }): Promise<{ quiz: Quiz; questions: Question[]; created: boolean; published: boolean }>;
   deleteQuiz(id: string): Promise<void>;
   getSurveySubmissions(surveyId: string, startDate?: Date, endDate?: Date): Promise<any[]>;
   getStudentSurveySubmission(surveyId: string, studentId: string): Promise<any | undefined>;
@@ -1017,7 +1021,11 @@ export class PrismaStorage implements IStorage {
   }
 
   async syncQuestions(quizId: string, questions: (Omit<Prisma.QuestionUncheckedCreateInput, 'options' | 'config' | 'correctAnswer'> & { options?: any; config?: any; correctAnswer?: string | null })[]): Promise<Question[]> {
-    await prisma.$transaction(async tx => {
+    await writeTransaction(tx => this.syncQuestionsInTransaction(tx, quizId, questions));
+    return this.getQuestionsByQuiz(quizId);
+  }
+
+  private async syncQuestionsInTransaction(tx: Prisma.TransactionClient, quizId: string, questions: ContentQuestionInput[]): Promise<void> {
       const existing = await tx.question.findMany({ where: { quizId } });
       const existingIds = new Set(existing.map(q => q.id));
       const incomingIds = questions.filter(q => q.id).map(q => q.id!);
@@ -1050,8 +1058,47 @@ export class PrismaStorage implements IStorage {
         if (q.id) await tx.question.update({ where: { id: q.id }, data });
         else await tx.question.create({ data });
       }
+  }
+
+  async saveContent(id: string, settings: ContentSettingsInput, questions: ContentQuestionInput[], actor: { id: string; role: string }) {
+    return writeTransaction(async tx => {
+      const existing = await tx.quiz.findUnique({ where: { id } });
+      if (existing && existing.contentType !== settings.contentType) throw new Error('CONTENT_TYPE_MISMATCH');
+      if (existing && actor.role !== 'admin' && existing.createdBy !== actor.id) throw new Error('CONTENT_FORBIDDEN');
+      if (settings.status === 'published' && questions.length === 0) throw new Error('CONTENT_EMPTY');
+      // Authorization is checked again in the write transaction, so assignment cannot
+      // slip through if a teacher loses responsibility while the request is saving.
+      if (actor.role !== 'admin' && settings.assignedClassIds.length) {
+        const allowed = await tx.class.count({ where: { id: { in: settings.assignedClassIds }, OR: [{ teachers: { some: { id: actor.id } } }, { classTeacherId: actor.id }, { teacherAssignments: { some: { teacherId: actor.id } } }] } });
+        if (allowed !== new Set(settings.assignedClassIds).size) throw new Error('CONTENT_FORBIDDEN');
+      }
+      const published = settings.status === 'published' && existing?.status !== 'published';
+      const audienceSize = published ? await tx.user.count({ where: { role: 'student', isActive: true, classId: { in: settings.assignedClassIds } } }) : existing?.audienceSize;
+      const data = {
+        title: settings.title, description: settings.description, categoryId: settings.categoryId,
+        difficulty: settings.difficulty, timeLimit: settings.timeLimit, shuffleQuestions: settings.shuffleQuestions,
+        status: settings.status, contentType: settings.contentType,
+        ...(published ? { publishedAt: new Date(), audienceSize } : {}),
+        assignedClasses: { set: settings.assignedClassIds.map(id => ({ id })) },
+      };
+      let quiz;
+      if (existing) quiz = await tx.quiz.update({ where: { id }, data, include: { assignedClasses: true } });
+      else {
+        const { assignedClasses: _assignments, ...creation } = data;
+        quiz = await tx.quiz.create({ data: { ...creation, id, createdBy: actor.id, assignedClasses: { connect: settings.assignedClassIds.map(id => ({ id })) } }, include: { assignedClasses: true } });
+      }
+      // A repeated request after a lost response may still contain new questions
+      // without IDs. Match unchanged questions before syncing to keep their IDs.
+      const current = await tx.question.findMany({ where: { quizId: id }, orderBy: { order: 'asc' } });
+      const normalized = questions.map((q, index) => {
+        const old = current[index];
+        if (!q.id && old && old.text === q.text && old.type === q.type && old.options === JSON.stringify(q.options || []) && old.correctAnswer === (q.correctAnswer || null) && old.config === (q.config ? JSON.stringify(q.config) : null) && old.imageUrl === (q.imageUrl ?? null) && old.order === q.order) return { ...q, id: old.id };
+        return q;
+      });
+      await this.syncQuestionsInTransaction(tx, id, normalized);
+      const saved = await tx.question.findMany({ where: { quizId: id }, orderBy: { order: 'asc' } });
+      return { quiz: quiz as unknown as Quiz, questions: saved.map(q => ({ ...q, options: JSON.parse(q.options || '[]'), config: q.config ? JSON.parse(q.config) : null })) as unknown as Question[], created: !existing, published };
     });
-    return this.getQuestionsByQuiz(quizId);
   }
 
   // Question Bank methods

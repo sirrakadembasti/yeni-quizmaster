@@ -1,3 +1,4 @@
+import { invalidateAdminRelations } from '@/lib/admin-cache';
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { useParams, Link } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -103,9 +104,8 @@ export default function AdminClassDetailPage() {
 
   const assignStudentMutation = useMutation({
     mutationFn: (studentId: string) => classApi.assignStudentToClass(id as string, studentId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       setSelectedStudentToAdd("");
       setIsLevelChangeOpen(false);
       setPendingStudentId(null);
@@ -134,9 +134,8 @@ export default function AdminClassDetailPage() {
 
   const removeStudentMutation = useMutation({
     mutationFn: (studentId: string) => classApi.removeStudentFromClass(id as string, studentId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       toast({ title: "Başarılı", description: "Öğrenci sınıftan çıkarıldı." });
     }
   });
@@ -144,8 +143,8 @@ export default function AdminClassDetailPage() {
   const assignTeacherMutation = useMutation({
     mutationFn: (data: { teacherId: string, categoryId: string }) =>
       classApi.assignTeacherToClassWithCourse(id as string, data.teacherId, data.categoryId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       setSelectedTeacherId("");
       setSelectedCategoryId("");
       toast({ title: "Başarılı", description: "Öğretmen atandı." });
@@ -154,8 +153,8 @@ export default function AdminClassDetailPage() {
 
   const removeTeacherMutation = useMutation({
     mutationFn: (assignmentId: string) => classApi.removeTeacherFromClassWithCourse(assignmentId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       toast({ title: "Başarılı", description: "Öğretmen ataması kaldırıldı." });
     }
   });
@@ -164,9 +163,8 @@ export default function AdminClassDetailPage() {
   const updateResponsibleTeacherMutation = useMutation({
     mutationFn: (teacherId: string | null) =>
       classApi.updateClass(id as string, { classTeacherId: teacherId }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       setSelectedResponsibleTeacherId("");
       toast({ title: "Başarılı", description: "Sorumlu öğretmen güncellendi." });
     },

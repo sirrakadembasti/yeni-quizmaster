@@ -1,0 +1,138 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\playwright\\cli.js",
+      "test",
+      "--config",
+      "playwright.admin-audit.config.ts",
+      "--grep",
+      "people: teacher creation must retain selected course and class"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.admin-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/admin-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "admin-audit.spec.ts",
+          "admin-audit-people-flows.spec.ts",
+          "admin-audit-system-flows.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "docs/admin-audit/playwright-report-latest",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/admin-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "admin-audit-people-flows.spec.ts",
+      "file": "admin-audit-people-flows.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "people: teacher creation must retain selected course and class",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 143373,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T16:04:54.816Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "teacher-selected-assignments",
+                      "contentType": "application/json",
+                      "body": "ewogICJwZXJzaXN0ZWQiOiB7CiAgICAiaWQiOiAiNjIxMGU4ZDYtNzAzYi00OTI3LTk2NzUtNGZkZmZiMDVkYzFmIiwKICAgICJuYW1lIjogIlBlb3BsZSBUZWFjaGVyIDE3OTA3ODQzNzc2MDEtMzQ5ZmIiLAogICAgImVtYWlsIjogInBlb3BsZS11aS10ZWFjaGVyLTE3OTA3ODQzNzc2MDEtMzQ5ZmJAZXhhbXBsZS50ZXN0IiwKICAgICJyb2xlIjogInRlYWNoZXIiLAogICAgInBob25lTnVtYmVyIjogIiIsCiAgICAiYWRkcmVzcyI6ICIiLAogICAgInN0dWRlbnRObyI6IG51bGwsCiAgICAiY2xhc3NObyI6IG51bGwsCiAgICAiaXNBY3RpdmUiOiB0cnVlLAogICAgImRlYWN0aXZhdGVkQXQiOiBudWxsLAogICAgInBhcmVudE5hbWUiOiAiIiwKICAgICJwYXJlbnRSZWxhdGlvbiI6ICIiLAogICAgInBhcmVudFBob25lIjogIiIsCiAgICAicGFyZW50RW1haWwiOiAiIiwKICAgICJwYXJlbnRBZGRyZXNzIjogIiIsCiAgICAiY3JlYXRlZEF0IjogIjIwMjYtMDktMzBUMTY6MDc6MTAuNzYyWiIsCiAgICAiZW1haWxWZXJpZmllZCI6IGZhbHNlLAogICAgIm5vdGlmaWNhdGlvbk11dGVkIjogZmFsc2UsCiAgICAiY2xhc3NJZCI6IG51bGwsCiAgICAiY2xhc3MiOiBudWxsLAogICAgImFzc2lnbmVkQ2F0ZWdvcmllcyI6IFsKICAgICAgewogICAgICAgICJpZCI6ICJiN2FkYWI1Yi04MDk0LTQ4MmYtYWQwNS01Yzg4OTEwYmZhYzEiLAogICAgICAgICJuYW1lIjogIlBlb3BsZSBDb3Vyc2UgMTc5MDc4NDM3NzYwMS0zNDlmYiIsCiAgICAgICAgImRlc2NyaXB0aW9uIjogbnVsbCwKICAgICAgICAiY3JlYXRlZEF0IjogIjIwMjYtMDktMzBUMTY6MDY6MzguNDcwWiIKICAgICAgfQogICAgXSwKICAgICJtYW5hZ2VkQ2xhc3NlcyI6IFsKICAgICAgewogICAgICAgICJpZCI6ICJhODQ2ZDhmMi0zYjI4LTRiMDQtYjVlZC1jZDJlNjcwYjJlMWMiLAogICAgICAgICJuYW1lIjogIjkwLUEtMTc5MDc4NDM3NzYwMS0zNDlmYiIsCiAgICAgICAgImRlc2NyaXB0aW9uIjogbnVsbCwKICAgICAgICAibWF4U3R1ZGVudHMiOiBudWxsLAogICAgICAgICJjcmVhdGVkQXQiOiAiMjAyNi0wOS0zMFQxNjowNjozNC42NzBaIiwKICAgICAgICAiY2xhc3NUZWFjaGVySWQiOiBudWxsCiAgICAgIH0KICAgIF0sCiAgICAicmVzcG9uc2libGVGb3JDbGFzc2VzIjogW10sCiAgICAidGVhY2hlckFzc2lnbm1lbnRzIjogW10sCiAgICAiY2xhc3NlcyI6IFsKICAgICAgewogICAgICAgICJpZCI6ICJhODQ2ZDhmMi0zYjI4LTRiMDQtYjVlZC1jZDJlNjcwYjJlMWMiLAogICAgICAgICJuYW1lIjogIjkwLUEtMTc5MDc4NDM3NzYwMS0zNDlmYiIsCiAgICAgICAgImRlc2NyaXB0aW9uIjogbnVsbCwKICAgICAgICAibWF4U3R1ZGVudHMiOiBudWxsLAogICAgICAgICJjcmVhdGVkQXQiOiAiMjAyNi0wOS0zMFQxNjowNjozNC42NzBaIiwKICAgICAgICAiY2xhc3NUZWFjaGVySWQiOiBudWxsCiAgICAgIH0KICAgIF0KICB9LAogICJleHBlY3RlZENsYXNzSWQiOiAiYTg0NmQ4ZjItM2IyOC00YjA0LWI1ZWQtY2QyZTY3MGIyZTFjIiwKICAiZXhwZWN0ZWRDYXRlZ29yeUlkIjogImI3YWRhYjViLTgwOTQtNDgyZi1hZDA1LTVjODg5MTBiZmFjMSIKfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f4bbfe3ef2be4ed8b2c-912b4c81314bf79c9595",
+          "file": "admin-audit-people-flows.spec.ts",
+          "line": 80,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-30T16:04:51.343Z",
+    "duration": 158802.44100000002,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

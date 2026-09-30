@@ -1,3 +1,4 @@
+import { invalidateAdminRelations } from '@/lib/admin-cache';
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -200,7 +201,7 @@ export default function AdminManagementPage() {
   // Retry Email Mutation
   const retryEmailMutation = useMutation({
     mutationFn: (id: string) => adminApi.retryEmail(id),
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/logs/emails'] });
       toast({ title: "Başarılı", description: "E-posta tekrar gönderim kuyruğuna alındı." });
     },
@@ -212,7 +213,7 @@ export default function AdminManagementPage() {
   // Delete Email Log Mutation
   const deleteEmailMutation = useMutation({
     mutationFn: (id: string) => adminApi.deleteEmailLog(id),
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/logs/emails'] });
       toast({ title: "Başarılı", description: "E-posta log kaydı silindi." });
     },
@@ -224,17 +225,17 @@ export default function AdminManagementPage() {
   const refreshResetRequests = () => queryClient.invalidateQueries({ queryKey: ['/api/admin/password-reset-requests'] });
   const createResetMutation = useMutation({
     mutationFn: () => adminApi.createPasswordResetRequest(resetEmail),
-    onSuccess: () => { refreshResetRequests(); setResetEmail(""); toast({ title: "Bağlantı hazırlandı", description: "Şifre sıfırlama e-postası Gmail kuyruğuna alındı." }); },
+    onSuccess: async () => { refreshResetRequests(); setResetEmail(""); toast({ title: "Bağlantı hazırlandı", description: "Şifre sıfırlama e-postası Gmail kuyruğuna alındı." }); },
     onError: (err: any) => toast({ title: "Gönderilemedi", description: err.message, variant: "destructive" }),
   });
   const resendResetMutation = useMutation({
     mutationFn: (id: string) => adminApi.resendPasswordResetRequest(id),
-    onSuccess: () => { refreshResetRequests(); toast({ title: "Yeni bağlantı gönderildi" }); },
+    onSuccess: async () => { refreshResetRequests(); toast({ title: "Yeni bağlantı gönderildi" }); },
     onError: (err: any) => toast({ title: "Gönderilemedi", description: err.message, variant: "destructive" }),
   });
   const cancelResetMutation = useMutation({
     mutationFn: (id: string) => adminApi.cancelPasswordResetRequest(id),
-    onSuccess: () => { refreshResetRequests(); toast({ title: "Talep iptal edildi" }); },
+    onSuccess: async () => { refreshResetRequests(); toast({ title: "Talep iptal edildi" }); },
     onError: (err: any) => toast({ title: "İptal edilemedi", description: err.message, variant: "destructive" }),
   });
 
@@ -252,8 +253,8 @@ export default function AdminManagementPage() {
     mutationFn: async (data: any) => {
       return userApi.createUser(data);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       setIsUserDialogOpen(false);
       toast({ title: "Başarılı", description: "Yeni kullanıcı oluşturuldu." });
     },
@@ -264,8 +265,8 @@ export default function AdminManagementPage() {
     mutationFn: async (data: any) => {
       return userApi.updateUser(data.id, data);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       setIsUserDialogOpen(false);
       toast({ title: "Başarılı", description: "Kullanıcı güncellendi." });
     },
@@ -274,8 +275,8 @@ export default function AdminManagementPage() {
 
   const deleteUserMutation = useMutation({
     mutationFn: (id: string) => userApi.deleteUser(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       setIsDeleteUserOpen(false);
       toast({ title: "Başarılı", description: "Kullanıcı silindi." });
     }
@@ -284,8 +285,8 @@ export default function AdminManagementPage() {
   // Mutations - Categories
   const createCategoryMutation = useMutation({
     mutationFn: () => categoryApi.createCategory(categoryName, categoryDesc),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       setIsCategoryDialogOpen(false);
       setCategoryName("");
       setCategoryDesc("");
@@ -297,8 +298,8 @@ export default function AdminManagementPage() {
   const updateCategoryMutation = useMutation({
     mutationFn: (data: { id: string, name: string, description?: string }) =>
       categoryApi.updateCategory(data.id, data.name, data.description),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       setIsCategoryDialogOpen(false);
       setEditingCategory(null);
       setCategoryName("");
@@ -310,8 +311,8 @@ export default function AdminManagementPage() {
 
   const deleteCategoryMutation = useMutation({
     mutationFn: (id: string) => categoryApi.deleteCategory(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       setIsDeleteCategoryOpen(false);
       toast({ title: "Başarılı", description: "Ders silindi." });
     },
@@ -321,8 +322,8 @@ export default function AdminManagementPage() {
 // Mutations - Classes & Assignments
 const createClassMutation = useMutation({
   mutationFn: (data: any) => classApi.createClass(data),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['/api/classes'] });
+  onSuccess: async () => {
+    await invalidateAdminRelations(queryClient);
     setIsClassDialogOpen(false);
     toast({ title: "Başarılı", description: "Sınıf başarıyla oluşturuldu." });
   },
@@ -334,10 +335,8 @@ const createClassMutation = useMutation({
 
 const updateClassMutation = useMutation({
   mutationFn: (data: any) => classApi.updateClass(data.id, data),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['/api/classes'] });
-    // Sorumlu öğretmen değişmiş olabilir — öğretmenlerin responsibleForClasses'ını güncelle
-    queryClient.invalidateQueries({ queryKey: ['users'] });
+  onSuccess: async () => {
+    await invalidateAdminRelations(queryClient);
     setIsClassDialogOpen(false);
     setIsEditClassMode(false);
     toast({ title: "Başarılı", description: "Sınıf güncellendi." });
@@ -350,9 +349,8 @@ const updateClassMutation = useMutation({
 
 const deleteClassMutation = useMutation({
   mutationFn: (id: string) => classApi.deleteClass(id),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['/api/classes'] });
-    queryClient.invalidateQueries({ queryKey: ['users'] });
+  onSuccess: async () => {
+    await invalidateAdminRelations(queryClient);
     setIsDeleteClassOpen(false);
     toast({ title: "Başarılı", description: "Sınıf başarıyla silindi." });
   },

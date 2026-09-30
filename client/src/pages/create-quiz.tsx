@@ -20,6 +20,7 @@ import { QuizSettings } from "@/components/quiz/QuizSettings";
 import { QuestionItem, type QuestionForm } from "@/components/quiz/QuestionItem";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { quizApi, surveyApi, categoryApi, classApi } from "@/lib/api";
+import { contentSaveApi } from '@/lib/content-save';
 import { useLocation, useParams } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -65,7 +66,7 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
   const [timeLimitEnabled, setTimeLimitEnabled] = useState(false);
   const [shuffleQuestions, setShuffleQuestions] = useState(false);
   const [assignedClassIds, setAssignedClassIds] = useState<string[]>([]);
-  const [loadedStatus, setLoadedStatus] = useState<'draft' | 'published' | 'archived'>('draft');
+  const newContentId = useRef<string | null>(null);
 
   const [questions, setQuestions] = useState<QuestionForm[]>([
     { id: 1, type: contentTypeMode === 'survey' ? "single-choice" : "multiple-choice", text: "", options: ["", "", "", "", ""], correctAnswer: 0 }
@@ -97,7 +98,6 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
           if ((quiz.contentType || 'exam') !== contentTypeMode) {
             throw new Error('İçerik türü bu düzenleyiciyle uyumlu değil.');
           }
-          setLoadedStatus(quiz.status === 'published' || quiz.status === 'archived' ? quiz.status : 'draft');
           setTitle(quiz.title);
           setDescription(quiz.description || '');
           setCategory(quiz.category || '');
@@ -178,38 +178,19 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
       
       const payload = {
         title,
-        description: description || undefined,
+        description: description || null,
         category: category || 'General',
         categoryId: selectedCat?.id, 
         difficulty: 'medium',
         contentType,
-        timeLimit: contentType === 'exam' && timeLimitEnabled ? timeLimit : undefined,
+        timeLimit: contentType === 'exam' && timeLimitEnabled ? timeLimit ?? null : null,
         shuffleQuestions: contentType === 'exam' ? shuffleQuestions : false,
         status,
         assignedClassIds
       };
 
-      let quizIdToUse = editId;
-      const currentStatus = editId ? loadedStatus : 'draft';
-      const settingsPayload = { ...payload, status: currentStatus };
-
-      if (editId) {
-        if (contentType === 'survey') await surveyApi.updateSurvey(editId, settingsPayload);
-        else await quizApi.updateQuiz(editId, settingsPayload);
-      } else {
-        if (contentType === 'survey') {
-          const { contentType: _contentType, timeLimit: _timeLimit, shuffleQuestions: _shuffle, ...surveyPayload } = settingsPayload;
-          const surveyResponse = await surveyApi.createSurvey(surveyPayload);
-          quizIdToUse = surveyResponse.survey.id;
-        } else {
-          const quizResponse = await quizApi.createQuiz(settingsPayload);
-          quizIdToUse = quizResponse.quiz.id;
-        }
-      }
-
       const validQuestions = questions.filter(q => q.text.trim() !== '');
-      if (validQuestions.length > 0) {
-        const questionsToAdd = validQuestions.map((q, index) => ({
+      const questionsToAdd = validQuestions.map((q, index) => ({
           ...(typeof q.id === 'string' ? { id: q.id } : {}),
           text: q.text,
           type: q.type as any,
@@ -218,16 +199,9 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
           config: q.config,
           imageUrl: q.imageUrl,
           order: index + 1,
-        }));
-        if (contentType === 'survey') await surveyApi.syncQuestions(quizIdToUse as string, questionsToAdd);
-        else await quizApi.addQuestions(quizIdToUse as string, questionsToAdd);
-      }
-
-      if (status !== currentStatus) {
-        if (contentType === 'survey') await surveyApi.updateSurvey(quizIdToUse as string, { status });
-        else await quizApi.updateQuiz(quizIdToUse as string, { status });
-      }
-
+      }));
+      const quizIdToUse = editId || (newContentId.current ??= crypto.randomUUID());
+      await contentSaveApi.save(contentType, quizIdToUse, { ...payload, questions: questionsToAdd });
       return quizIdToUse;
     },
     onSuccess: (_quizId, status) => {

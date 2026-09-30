@@ -1,3 +1,4 @@
+import { invalidateAdminRelations } from '@/lib/admin-cache';
 import { useState } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -44,7 +45,7 @@ export default function ArchivePage() {
 
   const archiveMutation = useMutation({
     mutationFn: (year: string) => adminApi.archiveYear(year),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/quizzes'] });
       setIsArchiveConfirmOpen(false);
       setAcademicYear("");
@@ -62,9 +63,8 @@ export default function ArchivePage() {
   const promoteMutation = useMutation({
     mutationFn: (data: { fromClassId: string, toClassId: string | null }) => 
       adminApi.promoteStudents([data]),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/classes'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/users'] });
+    onSuccess: async (data) => {
+      await invalidateAdminRelations(queryClient);
       setIsPromoteConfirmOpen(false);
       setPromotionFromClassId("");
       setPromotionToClassId("graduate");

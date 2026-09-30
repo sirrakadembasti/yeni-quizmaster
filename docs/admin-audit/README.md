@@ -2,7 +2,9 @@
 
 Bu rapor yalnız yönetici hesabıyla açılan sayfaları kapsar. Ayrıntılı yeniden üretim, beklenen/gerçek davranış, etki, öncelik, kod kanıtı, çözüm ve kabul ölçütleri [sistem/ayarlar](./inventory-settings.md), [kişi/sınıf](./people.md) ve [sınav/rapor](./quizzes.md) raporlarındadır. Öğrenci, öğretmen ve veli panelleri ayrıca denetlenmedi.
 
-**Düzeltme notu:** Bu belgedeki 34/7 tarayıcı sonucu ilk denetimin temel durumudur. Sonraki ilk uygulama paketinde PE-01 ile Q01/Q02 kodda düzeltildi; hedefli API ve bileşen regresyon testleri geçti. Diğer bulgular açık kalır. Aşağıdaki öncelik listesi, ilk denetimin tamamını gösterir; güncel kod durumunu alt raporların “Düzeltme durumu” bölümleri belirtir.
+**Düzeltme notu:** Bu belgedeki 34/7 tarayıcı sonucu ilk denetimin temel durumudur. İlk pakette PE-01 ve Q01/Q02; ikinci pakette PE-02, Q03/Q04/Q05 ve düzenleyici için Q06 düzeltildi. Hedefli API, gerçek bileşen ve Chromium regresyonları alt raporlarda belirtilir. Diğer bulgular açık kalır. Aşağıdaki öncelik listesi ilk denetimin tamamını gösterir; 34/7 güncel kodun toplu test sonucu değildir.
+
+İkinci paketin komutları, test sonuçları, ortam kısıtları ve kalan işler [doğrulama kaydındadır](./repair-verification.md).
 
 ## Ortam ve kanıt sınırı
 
@@ -53,8 +55,8 @@ API: [kişi testleri](../../server/tests/api/admin-audit-people.test.ts) 8/8, [s
 | Sunucu/Duyurular | Görünür hata/başarı toast'ı; yükleme-hata-boş ayrımı; kaydedilmemiş politika ile temizlemeyi engelle; silmede onay | Orta-yüksek / orta |
 | Tüm sayfalar | Anlamlı kontrol adları, klavye odak/menü kapatma, mobil tabloda kaydırma ipucu ve hata yeniden deneme | Orta / orta |
 
-Her kod değişikliğinin ayrıntılı kabul koşulu Q/PE/INV numaralı alt rapor maddesindedir. İlk uygulama paketi yalnız PE-01 ve Q01/Q02'yi değiştirdi; kalan işler için bu plan geçerlidir.
+Her kod değişikliğinin ayrıntılı kabul koşulu Q/PE/INV numaralı alt rapor maddesindedir. İkinci paket atomik kayıt, ilişkisel cache ve sonuç hesaplaması/seçicisini kapsar. PE-05 ve INV04 dahil kalan işler bu plan içinde açıktır; eski öğretmen bağının kaldırılma politikası ayrıca ürün tercihi bekler.
 
 ## Tekrar çalıştırma
 
-Üretim veritabanına yöneltmeden önce [izole sunucuyu](../../server/tests/admin-audit-server.ts) (`pnpm --filter quiz-master-server exec tsx tests/admin-audit-server.ts`) ve [izole Vite yapılandırmasını](../../client/vite.admin-audit.config.ts) (`pnpm --filter quiz-master-client exec vite --config vite.admin-audit.config.ts`) ayrı terminallerde başlatın. Sunucu her başlangıçta `server/data/quizmaster-test-admin-audit-*` altında yeni SQLite oluşturur ve `runtime.json` yazar. Chromium için `PLAYWRIGHT_BROWSERS_PATH` kurulu tarayıcı dizinine ayarlanmalıdır. [Playwright yapılandırması](../../playwright.admin-audit.config.ts) ile `pnpm exec playwright test --config playwright.admin-audit.config.ts` tüm rota ve akış testlerini seçer; doğrulanmış kusurları beklenen doğru davranışla sınayan yedi assertion mevcut kodda başarısız kalır. API ve bileşen testlerinin komutları alt raporlarda verilmiştir.
+Üretim veritabanına yöneltmeden önce [izole sunucuyu](../../server/tests/admin-audit-server.ts) (`pnpm --filter quiz-master-server exec tsx tests/admin-audit-server.ts`) ve [izole Vite yapılandırmasını](../../client/vite.admin-audit.config.ts) (`pnpm --filter quiz-master-client exec vite --config vite.admin-audit.config.ts`) ayrı terminallerde başlatın. Sunucu her başlangıçta `server/data/quizmaster-test-admin-audit-*` altında yeni SQLite oluşturur ve `runtime.json` yazar. Chromium için `PLAYWRIGHT_BROWSERS_PATH` kurulu tarayıcı dizinine ayarlanmalıdır. [Playwright yapılandırması](../../playwright.admin-audit.config.ts) ile `pnpm exec playwright test --config playwright.admin-audit.config.ts` tüm rota ve akış testlerini seçer; doğrulanmış kusurları beklenen doğru davranışla sınayan assertion’ların bir kısmı kalan açık bulgular nedeniyle başarısız kalabilir. API ve bileşen testlerinin komutları alt raporlarda verilmiştir.
