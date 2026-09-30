@@ -167,3 +167,11 @@ Paneldeki **Sunucu Durumu** ekranı normal kullanımda salt okunurdur. Profil ka
 - **Görsel yüklenmiyor:** Dosya türü/boyutu, piksel sınırı ve sunucu erişimini kontrol edin.
 - **Gmail gönderilmiyor:** Şifre Talepleri ve E-posta Loglarını kontrol edin; Gmail uygulama parolası ile 587/465 ağ erişimini doğrulayın.
 - **Bildirim geç görünüyor:** Oturumu ve Socket.IO bağlantısını kontrol edin; sayfayı yenileyerek sunucu listesini tekrar alın.
+
+## Bakım sonrası veri ve oturum kuralları
+
+Profil/parola sıfırlama talebi öğretmen atamalarını ve veli bağlantılarını korur; temizleme yalnız gerçek rol değişiminde yapılır. Öğrenci profilini okul yönetimi düzenler. Öz parola değişimi mevcut parolanın doğrulanmasını gerektirir; parola/rol değişikliği eski oturumları geçersiz kılar.
+
+Katılımı başlamış sınavın veya yanıt alınmış anketin soruları değiştirilemez. Yeni sürüm için yeni içerik oluşturun. Sınıf yükseltme ve dönem damgası tek işlemde yapılır; hedef sınıfta öğrenci numarası çakışması önlenir. E-posta worker'ı kayıtları geçici olarak sahiplenir.
+
+[Migration ve bakım notları](guvenlik-ve-bakim.md).

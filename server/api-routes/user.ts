@@ -1,3 +1,5 @@
+import { disconnectUserSockets } from "../socket";
+import { z } from "zod";
 import { Router, type Response } from "express";
 import { storage } from "../storage";
 import bcrypt from "bcryptjs";
@@ -196,6 +198,23 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
     if (!targetUser) return res.status(404).json({ message: "Kullanıcı bulunamadı." });
 
     const isUpdatingSelf = currentUser.id === targetUserId;
+    if (currentUser.role === "student") {
+      return res.status(403).json({ message: "Öğrenci profil bilgileri yalnızca okul yönetimi tarafından güncellenebilir." });
+    }
+    const updateSchema = z.object({
+      name: z.string().trim().min(2).max(100).optional(),
+      email: z.string().trim().email().optional(),
+      password: z.string().min(6).optional(),
+      role: z.enum(["admin", "teacher", "student", "parent"]).optional(),
+    }).passthrough();
+    const validation = updateSchema.safeParse(req.body);
+    if (!validation.success) return res.status(400).json({ message: "Geçersiz kullanıcı bilgileri." });
+    if (isUpdatingSelf && req.body.password !== undefined) {
+      if (typeof req.body.currentPassword !== "string" ||
+          !await bcrypt.compare(req.body.currentPassword, targetUser.password)) {
+        return res.status(400).json({ message: "Mevcut şifrenizi doğrulayın." });
+      }
+    }
     const isAdmin = currentUser.role === 'admin';
     const isTeacher = currentUser.role === 'teacher';
 
@@ -324,6 +343,12 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
     }
 
     const updatedUser = await storage.updateUser(targetUserId, filteredBody);
+    if (filteredBody.password || (filteredBody.role && filteredBody.role !== targetUser.role)) disconnectUserSockets(targetUserId);
+    if (isUpdatingSelf && filteredBody.password) {
+      await new Promise<void>((resolve, reject) => req.session.regenerate(error => error ? reject(error) : resolve()));
+      req.session.userId = updatedUser.id;
+      req.session.sessionVersion = updatedUser.sessionVersion ?? 0;
+    }
     const { password: _, ...userWithoutPassword } = updatedUser;
     res.json({ user: userWithoutPassword });
   } catch (error) {

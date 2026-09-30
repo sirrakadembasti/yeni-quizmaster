@@ -98,3 +98,11 @@ Süresiz sınav için:
 - **Süre az görünüyor:** Süre ilk sunucu başlangıcından beri devam eder; yenileme sıfırlamaz.
 - **Profil bilgisi yanlış:** Kendiniz değiştiremezsiniz; okul yönetimine başvurun.
 - **E-posta gelmedi:** Spam klasörünü kontrol edin ve yöneticiden Şifre Talepleri/E-posta Loglarını incelemesini isteyin.
+
+## Cevap kaydı ve ortak cihaz
+
+Sınav sürerken skor/doğru cevap sayısı gönderilmez. Eşzamanlı cevap kayıtları birbirini silmez; tekrar teslim aynı tamamlanmış sonucu döndürür. Karıştırma açıkken oturumun soru sırası yenilemede korunur.
+
+Çevrimdışı kuyruk bağlantı kesintisi, geçici sunucu hatası veya hız sınırı için yeniden dener. Oturum/yetki/geçersiz veri hataları döngüye alınmaz.
+
+**Çıkış cihazdaki soruları, cevapları ve gönderilmemiş teslimleri temizler.** Çıkmadan önce varsa bekleyen teslimin sunucuya ulaştığını kontrol edin. Parola sıfırlanınca eski oturumlar yeniden giriş gerektirir.

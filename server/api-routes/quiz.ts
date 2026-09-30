@@ -1,3 +1,4 @@
+import { questionImageUrlSchema } from "../utils/upload-paths";
 import { Router, type Response, type Request } from "express";
 import { storage } from "../storage";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
@@ -62,12 +63,13 @@ const quizSchema = z.object({
 });
 
 const questionSchema = z.object({
+  id: z.string().uuid().optional(),
   text: z.string().min(1, "Soru metni gereklidir."),
   type: z.string().default("multiple-choice"),
   options: z.array(z.string()).default([]),
   correctAnswer: z.string().optional().nullable(),
   config: z.record(z.any()).optional().nullable(),
-  imageUrl: z.string().url().optional().nullable(),
+  imageUrl: questionImageUrlSchema.optional().nullable(),
   order: z.number().int().default(0),
 });
 
@@ -281,6 +283,7 @@ router.post("/:id/questions", requireAuth, requireRole(["admin", "teacher"]), as
     }
 
     const questions = await storage.syncQuestions(req.params.id, validation.data.map((question) => ({
+      id: question.id,
       quizId: req.params.id,
       text: question.text,
       type: question.type,
@@ -293,6 +296,8 @@ router.post("/:id/questions", requireAuth, requireRole(["admin", "teacher"]), as
     res.status(201).json({ questions });
   } catch (error) {
     logger.error({ err: error }, "Sync questions error");
+    if ((error as Error).message === "CONTENT_HAS_RESPONSES") return res.status(409).json({ message: "Katılım başladıktan sonra sorular değiştirilemez. Yeni bir sınav/anket oluşturun." });
+    if ((error as Error).message === "INVALID_QUESTION_ID") return res.status(400).json({ message: "Geçersiz soru kimliği." });
     res.status(500).json({ message: "Sorular senkronize edilemedi." });
   }
 });

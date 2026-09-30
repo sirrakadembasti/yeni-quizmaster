@@ -1,3 +1,4 @@
+import { isRetryableError } from '@/lib/http-error';
 import { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'wouter';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -13,6 +14,7 @@ import {
   getOfflineRemainingSeconds,
   markOfflineSubmit,
   normalizeOfflineQuestions,
+  orderQuizQuestions,
   removeOfflineSession,
   saveOfflineSession,
   updateOfflineAnswers,
@@ -33,6 +35,7 @@ interface Question {
   text: string;
   type: string;
   options?: string[];
+  imageUrl?: string | null;
 }
 
 export default function StudentQuiz() {
@@ -79,7 +82,7 @@ export default function StudentQuiz() {
         setOfflineMode(false);
 
         // Normalize questions - ensure options is always an array
-        const normalizedQuestions = normalizeOfflineQuestions(data.questions || []);
+        const normalizedQuestions = orderQuizQuestions(normalizeOfflineQuestions(data.questions || []), Boolean(data.quiz.shuffleQuestions) && !isPreviewMode, data.resultId);
 
         setQuestions(normalizedQuestions);
         setResultId(data.resultId);
@@ -107,7 +110,7 @@ export default function StudentQuiz() {
         }
       } catch (err) {
         const cached = user ? getOfflineSession(user.id, quizId) : null;
-        if (!isPreviewMode && cached) {
+        if (!isPreviewMode && cached && isRetryableError(err)) {
           setQuiz(cached.quiz);
           setQuestions(cached.questions);
           setResultId(cached.resultId);
@@ -173,7 +176,7 @@ export default function StudentQuiz() {
       // 2 sn sonra göstergeyi gizle
       setTimeout(() => setSaveStatus('idle'), 2000);
     } catch (err) {
-      setOfflineMode(true);
+      setOfflineMode(isRetryableError(err));
       setSaveStatus('error');
     }
   };
@@ -219,6 +222,12 @@ export default function StudentQuiz() {
         setLocation(`/student/result/${resultId}`);
       }, 2000);
     } catch (err) {
+      if (!isRetryableError(err)) {
+        if (user) { markOfflineSubmit(user.id, quizId, false); removeOfflineSession(user.id, quizId); }
+        setSubmissionQueued(false);
+        setError(err instanceof Error ? err.message : 'Sınav teslim edilemedi.');
+        return;
+      }
       if (user) markOfflineSubmit(user.id, quizId, true);
       setOfflineMode(true);
       setSubmissionQueued(true);
@@ -238,8 +247,13 @@ export default function StudentQuiz() {
         setSubmissionQueued(false);
         setSubmitted(true);
         setTimeout(() => setLocation(`/student/result/${resultId}`), 1000);
-      } catch {
-        setSubmissionQueued(true);
+      } catch (err) {
+        if (!isRetryableError(err)) {
+          markOfflineSubmit(user.id, quizId, false);
+          removeOfflineSession(user.id, quizId);
+          setSubmissionQueued(false);
+          setError(err instanceof Error ? err.message : 'Teslim reddedildi.');
+        } else setSubmissionQueued(true);
       }
     };
 
@@ -465,6 +479,8 @@ export default function StudentQuiz() {
         <Card className="border-2">
           <CardHeader>
             <CardTitle className="text-xl">{currentQuestion.text}</CardTitle>
+              {currentQuestion?.imageUrl && <img src={currentQuestion.imageUrl} alt="Soru görseli" className="my-4 max-h-96 max-w-full rounded-lg object-contain" />}
+
             {currentQuestion.type === 'multiple_choice' && (
               <CardDescription>Doğru seçeneği seçin</CardDescription>
             )}

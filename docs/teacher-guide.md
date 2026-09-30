@@ -108,3 +108,11 @@ Liste ve sınıf detayında **Excel** ve **Yazdır** seçenekleri; rapor başlı
 - **Sonuç filtresi boş:** Seçilen ders-sınav ilişkisinin ve tarih aralığının uyumlu olduğunu kontrol edin.
 - **403 hatası:** Hedef kaydın yetki alanınızda olduğundan emin olun.
 - **Çevrimdışı teslim bekliyor:** Öğrencinin aynı cihaz/tarayıcıyla bağlantıya dönmesini sağlayın.
+
+## Düzenleme ve erişim sınırları
+
+Katılım/yanıt sonrası soru değişikliği 409 ile reddedilir; cevap geçmişi korunur. Taslaklarda mevcut soru kimlikleri korunur. Yeni sürüm için yeni sınav/anket oluşturun.
+
+Öğrenci taşırken kaynak ve hedef sınıf yetkili olmalıdır. Çıkarma yalnız belirtilen sınıfa ait öğrenci için yapılabilir. Önizleme kendi sınavlarınızla sınırlıdır. Sonuç raporları öğrenci/veli adresi, telefon ve kurtarma bilgilerini içermez.
+
+Kendi parola değişiminde mevcut parola doğrulanır. Profil/parola işlemi branş/sınıf atamalarınızı değiştirmez. AI özel sağlayıcısı genel internet üzerinde HTTPS kullanmalıdır; özel ağ adresleri ve redirect reddedilir.

@@ -19,7 +19,7 @@ const classSchema = z.object({
 
 // ==================== CLASS ROUTES ====================
 
-router.get("/", requireAuth, async (req: AuthRequest, res: Response) => {
+router.get("/", requireAuth, requireRole(["student", "teacher", "admin"]), async (req: AuthRequest, res: Response) => {
   try {
     let classes;
     if (req.user!.role === "admin") {
@@ -35,7 +35,7 @@ router.get("/", requireAuth, async (req: AuthRequest, res: Response) => {
   }
 });
 
-router.get("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
+router.get("/:id", requireAuth, requireRole(["student", "teacher", "admin"]), async (req: AuthRequest, res: Response) => {
   try {
     const cls = await storage.getClass(req.params.id);
     if (!cls) return res.status(404).json({ message: "Sınıf bulunamadı." });
@@ -63,7 +63,7 @@ router.get("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
   }
 });
 
-router.get("/:id/students", requireAuth, async (req: AuthRequest, res: Response) => {
+router.get("/:id/students", requireAuth, requireRole(["student", "teacher", "admin"]), async (req: AuthRequest, res: Response) => {
   try {
     // IDOR Check
     if (req.user!.role === "student" && req.user!.classId !== req.params.id) {
@@ -176,6 +176,10 @@ router.post("/:id/students", requireAuth, requireRole(["admin", "teacher"]), asy
     if (!student || student.role !== 'student') {
       return res.status(400).json({ message: "Geçersiz öğrenci ID." });
     }
+    if (req.user!.role === "teacher" && student.classId && student.classId !== cls.id &&
+        !await canAccessClass(req.user!.role, req.user!.id, student.classId)) {
+      return res.status(403).json({ message: "Öğrencinin mevcut sınıfını değiştirme yetkiniz yok." });
+    }
     await storage.assignStudentToClass(studentId, req.params.id);
     res.json({ message: "Öğrenci sınıfa eklendi." });
   } catch (error) {
@@ -194,6 +198,10 @@ router.delete("/:id/students/:studentId", requireAuth, requireRole(["admin", "te
       if (!isAssigned) return res.status(403).json({ message: "Bu sınıftan öğrenci çıkarma yetkiniz yok." });
     }
 
+    const student = await storage.getUser(req.params.studentId);
+    if (!student || student.role !== "student" || student.classId !== cls.id) {
+      return res.status(403).json({ message: "Öğrenci bu sınıfa ait değil." });
+    }
     await storage.removeStudentFromClass(req.params.studentId);
     res.json({ message: "Öğrenci sınıftan çıkarıldı." });
   } catch (error) {

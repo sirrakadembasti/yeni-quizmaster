@@ -1,65 +1,66 @@
-import { Server as SocketIOServer } from "socket.io";
+import { Server as SocketIOServer, type Socket } from "socket.io";
 import { type Server as HTTPServer } from "http";
 import type { RequestHandler } from "express";
 import { getEffectiveDeploymentConfig } from "./utils/deployment-config";
+import { storage } from "./storage";
 
 let io: SocketIOServer;
 
-/**
- * Socket.IO sunucusunu başlatır.
- *
- * @param sessionMiddleware - Express session middleware'i (index.ts'den paylaşılır).
- *   Bu middleware, socket.request üzerinden session verilerine erişimi sağlar.
- *   Böylece joinUserRoom olayında bağlanan kullanıcının session'daki userId'si doğrulanabilir.
- */
+export async function validateSocketSession(socket: Socket): Promise<string | null> {
+  let session = (socket.request as any).session;
+  if (!session?.userId) return null;
+  try {
+    await new Promise<void>((resolve,reject)=>session.reload((error: Error | null)=>error?reject(error):resolve()));
+    session = (socket.request as any).session;
+    if (!session?.userId) return null;
+    if (session.cookie?.expires && new Date(session.cookie.expires).getTime() <= Date.now()) return null;
+    const user = await storage.getUser(session.userId);
+    if (!user || user.isActive === false || (session.sessionVersion ?? 0) !== (user.sessionVersion ?? 0)) return null;
+    return user.id;
+  } catch { return null; }
+}
+
 export function setupSocket(httpServer: HTTPServer, sessionMiddleware: RequestHandler) {
-  const deploymentConfig = getEffectiveDeploymentConfig();
+  const config = getEffectiveDeploymentConfig();
   io = new SocketIOServer(httpServer, {
-    cors: {
-      origin: deploymentConfig.allowedOrigins,
-      methods: ["GET", "POST"],
-      credentials: true,
-    },
+    cors: { origin: config.allowedOrigins, methods: ["GET", "POST"], credentials: true },
+    allowRequest: (req, callback) => callback(null, !req.headers.origin || config.allowedOrigins.includes(req.headers.origin)),
   });
-
-  // Express session middleware'ini Socket.IO engine'e ekle.
-  // Bu sayede her socket bağlantısında socket.request.session üzerinden
-  // oturum bilgilerine (userId dahil) erişilebilir.
   io.engine.use(sessionMiddleware);
-
-  io.on("connection", (socket) => {
-    const session = (socket.request as any).session;
-    const authenticatedUserId: string | undefined = session?.userId;
-
-    // Oturumu doğrulanmış kullanıcıyı bağlantı kurulur kurulmaz odasına al.
-    // Böylece istemcinin joinUserRoom olayının ağda gecikmesi/kaçması bildirimleri geciktirmez.
-    if (authenticatedUserId) {
-      socket.join(`user_${authenticatedUserId}`);
-    }
-
-    // Kullanıcı kendi bildirim odasına katılmak istediğinde session doğrulaması yap.
-    // session.userId ile istemciden gelen userId eşleşmiyorsa bağlantıyı kes.
-    socket.on("joinUserRoom", (userId: string) => {
-      if (!authenticatedUserId || authenticatedUserId !== userId) {
-        // Kimlik doğrulama başarısız: yetkisiz oda katılımını reddet
-        socket.disconnect(true);
-        return;
-      }
-
+  io.use(async (socket,next)=>{
+    const userId=await validateSocketSession(socket);
+    if (!userId) return next(new Error("Unauthorized"));
+    socket.data.userId=userId;next();
+  });
+  io.on("connection", socket=>{
+    socket.join(`user_${socket.data.userId}`);
+    const check=async()=> {
+      if (await validateSocketSession(socket) !== socket.data.userId) socket.disconnect(true);
+    };
+    const timer=setInterval(check,30000);timer.unref();
+    socket.use(async (_packet,next)=>{
+      if (await validateSocketSession(socket) !== socket.data.userId) { socket.disconnect(true); return; }
+      next();
+    });
+    socket.on("joinUserRoom",(userId:string)=>{
+      if (userId !== socket.data.userId) return socket.disconnect(true);
       socket.join(`user_${userId}`);
     });
-
-    socket.on("disconnect", () => {
-      // Clean up if necessary
-    });
+    socket.on("disconnect",()=>clearInterval(timer));
   });
-
   return io;
 }
 
-export function getIO(): SocketIOServer {
-  if (!io) {
-    throw new Error("Socket.io has not been initialized yet!");
+export function disconnectUserSockets(userId: string) {
+  io?.in(`user_${userId}`).disconnectSockets(true);
+}
+export function disconnectSessionSockets(sessionId: string) {
+  if (!io) return;
+  for (const socket of io.sockets.sockets.values()) {
+    if ((socket.request as any).sessionID === sessionId) socket.disconnect(true);
   }
+}
+export function getIO(): SocketIOServer {
+  if (!io) throw new Error("Socket.io has not been initialized yet!");
   return io;
 }

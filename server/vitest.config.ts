@@ -1,6 +1,8 @@
 import { defineConfig } from 'vitest/config';
 import path from 'path';
 import dns from 'node:dns';
+import { mkdtempSync, writeFileSync } from 'node:fs';
+const testDirectory = mkdtempSync(path.join(__dirname, 'data', 'quizmaster-test-'));
 
 // Windows ortamında localhost çözümlemesini 127.0.0.1 olarak sabitle
 const origLookup = dns.lookup.bind(dns);
@@ -33,14 +35,20 @@ if (dns.promises) {
   };
 }
 
+writeFileSync(path.join(testDirectory, 'test.db'), '');
+
 export default defineConfig({
   root: __dirname,
   test: {
     environment: 'node',
     globals: true,
+    fileParallelism: false,
+    testTimeout: 30000,
+    hookTimeout: 30000,
+    globalSetup: ['tests/global-setup.ts'],
     include: ['tests/**/*.test.ts'],
     env: {
-      DATABASE_URL: 'file:../data/quiz.db',
+      DATABASE_URL: 'file:' + path.join(testDirectory, 'test.db').split('\\').join('/'),
     },
   },
   resolve: {

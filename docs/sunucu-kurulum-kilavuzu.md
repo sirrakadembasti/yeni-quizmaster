@@ -445,3 +445,15 @@ Güncellemeden önce veritabanı ve uploads yedeği alın. Migration uygulanmı�
 - [Nginx HTTP proxy modülü](https://nginx.org/en/docs/http/ngx_http_proxy_module.html)
 - [Nginx WebSocket proxy](https://nginx.org/en/docs/http/websocket.html)
 - [Prisma geliştirme ve üretim migration akışı](https://www.prisma.io/docs/orm/v6/prisma-migrate/workflows/development-and-production)
+
+## Mevcut kurulumda güvenlik bakımı
+
+1. Bakım penceresinde sunucuyu durdurun. SQLite backup API/tutarlı snapshot ile veritabanını ve session verisini yedekleyin; WAL açıkken yalnız ana db dosyasını kopyalamayın.
+2. `pnpm install` ve `pnpm --filter quiz-master-server db:deploy` çalıştırın. Migration `sessionVersion`, `processingUntil` ve sonuç indeksleri ekler; kayıtları silmez.
+3. `pnpm build` ardından sunucuyu yeniden başlatın. Session store çalışma dizininden bağımsız olarak `server/data` altındadır. Eski kök `data/sessions.db` varsa bakım sırasında taşıyın veya yeniden giriş sağlayın.
+4. HTTP/Socket.IO gerçek arayüz origin'lerini izin listesine ekleyin. Üretimde localhost istisnası yoktur.
+5. Giriş, rol ekranları, görsel, teslim ve parola sıfırlamayı kontrol edin.
+
+Kimliği doğrulanmış genel API/sınav limitleri kullanıcı bazındadır. Dar auth limiti IP+hedef hesap/token kullanır; `/me` ve çıkış buna dahil değildir. Çok sunuculu dağıtım merkezi session/rate-limit store ve Socket.IO adaptörü gerektirir.
+
+Anket şeması uyumu: 20260930120000_nullable_survey_answers migration'ı Question.correctAnswer alanını nullable yapar. SQLite tablo yeniden oluşturması bütün soru sütunlarını ve UUID'leri kopyalar; SurveyAnswer bağlantıları korunur. Yedek ve bakım penceresiyle birlikte db:deploy çalıştırın.

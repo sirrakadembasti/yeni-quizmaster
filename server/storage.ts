@@ -1,6 +1,23 @@
+import { isDeepStrictEqual } from "node:util";
 import { PrismaClient, Prisma, User, Quiz, Question, QuestionBank, StudentResult, Category, Class, ActionLog, EmailQueue } from '@prisma/client';
 
 const prisma = new PrismaClient();
+export const closeStorage = () => prisma.$disconnect();
+
+async function writeTransaction<T>(operation: (tx: Prisma.TransactionClient) => Promise<T>): Promise<T> {
+  for (let attempt = 0; ; attempt++) {
+    try { return await prisma.$transaction(operation, { maxWait: 10000, timeout: 10000 }); }
+    catch (error) {
+      if (attempt >= 3 || !["P1008", "P2028", "P2034"].includes((error as any).code)) throw error;
+      await new Promise(resolve => setTimeout(resolve, 50 * (attempt + 1)));
+    }
+  }
+}
+
+const resultStudentSelect = {
+  id: true, name: true, classId: true, studentNo: true,
+  class: { select: { id: true, name: true } },
+} satisfies Prisma.UserSelect;
 
 export interface IStorage {
   // Category methods
@@ -47,7 +64,7 @@ export interface IStorage {
   removeCategoryFromTeacher(teacherId: string, categoryId: string): Promise<void>;
 
   // Quiz methods
-  getAllQuizzes(): Promise<Quiz[]>;
+  getAllQuizzes(filters?: { studentClassId?: string | null }): Promise<Quiz[]>;
   getQuiz(id: string): Promise<Quiz | undefined>;
   getQuizzesByCreator(teacherId: string): Promise<Quiz[]>;
   createQuiz(quiz: Prisma.QuizUncheckedCreateInput & { assignedClassIds?: string[], category?: string }): Promise<Quiz>;
@@ -64,7 +81,7 @@ export interface IStorage {
   createQuestions(questions: (Omit<Prisma.QuestionUncheckedCreateInput, 'options' | 'config' | 'correctAnswer'> & { options?: any; config?: any; correctAnswer?: string | null })[]): Promise<Question[]>;
   deleteQuestion(id: string): Promise<void>;
   deleteQuestionsByQuiz(quizId: string): Promise<void>;
-  // Atomik soru senkronizasyonu: mevcut soruları siler ve yenilerini tek bir transaction içinde ekler.
+  // Katılım başladıktan sonra içerik değişmez; taslak düzenlemesi soru kimliklerini korur.
   // deleteMany başarılı olsa bile createMany hata verirse tüm değişiklikler geri alınır.
   syncQuestions(quizId: string, questions: (Omit<Prisma.QuestionUncheckedCreateInput, 'options' | 'config' | 'correctAnswer'> & { options?: any; config?: any; correctAnswer?: string | null })[]): Promise<Question[]>;
   
@@ -77,6 +94,8 @@ export interface IStorage {
   createResult(result: Prisma.StudentResultUncheckedCreateInput & { answers?: any }): Promise<StudentResult>;
   updateResult(id: string, result: Partial<Prisma.StudentResultUncheckedCreateInput> & { answers?: any }): Promise<void>;
   getResult(id: string): Promise<StudentResult | undefined>;
+  saveResultAnswer(id: string, studentId: string, questionId: string, answer: string): Promise<void>;
+  completeResult(id: string, studentId: string, answers: Record<string, string>): Promise<{ score: number; correctAnswers: number; totalQuestions: number; acceptedQueuedAnswers: boolean; newlyCompleted: boolean }>;
   getQuizStats(quizId: string): Promise<{
     totalParticipants: number;
     averageScore: number;
@@ -127,7 +146,8 @@ export interface IStorage {
   retryEmail(id: string): Promise<EmailQueue | null>;
   deleteEmailLog(id: string): Promise<boolean>;
   getPendingEmails(limit?: number): Promise<EmailQueue[]>;
-  updateEmailStatus(id: string, status: string, errorMessage?: string | null): Promise<EmailQueue | null>;
+  claimPendingEmails(limit?: number, excludeIds?: string[]): Promise<EmailQueue[]>;
+  updateEmailStatus(id: string, status: string, errorMessage?: string | null, processingUntil?: Date): Promise<EmailQueue | null>;
   createPasswordResetRequest(data: { userId: string; email: string; tokenHash: string; expiresAt: Date; requestedBy?: string | null; requestIp?: string | null }): Promise<any>;
   updatePasswordResetRequest(id: string, data: Record<string, unknown>): Promise<any>;
   getPasswordResetRequest(id: string): Promise<any | undefined>;
@@ -347,9 +367,12 @@ export class PrismaStorage implements IStorage {
       };
     }
 
-    const currentUser = await prisma.user.findUnique({ where: { id }, select: { role: true, classId: true } });
-    const updated = await prisma.$transaction(async (tx) => {
-      if (currentUser && currentUser.role !== prismaData.role) {
+    const updated = await writeTransaction(async (tx) => {
+      const currentUser = await tx.user.findUnique({ where: { id }, select: { role: true, classId: true } });
+      if (prismaData.password !== undefined || (prismaData.role !== undefined && prismaData.role !== currentUser?.role)) {
+        prismaData.sessionVersion = { increment: 1 };
+      }
+      if (currentUser && prismaData.role !== undefined && currentUser.role !== prismaData.role) {
         if (currentUser.role === 'parent') {
           await tx.guardianStudent.deleteMany({ where: { guardianId: id } });
         }
@@ -660,23 +683,8 @@ export class PrismaStorage implements IStorage {
   }
 
   async assignStudentToClass(studentId: string, classId: string): Promise<void> {
-    // Find the highest student number in this class
-    const highestStudentNoUser = await prisma.user.findFirst({
-      where: { classId, role: 'student' },
-      orderBy: { studentNo: 'desc' },
-      select: { studentNo: true }
-    });
+    await this.updateUser(studentId, { classId });
 
-    const nextNo = (highestStudentNoUser?.studentNo || 0) + 1;
-
-    await prisma.user.update({
-      where: { id: studentId },
-      data: { 
-        classId,
-        studentNo: nextNo,
-        classNo: null,
-      }
-    });
   }
 
 
@@ -761,8 +769,12 @@ export class PrismaStorage implements IStorage {
   }
 
   // Quiz methods
-  async getAllQuizzes(): Promise<Quiz[]> {
+  async getAllQuizzes(filters?: { studentClassId?: string | null }): Promise<Quiz[]> {
     const quizzes = await prisma.quiz.findMany({
+      where: filters && "studentClassId" in filters ? {
+        status: "published", contentType: "exam",
+        assignedClasses: filters.studentClassId ? { some: { id: filters.studentClassId } } : { none: {} },
+      } : undefined,
       include: {
         _count: {
           select: { 
@@ -775,7 +787,7 @@ export class PrismaStorage implements IStorage {
             surveySubmissions: true
           }
         },
-        category: true, creator: true,
+        category: true, creator: { select: { id: true, name: true, role: true } },
         assignedClasses: true
       },
       orderBy: { createdAt: 'desc' }
@@ -791,7 +803,7 @@ export class PrismaStorage implements IStorage {
   async getQuiz(id: string): Promise<Quiz | undefined> {
     const quiz = await prisma.quiz.findUnique({ 
       where: { id },
-      include: { category: true, creator: true, assignedClasses: true }
+      include: { category: true, creator: { select: { id: true, name: true, role: true } }, assignedClasses: true }
     });
     return quiz ? { 
       ...quiz, 
@@ -814,7 +826,7 @@ export class PrismaStorage implements IStorage {
             surveySubmissions: true
           }
         },
-        category: true, creator: true,
+        category: true, creator: { select: { id: true, name: true, role: true } },
         assignedClasses: true
       },
       orderBy: { createdAt: 'desc' }
@@ -845,7 +857,7 @@ export class PrismaStorage implements IStorage {
           connect: quiz.assignedClassIds.map(id => ({ id }))
         } : undefined,
       },
-      include: { assignedClasses: true, creator: true }
+      include: { assignedClasses: true, creator: { select: { id: true, name: true, role: true } } }
     });
     return {
       ...created,
@@ -871,7 +883,7 @@ export class PrismaStorage implements IStorage {
           set: quiz.assignedClassIds.map(id => ({ id }))
         } : undefined,
       },
-      include: { assignedClasses: true, creator: true }
+      include: { assignedClasses: true, creator: { select: { id: true, name: true, role: true } } }
     });
     return updated as unknown as Quiz;
   }
@@ -999,21 +1011,40 @@ export class PrismaStorage implements IStorage {
   }
 
   async syncQuestions(quizId: string, questions: (Omit<Prisma.QuestionUncheckedCreateInput, 'options' | 'config' | 'correctAnswer'> & { options?: any; config?: any; correctAnswer?: string | null })[]): Promise<Question[]> {
-    await prisma.$transaction([
-      prisma.question.deleteMany({ where: { quizId } }),
-      prisma.question.createMany({
-        data: questions.map((q) => ({
-          quizId,
-          text: q.text as string,
-          type: q.type as string,
+    await prisma.$transaction(async tx => {
+      const existing = await tx.question.findMany({ where: { quizId } });
+      const existingIds = new Set(existing.map(q => q.id));
+      const incomingIds = questions.filter(q => q.id).map(q => q.id!);
+      if (new Set(incomingIds).size !== incomingIds.length || incomingIds.some(id => !existingIds.has(id))) {
+        throw new Error("INVALID_QUESTION_ID");
+      }
+      const normalize = (q: any) => ({
+        text: q.text, type: q.type,
+        options: typeof q.options === 'string' ? JSON.parse(q.options) : q.options || [],
+        correctAnswer: q.correctAnswer || null,
+        config: typeof q.config === 'string' ? JSON.parse(q.config) : q.config || null,
+        imageUrl: q.imageUrl ?? null, order: q.order,
+      });
+      const existingById = new Map(existing.map(q => [q.id, q]));
+      const unchanged = questions.length === existing.length &&
+        questions.every(q => q.id && isDeepStrictEqual(normalize(q), normalize(existingById.get(q.id))));
+      if (unchanged) return;
+      const participation = await tx.studentResult.count({ where: { quizId } });
+      const submissions = await tx.surveySubmission.count({ where: { surveyId: quizId } });
+      if (participation || submissions) throw new Error("CONTENT_HAS_RESPONSES");
+      await tx.question.deleteMany({ where: { quizId, id: { notIn: incomingIds } } });
+      for (const q of questions) {
+        const data = {
+          quizId, text: q.text, type: q.type,
           options: JSON.stringify(q.options || []),
-          correctAnswer: (q.correctAnswer as string | null | undefined) || null,
+          correctAnswer: q.correctAnswer || null,
           config: q.config ? JSON.stringify(q.config) : null,
-          imageUrl: (q.imageUrl as string | null | undefined) ?? null,
-          order: q.order as number,
-        })),
-      }),
-    ]);
+          imageUrl: q.imageUrl ?? null, order: q.order,
+        };
+        if (q.id) await tx.question.update({ where: { id: q.id }, data });
+        else await tx.question.create({ data });
+      }
+    });
     return this.getQuestionsByQuiz(quizId);
   }
 
@@ -1064,7 +1095,7 @@ export class PrismaStorage implements IStorage {
     const results = await prisma.studentResult.findMany({
       where,
       include: {
-        student: { include: { class: true } },
+        student: { select: resultStudentSelect },
         quiz: { include: { category: true, creator: { select: { id: true, name: true } } } },
       },
       orderBy: { submittedAt: 'desc' },
@@ -1103,7 +1134,7 @@ export class PrismaStorage implements IStorage {
   async getResultsByQuiz(quizId: string): Promise<StudentResult[]> {
     const results = await prisma.studentResult.findMany({
       where: { quizId },
-      include: { student: true },
+      include: { student: { select: resultStudentSelect } },
       orderBy: { score: 'desc' }
     });
     return results.map(r => ({
@@ -1115,7 +1146,7 @@ export class PrismaStorage implements IStorage {
   async getLiveResults(quizId: string): Promise<StudentResult[]> {
     const results = await prisma.studentResult.findMany({
       where: { quizId, status: 'in_progress' },
-      include: { student: true },
+      include: { student: { select: resultStudentSelect } },
       orderBy: { startedAt: 'desc' }
     });
     return results.map(r => ({
@@ -1136,15 +1167,14 @@ export class PrismaStorage implements IStorage {
   }
 
   async createResult(r: Prisma.StudentResultUncheckedCreateInput & { answers?: any }): Promise<StudentResult> {
-    const created = await prisma.studentResult.create({
-      data: {
-        studentId: r.studentId,
-        quizId: r.quizId,
-        status: r.status || "in_progress",
-        answers: r.answers ? JSON.stringify(r.answers) : null,
-        totalQuestions: r.totalQuestions || 0,
-        startedAt: r.startedAt || new Date()
-      }
+    const created = await writeTransaction(async tx => {
+      const existing = await tx.studentResult.findFirst({ where: { studentId: r.studentId, quizId: r.quizId }, orderBy: { startedAt: 'desc' } });
+      if (existing) return existing;
+      return tx.studentResult.create({ data: {
+        studentId: r.studentId, quizId: r.quizId, status: r.status || "in_progress",
+        answers: JSON.stringify(r.answers || {}), totalQuestions: r.totalQuestions || 0,
+        startedAt: r.startedAt || new Date(),
+      } });
     });
     return {
       ...created,
@@ -1174,6 +1204,46 @@ export class PrismaStorage implements IStorage {
       ...r,
       answers: r.answers ? JSON.parse(r.answers) : {}
     } as unknown as StudentResult : undefined;
+  }
+
+  async saveResultAnswer(id: string, studentId: string, questionId: string, answer: string): Promise<void> {
+    await writeTransaction(async tx => {
+      const result = await tx.studentResult.findUnique({ where: { id }, include: { quiz: true } });
+      if (!result || result.studentId !== studentId) throw new Error("RESULT_FORBIDDEN");
+      if (result.status !== "in_progress") throw new Error("RESULT_COMPLETED");
+      if (result.quiz.timeLimit && Date.now() >= result.startedAt.getTime() + result.quiz.timeLimit * 60000) throw new Error("RESULT_EXPIRED");
+      const questions = await tx.question.findMany({ where: { quizId: result.quizId } });
+      if (!questions.some(q => q.id === questionId)) throw new Error("INVALID_QUESTION_ID");
+      const answers = { ...JSON.parse(result.answers || "{}"), [questionId]: answer };
+      const correct = questions.filter(q => answers[q.id] === q.correctAnswer).length;
+      await tx.studentResult.update({ where: { id }, data: { answers: JSON.stringify(answers), correctAnswersCount: correct } });
+    });
+  }
+
+  async completeResult(id: string, studentId: string, incomingAnswers: Record<string, string>) {
+    return writeTransaction(async tx => {
+      const result = await tx.studentResult.findUnique({ where: { id }, include: { quiz: true } });
+      if (!result || result.studentId !== studentId) throw new Error("RESULT_FORBIDDEN");
+      if (result.status === "completed") return {
+        score: result.score || 0, correctAnswers: result.correctAnswersCount,
+        totalQuestions: result.totalQuestions, acceptedQueuedAnswers: false, newlyCompleted: false,
+      };
+      if (result.status !== "in_progress") throw new Error("RESULT_COMPLETED");
+      const questions = await tx.question.findMany({ where: { quizId: result.quizId } });
+      const validIds = new Set(questions.map(q => q.id));
+      if (Object.keys(incomingAnswers).some(key => !validIds.has(key))) throw new Error("INVALID_QUESTION_ID");
+      const acceptedQueuedAnswers = !result.quiz.timeLimit || Date.now() < result.startedAt.getTime() + result.quiz.timeLimit * 60000;
+      const answers = { ...JSON.parse(result.answers || "{}"), ...(acceptedQueuedAnswers ? incomingAnswers : {}) };
+      const correct = questions.filter(q => answers[q.id] === q.correctAnswer).length;
+      const score = questions.length ? Math.round(correct / questions.length * 100) : 0;
+      const now = new Date();
+      await tx.studentResult.update({ where: { id }, data: {
+        status: "completed", answers: JSON.stringify(answers), score, correctAnswersCount: correct,
+        totalQuestions: questions.length, submittedAt: now, completedAt: now,
+        timeTaken: Math.max(0, Math.floor((now.getTime() - result.startedAt.getTime()) / 1000)),
+      } });
+      return { score, correctAnswers: correct, totalQuestions: questions.length, acceptedQueuedAnswers, newlyCompleted: true };
+    });
   }
 
   async getQuizStats(quizId: string) {
@@ -1401,31 +1471,20 @@ export class PrismaStorage implements IStorage {
   }
 
   async promoteStudents(fromClassId: string, toClassId: string | null, academicYear?: string): Promise<number> {
-    // academicYear verilmişse: öğrencilerin taşınmadan önceki tamamlanmış
-    // sınav sonuçlarına yıl damgası vur — yeni sınıf istatistiklerini kirletmez.
-    if (academicYear) {
-      const students = await prisma.user.findMany({
-        where: { role: 'student', classId: fromClassId },
-        select: { id: true }
+    if (fromClassId === toClassId) return 0;
+    return writeTransaction(async tx => {
+      const students = await tx.user.findMany({ where: { role: "student", classId: fromClassId }, orderBy: { id: "asc" } });
+      const ids = students.map(student => student.id);
+      if (academicYear && ids.length) await tx.studentResult.updateMany({
+        where: { studentId: { in: ids }, academicYear: null, status: "completed" }, data: { academicYear },
       });
-      const studentIds = students.map(s => s.id);
-      if (studentIds.length > 0) {
-        await prisma.studentResult.updateMany({
-          where: {
-            studentId: { in: studentIds },
-            academicYear: null,
-            status: 'completed'
-          },
-          data: { academicYear }
-        });
-      }
-    }
-
-    const result = await prisma.user.updateMany({
-      where: { role: 'student', classId: fromClassId },
-      data: { classId: toClassId }
+      const highest = toClassId ? await tx.user.aggregate({ where: { classId: toClassId, role: "student" }, _max: { studentNo: true } }) : null;
+      let number = highest?._max.studentNo || 0;
+      for (const student of students) await tx.user.update({
+        where: { id: student.id }, data: { classId: toClassId, studentNo: toClassId ? ++number : null, classNo: null },
+      });
+      return students.length;
     });
-    return result.count;
   }
 
   async purgeArchivedData(academicYear: string): Promise<{ quizzesPurged: number; resultsPurged: number }> {
@@ -1631,11 +1690,12 @@ export class PrismaStorage implements IStorage {
 
   async retryEmail(id: string): Promise<EmailQueue | null> {
     const email = await prisma.emailQueue.findUnique({ where: { id } });
-    if (!email) return null;
+    if (!email || (email.processingUntil && email.processingUntil > new Date())) return null;
     return await prisma.emailQueue.update({
       where: { id },
       data: {
         status: 'pending',
+        processingUntil: null,
         attempts: 0,
         errorMessage: null,
       }
@@ -1661,11 +1721,25 @@ export class PrismaStorage implements IStorage {
     });
   }
 
-  async updateEmailStatus(id: string, status: string, errorMessage?: string | null): Promise<EmailQueue | null> {
+  async claimPendingEmails(limit = 1, excludeIds: string[] = []): Promise<EmailQueue[]> {
+    return writeTransaction(async tx => {
+      const now = new Date();
+      const emails = await tx.emailQueue.findMany({
+        where: { status: "pending", id: { notIn: excludeIds }, OR: [{ processingUntil: null }, { processingUntil: { lt: now } }] },
+        orderBy: { createdAt: "asc" }, take: limit,
+      });
+      const processingUntil = new Date(now.getTime() + 5 * 60000);
+      for (const email of emails) await tx.emailQueue.update({ where: { id: email.id }, data: { processingUntil } });
+      return emails.map(email => ({ ...email, processingUntil }));
+    });
+  }
+
+  async updateEmailStatus(id: string, status: string, errorMessage?: string | null, processingUntil?: Date): Promise<EmailQueue | null> {
     try {
       return await prisma.emailQueue.update({
-        where: { id },
+        where: { id, ...(processingUntil ? { processingUntil } : {}) },
         data: {
+          processingUntil: null,
           status,
           errorMessage: errorMessage ?? null,
           lastAttempt: new Date(),

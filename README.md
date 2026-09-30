@@ -422,3 +422,11 @@ Komutlar, veri doğrulama sorguları, oturum deposu kararı, geri dönüş plan�
 - Vite API için `ECONNREFUSED`: backend'in `5000` portunda çalıştığını kontrol edin.
 - Gmail zaman aşımı: kurumsal ağın `587/465` çıkışını engelleyip engellemediğini kontrol edin; DNS/proxy değiştirmeden izinli bir ağda deneyin.
 - Çevrimdışı teslim bekliyor: aynı cihaz ve tarayıcıyla sınavı açıp bağlantının geri gelmesini bekleyin.
+
+## Güvenlik ve veri bütünlüğü bakımı
+
+30 Eylül 2026 bakımında yetki/rol ilişkileri, sınav/anket geçmişi, eşzamanlı kayıt, oturumlar, AI dış bağlantıları ve çevrimdışı kuyruk güçlendirildi. [Bakım notları](docs/guvenlik-ve-bakim.md) ayrıntıları ve işletim sınırlarını açıklar.
+
+Mevcut kurulumlarda tutarlı SQLite yedeği alın; `pnpm install`, `pnpm --filter quiz-master-server db:deploy`, `pnpm build` ve sunucu yeniden başlatma adımlarını uygulayın. Migration mevcut kayıtları koruyarak oturum sürümü, e-posta sahiplenme alanı ve sonuç indeksleri ekler; anket sorularının boş doğru cevap alanını migration geçmişiyle uyumlu hale getirir.
+
+Backend testleri geçici SQLite ve taklit SMTP kullanır. Kontroller: `pnpm --filter quiz-master-server test`, `pnpm --filter quiz-master-client exec vitest run`, `pnpm -r type-check` ve `pnpm build`.

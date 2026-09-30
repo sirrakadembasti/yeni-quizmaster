@@ -72,6 +72,13 @@ describe('Auth Middleware', () => {
     });
   });
 
+  it('rejects sessions issued before password change', async () => {
+    mockReq.session!.userId = 'user';
+    vi.mocked(storage.getUser).mockResolvedValue({id:'user',sessionVersion:1} as any);
+    await requireAuth(mockReq as AuthRequest,mockRes as Response,mockNext);
+    expect(mockRes.status).toHaveBeenCalledWith(401);expect(mockNext).not.toHaveBeenCalled();
+  });
+
   describe('requireRole', () => {
     it('should return 403 if req.user is undefined', () => {
       const middleware = requireRole(['admin']);

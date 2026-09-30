@@ -158,3 +158,9 @@ Proxy veya DNS ayarlarını değiştirmeden önce cep interneti gibi SMTP çık�
 - Gmail hesabı veya Uygulama Parolası değiştiğinde backend'i yeniden başlatın.
 - Uygulama Parolasını düzenli olarak döndürün ve eski parolayı Google hesabından iptal edin.
 - Üretim geçişinde `FRONTEND_URL`, HTTPS, oturum çerezi ve ters proxy ayarlarını birlikte doğrulayın.
+
+## Eşzamanlı worker ve oturumlar
+
+Worker e-postayı gönderimden önce beş dakika için veritabanında sahiplenir. Başka worker bu sürede aynı kaydı seçmez; başarı/hata kaydı sahiplenmeyi serbest bırakır. Çöken işlemin kaydı süre dolunca yeniden alınabilir. SMTP kabulünden sonra başarı kaydı yazılmadan çökme tekrar teslim üretebilir; Outbox en az bir kez teslim yaklaşımıdır. Aktif gönderim manuel yeniden denemeyle kopyalanamaz.
+
+Sıfırlama talebi öğretmen/veli ilişkilerini korur. Parola gerçekten değiştiğinde oturum sürümü artar; eski HTTP oturumları geçersiz olur ve bildirim bağlantıları kapanır. SMTP testleri gerçek Gmail kimlik bilgilerini yüklemez.

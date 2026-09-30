@@ -1,10 +1,10 @@
-import dotenv from 'dotenv';
-import path from 'path';
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+// Integration tests never load real SMTP credentials.
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { storage } from '../../storage';
 import { sendResetPasswordEmail } from '../../utils/email';
+
+vi.mock('nodemailer',()=>({default:{createTransport:()=>({sendMail:vi.fn(async()=>({messageId:'test'}))})}}));
 
 describe('Email Queue and Outbox Integration Tests', () => {
   let createdEmailId: string;
@@ -76,7 +76,7 @@ describe('Email Queue and Outbox Integration Tests', () => {
 
   it('retrieves system logs accurately', async () => {
     // Create a system log for testing
-    const adminUser = (await storage.getAllUsers()).find(u => u.role === 'admin');
+    const adminUser = await storage.createUser({ name: 'Log test admin', email: 'log-admin@test.local', password: 'hash', role: 'admin' });
     if (adminUser) {
       await storage.createLog(adminUser.id, 'ARCHIVE_YEAR', 'Test Yıl Sonu Arşivi Logu');
     }

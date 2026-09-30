@@ -1,3 +1,4 @@
+import { ApiError } from './http-error';
 const API_BASE = '/api';
 
 let csrfToken: string | null = null;
@@ -347,7 +348,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
     const errorMsg = error.details 
       ? `${error.message || 'Hata'} (${error.details})` 
       : (error.message || `İstek ${response.status} koduyla başarısız oldu.`);
-    throw new Error(errorMsg);
+    throw new ApiError(errorMsg, response.status);
   }
   return response.json();
 }

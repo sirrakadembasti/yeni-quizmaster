@@ -6,7 +6,7 @@ import { logger } from "../utils/logger";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { hashResetToken, issuePasswordReset } from "../services/password-reset";
-import { getIO } from "../socket";
+import { getIO, disconnectUserSockets, disconnectSessionSockets } from "../socket";
 
 const router: Router = Router();
 
@@ -69,6 +69,7 @@ router.post("/register", async (req: Request, res: Response) => {
     });
     
     req.session.userId = user.id;
+    req.session.sessionVersion = user.sessionVersion ?? 0;
     await storage.createLog(user.id, "REGISTER", `User registered as student`);
     try {
       const admins = (await storage.getAllUsers()).filter((candidate) => candidate.role === "admin");
@@ -115,6 +116,7 @@ router.post("/login", async (req: Request, res: Response) => {
     
     await regenerateSession(req);
     req.session.userId = user.id;
+    req.session.sessionVersion = user.sessionVersion ?? 0;
     await storage.createLog(user.id, "LOGIN", `User logged in`);
     const { password: _, ...userWithoutPassword } = user;
     res.json({ user: userWithoutPassword });
@@ -126,6 +128,8 @@ router.post("/login", async (req: Request, res: Response) => {
 
 router.post("/logout", requireAuth, async (req: AuthRequest, res: Response) => {
   await storage.createLog(req.user!.id, "LOGOUT", `User logged out`);
+  const cookieOptions = { secure: Boolean(req.session.cookie.secure), sameSite: req.session.cookie.sameSite };
+  disconnectSessionSockets(req.sessionID);
   req.session.destroy((error) => {
     if (error) {
       return res.status(500).json({ message: "Oturum kapatılamadı." });
@@ -134,8 +138,8 @@ router.post("/logout", requireAuth, async (req: AuthRequest, res: Response) => {
     res.clearCookie("quizmaster.sid", {
       path: "/",
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: cookieOptions.secure,
+      sameSite: cookieOptions.sameSite,
     });
     res.json({ message: "Oturum kapatıldı." });
   });
@@ -216,7 +220,11 @@ router.post("/change-password", requireAuth, async (req: AuthRequest, res: Respo
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
     
     // Update the password
-    await storage.updateUser(user.id, { password: hashedNewPassword });
+    const updated = await storage.updateUser(user.id, { password: hashedNewPassword });
+    disconnectUserSockets(user.id);
+    await regenerateSession(req);
+    req.session.userId = user.id;
+    req.session.sessionVersion = updated.sessionVersion ?? 0;
     await storage.createLog(user.id, "PASSWORD_CHANGE", "User changed their password");
     
     res.json({ message: "Şifreniz başarıyla güncellendi." });
@@ -281,6 +289,7 @@ router.post("/reset-password", async (req: Request, res: Response) => {
       resetToken: null,
       resetTokenExpiry: null,
     });
+    disconnectUserSockets(user.id);
     if (resetRequest) await storage.updatePasswordResetRequest(resetRequest.id, { status: "completed", completedAt: new Date() });
 
     await storage.createLog(user.id, "RESET_PASSWORD", "Password reset successfully");

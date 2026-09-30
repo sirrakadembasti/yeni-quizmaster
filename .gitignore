@@ -67,3 +67,5 @@ graphify-out/*
 .mimocode/
 *.exe
 tools/mailpit/*.exe
+
+/server/data/quizmaster-test-*/

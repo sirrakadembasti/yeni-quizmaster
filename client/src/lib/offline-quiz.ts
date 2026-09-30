@@ -5,6 +5,7 @@ export interface OfflineQuestion {
   text: string;
   type: string;
   options?: string[];
+  imageUrl?: string | null;
 }
 
 export interface OfflineQuizSession {
@@ -106,5 +107,25 @@ export function getOfflineUser() {
 }
 
 export function clearOfflineUser() {
-  if (typeof window !== 'undefined') window.localStorage.removeItem(USER_KEY);
+  if (typeof window === 'undefined') return;
+  try {
+    const keys = Object.keys(window.localStorage);
+    for (const key of keys) {
+      if (key === USER_KEY || key.startsWith(SESSION_PREFIX) || key.startsWith(LIST_PREFIX)) window.localStorage.removeItem(key);
+    }
+  } catch { /* Storage disabled by browser. */ }
+}
+
+// A result-specific seed keeps the displayed order stable across reloads.
+export function orderQuizQuestions<T>(questions: T[], shuffle: boolean, seed: string): T[] {
+  const result = [...questions];
+  if (!shuffle) return result;
+  let state = 2166136261;
+  for (const character of seed) state = Math.imul(state ^ character.charCodeAt(0), 16777619) >>> 0;
+  for (let i = result.length - 1; i > 0; i--) {
+    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+    const j = Math.floor(state / 4294967296 * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
 }

@@ -12,6 +12,7 @@ vi.mock('../../storage', () => ({
     getQuestion: vi.fn(),
     getQuestionsByQuiz: vi.fn(),
     updateResult: vi.fn(),
+    saveResultAnswer: vi.fn(),
     getUser: vi.fn(),
     createNotification: vi.fn(),
   }
@@ -92,7 +93,7 @@ describe('Student Exam Security & Timelimit Integration Tests', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.message).toBe('Cevap kaydedildi.');
-    expect(storage.updateResult).toHaveBeenCalled();
+    expect(storage.saveResultAnswer).toHaveBeenCalledWith('result-1', 'student-1', '550e8400-e29b-41d4-a716-446655440000', 'A');
   });
 
   it('should reject answer with 409 Conflict when exam time has expired', async () => {

@@ -1,3 +1,4 @@
+import { questionImageUrlSchema } from "../utils/upload-paths";
 import { Router, type Response } from "express";
 import { z } from "zod";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
@@ -26,11 +27,12 @@ const surveyWriteSchema = z.object({
 });
 
 const surveyQuestionSchema = z.array(z.object({
+  id: z.string().uuid().optional(),
   text: z.string().trim().min(1),
   type: z.enum(["single-choice", "multiple-choice", "open-text", "rating", "likert"]),
   options: z.array(z.string()).default([]),
   config: z.record(z.any()).optional().nullable(),
-  imageUrl: z.string().url().optional().nullable(),
+  imageUrl: questionImageUrlSchema.optional().nullable(),
   order: z.number().int().default(0),
 }));
 
@@ -296,6 +298,9 @@ router.post("/:id/questions", requireAuth, requireRole(["admin", "teacher"]), as
     const questions = await storage.syncQuestions(req.params.id, parsed.data.map((question) => ({ ...question, quizId: req.params.id, correctAnswer: null })));
     res.status(201).json({ questions });
   } catch (error) {
+    if ((error as Error).message === "CONTENT_HAS_RESPONSES") return res.status(409).json({ message: "Katılım başladıktan sonra sorular değiştirilemez. Yeni bir sınav/anket oluşturun." });
+    if ((error as Error).message === "INVALID_QUESTION_ID") return res.status(400).json({ message: "Geçersiz soru kimliği." });
+    console.error("Survey question synchronization error:", error);
     res.status(500).json({ message: "Anket soruları kaydedilemedi." });
   }
 });

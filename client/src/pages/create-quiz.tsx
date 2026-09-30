@@ -206,6 +206,7 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
       const validQuestions = questions.filter(q => q.text.trim() !== '');
       if (validQuestions.length > 0) {
         const questionsToAdd = validQuestions.map((q, index) => ({
+          ...(typeof q.id === 'string' ? { id: q.id } : {}),
           text: q.text,
           type: q.type as any,
           options: q.options.filter(o => o.trim() !== ''),

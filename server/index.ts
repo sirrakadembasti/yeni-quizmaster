@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./api-routes/routes";
 import { serveStatic } from "./static";
@@ -87,7 +88,8 @@ app.use(helmet({
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000, // limit each IP to 1000 requests per windowMs
+  keyGenerator: (req) => req.session?.userId || req.ip || "unknown",
+  max: 1000, // authenticated user; IP fallback before login
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: "Too many requests, please try again later." },
@@ -95,23 +97,25 @@ const limiter = rateLimit({
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // limit each IP to 20 auth requests per windowMs
+  keyGenerator: (req) => (req.ip || "unknown") + ":" + createHash("sha256").update(String(req.body?.email || req.body?.token || "").trim().toLowerCase()).digest("hex"),
+  max: 20, // per IP and login/reset identifier
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: "Too many login attempts, please try again later." },
 });
 
-app.use("/api/", limiter);
-app.use("/api/auth/", authLimiter);
+
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(["/api/auth/login", "/api/auth/register", "/api/auth/forgot-password", "/api/auth/reset-password"], authLimiter);
 
 // CORS configuration
 const allowedOrigins = deploymentConfig.allowedOrigins;
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin) || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
@@ -131,10 +135,12 @@ const isHttpsDeploy =
   process.env.NODE_ENV === "production" &&
   (String(frontendUrl).startsWith("https://") || process.env.FORCE_SECURE_COOKIES === "1");
 
+const sessionDirectory = path.join(serverDirectory, "data");
+fs.mkdirSync(sessionDirectory, { recursive: true });
 const sessionMiddleware = session({
   store: new SQLiteStore({
     db: "sessions.db",
-    dir: "./data",
+    dir: sessionDirectory,
   }) as any,
   secret: sessionSecret,
   resave: false,
@@ -148,6 +154,7 @@ const sessionMiddleware = session({
   },
 });
 app.use(sessionMiddleware);
+app.use("/api/", limiter);
 
 // Ensure uploads directory exists
 if (!fs.existsSync(uploadsDirectory)) {

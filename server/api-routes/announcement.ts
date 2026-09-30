@@ -24,6 +24,13 @@ router.get("/", requireAuth, async (req: AuthRequest, res: Response) => {
 
         return a.targetRole === 'all' || a.targetRole === 'student';
       });
+    } else if (req.user!.role === 'parent') {
+      const links = await storage.getGuardianStudents(req.user!.id);
+      const classIds = new Set(links.map(link => link.student?.classId).filter(Boolean));
+      filtered = all.filter(a =>
+        (a.targetRole === 'all' || a.targetRole === 'parent') &&
+        (!a.targetClassId || classIds.has(a.targetClassId))
+      );
     } else if (req.user!.role === 'teacher') {
       filtered = all.filter(a =>
         a.createdBy === req.user!.id ||

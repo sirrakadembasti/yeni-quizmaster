@@ -17,6 +17,7 @@ model User {
   name        String
   email       String  @unique
   password    String
+  sessionVersion Int @default(0)
   role        String  @default("student") // admin, teacher, student, parent
   phoneNumber String?
   address     String?
@@ -239,6 +240,9 @@ model StudentResult {
   startedAt           DateTime  @default(now())
   submittedAt         DateTime?
   completedAt         DateTime?
+  @@index([studentId, quizId])
+  @@index([quizId, status])
+
 }
 
 model SurveySubmission {
@@ -294,6 +298,7 @@ model Announcement {
 }
 
 model EmailQueue {
+  processingUntil DateTime?
   id           String    @id @default(uuid())
   to           String
   subject      String

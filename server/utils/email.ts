@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import nodemailer, { type Transporter, type SendMailOptions } from "nodemailer";
 import { storage } from "../storage";
 import { logger } from "./logger";
 import { getPublicAppUrl } from "./deployment-config";
@@ -26,7 +26,7 @@ export function getEmailConfiguration() {
   };
 }
 
-let transporter: nodemailer.Transporter | null = null;
+let transporter: Transporter | null = null;
 let transporterKey = "";
 
 function getTransporter() {
@@ -69,7 +69,7 @@ export const verifyEmailTransport = async () => {
 };
 
 /** Direct email sender (underlying SMTP call). */
-export const sendDirectEmail = async (options: nodemailer.SendMailOptions) => {
+export const sendDirectEmail = async (options: SendMailOptions) => {
   const config = getEmailConfiguration();
   const from = options.from || `"${config.fromName.replace(/[\r\n"]/g, "")}" <${config.fromEmail}>`;
   return getTransporter().sendMail({ ...options, from });
@@ -104,8 +104,11 @@ export const processEmailQueue = async () => {
   isProcessing = true;
 
   try {
-    const pendingEmails = await storage.getPendingEmails(10);
-    for (const email of pendingEmails) {
+    const attemptedIds: string[] = [];
+    for (let dispatched = 0; dispatched < 10; dispatched++) {
+      const [email] = await storage.claimPendingEmails(1, attemptedIds);
+      if (!email) break;
+      attemptedIds.push(email.id);
       try {
         await sendDirectEmail({
           to: email.to,
@@ -113,14 +116,14 @@ export const processEmailQueue = async () => {
           html: email.body,
         });
 
-        await storage.updateEmailStatus(email.id, "sent", null);
+        await storage.updateEmailStatus(email.id, "sent", null, email.processingUntil || undefined);
         logger.info({ emailId: email.id, to: email.to }, "[EmailQueue] Successfully sent email");
       } catch (err: any) {
         const errorMsg = err?.message || String(err);
         const newAttempts = email.attempts + 1;
         const newStatus = newAttempts >= email.maxAttempts ? "failed" : "pending";
 
-        await storage.updateEmailStatus(email.id, newStatus, errorMsg);
+        await storage.updateEmailStatus(email.id, newStatus, errorMsg, email.processingUntil || undefined);
         logger.warn(
           { emailId: email.id, to: email.to, attempt: newAttempts, error: errorMsg },
           `[EmailQueue] Failed to send email (attempt ${newAttempts}/${email.maxAttempts})`

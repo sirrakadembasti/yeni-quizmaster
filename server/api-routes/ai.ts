@@ -1,3 +1,4 @@
+import { isSafeUrl, safeExternalFetch } from "../utils/external-request";
 import { Router, type Response } from "express";
 import rateLimit from "express-rate-limit";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
@@ -16,28 +17,6 @@ const OFFICIAL_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/open
  * Kural: Sadece HTTPS + genel internet adresleri kabul edilir.
  * localhost, 127.x, 10.x, 172.16-31.x, 192.168.x ve IPv6 loopback reddedilir.
  */
-function isSafeUrl(urlString: string): boolean {
-  try {
-    const url = new URL(urlString);
-    if (url.protocol !== "https:") return false;
-    const h = url.hostname;
-    const blocked = [
-      /^localhost$/i,
-      /^127\./,
-      /^10\./,
-      /^172\.(1[6-9]|2[0-9]|3[01])\./,
-      /^192\.168\./,
-      /^0\./,
-      /^::1$/,
-      /^fc00:/i,
-      /^fe80:/i,
-    ];
-    return !blocked.some((pattern) => pattern.test(h));
-  } catch {
-    return false;
-  }
-}
-
 /**
  * API key izolasyon kuralı:
  * - Resmi endpoint → env key fallback'e izin verilir.
@@ -164,7 +143,7 @@ router.post("/test-config", aiTestLimiter, requireAuth, requireRole(["admin", "t
     }
 
     const endpoint = `${baseUrl.endsWith("/") ? baseUrl : baseUrl + "/"}chat/completions`;
-    const response = await fetch(endpoint, {
+    const response = await safeExternalFetch(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -189,6 +168,7 @@ router.post("/test-config", aiTestLimiter, requireAuth, requireRole(["admin", "t
       });
     }
   } catch (error: any) {
+    if (error.message === "UNSAFE_EXTERNAL_URL") return res.status(400).json({ message: "Geçersiz dış servis adresi." });
     logger.error({ err: error }, "[AI] test-config bağlantı hatası");
     res.status(500).json({
       success: false,
@@ -246,7 +226,7 @@ Output ONLY raw JSON.`;
 
     let response;
     try {
-      response = await fetch(`${baseUrl.endsWith('/') ? baseUrl : baseUrl + '/'}chat/completions`, {
+      response = await safeExternalFetch(`${baseUrl.endsWith('/') ? baseUrl : baseUrl + '/'}chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

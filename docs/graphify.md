@@ -121,3 +121,13 @@ Bu yaklaşım, görsel keşif ve geliştirici sorguları için gerekli çıktıl
 ## Güncellik kuralı
 
 Graphify çıktıları kaynak kodun yerine geçmez. Grafik ve raporun son committe güncel olup olmadığını kontrol edin; şüphe varsa kaynak kodu doğrulayın ve grafiği yeniden üretin. Bir özellik değişikliğinde mümkünse kod ve üç Graphify çıktısı aynı committe güncellenmelidir.
+
+## Bakımda güncellik kontrolü
+
+Gerçek Graphify 0.9.72 CLI ile yerel AST çıkarımı yenilenir. AST import/çağrı/sınıf ilişkilerini gösterir; yetkilendirme, transaction veya cascade güvenliğini kanıtlamaz. Bunlar kaynak ve regresyon testleriyle doğrulanır. Şema/lockfile AST kapsamından ayrı incelenir.
+
+`built_at_commit` üretim anındaki HEAD'dir; commitlenmemiş kaynak için tek başına yeterli değildir. Manifest içerik özetlerini kaynaklarla karşılaştırın, HTML/JSON düğüm/kenar tutarlılığını doğrulayın. Tarihli yedekler eski snapshot olabilir.
+
+Windows uv trampoline hatasında izole ortamın `Scripts/python.exe -m graphify update . --force` komutu kullanılabilir; ortam yolu makineye özeldir. Markdown semantiğinin LLM çıkarımı yerel AST bakımına dahil değildir.
+
+SQL parser eklentisi olmayan ortamda CLI .sql dosyalarının düğüm üretmediğini bildirir; migration güvenliği AST haritasından çıkarılamaz. İstenirse Graphify SQL extra ayrıca kurulabilir. Bakım haritası mevcut çalışma ağacını içerir; commit dışındaki yerel kurulum düzenlemeleri de çalışma ağacında bulunabilir.
