@@ -1,0 +1,18 @@
+{
+  "route": "/teachers",
+  "labels": [],
+  "views": [],
+  "errors": [],
+  "network": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 1,
+    "unlabeledInputs": [
+      {
+        "placeholder": "Öğretmen adı veya e-posta ile ara...",
+        "type": null
+      }
+    ]
+  }
+}

@@ -162,6 +162,10 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
           return false;
         }
       }
+      if (contentType === 'exam' && (q.correctAnswer < 0 || q.correctAnswer >= q.options.length)) {
+        toast({ title: "Hata", description: `Soru ${i + 1}: Doğru cevabı yeniden seçin.`, variant: "destructive" });
+        return false;
+      }
     }
     return true;
   };
@@ -285,23 +289,35 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
   };
 
   const removeQuestion = (id: number | string) => {
-    setQuestions(questions.filter(q => q.id !== id));
+    setQuestions(current => current.filter(q => q.id !== id));
   };
 
   const updateQuestion = (id: number | string, field: keyof QuestionForm, value: any) => {
-    setQuestions(questions.map(q => 
+    setQuestions(current => current.map(q =>
       q.id === id ? { ...q, [field]: value } : q
     ));
   };
 
   const updateOption = (questionId: number | string, optionIndex: number, value: string) => {
-    setQuestions(questions.map(q => {
+    setQuestions(current => current.map(q => {
       if (q.id === questionId) {
         const newOptions = [...q.options];
         newOptions[optionIndex] = value;
         return { ...q, options: newOptions };
       }
       return q;
+    }));
+  };
+
+  const removeOption = (questionId: number | string, optionIndex: number) => {
+    setQuestions(current => current.map(q => {
+      if (q.id !== questionId || q.options.length <= 2) return q;
+      return {
+        ...q,
+        options: q.options.filter((_, index) => index !== optionIndex),
+        correctAnswer: q.correctAnswer === optionIndex ? -1 :
+          q.correctAnswer > optionIndex ? q.correctAnswer - 1 : q.correctAnswer,
+      };
     }));
   };
 
@@ -394,6 +410,7 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
                   onUpdate={updateQuestion}
                   onRemove={removeQuestion}
                   onUpdateOption={updateOption}
+                  onRemoveOption={removeOption}
                 />
               ))}
 

@@ -1,0 +1,18 @@
+{
+  "route": "/students",
+  "labels": [],
+  "views": [],
+  "errors": [],
+  "network": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 1,
+    "unlabeledInputs": [
+      {
+        "placeholder": "Öğrenci ara...",
+        "type": null
+      }
+    ]
+  }
+}

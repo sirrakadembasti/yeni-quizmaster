@@ -1,0 +1,14 @@
+Browser tab: 3, Title: "QuizMaster - Admin Dashboard", URL: "http://127.0.0.1:5511/management".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 41, 43-72
+~				35 tab (selectable, settable, boolean) Dersler, Value: 0, ID: radix-_r_3_-trigger-categories
+~				36 tab (selected, settable, boolean) Sınıflar, Value: 1, ID: radix-_r_3_-trigger-classes
+~			39 container Description: Sınıflar, ID: radix-_r_3_-content-classes
+~				40 text field (settable)
++				41 button Yeni Sınıf
+~				42 container
++					43 pop up button (collapsed) ID: radix-_r_t_, Secondary Actions: Expand
++					44 heading Audit 7A, Value: 3
++						45 text Audit 7A
++					46 text Açıklama belirtilmemiş 1 ÖĞRENCI SORUMLU Audit
+The focused UI element is 36 tab (selected, settable, boolean) Sınıflar, Value: 1, ID: radix-_r_3_-trigger-classes

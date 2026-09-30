@@ -1,0 +1,51 @@
+Browser tab: 3, Title: "QuizMaster - Admin Dashboard", URL: "http://127.0.0.1:5511/settings".
+1 AXWebArea QuizMaster - Admin Dashboard, URL: 127.0.0.1:5511/settings
+	2 container root
+		3 container Notifications (F8)
+			4 content list
+		48 button Menüyü kapat
+		5 container
+			6 text Quiz Master
+			7 button
+			8 link Description: Dashboard, Value: 127.0.0.1:5511/
+			9 link Description: Sınav Yönetimi, Value: 127.0.0.1:5511/admin-quizzes
+			10 link Description: Sınavlar, Value: 127.0.0.1:5511/quizzes
+			11 link Description: Sınıf İstatistikleri, Value: 127.0.0.1:5511/statistics
+			12 link Description: Sınav Sonuçları, Value: 127.0.0.1:5511/results
+			13 link Description: Anket Yönetimi, Value: 127.0.0.1:5511/survey-results
+			14 link Description: Öğrenciler, Value: 127.0.0.1:5511/students
+			15 link Description: Öğretmenler, Value: 127.0.0.1:5511/teachers
+			16 link Description: Veli Eşleştirme, Value: 127.0.0.1:5511/guardian-management
+			17 link Description: Sınıflar, Value: 127.0.0.1:5511/classlist
+			18 link Description: Yönetim, Value: 127.0.0.1:5511/management
+			19 link Description: Arşiv, Value: 127.0.0.1:5511/archive
+			20 link Description: Sunucu Durumu, Value: 127.0.0.1:5511/server-setup
+			21 link Description: Duyurular, Value: 127.0.0.1:5511/announcements
+			22 link Description: Ayarlar, Value: 127.0.0.1:5511/settings
+		23 container
+			24 button Menüyü aç
+			25 pop up button (collapsed) Description: Bildirimleri aç, Secondary Actions: Expand
+			26 button Aydınlık Moda Geç
+			27 pop up button (collapsed) A, ID: radix-_r_29_, Secondary Actions: Expand
+			28 heading Hesap Ayarları, Value: 1
+				29 text Hesap Ayarları
+			30 text Profilinizi, güvenliğinizi ve bildirimlerinizi buradan yönetin.
+			31 button Yazdır
+			32 tab group
+				33 tab (selectable, settable, boolean) Profil Bilgileri, Value: 0, ID: radix-_r_2b_-trigger-profile
+				34 tab (selectable, settable, boolean) Bildirimler, Value: 0, ID: radix-_r_2b_-trigger-notifications
+				35 tab (selectable, settable, boolean) İşlem Geçmişi, Value: 0, ID: radix-_r_2b_-trigger-logs
+				36 tab (selected, settable, boolean) Güvenlik, Value: 1, ID: radix-_r_2b_-trigger-security
+			37 container Description: Güvenlik, ID: radix-_r_2b_-content-security
+				38 text Şifre Değiştir
+				39 text Hesabınızı güvende tutmak için şifrenizi düzenli olarak güncelleyin.
+				40 container
+					41 text MEVCUT ŞIFRE
+					42 text field (settable)
+					43 text YENI ŞIFRE
+					44 text field (settable)
+					45 text YENI ŞIFRE (TEKRAR)
+					46 text field (settable)
+					47 button (disabled) Şifreyi Güncelle
+
+The focused UI element is 24 button Menüyü aç

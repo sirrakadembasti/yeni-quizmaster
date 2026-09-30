@@ -1,0 +1,18 @@
+{
+  "route": "/admin/classes/audit-class",
+  "labels": [],
+  "views": [],
+  "errors": [],
+  "network": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 2,
+    "unlabeledInputs": [
+      {
+        "placeholder": "Ara...",
+        "type": null
+      }
+    ]
+  }
+}

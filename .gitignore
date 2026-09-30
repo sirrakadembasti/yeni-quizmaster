@@ -69,3 +69,9 @@ graphify-out/*
 tools/mailpit/*.exe
 
 /server/data/quizmaster-test-*/
+
+# Admin audit runtime and browser traces (may contain local paths/session data)
+/docs/admin-audit/runtime.json
+/docs/admin-audit/playwright-report*/
+/docs/admin-audit/test-results*/
+/docs/admin-audit/**/trace.zip

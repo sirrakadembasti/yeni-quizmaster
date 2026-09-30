@@ -275,7 +275,7 @@ export class PrismaStorage implements IStorage {
     return user || undefined;
   }
 
-  async createUser(user: Prisma.UserUncheckedCreateInput & { guardianStudentIds?: string[] }): Promise<User> {
+  async createUser(user: Prisma.UserUncheckedCreateInput & { guardianStudentIds?: string[]; assignedCategoryIds?: string[]; classIds?: string[] }): Promise<User> {
     const guardianStudentIds = [...new Set(user.guardianStudentIds || [])];
     return prisma.$transaction(async (tx) => {
       const role = user.role || 'student';
@@ -299,7 +299,13 @@ export class PrismaStorage implements IStorage {
         parentRelation: user.parentRelation,
         parentPhone: user.parentPhone,
         parentEmail: user.parentEmail,
-          parentAddress: user.parentAddress
+          parentAddress: user.parentAddress,
+          ...(role === 'teacher' && user.assignedCategoryIds?.length ? {
+            assignedCategories: { connect: user.assignedCategoryIds.map((id) => ({ id })) }
+          } : {}),
+          ...(role === 'teacher' && user.classIds?.length ? {
+            managedClasses: { connect: user.classIds.map((id) => ({ id })) }
+          } : {})
         }
       });
       if (created.role === 'parent' && guardianStudentIds.length > 0) {

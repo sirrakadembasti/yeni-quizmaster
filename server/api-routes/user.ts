@@ -29,6 +29,16 @@ async function validateGuardianStudentIds(input: unknown) {
   return ids as string[];
 }
 
+async function validateTeacherAssignmentIds(input: unknown, lookup: (id: string) => Promise<unknown>) {
+  if (input === undefined) return [];
+  if (!Array.isArray(input) || input.length > 1000) return null;
+  const ids = [...new Set(input)];
+  if (ids.some((id) => typeof id !== 'string' || !UUID_PATTERN.test(id))) return null;
+  const records = await Promise.all(ids.map((id) => lookup(id as string)));
+  if (records.some((record) => !record)) return null;
+  return ids as string[];
+}
+
 // ==================== USER MANAGEMENT ====================
 
 router.get("/", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
@@ -118,7 +128,7 @@ router.get("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
 router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
     const {
-      name, email, password, role, classId, phoneNumber, address,
+      name, email, password, role, classId, phoneNumber, address, assignedCategoryIds, classIds,
       parentName, parentRelation, parentPhone, parentEmail, parentAddress
     } = req.body;
 
@@ -142,6 +152,16 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
       : undefined;
     if (requestedRole === 'parent' && !guardianStudentIds) {
       return res.status(400).json({ message: "Geçersiz öğrenci seçimi." });
+    }
+    if (requestedRole !== 'teacher' && ((Array.isArray(assignedCategoryIds) && assignedCategoryIds.length > 0) || (Array.isArray(classIds) && classIds.length > 0))) {
+      return res.status(400).json({ message: "Ders ve sınıf ataması yalnızca öğretmen hesabına yapılabilir." });
+    }
+    const teacherCategoryIds = requestedRole === 'teacher'
+      ? await validateTeacherAssignmentIds(assignedCategoryIds, (id) => storage.getCategory(id)) : [];
+    const teacherClassIds = requestedRole === 'teacher'
+      ? await validateTeacherAssignmentIds(classIds, (id) => storage.getClass(id)) : [];
+    if (!teacherCategoryIds || !teacherClassIds) {
+      return res.status(400).json({ message: "Geçersiz öğretmen ders veya sınıf seçimi." });
     }
 
     if (req.user!.role === 'teacher') {
@@ -167,6 +187,10 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
       name: name.trim(), email: normalizedEmail, password: hashedPassword, role: requestedRole, classId, phoneNumber, address
     };
     if (guardianStudentIds) userPayload.guardianStudentIds = guardianStudentIds;
+    if (requestedRole === 'teacher') {
+      userPayload.assignedCategoryIds = teacherCategoryIds;
+      userPayload.classIds = teacherClassIds;
+    }
     if (requestedRole !== 'student') {
       userPayload.classId = null;
     }

@@ -5,6 +5,7 @@ QuizMaster; yöneticiler, öğretmenler, öğrenciler ve veliler için rol taban
 ## Kullanıcı kılavuzları
 
 - [Yönetici kullanıcı kılavuzu](docs/admin-guide.md)
+- [Yönetici paneli test kapsamı, bulgular ve düzeltme durumu](docs/admin-audit/README.md)
 - [Öğretmen kullanıcı kılavuzu](docs/teacher-guide.md)
 - [Öğrenci kullanıcı kılavuzu](docs/student-guide.md)
 - [Veli kullanıcı kılavuzu](docs/parent-guide.md)

@@ -1,0 +1,23 @@
+{
+  "route": "/student/results",
+  "labels": [],
+  "views": [],
+  "errors": [],
+  "network": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap",
+      "error": "net::ERR_CONNECTION_CLOSED"
+    }
+  ],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 1,
+    "unlabeledInputs": [
+      {
+        "placeholder": "Başlık ile ara...",
+        "type": null
+      }
+    ]
+  }
+}

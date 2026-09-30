@@ -25,6 +25,7 @@ interface QuestionItemProps {
   onUpdate: (id: number | string, field: keyof QuestionForm, value: any) => void;
   onRemove: (id: number | string) => void;
   onUpdateOption: (questionId: number | string, optionIndex: number, value: string) => void;
+  onRemoveOption: (questionId: number | string, optionIndex: number) => void;
 }
 
 const surveyTypes = [
@@ -35,7 +36,7 @@ const surveyTypes = [
   { value: 'likert', label: 'Likert Ölçeği' },
 ];
 
-export function QuestionItem({ question, index, totalQuestions, contentType, onUpdate, onRemove, onUpdateOption }: QuestionItemProps) {
+export function QuestionItem({ question, index, totalQuestions, contentType, onUpdate, onRemove, onUpdateOption, onRemoveOption }: QuestionItemProps) {
   const [isImageOpen, setIsImageOpen] = useState(false);
   const isSurvey = contentType === 'survey';
   const needsOptions = isSurvey ? ['single-choice', 'multiple-choice', 'likert'].includes(question.type) : true;
@@ -77,7 +78,7 @@ export function QuestionItem({ question, index, totalQuestions, contentType, onU
               <div key={optionIndex} className="flex items-center gap-2">
                 {!isSurvey && <button type="button" aria-label="Doğru cevap" onClick={() => onUpdate(question.id, 'correctAnswer', optionIndex)} className={"h-5 w-5 rounded-full border-2 " + (question.correctAnswer === optionIndex ? 'border-primary bg-primary' : 'border-input hover:border-primary/50')} />}
                 <Input value={option} onChange={(event) => onUpdateOption(question.id, optionIndex, event.target.value)} placeholder={(optionIndex + 1) + ". seçenek"} />
-                {question.options.length > 2 && <Button type="button" variant="ghost" size="icon" onClick={() => onUpdate(question.id, 'options', question.options.filter((_, itemIndex) => itemIndex !== optionIndex))}><X className="h-4 w-4" /></Button>}
+                {question.options.length > 2 && <Button type="button" variant="ghost" size="icon" onClick={() => onRemoveOption(question.id, optionIndex)}><X className="h-4 w-4" /></Button>}
               </div>
             ))}
             {question.options.length < 10 && <Button type="button" variant="outline" size="sm" className="gap-2" onClick={() => onUpdate(question.id, 'options', [...question.options, ''])}><PlusCircle className="h-4 w-4" />Seçenek Ekle</Button>}

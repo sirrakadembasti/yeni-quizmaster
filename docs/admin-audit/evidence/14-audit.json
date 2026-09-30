@@ -1,0 +1,40 @@
+{
+  "route": "/settings",
+  "labels": [
+    " Profil Bilgileri",
+    " Bildirimler",
+    " İşlem Geçmişi",
+    " Güvenlik"
+  ],
+  "views": [
+    "Profil Bilgileri",
+    "Bildirimler",
+    "İşlem Geçmişi",
+    "Güvenlik"
+  ],
+  "errors": [],
+  "network": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 1,
+    "unlabeledInputs": [
+      {
+        "placeholder": "Ad Soyad",
+        "type": null
+      },
+      {
+        "placeholder": "email@example.com",
+        "type": "email"
+      },
+      {
+        "placeholder": "05xx xxx xx xx",
+        "type": null
+      },
+      {
+        "placeholder": "İletişim adresi",
+        "type": null
+      }
+    ]
+  }
+}

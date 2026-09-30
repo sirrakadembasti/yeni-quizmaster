@@ -14,6 +14,10 @@ Depoda yalnız üç temel çıktı sürümlenir:
 
 Güncel düğüm, kenar ve topluluk sayıları her üretimde [`GRAPH_REPORT.md`](../graphify-out/GRAPH_REPORT.md) içinde yeniden yazılır.
 
+30 Eylül 2026'daki ilk admin veri bütünlüğü düzeltmesinden sonra `graphify update .` çalıştırıldı: 1867 düğüm, 5284 kenar ve 90 topluluk. `graphify diagnose multigraph --graph graphify-out/graph.json` sıfır eksik uç ve sıfır yinelenen kenar raporladı. Bu güncelleme yerel AST çıkarımıdır; Graphify'nin belirttiği SQL ayrıştırıcı bağımlılığı kurulu olmadığı için 14 SQL dosyası grafiğe katkı vermedi. Markdown değişiklikleri için semantik LLM çıkarımı bu koşuda yapılmadı. Hibrit `.bat`/`.sh` ve web kurulum akışı mimarisini değerlendirirken kaynak belgeleri ayrıca okuyun.
+
+Graphify raporundaki `Built from commit` alanı, komutun başladığı andaki HEAD'i gösterir. Bu üretimde commit öncesi çalışma ağacındaki yeni kod da çıkarıldı; bu nedenle yalnız HEAD karşılaştırması grafiğin bu düzeltmeler açısından eski olduğunu göstermez.
+
 ## Görsel haritayı açma
 
 GitHub HTML dosyasını uygulama olarak çalıştırmaz. Depoyu indirdikten sonra `graphify-out/graph.html` dosyasını tarayıcıda açın.

@@ -1,0 +1,13 @@
+{
+  "route": "/quizzes/audit-exam",
+  "labels": [],
+  "views": [],
+  "errors": [],
+  "network": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 1,
+    "unlabeledInputs": []
+  }
+}
