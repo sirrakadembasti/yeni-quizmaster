@@ -22,6 +22,8 @@ Graphify raporundaki `Built from commit` alanı, komutun başladığı andaki HE
 
 ## Görsel haritayı açma
 
+1 Ekim 2026 kalan admin onarımlarından sonra harita tekrar üretildi: **2027 düğüm, 5705 kenar, 109 topluluk**. Arşiv/audit transaction'ı, sorumlu öğretmen bağının kaldırılması, kapasite/rol doğrulaması, ortak soru doğrulaması ve yeni E2E'ler çalışma ağacından çıkarıldı. Kullanıcının commit dışında korunan localhost düzenlemeleri de çalışma ağacının parçasıdır. Geçici yardımcı dosyalar üretimden önce kaldırıldı. Bu güncelleme AST içindir; 14 SQL dosyasında ayrıştırıcı eksikliği ve Markdown/görsel içerik için semantik LLM çıkarımı sınırı sürer. Güncel çalışma zamanı kanıtları [onarım doğrulama raporundadır](admin-audit/remaining-repairs-verification.md).
+
 GitHub HTML dosyasını uygulama olarak çalıştırmaz. Depoyu indirdikten sonra `graphify-out/graph.html` dosyasını tarayıcıda açın.
 
 Windows PowerShell:

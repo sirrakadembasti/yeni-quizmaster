@@ -54,8 +54,9 @@ export default function ClassStatisticsPage() {
     }
     const totalStudents = data.reduce((acc, c) => acc + c.studentCount, 0);
     const totalParticipants = data.reduce((acc, c) => acc + c.participantCount, 0);
-    const avgParticipation = Math.round(data.reduce((acc, c) => acc + c.participationRate, 0) / data.length);
-    const avgScore = Math.round(data.reduce((acc, c) => acc + c.averageScore, 0) / data.length);
+    const avgParticipation = totalStudents ? Math.round(totalParticipants / totalStudents * 100) : 0;
+    const completedCount = data.reduce((acc, c) => acc + c.completedCount, 0);
+    const avgScore = completedCount ? Math.round(data.reduce((acc, c) => acc + c.averageScore * c.completedCount, 0) / completedCount) : 0;
     return { totalStudents, totalParticipants, avgParticipation, avgScore };
   }, [data]);
 
@@ -98,7 +99,7 @@ export default function ClassStatisticsPage() {
             <p className="text-sm text-muted-foreground">Yetkili sınıfların katılım ve başarı analizi.</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={exportCsv} disabled={!data.length}><Download className="mr-2 h-4 w-4" />Excel</Button>
+            <Button variant="outline" onClick={exportCsv} disabled={!data.length || analyticsQuery.isError}><Download className="mr-2 h-4 w-4" />Excel</Button>
             <PrintButton />
           </div>
         </div>
@@ -117,7 +118,7 @@ export default function ClassStatisticsPage() {
             <div className="section-stack">
               <Label className="text-xs font-semibold">Sınıf Seçimi</Label>
               <Select value={classId} onValueChange={setClassId}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger aria-label="Sınıf Seçimi"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Tüm Sınıflar</SelectItem>
                   {classesQuery.data?.classes.map((item) => <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>)}
@@ -127,8 +128,10 @@ export default function ClassStatisticsPage() {
           </CardContent>
         </Card>
 
+        {classesQuery.isError && <div role="alert" className="rounded-lg border p-3">Sınıflar yüklenemedi. {classesQuery.data && 'Son yüklenen sınıf seçenekleri gösteriliyor.'} <Button variant="outline" onClick={() => classesQuery.refetch()}>Sınıfları yeniden yükle</Button></div>}
+
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {!analyticsQuery.isLoading && !analyticsQuery.isError && <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Card>
             <CardContent className="p-3.5 flex items-center gap-3">
               <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400">
@@ -173,7 +176,7 @@ export default function ClassStatisticsPage() {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </div>}
 
         {/* Chart */}
         <Card>
@@ -185,6 +188,8 @@ export default function ClassStatisticsPage() {
           <CardContent className="h-[320px] p-2 sm:p-4">
             {analyticsQuery.isLoading ? (
               <div className="flex h-full items-center justify-center text-muted-foreground text-sm">Veriler yükleniyor...</div>
+            ) : analyticsQuery.isError ? (
+              <div role="alert" className="flex h-full flex-col items-center justify-center gap-3"><p>İstatistikler yüklenemedi.</p><Button variant="outline" onClick={() => analyticsQuery.refetch()}>Yeniden dene</Button></div>
             ) : data.length === 0 ? (
               <div className="flex h-full items-center justify-center rounded-xl border border-dashed text-center text-muted-foreground text-sm">
                 Seçilen kriterlerde gösterilecek veri bulunamadı.
@@ -209,7 +214,7 @@ export default function ClassStatisticsPage() {
         </Card>
 
         {/* Grafikle aynı veriyi sayısal olarak doğrulayan sınıf tablosu */}
-        {data.length > 0 && (
+        {!analyticsQuery.isError && data.length > 0 && (
           <Card className="overflow-hidden class-analysis-table">
             <CardHeader className="border-b bg-muted/20 py-3">
               <CardTitle className="text-base">Sınıf Bazında Ayrıntılı Sonuçlar</CardTitle>

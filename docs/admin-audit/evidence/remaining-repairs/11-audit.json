@@ -1,0 +1,24 @@
+{
+  "route": "/archive",
+  "labels": [
+    "Sınav Arşivi",
+    "Sınıf Atlatma"
+  ],
+  "views": [
+    "Sınav Arşivi",
+    "Sınıf Atlatma"
+  ],
+  "errors": [],
+  "network": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 0,
+    "unlabeledInputs": [
+      {
+        "placeholder": "Örn: 2025-2026 Eğitim Yılı",
+        "type": null
+      }
+    ]
+  }
+}

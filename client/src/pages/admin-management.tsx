@@ -1,3 +1,4 @@
+import { AdminQueryState } from "@/components/management/AdminQueryState";
 import { invalidateAdminRelations } from '@/lib/admin-cache';
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,7 +20,6 @@ import {
   Edit2,
   Users,
   BookOpen,
-  Loader2,
   Layers,
   Search,
   Activity,
@@ -37,7 +37,7 @@ import {
   RefreshCw,
   KeyRound
 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { categoryApi, classApi, userApi, adminApi, type Category } from "@/lib/api";
@@ -98,23 +98,30 @@ export default function AdminManagementPage() {
   const [userRoleFilter, setUserRoleFilter] = useState("all");
 
   // Fetch Data
-  const { data: categories = [] } = useQuery({
+  const categoriesQuery = useQuery({
     queryKey: ['categories'],
     queryFn: () => categoryApi.getAllCategories(),
   });
 
-  const { data: classesData } = useQuery({
+  const classesQuery = useQuery({
     queryKey: ['/api/classes'],
     queryFn: () => classApi.getAllClasses(),
   });
 
-  const { data: usersData } = useQuery({
+  const usersQuery = useQuery({
     queryKey: ['users'],
     queryFn: () => userApi.getAllUsers(),
   });
 
+  const { data: categories = [] } = categoriesQuery;
+  const { data: classesData } = classesQuery;
+  const { data: usersData } = usersQuery;
+
   // Sub-tabs for Logs: 'users' | 'emails' | 'system'
   const [logSubTab, setLogSubTab] = useState("users");
+
+  const [logPages, setLogPages] = useState<Record<string, number>>({ users: 1, emails: 1, "password-resets": 1, system: 1 });
+  const resetPages = (...tabs: string[]) => setLogPages(previous => ({ ...previous, ...Object.fromEntries(tabs.map(tab => [tab, 1])) }));
 
   // Filters for User Logs
   const [logRoleFilter, setLogRoleFilter] = useState("all");
@@ -157,46 +164,60 @@ export default function AdminManagementPage() {
   }, [logDateFilter]);
 
   // Query: User Action Logs
-  const { data: logsData, isLoading: logsLoading } = useQuery({
-    queryKey: ['/api/admin/logs', logRoleFilter, logActionSearch, logDateRange],
+  const logsQuery = useQuery({
+    queryKey: ['/api/admin/logs', logRoleFilter, logActionSearch, logDateRange, logPages.users],
     queryFn: () => adminApi.getLogs({
       role: logRoleFilter === "all" ? undefined : logRoleFilter,
       action: logActionSearch || undefined,
       startDate: logDateRange.startDate,
-      endDate: logDateRange.endDate
+      endDate: logDateRange.endDate,
+      page: logPages.users, limit: 50
     }),
+    enabled: activeTab === "logs" && logSubTab === "users",
   });
 
   // Query: Email Logs
-  const { data: emailLogsData, isLoading: emailLogsLoading } = useQuery({
-    queryKey: ['/api/admin/logs/emails', emailStatusFilter, emailSearch, logDateRange],
+  const emailLogsQuery = useQuery({
+    queryKey: ['/api/admin/logs/emails', emailStatusFilter, emailSearch, logDateRange, logPages.emails],
     queryFn: () => adminApi.getEmailLogs({
       status: emailStatusFilter === "all" ? undefined : emailStatusFilter,
       search: emailSearch || undefined,
       startDate: logDateRange.startDate,
       endDate: logDateRange.endDate,
+      page: logPages.emails, limit: 50,
     }),
-    enabled: logSubTab === "emails",
+    enabled: activeTab === "logs" && logSubTab === "emails",
     refetchInterval: logSubTab === "emails" ? 5000 : false,
   });
 
-  const { data: resetRequestsData, isLoading: resetRequestsLoading } = useQuery({
-    queryKey: ['/api/admin/password-reset-requests', resetStatusFilter, resetSearch],
-    queryFn: () => adminApi.getPasswordResetRequests({ status: resetStatusFilter, search: resetSearch || undefined }),
-    enabled: logSubTab === "password-resets",
+  const resetRequestsQuery = useQuery({
+    queryKey: ['/api/admin/password-reset-requests', resetStatusFilter, resetSearch, logPages['password-resets']],
+    queryFn: () => adminApi.getPasswordResetRequests({ status: resetStatusFilter, search: resetSearch || undefined, page: logPages["password-resets"], limit: 50 }),
+    enabled: activeTab === "logs" && logSubTab === "password-resets",
     refetchInterval: logSubTab === "password-resets" ? 5000 : false,
   });
 
   // Query: System Logs
-  const { data: systemLogsData, isLoading: systemLogsLoading } = useQuery({
-    queryKey: ['/api/admin/logs/system', systemLogSearch, logDateRange],
+  const systemLogsQuery = useQuery({
+    queryKey: ['/api/admin/logs/system', systemLogSearch, logDateRange, logPages.system],
     queryFn: () => adminApi.getSystemLogs({
       search: systemLogSearch || undefined,
       startDate: logDateRange.startDate,
       endDate: logDateRange.endDate,
+      page: logPages.system, limit: 50,
     }),
-    enabled: logSubTab === "system",
+    enabled: activeTab === "logs" && logSubTab === "system",
   });
+
+  const { data: logsData } = logsQuery;
+  const { data: emailLogsData } = emailLogsQuery;
+  const { data: resetRequestsData } = resetRequestsQuery;
+  const { data: systemLogsData } = systemLogsQuery;
+  const activeLogQuery = logSubTab === "emails" ? emailLogsQuery : logSubTab === "password-resets" ? resetRequestsQuery : logSubTab === "system" ? systemLogsQuery : logsQuery;
+  const logPagination = activeLogQuery.data?.pagination;
+  useEffect(() => {
+    if (logPagination && logPages[logSubTab] > Math.max(1, logPagination.totalPages)) setLogPages(previous => ({ ...previous, [logSubTab]: Math.max(1, logPagination.totalPages) }));
+  }, [logPagination, logSubTab, logPages]);
 
   // Retry Email Mutation
   const retryEmailMutation = useMutation({
@@ -279,7 +300,8 @@ export default function AdminManagementPage() {
       await invalidateAdminRelations(queryClient);
       setIsDeleteUserOpen(false);
       toast({ title: "Başarılı", description: "Kullanıcı silindi." });
-    }
+    },
+    onError: (error: Error) => toast({ title: "Kullanıcı silinemedi", description: error.message, variant: "destructive" })
   });
 
   // Mutations - Categories
@@ -416,7 +438,7 @@ const deleteClassMutation = useMutation({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {categories.length === 0 ? (
+                  {categoriesQuery.isPending || categoriesQuery.isError ? <TableRow><TableCell colSpan={4}><AdminQueryState queries={[categoriesQuery]} /></TableCell></TableRow> : categories.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={4} className="py-8 text-center text-muted-foreground font-medium text-xs">Kayıtlı ders bulunamadı.</TableCell>
                     </TableRow>
@@ -438,11 +460,11 @@ const deleteClassMutation = useMutation({
                           <span className="text-xs font-bold text-foreground">{new Date(cat.createdAt).toLocaleDateString('tr-TR')}</span>
                         </TableCell>
                         <TableCell className="text-right px-6">
-                          <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-indigo-600" onClick={() => { setEditingCategory(cat); setCategoryName(cat.name); setCategoryDesc(cat.description || ""); setIsEditCategoryMode(true); setIsCategoryDialogOpen(true); }}>
+                          <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
+                            <Button aria-label={`${cat.name} dersini düzenle`} variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-indigo-600" onClick={() => { setEditingCategory(cat); setCategoryName(cat.name); setCategoryDesc(cat.description || ""); setIsEditCategoryMode(true); setIsCategoryDialogOpen(true); }}>
                               <Edit2 className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-red-500" onClick={() => { setSelectedCategoryId(cat.id); setIsDeleteCategoryOpen(true); }}>
+                            <Button aria-label={`${cat.name} dersini sil`} variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-red-500" onClick={() => { setSelectedCategoryId(cat.id); setIsDeleteCategoryOpen(true); }}>
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
@@ -468,7 +490,7 @@ const deleteClassMutation = useMutation({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {classes.map((cls: any) => (
+              {classesQuery.isPending || classesQuery.isError ? <AdminQueryState queries={[classesQuery]} /> : classes.map((cls: any) => (
                 <div 
                   key={cls.id} 
                   onClick={() => setLocation(`/admin/classes/${cls.id}`)}
@@ -480,7 +502,7 @@ const deleteClassMutation = useMutation({
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"><MoreHorizontal className="h-4 w-4" /></Button>
+                        <Button aria-label={`${cls.name} sınıfı için işlemler`} variant="ghost" size="icon" className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity"><MoreHorizontal className="h-4 w-4" /></Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="rounded-xl">
                         <DropdownMenuItem onClick={(e) => { 
@@ -561,7 +583,7 @@ const deleteClassMutation = useMutation({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredUsers.length === 0 ? (
+                    {usersQuery.isPending || usersQuery.isError ? <TableRow><TableCell colSpan={4}><AdminQueryState queries={[usersQuery]} /></TableCell></TableRow> : filteredUsers.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={4} className="py-8 text-center text-muted-foreground font-medium text-xs">Bu kategoride kullanıcı bulunamadı.</TableCell>
                       </TableRow>
@@ -594,11 +616,11 @@ const deleteClassMutation = useMutation({
                             {u.phoneNumber || "No yok"}
                           </TableCell>
                           <TableCell className="text-right px-6">
-                            <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-indigo-600" onClick={() => { setSelectedUser(u); setIsEditUserMode(true); setIsUserDialogOpen(true); }}>
+                            <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
+                              <Button aria-label={`${u.name} kullanıcısını düzenle`} variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-indigo-600" onClick={() => { setSelectedUser(u); setIsEditUserMode(true); setIsUserDialogOpen(true); }}>
                                 <Edit2 className="h-4 w-4" />
                               </Button>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-red-500" onClick={() => { setSelectedUser(u); setIsDeleteUserOpen(true); }}>
+                              <Button aria-label={`${u.name} kullanıcısını sil`} variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-red-500" onClick={() => { setSelectedUser(u); setIsDeleteUserOpen(true); }}>
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             </div>
@@ -615,7 +637,7 @@ const deleteClassMutation = useMutation({
           {/* LOGS TAB - 3 SUB-TABS (Kullanıcı Logları, E-Posta Logları, Sistem Hata & İşlemleri) */}
           <TabsContent value="logs" className="mt-6 space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border pb-4">
-              <div className="flex items-center gap-2">
+              <div className="flex min-w-0 flex-wrap items-center gap-2">
                 <Button
                   variant={logSubTab === "users" ? "default" : "outline"}
                   size="sm"
@@ -661,9 +683,9 @@ const deleteClassMutation = useMutation({
               </div>
 
               {/* Ortak Tarih Aralığı Filtresi */}
-              <div className="flex items-center gap-2">
-                <Select value={logDateFilter} onValueChange={setLogDateFilter}>
-                  <SelectTrigger className="w-48 h-9 rounded-xl border-border bg-muted/40 text-xs font-semibold">
+              {logSubTab !== 'password-resets' && <div className="flex items-center gap-2">
+                <Select value={logDateFilter} onValueChange={value => { resetPages("users", "emails", "system"); setLogDateFilter(value); }}>
+                  <SelectTrigger aria-label="Günlük tarih aralığı" className="w-48 h-9 rounded-xl border-border bg-muted/40 text-xs font-semibold">
                     <SelectValue placeholder="Tarih Aralığı" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
@@ -673,7 +695,7 @@ const deleteClassMutation = useMutation({
                     <SelectItem value="last-year">Son 1 Yıl</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
+              </div>}
             </div>
 
             {/* TAB 1: KULLANICI LOGLARI */}
@@ -683,15 +705,15 @@ const deleteClassMutation = useMutation({
                   <div className="flex items-center gap-3 flex-1 w-full">
                     <div className="relative flex-1 max-w-sm">
                       <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input 
+                      <Input aria-label="Kullanıcı işlemi ara"
                         placeholder="İşlem ara (örn: create, delete, login)..." 
                         className="pl-10 rounded-xl bg-muted border-transparent focus:bg-background focus:border-input text-xs" 
                         value={logActionSearch}
-                        onChange={e => setLogActionSearch(e.target.value)}
+                        onChange={e => { resetPages("users"); setLogActionSearch(e.target.value); }}
                       />
                     </div>
-                    <Select value={logRoleFilter} onValueChange={setLogRoleFilter}>
-                      <SelectTrigger className="w-36 rounded-xl border-border bg-muted/30 text-xs">
+                    <Select value={logRoleFilter} onValueChange={value => { resetPages("users"); setLogRoleFilter(value); }}>
+                      <SelectTrigger aria-label="Kullanıcı rolü filtresi" className="w-36 rounded-xl border-border bg-muted/30 text-xs">
                         <SelectValue placeholder="Rol Filtrele" />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl">
@@ -721,8 +743,8 @@ const deleteClassMutation = useMutation({
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {logsLoading ? (
-                        <TableRow><TableCell colSpan={4} className="h-24 text-center"><Loader2 className="h-5 w-5 animate-spin mx-auto text-primary" /></TableCell></TableRow>
+                      {logsQuery.isPending || logsQuery.isError ? (
+                        <TableRow><TableCell colSpan={4}><AdminQueryState queries={[logsQuery]} /></TableCell></TableRow>
                       ) : logs.length === 0 ? (
                         <TableRow><TableCell colSpan={4} className="h-24 text-center text-muted-foreground italic font-medium text-xs">Kayıt bulunamadı.</TableCell></TableRow>
                       ) : (
@@ -775,7 +797,7 @@ const deleteClassMutation = useMutation({
               <div className="space-y-4">
                 <Card className="rounded-2xl border-primary/20 p-4">
                   <div className="flex flex-col gap-3 md:flex-row md:items-end">
-                    <div className="flex-1 space-y-2"><Label>Kullanıcı E-postası</Label><Input type="email" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} placeholder="kullanici@okul.com" /></div>
+                    <div className="flex-1 space-y-2"><Label htmlFor="reset-email">Kullanıcı E-postası</Label><Input id="reset-email" type="email" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} placeholder="kullanici@okul.com" /></div>
                     <Button disabled={!resetEmail || createResetMutation.isPending} onClick={() => createResetMutation.mutate()} className="gap-2"><Mail className="h-4 w-4" /> Sıfırlama Bağlantısı Gönder</Button>
                   </div>
                   <p className="mt-2 text-xs text-muted-foreground">Gönderimler yalnızca Gmail SMTP üzerinden yapılır. E-posta logları sadece teknik gönderim takibi içindir.</p>
@@ -784,12 +806,12 @@ const deleteClassMutation = useMutation({
                   {[['Bekleyen', resetCounts.pending], ['Tamamlanan', resetCounts.completed], ['İptal', resetCounts.cancelled], ['Hatalı', resetCounts.failed]].map(([label, value]) => <Card key={String(label)} className="p-3"><p className="text-xs font-bold text-muted-foreground">{label}</p><p className="text-xl font-black">{value}</p></Card>)}
                 </div>
                 <div className="flex flex-col gap-3 rounded-2xl border bg-card p-3 md:flex-row">
-                  <Input value={resetSearch} onChange={(e) => setResetSearch(e.target.value)} placeholder="Ad veya e-posta ara..." className="md:max-w-sm" />
-                  <Select value={resetStatusFilter} onValueChange={setResetStatusFilter}><SelectTrigger className="md:w-48"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Tüm Durumlar</SelectItem><SelectItem value="pending">Bekleyen</SelectItem><SelectItem value="completed">Tamamlanan</SelectItem><SelectItem value="cancelled">İptal</SelectItem><SelectItem value="expired">Süresi Dolan</SelectItem><SelectItem value="failed">Hatalı</SelectItem></SelectContent></Select>
+                  <Input aria-label="Şifre taleplerini ara" value={resetSearch} onChange={(e) => { resetPages("password-resets"); setResetSearch(e.target.value); }} placeholder="Ad veya e-posta ara..." className="md:max-w-sm" />
+                  <Select value={resetStatusFilter} onValueChange={value => { resetPages("password-resets"); setResetStatusFilter(value); }}><SelectTrigger aria-label="Şifre talebi durumu" className="md:w-48"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Tüm Durumlar</SelectItem><SelectItem value="pending">Bekleyen</SelectItem><SelectItem value="completed">Tamamlanan</SelectItem><SelectItem value="cancelled">İptal</SelectItem><SelectItem value="expired">Süresi Dolan</SelectItem><SelectItem value="failed">Hatalı</SelectItem></SelectContent></Select>
                 </div>
                 <Card className="overflow-hidden rounded-2xl">
                   <Table><TableHeader><TableRow><TableHead>Kullanıcı</TableHead><TableHead>Talep Zamanı</TableHead><TableHead>Son Geçerlilik</TableHead><TableHead>Gönderim</TableHead><TableHead>Durum</TableHead><TableHead className="text-right">İşlemler</TableHead></TableRow></TableHeader><TableBody>
-                    {resetRequestsLoading ? <TableRow><TableCell colSpan={6} className="h-24 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin" /></TableCell></TableRow> : resetRequests.length === 0 ? <TableRow><TableCell colSpan={6} className="h-24 text-center text-muted-foreground">Şifre sıfırlama talebi bulunmuyor.</TableCell></TableRow> : resetRequests.map((item: any) => <TableRow key={item.id}><TableCell><div className="font-bold">{item.user?.name || '-'}</div><div className="text-xs text-muted-foreground">{item.email}</div></TableCell><TableCell>{new Date(item.createdAt).toLocaleString('tr-TR')}</TableCell><TableCell>{new Date(item.expiresAt).toLocaleString('tr-TR')}</TableCell><TableCell><Badge variant="outline">{item.emailQueue?.status || 'kayıt yok'}</Badge></TableCell><TableCell><Badge variant={item.status === 'pending' ? 'default' : 'secondary'}>{item.status === 'pending' ? 'Bekliyor' : item.status === 'completed' ? 'Tamamlandı' : item.status === 'cancelled' ? 'İptal' : item.status === 'expired' ? 'Süresi doldu' : 'Hatalı'}</Badge></TableCell><TableCell className="text-right"><div className="flex justify-end gap-1">{item.status !== 'completed' && <Button size="sm" variant="outline" disabled={resendResetMutation.isPending} onClick={() => resendResetMutation.mutate(item.id)}><RotateCw className="mr-1 h-3.5 w-3.5" /> Yenile</Button>}{item.status === 'pending' && <Button size="sm" variant="destructive" disabled={cancelResetMutation.isPending} onClick={() => cancelResetMutation.mutate(item.id)}>İptal</Button>}</div></TableCell></TableRow>)}
+                    {resetRequestsQuery.isPending || resetRequestsQuery.isError ? <TableRow><TableCell colSpan={6}><AdminQueryState queries={[resetRequestsQuery]} /></TableCell></TableRow> : resetRequests.length === 0 ? <TableRow><TableCell colSpan={6} className="h-24 text-center text-muted-foreground">Şifre sıfırlama talebi bulunmuyor.</TableCell></TableRow> : resetRequests.map((item: any) => <TableRow key={item.id}><TableCell><div className="font-bold">{item.user?.name || '-'}</div><div className="text-xs text-muted-foreground">{item.email}</div></TableCell><TableCell>{new Date(item.createdAt).toLocaleString('tr-TR')}</TableCell><TableCell>{new Date(item.expiresAt).toLocaleString('tr-TR')}</TableCell><TableCell><Badge variant="outline">{item.emailQueue?.status || 'kayıt yok'}</Badge></TableCell><TableCell><Badge variant={item.status === 'pending' ? 'default' : 'secondary'}>{item.status === 'pending' ? 'Bekliyor' : item.status === 'completed' ? 'Tamamlandı' : item.status === 'cancelled' ? 'İptal' : item.status === 'expired' ? 'Süresi doldu' : 'Hatalı'}</Badge></TableCell><TableCell className="text-right"><div className="flex justify-end gap-1">{item.status !== 'completed' && <Button size="sm" variant="outline" disabled={resendResetMutation.isPending} onClick={() => resendResetMutation.mutate(item.id)}><RotateCw className="mr-1 h-3.5 w-3.5" /> Yenile</Button>}{item.status === 'pending' && <Button size="sm" variant="destructive" disabled={cancelResetMutation.isPending} onClick={() => cancelResetMutation.mutate(item.id)}>İptal</Button>}</div></TableCell></TableRow>)}
                   </TableBody></Table>
                 </Card>
               </div>
@@ -843,15 +865,15 @@ const deleteClassMutation = useMutation({
                   <div className="flex items-center gap-3 flex-1 w-full">
                     <div className="relative flex-1 max-w-sm">
                       <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input 
+                      <Input aria-label="E-posta günlüklerini ara"
                         placeholder="Alıcı e-posta veya konu ara..." 
                         className="pl-10 rounded-xl bg-muted border-transparent focus:bg-background focus:border-input text-xs" 
                         value={emailSearch}
-                        onChange={e => setEmailSearch(e.target.value)}
+                        onChange={e => { resetPages("emails"); setEmailSearch(e.target.value); }}
                       />
                     </div>
-                    <Select value={emailStatusFilter} onValueChange={setEmailStatusFilter}>
-                      <SelectTrigger className="w-40 rounded-xl border-border bg-muted/30 text-xs">
+                    <Select value={emailStatusFilter} onValueChange={value => { resetPages("emails"); setEmailStatusFilter(value); }}>
+                      <SelectTrigger aria-label="E-posta durumu" className="w-40 rounded-xl border-border bg-muted/30 text-xs">
                         <SelectValue placeholder="Durum Filtrele" />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl">
@@ -892,8 +914,8 @@ const deleteClassMutation = useMutation({
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {emailLogsLoading ? (
-                        <TableRow><TableCell colSpan={6} className="h-24 text-center"><Loader2 className="h-5 w-5 animate-spin mx-auto text-primary" /></TableCell></TableRow>
+                      {emailLogsQuery.isPending || emailLogsQuery.isError ? (
+                        <TableRow><TableCell colSpan={6}><AdminQueryState queries={[emailLogsQuery]} /></TableCell></TableRow>
                       ) : emailLogs.length === 0 ? (
                         <TableRow><TableCell colSpan={6} className="h-24 text-center text-muted-foreground italic font-medium text-xs">Henüz bir e-posta log kaydı bulunmuyor.</TableCell></TableRow>
                       ) : (
@@ -941,7 +963,7 @@ const deleteClassMutation = useMutation({
                                   variant="ghost" 
                                   size="icon" 
                                   className="h-8 w-8 text-muted-foreground hover:text-indigo-600" 
-                                  title="Görüntüle"
+                                  aria-label={`${item.subject} e-postasını görüntüle`} title="Görüntüle"
                                   onClick={() => { setSelectedEmail(item); setIsEmailViewOpen(true); }}
                                 >
                                   <Eye className="h-4 w-4" />
@@ -951,7 +973,7 @@ const deleteClassMutation = useMutation({
                                     variant="ghost" 
                                     size="icon" 
                                     className="h-8 w-8 text-muted-foreground hover:text-amber-600" 
-                                    title="Tekrar Gönder"
+                                    aria-label={`${item.subject} e-postasını tekrar gönder`} title="Tekrar Gönder"
                                     disabled={retryEmailMutation.isPending}
                                     onClick={() => retryEmailMutation.mutate(item.id)}
                                   >
@@ -962,7 +984,7 @@ const deleteClassMutation = useMutation({
                                   variant="ghost" 
                                   size="icon" 
                                   className="h-8 w-8 text-muted-foreground hover:text-red-500" 
-                                  title="Sil"
+                                  aria-label={`${item.subject} e-posta kaydını sil`} title="Sil"
                                   disabled={deleteEmailMutation.isPending}
                                   onClick={() => deleteEmailMutation.mutate(item.id)}
                                 >
@@ -986,11 +1008,11 @@ const deleteClassMutation = useMutation({
                   <div className="flex items-center gap-3 flex-1 w-full">
                     <div className="relative flex-1 max-w-md">
                       <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input 
+                      <Input aria-label="Sistem günlüklerini ara"
                         placeholder="Sistem işlem veya hata ara (örn: archive, purge, hata)..." 
                         className="pl-10 rounded-xl bg-muted border-transparent focus:bg-background focus:border-input text-xs" 
                         value={systemLogSearch}
-                        onChange={e => setSystemLogSearch(e.target.value)}
+                        onChange={e => { resetPages("system"); setSystemLogSearch(e.target.value); }}
                       />
                     </div>
                   </div>
@@ -1012,8 +1034,8 @@ const deleteClassMutation = useMutation({
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {systemLogsLoading ? (
-                        <TableRow><TableCell colSpan={4} className="h-24 text-center"><Loader2 className="h-5 w-5 animate-spin mx-auto text-primary" /></TableCell></TableRow>
+                      {systemLogsQuery.isPending || systemLogsQuery.isError ? (
+                        <TableRow><TableCell colSpan={4}><AdminQueryState queries={[systemLogsQuery]} /></TableCell></TableRow>
                       ) : systemLogs.length === 0 ? (
                         <TableRow><TableCell colSpan={4} className="h-24 text-center text-muted-foreground italic font-medium text-xs">Sistem işlemi veya hata kaydı bulunamadı.</TableCell></TableRow>
                       ) : (
@@ -1053,6 +1075,11 @@ const deleteClassMutation = useMutation({
                 </Card>
               </div>
             )}
+            {logPagination && <nav aria-label="Günlük sayfaları" className="flex items-center justify-between gap-3">
+              <Button variant="outline" disabled={logPages[logSubTab] <= 1 || activeLogQuery.isFetching || activeLogQuery.isError} onClick={() => setLogPages(previous => ({ ...previous, [logSubTab]: Math.max(1, previous[logSubTab] - 1) }))}>Önceki</Button>
+              <span className="text-sm">Toplam {logPagination.total} kayıt · Sayfa {logPagination.page} / {Math.max(1, logPagination.totalPages)}</span>
+              <Button variant="outline" disabled={logPages[logSubTab] >= logPagination.totalPages || activeLogQuery.isFetching || activeLogQuery.isError} onClick={() => setLogPages(previous => ({ ...previous, [logSubTab]: previous[logSubTab] + 1 }))}>Sonraki</Button>
+            </nav>}
           </TabsContent>
         </Tabs>
       </div>
@@ -1146,14 +1173,14 @@ const deleteClassMutation = useMutation({
         <DialogContent className="rounded-3xl sm:max-w-md bg-card">
           <DialogHeader><DialogTitle className="text-xl font-bold">{isEditUserMode ? "Kullanıcıyı Güncelle" : "Yeni Kullanıcı Kaydı"}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="space-y-2"><Label className="font-bold text-foreground">Ad Soyad</Label><Input value={selectedUser?.name || ""} onChange={e => setSelectedUser({...selectedUser, name: e.target.value})} className="rounded-xl border-border" placeholder="Örn: Mehmet Can" /></div>
-            <div className="space-y-2"><Label className="font-bold text-foreground">E-posta</Label><Input value={selectedUser?.email || ""} onChange={e => setSelectedUser({...selectedUser, email: e.target.value})} className="rounded-xl border-border" placeholder="mehmet@okul.com" /></div>
-            {!isEditUserMode && <div className="space-y-2"><Label className="font-bold text-foreground">Şifre</Label><Input type="password" value={selectedUser?.password || ""} onChange={e => setSelectedUser({...selectedUser, password: e.target.value})} className="rounded-xl border-border" /></div>}
+            <div className="space-y-2"><Label htmlFor="user-name" className="font-bold text-foreground">Ad Soyad</Label><Input id="user-name" value={selectedUser?.name || ""} onChange={e => setSelectedUser({...selectedUser, name: e.target.value})} className="rounded-xl border-border" placeholder="Örn: Mehmet Can" /></div>
+            <div className="space-y-2"><Label htmlFor="user-email" className="font-bold text-foreground">E-posta</Label><Input id="user-email" value={selectedUser?.email || ""} onChange={e => setSelectedUser({...selectedUser, email: e.target.value})} className="rounded-xl border-border" placeholder="mehmet@okul.com" /></div>
+            {!isEditUserMode && <div className="space-y-2"><Label htmlFor="user-password" className="font-bold text-foreground">Şifre</Label><Input id="user-password" type="password" value={selectedUser?.password || ""} onChange={e => setSelectedUser({...selectedUser, password: e.target.value})} className="rounded-xl border-border" /></div>}
             
             <div className="space-y-2">
-              <Label className="font-bold text-foreground">Sistem Rolü (Dönüştür)</Label>
+              <Label htmlFor="user-role" className="font-bold text-foreground">Sistem Rolü (Dönüştür)</Label>
               <Select value={selectedUser?.role || "student"} onValueChange={val => setSelectedUser({...selectedUser, role: val})}>
-                <SelectTrigger className="rounded-xl border-border"><SelectValue placeholder="Rol seçin" /></SelectTrigger>
+                <SelectTrigger id="user-role" className="rounded-xl border-border"><SelectValue placeholder="Rol seçin" /></SelectTrigger>
                 <SelectContent className="rounded-xl">
                   <SelectItem value="student">Öğrenci (Öğrenim Görebilir)</SelectItem>
                   <SelectItem value="teacher">Öğretmen (Ders Verebilir)</SelectItem>
@@ -1183,7 +1210,7 @@ const deleteClassMutation = useMutation({
 
             {selectedUser?.role === 'parent' && (
               <div className="space-y-3 rounded-2xl border border-violet-200 bg-violet-50/70 p-4 dark:border-violet-900/60 dark:bg-violet-950/20">
-                <div className="grid gap-3"><div className="space-y-2"><Label className="font-bold">Telefon *</Label><Input value={selectedUser?.phoneNumber || ""} onChange={(event) => setSelectedUser({ ...selectedUser, phoneNumber: event.target.value })} /></div><div className="space-y-2"><Label className="font-bold">Adres *</Label><Input value={selectedUser?.address || ""} onChange={(event) => setSelectedUser({ ...selectedUser, address: event.target.value })} /></div></div>
+                <div className="grid gap-3"><div className="space-y-2"><Label htmlFor="user-phoneNumber" className="font-bold">Telefon *</Label><Input id="user-phoneNumber" value={selectedUser?.phoneNumber || ""} onChange={(event) => setSelectedUser({ ...selectedUser, phoneNumber: event.target.value })} /></div><div className="space-y-2"><Label htmlFor="user-address" className="font-bold">Adres *</Label><Input id="user-address" value={selectedUser?.address || ""} onChange={(event) => setSelectedUser({ ...selectedUser, address: event.target.value })} /></div></div>
                 <Label className="font-bold text-foreground">Öğrenci Eşleştirmeleri</Label>
                 <p className="text-xs text-muted-foreground">Çok sayıda öğrencide hızlı arama ve güvenli ilişki yönetimi için eşleştirmeler ayrı sayfadan yapılır.</p>
                 <Button type="button" variant="outline" className="w-full" onClick={() => { setIsUserDialogOpen(false); setLocation('/guardian-management'); }}>Veli-Öğrenci Eşleştirme Sayfasını Aç</Button>
@@ -1205,9 +1232,9 @@ const deleteClassMutation = useMutation({
           <div className="space-y-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="font-bold text-foreground">Sınıf Seviyesi</Label>
+                <Label htmlFor="class-level" className="font-bold text-foreground">Sınıf Seviyesi</Label>
                 <Select value={classLevel} onValueChange={setClassLevel}>
-                  <SelectTrigger className="rounded-xl border-border"><SelectValue placeholder="Seviye Seç" /></SelectTrigger>
+                  <SelectTrigger id="class-level" className="rounded-xl border-border"><SelectValue placeholder="Seviye Seç" /></SelectTrigger>
                   <SelectContent className="rounded-xl">
                     <SelectItem value="Hazırlık">Hazırlık Sınıfı</SelectItem>
                     {["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"].map(level => (
@@ -1217,9 +1244,9 @@ const deleteClassMutation = useMutation({
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label className="font-bold text-foreground">Şube Adı</Label>
+                <Label htmlFor="class-section" className="font-bold text-foreground">Şube Adı</Label>
                 <Select value={classSection} onValueChange={setClassSection}>
-                  <SelectTrigger className="rounded-xl border-border"><SelectValue placeholder="Şube Seç" /></SelectTrigger>
+                  <SelectTrigger id="class-section" className="rounded-xl border-border"><SelectValue placeholder="Şube Seç" /></SelectTrigger>
                   <SelectContent className="rounded-xl">
                     {Array.from("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map(letter => (
                       <SelectItem key={letter} value={letter}>{letter} Şubesi</SelectItem>
@@ -1228,11 +1255,11 @@ const deleteClassMutation = useMutation({
                 </Select>
               </div>
             </div>
-            <div className="space-y-2"><Label className="font-bold text-foreground">Açıklama</Label><Textarea value={classDesc} onChange={e => setClassNameDesc(e.target.value)} className="rounded-xl border-border" /></div>
+            <div className="space-y-2"><Label htmlFor="class-description" className="font-bold text-foreground">Açıklama</Label><Textarea id="class-description" value={classDesc} onChange={e => setClassNameDesc(e.target.value)} className="rounded-xl border-border" /></div>
             <div className="space-y-2">
-              <Label className="font-bold text-foreground">Sorumlu Öğretmen</Label>
+              <Label htmlFor="class-teacher" className="font-bold text-foreground">Sorumlu Öğretmen</Label>
               <Select value={selectedTeacherId} onValueChange={setSelectedTeacherId}>
-                <SelectTrigger className="rounded-xl border-border"><SelectValue placeholder="Öğretmen Seçin" /></SelectTrigger>
+                <SelectTrigger id="class-teacher" className="rounded-xl border-border"><SelectValue placeholder="Öğretmen Seçin" /></SelectTrigger>
                 <SelectContent className="rounded-xl">
                   <SelectItem value="none">Atanmamış</SelectItem>
                   {teachers.map(t => (<SelectItem key={t.id} value={t.id}>{t.name} ({t.assignedCategories?.map((c: any) => c.name).join(', ') || 'Branş Yok'})</SelectItem>))}
@@ -1242,7 +1269,7 @@ const deleteClassMutation = useMutation({
           </div>
           <DialogFooter>
             <Button 
-              disabled={!classLevel || !classSection}
+              disabled={!classLevel || !classSection || createClassMutation.isPending || updateClassMutation.isPending}
               onClick={() => {
                 const formattedClassName = `${classLevel}-${classSection}`;
                 isEditClassMode 
@@ -1292,7 +1319,7 @@ const deleteClassMutation = useMutation({
           <DialogFooter className="flex gap-2 p-4 pt-0">
             <Button variant="outline" onClick={() => setIsDeleteClassOpen(false)} className="rounded-xl flex-1 font-bold">Vazgeç</Button>
             {(activeClass?._count?.students || 0) === 0 && (
-              <Button variant="destructive" onClick={() => deleteClassMutation.mutate(selectedClassId!)} className="rounded-xl flex-1 font-bold shadow-lg dark:shadow-none">Evet, Sil</Button>
+              <Button variant="destructive" disabled={deleteClassMutation.isPending} onClick={() => deleteClassMutation.mutate(selectedClassId!)} className="rounded-xl flex-1 font-bold shadow-lg dark:shadow-none">Evet, Sil</Button>
             )}
           </DialogFooter>
         </DialogContent>
@@ -1314,7 +1341,7 @@ const deleteClassMutation = useMutation({
           </div>
           <DialogFooter className="flex gap-2 p-4 pt-0">
             <Button variant="outline" onClick={() => setIsDeleteUserOpen(false)} className="rounded-xl flex-1 font-bold">Vazgeç</Button>
-            <Button variant="destructive" onClick={() => deleteUserMutation.mutate(selectedUser?.id)} className="rounded-xl flex-1 font-bold shadow-lg dark:shadow-none dark:shadow-none">Evet, Sil</Button>
+            <Button variant="destructive" disabled={deleteUserMutation.isPending} onClick={() => deleteUserMutation.mutate(selectedUser?.id)} className="rounded-xl flex-1 font-bold shadow-lg dark:shadow-none dark:shadow-none">Evet, Sil</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -1334,7 +1361,7 @@ const deleteClassMutation = useMutation({
           </div>
           <DialogFooter className="flex gap-2 p-4 pt-0">
             <Button variant="outline" onClick={() => setIsDeleteCategoryOpen(false)} className="rounded-xl flex-1 font-bold">Vazgeç</Button>
-            <Button variant="destructive" onClick={() => deleteCategoryMutation.mutate(selectedCategoryId!)} className="rounded-xl flex-1 font-bold">Evet, Sil</Button>
+            <Button variant="destructive" disabled={deleteCategoryMutation.isPending} onClick={() => deleteCategoryMutation.mutate(selectedCategoryId!)} className="rounded-xl flex-1 font-bold">Evet, Sil</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -1344,10 +1371,10 @@ const deleteClassMutation = useMutation({
         <DialogContent className="rounded-3xl sm:max-w-md">
           <DialogHeader><DialogTitle className="text-xl font-bold">{isEditCategoryMode ? "Dersi Güncelle" : "Yeni Ders Kaydı"}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="space-y-2"><Label className="font-bold text-slate-700 dark:text-slate-200">Ders Başlığı</Label><Input value={categoryName} onChange={e => setCategoryName(e.target.value.toLocaleUpperCase('tr-TR'))} className="rounded-xl border-slate-200 dark:border-slate-700" placeholder="Örn: GÖRSEL PROGRAMLAMA" /></div>
-            <div className="space-y-2"><Label className="font-bold text-slate-700 dark:text-slate-200">İçerik Açıklaması</Label><Textarea value={categoryDesc} onChange={e => setCategoryDesc(e.target.value)} className="rounded-xl border-slate-200 dark:border-slate-700" /></div>
+            <div className="space-y-2"><Label htmlFor="category-name" className="font-bold text-slate-700 dark:text-slate-200">Ders Başlığı</Label><Input id="category-name" value={categoryName} onChange={e => setCategoryName(e.target.value.toLocaleUpperCase('tr-TR'))} className="rounded-xl border-slate-200 dark:border-slate-700" placeholder="Örn: GÖRSEL PROGRAMLAMA" /></div>
+            <div className="space-y-2"><Label htmlFor="category-description" className="font-bold text-slate-700 dark:text-slate-200">İçerik Açıklaması</Label><Textarea id="category-description" value={categoryDesc} onChange={e => setCategoryDesc(e.target.value)} className="rounded-xl border-slate-200 dark:border-slate-700" /></div>
           </div>
-          <DialogFooter><Button onClick={() => isEditCategoryMode ? updateCategoryMutation.mutate({ id: editingCategory!.id, name: categoryName, description: categoryDesc }) : createCategoryMutation.mutate()} className="rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700 w-full shadow-lg dark:shadow-none dark:shadow-none">Dersi Kaydet</Button></DialogFooter>
+          <DialogFooter><Button disabled={createCategoryMutation.isPending || updateCategoryMutation.isPending || !categoryName.trim()} onClick={() => isEditCategoryMode ? updateCategoryMutation.mutate({ id: editingCategory!.id, name: categoryName, description: categoryDesc }) : createCategoryMutation.mutate()} className="rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700 w-full shadow-lg dark:shadow-none dark:shadow-none">Dersi Kaydet</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 

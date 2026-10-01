@@ -1,5 +1,6 @@
 import { invalidateAdminRelations } from '@/lib/admin-cache';
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { AdminQueryState } from '@/components/management/AdminQueryState';
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminApi, classApi, quizApi } from "@/lib/api";
@@ -21,32 +22,39 @@ export default function ArchivePage() {
 
   const [academicYear, setAcademicYear] = useState("");
   const [isArchiveConfirmOpen, setIsArchiveConfirmOpen] = useState(false);
+  const [archivePage, setArchivePage] = useState(1);
 
   // Student Promotion State
   const [promotionFromClassId, setPromotionFromClassId] = useState("");
   const [promotionToClassId, setPromotionToClassId] = useState("graduate");
   const [isPromoteConfirmOpen, setIsPromoteConfirmOpen] = useState(false);
 
-  const { data: classesData, isLoading: classesLoading } = useQuery({
+  const classesQuery = useQuery({
     queryKey: ['/api/classes'],
     queryFn: () => classApi.getAllClasses(),
   });
 
-  const { data: quizzesData } = useQuery({
+  const quizzesQuery = useQuery({
     queryKey: ['/api/admin/quizzes'],
     queryFn: () => quizApi.getAllAdminQuizzes(),
   });
+  const previewQuery = useQuery({ queryKey: ['archive-candidates'], queryFn: adminApi.getArchiveCandidates });
+  const { data: classesData, isLoading: classesLoading } = classesQuery;
+  const { data: quizzesData } = quizzesQuery;
 
   const classes = classesData?.classes || [];
   const quizzes = quizzesData?.quizzes || [];
 
-  const activeQuizzesCount = quizzes.filter((q: any) => q.status !== 'archived').length;
+  const activeQuizzesCount = previewQuery.data?.quizzes ?? 0;
   const archivedQuizzesCount = quizzes.filter((q: any) => q.status === 'archived').length;
+  const archivePages = Math.max(1, Math.ceil(archivedQuizzesCount / 20));
+  useEffect(() => { setArchivePage(page => Math.min(page, archivePages)); }, [archivePages]);
 
   const archiveMutation = useMutation({
     mutationFn: (year: string) => adminApi.archiveYear(year),
     onSuccess: async (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/quizzes'] });
+      await Promise.all(['archive-candidates', 'admin-quizzes', 'quizzes', 'dashboard-stats', 'dashboard-overview', 'dashboard-logs', 'class-analytics', '/api/quizzes', '/api/dashboard'].map(key => queryClient.invalidateQueries({ queryKey: [key] })));
       setIsArchiveConfirmOpen(false);
       setAcademicYear("");
       toast({
@@ -79,12 +87,13 @@ export default function ArchivePage() {
     }
   });
 
-  const handleArchive = () => {
+  const handleArchive = async () => {
     if (!academicYear || academicYear.length < 4) {
       toast({ variant: "destructive", title: "Hata", description: "Lütfen geçerli bir eğitim yılı girin (örn: 2025-2026)." });
       return;
     }
-    setIsArchiveConfirmOpen(true);
+    const preview = await previewQuery.refetch();
+    if (!preview.isError) setIsArchiveConfirmOpen(true);
   };
 
   const handlePromote = () => {
@@ -95,6 +104,7 @@ export default function ArchivePage() {
     setIsPromoteConfirmOpen(true);
   };
 
+  if ([classesQuery, quizzesQuery, previewQuery].some(query => query.isPending || query.isError)) return <DashboardLayout><AdminQueryState queries={[classesQuery, quizzesQuery, previewQuery]} /></DashboardLayout>;
   return (
     <DashboardLayout>
       <div className="space-y-3">
@@ -141,7 +151,7 @@ export default function ArchivePage() {
                   <Button 
                     className="w-full rounded-lg font-bold bg-primary text-primary-foreground shadow-sm h-8 text-xs"
                     onClick={handleArchive}
-                    disabled={archiveMutation.isPending}
+                    disabled={archiveMutation.isPending || previewQuery.isFetching}
                   >
                     {archiveMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <Archive className="h-3.5 w-3.5 mr-1.5" />}
                     Sistemi Arşivle
@@ -186,7 +196,7 @@ export default function ArchivePage() {
                           <TableCell colSpan={3} className="text-center py-8 text-muted-foreground italic">Henüz arşivlenmiş sınav bulunmuyor.</TableCell>
                        </TableRow>
                     ) : (
-                      quizzes.filter((q: any) => q.status === 'archived').slice(0, 20).map((quiz: any) => (
+                      quizzes.filter((q: any) => q.status === 'archived').slice((archivePage - 1) * 20, archivePage * 20).map((quiz: any) => (
                         <TableRow key={quiz.id} className="border-border">
                           <TableCell className="pl-6 font-bold">{quiz.title}</TableCell>
                           <TableCell><Badge variant="outline">{quiz.academicYear || 'Eski Kayıt'}</Badge></TableCell>
@@ -196,6 +206,11 @@ export default function ArchivePage() {
                     )}
                   </TableBody>
                </Table>
+               <div className="flex items-center justify-end gap-3 p-4">
+                 <span>Sayfa {archivePage} / {archivePages}</span>
+                 <Button variant="outline" disabled={archivePage <= 1} onClick={() => setArchivePage(page => page - 1)}>Önceki</Button>
+                 <Button variant="outline" disabled={archivePage >= archivePages} onClick={() => setArchivePage(page => page + 1)}>Sonraki</Button>
+               </div>
             </Card>
           </TabsContent>
 
@@ -214,7 +229,7 @@ export default function ArchivePage() {
               <CardContent className="space-y-8 p-8">
                 <div className="space-y-3">
                   <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Mevcut Sınıf (Kaynak)</Label>
-                  <Select value={promotionFromClassId} onValueChange={setPromotionFromClassId}>
+                  <Select value={promotionFromClassId} onValueChange={value => { setPromotionFromClassId(value); if (value === promotionToClassId) setPromotionToClassId('graduate'); }}>
                     <SelectTrigger className="h-14 rounded-xl border-2 border-border focus:border-indigo-500 bg-muted/30">
                       <SelectValue placeholder="Öğrencilerin bulunduğu sınıfı seçin..." />
                     </SelectTrigger>
@@ -276,12 +291,12 @@ export default function ArchivePage() {
             </div>
             <DialogTitle className="text-xl font-black">Arşivleme Onayı</DialogTitle>
             <DialogDescription className="text-sm font-medium">
-              Bu işlem geri alınamaz. <strong>{academicYear}</strong> etiketiyle tüm aktif sınavlar kilitlenecek. Devam etmek istiyor musunuz?
+              Bu işlem geri alınamaz. <strong>{academicYear}</strong> etiketiyle {previewQuery.data?.quizzes} içerik ve {previewQuery.data?.results} sonuç arşivlenecek. Önceden arşivlenmiş veya yıl etiketi olan içerikler korunur.
             </DialogDescription>
           </div>
           <DialogFooter className="flex gap-2 p-4 pt-0 sm:justify-center">
             <Button variant="outline" onClick={() => setIsArchiveConfirmOpen(false)} className="rounded-xl flex-1 font-bold">Vazgeç</Button>
-            <Button variant="destructive" onClick={() => archiveMutation.mutate(academicYear)} className="rounded-xl flex-1 font-bold shadow-md dark:shadow-none">Evet, Arşivle</Button>
+            <Button variant="destructive" disabled={archiveMutation.isPending} onClick={() => archiveMutation.mutate(academicYear)} className="rounded-xl flex-1 font-bold shadow-md dark:shadow-none">Evet, Arşivle</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -314,7 +329,7 @@ export default function ArchivePage() {
           </div>
           <DialogFooter className="flex gap-2 p-4 pt-0 sm:justify-center">
             <Button variant="outline" onClick={() => setIsPromoteConfirmOpen(false)} className="rounded-xl flex-1 font-bold">Vazgeç</Button>
-            <Button className="rounded-xl flex-1 font-bold bg-indigo-600 hover:bg-indigo-700 shadow-md dark:shadow-none text-white" onClick={() => promoteMutation.mutate({
+            <Button disabled={promoteMutation.isPending} className="rounded-xl flex-1 font-bold bg-indigo-600 hover:bg-indigo-700 shadow-md dark:shadow-none text-white" onClick={() => promoteMutation.mutate({
               fromClassId: promotionFromClassId,
               toClassId: promotionToClassId === "graduate" ? null : promotionToClassId
             })}>Evet, İşlemi Yap</Button>

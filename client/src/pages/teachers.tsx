@@ -1,3 +1,4 @@
+import { AdminQueryState } from "@/components/management/AdminQueryState";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,10 +33,12 @@ export default function TeachersPage() {
     setLocation(`/teachers/${user.id}`);
   };
 
-  const { data: usersData, isLoading } = useQuery({
+  const usersQuery = useQuery({
     queryKey: ['users'],
     queryFn: () => userApi.getAllUsers(),
   });
+
+  const { data: usersData, isLoading } = usersQuery;
 
   const teachers = useMemo(() => {
     if (!usersData?.users) return [];
@@ -60,6 +63,8 @@ export default function TeachersPage() {
     ],
     rows: teachers,
   });
+  const pageQueries = [usersQuery];
+  if (pageQueries.some(query => query.isPending || query.isError)) return <DashboardLayout><AdminQueryState queries={pageQueries} /></DashboardLayout>;
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -80,6 +85,7 @@ export default function TeachersPage() {
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
+              aria-label="Öğretmen ara"
               placeholder="Öğretmen adı veya e-posta ile ara..."
               className="pl-10"
               value={searchTerm}

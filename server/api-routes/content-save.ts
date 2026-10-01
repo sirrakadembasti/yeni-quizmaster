@@ -7,6 +7,7 @@ import { questionImageUrlSchema } from '../utils/upload-paths';
 import { getIO } from '../socket';
 import { logger } from '../utils/logger';
 import { shouldNotifyAdminAboutQuiz } from '../utils/notification-policy';
+import { hasInvalidQuestions } from '../utils/question-validation';
 
 const schema = z.object({
   title: z.string().trim().min(3).max(100), description: z.string().max(500).nullable().default(null),
@@ -53,11 +54,7 @@ export function saveContentHandler(contentType: 'exam' | 'survey') {
       const parsed = schema.safeParse(req.body);
       if (!parsed.success) return res.status(400).json({ message: 'İçerik bilgileri veya sorular geçersiz.' });
       const { questions, category, ...settings } = parsed.data;
-      const allowedTypes = new Set(['single-choice','multiple-choice','open-text','rating','likert']);
-      const duplicateOptions = questions.some(q => ['single-choice', 'multiple-choice', 'likert'].includes(q.type) && new Set(q.options).size !== q.options.length);
-      const invalid = duplicateOptions || questions.some(q => contentType === 'exam'
-        ? q.type !== 'multiple-choice' || q.options.length < 2 || q.options.some(o => !o.trim()) || !q.correctAnswer || !q.options.includes(q.correctAnswer)
-        : !allowedTypes.has(q.type) || (['single-choice','multiple-choice','likert'].includes(q.type) && (q.options.length < 2 || q.options.some(o => !o.trim()))));
+      const invalid = hasInvalidQuestions(contentType, questions);
       if (invalid || (settings.status === 'published' && !questions.length)) return res.status(400).json({ message: 'Yayınlamak için geçerli sorular gereklidir.' });
       if (!await canAssignClasses(req.user!.role, req.user!.id, settings.assignedClassIds)) return res.status(403).json({ message: 'Yalnızca yetkili olduğunuz sınıflara atama yapabilirsiniz.' });
       let categoryId = settings.categoryId;

@@ -1,0 +1,2291 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\playwright\\cli.js",
+      "test",
+      "--config",
+      "playwright.admin-audit.config.ts"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.admin-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/admin-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "admin-audit.spec.ts",
+          "admin-audit-people-flows.spec.ts",
+          "admin-audit-system-flows.spec.ts",
+          "admin-results-regression.spec.ts",
+          "admin-quiz-repairs.spec.ts",
+          "admin-inventory-repairs.spec.ts",
+          "admin-critical-repairs.spec.ts",
+          "admin-session-expiry.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "docs/admin-audit/playwright-report-latest",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/admin-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "admin-audit-people-flows.spec.ts",
+      "file": "admin-audit-people-flows.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "people: student creation in real modal persists enrollment and automatic number",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 105288,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:53:05.087Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "student-created",
+                      "contentType": "application/json",
+                      "body": "ewogICJpZCI6ICJjNjRiN2Y5OS00MTQ5LTRjZDEtYmEzMi03ZjlhZTg3MzkxZTAiLAogICJuYW1lIjogIlBlb3BsZSBTdHVkZW50IDVhYmU4NGQ1LWNkNDQtNGY4Mi1iNWEyLTExMWUzMmJmN2I1NiIsCiAgImVtYWlsIjogInBlb3BsZS11aS1zdHVkZW50LTVhYmU4NGQ1LWNkNDQtNGY4Mi1iNWEyLTExMWUzMmJmN2I1NkBleGFtcGxlLnRlc3QiLAogICJyb2xlIjogInN0dWRlbnQiLAogICJwaG9uZU51bWJlciI6ICIiLAogICJhZGRyZXNzIjogIiIsCiAgInN0dWRlbnRObyI6IDEsCiAgImNsYXNzTm8iOiBudWxsLAogICJpc0FjdGl2ZSI6IHRydWUsCiAgImRlYWN0aXZhdGVkQXQiOiBudWxsLAogICJwYXJlbnROYW1lIjogIiIsCiAgInBhcmVudFJlbGF0aW9uIjogIiIsCiAgInBhcmVudFBob25lIjogIiIsCiAgInBhcmVudEVtYWlsIjogIiIsCiAgInBhcmVudEFkZHJlc3MiOiAiIiwKICAiY3JlYXRlZEF0IjogIjIwMjYtMTAtMDFUMDk6NTQ6MzQuMTAzWiIsCiAgImVtYWlsVmVyaWZpZWQiOiBmYWxzZSwKICAibm90aWZpY2F0aW9uTXV0ZWQiOiBmYWxzZSwKICAiY2xhc3NJZCI6ICI1ZWM4ZmNjNS1lMDZhLTRmMzUtOGU1YS0xZWU3YzZkMDM5MzMiLAogICJjbGFzcyI6IHsKICAgICJpZCI6ICI1ZWM4ZmNjNS1lMDZhLTRmMzUtOGU1YS0xZWU3YzZkMDM5MzMiLAogICAgIm5hbWUiOiAiODktQS01YWJlODRkNS1jZDQ0LTRmODItYjVhMi0xMTFlMzJiZjdiNTYiLAogICAgImRlc2NyaXB0aW9uIjogbnVsbCwKICAgICJtYXhTdHVkZW50cyI6IG51bGwsCiAgICAiY3JlYXRlZEF0IjogIjIwMjYtMTAtMDFUMDk6NTQ6MjAuNjI3WiIsCiAgICAiY2xhc3NUZWFjaGVySWQiOiBudWxsCiAgfSwKICAiYXNzaWduZWRDYXRlZ29yaWVzIjogW10sCiAgIm1hbmFnZWRDbGFzc2VzIjogW10sCiAgInJlc3BvbnNpYmxlRm9yQ2xhc3NlcyI6IFtdLAogICJ0ZWFjaGVyQXNzaWdubWVudHMiOiBbXSwKICAiY2xhc3NlcyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f4bbfe3ef2be4ed8b2c-eb0205b152f4703bbb09",
+          "file": "admin-audit-people-flows.spec.ts",
+          "line": 107,
+          "column": 5
+        },
+        {
+          "title": "people: teacher creation must retain selected course and class",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 37437,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:54:52.565Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "teacher-selected-assignments",
+                      "contentType": "application/json",
+                      "body": "ewogICJwZXJzaXN0ZWQiOiB7CiAgICAiaWQiOiAiNjBjOWYyYTQtZDc0Ni00YzIxLTlhMTMtMDBhNzViOWQ3MDM2IiwKICAgICJuYW1lIjogIlBlb3BsZSBUZWFjaGVyIGMyMzdlM2VmLWFkMWMtNDYxZC04NmVkLTA2OTdiYTBlNmZmNCIsCiAgICAiZW1haWwiOiAicGVvcGxlLXVpLXRlYWNoZXItYzIzN2UzZWYtYWQxYy00NjFkLTg2ZWQtMDY5N2JhMGU2ZmY0QGV4YW1wbGUudGVzdCIsCiAgICAicm9sZSI6ICJ0ZWFjaGVyIiwKICAgICJwaG9uZU51bWJlciI6ICIiLAogICAgImFkZHJlc3MiOiAiIiwKICAgICJzdHVkZW50Tm8iOiBudWxsLAogICAgImNsYXNzTm8iOiBudWxsLAogICAgImlzQWN0aXZlIjogdHJ1ZSwKICAgICJkZWFjdGl2YXRlZEF0IjogbnVsbCwKICAgICJwYXJlbnROYW1lIjogIiIsCiAgICAicGFyZW50UmVsYXRpb24iOiAiIiwKICAgICJwYXJlbnRQaG9uZSI6ICIiLAogICAgInBhcmVudEVtYWlsIjogIiIsCiAgICAicGFyZW50QWRkcmVzcyI6ICIiLAogICAgImNyZWF0ZWRBdCI6ICIyMDI2LTEwLTAxVDA5OjU1OjEzLjUyMFoiLAogICAgImVtYWlsVmVyaWZpZWQiOiBmYWxzZSwKICAgICJub3RpZmljYXRpb25NdXRlZCI6IGZhbHNlLAogICAgImNsYXNzSWQiOiBudWxsLAogICAgImNsYXNzIjogbnVsbCwKICAgICJhc3NpZ25lZENhdGVnb3JpZXMiOiBbCiAgICAgIHsKICAgICAgICAiaWQiOiAiN2UxZmIxZDgtYWIxOC00ODFiLTg4Y2UtYTQzNWU2NjBkY2JlIiwKICAgICAgICAibmFtZSI6ICJQZW9wbGUgQ291cnNlIGMyMzdlM2VmLWFkMWMtNDYxZC04NmVkLTA2OTdiYTBlNmZmNCIsCiAgICAgICAgImRlc2NyaXB0aW9uIjogbnVsbCwKICAgICAgICAiY3JlYXRlZEF0IjogIjIwMjYtMTAtMDFUMDk6NTU6MDYuMDA2WiIKICAgICAgfQogICAgXSwKICAgICJtYW5hZ2VkQ2xhc3NlcyI6IFsKICAgICAgewogICAgICAgICJpZCI6ICI3YTA4YzcxYi1mMDkxLTRlOWEtOTMyNC1iYTE4MWZkOTBlMWQiLAogICAgICAgICJuYW1lIjogIjkwLUEtYzIzN2UzZWYtYWQxYy00NjFkLTg2ZWQtMDY5N2JhMGU2ZmY0IiwKICAgICAgICAiZGVzY3JpcHRpb24iOiBudWxsLAogICAgICAgICJtYXhTdHVkZW50cyI6IG51bGwsCiAgICAgICAgImNyZWF0ZWRBdCI6ICIyMDI2LTEwLTAxVDA5OjU1OjAyLjgwNVoiLAogICAgICAgICJjbGFzc1RlYWNoZXJJZCI6IG51bGwKICAgICAgfQogICAgXSwKICAgICJyZXNwb25zaWJsZUZvckNsYXNzZXMiOiBbXSwKICAgICJ0ZWFjaGVyQXNzaWdubWVudHMiOiBbXSwKICAgICJjbGFzc2VzIjogWwogICAgICB7CiAgICAgICAgImlkIjogIjdhMDhjNzFiLWYwOTEtNGU5YS05MzI0LWJhMTgxZmQ5MGUxZCIsCiAgICAgICAgIm5hbWUiOiAiOTAtQS1jMjM3ZTNlZi1hZDFjLTQ2MWQtODZlZC0wNjk3YmEwZTZmZjQiLAogICAgICAgICJkZXNjcmlwdGlvbiI6IG51bGwsCiAgICAgICAgIm1heFN0dWRlbnRzIjogbnVsbCwKICAgICAgICAiY3JlYXRlZEF0IjogIjIwMjYtMTAtMDFUMDk6NTU6MDIuODA1WiIsCiAgICAgICAgImNsYXNzVGVhY2hlcklkIjogbnVsbAogICAgICB9CiAgICBdCiAgfSwKICAiZXhwZWN0ZWRDbGFzc0lkIjogIjdhMDhjNzFiLWYwOTEtNGU5YS05MzI0LWJhMTgxZmQ5MGUxZCIsCiAgImV4cGVjdGVkQ2F0ZWdvcnlJZCI6ICI3ZTFmYjFkOC1hYjE4LTQ4MWItODhjZS1hNDM1ZTY2MGRjYmUiCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f4bbfe3ef2be4ed8b2c-912b4c81314bf79c9595",
+          "file": "admin-audit-people-flows.spec.ts",
+          "line": 137,
+          "column": 5
+        },
+        {
+          "title": "people: guardian link and unlink persist after reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 58356,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:55:30.047Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "guardian-unlinked",
+                      "contentType": "application/json",
+                      "body": "ewogICJzdGF0dXMiOiAyMDAsCiAgImJvZHkiOiB7CiAgICAic3R1ZGVudHMiOiBbXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f4bbfe3ef2be4ed8b2c-6345dabbcba7ef5695e1",
+          "file": "admin-audit-people-flows.spec.ts",
+          "line": 170,
+          "column": 5
+        },
+        {
+          "title": "people: same-level student transfer persists target and removes old enrollment",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 51264,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:56:28.441Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "student-transfer",
+                      "contentType": "application/json",
+                      "body": "ewogICJvbGRDbGFzcyI6IHsKICAgICJzdGF0dXMiOiAyMDAsCiAgICAiYm9keSI6IHsKICAgICAgImNsYXNzIjogewogICAgICAgICJpZCI6ICI1MThkYzk5Yy02OWRhLTRiNzUtYmQwNi0yNmRmZDNkYTY5NjAiLAogICAgICAgICJuYW1lIjogIjkxLUEtNGE4ZTgwZDEtNmZiNS00YTBiLTkxZmItY2Y4MTYzOTgwMzNjIiwKICAgICAgICAiZGVzY3JpcHRpb24iOiBudWxsLAogICAgICAgICJtYXhTdHVkZW50cyI6IG51bGwsCiAgICAgICAgImNyZWF0ZWRBdCI6ICIyMDI2LTEwLTAxVDA5OjU2OjM5LjUwNFoiLAogICAgICAgICJjbGFzc1RlYWNoZXJJZCI6IG51bGwsCiAgICAgICAgInRlYWNoZXJzIjogW10sCiAgICAgICAgImNsYXNzVGVhY2hlciI6IG51bGwsCiAgICAgICAgImFzc2lnbmVkQ2F0ZWdvcmllcyI6IFtdLAogICAgICAgICJ0ZWFjaGVyQXNzaWdubWVudHMiOiBbXQogICAgICB9LAogICAgICAic3R1ZGVudHMiOiBbXQogICAgfQogIH0sCiAgIm5ld0NsYXNzIjogewogICAgInN0YXR1cyI6IDIwMCwKICAgICJib2R5IjogewogICAgICAiY2xhc3MiOiB7CiAgICAgICAgImlkIjogIjI2NjdjN2RlLTVmMGItNDBkZS05MTQxLTc3OGM1ODI4OWFhYSIsCiAgICAgICAgIm5hbWUiOiAiOTEtQi00YThlODBkMS02ZmI1LTRhMGItOTFmYi1jZjgxNjM5ODAzM2MiLAogICAgICAgICJkZXNjcmlwdGlvbiI6IG51bGwsCiAgICAgICAgIm1heFN0dWRlbnRzIjogbnVsbCwKICAgICAgICAiY3JlYXRlZEF0IjogIjIwMjYtMTAtMDFUMDk6NTY6NDAuMjI2WiIsCiAgICAgICAgImNsYXNzVGVhY2hlcklkIjogbnVsbCwKICAgICAgICAidGVhY2hlcnMiOiBbXSwKICAgICAgICAiY2xhc3NUZWFjaGVyIjogbnVsbCwKICAgICAgICAiYXNzaWduZWRDYXRlZ29yaWVzIjogW10sCiAgICAgICAgInRlYWNoZXJBc3NpZ25tZW50cyI6IFtdCiAgICAgIH0sCiAgICAgICJzdHVkZW50cyI6IFsKICAgICAgICB7CiAgICAgICAgICAiaWQiOiAiYTU2MTY1NDMtZTkzMS00MzJiLWFmN2QtODhkODhjNTg0OTBjIiwKICAgICAgICAgICJuYW1lIjogIlBlb3BsZSBUcmFuc2ZlciA0YThlODBkMS02ZmI1LTRhMGItOTFmYi1jZjgxNjM5ODAzM2MiLAogICAgICAgICAgImVtYWlsIjogInBlb3BsZS1zdHVkZW50LTRhOGU4MGQxLTZmYjUtNGEwYi05MWZiLWNmODE2Mzk4MDMzY0BleGFtcGxlLnRlc3QiLAogICAgICAgICAgInJvbGUiOiAic3R1ZGVudCIsCiAgICAgICAgICAicGhvbmVOdW1iZXIiOiBudWxsLAogICAgICAgICAgImFkZHJlc3MiOiBudWxsLAogICAgICAgICAgInN0dWRlbnRObyI6IDEsCiAgICAgICAgICAiY2xhc3NObyI6IG51bGwsCiAgICAgICAgICAiaXNBY3RpdmUiOiB0cnVlLAogICAgICAgICAgImRlYWN0aXZhdGVkQXQiOiBudWxsLAogICAgICAgICAgInBhcmVudE5hbWUiOiBudWxsLAogICAgICAgICAgInBhcmVudFJlbGF0aW9uIjogbnVsbCwKICAgICAgICAgICJwYXJlbnRQaG9uZSI6IG51bGwsCiAgICAgICAgICAicGFyZW50RW1haWwiOiBudWxsLAogICAgICAgICAgInBhcmVudEFkZHJlc3MiOiBudWxsLAogICAgICAgICAgImNyZWF0ZWRBdCI6ICIyMDI2LTEwLTAxVDA5OjU2OjQzLjY0NVoiLAogICAgICAgICAgImVtYWlsVmVyaWZpZWQiOiBmYWxzZSwKICAgICAgICAgICJub3RpZmljYXRpb25NdXRlZCI6IGZhbHNlLAogICAgICAgICAgImNsYXNzSWQiOiAiMjY2N2M3ZGUtNWYwYi00MGRlLTkxNDEtNzc4YzU4Mjg5YWFhIgogICAgICAgIH0KICAgICAgXQogICAgfQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f4bbfe3ef2be4ed8b2c-2dd80b46e408c8da7113",
+          "file": "admin-audit-people-flows.spec.ts",
+          "line": 209,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "admin-audit-system-flows.spec.ts",
+      "file": "admin-audit-system-flows.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "management class required fields, create, edit, cancel delete, delete and persisted reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 32155,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:57:19.795Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7be15fe10641ee3a35e2-6a50eda057752a400b08",
+          "file": "admin-audit-system-flows.spec.ts",
+          "line": 56,
+          "column": 5
+        },
+        {
+          "title": "management user invalid input visible validation, create, edit, cancel and delete persist",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 33937,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:57:51.997Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7be15fe10641ee3a35e2-15e734c976bdedfa5859",
+          "file": "admin-audit-system-flows.spec.ts",
+          "line": 100,
+          "column": 5
+        },
+        {
+          "title": "parent creation requires contact information before submit",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12457,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:58:25.985Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7be15fe10641ee3a35e2-d43ab2b4e0ef0bde5229",
+          "file": "admin-audit-system-flows.spec.ts",
+          "line": 139,
+          "column": 5
+        },
+        {
+          "title": "archive promotion moves only isolated new students, updates counts and graduation persists",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 52346,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:58:38.469Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7be15fe10641ee3a35e2-2903c2b52cf229e09d45",
+          "file": "admin-audit-system-flows.spec.ts",
+          "line": 152,
+          "column": 5
+        },
+        {
+          "title": "deployment invalid origin receives API 400 and visible error instead of silent failure",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10216,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:59:30.861Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "invalid-deployment-response",
+                      "contentType": "application/json",
+                      "body": "eyJtZXNzYWdlIjoiWWFwxLFsYW5kxLFybWEgZ2XDp2Vyc2l6OiBwdWJsaWNVcmw6IEludmFsaWQgdXJsOyBwdWJsaWNVcmw6IFlhbG7EsXogxZ9lbWEgdmUgZG9tYWluIGnDp2VyZW4gYmlyIG9yaWdpbiBnaXJpbiAow7ZyLiBodHRwczovL3NpbmF2Lmt1cnVtLmdvdi50cikuIiwiaXNzdWVzIjpbeyJ2YWxpZGF0aW9uIjoidXJsIiwiY29kZSI6ImludmFsaWRfc3RyaW5nIiwibWVzc2FnZSI6IkludmFsaWQgdXJsIiwicGF0aCI6WyJwdWJsaWNVcmwiXX0seyJjb2RlIjoiY3VzdG9tIiwibWVzc2FnZSI6IllhbG7EsXogxZ9lbWEgdmUgZG9tYWluIGnDp2VyZW4gYmlyIG9yaWdpbiBnaXJpbiAow7ZyLiBodHRwczovL3NpbmF2Lmt1cnVtLmdvdi50cikuIiwicGF0aCI6WyJwdWJsaWNVcmwiXX1dfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7be15fe10641ee3a35e2-400f9c110640c62bdd7e",
+          "file": "admin-audit-system-flows.spec.ts",
+          "line": 192,
+          "column": 5
+        },
+        {
+          "title": "deployment profile saves only under isolated root and survives HTTP reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19597,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:59:41.121Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7be15fe10641ee3a35e2-a7dd1a0da722d003955c",
+          "file": "admin-audit-system-flows.spec.ts",
+          "line": 208,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "admin-audit.spec.ts",
+      "file": "admin-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "admin route /",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16495,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:00:00.836Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvIiwKICAibGFiZWxzIjogW10sCiAgInZpZXdzIjogW10sCiAgImVycm9ycyI6IFtdLAogICJuZXR3b3JrIjogW10sCiAgInV4IjogewogICAgInZpZXdwb3J0IjogMzkwLAogICAgImRvY3VtZW50V2lkdGgiOiAzOTAsCiAgICAidW5uYW1lZEJ1dHRvbnMiOiAwLAogICAgInVubGFiZWxlZElucHV0cyI6IFtdCiAgfQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-186bbc01ebd9e01cdf59",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /admin-quizzes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15844,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:00:17.371Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvYWRtaW4tcXVpenplcyIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMCwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-378b31b7579d23b64a18",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /quizzes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 45031,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:00:33.268Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvcXVpenplcyIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMCwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-7042655a1509e1cb75d2",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /statistics",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 31629,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:01:18.338Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvc3RhdGlzdGljcyIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMCwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-fd10239a9a3ad9f41c38",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19716,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:01:50.055Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvcmVzdWx0cyIsCiAgImxhYmVscyI6IFsKICAgICIgR2VuZWwgQmFrxLHFnyIKICBdLAogICJ2aWV3cyI6IFsKICAgICJHZW5lbCBCYWvEscWfIgogIF0sCiAgImVycm9ycyI6IFtdLAogICJuZXR3b3JrIjogW10sCiAgInV4IjogewogICAgInZpZXdwb3J0IjogMzkwLAogICAgImRvY3VtZW50V2lkdGgiOiAzOTAsCiAgICAidW5uYW1lZEJ1dHRvbnMiOiAwLAogICAgInVubGFiZWxlZElucHV0cyI6IFsKICAgICAgewogICAgICAgICJwbGFjZWhvbGRlciI6ICJTxLFuYXYgdmV5YSBkZXJzIGFyYS4uLiIsCiAgICAgICAgInR5cGUiOiBudWxsCiAgICAgIH0KICAgIF0KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-e7c3a4a550e113c138dd",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /survey-results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 37616,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:02:09.809Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvc3VydmV5LXJlc3VsdHMiLAogICJsYWJlbHMiOiBbCiAgICAiU29udcOnbGFyIiwKICAgICJBbmtldCBPbHXFn3R1ciIKICBdLAogICJ2aWV3cyI6IFsKICAgICJTb251w6dsYXIiLAogICAgIkFua2V0IE9sdcWfdHVyIgogIF0sCiAgImVycm9ycyI6IFtdLAogICJuZXR3b3JrIjogW10sCiAgInV4IjogewogICAgInZpZXdwb3J0IjogMzkwLAogICAgImRvY3VtZW50V2lkdGgiOiAzOTAsCiAgICAidW5uYW1lZEJ1dHRvbnMiOiAwLAogICAgInVubGFiZWxlZElucHV0cyI6IFsKICAgICAgewogICAgICAgICJwbGFjZWhvbGRlciI6IG51bGwsCiAgICAgICAgInR5cGUiOiAiZGF0ZSIKICAgICAgfSwKICAgICAgewogICAgICAgICJwbGFjZWhvbGRlciI6IG51bGwsCiAgICAgICAgInR5cGUiOiAiZGF0ZSIKICAgICAgfQogICAgXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-45d400e769d7af1da844",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /students",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15532,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:02:47.478Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvc3R1ZGVudHMiLAogICJsYWJlbHMiOiBbXSwKICAidmlld3MiOiBbXSwKICAiZXJyb3JzIjogW10sCiAgIm5ldHdvcmsiOiBbXSwKICAidXgiOiB7CiAgICAidmlld3BvcnQiOiAzOTAsCiAgICAiZG9jdW1lbnRXaWR0aCI6IDM5MCwKICAgICJ1bm5hbWVkQnV0dG9ucyI6IDAsCiAgICAidW5sYWJlbGVkSW5wdXRzIjogW10KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-b52ee8ea74568eabe38c",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /teachers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11610,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:03:03.049Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvdGVhY2hlcnMiLAogICJsYWJlbHMiOiBbXSwKICAidmlld3MiOiBbXSwKICAiZXJyb3JzIjogW10sCiAgIm5ldHdvcmsiOiBbXSwKICAidXgiOiB7CiAgICAidmlld3BvcnQiOiAzOTAsCiAgICAiZG9jdW1lbnRXaWR0aCI6IDM5MCwKICAgICJ1bm5hbWVkQnV0dG9ucyI6IDAsCiAgICAidW5sYWJlbGVkSW5wdXRzIjogW10KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-e7ad74434b5bcc555075",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /guardian-management",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13873,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:03:14.693Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvZ3VhcmRpYW4tbWFuYWdlbWVudCIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMCwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-bd4af15adfcba103c426",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /classlist",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 21970,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:03:28.622Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvY2xhc3NsaXN0IiwKICAibGFiZWxzIjogW10sCiAgInZpZXdzIjogW10sCiAgImVycm9ycyI6IFtdLAogICJuZXR3b3JrIjogW10sCiAgInV4IjogewogICAgInZpZXdwb3J0IjogMzkwLAogICAgImRvY3VtZW50V2lkdGgiOiAzOTAsCiAgICAidW5uYW1lZEJ1dHRvbnMiOiAwLAogICAgInVubGFiZWxlZElucHV0cyI6IFtdCiAgfQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-7a8e9a47787fe642b7d9",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /management",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14250,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:03:50.629Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvbWFuYWdlbWVudCIsCiAgImxhYmVscyI6IFsKICAgICJEZXJzbGVyIiwKICAgICJTxLFuxLFmbGFyIiwKICAgICJLdWxsYW7EsWPEsWxhciIsCiAgICAiTG9nbGFyIgogIF0sCiAgInZpZXdzIjogWwogICAgIkRlcnNsZXIiLAogICAgIlPEsW7EsWZsYXIiLAogICAgIkt1bGxhbsSxY8SxbGFyIiwKICAgICJLdWxsYW7EsWPEsWxhci9Uw7xtw7wiLAogICAgIkt1bGxhbsSxY8SxbGFyL1nDtm5ldGljaWxlciIsCiAgICAiS3VsbGFuxLFjxLFsYXIvw5bEn3JldG1lbmxlciIsCiAgICAiS3VsbGFuxLFjxLFsYXIvw5bEn3JlbmNpbGVyIiwKICAgICJLdWxsYW7EsWPEsWxhci9WZWxpbGVyIiwKICAgICJMb2dsYXIiCiAgXSwKICAiZXJyb3JzIjogW10sCiAgIm5ldHdvcmsiOiBbXSwKICAidXgiOiB7CiAgICAidmlld3BvcnQiOiAzOTAsCiAgICAiZG9jdW1lbnRXaWR0aCI6IDM5MCwKICAgICJ1bm5hbWVkQnV0dG9ucyI6IDAsCiAgICAidW5sYWJlbGVkSW5wdXRzIjogW10KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-1dc7788a26aee994e96f",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /archive",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12366,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:04:04.916Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvYXJjaGl2ZSIsCiAgImxhYmVscyI6IFsKICAgICJTxLFuYXYgQXLFn2l2aSIsCiAgICAiU8SxbsSxZiBBdGxhdG1hIgogIF0sCiAgInZpZXdzIjogWwogICAgIlPEsW5hdiBBcsWfaXZpIiwKICAgICJTxLFuxLFmIEF0bGF0bWEiCiAgXSwKICAiZXJyb3JzIjogW10sCiAgIm5ldHdvcmsiOiBbXSwKICAidXgiOiB7CiAgICAidmlld3BvcnQiOiAzOTAsCiAgICAiZG9jdW1lbnRXaWR0aCI6IDM5MCwKICAgICJ1bm5hbWVkQnV0dG9ucyI6IDAsCiAgICAidW5sYWJlbGVkSW5wdXRzIjogWwogICAgICB7CiAgICAgICAgInBsYWNlaG9sZGVyIjogIsOWcm46IDIwMjUtMjAyNiBFxJ9pdGltIFnEsWzEsSIsCiAgICAgICAgInR5cGUiOiBudWxsCiAgICAgIH0KICAgIF0KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-caee6b5d50b891fb6d04",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /server-setup",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9340,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:04:17.313Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvc2VydmVyLXNldHVwIiwKICAibGFiZWxzIjogW10sCiAgInZpZXdzIjogW10sCiAgImVycm9ycyI6IFtdLAogICJuZXR3b3JrIjogW10sCiAgInV4IjogewogICAgInZpZXdwb3J0IjogMzkwLAogICAgImRvY3VtZW50V2lkdGgiOiAzOTAsCiAgICAidW5uYW1lZEJ1dHRvbnMiOiAxLAogICAgInVubGFiZWxlZElucHV0cyI6IFsKICAgICAgewogICAgICAgICJwbGFjZWhvbGRlciI6IG51bGwsCiAgICAgICAgInR5cGUiOiAibnVtYmVyIgogICAgICB9LAogICAgICB7CiAgICAgICAgInBsYWNlaG9sZGVyIjogImh0dHA6Ly8xMjcuMC4wLjE6NTE3MyIsCiAgICAgICAgInR5cGUiOiBudWxsCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAicGxhY2Vob2xkZXIiOiAiL3F1aXptYXN0ZXIiLAogICAgICAgICJ0eXBlIjogbnVsbAogICAgICB9LAogICAgICB7CiAgICAgICAgInBsYWNlaG9sZGVyIjogImh0dHA6Ly8xMjcuMC4wLjE6NTE3M1xuaHR0cDovL2xvY2FsaG9zdDo1MTczXG5odHRwOi8vMTI3LjAuMC4xOjUwMDAiLAogICAgICAgICJ0eXBlIjogbnVsbAogICAgICB9LAogICAgICB7CiAgICAgICAgInBsYWNlaG9sZGVyIjogbnVsbCwKICAgICAgICAidHlwZSI6ICJudW1iZXIiCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAicGxhY2Vob2xkZXIiOiBudWxsLAogICAgICAgICJ0eXBlIjogIm51bWJlciIKICAgICAgfSwKICAgICAgewogICAgICAgICJwbGFjZWhvbGRlciI6IG51bGwsCiAgICAgICAgInR5cGUiOiAibnVtYmVyIgogICAgICB9LAogICAgICB7CiAgICAgICAgInBsYWNlaG9sZGVyIjogbnVsbCwKICAgICAgICAidHlwZSI6ICJudW1iZXIiCiAgICAgIH0KICAgIF0KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-ee626ecb61e56e6e719f",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /announcements",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14788,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:04:26.702Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvYW5ub3VuY2VtZW50cyIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMCwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-4585729da177e561b4fe",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /settings",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13937,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:04:41.528Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvc2V0dGluZ3MiLAogICJsYWJlbHMiOiBbCiAgICAiIFByb2ZpbCBCaWxnaWxlcmkiLAogICAgIiBCaWxkaXJpbWxlciIsCiAgICAiIMSwxZ9sZW0gR2XDp21pxZ9pIiwKICAgICIgR8O8dmVubGlrIgogIF0sCiAgInZpZXdzIjogWwogICAgIlByb2ZpbCBCaWxnaWxlcmkiLAogICAgIkJpbGRpcmltbGVyIiwKICAgICLEsMWfbGVtIEdlw6dtacWfaSIsCiAgICAiR8O8dmVubGlrIgogIF0sCiAgImVycm9ycyI6IFtdLAogICJuZXR3b3JrIjogW10sCiAgInV4IjogewogICAgInZpZXdwb3J0IjogMzkwLAogICAgImRvY3VtZW50V2lkdGgiOiAzOTAsCiAgICAidW5uYW1lZEJ1dHRvbnMiOiAwLAogICAgInVubGFiZWxlZElucHV0cyI6IFsKICAgICAgewogICAgICAgICJwbGFjZWhvbGRlciI6ICLigKLigKLigKLigKLigKLigKLigKLigKIiLAogICAgICAgICJ0eXBlIjogInBhc3N3b3JkIgogICAgICB9LAogICAgICB7CiAgICAgICAgInBsYWNlaG9sZGVyIjogIuKAouKAouKAouKAouKAouKAouKAouKAoiIsCiAgICAgICAgInR5cGUiOiAicGFzc3dvcmQiCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAicGxhY2Vob2xkZXIiOiAi4oCi4oCi4oCi4oCi4oCi4oCi4oCi4oCiIiwKICAgICAgICAidHlwZSI6ICJwYXNzd29yZCIKICAgICAgfQogICAgXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-181fce1459e280cc9a6b",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /create-quiz",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10909,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:04:55.501Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvY3JlYXRlLXF1aXoiLAogICJsYWJlbHMiOiBbCiAgICAiU8SxbmF2IEF5YXJsYXLEsSIsCiAgICAiU29ydWxhciAoMSkiCiAgXSwKICAidmlld3MiOiBbCiAgICAiU8SxbmF2IEF5YXJsYXLEsSIsCiAgICAiU29ydWxhciAoMSkiCiAgXSwKICAiZXJyb3JzIjogW10sCiAgIm5ldHdvcmsiOiBbXSwKICAidXgiOiB7CiAgICAidmlld3BvcnQiOiAzOTAsCiAgICAiZG9jdW1lbnRXaWR0aCI6IDM5MCwKICAgICJ1bm5hbWVkQnV0dG9ucyI6IDQsCiAgICAidW5sYWJlbGVkSW5wdXRzIjogW10KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-e9a0e64b71b34c549708",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /quizzes/audit-exam",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14051,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:05:06.451Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvcXVpenplcy9hdWRpdC1leGFtIiwKICAibGFiZWxzIjogWwogICAgIlPEsW5hdiBBeWFybGFyxLEiLAogICAgIlNvcnVsYXIgKDEpIgogIF0sCiAgInZpZXdzIjogWwogICAgIlPEsW5hdiBBeWFybGFyxLEiLAogICAgIlNvcnVsYXIgKDEpIgogIF0sCiAgImVycm9ycyI6IFtdLAogICJuZXR3b3JrIjogW10sCiAgInV4IjogewogICAgInZpZXdwb3J0IjogMzkwLAogICAgImRvY3VtZW50V2lkdGgiOiAzOTAsCiAgICAidW5uYW1lZEJ1dHRvbnMiOiA0LAogICAgInVubGFiZWxlZElucHV0cyI6IFtdCiAgfQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-16b592472b929f428388",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /teachers/audit-teacher",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9244,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:05:20.530Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvdGVhY2hlcnMvYXVkaXQtdGVhY2hlciIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMCwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-0fb44b9c91cd202b44e2",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /classes/audit-class",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9096,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:05:29.821Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvY2xhc3Nlcy9hdWRpdC1jbGFzcyIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMCwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbCiAgICAgIHsKICAgICAgICAicGxhY2Vob2xkZXIiOiAiw5bEn3JlbmNpIGlzbWluZSBnw7ZyZSBmaWx0cmVsZS4uLiIsCiAgICAgICAgInR5cGUiOiBudWxsCiAgICAgIH0KICAgIF0KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-34ac5a2c72f180e19e10",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /admin/classes/audit-class",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10730,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:05:38.945Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvYWRtaW4vY2xhc3Nlcy9hdWRpdC1jbGFzcyIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMCwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-a5acb6174604fcc56843",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /student/result/audit-result",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8901,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:05:49.709Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvc3R1ZGVudC9yZXN1bHQvYXVkaXQtcmVzdWx0IiwKICAibGFiZWxzIjogW10sCiAgInZpZXdzIjogW10sCiAgImVycm9ycyI6IFtdLAogICJuZXR3b3JrIjogW10sCiAgInV4IjogewogICAgInZpZXdwb3J0IjogMzkwLAogICAgImRvY3VtZW50V2lkdGgiOiAzOTAsCiAgICAidW5uYW1lZEJ1dHRvbnMiOiAwLAogICAgInVubGFiZWxlZElucHV0cyI6IFtdCiAgfQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-2c902a82da7242ffad5d",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /student/quiz/audit-teacher-exam",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10648,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:05:58.645Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvc3R1ZGVudC9xdWl6L2F1ZGl0LXRlYWNoZXItZXhhbSIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMCwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-581cfcb93a4c670c4a30",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "admin route /student/results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 21136,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:06:09.324Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvc3R1ZGVudC9yZXN1bHRzIiwKICAibGFiZWxzIjogW10sCiAgInZpZXdzIjogW10sCiAgImVycm9ycyI6IFtdLAogICJuZXR3b3JrIjogW10sCiAgInV4IjogewogICAgInZpZXdwb3J0IjogMzkwLAogICAgImRvY3VtZW50V2lkdGgiOiAzOTAsCiAgICAidW5uYW1lZEJ1dHRvbnMiOiAwLAogICAgInVubGFiZWxlZElucHV0cyI6IFsKICAgICAgewogICAgICAgICJwbGFjZWhvbGRlciI6ICJCYcWfbMSxayBpbGUgYXJhLi4uIiwKICAgICAgICAidHlwZSI6IG51bGwKICAgICAgfQogICAgXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-ac493bcbbdd2dd8073bb",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 45
+        },
+        {
+          "title": "profile state after save and navigation",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 833,
+                  "error": {
+                    "message": "Error: page.evaluate: TypeError: Failed to execute 'fetch' on 'Window': Failed to parse URL from /api/csrf-token\n    at eval (eval at evaluate (:311:30), <anonymous>:6:21)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                    "stack": "Error: page.evaluate: TypeError: Failed to execute 'fetch' on 'Window': Failed to parse URL from /api/csrf-token\n    at eval (eval at evaluate (:311:30), <anonymous>:6:21)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at eval (eval at evaluate (:311:30), <anonymous>:6:21)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at api (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:24:78)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:36:22",
+                    "location": {
+                      "file": "eval at evaluate (:311:30), <anonymous>",
+                      "column": 21,
+                      "line": 6
+                    }
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "eval at evaluate (:311:30), <anonymous>",
+                        "column": 21,
+                        "line": 6
+                      },
+                      "message": "Error: page.evaluate: TypeError: Failed to execute 'fetch' on 'Window': Failed to parse URL from /api/csrf-token\n    at eval (eval at evaluate (:311:30), <anonymous>:6:21)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at eval (eval at evaluate (:311:30), <anonymous>:6:21)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at api (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:24:78)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:36:22"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:06:30.512Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-audit-profile-state-after-save-and-navigation\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-audit-profile-state-after-save-and-navigation\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-audit-profile-state-after-save-and-navigation\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "eval at evaluate (:311:30), <anonymous>",
+                    "column": 21,
+                    "line": 6
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-39a585da66ee26a7b298",
+          "file": "admin-audit.spec.ts",
+          "line": 34,
+          "column": 5
+        },
+        {
+          "title": "unauthorized and expired sessions",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 33228,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:06:55.734Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-65ebffc49bab4d8474c8",
+          "file": "admin-audit.spec.ts",
+          "line": 54,
+          "column": 5
+        },
+        {
+          "title": "results selector includes teacher exams",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13411,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:07:31.884Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-7c1ad7bf16078191ed2f",
+          "file": "admin-audit.spec.ts",
+          "line": 55,
+          "column": 5
+        },
+        {
+          "title": "management category create edit delete persists",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23687,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:07:45.333Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-0ec3d1b9bf9f4589fa46",
+          "file": "admin-audit.spec.ts",
+          "line": 57,
+          "column": 5
+        },
+        {
+          "title": "announcement create reload delete",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22051,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:08:09.076Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-bfa79e3f1ca50233ef6e",
+          "file": "admin-audit.spec.ts",
+          "line": 60,
+          "column": 5
+        },
+        {
+          "title": "announcement fetch error must differ from empty",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12859,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:08:31.161Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-f9d3036143d498ab0a03",
+          "file": "admin-audit.spec.ts",
+          "line": 63,
+          "column": 5
+        },
+        {
+          "title": "settings unsupported tab falls back to profile",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3777,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:08:44.059Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-8d2167adbdb833c45f22",
+          "file": "admin-audit.spec.ts",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "mobile menu keyboard dismissal and dialog focus",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6789,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:08:47.874Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-537358a32834b311ec63",
+          "file": "admin-audit.spec.ts",
+          "line": 69,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "admin-critical-repairs.spec.ts",
+      "file": "admin-critical-repairs.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "responsible teacher removal revokes legacy access and preserves independent course access after reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 44148,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:08:55.173Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "access-false",
+                      "contentType": "application/json",
+                      "body": "eyJpZCI6IjQ1MGE0ODY1LWM5ZTUtNDEwNC04MDk2LWViODJlYTE0MzdmNiIsIm5hbWUiOiJBY2Nlc3MgcmVncmVzc2lvbiA0MmI3MDRiMS1mZjRmLTQ4YmItODZlNS1lZGIyNTg5MzE2ZDYiLCJkZXNjcmlwdGlvbiI6bnVsbCwibWF4U3R1ZGVudHMiOm51bGwsImNyZWF0ZWRBdCI6IjIwMjYtMTAtMDFUMTA6MDk6MDEuODkxWiIsImNsYXNzVGVhY2hlcklkIjpudWxsLCJ0ZWFjaGVycyI6W10sInRlYWNoZXJBc3NpZ25tZW50cyI6W119"
+                    },
+                    {
+                      "name": "access-true",
+                      "contentType": "application/json",
+                      "body": "eyJpZCI6Ijc4YWUwYjA1LWFmNjUtNGUwYi04OGJkLTRjN2FmMDgxN2UzYiIsIm5hbWUiOiJBY2Nlc3MgcmVncmVzc2lvbiA0YmE4MjA4NC0yYzNkLTRiODEtOTUwNy05MGNmMWYwZDdlN2MiLCJkZXNjcmlwdGlvbiI6bnVsbCwibWF4U3R1ZGVudHMiOm51bGwsImNyZWF0ZWRBdCI6IjIwMjYtMTAtMDFUMTA6MDk6MTguNTA0WiIsImNsYXNzVGVhY2hlcklkIjpudWxsLCJ0ZWFjaGVycyI6W10sInRlYWNoZXJBc3NpZ25tZW50cyI6W3siaWQiOiJkMjkyYmY0ZS0yYWMxLTRiNTAtOGI1Zi1mOTMxYjQ5NWRmZjQiLCJjbGFzc0lkIjoiNzhhZTBiMDUtYWY2NS00ZTBiLTg4YmQtNGM3YWYwODE3ZTNiIiwidGVhY2hlcklkIjoiNGJlMjUzNDAtMmY0Zi00MWViLTk1NTQtMjZhYmRkMGVlMzAzIiwiY2F0ZWdvcnlJZCI6IjQ5Zjg0YWJlLTBiNjktNDkyYi1iNmI5LTRjMmU2ZWIzM2I1ZCIsImFzc2lnbmVkQXQiOiIyMDI2LTEwLTAxVDEwOjA5OjE4LjUwNFoifV19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05ea98e4337cd963e063-3806a7ec4eb8948cceec",
+          "file": "admin-critical-repairs.spec.ts",
+          "line": 17,
+          "column": 5
+        },
+        {
+          "title": "archive failure rolls back data; retry records one complete archive and survives reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 32116,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:09:39.722Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "archive-retry",
+                      "contentType": "application/json",
+                      "body": "eyJxdWl6SWQiOiJiODM4NTA1Yy03OTVhLTQ2M2ItODA4NS1mMGJhOWI3ZjI4MGIiLCJ5ZWFyIjoiRTJFLTcwYWNjYzAzLWQ0NGUtNDhkNC05NmM0LTFiZGM3MDhiZjQ1MCJ9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05ea98e4337cd963e063-c407f995dfed24480c50",
+          "file": "admin-critical-repairs.spec.ts",
+          "line": 82,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "admin-inventory-repairs.spec.ts",
+      "file": "admin-inventory-repairs.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "settings unknown tab falls back; valid tab links preserve browser back history",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8008,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:10:11.990Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0b4171b7072a1e5a1857-37109c19b5bb85a590b9",
+          "file": "admin-inventory-repairs.spec.ts",
+          "line": 29,
+          "column": 5
+        },
+        {
+          "title": "personal history renders persisted LOGIN records with real createdAt dates",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7479,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:10:20.021Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0b4171b7072a1e5a1857-c65536d7e8ef9b2e2593",
+          "file": "admin-inventory-repairs.spec.ts",
+          "line": 44,
+          "column": 5
+        },
+        {
+          "title": "saved profile updates the header and clean form immediately and survives navigation/reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19423,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:10:27.534Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0b4171b7072a1e5a1857-556fc6e3d0a8b658195d",
+          "file": "admin-inventory-repairs.spec.ts",
+          "line": 60,
+          "column": 5
+        },
+        {
+          "title": "announcement load failure retries; named delete cancel/failure/retry persist correctly",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14450,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:10:46.990Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0b4171b7072a1e5a1857-be400183df7c732553e2",
+          "file": "admin-inventory-repairs.spec.ts",
+          "line": 80,
+          "column": 5
+        },
+        {
+          "title": "mobile drawer traps keyboard focus, Escape closes it and returns focus",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5892,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:11:01.498Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0b4171b7072a1e5a1857-d5e71f0c042c4639b64e",
+          "file": "admin-inventory-repairs.spec.ts",
+          "line": 124,
+          "column": 5
+        },
+        {
+          "title": "header mute request failure appears in the mounted Sonner renderer",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6891,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:11:07.425Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0b4171b7072a1e5a1857-e77b9b715bcce89efd3f",
+          "file": "admin-inventory-repairs.spec.ts",
+          "line": 144,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "admin-quiz-repairs.spec.ts",
+      "file": "admin-quiz-repairs.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "admin quizzes: a failed load retries; permanent deletion records reason and impact and survives reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 31529,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:11:14.700Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f2d1d107dfa33eb7529-855d5b19e56af39e819d",
+          "file": "admin-quiz-repairs.spec.ts",
+          "line": 27,
+          "column": 5
+        },
+        {
+          "title": "published exam and survey keep their questions when legacy endpoints reject empty or invalid replacements",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6431,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:11:46.625Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f2d1d107dfa33eb7529-edea9fb32c118912aa06",
+          "file": "admin-quiz-repairs.spec.ts",
+          "line": 77,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "admin-results-regression.spec.ts",
+      "file": "admin-results-regression.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "admin results: unfinished attempts never lower averages; completed zero remains counted after reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 28740,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:11:53.151Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec832937f131c6c8c297-5a703bbca908ccb33081",
+          "file": "admin-results-regression.spec.ts",
+          "line": 16,
+          "column": 5
+        },
+        {
+          "title": "admin cache: returning to a visited class list reflects student removal without page reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15305,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:12:21.933Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec832937f131c6c8c297-cab876b8e317947a9ecb",
+          "file": "admin-results-regression.spec.ts",
+          "line": 55,
+          "column": 5
+        },
+        {
+          "title": "admin content: retry after a lost save response keeps one published exam and its question",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 25192,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:12:37.270Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec832937f131c6c8c297-b426fdec9742d811f678",
+          "file": "admin-results-regression.spec.ts",
+          "line": 92,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "admin-session-expiry.spec.ts",
+      "file": "admin-session-expiry.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "expired server session rejects a still-present browser cookie and redirects admin to login",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 2967,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-session-expiry.spec.ts:24:27",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-session-expiry.spec.ts",
+                      "column": 27,
+                      "line": 24
+                    },
+                    "snippet": "  22 |   expect((await page.request.get('/api/admin/logs?limit=1')).status()).toBe(200);\n  23 |   const cookie = (await page.context().cookies()).find(item => item.name === 'connect.sid');\n> 24 |   expect(Boolean(cookie)).toBe(true);\n     |                           ^\n  25 |   const signed = decodeURIComponent(cookie!.value);\n  26 |   expect(signed.startsWith('s:')).toBe(true);\n  27 |   const sid = signed.slice(2, signed.lastIndexOf('.'));"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-session-expiry.spec.ts",
+                        "column": 27,
+                        "line": 24
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  22 |   expect((await page.request.get('/api/admin/logs?limit=1')).status()).toBe(200);\n  23 |   const cookie = (await page.context().cookies()).find(item => item.name === 'connect.sid');\n> 24 |   expect(Boolean(cookie)).toBe(true);\n     |                           ^\n  25 |   const signed = decodeURIComponent(cookie!.value);\n  26 |   expect(signed.startsWith('s:')).toBe(true);\n  27 |   const sid = signed.slice(2, signed.lastIndexOf('.'));\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-session-expiry.spec.ts:24:27"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:13:03.937Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-session-expiry-expir-8de4c-nd-redirects-admin-to-login\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-session-expiry-expir-8de4c-nd-redirects-admin-to-login\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-session-expiry-expir-8de4c-nd-redirects-admin-to-login\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-session-expiry.spec.ts",
+                    "column": 27,
+                    "line": 24
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "8f2fd1abcb1737b2f383-9a15e55c659c1370700f",
+          "file": "admin-session-expiry.spec.ts",
+          "line": 17,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-01T09:52:59.466Z",
+    "duration": 1211444.5,
+    "expected": 53,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

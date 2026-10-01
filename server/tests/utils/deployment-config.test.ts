@@ -2,6 +2,11 @@ import { describe, expect, it } from "vitest";
 import { buildDeploymentArtifacts, deploymentConfigSchema, normalizeBasePath } from "../../utils/deployment-config";
 
 describe("deployment configuration", () => {
+  it('malformed localhost URLs return validation issues instead of throwing', () => {
+    let result: ReturnType<typeof deploymentConfigSchema.safeParse> | undefined;
+    expect(() => { result = deploymentConfigSchema.safeParse({ mode: 'localhost', publicUrl: 'invalid', allowedOrigins: ['http://localhost:5000'] }); }).not.toThrow();
+    expect(result?.success).toBe(false);
+  });
   it("alt yolu tek biçime getirir ve geçersiz karakterleri reddeder", () => {
     expect(normalizeBasePath("quizmaster/" )).toBe("/quizmaster");
     expect(normalizeBasePath("/")).toBe("/");

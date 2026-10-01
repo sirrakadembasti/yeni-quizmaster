@@ -21,6 +21,7 @@ QuizMaster; yöneticiler, öğretmenler, öğrenciler ve veliler için rol taban
 - **Anket Yönetimi:** Sınavdan ayrılmış oluşturma ve sonuç akışı; tek seçim, çoklu seçim, açık uçlu, derecelendirme ve Likert soru türleri.
 - **Yetkilendirme:** Öğretmen yalnız yetkili olduğu sınıfları, öğrencileri, sınavları ve anketleri görür. Veli yalnız kendisiyle ilişkilendirilen öğrencilerin salt okunur sınav sonuçlarına ve soru/cevap detaylarına erişir.
 - **Öğrenci yaşam döngüsü:** Sınıf içinde benzersiz otomatik öğrenci numarası, manuel değişikliğe kapalı alan ve sınav/sınıf geçmişini koruyan pasife alma.
+- **Yönetici işlem tutarlılığı:** Arşiv ve kalıcı sınav silme işlemleri işlem kaydıyla birlikte tamamlanır veya geri alınır. Sınıf kapasitesi aktif öğrencilere uygulanır; sorumlu öğretmen değişiminde bağımsız ders atamaları korunur. Ayrıntılar [onarım sözleşmelerindedir](docs/admin-audit/repair-contracts.md).
 - **Raporlama:** Anket, sınav sonucu, sınıf istatistiği, öğrenci, öğretmen ve sınıf ekranlarında A4 uyumlu yazdırma; uygun ekranlarda biçimlendirilmiş `.xlsx` Excel çıktısı.
 - **Türkçe Excel desteği:** Dışa aktarımlar gerçek Excel çalışma kitabı üretir; Türkçe karakter, sütun genişliği, başlık, filtre bilgisi ve sabit başlık satırı korunur.
 - **Duyuru ve bildirim:** Rol/sınıf hedefleme, gönderen adı ve rolü, son beş bildirim, tekil silme ve ses açma/kapatma.

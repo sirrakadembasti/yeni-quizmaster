@@ -12,3 +12,13 @@ export function invalidateAdminRelations(client: QueryClient) {
     predicate: query => relationRoots.has(String(query.queryKey[0])),
   });
 }
+
+const quizRoots = new Set([
+  'quizzes', 'admin-quizzes', '/api/quizzes', '/api/admin/quizzes', 'archive-candidates',
+  'results', '/api/results', 'dashboard-stats', 'dashboard-overview', 'dashboard-logs',
+  '/api/dashboard', 'class-analytics',
+]);
+
+export function invalidateQuizData(client: QueryClient) {
+  return client.invalidateQueries({ predicate: query => quizRoots.has(String(query.queryKey[0])) });
+}

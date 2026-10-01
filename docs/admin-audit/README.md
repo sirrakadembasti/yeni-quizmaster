@@ -1,10 +1,12 @@
 # Yönetici paneli denetimi — 30 Eylül 2026
 
+> **Tarihsel denetim kaydı.** Aşağıdaki envanter, bulgular, açık iş ifadeleri ve test sayıları 30 Eylül'deki ilk denetim/önceki onarım paketlerini anlatır; güncel çalışma ağacının durumunu göstermez. 1 Ekim kalan onarımlarının kapsamı ve doğrulama durumu [güncel doğrulama kaydında](./remaining-repairs-verification.md), kabul edilen davranışlar [onarım sözleşmelerinde](./repair-contracts.md) bulunur. Öğretmen paneli denetimi henüz başlamadı.
+
 Bu rapor yalnız yönetici hesabıyla açılan sayfaları kapsar. Ayrıntılı yeniden üretim, beklenen/gerçek davranış, etki, öncelik, kod kanıtı, çözüm ve kabul ölçütleri [sistem/ayarlar](./inventory-settings.md), [kişi/sınıf](./people.md) ve [sınav/rapor](./quizzes.md) raporlarındadır. Öğrenci, öğretmen ve veli panelleri ayrıca denetlenmedi.
 
 **Düzeltme notu:** Bu belgedeki 34/7 tarayıcı sonucu ilk denetimin temel durumudur. İlk pakette PE-01 ve Q01/Q02; ikinci pakette PE-02, Q03/Q04/Q05 ve düzenleyici için Q06 düzeltildi. Hedefli API, gerçek bileşen ve Chromium regresyonları alt raporlarda belirtilir. Diğer bulgular açık kalır. Aşağıdaki öncelik listesi ilk denetimin tamamını gösterir; 34/7 güncel kodun toplu test sonucu değildir.
 
-İkinci paketin komutları, test sonuçları, ortam kısıtları ve kalan işler [doğrulama kaydındadır](./repair-verification.md).
+İkinci paketin komutları, test sonuçları, ortam kısıtları ve o tarihte kalan işler [tarihsel doğrulama kaydındadır](./repair-verification.md). Kalan onarımlar için kesinleşen güncel kanıt: istemci 19 dosyada **117/117** test geçti. Sunucu thread koşusu Prisma native Tokio paniğiyle kesildi; ayrı süreçlerle tekrarında 31 dosyada 189/189 test geçti. Kritik Chromium regresyonu 10/10 geçti. Üretim arayüzünde toplu koşu 53/55; iki test hazırlığı hatası düzeltildikten sonra hedefli tekrar 4/4 geçti. 55 benzersiz kontrol hedefli tekrarlarla doğrulandı. Güncel kanıt ve sınırlar bağlantılı rapordadır.
 
 ## Ortam ve kanıt sınırı
 
@@ -55,7 +57,7 @@ API: [kişi testleri](../../server/tests/api/admin-audit-people.test.ts) 8/8, [s
 | Sunucu/Duyurular | Görünür hata/başarı toast'ı; yükleme-hata-boş ayrımı; kaydedilmemiş politika ile temizlemeyi engelle; silmede onay | Orta-yüksek / orta |
 | Tüm sayfalar | Anlamlı kontrol adları, klavye odak/menü kapatma, mobil tabloda kaydırma ipucu ve hata yeniden deneme | Orta / orta |
 
-Her kod değişikliğinin ayrıntılı kabul koşulu Q/PE/INV numaralı alt rapor maddesindedir. İkinci paket atomik kayıt, ilişkisel cache ve sonuç hesaplaması/seçicisini kapsar. PE-05 ve INV04 dahil kalan işler bu plan içinde açıktır; eski öğretmen bağının kaldırılma politikası ayrıca ürün tercihi bekler.
+Her kod değişikliğinin ilk kabul koşulu Q/PE/INV numaralı alt rapor maddesindedir. İkinci paket atomik kayıt, ilişkisel cache ve sonuç hesaplaması/seçicisini kapsar. PE-05 için eski genel öğretmen bağının kaldırılması politikası artık [onarım sözleşmesinde](./repair-contracts.md) belirlenmiştir; INV04 arşiv atomikliği de kalan onarım kapsamındadır. Uygulanan değişikliklerin güncel doğrulama sınırları [ayrı kayıtta](./remaining-repairs-verification.md) tutulur.
 
 ## Tekrar çalıştırma
 

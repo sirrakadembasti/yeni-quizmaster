@@ -12,7 +12,8 @@ const retentionSchema = z.object({
 });
 
 const originSchema = z.string().url().refine((value) => {
-  const parsed = new URL(value);
+  let parsed: URL;
+  try { parsed = new URL(value); } catch { return false; }
   const normalized = value.replace(/\/$/, "");
   return !parsed.username
     && !parsed.password
@@ -60,7 +61,8 @@ export const deploymentConfigSchema = z.object({
     context.addIssue({ code: z.ZodIssueCode.custom, path: ["basePath"], message: "Alt yol kurulumunda /quizmaster gibi bir yol gereklidir." });
   }
   if (value.mode === "localhost") {
-    const host = new URL(value.publicUrl).hostname;
+    let host: string;
+    try { host = new URL(value.publicUrl).hostname; } catch { return; }
     if (!["localhost", "127.0.0.1", "::1"].includes(host)) {
       context.addIssue({
         code: z.ZodIssueCode.custom,

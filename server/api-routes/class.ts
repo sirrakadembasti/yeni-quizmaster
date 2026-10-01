@@ -4,6 +4,7 @@ import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { canAccessClass } from "../utils/class-authorization";
+import { respondToClassError } from '../utils/class-errors';
 
 const router: Router = Router();
 
@@ -100,13 +101,15 @@ router.post("/", requireAuth, requireRole(["admin"]), async (req: AuthRequest, r
     const cls = await storage.createClass({
       ...validation.data,
       teacherId: validation.data.teacherId ?? undefined,
-      classTeacherId: validation.data.classTeacherId ?? undefined,
+      classTeacherId: Object.prototype.hasOwnProperty.call(validation.data, 'classTeacherId') ? validation.data.classTeacherId : validation.data.teacherId,
     });
     res.status(201).json(cls);
   } catch (error: any) {
     if (error.message === "CLASS_EXISTS") {
       return res.status(400).json({ message: "Bu isimde bir sınıf zaten mevcut." });
     }
+    if (error.message === 'INVALID_CLASS_TEACHER') return res.status(400).json({ message: 'Aktif bir öğretmen seçin.' });
+    if (respondToClassError(error, res)) return;
     res.status(500).json({ message: "Sınıf oluşturulamadı." });
   }
 });
@@ -117,13 +120,18 @@ router.patch("/:id", requireAuth, requireRole(["admin"]), async (req: AuthReques
     if (!validation.success) {
       return res.status(400).json({ message: fromZodError(validation.error).message });
     }
-    const cls = await storage.updateClass(req.params.id, validation.data);
+    const cls = await storage.updateClass(req.params.id, {
+      ...validation.data,
+      classTeacherId: Object.prototype.hasOwnProperty.call(validation.data, 'classTeacherId') ? validation.data.classTeacherId : validation.data.teacherId,
+    });
     if (!cls) return res.status(404).json({ message: "Sınıf bulunamadı." });
     res.json(cls);
   } catch (error: any) {
     if (error.message === "CLASS_EXISTS") {
       return res.status(400).json({ message: "Bu isimde bir sınıf zaten mevcut." });
     }
+    if (error.message === 'INVALID_CLASS_TEACHER') return res.status(400).json({ message: 'Aktif bir öğretmen seçin.' });
+    if (respondToClassError(error, res)) return;
     res.status(500).json({ message: "Sınıf güncellenemedi." });
   }
 });
@@ -141,7 +149,7 @@ router.post("/:id/teachers", requireAuth, requireRole(["admin"]), async (req: Au
   try {
     const { teacherId } = req.body;
     const teacher = await storage.getUser(teacherId);
-    if (!teacher || teacher.role !== 'teacher') {
+    if (!teacher || teacher.role !== 'teacher' || !teacher.isActive) {
       return res.status(400).json({ message: "Geçersiz öğretmen ID." });
     }
     await storage.assignTeacherToClass(teacherId, req.params.id);
@@ -183,6 +191,7 @@ router.post("/:id/students", requireAuth, requireRole(["admin", "teacher"]), asy
     await storage.assignStudentToClass(studentId, req.params.id);
     res.json({ message: "Öğrenci sınıfa eklendi." });
   } catch (error) {
+    if (respondToClassError(error, res)) return;
     res.status(500).json({ message: "Öğrenci eklenemedi." });
   }
 });
@@ -255,10 +264,14 @@ router.delete("/teachers/:id/categories/:categoryId", requireAuth, requireRole([
 // Triple Relationship: Teacher -> Class -> Course
 router.post("/:id/teachers-with-course", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
   try {
-    const { teacherId, categoryId } = req.body;
+    const validation = z.object({ teacherId: z.string().uuid(), categoryId: z.string().uuid() }).safeParse(req.body);
+    if (!validation.success) return res.status(400).json({ message: fromZodError(validation.error).message });
+    const { teacherId, categoryId } = validation.data;
     await storage.assignTeacherToClassWithCourse(req.params.id, teacherId, categoryId);
     res.json({ message: "Öğretmen sınıfa ilgili dersle birlikte atandı." });
   } catch (error: any) {
+    if (error.message === 'INVALID_CLASS_TEACHER') return res.status(400).json({ message: 'Aktif bir öğretmen seçin.' });
+    if (error.message === 'CLASS_NOT_FOUND' || error.message === 'CATEGORY_NOT_FOUND') return res.status(404).json({ message: 'Sınıf veya ders bulunamadı.' });
     res.status(500).json({ message: "Atama başarısız: " + error.message });
   }
 });

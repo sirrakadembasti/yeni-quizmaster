@@ -1,3 +1,4 @@
+import { AdminQueryState } from "@/components/management/AdminQueryState";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { 
   Table, 
@@ -30,15 +31,18 @@ export default function ClassesPage() {
   const { role } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { data: classesData, isLoading: isClassesLoading } = useQuery({
+  const classesQuery = useQuery({
     queryKey: ['/api/classes'],
     queryFn: () => role === 'admin' ? classApi.getAllClasses() : classApi.getTeacherClasses(),
   });
 
-  const { data: usersData } = useQuery({
+  const usersQuery = useQuery({
     queryKey: ['/api/users'],
     queryFn: () => userApi.getAllUsers(),
   });
+
+  const { data: classesData, isLoading: isClassesLoading } = classesQuery;
+  const { data: usersData } = usersQuery;
 
   const classes = classesData?.classes || [];
   const students = usersData?.users.filter(u => u.role === 'student') || [];
@@ -60,6 +64,8 @@ export default function ClassesPage() {
     ],
     rows: filteredClasses,
   });
+  const pageQueries = [classesQuery, usersQuery];
+  if (pageQueries.some(query => query.isPending || query.isError)) return <DashboardLayout><AdminQueryState queries={pageQueries} /></DashboardLayout>;
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -86,6 +92,7 @@ export default function ClassesPage() {
           <div className="relative group max-w-sm">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
             <Input 
+              aria-label="Sınıf ara"
               placeholder="Sınıf ara..." 
               className="rounded-xl border-input bg-card pl-10 shadow-sm transition-colors focus:border-primary/50"
               value={searchTerm}

@@ -31,22 +31,25 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { format, isAfter, subMonths } from "date-fns";
+import { format, subMonths } from "date-fns";
 import { tr } from "date-fns/locale";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Switch } from "@/components/ui/switch";
-import { useLocation } from "wouter";
+import { useLocation, useSearch } from "wouter";
 import { removeNotification, type NotificationPage } from "@/lib/notification-cache";
 
 export default function SettingsPage() {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [currentLocation] = useLocation();
+  const [, setLocation] = useLocation();
+  const search = useSearch();
   
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const [notificationPage, setNotificationPage] = useState(1);
+  const [historyPage, setHistoryPage] = useState(1);
+  const [historyStartDate] = useState(() => subMonths(new Date(), 6).toISOString());
   
   const [formData, setFormData] = useState({
     name: "",
@@ -62,7 +65,7 @@ export default function SettingsPage() {
   });
 
   // Notifications Query
-  const { data: notificationsData } = useQuery({
+  const { data: notificationsData, isLoading: notificationsLoading, isError: notificationsError, error: notificationError, refetch: retryNotifications } = useQuery({
     queryKey: ["notifications", "all", notificationPage],
     queryFn: () => notificationApi.getUserNotifications(notificationPage, 20),
     enabled: !!user
@@ -75,18 +78,15 @@ export default function SettingsPage() {
   });
 
   // Logs Query (6 months)
-  const { data: logsData, isLoading: logsLoading } = useQuery({
-    queryKey: ['dashboard-logs', user?.id],
-    queryFn: () => adminApi.getLogsMe(),
+  const { data: logsData, isLoading: logsLoading, isError: logsError, error: logError, refetch: retryLogs } = useQuery({
+    queryKey: ['settings-logs', user?.id, historyPage, historyStartDate],
+    queryFn: () => adminApi.getLogsMe({ page: historyPage, limit: 50, startDate: historyStartDate }),
     enabled: !!user && activeTab === "logs"
   });
 
   const notifications = notificationsData?.notifications || [];
-  const logs = useMemo(() => {
-    if (!logsData?.logs) return [];
-    const sixMonthsAgo = subMonths(new Date(), 6);
-    return logsData.logs.filter((log: any) => isAfter(new Date(log.timestamp), sixMonthsAgo));
-  }, [logsData]);
+  const logs = logsData?.logs || [];
+  const historyTotalPages = Math.max(1, logsData?.pagination?.totalPages ?? 1);
 
   const markAllReadMutation = useMutation({
     mutationFn: () => notificationApi.markAllAsRead(),
@@ -130,18 +130,19 @@ export default function SettingsPage() {
       toast({
         title: preferences.muted ? "Bildirimler sessize alındı" : "Bildirimlerin sesi açıldı"
       });
-    }
+    },
+    onError: () => toast({ title: "Hata", description: "Bildirim tercihleri güncellenemedi. Lütfen tekrar deneyin.", variant: "destructive" })
   });
 
   const notificationsMuted = notificationPreferences?.muted ?? false;
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(search);
     const tab = params.get("tab");
-    if (tab) {
-      setActiveTab(tab);
-    }
+    setActiveTab(tab && ["profile", "notifications", "logs", "security"].includes(tab) ? tab : "profile");
+  }, [search]);
 
+  useEffect(() => {
     if (user) {
       setFormData({
         name: user.name || "",
@@ -150,7 +151,7 @@ export default function SettingsPage() {
         address: user.address || ""
       });
     }
-  }, [user, currentLocation]);
+  }, [user]);
 
   const isProfileChanged = useMemo(() => {
     if (!user) return false;
@@ -169,7 +170,8 @@ export default function SettingsPage() {
     
     setLoading(true);
     try {
-      await authApi.updateProfile(formData);
+      const { user: updatedUser } = await authApi.updateProfile(formData);
+      updateUser(updatedUser);
       queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
       toast({ title: "Başarılı", description: "Profil bilgileriniz güncellendi." });
     } catch (error: any) {
@@ -218,7 +220,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs value={activeTab} onValueChange={(tab) => { setActiveTab(tab); setLocation(`/settings?tab=${tab}`); }} className="space-y-6">
           <TabsList className="bg-muted/50 p-1 rounded-xl w-full max-w-2xl overflow-x-auto h-auto">
             <TabsTrigger value="profile" className="gap-2 rounded-lg py-2 px-4 whitespace-nowrap">
               <UserIcon className="h-4 w-4" /> Profil Bilgileri
@@ -440,7 +442,14 @@ export default function SettingsPage() {
                   />
                 </div>
                 <ScrollArea className="h-[400px]">
-                  {notifications.length > 0 ? (
+                  {notificationsLoading ? (
+                    <p role="status" className="py-12 text-center text-muted-foreground">Bildirimler yükleniyor...</p>
+                  ) : notificationsError ? (
+                    <div role="alert" className="space-y-3 p-6 text-center">
+                      <p>Bildirimler yüklenemedi. {notificationError instanceof Error ? notificationError.message : "Lütfen tekrar deneyin."}</p>
+                      <Button variant="outline" onClick={() => retryNotifications()}>Tekrar dene</Button>
+                    </div>
+                  ) : notifications.length > 0 ? (
                     <div className="divide-y divide-border/50">
                       {notifications.map((notification: any) => (
                         <div key={notification.id} className={cn(
@@ -522,7 +531,7 @@ export default function SettingsPage() {
                     <CardDescription>Son 6 ay içinde gerçekleştirdiğiniz tüm sistem hareketleri.</CardDescription>
                   </div>
                   <Badge variant="outline" className="gap-1.5 py-1.5 px-4 rounded-full border-blue-200 bg-blue-50 text-blue-700 font-bold">
-                    <History className="h-3.5 w-3.5" /> {logs.length} İşlem
+                    <History className="h-3.5 w-3.5" /> {logsData?.pagination?.total ?? logs.length} İşlem
                   </Badge>
                 </div>
               </CardHeader>
@@ -530,6 +539,11 @@ export default function SettingsPage() {
                 {logsLoading ? (
                   <div className="flex items-center justify-center py-20">
                     <Loader2 className="h-8 w-8 animate-spin text-primary opacity-20" />
+                  </div>
+                ) : logsError ? (
+                  <div role="alert" className="space-y-3 p-6 text-center">
+                    <p>İşlem geçmişi yüklenemedi. {logError instanceof Error ? logError.message : "Lütfen tekrar deneyin."}</p>
+                    <Button variant="outline" onClick={() => retryLogs()}>Tekrar dene</Button>
                   </div>
                 ) : logs.length > 0 ? (
                   <div className="overflow-x-auto">
@@ -561,10 +575,10 @@ export default function SettingsPage() {
                             <td className="py-4 px-6 text-right">
                               <div className="flex flex-col items-end">
                                 <span className="text-sm font-bold text-foreground">
-                                  {format(new Date(log.timestamp), "d MMM yyyy", { locale: tr })}
+                                  {format(new Date(log.createdAt ?? log.timestamp), "d MMM yyyy", { locale: tr })}
                                 </span>
                                 <span className="text-[10px] text-muted-foreground font-medium">
-                                  {format(new Date(log.timestamp), "HH:mm:ss")}
+                                  {format(new Date(log.createdAt ?? log.timestamp), "HH:mm:ss")}
                                 </span>
                               </div>
                             </td>
@@ -580,6 +594,13 @@ export default function SettingsPage() {
                     </div>
                     <p className="text-muted-foreground font-bold">Herhangi bir işlem geçmişi bulunamadı.</p>
                     <p className="text-xs text-muted-foreground max-w-xs mt-1">Sistemdeki hareketleriniz burada listelenecektir.</p>
+                  </div>
+                )}
+                {!logsLoading && !logsError && historyTotalPages > 1 && (
+                  <div className="flex items-center justify-between border-t border-border/50 px-4 py-3">
+                    <Button variant="outline" size="sm" disabled={historyPage <= 1} onClick={() => setHistoryPage(page => Math.max(1, page - 1))}>Önceki</Button>
+                    <span className="text-xs font-medium text-muted-foreground">Sayfa {historyPage} / {historyTotalPages}</span>
+                    <Button variant="outline" size="sm" disabled={historyPage >= historyTotalPages} onClick={() => setHistoryPage(page => page + 1)}>Sonraki</Button>
                   </div>
                 )}
               </CardContent>

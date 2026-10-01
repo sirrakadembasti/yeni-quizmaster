@@ -1028,13 +1028,21 @@ export const adminApi = {
     const response = await apiFetch(`${API_BASE}/admin/logs?${params.toString()}`, {
       credentials: "include",
     });
-    return handleResponse<{ logs: any[] }>(response);
+    return handleResponse<{ logs: any[]; pagination: { page: number; limit: number; total: number; totalPages: number } }>(response);
   },
-  async getLogsMe() {
-    const response = await apiFetch(`${API_BASE}/admin/logs/me`, {
+  async getLogsMe(filters?: { page?: number; limit?: number; startDate?: string }) {
+    const params = new URLSearchParams();
+    if (filters?.page) params.set('page', String(filters.page));
+    if (filters?.limit) params.set('limit', String(filters.limit));
+    if (filters?.startDate) params.set('startDate', filters.startDate);
+    const response = await apiFetch(`${API_BASE}/admin/logs/me?${params}`, {
       credentials: "include",
     });
-    return handleResponse<{ logs: any[] }>(response);
+    return handleResponse<{ logs: any[]; pagination: { page: number; limit: number; total: number; totalPages: number } }>(response);
+  },
+  async getArchiveCandidates() {
+    const response = await apiFetch(`${API_BASE}/admin/archive/preview`, { credentials: 'include' });
+    return handleResponse<{ quizzes: number; results: number }>(response);
   },
   async archiveYear(academicYear: string) {
     const response = await apiFetch(`${API_BASE}/admin/archive`, {

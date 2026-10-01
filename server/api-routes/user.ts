@@ -1,6 +1,7 @@
 import { disconnectUserSockets } from "../socket";
 import { z } from "zod";
 import { Router, type Response } from "express";
+import { respondToClassError } from '../utils/class-errors';
 import { storage } from "../storage";
 import bcrypt from "bcryptjs";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
@@ -209,7 +210,8 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
     const { password: _, ...userWithoutPassword } = user;
     res.status(201).json({ user: userWithoutPassword });
   } catch (error) {
-    res.status(500).json({ message: "Kullanıcı oluşturulamadı." });
+      if (respondToClassError(error, res)) return;
+      res.status(500).json({ message: "Kullanıcı oluşturulamadı." });
   }
 });
 
@@ -378,7 +380,8 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
   } catch (error) {
     console.error("[PATCH /api/users/:id] Error:", error);
     if ((error as any)?.code === "P2002") return res.status(409).json({ message: "Bu e-posta adresi zaten kullanılıyor." });
-    res.status(500).json({ message: "Kullanıcı güncellenemedi." });
+      if (respondToClassError(error, res)) return;
+      res.status(500).json({ message: "Kullanıcı güncellenemedi." });
   }
 });
 router.delete("/:id", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {

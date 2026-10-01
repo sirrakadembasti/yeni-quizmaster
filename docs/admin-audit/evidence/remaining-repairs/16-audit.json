@@ -1,0 +1,19 @@
+{
+  "route": "/quizzes/audit-exam",
+  "labels": [
+    "Sınav Ayarları",
+    "Sorular (1)"
+  ],
+  "views": [
+    "Sınav Ayarları",
+    "Sorular (1)"
+  ],
+  "errors": [],
+  "network": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 4,
+    "unlabeledInputs": []
+  }
+}

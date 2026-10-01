@@ -14,6 +14,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   register: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
+  updateUser: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,6 +24,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [, setLocation] = useLocation();
+
+  const updateUser = (updatedUser: User) => {
+    setUser(updatedUser);
+    setIsAuthenticated(true);
+    saveOfflineUser(updatedUser);
+  };
 
   // Check if user is already logged in on mount.
   // We also pre-fetch the CSRF token here to warm up the session before
@@ -112,7 +119,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       loading,
       login,
       register,
-      logout
+      logout,
+      updateUser
     }}>
       {children}
     </AuthContext.Provider>

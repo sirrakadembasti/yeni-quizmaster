@@ -14,6 +14,9 @@ if (dirname(isolatedRoot) !== expectedParent || !/^quizmaster-test-admin-audit-/
 // Root config uses one worker; keep tests independent so a desired-UX failure
 // does not skip the subsequent persisted-profile check.
 test.describe.configure({ mode: 'default' });
+test.beforeEach(async ({ baseURL }) => {
+  if (baseURL !== 'http://127.0.0.1:5511') throw new Error('System flow audit must target the disposable browser server on 127.0.0.1:5511.');
+});
 
 async function login(page: Page) {
   const base = 'http://127.0.0.1:5511';
@@ -196,9 +199,10 @@ test('deployment invalid origin receives API 400 and visible error instead of si
   const response = await failed;
   expect.soft(response.status()).toBe(400);
   await info.attach('invalid-deployment-response', { body: await response.text(), contentType: 'application/json' });
-  await page.screenshot({ path: 'docs/admin-audit/evidence/deployment-invalid-profile.png', fullPage: true });
-  // Desired UX assertion intentionally exposes the absent Sonner renderer.
-  await expect.soft(page.getByText('Yapılandırma geçersiz.', { exact: true })).toBeVisible();
+  await page.screenshot({ path: 'docs/admin-audit/evidence/remaining-repairs/deployment-invalid-profile.png', fullPage: true });
+  const errorToast = page.locator('[data-sonner-toast]').filter({ hasText: 'Yapılandırma geçersiz' });
+  await expect.soft(errorToast).toBeVisible();
+  await expect.soft(errorToast).toContainText('publicUrl');
 });
 
 test('deployment profile saves only under isolated root and survives HTTP reload', async ({ page }) => {

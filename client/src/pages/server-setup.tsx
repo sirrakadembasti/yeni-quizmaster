@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { AdminQueryState } from '@/components/management/AdminQueryState';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Clipboard, Database, HardDrive, RefreshCw, Save, ServerCog, ShieldAlert, XCircle } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
@@ -56,6 +57,9 @@ export default function ServerSetupPage() {
   const queryClient = useQueryClient();
   const [form, setForm] = useState<DeploymentConfig>(emptyConfig);
   const [originsText, setOriginsText] = useState(emptyConfig.allowedOrigins.join("\n"));
+  const baseline = useRef<DeploymentConfig | null>(null);
+  const origins = useMemo(() => originsText.split(/[\n,]/).map((value) => value.trim()).filter(Boolean), [originsText]);
+  const dirty = baseline.current !== null && JSON.stringify({ ...form, allowedOrigins: origins }) !== JSON.stringify(baseline.current);
 
   const statusQuery = useQuery({
     queryKey: ["deployment-status"],
@@ -65,6 +69,8 @@ export default function ServerSetupPage() {
 
   useEffect(() => {
     if (!statusQuery.data) return;
+    if (dirty) return;
+    baseline.current = statusQuery.data.config;
     setForm(statusQuery.data.config);
     setOriginsText(statusQuery.data.config.allowedOrigins.join("\n"));
   }, [statusQuery.data]);
@@ -72,6 +78,9 @@ export default function ServerSetupPage() {
   const saveMutation = useMutation({
     mutationFn: deploymentApi.saveConfiguration,
     onSuccess: (data) => {
+      baseline.current = data.config;
+      setForm(data.config);
+      setOriginsText(data.config.allowedOrigins.join("\n"));
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ["deployment-status"] });
     },
@@ -80,13 +89,14 @@ export default function ServerSetupPage() {
 
   const retentionMutation = useMutation({
     mutationFn: deploymentApi.runRetention,
-    onSuccess: (data) => toast.success(data.message),
+    onSuccess: (data) => toast.success(data.message, { description: `İşlem logu: ${data.result.actionLogs ?? 0}; okunmuş bildirim: ${data.result.readNotifications ?? 0}; e-posta: ${data.result.emailLogs ?? 0}; parola talebi: ${data.result.passwordResets ?? 0} kayıt silindi.` }),
     onError: (error: Error) => toast.error(error.message || "Bakım işi çalıştırılamadı."),
   });
 
-  const origins = useMemo(() => originsText.split(/[\n,]/).map((value) => value.trim()).filter(Boolean), [originsText]);
   const artifacts = statusQuery.data?.artifacts;
   const changesAllowed = statusQuery.data?.runtimeChangesAllowed === true;
+  const policyMatchesSaved = JSON.stringify(form.retention) === JSON.stringify(statusQuery.data?.config.retention);
+  const cleanupReady = !dirty && policyMatchesSaved && !statusQuery.isFetching && !statusQuery.isError && statusQuery.data?.config.retention.enabled === true;
 
   const save = () => {
     if (form.mode === "subdomain" && form.basePath !== "/") {
@@ -101,18 +111,20 @@ export default function ServerSetupPage() {
   };
 
   const runRetention = () => {
-    if (!form.retention.enabled) {
+    if (!cleanupReady) {
       toast.error("Önce saklama politikasını etkinleştirip kaydedin.");
       return;
     }
-    if (window.confirm("Belirlenen süreleri aşan operasyon kayıtları kalıcı olarak silinecek. Devam edilsin mi?")) {
+    if (window.confirm(`İşlem logu ${form.retention.actionLogDays}, okunmuş bildirim ${form.retention.readNotificationDays}, e-posta ${form.retention.emailLogDays}, tamamlanmış parola talebi ${form.retention.passwordResetDays} günden eskiyse kalıcı silinecek. Devam edilsin mi?`)) {
       retentionMutation.mutate();
     }
   };
 
+  if (!statusQuery.data && (statusQuery.isPending || statusQuery.isError)) return <DashboardLayout><AdminQueryState queries={[statusQuery]} /></DashboardLayout>;
   return (
     <DashboardLayout>
       <div className="mx-auto max-w-7xl space-y-6 p-4 md:p-6">
+        {statusQuery.isError && <AdminQueryState queries={[statusQuery]} />}
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
           <div>
             <h1 className="flex items-center gap-3 text-3xl font-black"><ServerCog className="h-8 w-8 text-primary" />Sunucu Durumu</h1>
@@ -186,7 +198,9 @@ export default function ServerSetupPage() {
                 ['passwordResetDays', 'Parola talebi (gün)'],
               ] as const).map(([key, label]) => <div className="space-y-2" key={key}><Label>{label}</Label><Input type="number" min={key === 'actionLogDays' ? 30 : 7} max={3650} value={form.retention[key]} onChange={(event) => setForm((current) => ({ ...current, retention: { ...current.retention, [key]: Number(event.target.value) } }))} /></div>)}
             </div>
-            <div className="flex flex-wrap gap-3"><Button onClick={save} disabled={saveMutation.isPending || !changesAllowed}><Save className="mr-2 h-4 w-4" />Politikayı Kaydet</Button><Button variant="destructive" onClick={runRetention} disabled={retentionMutation.isPending || !form.retention.enabled || !changesAllowed}>Şimdi Temizle</Button></div>
+            <div className="flex flex-wrap gap-3"><Button onClick={save} disabled={saveMutation.isPending || !changesAllowed}><Save className="mr-2 h-4 w-4" />Politikayı Kaydet</Button><Button variant="destructive" onClick={runRetention} disabled={retentionMutation.isPending || !cleanupReady || !changesAllowed}>Şimdi Temizle</Button></div>
+            {dirty && <p role="status" className="text-sm text-muted-foreground">Kaydedilmemiş değişiklikler var. Temizlikten önce politikayı kaydedin.</p>}
+            {!dirty && !policyMatchesSaved && statusQuery.data && <div role="status"><p>Kaydedilen politika değişti. Temizlikten önce güncel profili yükleyin.</p><Button variant="outline" onClick={() => { const config = statusQuery.data!.config; baseline.current = config; setForm(config); setOriginsText(config.allowedOrigins.join('\n')); }}>Kaydedilen Profili Yükle</Button></div>}
           </CardContent>
         </Card>
 

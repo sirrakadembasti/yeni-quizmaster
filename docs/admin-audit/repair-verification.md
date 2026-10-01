@@ -1,5 +1,7 @@
 # İkinci admin onarım paketi — doğrulama
 
+> **Tarihsel paket doğrulaması.** Bu dosyadaki 153/153, 53/53, build/type-check, Chromium ve Graphify sonuçları ikinci paketin 30 Eylül 2026 koşularına aittir. Daha sonraki kalan onarımlar için yeniden başarı kanıtı değildir. Güncel sonuçlar ve bekleyen kontroller [kalan onarımlar doğrulama kaydında](./remaining-repairs-verification.md), güncel davranış politikası [onarım sözleşmelerindedir](./repair-contracts.md).
+
 30 Eylül 2026. Q03/Q04/Q05, düzenleyici için Q06 ve PE02 giderildi. İlk paket PE01/Q01/Q02'yi kapsıyordu. Diğer panel denetimleri ve kalan admin bulguları tamamlanmış sayılmaz.
 
 | Kontrol | Sonuç |
@@ -21,4 +23,4 @@ API testleri gerçek geçici Prisma/SQLite kullanır. Veri yazımı sırasında 
 
 Gerçek `server/data/quiz.db` başlangıç SHA-256, boyut ve mtime değerleriyle aynı kaldı. Kullanıcının mevcut `DeploymentConfig.mode` ve `server-setup.tsx` düzenlemeleri korunur; API dosyasında yalnız transport helper export'ları bu pakete aittir. Hibrit kurulum kodu değiştirilmedi; taze terminal/bat/sh/web kurulumu bu pakette E2E sınanmadı.
 
-**Açık yüksek öncelikler:** PE05 eski ikinci öğretmen bağının kaldırılma politikası ürün yanıtını bekler; INV04 arşiv transaction'ı henüz düzeltilmedi. Q08'in eski POST/PATCH uçları ve raporlardaki diğer orta/düşük bulgular açık kalır. Bütün admin sayfa/sekme kontrolleri yeniden toplu çalıştırılmadı.
+**İkinci paket sonundaki tarihsel açık işler:** PE05 eski ikinci öğretmen bağının kaldırılma politikası o tarihte ürün yanıtını bekliyordu; INV04 arşiv transaction'ı henüz düzeltilmemişti. Q08'in eski POST/PATCH uçları ve raporlardaki diğer orta/düşük bulgular o paket kapsamı dışında kalmıştı. PE05 politikası artık [onarım sözleşmesinde](./repair-contracts.md) belirlenmiştir; INV04 ve eski uçların doğrulama korumaları kalan onarımların kapsamına alınmıştır. Bütün admin sayfa/sekme kontrollerinin güncel toplu başarısı bu tarihsel dosyadan çıkarılamaz.

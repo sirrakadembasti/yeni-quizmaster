@@ -1,3 +1,4 @@
+import { AdminQueryState } from "@/components/management/AdminQueryState";
 import { invalidateAdminRelations } from '@/lib/admin-cache';
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,7 +23,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { userApi, quizApi, classApi } from "@/lib/api";
 import { Link, useParams, useLocation } from "wouter";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/hooks/use-toast";
 import { UserFormModal } from "@/components/management/UserFormModal";
@@ -37,23 +38,28 @@ export default function TeacherDetailPage() {
   const [, setLocation] = useLocation();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [quizPage, setQuizPage] = useState(0);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: usersData, isLoading: usersLoading } = useQuery({
+  const usersQuery = useQuery({
     queryKey: ["users"],
     queryFn: () => userApi.getAllUsers(),
   });
 
-  const { data: quizzesData } = useQuery({
+  const quizzesQuery = useQuery({
     queryKey: ["quizzes"],
     queryFn: () => quizApi.getAllQuizzes(),
   });
 
-  const { data: classesData } = useQuery({
+  const classesQuery = useQuery({
     queryKey: ["/api/classes"],
     queryFn: () => classApi.getAllClasses(),
   });
+
+  const { data: usersData, isLoading: usersLoading } = usersQuery;
+  const { data: quizzesData } = quizzesQuery;
+  const { data: classesData } = classesQuery;
 
   const teacher = useMemo(
     () => usersData?.users.find((u) => u.id === teacherId),
@@ -101,6 +107,11 @@ export default function TeacherDetailPage() {
     [classesData, teacherId]
   );
 
+  const quizPageCount = Math.ceil(teacherQuizzes.length / 10);
+  const currentQuizPage = Math.min(quizPage, Math.max(0, quizPageCount - 1));
+  const visibleQuizzes = teacherQuizzes.length <= 20 ? teacherQuizzes : teacherQuizzes.slice(currentQuizPage * 10, (currentQuizPage + 1) * 10);
+  useEffect(() => { setQuizPage(0); }, [teacherId]);
+
   const exportTeacher = () => {
     if (!teacher) return;
     downloadCsv({
@@ -122,6 +133,8 @@ export default function TeacherDetailPage() {
       ],
     });
   };
+  const pageQueries = [usersQuery, quizzesQuery, classesQuery];
+  if (pageQueries.some(query => query.isPending || query.isError)) return <DashboardLayout><AdminQueryState queries={pageQueries} /></DashboardLayout>;
   if (usersLoading) {
     return (
       <DashboardLayout>
@@ -133,7 +146,7 @@ export default function TeacherDetailPage() {
     );
   }
 
-  if (!teacher) {
+  if (!teacher || teacher.role !== 'teacher') {
     return (
       <DashboardLayout>
         <div className="flex flex-col items-center justify-center py-32 gap-4">
@@ -155,7 +168,7 @@ export default function TeacherDetailPage() {
         <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Button variant="outline" size="icon" asChild className="rounded-xl border-2">
-              <Link href="/teachers"><ArrowLeft className="h-5 w-5" /></Link>
+              <Link href="/teachers" aria-label="Öğretmen listesine dön"><ArrowLeft className="h-5 w-5" /></Link>
             </Button>
             <div>
               <h1 className="text-3xl font-black tracking-tighter text-foreground">{teacher.name}</h1>
@@ -325,7 +338,7 @@ export default function TeacherDetailPage() {
               <CardContent className="pt-5">
                 {teacherQuizzes.length > 0 ? (
                   <div className="space-y-2">
-                    {teacherQuizzes.slice(0, 10).map((quiz: any) => (
+                    {visibleQuizzes.map((quiz: any) => (
                       <div key={quiz.id} className="flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-border">
                         <div className="flex items-center gap-2 min-w-0">
                           <FileText className="h-4 w-4 text-purple-500 shrink-0" />
@@ -344,6 +357,12 @@ export default function TeacherDetailPage() {
                   <p className="text-sm text-muted-foreground italic">Henüz sınav oluşturulmamış.</p>
                 )}
               </CardContent>
+              {teacherQuizzes.length > 20 && <nav aria-label="Öğretmenin sınav sayfaları" className="flex items-center justify-between gap-3 p-5">
+                <Button variant="outline" disabled={currentQuizPage === 0} onClick={() => setQuizPage(currentQuizPage - 1)}>Önceki Sayfa</Button>
+                <span>Sayfa {currentQuizPage + 1} / {quizPageCount}</span>
+                <Button variant="outline" disabled={currentQuizPage + 1 >= quizPageCount} onClick={() => setQuizPage(currentQuizPage + 1)}>Sonraki Sayfa</Button>
+              </nav>}
+
             </Card>
           </div>
         </div>

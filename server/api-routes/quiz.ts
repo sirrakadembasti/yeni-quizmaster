@@ -9,6 +9,7 @@ import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { canAssignClasses } from "../utils/class-authorization";
 import { shouldNotifyAdminAboutQuiz } from "../utils/notification-policy";
+import { hasInvalidQuestions } from "../utils/question-validation";
 
 const router: Router = Router();
 router.put('/:id/content', requireAuth, requireRole(['admin', 'teacher']), saveContentHandler('exam'));
@@ -139,6 +140,7 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
     }
 
     const { title, description, category, categoryId, difficulty, timeLimit, shuffleQuestions, status, contentType, assignedClassIds } = validation.data;
+    if (status === 'published') return res.status(400).json({ message: 'Yayınlamak için önce soruları kaydedin veya içerik kaydetme işlemini kullanın.' });
 
     if (!await canAssignClasses(req.user!.role, req.user!.id, assignedClassIds)) {
       return res.status(403).json({ message: "Yalnızca sorumlu olduğunuz sınıflara sınav atayabilirsiniz." });
@@ -151,12 +153,6 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
       if (found) finalCategoryId = found.id;
     }
 
-    const assignedStudentIds = new Set<string>();
-    for (const classId of assignedClassIds) {
-      const students = await storage.getStudentsByClass(classId);
-      students.forEach((student) => assignedStudentIds.add(student.id));
-    }
-
     const quiz = await storage.createQuiz({
       title,
       description,
@@ -167,8 +163,8 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
       status,
       contentType,
       createdBy: req.user!.id,
-      publishedAt: status === "published" ? new Date() : null,
-      audienceSize: status === "published" ? assignedStudentIds.size : null,
+      publishedAt: null,
+      audienceSize: null,
       assignedClassIds
     });
 
@@ -209,9 +205,9 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
       return res.status(403).json({ message: "Yalnizca yetkili oldugunuz siniflara atama yapabilirsiniz." });
     }
 
-    if (validation.data.status === "published" && existingQuiz.status !== "published") {
+    if ((validation.data.status ?? existingQuiz.status) === "published") {
       const questions = await storage.getQuestionsByQuiz(req.params.id);
-      if (questions.length === 0) return res.status(400).json({ message: "Yayinlamak icin en az bir soru gereklidir." });
+      if (questions.length === 0 || hasInvalidQuestions('exam', questions)) return res.status(400).json({ message: "Yayınlamak için geçerli sınav soruları gereklidir." });
     }
 
     const publicationFields: { publishedAt?: Date; audienceSize?: number } = {};
@@ -268,20 +264,8 @@ router.post("/:id/questions", requireAuth, requireRole(["admin", "teacher"]), as
       return res.status(403).json({ message: "Bu içeriğe soru ekleme yetkiniz yok." });
     }
 
-    const allowedSurveyTypes = new Set(["single-choice", "multiple-choice", "open-text", "rating", "likert"]);
-    if (quiz.contentType === "survey") {
-      const invalidSurveyQuestion = validation.data.some((question) => {
-        if (!allowedSurveyTypes.has(question.type)) return true;
-        if (["single-choice", "multiple-choice", "likert"].includes(question.type)) {
-          return question.options.length < 2 || question.options.some((option) => !option.trim());
-        }
-        return false;
-      });
-      if (invalidSurveyQuestion) {
-        return res.status(400).json({ message: "Anket soru türü veya seçenekleri geçersiz." });
-      }
-    } else if (validation.data.some((question) => question.options.length < 2 || !question.correctAnswer)) {
-      return res.status(400).json({ message: "Sınav sorularında seçenekler ve doğru cevap zorunludur." });
+    if (hasInvalidQuestions('exam', validation.data) || (quiz.status === 'published' && validation.data.length === 0)) {
+      return res.status(400).json({ message: "Sınav soruları, seçenekleri veya doğru cevap geçersiz." });
     }
 
     const questions = await storage.syncQuestions(req.params.id, validation.data.map((question) => ({
@@ -306,12 +290,14 @@ router.post("/:id/questions", requireAuth, requireRole(["admin", "teacher"]), as
 
 router.delete("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
+    const parsed = z.object({ reason: z.string().trim().min(5).max(1000) }).safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ message: 'En az 5 karakterlik bir silme nedeni gereklidir.' });
     const quiz = await storage.getQuiz(req.params.id);
     if (!quiz) return res.status(404).json({ message: "Sınav bulunamadı." });
     if (req.user!.role === "teacher" && quiz.createdBy !== req.user!.id) {
       return res.status(403).json({ message: "Bu sınavı silme yetkiniz yok." });
     }
-    await storage.deleteQuiz(req.params.id);
+    await storage.deleteQuizWithAudit(req.params.id, req.user!.id, parsed.data.reason);
     res.json({ message: "Sınav başarıyla silindi." });
   } catch (e) {
     res.status(500).json({ message: "Sınav silinemedi." });

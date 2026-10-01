@@ -94,6 +94,14 @@ describe('Atomic content API using disposable Prisma database', () => {
     expect(response.status).toBe(400);
     expect(await storage.getQuiz(id)).toBeUndefined();
   });
+  it.each(['exam', 'survey'])('rejects whitespace-equivalent selectable options in atomic %s saves', async contentType => {
+    actor = admin;
+    const id = randomUUID();
+    const question = { ...payload().questions[0], type: contentType === 'exam' ? 'multiple-choice' : 'single-choice', options: ['A', ' A '], correctAnswer: contentType === 'exam' ? 'A' : null };
+    const response = await request(app).put(`/${contentType === 'exam' ? 'quizzes' : 'surveys'}/${id}/content`).send(payload({ questions: [question] }));
+    expect(response.status).toBe(400);
+    expect(await storage.getQuiz(id)).toBeUndefined();
+  });
   it('clears metadata and keeps unchanged question IDs on response-lost retry after participation', async () => {
     actor = admin;
     const id = randomUUID();

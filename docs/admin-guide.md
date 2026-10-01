@@ -76,6 +76,10 @@ inceleyebilirsiniz. Atama değişikliklerini kaydettikten sonra ilgili öğretme
 3. Öğrencileri sınıfa, öğretmenleri sorumlu sınıfa ve branş derslerine atayın.
 4. Sınıf detayında mevcudu ve branş öğretmenlerini doğrulayın.
 
+Sorumlu öğretmeni kaldırmak veya değiştirmek, eski öğretmenin aynı sınıftaki genel yetkisini kaldırır. Bağımsız branş/ders atamaları korunur ve ekran kalan dersleri açıklar. Erişimi tamamen kaldırmak için kalan ders atamalarını da kaldırın. Başka bir öğretmenin atamaları etkilenmez.
+
+Sınıfta `maxStudents` sınırı tanımlanmışsa aktif öğrenciler kapasiteye sayılır. Dolu sınıfa yeni kayıt, nakil veya toplu sınıf atlatma reddedilir; mevcut öğrencinin kişisel bilgilerini düzenlemek engellenmez. Pasif öğrenciler kapasite tüketmez.
+
 Sınıf silmeden önce bağlı öğrenci, öğretmen, sınav ve anketleri kontrol edin. Liste ve detay ekranlarında **Excel** ve **Yazdır** seçeneklerini kullanabilirsiniz.
 
 ## 7. Sınav oluşturma ve yönetme
@@ -136,6 +140,8 @@ Yönetici okul geneline, role veya sınıfa duyuru gönderebilir. Duyuruda gönd
 
 Şifre talebi oluşturulduğunda eski bekleyen bağlantı iptal edilir ve yeni bağlantı Gmail Outbox kuyruğuna alınır. **Yenile** yeni token üretir; **İptal** bekleyen tokeni geçersiz kılar. Ayrıntılı kurulum için [Gmail e-posta belgesine](e-posta-yapilandirma.md) bakın.
 
+Dört log bölümünde toplam kayıt ve sayfa bilgisi gösterilir; **Önceki / Sonraki** ile geçmiş kayıtlara ulaşılır. Filtre değişiminde ilk sayfaya dönülür. Şifre taleplerinin tarih filtresi yoktur; durum ve arama filtreleri uygulanır. **Ayarlar > İşlem Geçmişi** son altı aylık kişisel kayıtları sunucu üzerinden sayfalar.
+
 ## 12. Excel ve yazdırma
 
 - **Excel** gerçek `.xlsx` dosyası indirir; Türkçe karakterler Unicode olarak korunur.
@@ -164,6 +170,14 @@ Kurulum sihirbazı son adımda **Uygulamayı başlat** düğmesi sunar:
 Kör yönlendirme yoktur; uygulama ayakta değilse “sayfaya ulaşılamıyor” yerine düğme ve açıklama gösterilir. Ayrıntılar için [Sunucu Kurulum Kılavuzu](sunucu-kurulum-kilavuzu.md) izlenmelidir.
 
 Paneldeki **Sunucu Durumu** ekranı normal kullanımda salt okunurdur. Profil kaydetme ve kalıcı saklama temizliği yalnız sunucu yöneticisinin bakım sırasında `ALLOW_RUNTIME_DEPLOYMENT_CHANGES=true` ayarını açıkça etkinleştirmesiyle açılır. Bu ayarı sürekli açık bırakmayın. Gizli anahtarlar ve Gmail uygulama parolası bu ekranda gösterilmez.
+
+**Sunucuyu Yeniden Algıla** kaydedilmemiş değişiklikleri korur. Temizlik için önce politikayı kaydedin; ekrandaki politika sunucunun güncel kayıtlı politikasıyla eşleşmelidir. Onayda kayıt türlerinin süreleri, başarılı sonuçta silinen kayıt sayıları gösterilir.
+
+### Yıl sonu arşivi ve kalıcı silme
+
+**Arşiv > Sınav Arşivi** yıl etiketi olmayan, henüz arşivlenmemiş içeriklerle etiketsiz öğrenci sonuçlarının güncel aday sayısını gösterir. Onayı inceleyip eğitim yılı etiketini girin. Veri veya işlem kaydı yazımında hata olursa bütün işlem geri alınır; aynı işlemi yeniden deneyebilirsiniz. Önceden arşivlenen içerikler yeniden etiketlenmez. Arşiv geçmişinin sonraki sayfalarına **Sonraki** düğmesiyle ulaşılır.
+
+Kalıcı sınav silme, bağlı sonuçları da kaldırır. Silme penceresinde gerekçe girilmesi zorunludur; gerekçe ve etkilenen kayıt sayıları işlem geçmişinde saklanır. İşlem kaydı yazılamazsa sınav da silinmez.
 
 - **Öğretmen bir sınıfı/öğrenciyi göremiyor:** Ders-sınıf ve öğretmen atamalarını kontrol edin.
 - **Öğrenci sınavı/anketi göremiyor:** Yayın durumunu ve sınıf atamasını kontrol edin.

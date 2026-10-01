@@ -1,5 +1,7 @@
 # Admin audit: route inventory, management, settings, server, archive, announcements
 
+> **Historical audit snapshot (30 September 2026).** Findings, source line references and open-status statements below describe the original audit and earlier repair notes, not the current tree. See [repair contracts](./repair-contracts.md) for the accepted behavior and [remaining repairs verification](./remaining-repairs-verification.md) for the current evidence and limitations. Current confirmed client result: 19 files, 117/117 tests. The server thread run hit a Prisma native Tokio panic; its fork rerun is in progress. New E2E checks have not run. The teacher-panel audit has not started.
+
 Date: 2026-09-30. Method: read-only source review of the current working tree. This document does not claim browser execution or database mutation. Existing changes to `client/src/lib/api.ts` and `client/src/pages/server-setup.tsx` were inspected but preserved. No AGENTS.md was found at the repository/client/src/pages/docs ancestor locations checked.
 
 ## Complete admin route inventory

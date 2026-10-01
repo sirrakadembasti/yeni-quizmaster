@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
@@ -60,8 +60,55 @@ interface DashboardLayoutProps {
 export function DashboardLayout({ children, hideNavigation = false }: DashboardLayoutProps) {
   const [location] = useLocation();
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
+  const menuTriggerRef = useRef<HTMLButtonElement>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
+  const [isMobileNavigation, setIsMobileNavigation] = useState(() => typeof window.matchMedia !== "function" || !window.matchMedia("(min-width: 1024px)").matches);
   const { user, role, logout } = useAuth();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (typeof window.matchMedia !== "function") return;
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const update = () => {
+      setIsMobileNavigation(!desktop.matches);
+      if (desktop.matches) setMobileNavigationOpen(false);
+    };
+    desktop.addEventListener("change", update);
+    return () => desktop.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (!mobileNavigationOpen || hideNavigation) return;
+    const sidebar = sidebarRef.current;
+    if (!sidebar) return;
+    const controls = () => Array.from(sidebar.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex="0"]'));
+    controls()[0]?.focus();
+    const keydown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setMobileNavigationOpen(false);
+      } else if (event.key === "Tab") {
+        const items = controls();
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (event.shiftKey && (document.activeElement === first || !sidebar.contains(document.activeElement))) {
+          event.preventDefault(); last?.focus();
+        } else if (!event.shiftKey && (document.activeElement === last || !sidebar.contains(document.activeElement))) {
+          event.preventDefault(); first?.focus();
+        }
+      }
+    };
+    const keepFocus = (event: FocusEvent) => {
+      if (!sidebar.contains(event.target as Node)) controls()[0]?.focus();
+    };
+    document.addEventListener("keydown", keydown);
+    document.addEventListener("focusin", keepFocus);
+    return () => {
+      document.removeEventListener("keydown", keydown);
+      document.removeEventListener("focusin", keepFocus);
+      menuTriggerRef.current?.focus();
+    };
+  }, [mobileNavigationOpen, hideNavigation]);
 
   const { data: notificationsData } = useQuery({
     queryKey: ["notifications", "nav"],
@@ -109,7 +156,8 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
     mutationFn: (muted: boolean) => notificationApi.updatePreferences(muted),
     onSuccess: (preferences) => {
       queryClient.setQueryData(["notifications", "preferences"], preferences);
-    }
+    },
+    onError: () => toast.error("Bildirim tercihleri güncellenemedi. Lütfen tekrar deneyin.")
   });
 
   const notifications = notificationsData?.notifications || [];
@@ -160,14 +208,15 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
         <button
           type="button"
           aria-label="Menüyü kapat"
+          tabIndex={-1}
           className="fixed inset-0 z-40 bg-slate-950/45 backdrop-blur-sm lg:hidden print:hidden"
           onClick={() => setMobileNavigationOpen(false)}
         />
       )}
       {!hideNavigation && (
-      <aside className={cn(
+      <aside ref={sidebarRef} id="dashboard-navigation" role={mobileNavigationOpen ? "dialog" : undefined} aria-modal={mobileNavigationOpen ? true : undefined} aria-label="Ana menü" aria-hidden={isMobileNavigation && !mobileNavigationOpen ? true : undefined} inert={isMobileNavigation && !mobileNavigationOpen ? true : undefined} className={cn(
         "fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-border/70 bg-card shadow-xl transition-transform duration-200 lg:static lg:w-64 lg:translate-x-0 lg:shadow-sm print:hidden",
-        mobileNavigationOpen ? "translate-x-0" : "-translate-x-full"
+        mobileNavigationOpen ? "translate-x-0" : "-translate-x-full invisible lg:visible"
       )}>
         <div className="p-6">
           <div className="flex items-center justify-between gap-3">
@@ -179,7 +228,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
               Quiz<span className="text-indigo-600">Master</span>
             </span>
             </div>
-            <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileNavigationOpen(false)}>
+            <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Menüyü kapat" onClick={() => setMobileNavigationOpen(false)}>
               <X className="h-5 w-5" />
             </Button>
           </div>
@@ -210,7 +259,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
       )}
 
       {/* Main Content */}
-      <main data-dashboard-main className="flex min-w-0 flex-1 flex-col overflow-hidden">
+      <main data-dashboard-main inert={mobileNavigationOpen ? true : undefined} aria-hidden={mobileNavigationOpen ? true : undefined} className="flex min-w-0 flex-1 flex-col overflow-hidden">
         {!hideNavigation && (
         <header className="flex h-16 shrink-0 items-center justify-between border-b border-border/70 bg-card/95 px-4 backdrop-blur sm:px-6 lg:justify-end lg:px-8 print:hidden">
           <Button
@@ -218,6 +267,9 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
             size="icon"
             className="lg:hidden"
             aria-label="Menüyü aç"
+            ref={menuTriggerRef}
+            aria-expanded={mobileNavigationOpen}
+            aria-controls="dashboard-navigation"
             onClick={() => setMobileNavigationOpen(true)}
           >
             <Menu className="h-5 w-5" />

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { canAssignClasses, getAuthorizedClassIds } from "../utils/class-authorization";
 import { storage } from "../storage";
+import { hasInvalidQuestions } from "../utils/question-validation";
 
 const router: Router = Router();
 router.put('/:id/content', requireAuth, requireRole(['admin', 'teacher']), saveContentHandler('survey'));
@@ -235,12 +236,9 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
     const parsed = surveyWriteSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ message: "Geçersiz anket bilgileri." });
     const { assignedClassIds, ...data } = parsed.data;
+    if (data.status === 'published') return res.status(400).json({ message: 'Yayınlamak için önce soruları kaydedin veya içerik kaydetme işlemini kullanın.' });
     if (!await canAssignClasses(req.user!.role, req.user!.id, assignedClassIds)) {
       return res.status(403).json({ message: "Yalnızca yetkili olduğunuz sınıflara anket atayabilirsiniz." });
-    }
-    const audience = new Set<string>();
-    for (const classId of assignedClassIds) {
-      (await storage.getStudentsByClass(classId)).forEach((student) => audience.add(student.id));
     }
     const survey = await storage.createQuiz({
       ...data,
@@ -248,8 +246,8 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
       timeLimit: null,
       shuffleQuestions: false,
       createdBy: req.user!.id,
-      publishedAt: data.status === "published" ? new Date() : null,
-      audienceSize: data.status === "published" ? audience.size : null,
+      publishedAt: null,
+      audienceSize: null,
       assignedClassIds,
     });
     res.status(201).json({ survey });
@@ -270,9 +268,11 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
       return res.status(403).json({ message: "Yalnızca yetkili olduğunuz sınıflara anket atayabilirsiniz." });
     }
     const publicationFields: { publishedAt?: Date; audienceSize?: number } = {};
-    if (parsed.data.status === "published" && existing.status !== "published") {
+    if ((parsed.data.status ?? existing.status) === "published") {
       const questions = await storage.getQuestionsByQuiz(existing.id);
-      if (questions.length === 0) return res.status(400).json({ message: "Yayınlamak için en az bir anket sorusu gereklidir." });
+      if (questions.length === 0 || hasInvalidQuestions('survey', questions)) return res.status(400).json({ message: "Yayınlamak için geçerli anket soruları gereklidir." });
+    }
+    if (parsed.data.status === "published" && existing.status !== "published") {
       const effectiveClassIds = assignedClassIds || ((existing as any).assignedClasses || []).map((item: any) => item.id);
       const audience = new Set<string>();
       for (const classId of effectiveClassIds) {
@@ -294,7 +294,7 @@ router.post("/:id/questions", requireAuth, requireRole(["admin", "teacher"]), as
     if (!survey || survey.contentType !== "survey") return res.status(404).json({ message: "Anket bulunamadı." });
     if (req.user!.role === "teacher" && survey.createdBy !== req.user!.id) return res.status(403).json({ message: "Bu ankete soru ekleme yetkiniz yok." });
     const parsed = surveyQuestionSchema.safeParse(req.body);
-    if (!parsed.success || parsed.data.some((question) => ["single-choice", "multiple-choice", "likert"].includes(question.type) && (question.options.length < 2 || question.options.some((option) => !option.trim())))) {
+    if (!parsed.success || hasInvalidQuestions('survey', parsed.data) || (survey.status === 'published' && parsed.data.length === 0)) {
       return res.status(400).json({ message: "Anket soruları veya seçenekleri geçersiz." });
     }
     const questions = await storage.syncQuestions(req.params.id, parsed.data.map((question) => ({ ...question, quizId: req.params.id, correctAnswer: null })));

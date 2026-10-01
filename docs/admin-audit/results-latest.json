@@ -7,9 +7,7 @@
       "--config",
       "playwright.admin-audit.config.ts",
       "--grep",
-      "admin content:|results selector includes teacher exams",
-      "--timeout",
-      "360000"
+      "profile state after save and navigation|unauthorized and expired sessions|management category create edit delete persists|expired server session"
     ],
     "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.admin-audit.config.ts",
     "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
@@ -42,9 +40,13 @@
           "admin-audit.spec.ts",
           "admin-audit-people-flows.spec.ts",
           "admin-audit-system-flows.spec.ts",
-          "admin-results-regression.spec.ts"
+          "admin-results-regression.spec.ts",
+          "admin-quiz-repairs.spec.ts",
+          "admin-inventory-repairs.spec.ts",
+          "admin-critical-repairs.spec.ts",
+          "admin-session-expiry.spec.ts"
         ],
-        "timeout": 360000
+        "timeout": 120000
       }
     ],
     "quiet": false,
@@ -87,12 +89,12 @@
       "line": 0,
       "specs": [
         {
-          "title": "results selector includes teacher exams",
+          "title": "profile state after save and navigation",
           "ok": true,
           "tags": [],
           "tests": [
             {
-              "timeout": 360000,
+              "timeout": 120000,
               "annotations": [],
               "expectedStatus": "passed",
               "projectId": "",
@@ -102,12 +104,52 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 141120,
+                  "duration": 102146,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-30T18:21:42.782Z",
+                  "startTime": "2026-10-01T10:17:17.511Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "profile",
+                      "contentType": "application/json",
+                      "body": "eyJhZnRlck5hdmlnYXRpb24iOiJBdWRpdCBBZG1pbiAxNzkwODQ5ODc4NDA4IiwiYWZ0ZXJSZWxvYWQiOiJBdWRpdCBBZG1pbiAxNzkwODQ5ODc4NDA4In0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-39a585da66ee26a7b298",
+          "file": "admin-audit.spec.ts",
+          "line": 38,
+          "column": 5
+        },
+        {
+          "title": "unauthorized and expired sessions",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 59148,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:19:02.503Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -115,26 +157,60 @@
               "status": "expected"
             }
           ],
-          "id": "1e4164cbcd7d7052b193-7c1ad7bf16078191ed2f",
+          "id": "1e4164cbcd7d7052b193-65ebffc49bab4d8474c8",
           "file": "admin-audit.spec.ts",
-          "line": 18,
+          "line": 58,
+          "column": 5
+        },
+        {
+          "title": "management category create edit delete persists",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 28277,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T10:20:01.711Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-0ec3d1b9bf9f4589fa46",
+          "file": "admin-audit.spec.ts",
+          "line": 61,
           "column": 5
         }
       ]
     },
     {
-      "title": "admin-results-regression.spec.ts",
-      "file": "admin-results-regression.spec.ts",
+      "title": "admin-session-expiry.spec.ts",
+      "file": "admin-session-expiry.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
         {
-          "title": "admin content: retry after a lost save response keeps one published exam and its question",
+          "title": "expired server session rejects a still-present browser cookie and redirects admin to login",
           "ok": true,
           "tags": [],
           "tests": [
             {
-              "timeout": 360000,
+              "timeout": 180000,
               "annotations": [],
               "expectedStatus": "passed",
               "projectId": "",
@@ -144,12 +220,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 34887,
+                  "duration": 6192,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-30T18:24:18.441Z",
+                  "startTime": "2026-10-01T10:20:32.029Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -157,9 +233,9 @@
               "status": "expected"
             }
           ],
-          "id": "ec832937f131c6c8c297-b426fdec9742d811f678",
-          "file": "admin-results-regression.spec.ts",
-          "line": 92,
+          "id": "8f2fd1abcb1737b2f383-9a15e55c659c1370700f",
+          "file": "admin-session-expiry.spec.ts",
+          "line": 17,
           "column": 5
         }
       ]
@@ -167,9 +243,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-09-30T18:21:38.713Z",
-    "duration": 197791.484,
-    "expected": 2,
+    "startTime": "2026-10-01T10:16:38.537Z",
+    "duration": 241092.288,
+    "expected": 4,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

@@ -75,9 +75,9 @@ describe('Admin question editor data preservation', () => {
     for (const [index, value] of ['A', 'B', 'C', 'D', 'E'].entries()) {
       await user.type(screen.getByPlaceholderText(`${index + 1}. seçenek`), value);
     }
-    await user.click(screen.getAllByRole('button', { name: 'Doğru cevap' })[1]);
+    await user.click(screen.getByRole('button', { name: '1. soru: 2. seçenek doğru cevap' }));
     const firstRow = screen.getByPlaceholderText('1. seçenek').parentElement!;
-    const removeOptionButton = within(firstRow).getAllByRole('button').find((button) => button.getAttribute('aria-label') !== 'Doğru cevap')!;
+    const removeOptionButton = within(firstRow).getByRole('button', { name: /seçeneği sil/ });
     await user.click(removeOptionButton);
     expect(screen.getByPlaceholderText('1. seçenek')).toHaveValue('B');
     await user.click(screen.getByRole('button', { name: /Taslak/ }));
@@ -94,9 +94,9 @@ describe('Admin question editor data preservation', () => {
     for (const [index, value] of ['A', 'B', 'C'].entries()) {
       await user.type(screen.getByPlaceholderText(`${index + 1}. seçenek`), value);
     }
-    await user.click(screen.getAllByRole('button', { name: 'Doğru cevap' })[1]);
+    await user.click(screen.getByRole('button', { name: '1. soru: 2. seçenek doğru cevap' }));
     const secondRow = screen.getByPlaceholderText('2. seçenek').parentElement!;
-    await user.click(within(secondRow).getAllByRole('button').find((button) => button.getAttribute('aria-label') !== 'Doğru cevap')!);
+    await user.click(within(secondRow).getByRole('button', { name: /seçeneği sil/ }));
     await user.click(screen.getByRole('button', { name: /Taslak/ }));
     expect(mocks.saveContent).not.toHaveBeenCalled();
     expect(mocks.toast).toHaveBeenCalledWith(expect.objectContaining({ variant: 'destructive' }));

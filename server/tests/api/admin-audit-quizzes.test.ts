@@ -3,13 +3,14 @@ import express from 'express';
 import request from 'supertest';
 import quizRouter from '../../api-routes/quiz';
 import dashboardRouter from '../../api-routes/dashboard';
+import surveyRouter from '../../api-routes/survey';
 import { storage } from '../../storage';
 
 // Audit probes record current behavior. No application database or real session is used.
 vi.mock('../../storage', () => ({ storage: {
   getAllQuizzes: vi.fn(), getQuizzesByCreator: vi.fn(), getQuiz: vi.fn(),
   getQuestionsByQuiz: vi.fn(), syncQuestions: vi.fn(), deleteQuiz: vi.fn(),
-  createLog: vi.fn(), getAllUsers: vi.fn(), getAdminStats: vi.fn(),
+  createLog: vi.fn(), getAllUsers: vi.fn(), getAdminStats: vi.fn(), deleteQuizWithAudit: vi.fn(), createQuiz: vi.fn(), updateQuiz: vi.fn(),
 } }));
 vi.mock('../../middleware/auth', () => ({
   requireAuth: (_req: unknown, _res: unknown, next: () => void) => next(),
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use((req: any, _res, next) => { req.user = admin; next(); });
 app.use('/quizzes', quizRouter);
 app.use('/dashboard', dashboardRouter);
+app.use('/surveys', surveyRouter);
 
 describe('Admin audit: quiz API current behavior', () => {
   beforeEach(() => {
@@ -44,25 +46,61 @@ describe('Admin audit: quiz API current behavior', () => {
     expect(storage.getQuizzesByCreator).toHaveBeenCalledWith(admin.id);
   });
 
-  it('accepts an answer that is absent from selectable options', async () => {
+  it('rejects an answer that is absent from selectable options', async () => {
     const response = await request(app).post('/quizzes/quiz-audit/questions').send([
       { text: 'Select A', options: ['A', 'B'], correctAnswer: 'C', type: 'multiple-choice' },
     ]);
-    expect(response.status).toBe(201);
-    expect(storage.syncQuestions).toHaveBeenCalledWith('quiz-audit', [expect.objectContaining({ correctAnswer: 'C', options: ['A', 'B'] })]);
+    expect(response.status).toBe(400);
+    expect(storage.syncQuestions).not.toHaveBeenCalled();
   });
 
-  it('allows replacing all questions in a published exam with an empty list', async () => {
+  it('rejects replacing all questions in a published exam with an empty list', async () => {
     const response = await request(app).post('/quizzes/quiz-audit/questions').send([]);
-    expect(response.status).toBe(201);
-    expect(storage.syncQuestions).toHaveBeenCalledWith('quiz-audit', []);
+    expect(response.status).toBe(400);
+    expect(storage.syncQuestions).not.toHaveBeenCalled();
   });
 
-  it('quiz deletion succeeds without recording an audit action or reason', async () => {
+  it('quiz deletion passes actor and reason to the atomic audit operation', async () => {
     const response = await request(app).delete('/quizzes/quiz-audit').send({ reason: 'Audit reason' });
     expect(response.status).toBe(200);
-    expect(storage.deleteQuiz).toHaveBeenCalledWith('quiz-audit');
-    expect(storage.createLog).not.toHaveBeenCalled();
+    expect((storage as any).deleteQuizWithAudit).toHaveBeenCalledWith('quiz-audit', admin.id, 'Audit reason');
+    expect(storage.deleteQuiz).not.toHaveBeenCalled();
+  });
+
+  it.each([['A', ''], ['A', 'A'], ['A', ' A ']])('rejects invalid options %j', async (...options) => {
+    const response = await request(app).post('/quizzes/quiz-audit/questions').send([{ text: 'Question', options, correctAnswer: 'A' }]);
+    expect(response.status).toBe(400);
+  });
+
+  it('rejects missing deletion reason and preserves the quiz on an audit failure', async () => {
+    expect((await request(app).delete('/quizzes/quiz-audit')).status).toBe(400);
+    (storage as any).deleteQuizWithAudit.mockRejectedValueOnce(new Error('audit unavailable'));
+    expect((await request(app).delete('/quizzes/quiz-audit').send({ reason: 'Audit reason' })).status).toBe(500);
+    expect(storage.deleteQuiz).not.toHaveBeenCalled();
+  });
+
+  it.each(['/quizzes', '/surveys'])('rejects published creation without questions on %s', async (url) => {
+    expect((await request(app).post(url).send({ title: 'Empty publication', status: 'published' })).status).toBe(400);
+    expect(storage.createQuiz).not.toHaveBeenCalled();
+  });
+
+  it('protects a published survey against empty replacement', async () => {
+    vi.mocked(storage.getQuiz).mockResolvedValue({ id: 'survey', status: 'published', contentType: 'survey' } as any);
+    expect((await request(app).post('/surveys/survey/questions').send([])).status).toBe(400);
+    expect(storage.syncQuestions).not.toHaveBeenCalled();
+  });
+
+  it.each(['/quizzes', '/surveys'])('rejects an empty publication through PATCH on %s', async (url) => {
+    vi.mocked(storage.getQuiz).mockResolvedValue({ id:'content', contentType:url === '/quizzes' ? 'exam':'survey', status:'published' } as any);
+    vi.mocked(storage.getQuestionsByQuiz).mockResolvedValue([]);
+    expect((await request(app).patch(`${url}/content`).send({status:'published'})).status).toBe(400);
+    expect(storage.updateQuiz).not.toHaveBeenCalled();
+  });
+
+  it('rejects duplicate survey options and permits clearing draft questions', async () => {
+    vi.mocked(storage.getQuiz).mockResolvedValue({ id:'survey', contentType:'survey', status:'draft' } as any);
+    expect((await request(app).post('/surveys/survey/questions').send([{text:'Question', type:'single-choice', options:['A',' A ']}])).status).toBe(400);
+    expect((await request(app).post('/surveys/survey/questions').send([])).status).toBe(201);
   });
 
   it('dashboard exam count includes survey records', async () => {

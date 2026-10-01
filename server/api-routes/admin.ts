@@ -4,6 +4,8 @@ import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { logger } from "../utils/logger";
 import { getEmailStatus, sendDirectEmail, verifyEmailTransport } from "../utils/email";
 import { issuePasswordReset } from "../services/password-reset";
+import { respondToClassError } from '../utils/class-errors';
+import { z } from 'zod';
 
 const router: Router = Router();
 
@@ -11,12 +13,15 @@ const router: Router = Router();
 
 router.get("/logs/me", requireAuth, async (req: AuthRequest, res: Response) => {
   try {
-    const { page, limit } = req.query;
+    const { page, limit, startDate } = req.query;
+    const cutoff = startDate ? new Date(String(startDate)) : undefined;
+    if (cutoff && !Number.isFinite(cutoff.getTime())) return res.status(400).json({ message: 'Geçersiz başlangıç tarihi.' });
     const pageNum = page ? Math.max(1, parseInt(page as string, 10)) : 1;
     const limitNum = limit ? Math.min(100, Math.max(1, parseInt(limit as string, 10))) : 50;
 
     const { data: logs, total } = await storage.getLogs({
       userId: req.user!.id,
+      startDate: cutoff,
       page: pageNum,
       limit: limitNum,
     });
@@ -269,16 +274,18 @@ router.get("/quizzes", requireAuth, requireRole(["admin"]), async (req: AuthRequ
   }
 });
 
+router.get('/archive/preview', requireAuth, requireRole(['admin']), async (_req: AuthRequest, res: Response) => {
+  try { res.json(await storage.getArchiveCandidates()); }
+  catch { res.status(500).json({ message: 'Arşiv adayları getirilemedi.' }); }
+});
+
 router.post("/archive", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
   try {
     const { academicYear } = req.body;
-    if (!academicYear) {
+    if (typeof academicYear !== 'string' || !academicYear.trim() || academicYear.length > 50) {
       return res.status(400).json({ message: "Eğitim yılı (academicYear) belirtilmelidir." });
     }
-    const result = await storage.archiveQuizzesAndResults(academicYear);
-    
-    // Log the action
-    await storage.createLog(req.user!.id, "ARCHIVE_YEAR", `Yıl sonu arşivi yapıldı: ${academicYear}. Sınavlar: ${result.quizzesArchived}, Sonuçlar: ${result.resultsArchived}`);
+    const result = await storage.archiveQuizzesAndResults(academicYear.trim(), req.user!.id);
 
     res.json({ message: "Yıl sonu arşivleme başarıyla tamamlandı.", ...result });
   } catch (error) {
@@ -291,10 +298,11 @@ router.post("/promote-students", requireAuth, requireRole(["admin"]), async (req
   try {
     // academicYear opsiyoneldir. Verilirse, taşınmadan önce tamamlanmış
     // sonuçlara yıl damgası vurulur — yeni sınıf istatistiklerini kirletmez.
-    const { promotions, academicYear } = req.body; // Array of { fromClassId, toClassId }
-    if (!promotions || !Array.isArray(promotions)) {
+    const validation = z.object({ promotions: z.array(z.object({ fromClassId: z.string().uuid(), toClassId: z.string().uuid().nullable() })).min(1).max(100), academicYear: z.string().trim().min(1).max(50).optional() }).safeParse(req.body);
+    if (!validation.success) {
       return res.status(400).json({ message: "Sınıf atlatma listesi (promotions) gereklidir." });
     }
+    const { promotions, academicYear } = validation.data;
 
     let totalPromoted = 0;
     for (const promo of promotions) {
@@ -308,6 +316,7 @@ router.post("/promote-students", requireAuth, requireRole(["admin"]), async (req
     res.json({ message: "Öğrenciler başarıyla yeni sınıflarına aktarıldı.", totalPromoted });
   } catch (error) {
     logger.error({ err: error }, "[POST /api/admin/promote-students] Error");
+    if (respondToClassError(error, res)) return;
     res.status(500).json({ message: "Öğrenci sınıf atlatma başarısız oldu." });
   }
 });

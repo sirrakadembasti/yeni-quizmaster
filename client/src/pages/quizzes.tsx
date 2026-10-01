@@ -47,6 +47,8 @@ import { useEffect, useState, useMemo } from "react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { quizApi, categoryApi, classApi } from "@/lib/api";
+import { deleteQuizWithReason } from "@/lib/quiz-delete";
+import { invalidateQuizData } from "@/lib/admin-cache";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const categoryColors: { [key: string]: string } = {
@@ -76,25 +78,25 @@ export default function QuizzesPage() {
   const [deleteReason, setDeleteReason] = useState("");
 
   // Queries
-  const { data: quizzesData, isLoading: quizzesLoading } = useQuery({
+  const { data: quizzesData, isLoading: quizzesLoading, isError: quizzesError, refetch: retryQuizzes } = useQuery({
     queryKey: ['quizzes'],
     queryFn: () => quizApi.getAllQuizzes(),
   });
 
-  const { data: categoriesData } = useQuery({
+  const { data: categoriesData, isError: categoriesError, refetch: retryCategories } = useQuery({
     queryKey: ['categories'],
     queryFn: () => categoryApi.getAllCategories(),
   });
 
-  const { data: classesData } = useQuery({
+  const { data: classesData, isError: classesError, refetch: retryClasses } = useQuery({
     queryKey: ['classes'],
     queryFn: () => role === 'teacher' ? classApi.getTeacherClasses() : classApi.getAllClasses(),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => quizApi.deleteQuiz(id),
+    mutationFn: (id: string) => deleteQuizWithReason(id, deleteReason),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['quizzes'] });
+      invalidateQuizData(queryClient);
       toast({ title: "Başarılı", description: "Sınav silindi" });
       setDeleteModalOpen(false);
       setDeleteReason("");
@@ -143,6 +145,7 @@ export default function QuizzesPage() {
   }, [searchTerm, selectedCategoryId, selectedClassId]);
 
   const totalPages = Math.max(1, Math.ceil(filteredQuizzes.length / pageSize));
+  useEffect(() => setCurrentPage(page => Math.min(page, totalPages)), [totalPages]);
   const paginatedQuizzes = filteredQuizzes.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const resetFilters = () => {
     setSearchTerm("");
@@ -182,14 +185,15 @@ export default function QuizzesPage() {
             <div className="flex flex-col space-y-4">
               <div className="relative w-full">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input 
+                <Input
+                  aria-label="Sınav adı veya açıklama ile ara"
                   placeholder="Sınav adı veya açıklama ile ara..." 
                   className="pl-10 h-11 bg-background"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 {searchTerm && (
-                  <Button variant="ghost" size="icon" className="absolute right-1 top-1 h-9 w-9" onClick={() => setSearchTerm("")}>
+                  <Button aria-label="Aramayı temizle" variant="ghost" size="icon" className="absolute right-1 top-1 h-9 w-9" onClick={() => setSearchTerm("")}>
                     <X className="h-4 w-4" />
                   </Button>
                 )}
@@ -199,7 +203,7 @@ export default function QuizzesPage() {
                 <div className="space-y-1.5">
                   <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Ders Filtresi</Label>
                   <Select value={selectedCategoryId} onValueChange={setSelectedCategoryId}>
-                    <SelectTrigger className="h-10">
+                    <SelectTrigger aria-label="Ders Filtresi" className="h-10">
                       <div className="flex items-center gap-2">
                         <Book className="h-4 w-4 text-muted-foreground" />
                         <SelectValue placeholder="Tüm Dersler" />
@@ -217,7 +221,7 @@ export default function QuizzesPage() {
                 <div className="space-y-1.5">
                   <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Sınıf Filtresi</Label>
                   <Select value={selectedClassId} onValueChange={setSelectedClassId}>
-                    <SelectTrigger className="h-10">
+                    <SelectTrigger aria-label="Sınıf Filtresi" className="h-10">
                       <div className="flex items-center gap-2">
                         <Layers className="h-4 w-4 text-muted-foreground" />
                         <SelectValue placeholder="Tüm Sınıflar" />
@@ -242,8 +246,11 @@ export default function QuizzesPage() {
           </CardContent>
         </Card>
 
+        {(categoriesError || classesError) && <div role="alert" className="rounded-lg border p-3">Filtre seçenekleri yüklenemedi. {(categoriesData || classesData) && 'Son yüklenen seçenekler gösteriliyor.'} <Button variant="outline" onClick={() => { if (categoriesError) retryCategories(); if (classesError) retryClasses(); }}>Filtreleri yeniden yükle</Button></div>}
         {quizzesLoading ? (
           <div className="flex items-center justify-center py-24"><Loader2 className="h-10 w-10 animate-spin text-primary" /></div>
+        ) : quizzesError ? (
+          <div role="alert" className="rounded-lg border p-6 text-center space-y-2"><p>Sınavlar yüklenemedi.</p><Button variant="outline" onClick={() => retryQuizzes()}>Yeniden dene</Button></div>
         ) : filteredQuizzes.length === 0 ? (
           <Card className="border-dashed border-2 py-24 bg-muted/20">
             <CardContent className="flex flex-col items-center justify-center text-center">
@@ -285,12 +292,12 @@ export default function QuizzesPage() {
                       <TableCell className="text-center tabular-nums">{quiz.questionCount || 0}</TableCell>
                       <TableCell className="text-center tabular-nums">{quiz.timeLimit ? `${quiz.timeLimit} dk` : "-"}</TableCell>
                       <TableCell className="text-center tabular-nums">{quiz.participantCount || 0}</TableCell>
-                      <TableCell><Badge variant={quiz.status === "published" ? "default" : "outline"}>{quiz.status === "published" ? "Yayında" : "Taslak"}</Badge></TableCell>
+                      <TableCell><Badge variant={quiz.status === "published" ? "default" : quiz.status === "archived" ? "secondary" : "outline"}>{quiz.status === "published" ? "Yayında" : quiz.status === "archived" ? "Arşivlenmiş" : "Taslak"}</Badge></TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
                           <Button variant="outline" size="sm" onClick={() => setLocation(`/student/quiz/${quiz.id}`)}><Eye className="mr-1 h-4 w-4" />Önizle</Button>
                           <DropdownMenu>
-                            <DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreVertical className="h-4 w-4" /></Button></DropdownMenuTrigger>
+                            <DropdownMenuTrigger asChild><Button aria-label={`${quiz.title} işlemleri`} variant="ghost" size="icon"><MoreVertical className="h-4 w-4" /></Button></DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem onClick={() => setLocation(`/quizzes/${quiz.id}`)}><Edit className="mr-2 h-4 w-4" />Düzenle</DropdownMenuItem>
                               <DropdownMenuItem className="text-destructive" onClick={() => openDeleteModal(quiz.id)}><Trash2 className="mr-2 h-4 w-4" />Sil</DropdownMenuItem>
@@ -317,8 +324,8 @@ export default function QuizzesPage() {
       {/* Delete Modal */}
       <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
         <DialogContent className="rounded-3xl">
-          <DialogHeader><DialogTitle className="text-2xl font-black text-destructive flex items-center gap-2"><Trash2 className="h-6 w-6" /> Sınavı Sil</DialogTitle><DialogDescription>Bu işlem geri alınamaz.</DialogDescription></DialogHeader>
-          <div className="space-y-2 py-4"><Label className="font-bold">Silme Nedeni</Label><Textarea placeholder="Nedeni belirtin..." value={deleteReason} onChange={(e) => setDeleteReason(e.target.value)} rows={3} className="resize-none" /></div>
+          <DialogHeader><DialogTitle className="text-2xl font-black text-destructive flex items-center gap-2"><Trash2 className="h-6 w-6" /> Sınavı Sil</DialogTitle><DialogDescription>Sınav, tüm soruları ve öğrenci sonuçları kalıcı olarak silinir. Bu işlem geri alınamaz. {typeof quizzesData?.quizzes.find(quiz => quiz.id === quizToDelete)?.participantCount === 'number' && <span className="block mt-2">Listede {quizzesData?.quizzes.find(quiz => quiz.id === quizToDelete)?.participantCount} öğrenci sonucu bulunuyor.</span>}</DialogDescription></DialogHeader>
+          <div className="space-y-2 py-4"><Label htmlFor="quiz-delete-reason" className="font-bold">Silme Nedeni</Label><Textarea id="quiz-delete-reason" placeholder="Nedeni belirtin..." value={deleteReason} onChange={(e) => setDeleteReason(e.target.value)} rows={3} className="resize-none" /></div>
           <DialogFooter className="gap-2">
             <Button variant="ghost" onClick={() => setDeleteModalOpen(false)}>Vazgeç</Button>
             <Button variant="destructive" onClick={confirmDelete} disabled={deleteMutation.isPending || deleteReason.trim().length < 5}>

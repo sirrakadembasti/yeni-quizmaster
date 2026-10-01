@@ -1,3 +1,4 @@
+import { AdminQueryState } from "./AdminQueryState";
 import { 
   Dialog, 
   DialogContent, 
@@ -10,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, X, AlertTriangle, Book, School, Info } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import { type User } from "./UserManagementTable";
 import { useQuery } from "@tanstack/react-query";
 import { classApi, categoryApi } from "@/lib/api";
@@ -46,6 +47,7 @@ export function UserFormModal({
   isPending,
   teacherEditScope = 'all'
 }: UserFormModalProps) {
+  const formId = useId();
   const [formData, setFormData] = useState({ 
     name: "", 
     email: "", 
@@ -62,13 +64,13 @@ export function UserFormModal({
     parentAddress: ""
   });
 
-  const { data: classesData } = useQuery({
+  const classesQuery = useQuery({
     queryKey: ['/api/classes'],
     queryFn: () => classApi.getAllClasses(),
     enabled: isOpen
   });
 
-  const { data: categoriesData } = useQuery({
+  const categoriesQuery = useQuery({
     queryKey: ['/api/categories'],
     queryFn: () => categoryApi.getAllCategories(),
     enabled: isOpen
@@ -128,6 +130,10 @@ export function UserFormModal({
     }));
   };
 
+  const { data: classesData } = classesQuery;
+  const { data: categoriesData } = categoriesQuery;
+  const assignmentQueries = role === "teacher" ? [classesQuery, categoriesQuery] : [classesQuery];
+  const assignmentsUnavailable = assignmentQueries.some(query => query.isPending || query.isError);
   const allCategories = categoriesData || [];
   const allClasses = classesData?.classes || [];
   const showTeacherProfile = role !== 'teacher' || mode === 'create' || teacherEditScope !== 'assignments';
@@ -157,8 +163,9 @@ export function UserFormModal({
           </DialogHeader>
         </div>
 
-        <form id="user-form" onSubmit={(e) => {
+        <form id={formId} onSubmit={(e) => {
           e.preventDefault();
+          if (isPending || (showTeacherAssignments && assignmentsUnavailable)) return;
           let submissionData: any = { ...formData };
           if (role === 'teacher' && mode === 'edit' && teacherEditScope === 'assignments') {
             submissionData = { assignedCategoryIds: formData.assignedCategoryIds, classIds: formData.classIds };
@@ -176,10 +183,11 @@ export function UserFormModal({
           delete submissionData.studentNo;
           onSubmit(submissionData);
         }} className="p-6 space-y-6 bg-white dark:bg-slate-900 flex-1 overflow-y-auto min-h-0">
+          {showTeacherAssignments && <AdminQueryState queries={assignmentQueries} />}
           {showTeacherProfile && <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-xs font-black uppercase tracking-widest opacity-60">Tam İsim</Label>
-              <Input 
+              <Label htmlFor={`${formId}-name`} className="text-xs font-black uppercase tracking-widest opacity-60">Tam İsim</Label>
+              <Input id={`${formId}-name`}
                 value={formData.name} 
                 onChange={e => setFormData({ ...formData, name: e.target.value })} 
                 placeholder="Örn: Ahmet Yılmaz"
@@ -187,8 +195,8 @@ export function UserFormModal({
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-xs font-black uppercase tracking-widest opacity-60">E-posta Adresi</Label>
-              <Input 
+              <Label htmlFor={`${formId}-email`} className="text-xs font-black uppercase tracking-widest opacity-60">E-posta Adresi</Label>
+              <Input id={`${formId}-email`}
                 type="email" 
                 value={formData.email} 
                 onChange={e => setFormData({ ...formData, email: e.target.value })} 
@@ -201,12 +209,12 @@ export function UserFormModal({
           {role === 'teacher' && showTeacherProfile && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-xs font-black uppercase tracking-widest opacity-60">Telefon</Label>
-                <Input value={formData.phoneNumber} onChange={e => setFormData({ ...formData, phoneNumber: e.target.value })} placeholder="05xx xxx xx xx" className="rounded-xl" />
+                <Label htmlFor={`${formId}-phoneNumber`} className="text-xs font-black uppercase tracking-widest opacity-60">Telefon</Label>
+                <Input id={`${formId}-phoneNumber`} value={formData.phoneNumber} onChange={e => setFormData({ ...formData, phoneNumber: e.target.value })} placeholder="05xx xxx xx xx" className="rounded-xl" />
               </div>
               <div className="space-y-2 md:col-span-2">
-                <Label className="text-xs font-black uppercase tracking-widest opacity-60">Adres</Label>
-                <Input value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} placeholder="İletişim adresi" className="rounded-xl" />
+                <Label htmlFor={`${formId}-address`} className="text-xs font-black uppercase tracking-widest opacity-60">Adres</Label>
+                <Input id={`${formId}-address`} value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} placeholder="İletişim adresi" className="rounded-xl" />
               </div>
             </div>
           )}
@@ -215,13 +223,13 @@ export function UserFormModal({
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-widest opacity-60">Sınıf Numarası</Label>
-                  <Input value={initialData?.studentNo || "Sınıfa atanınca otomatik verilir"} disabled className="rounded-xl" />
+                  <Label htmlFor={`${formId}-studentNo`} className="text-xs font-black uppercase tracking-widest opacity-60">Sınıf Numarası</Label>
+                  <Input id={`${formId}-studentNo`} value={initialData?.studentNo || "Sınıfa atanınca otomatik verilir"} disabled className="rounded-xl" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-widest opacity-60">Kayıtlı Sınıf</Label>
+                  <Label htmlFor={`${formId}-classId`} className="text-xs font-black uppercase tracking-widest opacity-60">Kayıtlı Sınıf</Label>
                   <Select value={formData.classId} onValueChange={val => setFormData({ ...formData, classId: val })}>
-                    <SelectTrigger className="rounded-xl">
+                    <SelectTrigger id={`${formId}-classId`} className="rounded-xl">
                       <SelectValue placeholder="Sınıf Seçin" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
@@ -234,8 +242,8 @@ export function UserFormModal({
                 </div>
               </div>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="space-y-2"><Label className="text-xs font-black uppercase tracking-widest opacity-60">Öğrenci Telefonu</Label><Input value={formData.phoneNumber} onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })} className="rounded-xl" /></div>
-                <div className="space-y-2"><Label className="text-xs font-black uppercase tracking-widest opacity-60">Öğrenci Adresi</Label><Input value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} className="rounded-xl" /></div>
+                <div className="space-y-2"><Label htmlFor={`${formId}-phoneNumber`} className="text-xs font-black uppercase tracking-widest opacity-60">Öğrenci Telefonu</Label><Input id={`${formId}-phoneNumber`} value={formData.phoneNumber} onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })} className="rounded-xl" /></div>
+                <div className="space-y-2"><Label htmlFor={`${formId}-address`} className="text-xs font-black uppercase tracking-widest opacity-60">Öğrenci Adresi</Label><Input id={`${formId}-address`} value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} className="rounded-xl" /></div>
               </div>
               
               <div className="bg-amber-50 border border-amber-100 p-4 rounded-2xl flex gap-3 items-start">
@@ -255,8 +263,8 @@ export function UserFormModal({
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label className="text-[11px] font-bold uppercase text-muted-foreground">Veli Adı Soyadı</Label>
-                    <Input
+                    <Label htmlFor={`${formId}-parentName`} className="text-[11px] font-bold uppercase text-muted-foreground">Veli Adı Soyadı</Label>
+                    <Input id={`${formId}-parentName`}
                       value={formData.parentName}
                       onChange={e => setFormData({ ...formData, parentName: e.target.value })}
                       placeholder="Örn: Mehmet Yılmaz"
@@ -264,12 +272,12 @@ export function UserFormModal({
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[11px] font-bold uppercase text-muted-foreground">Yakınlık Derecesi</Label>
-                    <Select value={formData.parentRelation || "none"} onValueChange={(value) => setFormData({ ...formData, parentRelation: value === "none" ? "" : value })}><SelectTrigger className="rounded-xl"><SelectValue placeholder="Yakınlık seçin" /></SelectTrigger><SelectContent><SelectItem value="none">Belirtilmemiş</SelectItem><SelectItem value="Anne">Anne</SelectItem><SelectItem value="Baba">Baba</SelectItem><SelectItem value="Diğer">Diğer</SelectItem></SelectContent></Select>
+                    <Label htmlFor={`${formId}-parentRelation`} className="text-[11px] font-bold uppercase text-muted-foreground">Yakınlık Derecesi</Label>
+                    <Select value={formData.parentRelation || "none"} onValueChange={(value) => setFormData({ ...formData, parentRelation: value === "none" ? "" : value })}><SelectTrigger id={`${formId}-parentRelation`} className="rounded-xl"><SelectValue placeholder="Yakınlık seçin" /></SelectTrigger><SelectContent><SelectItem value="none">Belirtilmemiş</SelectItem><SelectItem value="Anne">Anne</SelectItem><SelectItem value="Baba">Baba</SelectItem><SelectItem value="Diğer">Diğer</SelectItem></SelectContent></Select>
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[11px] font-bold uppercase text-muted-foreground">Veli Telefonu</Label>
-                    <Input
+                    <Label htmlFor={`${formId}-parentPhone`} className="text-[11px] font-bold uppercase text-muted-foreground">Veli Telefonu</Label>
+                    <Input id={`${formId}-parentPhone`}
                       value={formData.parentPhone}
                       onChange={e => setFormData({ ...formData, parentPhone: e.target.value })}
                       placeholder="05xx xxx xx xx"
@@ -277,8 +285,8 @@ export function UserFormModal({
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[11px] font-bold uppercase text-muted-foreground">Veli E-Posta</Label>
-                    <Input
+                    <Label htmlFor={`${formId}-parentEmail`} className="text-[11px] font-bold uppercase text-muted-foreground">Veli E-Posta</Label>
+                    <Input id={`${formId}-parentEmail`}
                       type="email"
                       value={formData.parentEmail}
                       onChange={e => setFormData({ ...formData, parentEmail: e.target.value })}
@@ -287,8 +295,8 @@ export function UserFormModal({
                     />
                   </div>
                   <div className="md:col-span-2 space-y-1.5">
-                    <Label className="text-[11px] font-bold uppercase text-muted-foreground">Veli Adresi</Label>
-                    <Input
+                    <Label htmlFor={`${formId}-parentAddress`} className="text-[11px] font-bold uppercase text-muted-foreground">Veli Adresi</Label>
+                    <Input id={`${formId}-parentAddress`}
                       value={formData.parentAddress}
                       onChange={e => setFormData({ ...formData, parentAddress: e.target.value })}
                       placeholder="Ev / İş Adresi"
@@ -311,7 +319,7 @@ export function UserFormModal({
                     return cat ? (
                       <Badge key={id} variant="secondary" className="gap-1 pl-2 pr-1 py-1 rounded-lg bg-indigo-50 text-indigo-700 border-indigo-100 font-bold">
                         {cat.name}
-                        <X className="h-3 w-3 cursor-pointer hover:text-rose-500" onClick={() => toggleCategory(id)} />
+                        <button type="button" aria-label={`${cat.name} dersini kaldır`} disabled={isPending} className="rounded p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" onClick={() => toggleCategory(id)}><X className="h-3 w-3" /></button>
                       </Badge>
                     ) : null;
                   })}
@@ -322,12 +330,12 @@ export function UserFormModal({
                     {allCategories.map(cat => (
                       <div key={cat.id} className="flex items-center space-x-2 group">
                         <Checkbox 
-                          id={`cat-${cat.id}`} 
+                          id={`${formId}-cat-${cat.id}`}
                           checked={formData.assignedCategoryIds.includes(cat.id)}
                           onCheckedChange={() => toggleCategory(cat.id)}
                           className="rounded-md border-slate-300 data-[state=checked]:bg-indigo-600"
                         />
-                        <label htmlFor={`cat-${cat.id}`} className="text-xs font-bold leading-none cursor-pointer group-hover:text-indigo-600 transition-colors">
+                        <label htmlFor={`${formId}-cat-${cat.id}`} className="text-xs font-bold leading-none cursor-pointer group-hover:text-indigo-600 transition-colors">
                           {cat.name}
                         </label>
                       </div>
@@ -347,7 +355,7 @@ export function UserFormModal({
                     return cls ? (
                       <Badge key={id} variant="outline" className="gap-1 pl-2 pr-1 py-1 rounded-lg border-emerald-200 text-emerald-700 bg-emerald-50 font-bold">
                         {cls.name}
-                        <X className="h-3 w-3 cursor-pointer hover:text-rose-500" onClick={() => toggleClass(id)} />
+                        <button type="button" aria-label={`${cls.name} sınıfını kaldır`} disabled={isPending} className="rounded p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" onClick={() => toggleClass(id)}><X className="h-3 w-3" /></button>
                       </Badge>
                     ) : null;
                   })}
@@ -358,12 +366,12 @@ export function UserFormModal({
                     {allClasses.map(cls => (
                       <div key={cls.id} className="flex items-center space-x-2 group">
                         <Checkbox 
-                          id={`cls-${cls.id}`} 
+                          id={`${formId}-cls-${cls.id}`}
                           checked={formData.classIds.includes(cls.id)}
                           onCheckedChange={() => toggleClass(cls.id)}
                           className="rounded-md border-slate-300 data-[state=checked]:bg-emerald-600"
                         />
-                        <label htmlFor={`cls-${cls.id}`} className="text-xs font-bold leading-none cursor-pointer group-hover:text-emerald-600 transition-colors">
+                        <label htmlFor={`${formId}-cls-${cls.id}`} className="text-xs font-bold leading-none cursor-pointer group-hover:text-emerald-600 transition-colors">
                           {cls.name}
                         </label>
                       </div>
@@ -376,7 +384,7 @@ export function UserFormModal({
 
           {showTeacherProfile && <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <Label className="text-xs font-black uppercase tracking-widest opacity-60">
+              <Label htmlFor={`${formId}-password`} className="text-xs font-black uppercase tracking-widest opacity-60">
                 {role === 'student' ? (mode === 'create' ? 'Öğrenci Hesabı Şifresi' : 'Öğrenci Hesabı Şifresini Güncelle') : (mode === 'create' ? 'Güvenli Şifre' : 'Şifreyi Güncelle')}
               </Label>
               {mode === 'edit' && (
@@ -388,7 +396,7 @@ export function UserFormModal({
                 </div>
               )}
             </div>
-            <Input 
+            <Input id={`${formId}-password`}
               type="password" 
               placeholder={mode === 'edit' ? "••••••" : "En az 6 karakter"} 
               value={formData.password} 
@@ -402,8 +410,8 @@ export function UserFormModal({
           <Button variant="ghost" onClick={() => onOpenChange(false)} type="button" className="rounded-xl font-bold">Vazgeç</Button>
           <Button 
             type="submit"
-            form="user-form"
-            disabled={isPending || !formData.name || !formData.email || (mode === 'create' && !formData.password) || !parentContactComplete}
+            form={formId}
+            disabled={isPending || (showTeacherAssignments && assignmentsUnavailable) || !formData.name || !formData.email || (mode === 'create' && !formData.password) || !parentContactComplete}
             className="rounded-xl font-black px-8 shadow-xl shadow-indigo-500/20 bg-indigo-600 hover:bg-indigo-700 text-white"
           >
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

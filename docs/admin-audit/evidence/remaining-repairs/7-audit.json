@@ -1,0 +1,13 @@
+{
+  "route": "/teachers",
+  "labels": [],
+  "views": [],
+  "errors": [],
+  "network": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 0,
+    "unlabeledInputs": []
+  }
+}
