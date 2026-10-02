@@ -1,0 +1,254 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\playwright\\cli.js",
+      "test",
+      "--config",
+      "playwright.admin-audit.config.ts",
+      "admin-accessibility-closure.spec.ts",
+      "--grep",
+      "keyboard tabs and profile labels"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.admin-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/admin-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "admin-audit.spec.ts",
+          "admin-audit-people-flows.spec.ts",
+          "admin-audit-system-flows.spec.ts",
+          "admin-results-regression.spec.ts",
+          "admin-quiz-repairs.spec.ts",
+          "admin-inventory-repairs.spec.ts",
+          "admin-critical-repairs.spec.ts",
+          "admin-session-expiry.spec.ts",
+          "admin-export-print.spec.ts",
+          "admin-accessibility-closure.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "docs/admin-audit/playwright-report-latest",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/admin-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "admin-accessibility-closure.spec.ts",
+      "file": "admin-accessibility-closure.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "keyboard tabs and profile labels desktop",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 82779,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('switch', { name: 'Bildirim sesi', exact: true })\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('switch', { name: 'Bildirim sesi', exact: true }) with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('switch', { name: 'Bildirim sesi', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('switch', { name: 'Bildirim sesi', exact: true })\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('switch', { name: 'Bildirim sesi', exact: true }) with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('switch', { name: 'Bildirim sesi', exact: true })\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:144:84",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                      "column": 84,
+                      "line": 144
+                    },
+                    "snippet": "  142 |     await expect(notifications).toHaveAttribute('aria-selected', 'true');\n  143 |     await expect(page).toHaveURL(/tab=notifications/);\n> 144 |     await expect(page.getByRole('switch', { name: 'Bildirim sesi', exact: true })).toBeVisible();\n      |                                                                                    ^\n  145 |     // Do not toggle persisted notification preferences.\n  146 |     await page.keyboard.press('End');\n  147 |     await expect(page.getByRole('tab', { name: 'Güvenlik', exact: true })).toBeFocused();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                        "column": 84,
+                        "line": 144
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('switch', { name: 'Bildirim sesi', exact: true })\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('switch', { name: 'Bildirim sesi', exact: true }) with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('switch', { name: 'Bildirim sesi', exact: true })\u001b[22m\n\n\n  142 |     await expect(notifications).toHaveAttribute('aria-selected', 'true');\n  143 |     await expect(page).toHaveURL(/tab=notifications/);\n> 144 |     await expect(page.getByRole('switch', { name: 'Bildirim sesi', exact: true })).toBeVisible();\n      |                                                                                    ^\n  145 |     // Do not toggle persisted notification preferences.\n  146 |     await page.keyboard.press('End');\n  147 |     await expect(page.getByRole('tab', { name: 'Güvenlik', exact: true })).toBeFocused();\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:144:84"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T11:00:04.729Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-accessibility-closur-7ba8c--and-profile-labels-desktop\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-accessibility-closur-7ba8c--and-profile-labels-desktop\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-accessibility-closur-7ba8c--and-profile-labels-desktop\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                    "column": 84,
+                    "line": 144
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "b0806312ca8f6416c281-ae754c2ba213938a8ffc",
+          "file": "admin-accessibility-closure.spec.ts",
+          "line": 134,
+          "column": 7
+        },
+        {
+          "title": "keyboard tabs and profile labels mobile",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 35949,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('switch', { name: 'Bildirim sesi', exact: true })\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('switch', { name: 'Bildirim sesi', exact: true }) with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('switch', { name: 'Bildirim sesi', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('switch', { name: 'Bildirim sesi', exact: true })\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('switch', { name: 'Bildirim sesi', exact: true }) with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('switch', { name: 'Bildirim sesi', exact: true })\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:144:84",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                      "column": 84,
+                      "line": 144
+                    },
+                    "snippet": "  142 |     await expect(notifications).toHaveAttribute('aria-selected', 'true');\n  143 |     await expect(page).toHaveURL(/tab=notifications/);\n> 144 |     await expect(page.getByRole('switch', { name: 'Bildirim sesi', exact: true })).toBeVisible();\n      |                                                                                    ^\n  145 |     // Do not toggle persisted notification preferences.\n  146 |     await page.keyboard.press('End');\n  147 |     await expect(page.getByRole('tab', { name: 'Güvenlik', exact: true })).toBeFocused();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                        "column": 84,
+                        "line": 144
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('switch', { name: 'Bildirim sesi', exact: true })\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('switch', { name: 'Bildirim sesi', exact: true }) with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('switch', { name: 'Bildirim sesi', exact: true })\u001b[22m\n\n\n  142 |     await expect(notifications).toHaveAttribute('aria-selected', 'true');\n  143 |     await expect(page).toHaveURL(/tab=notifications/);\n> 144 |     await expect(page.getByRole('switch', { name: 'Bildirim sesi', exact: true })).toBeVisible();\n      |                                                                                    ^\n  145 |     // Do not toggle persisted notification preferences.\n  146 |     await page.keyboard.press('End');\n  147 |     await expect(page.getByRole('tab', { name: 'Güvenlik', exact: true })).toBeFocused();\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:144:84"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T11:02:07.061Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-accessibility-closur-f8a67-s-and-profile-labels-mobile\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-accessibility-closur-f8a67-s-and-profile-labels-mobile\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-accessibility-closur-f8a67-s-and-profile-labels-mobile\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                    "column": 84,
+                    "line": 144
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "b0806312ca8f6416c281-e3ef1ebae502266dc11e",
+          "file": "admin-accessibility-closure.spec.ts",
+          "line": 134,
+          "column": 7
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-01T11:00:00.454Z",
+    "duration": 168995.108,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,23 @@
+QuizMaster Yönetim ve Sınav Sistemi Audit Admin · Yönetici
+Sınıf Ö ğ renci Listesi
+01.10.2026 17:55:21
+Sınıf
+1-Çı ğ  9652cd38
+Sorumlu ö ğ retmen
+Ş ule İğ de 9652cd38
+Ö ğ renci sayısı
+1
+Arama
+Ça ğ rı I ş ık 9652cd38
+Ş ule İğ de 9652cd38
+Henüz bran ş  ö ğ retmeni atanmamı ş .
+1-ÇI Ğ  9652CD38 Ö Ğ RENC İ  L İ STES İ
+01.10.2026 tarihinde olu ş turuldu
+Sınıf Ö ğ retmeni
+Ş ule İğ de 9652cd38
+Okul Müdürü
+................
+S O R U M L U  Ö Ğ R E T M E N
+te a c h e r- 9 6 5 2 c d 3 8 @ e x a m p le .te s t
+S.NO Ö Ğ RENCI ADI SOYADI SINIF NO
+1 Ça ğ rı I ş ık 9652cd38 7

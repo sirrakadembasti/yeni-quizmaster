@@ -5,13 +5,15 @@ import { cn } from "@/lib/utils";
 interface PrintButtonProps {
   className?: string;
   label?: string;
+  disabled?: boolean;
 }
 
-export function PrintButton({ className, label = "Yazd\u0131r" }: PrintButtonProps) {
+export function PrintButton({ className, label = "Yazd\u0131r", disabled = false }: PrintButtonProps) {
   return (
     <Button
       type="button"
       variant="outline"
+      disabled={disabled}
       onClick={() => window.print()}
       className={cn("gap-2 print:hidden", className)}
     >

@@ -1,6 +1,6 @@
 # Yönetici denetimi: öğrenci, öğretmen, sınıf ve veli yönetimi
 
-> **Tarihsel denetim kaydı (30 Eylül 2026).** Aşağıdaki bulgular, satır numaraları ve açık durum ifadeleri ilk denetim/önceki paketlerin kaydıdır; güncel kodun durumunu göstermez. Eski sorumlu öğretmenin genel bağlantısını kaldırma politikası ve kapasite kuralları [onarım sözleşmelerinde](./repair-contracts.md) belirlenmiştir. Kalan onarımların kanıtı [güncel doğrulama kaydındadır](./remaining-repairs-verification.md): istemci 19 dosyada 117/117 geçti; sunucu thread koşusu Prisma native Tokio paniğiyle kesildi, fork tekrarı sürüyor; yeni E2E henüz çalışmadı. Öğretmen paneli denetimi henüz başlamadı.
+> **Tarihsel denetim kaydı (30 Eylül 2026).** Aşağıdaki bulgular, satır numaraları ve açık durum ifadeleri ilk denetim/önceki paketlerin kaydıdır; güncel kodun durumunu göstermez. Eski sorumlu öğretmenin genel bağlantısını kaldırma politikası ve kapasite kuralları [onarım sözleşmelerinde](./repair-contracts.md) belirlenmiştir. Önceki onarım paketinin tamamlanmış istemci/sunucu/E2E kanıtları [onarım doğrulama kaydındadır](./remaining-repairs-verification.md); fork tekrarı ve yeni E2E artık beklemiyor. Excel, baskı, erişilebilirlik ve gerçek hibrit kurulum için [sonraki doğrulama kaydını](./verification-closure.md) okuyun. Öğretmen paneli denetimi henüz başlamadı.
 
 Tarih: 30 Eylül 2026. Kapsam yalnız yönetici ekranları ve bunların API/storage eşleşmeleri. Üretim kodu veya gerçek veritabanı değiştirilmedi. `api.ts` ve `server-setup.tsx` üzerindeki mevcut değişikliklere dokunulmadı.
 

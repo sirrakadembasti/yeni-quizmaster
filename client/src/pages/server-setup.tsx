@@ -164,12 +164,12 @@ export default function ServerSetupPage() {
             <CardHeader><CardTitle>Dağıtım Profili</CardTitle><CardDescription>Subdomain önerilir; alt yol mevcut kurum sitesiyle servis yollarını paylaşır.</CardDescription></CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2"><Label>Kurulum biçimi</Label><Select value={form.mode} onValueChange={(mode: DeploymentConfig['mode']) => setForm((current) => ({ ...current, mode, basePath: mode === 'subdomain' ? '/' : current.basePath }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="subdomain">Subdomain</SelectItem><SelectItem value="subpath">Kurum sitesi altında alt yol</SelectItem></SelectContent></Select></div>
-                <div className="space-y-2"><Label>Güvenilir proxy sayısı</Label><Input type="number" min={0} max={5} value={form.trustProxyHops} onChange={(event) => setForm((current) => ({ ...current, trustProxyHops: Number(event.target.value) }))} /></div>
+                <div className="space-y-2"><Label htmlFor="deployment-mode">Kurulum biçimi</Label><Select value={form.mode} onValueChange={(mode: DeploymentConfig['mode']) => setForm((current) => ({ ...current, mode, basePath: mode === 'subdomain' ? '/' : current.basePath }))}><SelectTrigger id="deployment-mode"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="subdomain">Subdomain</SelectItem><SelectItem value="subpath">Kurum sitesi altında alt yol</SelectItem></SelectContent></Select></div>
+                <div className="space-y-2"><Label htmlFor="deployment-proxy-hops">Güvenilir proxy sayısı</Label><Input id="deployment-proxy-hops" type="number" min={0} max={5} value={form.trustProxyHops} onChange={(event) => setForm((current) => ({ ...current, trustProxyHops: Number(event.target.value) }))} /></div>
               </div>
-              <div className="space-y-2"><Label>Herkese açık kurum adresi</Label><Input value={form.publicUrl} onChange={(event) => setForm((current) => ({ ...current, publicUrl: event.target.value }))} placeholder="https://sinav.kurum.gov.tr" /></div>
-              <div className="space-y-2"><Label>Uygulama alt yolu</Label><Input value={form.basePath} disabled={form.mode === 'subdomain'} onChange={(event) => setForm((current) => ({ ...current, basePath: event.target.value }))} placeholder="/quizmaster" /></div>
-              <div className="space-y-2"><Label>İzinli origin adresleri</Label><Textarea value={originsText} onChange={(event) => setOriginsText(event.target.value)} rows={4} placeholder="Her satıra bir https:// adresi" /></div>
+              <div className="space-y-2"><Label htmlFor="deployment-public-url">Herkese açık kurum adresi</Label><Input id="deployment-public-url" value={form.publicUrl} onChange={(event) => setForm((current) => ({ ...current, publicUrl: event.target.value }))} placeholder="https://sinav.kurum.gov.tr" /></div>
+              <div className="space-y-2"><Label htmlFor="deployment-base-path">Uygulama alt yolu</Label><Input id="deployment-base-path" value={form.basePath} disabled={form.mode === 'subdomain'} onChange={(event) => setForm((current) => ({ ...current, basePath: event.target.value }))} placeholder="/quizmaster" /></div>
+              <div className="space-y-2"><Label htmlFor="deployment-origins">İzinli origin adresleri</Label><Textarea id="deployment-origins" value={originsText} onChange={(event) => setOriginsText(event.target.value)} rows={4} placeholder="Her satıra bir https:// adresi" /></div>
               <Button onClick={save} disabled={saveMutation.isPending || !changesAllowed}><Save className="mr-2 h-4 w-4" />Profili Kaydet</Button>
             </CardContent>
           </Card>
@@ -189,14 +189,14 @@ export default function ServerSetupPage() {
         <Card>
           <CardHeader><CardTitle>Veri Saklama Politikası</CardTitle><CardDescription>Varsayılan olarak kapalıdır. Yalnız süresi dolmuş operasyon kayıtlarını temizler; sınav ve anket sonuçlarına dokunmaz.</CardDescription></CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between rounded-xl border p-4"><div><div className="font-semibold">Otomatik günlük bakım</div><div className="text-sm text-muted-foreground">Okunmuş bildirim, tamamlanmış e-posta/parola talepleri ve işlem logları</div></div><Switch checked={form.retention.enabled} onCheckedChange={(enabled) => setForm((current) => ({ ...current, retention: { ...current.retention, enabled } }))} /></div>
+            <div className="flex items-center justify-between rounded-xl border p-4"><div><Label htmlFor="retention-enabled" className="font-semibold">Otomatik günlük bakım</Label><div className="text-sm text-muted-foreground">Okunmuş bildirim, tamamlanmış e-posta/parola talepleri ve işlem logları</div></div><Switch id="retention-enabled" checked={form.retention.enabled} onCheckedChange={(enabled) => setForm((current) => ({ ...current, retention: { ...current.retention, enabled } }))} /></div>
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               {([
                 ['actionLogDays', 'İşlem logu (gün)'],
                 ['readNotificationDays', 'Okunmuş bildirim (gün)'],
                 ['emailLogDays', 'E-posta logu (gün)'],
                 ['passwordResetDays', 'Parola talebi (gün)'],
-              ] as const).map(([key, label]) => <div className="space-y-2" key={key}><Label>{label}</Label><Input type="number" min={key === 'actionLogDays' ? 30 : 7} max={3650} value={form.retention[key]} onChange={(event) => setForm((current) => ({ ...current, retention: { ...current.retention, [key]: Number(event.target.value) } }))} /></div>)}
+              ] as const).map(([key, label]) => <div className="space-y-2" key={key}><Label htmlFor={`retention-${key}`}>{label}</Label><Input id={`retention-${key}`} type="number" min={key === 'actionLogDays' ? 30 : 7} max={3650} value={form.retention[key]} onChange={(event) => setForm((current) => ({ ...current, retention: { ...current.retention, [key]: Number(event.target.value) } }))} /></div>)}
             </div>
             <div className="flex flex-wrap gap-3"><Button onClick={save} disabled={saveMutation.isPending || !changesAllowed}><Save className="mr-2 h-4 w-4" />Politikayı Kaydet</Button><Button variant="destructive" onClick={runRetention} disabled={retentionMutation.isPending || !cleanupReady || !changesAllowed}>Şimdi Temizle</Button></div>
             {dirty && <p role="status" className="text-sm text-muted-foreground">Kaydedilmemiş değişiklikler var. Temizlikten önce politikayı kaydedin.</p>}

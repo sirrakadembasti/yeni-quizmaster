@@ -37,7 +37,7 @@ import {
   RefreshCw,
   KeyRound
 } from "lucide-react";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { categoryApi, classApi, userApi, adminApi, type Category } from "@/lib/api";
@@ -75,6 +75,7 @@ export default function AdminManagementPage() {
 
   // Dialog States
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
+  const categoryDialogOpenerRef = useRef<HTMLButtonElement | null>(null);
   const [isEditCategoryMode, setIsEditCategoryMode] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [categoryName, setCategoryName] = useState("");
@@ -422,7 +423,7 @@ const deleteClassMutation = useMutation({
           <TabsContent value="categories" className="mt-6 space-y-6">
             <div className="bg-card p-3 rounded-2xl border border-border flex flex-col md:flex-row justify-between items-center gap-4">
                <h2 className="text-xl font-black text-foreground">Ders Yönetimi</h2>
-               <Button onClick={() => { setIsEditCategoryMode(false); setCategoryName(""); setCategoryDesc(""); setIsCategoryDialogOpen(true); }} className="rounded-xl font-bold gap-2 bg-primary text-primary-foreground hover:opacity-90">
+               <Button onClick={(event) => { categoryDialogOpenerRef.current = event.currentTarget; setIsEditCategoryMode(false); setCategoryName(""); setCategoryDesc(""); setIsCategoryDialogOpen(true); }} className="rounded-xl font-bold gap-2 bg-primary text-primary-foreground hover:opacity-90">
                  <Plus className="h-4 w-4" /> Yeni Ders Ekle
                </Button>
             </div>
@@ -461,7 +462,7 @@ const deleteClassMutation = useMutation({
                         </TableCell>
                         <TableCell className="text-right px-6">
                           <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
-                            <Button aria-label={`${cat.name} dersini düzenle`} variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-indigo-600" onClick={() => { setEditingCategory(cat); setCategoryName(cat.name); setCategoryDesc(cat.description || ""); setIsEditCategoryMode(true); setIsCategoryDialogOpen(true); }}>
+                            <Button aria-label={`${cat.name} dersini düzenle`} variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-indigo-600" onClick={(event) => { categoryDialogOpenerRef.current = event.currentTarget; setEditingCategory(cat); setCategoryName(cat.name); setCategoryDesc(cat.description || ""); setIsEditCategoryMode(true); setIsCategoryDialogOpen(true); }}>
                               <Edit2 className="h-4 w-4" />
                             </Button>
                             <Button aria-label={`${cat.name} dersini sil`} variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-red-500" onClick={() => { setSelectedCategoryId(cat.id); setIsDeleteCategoryOpen(true); }}>
@@ -1368,7 +1369,12 @@ const deleteClassMutation = useMutation({
 
       {/* CATEGORY DIALOG */}
       <Dialog open={isCategoryDialogOpen} onOpenChange={setIsCategoryDialogOpen}>
-        <DialogContent className="rounded-3xl sm:max-w-md">
+        <DialogContent className="rounded-3xl sm:max-w-md" onCloseAutoFocus={(event) => {
+          if (categoryDialogOpenerRef.current?.isConnected) {
+            event.preventDefault();
+            categoryDialogOpenerRef.current.focus();
+          }
+        }}>
           <DialogHeader><DialogTitle className="text-xl font-bold">{isEditCategoryMode ? "Dersi Güncelle" : "Yeni Ders Kaydı"}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2"><Label htmlFor="category-name" className="font-bold text-slate-700 dark:text-slate-200">Ders Başlığı</Label><Input id="category-name" value={categoryName} onChange={e => setCategoryName(e.target.value.toLocaleUpperCase('tr-TR'))} className="rounded-xl border-slate-200 dark:border-slate-700" placeholder="Örn: GÖRSEL PROGRAMLAMA" /></div>

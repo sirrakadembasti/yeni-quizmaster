@@ -19,7 +19,7 @@ Element.prototype.setPointerCapture = () => {};
 Element.prototype.releasePointerCapture = () => {};
 
 const api = vi.hoisted(() => ({ users: vi.fn(), classes: vi.fn(), categories: vi.fn(), quizzes: vi.fn(), parents: vi.fn(), links: vi.fn(), remove: vi.fn(), unlink: vi.fn(), toast: vi.fn() }));
-vi.mock('@/lib/api', () => ({ userApi: { getAllUsers: api.users }, classApi: { getAllClasses: api.classes, getClass: api.classes, removeStudentFromClass: api.remove }, categoryApi: { getAllCategories: api.categories }, quizApi: { getAllQuizzes: api.quizzes }, parentApi: { getParents: api.parents, getParentStudents: api.links, unlinkParent: api.unlink } }));
+vi.mock('@/lib/api', () => ({ userApi: { getAllUsers: api.users }, classApi: { getAllClasses: api.classes, getClass: api.classes, removeStudentFromClass: api.remove }, categoryApi: { getAllCategories: api.categories }, quizApi: { getAllQuizzes: api.quizzes, getAllAdminQuizzes: api.quizzes }, parentApi: { getParents: api.parents, getParentStudents: api.links, unlinkParent: api.unlink } }));
 vi.mock('@/components/layout/DashboardLayout', () => ({ DashboardLayout: ({ children }: any) => <main>{children}</main> }));
 vi.mock('@/context/auth-context', () => ({ useAuth: () => ({ role: 'admin', user: { id: 'admin' } }) }));
 vi.mock('@/hooks/use-toast', () => ({ useToast: () => ({ toast: api.toast }) }));

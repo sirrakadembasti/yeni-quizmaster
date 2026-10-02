@@ -147,7 +147,7 @@ Linux/macOS’ta sihirbaz aynıdır; yalnız başlatıcı `./kurulum.sh` ve sür
 Sihirbaz bitişindeki **Uygulamayı başlat** düğmesi:
 
 - Yerelde: `pnpm dev` (API 5000 + arayüz 5173) → `http://127.0.0.1:5173/auth`
-- Kurumda: üretim servisi (`dist/index.cjs` / `pnpm start`) → yapılandırılan `https://.../auth`
+- Kurumda: üretim servisi (`pnpm --filter quiz-master-server start`) → yapılandırılan `https://.../auth`
 
 Elle çalıştırmak için:
 
@@ -423,7 +423,7 @@ Komutlar, veri doğrulama sorguları, oturum deposu kararı, geri dönüş plan�
 
 - `concurrently bulunamadı`: proje kökünde `pnpm install --frozen-lockfile` çalıştırın.
 - Prisma istemcisi hazır değil: `pnpm --filter quiz-master-server exec prisma generate` çalıştırın.
-- Vite API için `ECONNREFUSED`: backend'in `5000` portunda çalıştığını kontrol edin.
+- Vite API için `ECONNREFUSED`: backend'in yapılandırılan `PORT` üzerinde çalıştığını kontrol edin; varsayılan `5000`'dir. Vite, süreç ortamı → `server/.env` → kök `.env` sırasıyla yalnız `PORT` değerini okuyarak API, yükleme ve Socket.IO isteklerini aynı sunucuya iletir. Port değişince Vite'ı yeniden başlatın.
 - Gmail zaman aşımı: kurumsal ağın `587/465` çıkışını engelleyip engellemediğini kontrol edin; DNS/proxy değiştirmeden izinli bir ağda deneyin.
 - Çevrimdışı teslim bekliyor: aynı cihaz ve tarayıcıyla sınavı açıp bağlantının geri gelmesini bekleyin.
 
@@ -434,3 +434,5 @@ Komutlar, veri doğrulama sorguları, oturum deposu kararı, geri dönüş plan�
 Mevcut kurulumlarda tutarlı SQLite yedeği alın; `pnpm install`, `pnpm --filter quiz-master-server db:deploy`, `pnpm build` ve sunucu yeniden başlatma adımlarını uygulayın. Migration mevcut kayıtları koruyarak oturum sürümü, e-posta sahiplenme alanı ve sonuç indeksleri ekler; anket sorularının boş doğru cevap alanını migration geçmişiyle uyumlu hale getirir.
 
 Backend testleri geçici SQLite ve taklit SMTP kullanır. Kontroller: `pnpm --filter quiz-master-server test`, `pnpm --filter quiz-master-client exec vitest run`, `pnpm -r type-check` ve `pnpm build`.
+
+Admin panelinin sayfa/sekme denetimi, gerçek Excel/PDF çıktı kontrolleri, erişilebilirlik ve izole hibrit kurulum denemeleri [admin doğrulama raporunda](docs/admin-audit/verification-closure.md) izlenir. Çalıştırılmayan veya ortam erişimine takılan kontroller başarılı olarak sayılmaz.

@@ -312,14 +312,14 @@ export default function SurveyResultsPage() {
 
         <Card className="no-print print:hidden">
           <CardContent className="grid gap-3 p-3 md:grid-cols-[1.4fr_1fr_1fr_auto] md:items-end">
-            <div className="space-y-1.5"><Label>Anket</Label>
-              <Select value={surveyId} onValueChange={setSurveyId}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>
+            <div className="space-y-1.5"><Label htmlFor="survey-results-survey">Anket</Label>
+              <Select value={surveyId} onValueChange={setSurveyId}><SelectTrigger id="survey-results-survey"><SelectValue /></SelectTrigger><SelectContent>
                 <SelectItem value="all">Tüm anketler</SelectItem>
                 {listQuery.data?.surveys.map((survey) => <SelectItem key={survey.id} value={survey.id}>{survey.title}</SelectItem>)}
               </SelectContent></Select>
             </div>
-            <div className="space-y-1.5"><Label>Başlangıç</Label><Input type="date" value={startDate} max={endDate} onChange={(event) => setStartDate(event.target.value)} /></div>
-            <div className="space-y-1.5"><Label>Bitiş</Label><Input type="date" value={endDate} min={startDate} max={today} onChange={(event) => setEndDate(event.target.value)} /></div>
+            <div className="space-y-1.5"><Label htmlFor="survey-results-start">Başlangıç</Label><Input id="survey-results-start" type="date" value={startDate} max={endDate} onChange={(event) => setStartDate(event.target.value)} /></div>
+            <div className="space-y-1.5"><Label htmlFor="survey-results-end">Bitiş</Label><Input id="survey-results-end" type="date" value={endDate} min={startDate} max={today} onChange={(event) => setEndDate(event.target.value)} /></div>
             <Button variant="ghost" onClick={resetFilters}><RefreshCcw className="mr-2 h-4 w-4" />Sıfırla</Button>
           </CardContent>
         </Card>

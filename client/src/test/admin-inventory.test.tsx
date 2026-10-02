@@ -54,6 +54,39 @@ it('profile save synchronizes the header, clean form and offline identity', asyn
   expect(saveOfflineUser).toHaveBeenLastCalledWith(expect.objectContaining({ name: 'Updated Admin' }));
 });
 
+it('profile fields expose their visible labels and clicking each label focuses its field', async () => {
+  mount(<SettingsPage />);
+  await screen.findByText('Hesap Ayarları');
+  // A removed/broken label association must fail even when a matching placeholder
+  // could otherwise provide the same accessible name (e.g. Ad Soyad).
+  const fields = [
+    { placeholder: 'Ad Soyad', name: 'Ad Soyad' },
+    { placeholder: 'email@example.com', name: 'E-posta' },
+    { placeholder: '05xx xxx xx xx', name: 'Telefon' },
+    { placeholder: 'İletişim adresi', name: 'Adres' },
+  ];
+  for (const { placeholder, name } of fields) {
+    const input = screen.getByPlaceholderText(placeholder);
+    expect.soft(input, `${name}: meaningful accessible name`).toHaveAccessibleName(name);
+    await userEvent.click(screen.getByText(name, { selector: 'label', exact: true }));
+    expect.soft(input, `${name}: visible label focuses its input`).toHaveFocus();
+  }
+});
+
+it('password fields have distinct visible-label names and their labels focus the matching field', async () => {
+  window.history.replaceState({}, '', '/settings?tab=security');
+  mount(<SettingsPage />);
+  await screen.findByText('Şifre Değiştir');
+  const passwords = screen.getAllByPlaceholderText('••••••••');
+  expect(passwords).toHaveLength(3);
+  const names = ['Mevcut Şifre', 'Yeni Şifre', 'Yeni Şifre (Tekrar)'];
+  for (const [index, name] of names.entries()) {
+    expect.soft(passwords[index], `${name}: distinct password name`).toHaveAccessibleName(name);
+    await userEvent.click(screen.getByText(name, { selector: 'label', exact: true }));
+    expect.soft(passwords[index], `${name}: label focuses matching password`).toHaveFocus();
+  }
+});
+
 it('unsupported settings deep links select the profile panel', async () => {
   window.history.replaceState({}, '', '/settings?tab=unknown');
   mount(<SettingsPage />);

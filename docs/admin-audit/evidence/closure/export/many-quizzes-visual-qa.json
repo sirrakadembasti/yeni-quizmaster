@@ -1,0 +1,41 @@
+{
+  "suite": "16/16 production E2E passed",
+  "startTime": "2026-10-01T16:03:58.758Z",
+  "pages": 2,
+  "pageDimensions": [
+    [
+      594.95996,
+      841.91998
+    ],
+    [
+      594.95996,
+      841.91998
+    ]
+  ],
+  "pdfTitleOccurrences": {
+    "SayfalıÖğretmenSınavı018a808a3f": 1,
+    "SayfalıÖğretmenSınavı028a808a3f": 1,
+    "SayfalıÖğretmenSınavı038a808a3f": 1,
+    "SayfalıÖğretmenSınavı048a808a3f": 1,
+    "SayfalıÖğretmenSınavı058a808a3f": 1,
+    "SayfalıÖğretmenSınavı068a808a3f": 1,
+    "SayfalıÖğretmenSınavı078a808a3f": 1,
+    "SayfalıÖğretmenSınavı088a808a3f": 1,
+    "SayfalıÖğretmenSınavı098a808a3f": 1,
+    "SayfalıÖğretmenSınavı108a808a3f": 1,
+    "SayfalıÖğretmenSınavı118a808a3f": 1,
+    "SayfalıÖğretmenSınavı128a808a3f": 1,
+    "SayfalıÖğretmenSınavı138a808a3f": 1,
+    "SayfalıÖğretmenSınavı148a808a3f": 1,
+    "SayfalıÖğretmenSınavı158a808a3f": 1,
+    "SayfalıÖğretmenSınavı168a808a3f": 1,
+    "SayfalıÖğretmenSınavı178a808a3f": 1,
+    "SayfalıÖğretmenSınavı188a808a3f": 1,
+    "SayfalıÖğretmenSınavı198a808a3f": 1,
+    "SayfalıÖğretmenSınavı208a808a3f": 1,
+    "SayfalıÖğretmenSınavı218a808a3f": 1
+  },
+  "textSource": "raw Playwright PDF-text attachment; pypdf",
+  "renderer": "Poppler pdftoppm all pages scale-to1200",
+  "visualQA": "Both pages viewed: teacher title/email and Turkish metadata readable; quiz01-15 on page1, quiz16-21 on page2; no clipped rows or truncated fixture titles; portrait margins retained."
+}

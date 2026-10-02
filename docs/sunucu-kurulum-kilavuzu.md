@@ -2,6 +2,14 @@
 
 Bu kılavuz QuizMaster'ın başka bir kurumun domain altyapısında subdomain veya alt yol altında üretime alınmasını kapsar. Önerilen model ayrı bir subdomain ve HTTPS reverse proxy'dir.
 
+Yerel geliştirmede sihirbazın kaydettiği API portu `server/.env` içindeki `PORT` değeridir. Vite'ın API, `/uploads` ve Socket.IO proxy'leri aynı portu kullanır: süreç ortamı, `server/.env`, ardından kök `.env`; değer yoksa 5000. Backend'in okumadığı `.env.local` ve Vite mode dosyaları bu seçime dahil edilmez. Sunucu gizli değerleri istemciye enjekte edilmez. API portunu değiştirince backend ve Vite'ı yeniden başlatın; arayüzün 5173 portu ayrı bir ayardır.
+
+Başlatıcı çalışma zamanı sürümlerini süreç başında doğrular ve status polling sırasında aynı snapshot'ı kullanır; paket işi ve kurulum durumu canlı kontrol edilir. Terminal/BAT/SH → paket kurulumu → web sihirbazı için gerçek izole denemeler ve kapsam sınırları [hibrit kurulum doğrulama kaydındadır](admin-audit/hybrid-setup-closure.md). Unit/config testinin geçmesi taze kurulumun tamamlandığı anlamına gelmez.
+
+Başlatıcı aynı anda yalnız bir durum sorgusu gönderir; 30 saniyede yanıt gelmeyen durum okuması sonlandırılır ve sonraki yenilemeye izin verilir. Paket kurulumu ve sihirbazı uygulama işlemleri bu timeout ile kesilmez. Otomatik tarayıcı açılışını istemiyorsanız `pnpm run setup --no-open`, `kurulum.bat --no-open` veya `sh kurulum.sh --no-open` kullanın ve terminaldeki yerel adresi açın; seçenek verilmezse mevcut otomatik açılış davranışı sürer.
+
+Sihirbaz yalnız migration alt sürecinde `RUST_LOG=info` kullanır. Prisma 5.22'nin eksik SQLite dosyasını otomatik oluşturması, dış ortamdan gelen `warn/error` seviyesinde bozulabildiği için bu işlem ayrıştırıcının beklediği başlangıç logunu korur. Uygulamanın genel log tercihi değiştirilmez. Paket indirme veya Prisma postinstall ağ hatası migration başarısı sayılmaz; hata giderilince paket kurulumunu yeniden deneyin.
+
 ## 1. Mimari ve karar
 
 ```text
@@ -170,7 +178,7 @@ $env:VITE_BASE_PATH="/quizmaster/"
 pnpm build
 ```
 
-Derleme sonunda `client/dist` ve kökte `dist/index.cjs` bulunmalıdır. Derleme yapılan Node ana sürümü ile üretimdeki Node ana sürümü aynı tutulmalıdır.
+Derleme sonunda `client/dist` ve kökte `dist/index.cjs` bulunmalıdır. Derleme yapılan Node ana sürümü ile üretimdeki Node ana sürümü aynı tutulmalıdır. Sunucuyu workspace kökünden `pnpm --filter quiz-master-server start` ile çalıştırın; paket komutu pnpm'in native bağımlılık çözümlemesini de sağlar. SQLite3 ve Sharp build dışında bırakılır, kurulu `node_modules` gerektirir; yalnız `dist/index.cjs` dosyasını başka bir yere taşımak bağımsız dağıtım oluşturmaz.
 
 ## 9. systemd servisi
 

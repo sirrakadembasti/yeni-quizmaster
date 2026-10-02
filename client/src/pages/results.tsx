@@ -216,13 +216,15 @@ export default function StatisticsPage() {
         { label: "Ders", value: categoryName },
         { label: "Sınav", value: quizName },
         { label: "Sınıf", value: className },
+        { label: "Öğretmen", value: teachers.find((teacher: any) => teacher.id === selectedTeacherId)?.name || "Tüm Öğretmenler" },
+        { label: "Öğrenci", value: students.find((student: any) => student.id === selectedStudentId)?.name || "Tüm Öğrenciler" },
         { label: "Kayıt Sayısı", value: filteredResults.length },
       ],
       columns: [
         { header: "Sınav Adı", value: (row: any) => row.quizTitle || row.quiz?.title },
         { header: "Ders", value: (row: any) => row.quiz?.category?.name || categories.find((c: any) => c.id === row.categoryId)?.name || "Genel" },
         { header: "Öğrenci", value: (row: any) => row.student?.name },
-        { header: "E-posta", value: (row: any) => row.student?.email },
+        { header: "E-posta", value: (row: any) => row.student?.email || students.find((student: any) => student.id === (row.studentId || row.student?.id))?.email || "" },
         { header: "Sınıf", value: (row: any) => row.student?.class?.name || row.student?.classNo },
         { header: "Durum", value: (row: any) => row.status === "completed" ? "Tamamlandı" : "Devam Ediyor" },
         { header: "Puan", value: (row: any) => row.score ?? "" },
@@ -255,6 +257,8 @@ export default function StatisticsPage() {
             { label: "Kategori", value: categories.find((c: any) => c.id === selectedCategoryId)?.name || "Tümü" },
             { label: "Sınıf", value: classes.find((c: any) => c.id === selectedClassId)?.name || "Tümü" },
             { label: "Sınav", value: quizzes.find((q: any) => q.id === selectedQuizId)?.title || "Tümü" },
+            { label: "Öğretmen", value: teachers.find((teacher: any) => teacher.id === selectedTeacherId)?.name || "Tüm Öğretmenler" },
+            { label: "Öğrenci", value: students.find((student: any) => student.id === selectedStudentId)?.name || "Tüm Öğrenciler" },
           ]}
         />
 
@@ -289,9 +293,9 @@ export default function StatisticsPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
                 <div className="space-y-1.5">
-                  <Label className="text-[10px] font-bold text-muted-foreground ml-1">Sınıf</Label>
+                  <Label htmlFor="results-class" className="text-[10px] font-bold text-muted-foreground ml-1">Sınıf</Label>
                   <Select value={selectedClassId} onValueChange={(val) => { setSelectedClassId(val); setSelectedStudentId("all"); }}>
-                    <SelectTrigger className="rounded-xl bg-muted/30 border-transparent">
+                    <SelectTrigger id="results-class" className="rounded-xl bg-muted/30 border-transparent">
                       <SelectValue placeholder="Sınıf Seçin" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
@@ -304,9 +308,9 @@ export default function StatisticsPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-[10px] font-bold text-muted-foreground ml-1">Ders/Kategori</Label>
+                  <Label htmlFor="results-category" className="text-[10px] font-bold text-muted-foreground ml-1">Ders/Kategori</Label>
                   <Select value={selectedCategoryId} onValueChange={(value) => { setSelectedCategoryId(value); setSelectedQuizId("all"); }}>
-                    <SelectTrigger className="rounded-xl bg-muted/30 border-transparent">
+                    <SelectTrigger id="results-category" className="rounded-xl bg-muted/30 border-transparent">
                       <SelectValue placeholder="Ders Seçin" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
@@ -319,9 +323,9 @@ export default function StatisticsPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-[10px] font-bold text-muted-foreground ml-1">Sınav Adı</Label>
+                  <Label htmlFor="results-quiz" className="text-[10px] font-bold text-muted-foreground ml-1">Sınav Adı</Label>
                   <Select value={selectedQuizId} onValueChange={setSelectedQuizId}>
-                    <SelectTrigger className="rounded-xl bg-muted/30 border-transparent">
+                    <SelectTrigger id="results-quiz" className="rounded-xl bg-muted/30 border-transparent">
                       <SelectValue placeholder="Sınav Seçin" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
@@ -338,9 +342,9 @@ export default function StatisticsPage() {
                 </div>
                 {role === 'admin' && (
                   <div className="space-y-1.5">
-                    <Label className="text-[10px] font-bold text-muted-foreground ml-1">Öğretmen</Label>
+                    <Label htmlFor="results-teacher" className="text-[10px] font-bold text-muted-foreground ml-1">Öğretmen</Label>
                     <Select value={selectedTeacherId} onValueChange={setSelectedTeacherId}>
-                      <SelectTrigger className="rounded-xl bg-muted/30 border-transparent">
+                      <SelectTrigger id="results-teacher" className="rounded-xl bg-muted/30 border-transparent">
                         <SelectValue placeholder="Öğretmen Seçin" />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl">
@@ -354,9 +358,9 @@ export default function StatisticsPage() {
                 )}
 
                 <div className="space-y-1.5">
-                  <Label className="text-[10px] font-bold text-muted-foreground ml-1">Öğrenci</Label>
+                  <Label htmlFor="results-student" className="text-[10px] font-bold text-muted-foreground ml-1">Öğrenci</Label>
                   <Select value={selectedStudentId} onValueChange={setSelectedStudentId}>
-                    <SelectTrigger className="rounded-xl bg-muted/30 border-transparent">
+                    <SelectTrigger id="results-student" className="rounded-xl bg-muted/30 border-transparent">
                       <SelectValue placeholder="Öğrenci Seçin" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">

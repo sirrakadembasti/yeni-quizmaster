@@ -16,6 +16,7 @@ import { getProjectRoot } from "../utils/project-paths";
 import { buildDeploymentArtifacts, saveDeploymentConfig } from "../utils/deployment-config";
 import { buildServerEnv, publicAppUrl, setupPayloadSchema, toDeploymentConfig, type SetupPayload } from "./config";
 import { renderSetupPage } from "./ui";
+import { deploySetupDatabase } from "./migration";
 
 const projectRoot = getProjectRoot();
 const serverRoot = path.join(projectRoot, "server");
@@ -223,7 +224,7 @@ async function applySetup(payload: SetupPayload, applyJob: ApplyJobState) {
     }
 
     markStep(applyJob, "migrate", "running");
-    await fixedPnpm(["--filter", "quiz-master-server", "db:deploy"], { DATABASE_URL: databaseUrl });
+    await deploySetupDatabase(databaseUrl, fixedPnpm);
     markStep(applyJob, "migrate", "done");
     summary.push("Veritabanı migration'ları uygulandı.");
 

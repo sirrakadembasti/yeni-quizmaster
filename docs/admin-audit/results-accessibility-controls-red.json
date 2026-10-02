@@ -1,0 +1,447 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\playwright\\cli.js",
+      "test",
+      "--config",
+      "playwright.admin-audit.config.ts",
+      "admin-accessibility-closure.spec.ts",
+      "--workers=1",
+      "--grep",
+      "computed accessibility desktop /(survey-results|server-setup|classes/audit-class)$",
+      "--max-failures=3"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.admin-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 3,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/admin-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "admin-audit.spec.ts",
+          "admin-audit-people-flows.spec.ts",
+          "admin-audit-system-flows.spec.ts",
+          "admin-results-regression.spec.ts",
+          "admin-quiz-repairs.spec.ts",
+          "admin-inventory-repairs.spec.ts",
+          "admin-critical-repairs.spec.ts",
+          "admin-session-expiry.spec.ts",
+          "admin-export-print.spec.ts",
+          "admin-accessibility-closure.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "docs/admin-audit/playwright-report-latest",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/admin-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "admin-accessibility-closure.spec.ts",
+      "file": "admin-accessibility-closure.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "computed accessibility desktop /survey-results",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 20903,
+                  "error": {
+                    "message": "Error: initial: computed textbox name, index 0\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('textbox').first()\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - initial: computed textbox name, index 0 getByRole('textbox').first() with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('textbox').first()\u001b[22m\n\u001b[2m    6 × locator resolved to <input type=\"date\" max=\"2026-10-01\" value=\"2026-09-01\" class=\"flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n",
+                    "stack": "Error: initial: computed textbox name, index 0\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('textbox').first()\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - initial: computed textbox name, index 0 getByRole('textbox').first() with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('textbox').first()\u001b[22m\n\u001b[2m    6 × locator resolved to <input type=\"date\" max=\"2026-10-01\" value=\"2026-09-01\" class=\"flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n    at namesAndSnapshot (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:75:83)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:105:7",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                      "column": 83,
+                      "line": 75
+                    },
+                    "snippet": "  73 |       const control = controls.nth(i);\n  74 |       if (await control.isVisible()) {\n> 75 |         await expect.soft(control, `${state}: computed ${role} name, index ${i}`).toHaveAccessibleName(/\\S/, { timeout: 300 });\n     |                                                                                   ^\n  76 |       }\n  77 |     }\n  78 |   }"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                        "column": 83,
+                        "line": 75
+                      },
+                      "message": "Error: initial: computed textbox name, index 0\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('textbox').first()\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - initial: computed textbox name, index 0 getByRole('textbox').first() with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('textbox').first()\u001b[22m\n\u001b[2m    6 × locator resolved to <input type=\"date\" max=\"2026-10-01\" value=\"2026-09-01\" class=\"flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  73 |       const control = controls.nth(i);\n  74 |       if (await control.isVisible()) {\n> 75 |         await expect.soft(control, `${state}: computed ${role} name, index ${i}`).toHaveAccessibleName(/\\S/, { timeout: 300 });\n     |                                                                                   ^\n  76 |       }\n  77 |     }\n  78 |   }\n    at namesAndSnapshot (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:75:83)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:105:7"
+                    },
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                        "column": 83,
+                        "line": 75
+                      },
+                      "message": "Error: initial: computed textbox name, index 1\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('textbox').nth(1)\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - initial: computed textbox name, index 1 getByRole('textbox').nth(1) with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('textbox').nth(1)\u001b[22m\n\u001b[2m    6 × locator resolved to <input type=\"date\" min=\"2026-09-01\" max=\"2026-10-01\" value=\"2026-10-01\" class=\"flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  73 |       const control = controls.nth(i);\n  74 |       if (await control.isVisible()) {\n> 75 |         await expect.soft(control, `${state}: computed ${role} name, index ${i}`).toHaveAccessibleName(/\\S/, { timeout: 300 });\n     |                                                                                   ^\n  76 |       }\n  77 |     }\n  78 |   }\n    at namesAndSnapshot (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:75:83)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:105:7"
+                    },
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                        "column": 83,
+                        "line": 75
+                      },
+                      "message": "Error: initial: computed combobox name, index 0\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('combobox').first()\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - initial: computed combobox name, index 0 getByRole('combobox').first() with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('combobox').first()\u001b[22m\n\u001b[2m    5 × locator resolved to <button dir=\"ltr\" type=\"button\" role=\"combobox\" data-state=\"closed\" aria-expanded=\"false\" aria-autocomplete=\"none\" class=\"flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm dark:shadow-none ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1\">…</button>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  73 |       const control = controls.nth(i);\n  74 |       if (await control.isVisible()) {\n> 75 |         await expect.soft(control, `${state}: computed ${role} name, index ${i}`).toHaveAccessibleName(/\\S/, { timeout: 300 });\n     |                                                                                   ^\n  76 |       }\n  77 |     }\n  78 |   }\n    at namesAndSnapshot (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:75:83)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:105:7"
+                    },
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                        "column": 83,
+                        "line": 75
+                      },
+                      "message": "Error: tablist-0-tab-0: computed textbox name, index 0\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('textbox').first()\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - tablist-0-tab-0: computed textbox name, index 0 getByRole('textbox').first() with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('textbox').first()\u001b[22m\n\u001b[2m    6 × locator resolved to <input type=\"date\" max=\"2026-10-01\" value=\"2026-09-01\" class=\"flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  73 |       const control = controls.nth(i);\n  74 |       if (await control.isVisible()) {\n> 75 |         await expect.soft(control, `${state}: computed ${role} name, index ${i}`).toHaveAccessibleName(/\\S/, { timeout: 300 });\n     |                                                                                   ^\n  76 |       }\n  77 |     }\n  78 |   }\n    at namesAndSnapshot (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:75:83)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:120:11"
+                    },
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                        "column": 83,
+                        "line": 75
+                      },
+                      "message": "Error: tablist-0-tab-0: computed textbox name, index 1\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('textbox').nth(1)\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - tablist-0-tab-0: computed textbox name, index 1 getByRole('textbox').nth(1) with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('textbox').nth(1)\u001b[22m\n\u001b[2m    6 × locator resolved to <input type=\"date\" min=\"2026-09-01\" max=\"2026-10-01\" value=\"2026-10-01\" class=\"flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  73 |       const control = controls.nth(i);\n  74 |       if (await control.isVisible()) {\n> 75 |         await expect.soft(control, `${state}: computed ${role} name, index ${i}`).toHaveAccessibleName(/\\S/, { timeout: 300 });\n     |                                                                                   ^\n  76 |       }\n  77 |     }\n  78 |   }\n    at namesAndSnapshot (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:75:83)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:120:11"
+                    },
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                        "column": 83,
+                        "line": 75
+                      },
+                      "message": "Error: tablist-0-tab-0: computed combobox name, index 0\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('combobox').first()\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - tablist-0-tab-0: computed combobox name, index 0 getByRole('combobox').first() with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('combobox').first()\u001b[22m\n\u001b[2m    6 × locator resolved to <button dir=\"ltr\" type=\"button\" role=\"combobox\" data-state=\"closed\" aria-expanded=\"false\" aria-autocomplete=\"none\" class=\"flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm dark:shadow-none ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1\">…</button>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  73 |       const control = controls.nth(i);\n  74 |       if (await control.isVisible()) {\n> 75 |         await expect.soft(control, `${state}: computed ${role} name, index ${i}`).toHaveAccessibleName(/\\S/, { timeout: 300 });\n     |                                                                                   ^\n  76 |       }\n  77 |     }\n  78 |   }\n    at namesAndSnapshot (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:75:83)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:120:11"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:11:28.987Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "initial-computed-aria",
+                      "contentType": "text/yaml",
+                      "body": "LSByZWdpb24gIk5vdGlmaWNhdGlvbnMgKEY4KSI6CiAgLSBsaXN0Ci0gcmVnaW9uICJOb3RpZmljYXRpb25zIGFsdCtUIgotIGNvbXBsZW1lbnRhcnkgIkFuYSBtZW7DvCI6CiAgLSB0ZXh0OiBRdWl6TWFzdGVyCiAgLSBuYXZpZ2F0aW9uOgogICAgLSBsaW5rICJEYXNoYm9hcmQiOgogICAgICAtIC91cmw6IC8KICAgIC0gbGluayAiU8SxbmF2IFnDtm5ldGltaSI6CiAgICAgIC0gL3VybDogL2FkbWluLXF1aXp6ZXMKICAgIC0gbGluayAiU8SxbmF2bGFyIjoKICAgICAgLSAvdXJsOiAvcXVpenplcwogICAgLSBsaW5rICJTxLFuxLFmIMSwc3RhdGlzdGlrbGVyaSI6CiAgICAgIC0gL3VybDogL3N0YXRpc3RpY3MKICAgIC0gbGluayAiU8SxbmF2IFNvbnXDp2xhcsSxIjoKICAgICAgLSAvdXJsOiAvcmVzdWx0cwogICAgLSBsaW5rICJBbmtldCBZw7ZuZXRpbWkiOgogICAgICAtIC91cmw6IC9zdXJ2ZXktcmVzdWx0cwogICAgLSBsaW5rICLDlsSfcmVuY2lsZXIiOgogICAgICAtIC91cmw6IC9zdHVkZW50cwogICAgLSBsaW5rICLDlsSfcmV0bWVubGVyIjoKICAgICAgLSAvdXJsOiAvdGVhY2hlcnMKICAgIC0gbGluayAiVmVsaSBFxZ9sZcWfdGlybWUiOgogICAgICAtIC91cmw6IC9ndWFyZGlhbi1tYW5hZ2VtZW50CiAgICAtIGxpbmsgIlPEsW7EsWZsYXIiOgogICAgICAtIC91cmw6IC9jbGFzc2xpc3QKICAgIC0gbGluayAiWcO2bmV0aW0iOgogICAgICAtIC91cmw6IC9tYW5hZ2VtZW50CiAgICAtIGxpbmsgIkFyxZ9pdiI6CiAgICAgIC0gL3VybDogL2FyY2hpdmUKICAgIC0gbGluayAiU3VudWN1IER1cnVtdSI6CiAgICAgIC0gL3VybDogL3NlcnZlci1zZXR1cAogICAgLSBsaW5rICJEdXl1cnVsYXIiOgogICAgICAtIC91cmw6IC9hbm5vdW5jZW1lbnRzCiAgICAtIGxpbmsgIkF5YXJsYXIiOgogICAgICAtIC91cmw6IC9zZXR0aW5ncwotIG1haW46CiAgLSBidXR0b24gIkJpbGRpcmltbGVyaSBhw6ciCiAgLSBidXR0b24gIkthcmFubMSxayBNb2RhIEdlw6ciCiAgLSBidXR0b24gIkEgQXVkaXQgQWRtaW4gWcO2bmV0aWNpIgogIC0gdGFibGlzdDoKICAgIC0gdGFiICJTb251w6dsYXIiIFtzZWxlY3RlZF0KICAgIC0gdGFiICJBbmtldCBPbHXFn3R1ciIKICAtIGhlYWRpbmcgIkFua2V0IFnDtm5ldGltaSIgW2xldmVsPTFdCiAgLSBwYXJhZ3JhcGg6IEthdMSxbMSxbcSxIGthcsWfxLFsYcWfdMSxcsSxbjsgaGVyIHNvcnV5dSBncmFmaWsgdmUgdGFibG95bGEgYmlybGlrdGUgaW5jZWxleWluLgogIC0gYnV0dG9uICJFeGNlbCIKICAtIGJ1dHRvbiAiWWF6ZMSxciIKICAtIHRleHQ6IEFua2V0CiAgLSBjb21ib2JveDogVMO8bSBhbmtldGxlcgogIC0gdGV4dDogQmHFn2xhbmfEscOnCiAgLSB0ZXh0Ym94OiAyMDI2LTA5LTAxCiAgLSB0ZXh0OiBCaXRpxZ8KICAtIHRleHRib3g6IDIwMjYtMTAtMDEKICAtIGJ1dHRvbiAiU8SxZsSxcmxhIgogIC0gcGFyYWdyYXBoOiBHw7Zyw7xudMO8bGVuZW4gQW5rZXQKICAtIHBhcmFncmFwaDogIjEiCiAgLSBwYXJhZ3JhcGg6IFTDvG0gYW5rZXRsZXIKICAtIHBhcmFncmFwaDogVG9wbGFtIEthdMSxbMSxbQogIC0gcGFyYWdyYXBoOiAiMSIKICAtIHBhcmFncmFwaDogRmlsdHJlbGVuZW4geWFuxLF0bGFtYSBzYXnEsXPEsQogIC0gcGFyYWdyYXBoOiBIZWRlZiBLYXTEsWzEsW1jxLEKICAtIHBhcmFncmFwaDogIjAiCiAgLSBwYXJhZ3JhcGg6IEFua2V0bGVyZSBhdGFubcSxxZ8gw7bEn3JlbmNpCiAgLSBwYXJhZ3JhcGg6IEdlbmVsIEthdMSxbMSxbSBPcmFuxLEKICAtIHBhcmFncmFwaDogIiUwIgogIC0gcGFyYWdyYXBoOiAxIHNvcnUgYW5hbGl6IGVkaWxkaQogIC0gdGV4dDogR3JhZmlrbGVyZGUgYWRldCB2ZSBvcmFuIGJpcmxpa3RlIGfDtnN0ZXJpbGlyOyBheXLEsW50xLFsxLEgZGXEn2VybGVyIHlhbiB0YWJsb2RhZMSxci4gYXVkaXQtc3VydmV5IDAxLjEwLjIwMjYgMSBzb3J1IDEgLyAwIGthdMSxbMSxbWPEsSBLYXTEsWzEsW0gaWxlcmxlbWVzaQogIC0gc3Ryb25nOiAiJTAiCiAgLSBwcm9ncmVzc2JhcgogIC0gYnV0dG9uICJEw7x6ZW5sZSIKICAtIGltZzoKICAgIC0gaW1nCiAgLSBzdHJvbmc6ICIlMCIKICAtIHRleHQ6IEthdMSxbMSxbSAxCiAgLSBoZWFkaW5nICJBdWRpdCBxdWVzdGlvbj8iIFtsZXZlbD0zXQogIC0gdGV4dDogc2hvcnQtYW5zd2VyIDEgeWFuxLF0bGF5YW4KICAtIGltZzogMCAxIDIgMyA0IEF1ZGl0IHJlc3BvbnNlCiAgLSB0YWJsZToKICAgIC0gcm93Z3JvdXA6CiAgICAgIC0gcm93ICJTZcOnZW5layBZYW7EsXQgT3JhbiI6CiAgICAgICAgLSBjb2x1bW5oZWFkZXIgIlNlw6dlbmVrIgogICAgICAgIC0gY29sdW1uaGVhZGVyICJZYW7EsXQiCiAgICAgICAgLSBjb2x1bW5oZWFkZXIgIk9yYW4iCiAgICAtIHJvd2dyb3VwOgogICAgICAtIHJvdyAiQXVkaXQgcmVzcG9uc2UgMSAlMTAwIjoKICAgICAgICAtIGNlbGwgIkF1ZGl0IHJlc3BvbnNlIjoKICAgICAgICAgIC0gdGV4dDogQXVkaXQgcmVzcG9uc2UKICAgICAgICAgIC0gcHJvZ3Jlc3NiYXIKICAgICAgICAtIGNlbGwgIjEiCiAgICAgICAgLSBjZWxsICIlMTAwIg=="
+                    },
+                    {
+                      "name": "tablist-0-tab-0-computed-aria",
+                      "contentType": "text/yaml",
+                      "body": "LSByZWdpb24gIk5vdGlmaWNhdGlvbnMgKEY4KSI6CiAgLSBsaXN0Ci0gcmVnaW9uICJOb3RpZmljYXRpb25zIGFsdCtUIgotIGNvbXBsZW1lbnRhcnkgIkFuYSBtZW7DvCI6CiAgLSB0ZXh0OiBRdWl6TWFzdGVyCiAgLSBuYXZpZ2F0aW9uOgogICAgLSBsaW5rICJEYXNoYm9hcmQiOgogICAgICAtIC91cmw6IC8KICAgIC0gbGluayAiU8SxbmF2IFnDtm5ldGltaSI6CiAgICAgIC0gL3VybDogL2FkbWluLXF1aXp6ZXMKICAgIC0gbGluayAiU8SxbmF2bGFyIjoKICAgICAgLSAvdXJsOiAvcXVpenplcwogICAgLSBsaW5rICJTxLFuxLFmIMSwc3RhdGlzdGlrbGVyaSI6CiAgICAgIC0gL3VybDogL3N0YXRpc3RpY3MKICAgIC0gbGluayAiU8SxbmF2IFNvbnXDp2xhcsSxIjoKICAgICAgLSAvdXJsOiAvcmVzdWx0cwogICAgLSBsaW5rICJBbmtldCBZw7ZuZXRpbWkiOgogICAgICAtIC91cmw6IC9zdXJ2ZXktcmVzdWx0cwogICAgLSBsaW5rICLDlsSfcmVuY2lsZXIiOgogICAgICAtIC91cmw6IC9zdHVkZW50cwogICAgLSBsaW5rICLDlsSfcmV0bWVubGVyIjoKICAgICAgLSAvdXJsOiAvdGVhY2hlcnMKICAgIC0gbGluayAiVmVsaSBFxZ9sZcWfdGlybWUiOgogICAgICAtIC91cmw6IC9ndWFyZGlhbi1tYW5hZ2VtZW50CiAgICAtIGxpbmsgIlPEsW7EsWZsYXIiOgogICAgICAtIC91cmw6IC9jbGFzc2xpc3QKICAgIC0gbGluayAiWcO2bmV0aW0iOgogICAgICAtIC91cmw6IC9tYW5hZ2VtZW50CiAgICAtIGxpbmsgIkFyxZ9pdiI6CiAgICAgIC0gL3VybDogL2FyY2hpdmUKICAgIC0gbGluayAiU3VudWN1IER1cnVtdSI6CiAgICAgIC0gL3VybDogL3NlcnZlci1zZXR1cAogICAgLSBsaW5rICJEdXl1cnVsYXIiOgogICAgICAtIC91cmw6IC9hbm5vdW5jZW1lbnRzCiAgICAtIGxpbmsgIkF5YXJsYXIiOgogICAgICAtIC91cmw6IC9zZXR0aW5ncwotIG1haW46CiAgLSBidXR0b24gIkJpbGRpcmltbGVyaSBhw6ciCiAgLSBidXR0b24gIkthcmFubMSxayBNb2RhIEdlw6ciCiAgLSBidXR0b24gIkEgQXVkaXQgQWRtaW4gWcO2bmV0aWNpIgogIC0gdGFibGlzdDoKICAgIC0gdGFiICJTb251w6dsYXIiIFtzZWxlY3RlZF0KICAgIC0gdGFiICJBbmtldCBPbHXFn3R1ciIKICAtIGhlYWRpbmcgIkFua2V0IFnDtm5ldGltaSIgW2xldmVsPTFdCiAgLSBwYXJhZ3JhcGg6IEthdMSxbMSxbcSxIGthcsWfxLFsYcWfdMSxcsSxbjsgaGVyIHNvcnV5dSBncmFmaWsgdmUgdGFibG95bGEgYmlybGlrdGUgaW5jZWxleWluLgogIC0gYnV0dG9uICJFeGNlbCIKICAtIGJ1dHRvbiAiWWF6ZMSxciIKICAtIHRleHQ6IEFua2V0CiAgLSBjb21ib2JveDogVMO8bSBhbmtldGxlcgogIC0gdGV4dDogQmHFn2xhbmfEscOnCiAgLSB0ZXh0Ym94OiAyMDI2LTA5LTAxCiAgLSB0ZXh0OiBCaXRpxZ8KICAtIHRleHRib3g6IDIwMjYtMTAtMDEKICAtIGJ1dHRvbiAiU8SxZsSxcmxhIgogIC0gcGFyYWdyYXBoOiBHw7Zyw7xudMO8bGVuZW4gQW5rZXQKICAtIHBhcmFncmFwaDogIjEiCiAgLSBwYXJhZ3JhcGg6IFTDvG0gYW5rZXRsZXIKICAtIHBhcmFncmFwaDogVG9wbGFtIEthdMSxbMSxbQogIC0gcGFyYWdyYXBoOiAiMSIKICAtIHBhcmFncmFwaDogRmlsdHJlbGVuZW4geWFuxLF0bGFtYSBzYXnEsXPEsQogIC0gcGFyYWdyYXBoOiBIZWRlZiBLYXTEsWzEsW1jxLEKICAtIHBhcmFncmFwaDogIjAiCiAgLSBwYXJhZ3JhcGg6IEFua2V0bGVyZSBhdGFubcSxxZ8gw7bEn3JlbmNpCiAgLSBwYXJhZ3JhcGg6IEdlbmVsIEthdMSxbMSxbSBPcmFuxLEKICAtIHBhcmFncmFwaDogIiUwIgogIC0gcGFyYWdyYXBoOiAxIHNvcnUgYW5hbGl6IGVkaWxkaQogIC0gdGV4dDogR3JhZmlrbGVyZGUgYWRldCB2ZSBvcmFuIGJpcmxpa3RlIGfDtnN0ZXJpbGlyOyBheXLEsW50xLFsxLEgZGXEn2VybGVyIHlhbiB0YWJsb2RhZMSxci4gYXVkaXQtc3VydmV5IDAxLjEwLjIwMjYgMSBzb3J1IDEgLyAwIGthdMSxbMSxbWPEsSBLYXTEsWzEsW0gaWxlcmxlbWVzaQogIC0gc3Ryb25nOiAiJTAiCiAgLSBwcm9ncmVzc2JhcgogIC0gYnV0dG9uICJEw7x6ZW5sZSIKICAtIGltZzoKICAgIC0gaW1nCiAgLSBzdHJvbmc6ICIlMCIKICAtIHRleHQ6IEthdMSxbMSxbSAxCiAgLSBoZWFkaW5nICJBdWRpdCBxdWVzdGlvbj8iIFtsZXZlbD0zXQogIC0gdGV4dDogc2hvcnQtYW5zd2VyIDEgeWFuxLF0bGF5YW4KICAtIGltZzogMCAxIDIgMyA0IEF1ZGl0IHJlc3BvbnNlCiAgLSB0YWJsZToKICAgIC0gcm93Z3JvdXA6CiAgICAgIC0gcm93ICJTZcOnZW5layBZYW7EsXQgT3JhbiI6CiAgICAgICAgLSBjb2x1bW5oZWFkZXIgIlNlw6dlbmVrIgogICAgICAgIC0gY29sdW1uaGVhZGVyICJZYW7EsXQiCiAgICAgICAgLSBjb2x1bW5oZWFkZXIgIk9yYW4iCiAgICAtIHJvd2dyb3VwOgogICAgICAtIHJvdyAiQXVkaXQgcmVzcG9uc2UgMSAlMTAwIjoKICAgICAgICAtIGNlbGwgIkF1ZGl0IHJlc3BvbnNlIjoKICAgICAgICAgIC0gdGV4dDogQXVkaXQgcmVzcG9uc2UKICAgICAgICAgIC0gcHJvZ3Jlc3NiYXIKICAgICAgICAtIGNlbGwgIjEiCiAgICAgICAgLSBjZWxsICIlMTAwIg=="
+                    },
+                    {
+                      "name": "tablist-0-tab-1-computed-aria",
+                      "contentType": "text/yaml",
+                      "body": "LSByZWdpb24gIk5vdGlmaWNhdGlvbnMgKEY4KSI6CiAgLSBsaXN0Ci0gcmVnaW9uICJOb3RpZmljYXRpb25zIGFsdCtUIgotIGNvbXBsZW1lbnRhcnkgIkFuYSBtZW7DvCI6CiAgLSB0ZXh0OiBRdWl6TWFzdGVyCiAgLSBuYXZpZ2F0aW9uOgogICAgLSBsaW5rICJEYXNoYm9hcmQiOgogICAgICAtIC91cmw6IC8KICAgIC0gbGluayAiU8SxbmF2IFnDtm5ldGltaSI6CiAgICAgIC0gL3VybDogL2FkbWluLXF1aXp6ZXMKICAgIC0gbGluayAiU8SxbmF2bGFyIjoKICAgICAgLSAvdXJsOiAvcXVpenplcwogICAgLSBsaW5rICJTxLFuxLFmIMSwc3RhdGlzdGlrbGVyaSI6CiAgICAgIC0gL3VybDogL3N0YXRpc3RpY3MKICAgIC0gbGluayAiU8SxbmF2IFNvbnXDp2xhcsSxIjoKICAgICAgLSAvdXJsOiAvcmVzdWx0cwogICAgLSBsaW5rICJBbmtldCBZw7ZuZXRpbWkiOgogICAgICAtIC91cmw6IC9zdXJ2ZXktcmVzdWx0cwogICAgLSBsaW5rICLDlsSfcmVuY2lsZXIiOgogICAgICAtIC91cmw6IC9zdHVkZW50cwogICAgLSBsaW5rICLDlsSfcmV0bWVubGVyIjoKICAgICAgLSAvdXJsOiAvdGVhY2hlcnMKICAgIC0gbGluayAiVmVsaSBFxZ9sZcWfdGlybWUiOgogICAgICAtIC91cmw6IC9ndWFyZGlhbi1tYW5hZ2VtZW50CiAgICAtIGxpbmsgIlPEsW7EsWZsYXIiOgogICAgICAtIC91cmw6IC9jbGFzc2xpc3QKICAgIC0gbGluayAiWcO2bmV0aW0iOgogICAgICAtIC91cmw6IC9tYW5hZ2VtZW50CiAgICAtIGxpbmsgIkFyxZ9pdiI6CiAgICAgIC0gL3VybDogL2FyY2hpdmUKICAgIC0gbGluayAiU3VudWN1IER1cnVtdSI6CiAgICAgIC0gL3VybDogL3NlcnZlci1zZXR1cAogICAgLSBsaW5rICJEdXl1cnVsYXIiOgogICAgICAtIC91cmw6IC9hbm5vdW5jZW1lbnRzCiAgICAtIGxpbmsgIkF5YXJsYXIiOgogICAgICAtIC91cmw6IC9zZXR0aW5ncwotIG1haW46CiAgLSBidXR0b24gIkJpbGRpcmltbGVyaSBhw6ciCiAgLSBidXR0b24gIkthcmFubMSxayBNb2RhIEdlw6ciCiAgLSBidXR0b24gIkEgQXVkaXQgQWRtaW4gWcO2bmV0aWNpIgogIC0gdGFibGlzdDoKICAgIC0gdGFiICJTb251w6dsYXIiCiAgICAtIHRhYiAiQW5rZXQgT2x1xZ90dXIiIFtzZWxlY3RlZF0KICAtIGhlYWRpbmcgIlllbmkgQW5rZXQgT2x1xZ90dXIiIFtsZXZlbD0xXQogIC0gcGFyYWdyYXBoOiBBbmtldCBkZXRheWxhcsSxbsSxIHZlIHNvcnVsYXLEsW7EsSBiZWxpcmxleWluLgogIC0gYnV0dG9uICJUYXNsYWsgS2F5ZGV0IgogIC0gYnV0dG9uICJZYXnEsW5sYSIgW2Rpc2FibGVkXQogIC0gdGFibGlzdDoKICAgIC0gdGFiICJBbmtldCBBeWFybGFyxLEiIFtzZWxlY3RlZF0KICAgIC0gdGFiICJTb3J1bGFyICgxKSIKICAtIHRhYnBhbmVsICJBbmtldCBBeWFybGFyxLEiOgogICAgLSB0ZXh0OiBUZW1lbCBCaWxnaWxlciBBbmtldCBnw7Zyw7xuw7xtw7xuw7wsIGhlZGVmaW5pIHZlIHRlbWVsIGF5YXJsYXLEsW7EsSBiZWxpcmxleWluLiBBbmtldCBCYcWfbMSxxJ/EsSAqCiAgICAtIHRleHRib3ggIkFua2V0IEJhxZ9sxLHEn8SxICoiOgogICAgICAtIC9wbGFjZWhvbGRlcjogIsOWcm46IMOWxJ9yZW5jaSBNZW1udW5peWV0IEFua2V0aSIKICAgIC0gdGV4dDogQcOnxLFrbGFtYSAoT3BzaXlvbmVsKQogICAgLSB0ZXh0Ym94ICJBw6fEsWtsYW1hIChPcHNpeW9uZWwpIjoKICAgICAgLSAvcGxhY2Vob2xkZXI6IEFua2V0IGhha2vEsW5kYSBrxLFzYSBiaXIgYcOnxLFrbGFtYSB2ZXlhIHnDtm5lcmdlIGVrbGV5aW4uLi4KICAgIC0gdGV4dDogRGVycyAvIEthdGVnb3JpCiAgICAtIGNvbWJvYm94ICJEZXJzIC8gS2F0ZWdvcmkiOiBLYXRlZ29yaSBzZcOnaW4KICAgIC0gdGV4dDogWWF5xLFubGFuYWNhayBTxLFuxLFmbGFyCiAgICAtIHBhcmFncmFwaDogWWV0a2lsaSBzxLFuxLFmIGJ1bHVubXV5b3IuCiAgICAtIHBhcmFncmFwaDogU8SxbsSxZsSxIGJ1bHVuYW4gw7bEn3JlbmNpbGVyIGnDp2luIGVuIGF6IGJpciBoZWRlZiBzxLFuxLFmIHNlw6dpbG1lbGlkaXIuCiAgLSB0ZXh0OiDinKggWWFwYXkgWmVrYSBZYXBheSB6ZWthIGlsZSBzYW5peWVsZXIgacOnaW5kZSBrYWxpdGVsaSBzb3J1bGFyIMO8cmV0aW4uCiAgLSBidXR0b24gIkFJIGlsZSBBbmtldCBTb3J1bGFyxLEgw5xyZXQi"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-accessibility-closur-85640-lity-desktop-survey-results\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-accessibility-closur-85640-lity-desktop-survey-results\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-accessibility-closur-85640-lity-desktop-survey-results\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                    "column": 83,
+                    "line": 75
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "b0806312ca8f6416c281-636788d20dce1fa08530",
+          "file": "admin-accessibility-closure.spec.ts",
+          "line": 102,
+          "column": 9
+        },
+        {
+          "title": "computed accessibility desktop /server-setup",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 15643,
+                  "error": {
+                    "message": "Error: initial: computed combobox name, index 0\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('combobox').first()\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - initial: computed combobox name, index 0 getByRole('combobox').first() with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('combobox').first()\u001b[22m\n\u001b[2m    5 × locator resolved to <button dir=\"ltr\" type=\"button\" role=\"combobox\" data-state=\"closed\" aria-expanded=\"false\" aria-autocomplete=\"none\" class=\"flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm dark:shadow-none ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1\">…</button>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n",
+                    "stack": "Error: initial: computed combobox name, index 0\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('combobox').first()\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - initial: computed combobox name, index 0 getByRole('combobox').first() with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('combobox').first()\u001b[22m\n\u001b[2m    5 × locator resolved to <button dir=\"ltr\" type=\"button\" role=\"combobox\" data-state=\"closed\" aria-expanded=\"false\" aria-autocomplete=\"none\" class=\"flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm dark:shadow-none ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1\">…</button>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n    at namesAndSnapshot (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:75:83)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:105:7",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                      "column": 83,
+                      "line": 75
+                    },
+                    "snippet": "  73 |       const control = controls.nth(i);\n  74 |       if (await control.isVisible()) {\n> 75 |         await expect.soft(control, `${state}: computed ${role} name, index ${i}`).toHaveAccessibleName(/\\S/, { timeout: 300 });\n     |                                                                                   ^\n  76 |       }\n  77 |     }\n  78 |   }"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                        "column": 83,
+                        "line": 75
+                      },
+                      "message": "Error: initial: computed combobox name, index 0\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('combobox').first()\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - initial: computed combobox name, index 0 getByRole('combobox').first() with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('combobox').first()\u001b[22m\n\u001b[2m    5 × locator resolved to <button dir=\"ltr\" type=\"button\" role=\"combobox\" data-state=\"closed\" aria-expanded=\"false\" aria-autocomplete=\"none\" class=\"flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm dark:shadow-none ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1\">…</button>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  73 |       const control = controls.nth(i);\n  74 |       if (await control.isVisible()) {\n> 75 |         await expect.soft(control, `${state}: computed ${role} name, index ${i}`).toHaveAccessibleName(/\\S/, { timeout: 300 });\n     |                                                                                   ^\n  76 |       }\n  77 |     }\n  78 |   }\n    at namesAndSnapshot (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:75:83)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:105:7"
+                    },
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                        "column": 83,
+                        "line": 75
+                      },
+                      "message": "Error: initial: computed switch name, index 0\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('switch').first()\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - initial: computed switch name, index 0 getByRole('switch').first() with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('switch').first()\u001b[22m\n\u001b[2m    5 × locator resolved to <button value=\"on\" type=\"button\" role=\"switch\" aria-checked=\"false\" data-state=\"unchecked\" class=\"peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-sm dark:shadow-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input\">…</button>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  73 |       const control = controls.nth(i);\n  74 |       if (await control.isVisible()) {\n> 75 |         await expect.soft(control, `${state}: computed ${role} name, index ${i}`).toHaveAccessibleName(/\\S/, { timeout: 300 });\n     |                                                                                   ^\n  76 |       }\n  77 |     }\n  78 |   }\n    at namesAndSnapshot (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:75:83)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:105:7"
+                    },
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                        "column": 83,
+                        "line": 75
+                      },
+                      "message": "Error: initial: computed spinbutton name, index 0\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('spinbutton').first()\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - initial: computed spinbutton name, index 0 getByRole('spinbutton').first() with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('spinbutton').first()\u001b[22m\n\u001b[2m    5 × locator resolved to <input min=\"0\" max=\"5\" value=\"0\" type=\"number\" class=\"flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  73 |       const control = controls.nth(i);\n  74 |       if (await control.isVisible()) {\n> 75 |         await expect.soft(control, `${state}: computed ${role} name, index ${i}`).toHaveAccessibleName(/\\S/, { timeout: 300 });\n     |                                                                                   ^\n  76 |       }\n  77 |     }\n  78 |   }\n    at namesAndSnapshot (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:75:83)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:105:7"
+                    },
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                        "column": 83,
+                        "line": 75
+                      },
+                      "message": "Error: initial: computed spinbutton name, index 1\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('spinbutton').nth(1)\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - initial: computed spinbutton name, index 1 getByRole('spinbutton').nth(1) with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('spinbutton').nth(1)\u001b[22m\n\u001b[2m    6 × locator resolved to <input min=\"30\" max=\"3650\" value=\"365\" type=\"number\" class=\"flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  73 |       const control = controls.nth(i);\n  74 |       if (await control.isVisible()) {\n> 75 |         await expect.soft(control, `${state}: computed ${role} name, index ${i}`).toHaveAccessibleName(/\\S/, { timeout: 300 });\n     |                                                                                   ^\n  76 |       }\n  77 |     }\n  78 |   }\n    at namesAndSnapshot (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:75:83)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:105:7"
+                    },
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                        "column": 83,
+                        "line": 75
+                      },
+                      "message": "Error: initial: computed spinbutton name, index 2\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('spinbutton').nth(2)\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - initial: computed spinbutton name, index 2 getByRole('spinbutton').nth(2) with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('spinbutton').nth(2)\u001b[22m\n\u001b[2m    6 × locator resolved to <input min=\"7\" max=\"3650\" value=\"180\" type=\"number\" class=\"flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  73 |       const control = controls.nth(i);\n  74 |       if (await control.isVisible()) {\n> 75 |         await expect.soft(control, `${state}: computed ${role} name, index ${i}`).toHaveAccessibleName(/\\S/, { timeout: 300 });\n     |                                                                                   ^\n  76 |       }\n  77 |     }\n  78 |   }\n    at namesAndSnapshot (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:75:83)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:105:7"
+                    },
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                        "column": 83,
+                        "line": 75
+                      },
+                      "message": "Error: initial: computed spinbutton name, index 3\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('spinbutton').nth(3)\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - initial: computed spinbutton name, index 3 getByRole('spinbutton').nth(3) with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('spinbutton').nth(3)\u001b[22m\n\u001b[2m    5 × locator resolved to <input min=\"7\" max=\"3650\" value=\"90\" type=\"number\" class=\"flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  73 |       const control = controls.nth(i);\n  74 |       if (await control.isVisible()) {\n> 75 |         await expect.soft(control, `${state}: computed ${role} name, index ${i}`).toHaveAccessibleName(/\\S/, { timeout: 300 });\n     |                                                                                   ^\n  76 |       }\n  77 |     }\n  78 |   }\n    at namesAndSnapshot (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:75:83)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:105:7"
+                    },
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                        "column": 83,
+                        "line": 75
+                      },
+                      "message": "Error: initial: computed spinbutton name, index 4\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('spinbutton').nth(4)\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - initial: computed spinbutton name, index 4 getByRole('spinbutton').nth(4) with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('spinbutton').nth(4)\u001b[22m\n\u001b[2m    6 × locator resolved to <input min=\"7\" max=\"3650\" value=\"90\" type=\"number\" class=\"flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  73 |       const control = controls.nth(i);\n  74 |       if (await control.isVisible()) {\n> 75 |         await expect.soft(control, `${state}: computed ${role} name, index ${i}`).toHaveAccessibleName(/\\S/, { timeout: 300 });\n     |                                                                                   ^\n  76 |       }\n  77 |     }\n  78 |   }\n    at namesAndSnapshot (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:75:83)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:105:7"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:12:06.374Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "initial-computed-aria",
+                      "contentType": "text/yaml",
+                      "body": "LSByZWdpb24gIk5vdGlmaWNhdGlvbnMgKEY4KSI6CiAgLSBsaXN0Ci0gcmVnaW9uICJOb3RpZmljYXRpb25zIGFsdCtUIgotIGNvbXBsZW1lbnRhcnkgIkFuYSBtZW7DvCI6CiAgLSB0ZXh0OiBRdWl6TWFzdGVyCiAgLSBuYXZpZ2F0aW9uOgogICAgLSBsaW5rICJEYXNoYm9hcmQiOgogICAgICAtIC91cmw6IC8KICAgIC0gbGluayAiU8SxbmF2IFnDtm5ldGltaSI6CiAgICAgIC0gL3VybDogL2FkbWluLXF1aXp6ZXMKICAgIC0gbGluayAiU8SxbmF2bGFyIjoKICAgICAgLSAvdXJsOiAvcXVpenplcwogICAgLSBsaW5rICJTxLFuxLFmIMSwc3RhdGlzdGlrbGVyaSI6CiAgICAgIC0gL3VybDogL3N0YXRpc3RpY3MKICAgIC0gbGluayAiU8SxbmF2IFNvbnXDp2xhcsSxIjoKICAgICAgLSAvdXJsOiAvcmVzdWx0cwogICAgLSBsaW5rICJBbmtldCBZw7ZuZXRpbWkiOgogICAgICAtIC91cmw6IC9zdXJ2ZXktcmVzdWx0cwogICAgLSBsaW5rICLDlsSfcmVuY2lsZXIiOgogICAgICAtIC91cmw6IC9zdHVkZW50cwogICAgLSBsaW5rICLDlsSfcmV0bWVubGVyIjoKICAgICAgLSAvdXJsOiAvdGVhY2hlcnMKICAgIC0gbGluayAiVmVsaSBFxZ9sZcWfdGlybWUiOgogICAgICAtIC91cmw6IC9ndWFyZGlhbi1tYW5hZ2VtZW50CiAgICAtIGxpbmsgIlPEsW7EsWZsYXIiOgogICAgICAtIC91cmw6IC9jbGFzc2xpc3QKICAgIC0gbGluayAiWcO2bmV0aW0iOgogICAgICAtIC91cmw6IC9tYW5hZ2VtZW50CiAgICAtIGxpbmsgIkFyxZ9pdiI6CiAgICAgIC0gL3VybDogL2FyY2hpdmUKICAgIC0gbGluayAiU3VudWN1IER1cnVtdSI6CiAgICAgIC0gL3VybDogL3NlcnZlci1zZXR1cAogICAgLSBsaW5rICJEdXl1cnVsYXIiOgogICAgICAtIC91cmw6IC9hbm5vdW5jZW1lbnRzCiAgICAtIGxpbmsgIkF5YXJsYXIiOgogICAgICAtIC91cmw6IC9zZXR0aW5ncwotIG1haW46CiAgLSBidXR0b24gIkJpbGRpcmltbGVyaSBhw6ciCiAgLSBidXR0b24gIkthcmFubMSxayBNb2RhIEdlw6ciCiAgLSBidXR0b24gIkEgQXVkaXQgQWRtaW4gWcO2bmV0aWNpIgogIC0gaGVhZGluZyAiU3VudWN1IER1cnVtdSIgW2xldmVsPTFdCiAgLSBwYXJhZ3JhcGg6IFllcmVsL2t1cnVtIGRhxJ/EsXTEsW0gcHJvZmlsaW5pLCByZXZlcnNlIHByb3h5LCBhbHQgeW9sIHZlIHZlcmkgc2FrbGFtYXnEsSBkZW5ldGxleWluLgogIC0gYnV0dG9uICJTdW51Y3V5dSBZZW5pZGVuIEFsZ8SxbGEiCiAgLSBwYXJhZ3JhcGg6CiAgICAtIHRleHQ6IEJ1IGVrcmFuIGdpemxpIGFuYWh0YXJsYXLEsSBnw7ZzdGVybWV6IHZleWEgZGXEn2nFn3Rpcm1lei4KICAgIC0gY29kZTogREFUQUJBU0VfVVJMCiAgICAtIHRleHQ6ICIsIgogICAgLSBjb2RlOiBTRVNTSU9OX1NFQ1JFVAogICAgLSB0ZXh0OiB2ZSBHbWFpbCB1eWd1bGFtYSBwYXJvbGFzxLEgc3VudWN1bnVuCiAgICAtIGNvZGU6IC5lbnYKICAgIC0gdGV4dDogL3NlY3JldCB5w7ZuZXRpY2lzaW5kZSB0dXR1bG1hbMSxZMSxci4gS2F5ZGVkaWxlbiBhxJ8gYXlhcmxhcsSxIHllbmlkZW4gYmHFn2xhdG1hZGE7IGFsdCB5b2wgaXNlIGF5csSxY2EgZnJvbnRlbmQgeWVuaWRlbiBkZXJsZW5kacSfaW5kZSBldGtpbmxlxZ9pci4gWWVyZWwgKAogICAgLSBjb2RlOiBsb2NhbGhvc3QKICAgIC0gdGV4dDogKSBrdXJ1bHVtZGEgSFRUUCBub3JtYWxkaXI7IMO8cmV0aW1kZSBIVFRQUyBrdWxsYW7EsW4uCiAgLSB0ZXh0OiBWZXJpdGFiYW7EsSBlcmnFn2lsZWJpbGlyIFnDvGtsZW1lIGFsYW7EsSB5YXrEsWxhYmlsaXIgT3R1cnVtIGFuYWh0YXLEsSB0YW7EsW1sxLEgWWVyZWwgSFRUUCAoYmVrbGVuZW4pIERhxJ/EsXTEsW0gUHJvZmlsaSBZZXJlbCBkZW5lbWUgacOnaW4KICAtIHN0cm9uZzogbG9jYWxob3N0CiAgLSB0ZXh0OiAiLCDDvHJldGltIGnDp2luIgogIC0gc3Ryb25nOiBzdWJkb21haW4KICAtIHRleHQ6IMO2bmVyaWxpci4gQWx0IHlvbCwgbWV2Y3V0IGt1cnVtIHNpdGVzaXlsZSBzZXJ2aXMgeW9sbGFyxLFuxLEgcGF5bGHFn8Sxci4gS3VydWx1bSBiacOnaW1pCiAgLSBjb21ib2JveDogWWVyZWwgLyBsb2NhbGhvc3QgKGRlbmVtZSkKICAtIHBhcmFncmFwaDogIlllcmVsIGRlbmVtZTogYXJhecO8eiBodHRwOi8vMTI3LjAuMC4xOjUxNzMgKHBucG0gZGV2KSwgQVBJIDo1MDAwLiBSZXZlcnNlIHByb3h5L1RMUyBnZXJla21lei4iCiAgLSB0ZXh0OiBHw7x2ZW5pbGlyIHByb3h5IHNhecSxc8SxCiAgLSBzcGluYnV0dG9uOiAiMCIKICAtIHBhcmFncmFwaDogWWVyZWxkZSAwOyB0ZWsgTmdpbnggw7Zuw7xuZGUgMS4KICAtIHRleHQ6IEhlcmtlc2UgYcOnxLFrIGFkcmVzCiAgLSB0ZXh0Ym94ICJodHRwOi8vMTI3LjAuMC4xOjUxNzMiOiBodHRwOi8vMTI3LjAuMC4xOjU1MTEKICAtIHBhcmFncmFwaDoKICAgIC0gdGV4dDogWWVyZWxkZSB0YXJhecSxY8SxIGFkcmVzaQogICAgLSBjb2RlOiBodHRwOi8vMTI3LjAuMC4xOjUxNzMKICAgIC0gdGV4dDogKHBucG0gZGV2KS4gQVBJIHBvcnR1IDUwMDDigJlkaXIuCiAgLSB0ZXh0OiBVeWd1bGFtYSBhbHQgeW9sdQogIC0gdGV4dGJveCAiL3F1aXptYXN0ZXIiIFtkaXNhYmxlZF06IC8KICAtIHRleHQ6IMSwemlubGkgb3JpZ2luIGFkcmVzbGVyaQogIC0gdGV4dGJveCAiaHR0cDovLzEyNy4wLjAuMTo1MTczIGh0dHA6Ly9sb2NhbGhvc3Q6NTE3MyBodHRwOi8vMTI3LjAuMC4xOjUwMDAiOgogICAgLSAvcGxhY2Vob2xkZXI6ICJodHRwOi8vMTI3LjAuMC4xOjUxNzNcbmh0dHA6Ly9sb2NhbGhvc3Q6NTE3M1xuaHR0cDovLzEyNy4wLjAuMTo1MDAwIgogICAgLSB0ZXh0OiBodHRwOi8vMTI3LjAuMC4xOjU1MTEKICAtIHBhcmFncmFwaDogQ09SUy9DU1JGIGnDp2luIHRhbSBhZHJlc2xlci4gWWVyZWxkZSA1MTczIChhcmF5w7x6KSB2ZSA1MDAwIChBUEkpIGJpcmxpa3RlIHlhesSxbi4KICAtIGJ1dHRvbiAiUHJvZmlsaSBLYXlkZXQiCiAgLSB0ZXh0OiBBbGfEsWxhbmFuIFN1bnVjdSBSZXZlcnNlIHByb3h5IHRhcmFmxLFuZGFuIHV5Z3VsYW1heWEgaWxldGlsZW4gZ8O8dmVubGkgw7Z6ZXQuIG9yaWdpbiBodHRwOi8vMTI3LjAuMC4xOjU1MTAgZm9yd2FyZGVkUHJvdG8g4oCUIGZvcndhcmRlZEhvc3Qg4oCUIGZvcndhcmRlZEZvclByZXNlbnQgZmFsc2UgaG9zdG5hbWUgYWNlciBwbGF0Zm9ybSB3aW4zMi94NjQgbm9kZVZlcnNpb24gdjIyLjIzLjIgbm9kZUVudmlyb25tZW50IGRldmVsb3BtZW50IGRhdGFiYXNlUHJvdmlkZXIgc3FsaXRlIFlhcMSxbGFuZMSxcm1hIGtheW5hxJ/EsSBlbnZpcm9ubWVudCBHbWFpbCBFa3NpayBWZXJpIFNha2xhbWEgUG9saXRpa2FzxLEgVmFyc2F5xLFsYW4gb2xhcmFrIGthcGFsxLFkxLFyLiBZYWxuxLF6IHPDvHJlc2kgZG9sbXXFnyBvcGVyYXN5b24ga2F5xLF0bGFyxLFuxLEgdGVtaXpsZXI7IHPEsW5hdiB2ZSBhbmtldCBzb251w6dsYXLEsW5hIGRva3VubWF6LiBPdG9tYXRpayBnw7xubMO8ayBiYWvEsW0gT2t1bm11xZ8gYmlsZGlyaW0sIHRhbWFtbGFubcSxxZ8gZS1wb3N0YS9wYXJvbGEgdGFsZXBsZXJpIHZlIGnFn2xlbSBsb2dsYXLEsQogIC0gc3dpdGNoCiAgLSB0ZXh0OiDEsMWfbGVtIGxvZ3UgKGfDvG4pCiAgLSBzcGluYnV0dG9uOiAiMzY1IgogIC0gdGV4dDogT2t1bm11xZ8gYmlsZGlyaW0gKGfDvG4pCiAgLSBzcGluYnV0dG9uOiAiMTgwIgogIC0gdGV4dDogRS1wb3N0YSBsb2d1IChnw7xuKQogIC0gc3BpbmJ1dHRvbjogIjkwIgogIC0gdGV4dDogUGFyb2xhIHRhbGViaSAoZ8O8bikKICAtIHNwaW5idXR0b246ICI5MCIKICAtIGJ1dHRvbiAiUG9saXRpa2F5xLEgS2F5ZGV0IgogIC0gYnV0dG9uICLFnmltZGkgVGVtaXpsZSIgW2Rpc2FibGVkXQogIC0gdGV4dDogT3J0YW0gRGXEn2nFn2tlbmkgxZ5hYmxvbnUgLmVudi5wcm9kdWN0aW9uCiAgLSBidXR0b24gIktvcHlhbGEiCiAgLSB0ZXh0OiBOT0RFX0VOVj1wcm9kdWN0aW9uIFBPUlQ9NTAwMCBGUk9OVEVORF9VUkw9aHR0cDovLzEyNy4wLjAuMTo1NTExIEFQUF9CQVNFX1BBVEg9LyBBTExPV0VEX09SSUdJTlM9aHR0cDovLzEyNy4wLjAuMTo1NTExIFRSVVNUX1BST1hZX0hPUFM9MCBEQVRBQkFTRV9VUkw9ZmlsZTouLi9kYXRhL3F1aXouZGIgU0VTU0lPTl9TRUNSRVQ9PFNFQ1JFVF9NQU5BR0VSX0lMRV9HVUNMVV9ERUdFUj4gRU1BSUxfVVNFUj08R01BSUxfQURSRVNJPiBFTUFJTF9QQVNTPTxHT09HTEVfVVlHVUxBTUFfUEFST0xBU0k+IEVNQUlMX0ZST009PEdNQUlMX0FEUkVTST4gRU1BSUxfRlJPTV9OQU1FPVF1aXpNYXN0ZXIgTmdpbnggUmV2ZXJzZSBQcm94eSDFnmFibG9udSBOZ2lueCB5YXDEsWxhbmTEsXJtYXPEsQogIC0gYnV0dG9uICJLb3B5YWxhIgogIC0gdGV4dDogIiMgWWVyZWwgKGxvY2FsaG9zdCkga3VydWx1bTogcmV2ZXJzZSBwcm94eSBnZXJla21lei4gIyBVeWd1bGFtYSBkb8SfcnVkYW4gaHR0cDovLzEyNy4wLjAuMTo1NTEwIMO8emVyaW5kZW4gYcOnxLFsxLFyLiAjIMOccmV0aW1lIMOnxLFrYXJrZW4gc3ViZG9tYWluIHZleWEgc3VicGF0aCBwcm9maWxpbmkga3VsbGFuxLFuLiBEZXJsZW1lIEtvbXV0dSBBbHQgeW9sIGRlxJ9pxZ90acSfaW5kZSBidSBrb211dGxhIHllbmlkZW4gZGVybGV5aW4uIFBvd2VyU2hlbGwiCiAgLSBidXR0b24gIktvcHlhbGEiCiAgLSB0ZXh0OiBwbnBtIGJ1aWxk"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-accessibility-closur-88cb8-bility-desktop-server-setup\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-accessibility-closur-88cb8-bility-desktop-server-setup\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-accessibility-closur-88cb8-bility-desktop-server-setup\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                    "column": 83,
+                    "line": 75
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "b0806312ca8f6416c281-8f3a0fbf39b919f8f7e3",
+          "file": "admin-accessibility-closure.spec.ts",
+          "line": 102,
+          "column": 9
+        },
+        {
+          "title": "computed accessibility desktop /classes/audit-class",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 10774,
+                  "error": {
+                    "message": "Error: initial: computed link name, index 15\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link').nth(15)\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - initial: computed link name, index 15 getByRole('link').nth(15) with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link').nth(15)\u001b[22m\n\u001b[2m    6 × locator resolved to <a href=\"/classlist\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover-elevate active-elevate-2 [border-color:var(--button-outline)] shadow-xs active:shadow-none dark:shadow-none h-9 w-9 rounded-xl border-2 border-border\">…</a>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n",
+                    "stack": "Error: initial: computed link name, index 15\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link').nth(15)\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - initial: computed link name, index 15 getByRole('link').nth(15) with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link').nth(15)\u001b[22m\n\u001b[2m    6 × locator resolved to <a href=\"/classlist\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover-elevate active-elevate-2 [border-color:var(--button-outline)] shadow-xs active:shadow-none dark:shadow-none h-9 w-9 rounded-xl border-2 border-border\">…</a>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n    at namesAndSnapshot (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:75:83)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:105:7",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                      "column": 83,
+                      "line": 75
+                    },
+                    "snippet": "  73 |       const control = controls.nth(i);\n  74 |       if (await control.isVisible()) {\n> 75 |         await expect.soft(control, `${state}: computed ${role} name, index ${i}`).toHaveAccessibleName(/\\S/, { timeout: 300 });\n     |                                                                                   ^\n  76 |       }\n  77 |     }\n  78 |   }"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                        "column": 83,
+                        "line": 75
+                      },
+                      "message": "Error: initial: computed link name, index 15\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link').nth(15)\nExpected pattern: \u001b[32m/\\S/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 300ms\n\nCall log:\n\u001b[2m  - initial: computed link name, index 15 getByRole('link').nth(15) with timeout 300ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link').nth(15)\u001b[22m\n\u001b[2m    6 × locator resolved to <a href=\"/classlist\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover-elevate active-elevate-2 [border-color:var(--button-outline)] shadow-xs active:shadow-none dark:shadow-none h-9 w-9 rounded-xl border-2 border-border\">…</a>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  73 |       const control = controls.nth(i);\n  74 |       if (await control.isVisible()) {\n> 75 |         await expect.soft(control, `${state}: computed ${role} name, index ${i}`).toHaveAccessibleName(/\\S/, { timeout: 300 });\n     |                                                                                   ^\n  76 |       }\n  77 |     }\n  78 |   }\n    at namesAndSnapshot (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:75:83)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts:105:7"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:12:32.582Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "initial-computed-aria",
+                      "contentType": "text/yaml",
+                      "body": "LSByZWdpb24gIk5vdGlmaWNhdGlvbnMgKEY4KSI6CiAgLSBsaXN0Ci0gcmVnaW9uICJOb3RpZmljYXRpb25zIGFsdCtUIgotIGNvbXBsZW1lbnRhcnkgIkFuYSBtZW7DvCI6CiAgLSB0ZXh0OiBRdWl6TWFzdGVyCiAgLSBuYXZpZ2F0aW9uOgogICAgLSBsaW5rICJEYXNoYm9hcmQiOgogICAgICAtIC91cmw6IC8KICAgIC0gbGluayAiU8SxbmF2IFnDtm5ldGltaSI6CiAgICAgIC0gL3VybDogL2FkbWluLXF1aXp6ZXMKICAgIC0gbGluayAiU8SxbmF2bGFyIjoKICAgICAgLSAvdXJsOiAvcXVpenplcwogICAgLSBsaW5rICJTxLFuxLFmIMSwc3RhdGlzdGlrbGVyaSI6CiAgICAgIC0gL3VybDogL3N0YXRpc3RpY3MKICAgIC0gbGluayAiU8SxbmF2IFNvbnXDp2xhcsSxIjoKICAgICAgLSAvdXJsOiAvcmVzdWx0cwogICAgLSBsaW5rICJBbmtldCBZw7ZuZXRpbWkiOgogICAgICAtIC91cmw6IC9zdXJ2ZXktcmVzdWx0cwogICAgLSBsaW5rICLDlsSfcmVuY2lsZXIiOgogICAgICAtIC91cmw6IC9zdHVkZW50cwogICAgLSBsaW5rICLDlsSfcmV0bWVubGVyIjoKICAgICAgLSAvdXJsOiAvdGVhY2hlcnMKICAgIC0gbGluayAiVmVsaSBFxZ9sZcWfdGlybWUiOgogICAgICAtIC91cmw6IC9ndWFyZGlhbi1tYW5hZ2VtZW50CiAgICAtIGxpbmsgIlPEsW7EsWZsYXIiOgogICAgICAtIC91cmw6IC9jbGFzc2xpc3QKICAgIC0gbGluayAiWcO2bmV0aW0iOgogICAgICAtIC91cmw6IC9tYW5hZ2VtZW50CiAgICAtIGxpbmsgIkFyxZ9pdiI6CiAgICAgIC0gL3VybDogL2FyY2hpdmUKICAgIC0gbGluayAiU3VudWN1IER1cnVtdSI6CiAgICAgIC0gL3VybDogL3NlcnZlci1zZXR1cAogICAgLSBsaW5rICJEdXl1cnVsYXIiOgogICAgICAtIC91cmw6IC9hbm5vdW5jZW1lbnRzCiAgICAtIGxpbmsgIkF5YXJsYXIiOgogICAgICAtIC91cmw6IC9zZXR0aW5ncwotIG1haW46CiAgLSBidXR0b24gIkJpbGRpcmltbGVyaSBhw6ciCiAgLSBidXR0b24gIkthcmFubMSxayBNb2RhIEdlw6ciCiAgLSBidXR0b24gIkEgQXVkaXQgQWRtaW4gWcO2bmV0aWNpIgogIC0gbGluazoKICAgIC0gL3VybDogL2NsYXNzbGlzdAogIC0gaGVhZGluZyAiQXVkaXQgN0EiIFtsZXZlbD0xXQogIC0gcGFyYWdyYXBoOiBHZW5lbCBBa2FkZW1payBTxLFuxLFmIEfDtnLDvG7DvG3DvAogIC0gYnV0dG9uICJFeGNlbCIKICAtIGJ1dHRvbiAiWWF6ZMSxciIKICAtIHRleHQ6IDEgw5bEn3JlbmNpIFNvcnVtbHUgw5bEn3JldG1lbgogIC0gaGVhZGluZyAiQXVkaXQgVGVhY2hlciIgW2xldmVsPTNdCiAgLSB0ZXh0OiBhdWRpdC10ZWFjaGVyQGV4YW1wbGUudGVzdCBIZW7DvHogYnJhbsWfIMO2xJ9yZXRtZW5pIGF0YW5tYW3EscWfLiBTxLFuxLFmIE1ldmN1ZHUKICAtIHRleHRib3ggIsOWxJ9yZW5jaSBpc21pbmUgZ8O2cmUgZmlsdHJlbGUuLi4iCiAgLSB0YWJsZToKICAgIC0gcm93Z3JvdXA6CiAgICAgIC0gcm93ICJTLk5vIMOWxJ9yZW5jaSBBZMSxIFNveWFkxLEgU8SxbsSxZiBObyI6CiAgICAgICAgLSBjb2x1bW5oZWFkZXIgIlMuTm8iCiAgICAgICAgLSBjb2x1bW5oZWFkZXIgIsOWxJ9yZW5jaSBBZMSxIFNveWFkxLEiCiAgICAgICAgLSBjb2x1bW5oZWFkZXIgIlPEsW7EsWYgTm8iCiAgICAtIHJvd2dyb3VwOgogICAgICAtIHJvdyAiMSBBdWRpdCBTdHVkZW50IDEiOgogICAgICAgIC0gY2VsbCAiMSIKICAgICAgICAtIGNlbGwgIkF1ZGl0IFN0dWRlbnQiCiAgICAgICAgLSBjZWxsICIxIg=="
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-accessibility-closur-eafbb-desktop-classes-audit-class\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-accessibility-closur-eafbb-desktop-classes-audit-class\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-accessibility-closur-eafbb-desktop-classes-audit-class\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-accessibility-closure.spec.ts",
+                    "column": 83,
+                    "line": 75
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "b0806312ca8f6416c281-68e9e4823622f855fdb3",
+          "file": "admin-accessibility-closure.spec.ts",
+          "line": 102,
+          "column": 9
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "\u001b[31mTesting stopped early after 3 maximum allowed failures.\u001b[39m"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-10-01T14:11:22.112Z",
+    "duration": 84771.302,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

@@ -350,7 +350,7 @@
   .print\:hidden,
   .no-print,
   aside,
-  header,
+  [data-dashboard-main] > header,
   nav,
   [data-sidebar],
   .sidebar,
@@ -619,6 +619,8 @@
     page-break-inside: avoid !important;
   }
 
+  /* Set the document page too: page is not inherited by the shared masthead. */
+  body:has(.print-landscape),
   .print-landscape { page: landscape; }
 
   @page {

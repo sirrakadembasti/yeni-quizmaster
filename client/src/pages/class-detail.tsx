@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { downloadCsv } from "@/lib/export";
+import { PrintMeta } from "@/components/print/PrintTools";
 
 export default function ClassDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -72,11 +73,17 @@ export default function ClassDetailPage() {
   return (
     <DashboardLayout>
       <div className="space-y-8 print-content">
+        <PrintMeta title="Sınıf Öğrenci Listesi" filters={[
+          { label: "Sınıf", value: cls.name },
+          { label: "Sorumlu öğretmen", value: cls.classTeacher?.name || "Atanmamış" },
+          { label: "Öğrenci sayısı", value: filteredStudents.length },
+          { label: "Arama", value: searchTerm || "Tümü" },
+        ]} />
         {/* Header Section — hidden on print */}
         <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 print:hidden">
           <div className="flex items-center gap-4">
             <Button variant="outline" size="icon" asChild className="rounded-xl border-2 border-border">
-              <Link href="/classlist"><ArrowLeft className="h-5 w-5" /></Link>
+              <Link href="/classlist" aria-label="Sınıf listesine dön"><ArrowLeft className="h-5 w-5" /></Link>
             </Button>
             <div>
               <h1 className="text-4xl font-black text-foreground tracking-tighter">{cls.name}</h1>
@@ -166,6 +173,7 @@ export default function ClassDetailPage() {
               <div className="relative w-full sm:w-72">
                 <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
                 <Input
+                  aria-label="Sınıf öğrencilerini ara"
                   placeholder="Öğrenci ismine göre filtrele..."
                   className="pl-9 h-8 rounded-lg border border-border bg-background focus:border-indigo-500 text-xs"
                   value={searchTerm}

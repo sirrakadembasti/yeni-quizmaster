@@ -126,7 +126,7 @@ echo.
 echo [TAMAM] Gerekli çalýþma ortamý hazýr.
 echo Grafik kurulum baþlangýcý açýlýyor...
 echo.
-call pnpm run setup
+call pnpm run setup %*
 set "SETUP_EXIT=%ERRORLEVEL%"
 if not "%SETUP_EXIT%"=="0" (
   echo.

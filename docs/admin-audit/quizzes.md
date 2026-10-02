@@ -1,6 +1,6 @@
 # Yönetici denetimi — sınav, anket ve raporlar
 
-> **Tarihsel denetim kaydı (30 Eylül 2026).** Aşağıdaki bulgular, satır numaraları, test sayıları ve açık durum ifadeleri ilk denetim/önceki paketlerin kaydıdır; güncel çalışma ağacının durumunu göstermez. [Onarım sözleşmeleri](./repair-contracts.md) kabul edilen davranışları, [kalan onarımlar doğrulama kaydı](./remaining-repairs-verification.md) güncel kanıtı belirtir. İstemci 19 dosyada 117/117 geçti. Sunucu thread koşusu Prisma native Tokio paniğiyle kesildi; fork tekrarı sürüyor. Yeni E2E henüz çalışmadı. Öğretmen paneli denetimi henüz başlamadı.
+> **Tarihsel denetim kaydı (30 Eylül 2026).** Aşağıdaki bulgular, satır numaraları, test sayıları ve açık durum ifadeleri ilk denetim/önceki paketlerin kaydıdır; güncel çalışma ağacının durumunu göstermez. [Onarım sözleşmeleri](./repair-contracts.md) kabul edilen davranışları, [onarım doğrulama kaydı](./remaining-repairs-verification.md) önceki paketin tamamlanmış istemci/sunucu/E2E kanıtlarını belirtir; fork tekrarı ve yeni E2E artık beklemiyor. [Sonraki doğrulama kaydı](./verification-closure.md) güncel Excel, baskı, erişilebilirlik ve gerçek hibrit kurulum kapsamını açıklar. Öğretmen paneli denetimi henüz başlamadı.
 
 Tarih: 30 Eylül 2026. Kapsam yalnız yönetici hesabının erişebildiği işlevlerdir. Üretim kodu değiştirilmedi; gerçek uygulama veritabanında oluşturma, güncelleme veya silme yapılmadı. `api.ts` ve `server-setup.tsx` dosyalarındaki önceden bulunan değişikliklere dokunulmadı.
 

@@ -256,10 +256,11 @@ export default function SettingsPage() {
                     )}
                     <div className="grid gap-4 sm:grid-cols-2">
                       <div className="space-y-2">
-                        <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Ad Soyad</Label>
+                        <Label htmlFor="profile-name" className="text-xs font-bold text-muted-foreground uppercase ml-1">Ad Soyad</Label>
                         <div className="relative">
                           <UserIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                           <Input 
+                            id="profile-name"
                             disabled={user?.role === 'student'}
                             value={formData.name}
                             onChange={(e) => setFormData({...formData, name: e.target.value})}
@@ -269,11 +270,12 @@ export default function SettingsPage() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">E-posta</Label>
+                        <Label htmlFor="profile-email" className="text-xs font-bold text-muted-foreground uppercase ml-1">E-posta</Label>
                         <div className="relative">
                           <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                           <Input 
                             disabled={user?.role === 'student'}
+                            id="profile-email"
                             value={formData.email}
                             onChange={(e) => setFormData({...formData, email: e.target.value})}
                             className="pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30" 
@@ -283,17 +285,17 @@ export default function SettingsPage() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Telefon</Label>
+                        <Label htmlFor="profile-phone" className="text-xs font-bold text-muted-foreground uppercase ml-1">Telefon</Label>
                         <div className="relative">
                           <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                          <Input disabled={user?.role === 'student'} value={formData.phoneNumber} onChange={(e) => setFormData({...formData, phoneNumber: e.target.value})} className="pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30" placeholder="05xx xxx xx xx" />
+                          <Input id="profile-phone" disabled={user?.role === 'student'} value={formData.phoneNumber} onChange={(e) => setFormData({...formData, phoneNumber: e.target.value})} className="pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30" placeholder="05xx xxx xx xx" />
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Adres</Label>
+                        <Label htmlFor="profile-address" className="text-xs font-bold text-muted-foreground uppercase ml-1">Adres</Label>
                         <div className="relative">
                           <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                          <Input disabled={user?.role === 'student'} value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} className="pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30" placeholder="İletişim adresi" />
+                          <Input id="profile-address" disabled={user?.role === 'student'} value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} className="pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30" placeholder="İletişim adresi" />
                         </div>
                       </div>
                     </div>
@@ -616,10 +618,11 @@ export default function SettingsPage() {
               <form onSubmit={handlePasswordChange}>
                 <CardContent className="space-y-4 pt-6">
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Mevcut Şifre</Label>
+                    <Label htmlFor="security-current-password" className="text-xs font-bold text-muted-foreground uppercase ml-1">Mevcut Şifre</Label>
                     <div className="relative">
                       <Key className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input 
+                        id="security-current-password"
                         value={passwordData.currentPassword}
                         onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
                         type="password" 
@@ -630,10 +633,11 @@ export default function SettingsPage() {
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
-                      <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Yeni Şifre</Label>
+                      <Label htmlFor="security-new-password" className="text-xs font-bold text-muted-foreground uppercase ml-1">Yeni Şifre</Label>
                       <div className="relative">
                         <Key className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
+                          id="security-new-password"
                           value={passwordData.newPassword}
                           onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
                           type="password" 
@@ -643,10 +647,11 @@ export default function SettingsPage() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Yeni Şifre (Tekrar)</Label>
+                      <Label htmlFor="security-password-confirmation" className="text-xs font-bold text-muted-foreground uppercase ml-1">Yeni Şifre (Tekrar)</Label>
                       <div className="relative">
                         <Key className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
+                          id="security-password-confirmation"
                           value={passwordData.confirmPassword}
                           onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
                           type="password" 

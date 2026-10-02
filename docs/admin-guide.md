@@ -181,7 +181,7 @@ Kalıcı sınav silme, bağlı sonuçları da kaldırır. Silme penceresinde ger
 
 - **Öğretmen bir sınıfı/öğrenciyi göremiyor:** Ders-sınıf ve öğretmen atamalarını kontrol edin.
 - **Öğrenci sınavı/anketi göremiyor:** Yayın durumunu ve sınıf atamasını kontrol edin.
-- **Excel eski veriyi içeriyor:** Aktif filtreleri temizleyin veya sorgunun tamamlanmasını bekleyip yeniden indirin.
+- **Excel eski veriyi içeriyor:** Aktif filtreleri kontrol edin ve sorgunun tamamlanmasını bekleyip yeniden indirin. Öğrenci analizi, öğrenci kimliği ve sonuçları birlikte yüklenene kadar Excel/Yazdır işlemlerini kapalı tutar; yükleme hatası giderilmeden çıktı alınamaz. Sonuçlar çıktısında seçili öğretmen ve öğrenci filtreleri yer alır. Sınıf çıktısında sınıf adı, sorumlu öğretmen, arama ve filtrelenmiş öğrenci sayısı gösterilir.
 - **Görsel yüklenmiyor:** Dosya türü/boyutu, piksel sınırı ve sunucu erişimini kontrol edin.
 - **Gmail gönderilmiyor:** Şifre Talepleri ve E-posta Loglarını kontrol edin; Gmail uygulama parolası ile 587/465 ağ erişimini doğrulayın.
 - **Bildirim geç görünüyor:** Oturumu ve Socket.IO bağlantısını kontrol edin; sayfayı yenileyerek sunucu listesini tekrar alın.
@@ -193,3 +193,5 @@ Profil/parola sıfırlama talebi öğretmen atamalarını ve veli bağlantılar�
 Katılımı başlamış sınavın veya yanıt alınmış anketin soruları değiştirilemez. Yeni sürüm için yeni içerik oluşturun. Sınıf yükseltme ve dönem damgası tek işlemde yapılır; hedef sınıfta öğrenci numarası çakışması önlenir. E-posta worker'ı kayıtları geçici olarak sahiplenir.
 
 [Migration ve bakım notları](guvenlik-ve-bakim.md).
+
+Öğretmen ayrıntısındaki sınav listesi ekranda sayfalansa da Excel ve baskı bütün ilgili sınavları içerir. Öğrenci analizinde kimlik ve sonuçlar yüklenene kadar Excel/Yazdır kapalıdır; yükleme hatasında görünen hata giderildikten sonra rapor alınabilir. Raporlarda seçili kişi ve sınıf filtreleri yer alır. [Dışa aktarma ve baskı doğrulama kapsamı](admin-audit/export-print-closure.md).

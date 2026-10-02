@@ -1,0 +1,59 @@
+{
+  "suite": "15/15 final production E2E passed",
+  "extractor": "pypdf; pdftotext executable unavailable in bundled Poppler",
+  "textNormalization": "whitespace removed for checks because PDF kerning introduces extraction spaces; UTF8 raw text preserved",
+  "renderer": "bundled Poppler pdftoppm first page at120dpi",
+  "results": [
+    {
+      "name": "teacher-list",
+      "pages": 1,
+      "pageDimensions": [
+        [
+          594.95996,
+          841.91998
+        ]
+      ],
+      "textChecks": {
+        "Öğretmen Listesi": true,
+        "Şule İğde": true,
+        "Türkçe": true
+      },
+      "visualQA": "titles,metadata,Turkish text readable; table edges and content unclipped"
+    },
+    {
+      "name": "class-roster",
+      "pages": 1,
+      "pageDimensions": [
+        [
+          594.95996,
+          841.91998
+        ]
+      ],
+      "textChecks": {
+        "Sınıf Öğrenci Listesi": true,
+        "Çağrı Işık": true,
+        "Öğrenci sayısı": true,
+        "Sınıf Öğretmeni": true
+      },
+      "visualQA": "titles,metadata,Turkish text readable; table edges and content unclipped"
+    },
+    {
+      "name": "survey-results",
+      "pages": 1,
+      "pageDimensions": [
+        [
+          841.91998,
+          594.95996
+        ]
+      ],
+      "textChecks": {
+        "Anket Sonuçları": true,
+        "Görüş Anketi": true,
+        "Başlangıç": true,
+        "Bitiş": true,
+        "Şüpheli": true
+      },
+      "visualQA": "titles,metadata,Turkish text readable; table edges and content unclipped"
+    }
+  ]
+}

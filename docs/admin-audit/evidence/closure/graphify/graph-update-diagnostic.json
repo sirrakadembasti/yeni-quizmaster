@@ -1,0 +1,72 @@
+{
+  "recordedAt": "2026-10-02",
+  "provenance": {
+    "updateAndDiagnose": "Actual CLI exits and diagnostic counters reported by the coordinator; host-specific launcher not retained here.",
+    "graphAndVisual": "Independently checked against persisted graph.json and graphify/result.json."
+  },
+  "update": { "operation": "graphify update .", "exitCode": 0, "method": "local AST" },
+  "diagnose": {
+    "operation": "graphify diagnose multigraph --graph graphify-out/graph.json",
+    "exitCode": 0,
+    "missingNodes": 0,
+    "danglingEdges": 0,
+    "exactDuplicateEdges": 0,
+    "unverifiedNodes": 0,
+    "selfLoops": 3,
+    "scope": "Generated post-build graph; not proof of losslessness in the raw producer."
+  },
+  "graph": {
+    "nodes": 2204,
+    "edges": 6022,
+    "communities": 115,
+    "builtAtCommit": "e54537d72a6385ea8e3e088febba2e94f17404ed"
+  },
+  "labels": { "saved": 109, "currentCommunities": 115, "hubRenamed": 46, "llmRelabel": false },
+  "coverageLimits": {
+    "sqlFilesSkipped": 14,
+    "sqlReason": "tree_sitter_sql unavailable",
+    "pdfTextSkipped": true,
+    "pdfReason": "pypdf unavailable in the Graphify Python environment; separate export PDF verification used another runtime.",
+    "markdownImageDocumentSemanticRefresh": false,
+    "llmSemanticRefresh": false
+  },
+  "visual": {
+    "command": "node scripts/graphify-admin-closure-visual.mjs",
+    "exitCode": 0,
+    "status": "passed",
+    "startedAt": "2026-10-02T06:28:19.078Z",
+    "finishedAt": "2026-10-02T06:29:47.340Z",
+    "result": "result.json",
+    "realCdnRenderer": true,
+    "rendererHttpStatus": 200,
+    "mockedRenderer": false,
+    "renderedNodes": 2204,
+    "renderedEdges": 6022,
+    "renderedCommunities": 115,
+    "canvas": { "width": 1320, "height": 1000 },
+    "selectedHelper": {
+      "label": "deploySetupDatabase()",
+      "source": "server/setup-wizard/migration.ts",
+      "degree": 4,
+      "connectedEdges": 4,
+      "neighbors": ["applySetup()", "server.ts", "setup-migration.test.ts", "migration.ts"]
+    },
+    "pageErrors": 0,
+    "consoleErrors": 0,
+    "failedRequests": 0,
+    "browserClosed": true,
+    "serverClosed": true,
+    "screenshots": ["overview.png", "map.png", "selected-info.png"]
+  },
+  "worktreeScope": {
+    "userOriginalChangesIncludedInGraph": ["client/src/lib/api.ts", "client/src/pages/server-setup.tsx"],
+    "userOriginalHunksExcludedFromCommit": true,
+    "astSourceChangedAfterRefresh": false,
+    "subsequentChanges": "Markdown and diagnostic documents only; these were not semantically refreshed.",
+    "builtAtCommitMeaning": "Pre-commit HEAD, not standalone proof of a new commit or fresh installation."
+  },
+  "limits": [
+    "This visual check verifies the generated graph renderer, search and selected helper information.",
+    "It is not application E2E, fresh-install acceptance, full semantic coverage or raw-producer losslessness proof."
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "recordedAt": "2026-10-01T17:25:13.134Z",
+  "scope": "Guarded disposable databases only; application DB/env/lock unchanged",
+  "productionFiles": [
+    "server/setup-wizard/migration.ts",
+    "server/setup-wizard/server.ts"
+  ],
+  "regressionFile": "server/tests/utils/setup-migration.test.ts",
+  "command": {
+    "cwd": "server",
+    "powershell": "$env:CHECKPOINT_DISABLE='1'; pnpm run test tests/utils/setup-migration.test.ts --maxWorkers=1"
+  },
+  "red": {
+    "exitCode": 1,
+    "passed": 0,
+    "failed": 1,
+    "durationSeconds": 83.42,
+    "testSeconds": 10.24,
+    "result": "Actual production helper and actual pnpm db:deploy on an initially absent SQLite database under inherited RUST_LOG=warn reproduced blank Schema engine error."
+  },
+  "intermediateGreenAttempt": {
+    "exitCode": 1,
+    "durationSeconds": 90.59,
+    "testSeconds": 31.35,
+    "classification": "Subprocess ETIMEDOUT at the original 30-second test deadline; no successful or failed semantic assertion established. Deadline increased to the authorized bounded 120 seconds."
+  },
+  "green": {
+    "exitCode": 0,
+    "passed": 1,
+    "failed": 0,
+    "durationSeconds": 153.31,
+    "testSeconds": 99.4,
+    "perCommandTimeoutSeconds": 120,
+    "assertions": [
+      "Initially absent SQLite file automatically created by deploySetupDatabase",
+      "All 14 repository migration names present, finished, not rolled back",
+      "Existing user record unchanged on second deploy",
+      "Entire migration catalogue identical on second deploy",
+      "Inherited warn logging object retained"
+    ]
+  },
+  "cause": {
+    "inheritedRustLog": "warn",
+    "prismaVersion": "5.22.0",
+    "engineHash": "605197351a3c8bdd595af2d2a9bc3025bca48ea2",
+    "engineBinarySha256": "A7D949E16CC5937AA77D67888C8993118EF16C764E536E9ED7C17CFE61BB65AD",
+    "engineMatchesBaseline": true,
+    "explanation": "Prisma CLI stderr parser drops first line. At warn logging absent DB emits one P1003 ERROR line, which gets discarded. At info it emits an INFO line first, preserving P1003 and permitting automatic creation.",
+    "fix": "Only migration subprocess extra environment sets RUST_LOG=info. No SQLite precreation, URL rewrite, global/build/app logging changes.",
+    "README": "Original failing harness excluded tracked server/data/README.md; corrected harness preserves that marker. The omission was not causal because the wizard creates the data directory."
+  },
+  "limits": [
+    "Unit/native probes do not replace the fresh real-install browser matrix",
+    "Raw debug logs not copied",
+    "No credentials/cookies/tokens/env files copied"
+  ],
+  "probeFiles": [
+    "migration-native-diagnostic.json",
+    "migration-native-missing-diagnostic.json",
+    "migration-file0-warn-probe.json",
+    "migration-info-probe.json"
+  ]
+}

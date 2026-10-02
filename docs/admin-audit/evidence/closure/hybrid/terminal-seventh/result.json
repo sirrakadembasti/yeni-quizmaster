@@ -1,0 +1,231 @@
+{
+  "date": "2026-10-01T18:22:46.575Z",
+  "entry": "terminal",
+  "fullApplyRequested": true,
+  "root": "C:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-terminal-uTLhPt",
+  "copiedSourceFiles": 279,
+  "initialState": "source-only; no env/database/config/lock/node_modules",
+  "phases": [
+    "real entrypoint + token exchange + fresh/no-dependencies browser state",
+    "real package install finished; independent node_modules verified",
+    "real web wizard opened with fresh preflight",
+    "real browser apply: server/client builds, migration, first admin, config/env/lock",
+    "persisted form values + bootstrap reload installed/disabled + actual reentry rejection"
+  ],
+  "status": "failed",
+  "ports": {
+    "bootstrapPort": 50599,
+    "wizardPort": 50600,
+    "appPort": 50601,
+    "uiPort": 50602
+  },
+  "ownedBrowserPid": 457940,
+  "lastProgress": {
+    "stage": "wizard-apply",
+    "message": "QuizMaster kurulumu tamamlandı. Birazdan giriş sayfasına yönlendirileceksiniz.",
+    "lastLogLines": [],
+    "steps": [
+      {
+        "id": "prepare",
+        "status": "done"
+      },
+      {
+        "id": "buildServer",
+        "status": "done"
+      },
+      {
+        "id": "buildClient",
+        "status": "done"
+      },
+      {
+        "id": "migrate",
+        "status": "done"
+      },
+      {
+        "id": "admin",
+        "status": "done"
+      },
+      {
+        "id": "artifacts",
+        "status": "done"
+      },
+      {
+        "id": "env",
+        "status": "done"
+      },
+      {
+        "id": "finish",
+        "status": "done"
+      }
+    ]
+  },
+  "navigationDiagnostics": [
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "dom-and-selector-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "fresh-state-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "wizard-entry",
+      "outcome": "dom-and-preflight-ready",
+      "file": "wizard-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-locked",
+      "outcome": "dom-and-selector-ready",
+      "file": "bootstrap-locked-navigation.json"
+    },
+    {
+      "phase": "bootstrap-failure",
+      "outcome": "failed",
+      "file": "bootstrap-failure-navigation.json"
+    }
+  ],
+  "statusReadMisses": [
+    {
+      "at": "2026-10-01T18:27:10.430Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: Timeout 20000ms exceeded.\nCall log:\n  - → GET http://127.0.0.1:50599/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "bootstrap",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 623, downloaded 0, added 121",
+          "Progress: resolved 623, reused 623, downloaded 0, added 122",
+          "Progress: resolved 623, reused 623, downloaded 0, added 123",
+          "Progress: resolved 623, reused 623, downloaded 0, added 124",
+          "Progress: resolved 623, reused 623, downloaded 0, added 125",
+          "Progress: resolved 623, reused 623, downloaded 0, added 126",
+          "Progress: resolved 623, reused 623, downloaded 0, added 127",
+          "Progress: resolved 623, reused 623, downloaded 0, added 137"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-01T18:33:24.366Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: read ECONNRESET\nCall log:\n  - → GET http://127.0.0.1:50600/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "wizard-apply",
+        "message": "Kurulum uygulanıyor; adımlar ekranda canlı izleniyor…",
+        "lastLogLines": [],
+        "steps": [
+          {
+            "id": "prepare",
+            "status": "done"
+          },
+          {
+            "id": "buildServer",
+            "status": "done"
+          },
+          {
+            "id": "buildClient",
+            "status": "running"
+          },
+          {
+            "id": "migrate",
+            "status": "pending"
+          },
+          {
+            "id": "admin",
+            "status": "pending"
+          },
+          {
+            "id": "artifacts",
+            "status": "pending"
+          },
+          {
+            "id": "env",
+            "status": "pending"
+          },
+          {
+            "id": "finish",
+            "status": "pending"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-01T18:33:53.258Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: read ECONNRESET\nCall log:\n  - → GET http://127.0.0.1:50600/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "wizard-apply",
+        "message": "Kurulum uygulanıyor; adımlar ekranda canlı izleniyor…",
+        "lastLogLines": [],
+        "steps": [
+          {
+            "id": "prepare",
+            "status": "done"
+          },
+          {
+            "id": "buildServer",
+            "status": "done"
+          },
+          {
+            "id": "buildClient",
+            "status": "running"
+          },
+          {
+            "id": "migrate",
+            "status": "pending"
+          },
+          {
+            "id": "admin",
+            "status": "pending"
+          },
+          {
+            "id": "artifacts",
+            "status": "pending"
+          },
+          {
+            "id": "env",
+            "status": "pending"
+          },
+          {
+            "id": "finish",
+            "status": "pending"
+          }
+        ]
+      }
+    }
+  ],
+  "statusResponseDisposalError": "Timed out: status response disposal",
+  "error": "Timed out: freshly built actual API startup",
+  "cleanup": [
+    {
+      "kind": "owned-process-tree",
+      "pid": 457172,
+      "stopped": false,
+      "error": "Cannot verify launch identity/known descendant absence; no unknown PID was killed"
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 457940,
+      "stopped": true,
+      "knownProcessCount": 6,
+      "remainingPids": [],
+      "outcomes": []
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 453192,
+      "stopped": true,
+      "knownProcessCount": 13,
+      "remainingPids": [],
+      "outcomes": []
+    }
+  ],
+  "browserCloseErrors": [],
+  "cleanupSucceeded": false,
+  "productStatusBeforeCleanup": "failed",
+  "sourceProtectedFilesUnchanged": true,
+  "finishedAt": "2026-10-01T18:38:26.282Z"
+}

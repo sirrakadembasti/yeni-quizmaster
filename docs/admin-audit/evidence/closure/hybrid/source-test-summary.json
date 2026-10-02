@@ -1,0 +1,78 @@
+{
+  "scope": "Source regressions, not fresh installation acceptance",
+  "reportedBy": "root agent",
+  "earlierInterruptedCombined": {
+    "status": "incomplete",
+    "passed": 2,
+    "failed": 1,
+    "remaining": "unrun",
+    "exitCode": 1,
+    "stoppedBy": "owned Ctrl+C",
+    "startupSeconds": 110.48,
+    "diagnostic": "No CSRF; empty captured output"
+  },
+  "completedCombined": {
+    "total": 31,
+    "passed": 30,
+    "failed": 1,
+    "exitCode": 1,
+    "totalSeconds": 108.821,
+    "startupTestSeconds": 50.352,
+    "nativePngPassed": true,
+    "apiDeadlineSeconds": 30,
+    "csrfObserved": false,
+    "lifecycle": {
+      "spawned": true,
+      "exited": false,
+      "closed": false
+    },
+    "outputClassification": "pnpm invocation only; raw error output excluded"
+  },
+  "testOnlyCleanupRegression": {
+    "red": {
+      "passed": 0,
+      "failed": 3
+    },
+    "green": {
+      "passed": 3,
+      "failed": 0
+    },
+    "scope": "finally pipe unref, owned stop proof, preserved fixture"
+  },
+  "errorOutputSafetyRegression": {
+    "red": {
+      "passed": 3,
+      "failed": 1,
+      "milliseconds": 767.411
+    },
+    "green": {
+      "passed": 4,
+      "failed": 0,
+      "milliseconds": 462.748
+    },
+    "rawErrorOutputPrinted": false
+  },
+  "lastNativeOnly": {
+    "status": "passed",
+    "passed": 1,
+    "failed": 0,
+    "exitCode": 0,
+    "testMilliseconds": 71936.0927,
+    "totalMilliseconds": 72608.3536,
+    "apiDeadlineSeconds": 120,
+    "assertionsUnchanged": true,
+    "command": "pnpm exec node --test --test-concurrency=1 scripts/server-build-startup.test.mjs",
+    "CHECKPOINT_DISABLE": "1"
+  },
+  "retainedEarlierEvidence": {
+    "startupPassed": "1/1",
+    "startupSeconds": 17.84,
+    "realBatApiAdminLoginPassed": true
+  },
+  "limits": [
+    "No aggregate all-pass claim",
+    "No proven app root cause",
+    "No fresh or browser retry",
+    "No performance repair claim"
+  ]
+}

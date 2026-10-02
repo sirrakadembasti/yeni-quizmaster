@@ -1,0 +1,12 @@
+{
+  "status": 1,
+  "signal": null,
+  "error": null,
+  "stdout": "",
+  "stderr": "{\"timestamp\":\"2026-10-01T16:52:02.0201312Z\",\"level\":\"INFO\",\"fields\":{\"message\":\"Starting schema engine CLI\",\"git_hash\":\"605197351a3c8bdd595af2d2a9bc3025bca48ea2\"},\"target\":\"schema_engine\"}\n{\"timestamp\":\"2026-10-01T16:52:02.021959Z\",\"level\":\"ERROR\",\"fields\":{\"is_panic\":false,\"error_code\":\"P1003\",\"message\":\"Database `diagnostic-missing.db` does not exist at `C:/Users/ahmet/AppData/Local/Temp/quizmaster-fresh-terminal-ZKgkgH/server/data/diagnostic-missing.db`.\"},\"target\":\"schema_engine::logger\"}\n",
+  "databaseExists": false,
+  "prismaParserAfterDiscardFirstLine": [
+    "{\"timestamp\":\"2026-10-01T16:52:02.021959Z\",\"level\":\"ERROR\",\"fields\":{\"is_panic\":false,\"error_code\":\"P1003\",\"message\":\"Database `diagnostic-missing.db` does not exist at `C:/Users/ahmet/AppData/Local/Temp/quizmaster-fresh-terminal-ZKgkgH/server/data/diagnostic-missing.db`.\"},\"target\":\"schema_engine::logger\"}",
+    ""
+  ]
+}

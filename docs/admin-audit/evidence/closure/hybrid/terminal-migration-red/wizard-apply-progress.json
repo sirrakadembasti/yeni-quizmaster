@@ -1,0 +1,52 @@
+{
+  "recordedAt": "2026-10-01T16:20:30.532Z",
+  "stage": "wizard-apply",
+  "apply": {
+    "status": "error",
+    "message": "Sabit kurulum komutu başarısız oldu (1).\n\n> quiz-master-server@1.0.0 db:deploy C:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-terminal-ZKgkgH\\server\n> prisma migrate deploy\n\nPrisma schema loaded from prisma\\schema.prisma\nDatasource \"db\": SQLite database \"quiz.db\" at \"file:../data/quiz.db\"\n\nError: Schema engine error:\n\nC:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-terminal-ZKgkgH\\server:\r\n ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  quiz-master-server@1.0.0 db:deploy: `prisma migrate deploy`\nExit status 1\n",
+    "steps": [
+      {
+        "id": "prepare",
+        "label": "Kurulum ortamı hazırlanıyor",
+        "status": "done",
+        "detail": "Geçici ortam dosyası hazırlandı."
+      },
+      {
+        "id": "buildServer",
+        "label": "Sunucu derlemesi",
+        "status": "done"
+      },
+      {
+        "id": "buildClient",
+        "label": "İstemci (web) derlemesi",
+        "status": "done"
+      },
+      {
+        "id": "migrate",
+        "label": "Veritabanı migration'ları",
+        "status": "error",
+        "detail": "Sabit kurulum komutu başarısız oldu (1).\n\n> quiz-master-server@1.0.0 db:deploy C:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-terminal-ZKgkgH\\server\n> prisma migrate deploy\n\nPrisma schema loaded from prisma\\schema.prisma\nDatasource \"db\": SQLite database \"quiz.db\" at \"file:../data/quiz.db\"\n\nError: Schema engine error:\n\nC:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-terminal-ZKgkgH\\server:\r\n ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  quiz-master-server@1.0.0 db:deploy: `prisma migrate deploy`\nExit status 1\n"
+      },
+      {
+        "id": "admin",
+        "label": "İlk yönetici hesabı",
+        "status": "pending"
+      },
+      {
+        "id": "artifacts",
+        "label": "Dağıtım profili ve Nginx örneği",
+        "status": "pending"
+      },
+      {
+        "id": "env",
+        "label": "Gizli ayarların yazılması (server/.env)",
+        "status": "pending"
+      },
+      {
+        "id": "finish",
+        "label": "Kurulum kilidi ve kapanış",
+        "status": "pending"
+      }
+    ]
+  }
+}

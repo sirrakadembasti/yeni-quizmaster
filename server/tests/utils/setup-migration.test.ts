@@ -1,0 +1,49 @@
+import { expect, it } from 'vitest';
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, existsSync, readdirSync, rmSync } from 'node:fs';
+import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { PrismaClient } from '@prisma/client';
+import { deploySetupDatabase, type SetupCommand } from '../../setup-wizard/migration';
+
+it('deploys all migrations into an absent SQLite DB under inherited warn logging and preserves existing data on rerun', async () => {
+  const serverRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
+  const pnpmScript = process.env.npm_execpath;
+  if (!pnpmScript) throw new Error('Run this integration regression through pnpm run test');
+  const dataRoot = join(serverRoot, 'data');
+  const fixture = mkdtempSync(join(dataRoot, 'quizmaster-test-migration-'));
+  const child = relative(dataRoot, fixture);
+  if (!child || child.startsWith('..') || isAbsolute(child) || !basename(fixture).startsWith('quizmaster-test-migration-')) {
+    throw new Error('Migration regression requires an isolated database under server/data');
+  }
+  const database = join(fixture, 'fresh.db');
+  const databaseUrl = 'file:' + database.replaceAll('\\', '/');
+  const inherited = { ...process.env, RUST_LOG: 'warn', CHECKPOINT_DISABLE: '1' };
+  const execute: SetupCommand = async (args, extraEnv) => execFileSync(process.execPath, [pnpmScript, ...args], {
+    cwd: dirname(serverRoot), shell: false, windowsHide: true, timeout: 120000,
+    env: { ...inherited, ...extraEnv }, encoding: 'utf8',
+  });
+  const prisma = new PrismaClient({ datasources: { db: { url: databaseUrl } } });
+  try {
+    expect(existsSync(database), 'A fresh install has no database file to precreate').toBe(false);
+    await deploySetupDatabase(databaseUrl, execute);
+    expect(existsSync(database)).toBe(true);
+    const expected = readdirSync(join(serverRoot, 'prisma/migrations')).filter(name => /^\d/.test(name)).sort();
+    const applied = await prisma.$queryRawUnsafe<Array<{ migration_name: string; finished_at: unknown; rolled_back_at: unknown }>>(
+      'SELECT migration_name, finished_at, rolled_back_at FROM _prisma_migrations ORDER BY migration_name',
+    );
+    expect(applied.map(row => row.migration_name)).toEqual(expected);
+    expect(applied.every(row => row.finished_at != null && row.rolled_back_at == null)).toBe(true);
+    const marker = await prisma.user.create({ data: { name: 'Migration marker', email: 'migration-marker@example.test', password: 'unused-test-marker', role: 'student' } });
+    const before = await prisma.user.findUnique({ where: { id: marker.id } });
+    await deploySetupDatabase(databaseUrl, execute);
+    expect(await prisma.user.findUnique({ where: { id: marker.id } })).toEqual(before);
+    expect(await prisma.$queryRawUnsafe<Array<{ migration_name: string; finished_at: unknown; rolled_back_at: unknown }>>(
+      'SELECT migration_name, finished_at, rolled_back_at FROM _prisma_migrations ORDER BY migration_name',
+    )).toEqual(applied);
+    expect(inherited.RUST_LOG).toBe('warn');
+  } finally {
+    await prisma.$disconnect();
+    rmSync(fixture, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
+  }
+}, 270000);

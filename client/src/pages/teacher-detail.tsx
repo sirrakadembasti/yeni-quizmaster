@@ -48,8 +48,8 @@ export default function TeacherDetailPage() {
   });
 
   const quizzesQuery = useQuery({
-    queryKey: ["quizzes"],
-    queryFn: () => quizApi.getAllQuizzes(),
+    queryKey: [role === 'admin' ? 'admin-quizzes' : 'quizzes'],
+    queryFn: () => role === 'admin' ? quizApi.getAllAdminQuizzes() : quizApi.getAllQuizzes(),
   });
 
   const classesQuery = useQuery({
@@ -338,8 +338,8 @@ export default function TeacherDetailPage() {
               <CardContent className="pt-5">
                 {teacherQuizzes.length > 0 ? (
                   <div className="space-y-2">
-                    {visibleQuizzes.map((quiz: any) => (
-                      <div key={quiz.id} className="flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-border">
+                    {teacherQuizzes.map((quiz: any) => (
+                      <div key={quiz.id} className={`${visibleQuizzes.includes(quiz) ? 'flex' : 'hidden'} print:flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-border`}>
                         <div className="flex items-center gap-2 min-w-0">
                           <FileText className="h-4 w-4 text-purple-500 shrink-0" />
                           <span className="text-sm font-bold text-foreground truncate">{quiz.title}</span>

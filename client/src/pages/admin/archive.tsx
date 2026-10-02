@@ -140,8 +140,9 @@ export default function ArchivePage() {
                     </p>
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="font-bold text-xs">Eğitim Yılı Etiketi</Label>
+                    <Label htmlFor="archive-academic-year" className="font-bold text-xs">Eğitim Yılı Etiketi</Label>
                     <Input 
+                      id="archive-academic-year"
                       placeholder="Örn: 2025-2026 Eğitim Yılı" 
                       value={academicYear}
                       onChange={e => setAcademicYear(e.target.value)}
@@ -228,9 +229,9 @@ export default function ArchivePage() {
               </CardHeader>
               <CardContent className="space-y-8 p-8">
                 <div className="space-y-3">
-                  <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Mevcut Sınıf (Kaynak)</Label>
+                  <Label htmlFor="archive-promotion-source" className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Mevcut Sınıf (Kaynak)</Label>
                   <Select value={promotionFromClassId} onValueChange={value => { setPromotionFromClassId(value); if (value === promotionToClassId) setPromotionToClassId('graduate'); }}>
-                    <SelectTrigger className="h-14 rounded-xl border-2 border-border focus:border-indigo-500 bg-muted/30">
+                    <SelectTrigger id="archive-promotion-source" className="h-14 rounded-xl border-2 border-border focus:border-indigo-500 bg-muted/30">
                       <SelectValue placeholder="Öğrencilerin bulunduğu sınıfı seçin..." />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
@@ -250,9 +251,9 @@ export default function ArchivePage() {
                 </div>
 
                 <div className="space-y-3">
-                  <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Yeni Sınıf (Hedef)</Label>
+                  <Label htmlFor="archive-promotion-target" className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Yeni Sınıf (Hedef)</Label>
                   <Select value={promotionToClassId} onValueChange={setPromotionToClassId}>
-                    <SelectTrigger className="h-14 rounded-xl border-2 border-border focus:border-indigo-500 bg-muted/30">
+                    <SelectTrigger id="archive-promotion-target" className="h-14 rounded-xl border-2 border-border focus:border-indigo-500 bg-muted/30">
                       <SelectValue placeholder="Hedef sınıfı seçin..." />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">

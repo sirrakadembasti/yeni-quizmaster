@@ -1,0 +1,106 @@
+{
+  "date": "2026-10-01T17:49:26.939Z",
+  "entry": "terminal",
+  "fullApplyRequested": true,
+  "root": "C:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-terminal-VwvTSK",
+  "copiedSourceFiles": 278,
+  "initialState": "source-only; no env/database/config/lock/node_modules",
+  "phases": [
+    "real entrypoint + token exchange + fresh/no-dependencies browser state"
+  ],
+  "status": "failed",
+  "ports": {
+    "bootstrapPort": 40539,
+    "wizardPort": 40540,
+    "appPort": 40541,
+    "uiPort": 40542
+  },
+  "ownershipSnapshotError": "Windows process ownership snapshot unavailable",
+  "ownedBrowserPid": 451360,
+  "lastProgress": {
+    "stage": "dependencies",
+    "jobStatus": "error",
+    "jobExitCode": 1,
+    "message": "İşlem 1 çıkış koduyla başarısız oldu.",
+    "lastLogLines": [
+      "server postinstall:     at TCP.done (node:internal/tls/wrap:748:7) {",
+      "server postinstall:   code: 'ECONNRESET',",
+      "server postinstall:   attemptNumber: 1,",
+      "server postinstall:   retriesLeft: 2",
+      "server postinstall: }",
+      "server postinstall: Node.js v22.23.2",
+      "server postinstall: Failed",
+      " ELIFECYCLE  Command failed with exit code 1."
+    ]
+  },
+  "navigationDiagnostics": [
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "dom-and-selector-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "fresh-state-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-failure",
+      "outcome": "failed",
+      "file": "bootstrap-failure-navigation.json"
+    }
+  ],
+  "statusReadMisses": [
+    {
+      "at": "2026-10-01T17:55:05.918Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: Timeout 20000ms exceeded.\nCall log:\n  - → GET http://127.0.0.1:40539/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "bootstrap",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 623, downloaded 0, added 233",
+          "Progress: resolved 623, reused 623, downloaded 0, added 234",
+          "Progress: resolved 623, reused 623, downloaded 0, added 235",
+          "Progress: resolved 623, reused 623, downloaded 0, added 236",
+          "Progress: resolved 623, reused 623, downloaded 0, added 237",
+          "Progress: resolved 623, reused 623, downloaded 0, added 238",
+          "Progress: resolved 623, reused 623, downloaded 0, added 241",
+          "Progress: resolved 623, reused 623, downloaded 0, added 243"
+        ]
+      }
+    }
+  ],
+  "statusResponseDisposalError": "Timed out: status response disposal",
+  "error": "Real dependency install failed: İşlem 1 çıkış koduyla başarısız oldu.",
+  "cleanup": [
+    {
+      "kind": "owned-process-tree",
+      "pid": 451360,
+      "stopped": true,
+      "knownProcessCount": 4,
+      "remainingPids": [],
+      "outcomes": []
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 453236,
+      "stopped": false,
+      "knownProcessCount": 7,
+      "outcomes": [
+        {
+          "pid": 450840,
+          "exitCode": 0
+        }
+      ],
+      "error": "Final identity/absence snapshot unavailable"
+    }
+  ],
+  "browserCloseErrors": [],
+  "cleanupSucceeded": false,
+  "productStatusBeforeCleanup": "failed",
+  "sourceProtectedFilesUnchanged": true,
+  "finishedAt": "2026-10-01T18:00:41.073Z"
+}
