@@ -1,0 +1,83 @@
+{
+  "at": "2026-10-03T13:59:25.418Z",
+  "phase": "bootstrap-entry",
+  "outcome": "fresh-state-ready",
+  "url": "http://127.0.0.1:44655/setup",
+  "pending": [],
+  "events": [
+    {
+      "at": "2026-10-03T13:59:24.633Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:44655/setup?token=[redacted]",
+      "type": "document",
+      "method": "GET",
+      "navigation": true
+    },
+    {
+      "at": "2026-10-03T13:59:24.754Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:44655/setup?token=[redacted]",
+      "status": 303
+    },
+    {
+      "at": "2026-10-03T13:59:24.755Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:44655/setup",
+      "type": "document",
+      "method": "GET",
+      "navigation": true
+    },
+    {
+      "at": "2026-10-03T13:59:24.779Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:44655/setup",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:59:24.882Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:44655/bootstrap.js",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:59:24.961Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:44655/bootstrap.js",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:59:25.148Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:44655/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:59:25.148Z",
+      "kind": "domcontentloaded",
+      "url": "http://127.0.0.1:44655/setup"
+    },
+    {
+      "at": "2026-10-03T13:59:25.151Z",
+      "kind": "load",
+      "url": "http://127.0.0.1:44655/setup"
+    },
+    {
+      "at": "2026-10-03T13:59:25.239Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:44655/api/status",
+      "status": 200
+    }
+  ],
+  "document": {
+    "readyState": "complete",
+    "title": "QuizMaster Kurulum Başlatıcısı",
+    "installerPresent": true,
+    "wizardPresent": false,
+    "loginPresent": false,
+    "bootstrapState": "Yeni kurulum"
+  }
+}

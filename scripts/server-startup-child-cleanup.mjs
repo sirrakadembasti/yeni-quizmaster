@@ -1,4 +1,13 @@
 // Releasing handles is not proof that an owned process tree stopped.
+export function releaseOwnedChildHandles(child) {
+  let handlesReleased = true;
+  for (const stream of [child.stdout, child.stderr]) {
+    try { stream?.destroy(); } catch { handlesReleased = false; }
+  }
+  try { child.unref(); } catch { handlesReleased = false; }
+  return { handlesReleased };
+}
+
 export async function cleanupStartupChild(child, lifecycle, terminateTree, timeoutMs = 10000) {
   const result = { stopProven: false, handlesReleased: false };
   let timer, onClose;
@@ -25,12 +34,7 @@ export async function cleanupStartupChild(child, lifecycle, terminateTree, timeo
   } finally {
     clearTimeout(timer);
     if (onClose) child.removeListener('close', onClose);
-    let released = true;
-    for (const stream of [child.stdout, child.stderr]) {
-      try { stream?.destroy(); } catch { released = false; }
-    }
-    try { child.unref(); } catch { released = false; }
-    result.handlesReleased = released;
+    result.handlesReleased = releaseOwnedChildHandles(child).handlesReleased;
   }
   return result;
 }

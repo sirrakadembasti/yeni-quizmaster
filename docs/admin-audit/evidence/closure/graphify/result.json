@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-10-02T06:28:19.078Z",
+  "startedAt": "2026-10-03T14:45:56.137Z",
   "status": "passed",
   "pageErrors": [],
   "consoleErrors": [],
@@ -7,7 +7,7 @@
   "responses": [
     {
       "status": 200,
-      "origin": "http://127.0.0.1:45625",
+      "origin": "http://127.0.0.1:43340",
       "pathname": "/graph.html",
       "queryKeys": []
     },
@@ -20,7 +20,7 @@
   ],
   "navigations": [
     {
-      "origin": "http://127.0.0.1:45625",
+      "origin": "http://127.0.0.1:43340",
       "pathname": "/graph.html",
       "queryKeys": []
     }
@@ -30,20 +30,20 @@
     "serverClosed": true
   },
   "graphJson": {
-    "nodes": 2204,
-    "edges": 6022,
-    "communities": 115,
-    "builtAtCommit": "e54537d72a6385ea8e3e088febba2e94f17404ed",
+    "nodes": 2206,
+    "edges": 6030,
+    "communities": 114,
+    "builtAtCommit": "5b83a1163e6a49d7d2c392350813823d2e91172f",
     "helper": {
       "id": "server_setup_wizard_migration_deploysetupdatabase",
       "label": "deploySetupDatabase()",
       "source": "server/setup-wizard/migration.ts",
-      "degree": 4
+      "degree": 6
     }
   },
-  "servedOrigin": "http://127.0.0.1:45625",
+  "servedOrigin": "http://127.0.0.1:43340",
   "rendered": {
-    "stats": "2204 nodes · 6022 edges · 115 communities",
+    "stats": "2206 nodes · 6030 edges · 114 communities",
     "canvas": {
       "width": 1320,
       "height": 1000,
@@ -54,13 +54,13 @@
       "id": "server_setup_wizard_migration_deploysetupdatabase",
       "label": "deploySetupDatabase()",
       "source": "server/setup-wizard/migration.ts",
-      "degree": 4,
-      "connectedEdges": 4
+      "degree": 6,
+      "connectedEdges": 6
     },
     "selected": [
       "server_setup_wizard_migration_deploysetupdatabase"
     ]
   },
-  "selectedInfo": "deploySetupDatabase()\nType: code\nCommunity: applySetup\nSource: server/setup-wizard/migration.ts\nDegree: 4\nNeighbors (4)\napplySetup()\nserver.ts\nsetup-migration.test.ts\nmigration.ts",
-  "finishedAt": "2026-10-02T06:29:47.340Z"
+  "selectedInfo": "deploySetupDatabase()\nType: code\nCommunity: applySetup\nSource: server/setup-wizard/migration.ts\nDegree: 6\nNeighbors (6)\napplySetup()\nserver.ts\nsetup-migration.test.ts\nmigration.ts\nGörsel haritayı açma\nIntegration and report",
+  "finishedAt": "2026-10-03T14:46:22.502Z"
 }

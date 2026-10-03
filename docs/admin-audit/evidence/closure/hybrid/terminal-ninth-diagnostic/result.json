@@ -1,0 +1,139 @@
+{
+  "date": "2026-10-03T12:11:34.979Z",
+  "entry": "terminal",
+  "fullApplyRequested": true,
+  "root": "C:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-terminal-FjesW2",
+  "copiedSourceFiles": 284,
+  "initialState": "source-only; no env/database/config/lock/node_modules",
+  "phases": [
+    "real entrypoint + token exchange + fresh/no-dependencies browser state",
+    "real package install finished; independent node_modules verified",
+    "real web wizard opened with fresh preflight",
+    "real browser apply: server/client builds, migration, first admin, config/env/lock",
+    "persisted form values + bootstrap reload installed/disabled + actual reentry rejection",
+    "actual built API startup + first-admin login/auth cookie",
+    "actual unmodified Vite frontend + browser first-admin login + authenticated admin route"
+  ],
+  "status": "failed",
+  "ports": {
+    "bootstrapPort": 17414,
+    "wizardPort": 17415,
+    "appPort": 17416,
+    "uiPort": 17417
+  },
+  "processSnapshotDiagnostic": {
+    "at": "2026-10-03T12:20:23.683Z",
+    "status": 0,
+    "stdoutBytes": 29436,
+    "stderrBytes": 0,
+    "rowCount": 348,
+    "invalidRows": [
+      {
+        "pid": 0,
+        "pidValid": false,
+        "parentValid": true,
+        "creationValid": true
+      }
+    ]
+  },
+  "ownershipSnapshotError": "Windows process ownership snapshot unavailable",
+  "ownedBrowserPid": 182800,
+  "lastProgress": {
+    "stage": "wizard-apply",
+    "message": "QuizMaster kurulumu tamamlandı. Birazdan giriş sayfasına yönlendirileceksiniz.",
+    "lastLogLines": [],
+    "steps": [
+      {
+        "id": "prepare",
+        "status": "done"
+      },
+      {
+        "id": "buildServer",
+        "status": "done"
+      },
+      {
+        "id": "buildClient",
+        "status": "done"
+      },
+      {
+        "id": "migrate",
+        "status": "done"
+      },
+      {
+        "id": "admin",
+        "status": "done"
+      },
+      {
+        "id": "artifacts",
+        "status": "done"
+      },
+      {
+        "id": "env",
+        "status": "done"
+      },
+      {
+        "id": "finish",
+        "status": "done"
+      }
+    ]
+  },
+  "navigationDiagnostics": [
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "dom-and-selector-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "fresh-state-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "wizard-entry",
+      "outcome": "dom-and-preflight-ready",
+      "file": "wizard-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-locked",
+      "outcome": "dom-and-selector-ready",
+      "file": "bootstrap-locked-navigation.json"
+    },
+    {
+      "phase": "fresh-login",
+      "outcome": "dom-and-selector-ready",
+      "file": "fresh-login-navigation.json"
+    }
+  ],
+  "cleanup": [
+    {
+      "kind": "owned-process-tree",
+      "pid": 182516,
+      "stopped": false,
+      "error": "Cannot verify launch identity/known descendant absence; no unknown PID was killed"
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 175348,
+      "stopped": false,
+      "error": "Cannot verify launch identity/known descendant absence; no unknown PID was killed"
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 182800,
+      "stopped": false,
+      "error": "Cannot verify launch identity/known descendant absence; no unknown PID was killed"
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 182880,
+      "stopped": false,
+      "error": "Cannot verify launch identity/known descendant absence; no unknown PID was killed"
+    }
+  ],
+  "browserCloseErrors": [],
+  "cleanupSucceeded": false,
+  "productStatusBeforeCleanup": "passed-full-install-api-and-ui-login",
+  "error": "Owned browser/process cleanup did not complete; see cleanup evidence.",
+  "sourceProtectedFilesUnchanged": true,
+  "finishedAt": "2026-10-03T12:20:23.962Z"
+}

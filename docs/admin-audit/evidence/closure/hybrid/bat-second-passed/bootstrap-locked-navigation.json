@@ -1,0 +1,69 @@
+{
+  "at": "2026-10-03T13:13:21.772Z",
+  "phase": "bootstrap-locked",
+  "outcome": "dom-and-selector-ready",
+  "url": "http://127.0.0.1:23668/setup",
+  "pending": [],
+  "events": [
+    {
+      "at": "2026-10-03T13:13:21.565Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23668/setup",
+      "type": "document",
+      "method": "GET",
+      "navigation": true
+    },
+    {
+      "at": "2026-10-03T13:13:21.574Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23668/setup",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:21.600Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23668/bootstrap.js",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:21.660Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23668/bootstrap.js",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:21.665Z",
+      "kind": "domcontentloaded",
+      "url": "http://127.0.0.1:23668/setup"
+    },
+    {
+      "at": "2026-10-03T13:13:21.667Z",
+      "kind": "load",
+      "url": "http://127.0.0.1:23668/setup"
+    },
+    {
+      "at": "2026-10-03T13:13:21.668Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23668/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:21.709Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23668/api/status",
+      "status": 200
+    }
+  ],
+  "document": {
+    "readyState": "complete",
+    "title": "QuizMaster Kurulum Başlatıcısı",
+    "installerPresent": true,
+    "wizardPresent": false,
+    "loginPresent": false,
+    "bootstrapState": "Uygulama zaten kurulu"
+  }
+}

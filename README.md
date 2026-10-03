@@ -436,3 +436,5 @@ Mevcut kurulumlarda tutarlı SQLite yedeği alın; `pnpm install`, `pnpm --filte
 Backend testleri geçici SQLite ve taklit SMTP kullanır. Kontroller: `pnpm --filter quiz-master-server test`, `pnpm --filter quiz-master-client exec vitest run`, `pnpm -r type-check` ve `pnpm build`.
 
 Admin panelinin sayfa/sekme denetimi, gerçek Excel/PDF çıktı kontrolleri, erişilebilirlik ve izole hibrit kurulum denemeleri [admin doğrulama raporunda](docs/admin-audit/verification-closure.md) izlenir. Çalıştırılmayan veya ortam erişimine takılan kontroller başarılı olarak sayılmaz.
+
+3 Ekim 2026 tekrarında Windows terminali, BAT ve Git SH üzerinden ayrı temiz kurulumlar; web sihirbazı, ilk adminin API/tarayıcı girişi ve test süreçlerinin temizliği dahil **3/3 geçti**. Yerel Linux/WSL bu koşulara dahil değildir. Sesli ekran okuyucu doğrulaması kullanıcı kararıyla kapsamdan çıkarıldı; form etiketleri ve klavye erişimi korundu.

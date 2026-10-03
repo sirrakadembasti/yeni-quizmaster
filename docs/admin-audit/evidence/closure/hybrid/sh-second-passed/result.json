@@ -1,0 +1,171 @@
+{
+  "date": "2026-10-03T13:59:05.376Z",
+  "entry": "sh",
+  "fullApplyRequested": true,
+  "root": "C:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-sh-PQNzgQ",
+  "copiedSourceFiles": 284,
+  "initialState": "source-only; no env/database/config/lock/node_modules",
+  "phases": [
+    "real entrypoint + token exchange + fresh/no-dependencies browser state",
+    "real package install finished; independent node_modules verified",
+    "real web wizard opened with fresh preflight",
+    "real browser apply: server/client builds, migration, first admin, config/env/lock",
+    "persisted form values + bootstrap reload installed/disabled + actual reentry rejection",
+    "actual built API startup + first-admin login/auth cookie",
+    "actual unmodified Vite frontend + browser first-admin login + authenticated admin route"
+  ],
+  "status": "passed-full-install-api-and-ui-login",
+  "ports": {
+    "bootstrapPort": 44655,
+    "wizardPort": 44656,
+    "appPort": 44657,
+    "uiPort": 44658
+  },
+  "processSnapshotDiagnostic": {
+    "at": "2026-10-03T14:09:49.814Z",
+    "status": 0,
+    "stdoutBytes": 24853,
+    "stderrBytes": 0,
+    "rowCount": 295,
+    "excludedSystemIdleRows": 1,
+    "invalidRows": []
+  },
+  "ownedBrowserPid": 190760,
+  "lastProgress": {
+    "stage": "wizard-apply",
+    "message": "QuizMaster kurulumu tamamlandı. Birazdan giriş sayfasına yönlendirileceksiniz.",
+    "lastLogLines": [],
+    "steps": [
+      {
+        "id": "prepare",
+        "status": "done"
+      },
+      {
+        "id": "buildServer",
+        "status": "done"
+      },
+      {
+        "id": "buildClient",
+        "status": "done"
+      },
+      {
+        "id": "migrate",
+        "status": "done"
+      },
+      {
+        "id": "admin",
+        "status": "done"
+      },
+      {
+        "id": "artifacts",
+        "status": "done"
+      },
+      {
+        "id": "env",
+        "status": "done"
+      },
+      {
+        "id": "finish",
+        "status": "done"
+      }
+    ]
+  },
+  "navigationDiagnostics": [
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "dom-and-selector-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "fresh-state-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "wizard-entry",
+      "outcome": "dom-and-preflight-ready",
+      "file": "wizard-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-locked",
+      "outcome": "dom-and-selector-ready",
+      "file": "bootstrap-locked-navigation.json"
+    },
+    {
+      "phase": "fresh-login",
+      "outcome": "dom-and-selector-ready",
+      "file": "fresh-login-navigation.json"
+    }
+  ],
+  "ownershipSnapshotError": "Windows process ownership snapshot unavailable",
+  "cleanup": [
+    {
+      "kind": "owned-process-tree",
+      "pid": 190504,
+      "stopped": true,
+      "knownProcessCount": 8,
+      "remainingPids": [],
+      "outcomes": [
+        {
+          "pid": 192800,
+          "exitCode": 0
+        },
+        {
+          "pid": 192660,
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 179788,
+      "stopped": true,
+      "knownProcessCount": 8,
+      "remainingPids": [],
+      "outcomes": [
+        {
+          "pid": 150356,
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 190760,
+      "stopped": true,
+      "knownProcessCount": 7,
+      "remainingPids": [],
+      "outcomes": []
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 188640,
+      "stopped": true,
+      "knownProcessCount": 3,
+      "remainingPids": [],
+      "outcomes": []
+    }
+  ],
+  "browserCloseErrors": [],
+  "handleRelease": [
+    {
+      "pid": 190504,
+      "handlesReleased": true
+    },
+    {
+      "pid": 179788,
+      "handlesReleased": true
+    },
+    {
+      "pid": 190760,
+      "handlesReleased": true
+    },
+    {
+      "pid": 188640,
+      "handlesReleased": true
+    }
+  ],
+  "cleanupSucceeded": true,
+  "sourceProtectedFilesUnchanged": true,
+  "finishedAt": "2026-10-03T14:09:50.009Z"
+}

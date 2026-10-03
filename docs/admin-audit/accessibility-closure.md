@@ -58,6 +58,14 @@ exposes native date controls with the same role. Explicit label associations and
 
 ## Reader availability and limits
 
+**Current scope decision, 3 October 2026:** The user removed the requirement
+for actual spoken screen-reader use from this admin acceptance scope. The
+existing ARIA labels, computed accessible-name checks and keyboard/focus
+requirements remain in place. The historical reader attempt below is retained
+as unverified evidence, not a passed check or a requirement before teacher-panel
+work. Latest same-code terminal/BAT/Git SH setup acceptance passed 3/3 on
+3 October; the hybrid hold is resolved. Teacher-panel auditing has not started.
+
 Initial read-only PowerShell inventory found `C:\Windows\System32\Narrator.exe` present.
 Neither `C:\Program Files\NVDA\nvda.exe` nor
 `C:\Program Files (x86)\NVDA\nvda.exe` was present. Before the reader launch, no matching Narrator,
@@ -77,7 +85,8 @@ claim that all native application access is disabled.
 Playwright ARIA snapshots and accessible-name matchers inspect a computed
 accessibility representation in the browser. They do not establish Narrator/NVDA pronunciation, announcements,
 browse mode, reading order, reader-specific shortcuts, or actual screen-reader
-usability. Those require an interactive reader session. Full WCAG conformance,
+usability. Those would require an interactive reader session, which is excluded
+from the current acceptance scope by the 3 October user decision. Full WCAG conformance,
 color contrast, every validation/live announcement, and every destructive workflow
 are outside the assertions in this suite.
 

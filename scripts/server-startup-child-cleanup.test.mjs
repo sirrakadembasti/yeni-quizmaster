@@ -4,6 +4,7 @@ import { EventEmitter } from 'node:events';
 import { PassThrough } from 'node:stream';
 import test from 'node:test';
 import { cleanupStartupChild } from './server-startup-child-cleanup.mjs';
+import * as cleanupHelpers from './server-startup-child-cleanup.mjs';
 
 function fixture() {
   const child = new EventEmitter();
@@ -15,6 +16,27 @@ function fixture() {
   child.unref = () => { child.unrefCalls++; };
   return { child, lifecycle: { spawned: true, closed: false } };
 }
+
+test('handle release attempts both pipes and unref after a stream failure without claiming stop', () => {
+  const { child } = fixture();
+  child.stdout.destroy = () => { throw new Error('controlled stream failure'); };
+  assert.equal(typeof cleanupHelpers.releaseOwnedChildHandles, 'function');
+  const result = cleanupHelpers.releaseOwnedChildHandles(child);
+  assert.equal(result.handlesReleased, false);
+  assert.equal(child.stderr.destroyed, true);
+  assert.equal(child.unrefCalls, 1);
+  assert.equal(Object.hasOwn(result, 'stopProven'), false);
+});
+
+test('handle release still destroys pipes if unref fails', () => {
+  const { child } = fixture();
+  child.unref = () => { throw new Error('controlled unref failure'); };
+  assert.equal(typeof cleanupHelpers.releaseOwnedChildHandles, 'function');
+  const result = cleanupHelpers.releaseOwnedChildHandles(child);
+  assert.equal(result.handlesReleased, false);
+  assert.equal(child.stdout.destroyed, true);
+  assert.equal(child.stderr.destroyed, true);
+});
 
 test('termination failure releases pipe/child handles without claiming stop or fixture deletion safety', async () => {
   const { child, lifecycle } = fixture();

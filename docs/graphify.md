@@ -24,8 +24,8 @@ Graphify raporundaki `Built from commit` alanı, komutun başladığı andaki HE
 
 1 Ekim 2026 kalan admin onarımlarından sonra harita tekrar üretildi: **2027 düğüm, 5705 kenar, 109 topluluk**. Arşiv/audit transaction'ı, sorumlu öğretmen bağının kaldırılması, kapasite/rol doğrulaması, ortak soru doğrulaması ve yeni E2E'ler çalışma ağacından çıkarıldı. Kullanıcının commit dışında korunan localhost düzenlemeleri de çalışma ağacının parçasıdır. Geçici yardımcı dosyalar üretimden önce kaldırıldı. Bu güncelleme AST içindir; 14 SQL dosyasında ayrıştırıcı eksikliği ve Markdown/görsel içerik için semantik LLM çıkarımı sınırı sürer. Güncel çalışma zamanı kanıtları [onarım doğrulama raporundadır](admin-audit/remaining-repairs-verification.md).
 
-2 Ekim 2026 admin kapanış güncellemesi tamamlandı: **2204 düğüm, 6022 kenar,
-115 topluluk**; gerçek `graphify update .` işlemi çıkış **0** verdi. Ardından
+3 Ekim 2026 süreç temizliği düzeltmesinden sonra harita güncellendi: **2206 düğüm, 6030 kenar,
+114 topluluk**; gerçek `graphify update .` işlemi çıkış **0** verdi. Ardından
 `graphify diagnose multigraph --graph graphify-out/graph.json` çıkış **0** ile
 eksik uç **0**, sarkan uç **0**, tam yinelenen kenar **0**, unverified **0** ve
 self-loop **3** kaydetti. Bu tanı oluşturulmuş son grafiği inceler; üretici ham
@@ -35,28 +35,28 @@ Bu üretim yerel AST güncellemesidir. `tree_sitter_sql` eksikliği nedeniyle **
 SQL dosyası** katkı vermedi; Graphify'nin kendi Python ortamında `pypdf` olmadığı
 için PDF metni çıkarılmadı. Bu, başka Python ortamıyla yapılmış gerçek export/PDF
 kontrollerinin yapılmadığı anlamına gelmez. Markdown, görsel ve belge semantiği
-için LLM çıkarımı yenilenmedi. **109 kayıtlı etiket / 115 güncel topluluk** ve
-merkez düğüm adıyla **46 yeniden adlandırma** kaydedildi; LLM yeniden etiketleme
+için LLM çıkarımı yenilenmedi. **115 kayıtlı etiket / 114 güncel topluluk** ve
+merkez düğüm adıyla **17 yeniden adlandırma** kaydedildi; LLM yeniden etiketleme
 yapılmadı. Migration güvenliği, erişilebilirlik, kurulum ve runtime başarısı bu
 haritadan çıkarılamaz.
 
 Grafik commit öncesi çalışma ağacını içerir: kullanıcıya ait `api.ts` ve
 `server-setup.tsx` localhost düzenlemeleri haritada bulunabilir, fakat bu kullanıcı
 hunk'ları commit kapsamı dışındadır. `built_at_commit` değeri
-`e54537d72a6385ea8e3e088febba2e94f17404ed`, üretim anındaki önceki HEAD'dir;
+`5b83a1163e6a49d7d2c392350813823d2e91172f`, üretim anındaki önceki HEAD'dir;
 tek başına yeni commit veya fresh kurulum kanıtı değildir. Güncellemeden sonra
 AST kaynakları değişmedi; sonraki Markdown/tanı kayıtları semantik olarak
 yenilenmiş sayılmaz. [Güncelleme/tanı kaydı](admin-audit/evidence/closure/graphify/graph-update-diagnostic.json)
 bu kapsamı saklar.
 
-Gerçek Chromium görsel kontrolü **2 Ekim 2026 06:28:19–06:29:47 UTC** arasında
+Gerçek Chromium görsel kontrolü **3 Ekim 2026 14:45:56–14:46:22 UTC** arasında
 çıkış **0** ile geçti. Harita yalnız `graphify-out` dosyalarını sunan geçici
 loopback sunucudan açıldı; gerçek CDN `vis-network` isteği HTTP **200** verdi,
 renderer taklit edilmedi. Görünen canvas **1320 × 1000**, sayılan grafik
-**2204/6022/115** idi. Arama üzerinden `deploySetupDatabase()` seçildi;
-ayrıntı paneli `server/setup-wizard/migration.ts`, derece **4** ve **4 bağlı
+**2206/6030/114** idi. Arama üzerinden `deploySetupDatabase()` seçildi;
+ayrıntı paneli `server/setup-wizard/migration.ts`, derece **6** ve **6 bağlı
 kenar** gösterdi. Komşular `applySetup()`, `server.ts`,
-`setup-migration.test.ts` ve `migration.ts` idi. Sayfa/konsol/başarısız istek
+`setup-migration.test.ts`, `migration.ts`, “Görsel haritayı açma” ve “Integration and report” idi. Son iki komşu mevcut belge düğümleridir; yeni semantik çıkarım kanıtı değildir. Sayfa/konsol/başarısız istek
 hataları **0/0/0**; yalnız bu runner'ın tarayıcısı ve sunucusu kapatıldı.
 [Gerçek sonuç](admin-audit/evidence/closure/graphify/result.json),
 [genel görünüm](admin-audit/evidence/closure/graphify/overview.png),

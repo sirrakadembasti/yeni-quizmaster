@@ -1,0 +1,170 @@
+{
+  "date": "2026-10-03T13:07:32.905Z",
+  "entry": "bat",
+  "fullApplyRequested": true,
+  "root": "C:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-bat-cezDpv",
+  "copiedSourceFiles": 284,
+  "initialState": "source-only; no env/database/config/lock/node_modules",
+  "phases": [
+    "real entrypoint + token exchange + fresh/no-dependencies browser state",
+    "real package install finished; independent node_modules verified",
+    "real web wizard opened with fresh preflight",
+    "real browser apply: server/client builds, migration, first admin, config/env/lock",
+    "persisted form values + bootstrap reload installed/disabled + actual reentry rejection",
+    "actual built API startup + first-admin login/auth cookie",
+    "actual unmodified Vite frontend + browser first-admin login + authenticated admin route"
+  ],
+  "status": "passed-full-install-api-and-ui-login",
+  "ports": {
+    "bootstrapPort": 23668,
+    "wizardPort": 23669,
+    "appPort": 23670,
+    "uiPort": 23671
+  },
+  "processSnapshotDiagnostic": {
+    "at": "2026-10-03T13:14:42.734Z",
+    "status": 0,
+    "stdoutBytes": 28738,
+    "stderrBytes": 0,
+    "rowCount": 340,
+    "excludedSystemIdleRows": 1,
+    "invalidRows": []
+  },
+  "ownedBrowserPid": 183656,
+  "lastProgress": {
+    "stage": "wizard-apply",
+    "message": "QuizMaster kurulumu tamamlandı. Birazdan giriş sayfasına yönlendirileceksiniz.",
+    "lastLogLines": [],
+    "steps": [
+      {
+        "id": "prepare",
+        "status": "done"
+      },
+      {
+        "id": "buildServer",
+        "status": "done"
+      },
+      {
+        "id": "buildClient",
+        "status": "done"
+      },
+      {
+        "id": "migrate",
+        "status": "done"
+      },
+      {
+        "id": "admin",
+        "status": "done"
+      },
+      {
+        "id": "artifacts",
+        "status": "done"
+      },
+      {
+        "id": "env",
+        "status": "done"
+      },
+      {
+        "id": "finish",
+        "status": "done"
+      }
+    ]
+  },
+  "navigationDiagnostics": [
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "dom-and-selector-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "fresh-state-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "wizard-entry",
+      "outcome": "dom-and-preflight-ready",
+      "file": "wizard-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-locked",
+      "outcome": "dom-and-selector-ready",
+      "file": "bootstrap-locked-navigation.json"
+    },
+    {
+      "phase": "fresh-login",
+      "outcome": "dom-and-selector-ready",
+      "file": "fresh-login-navigation.json"
+    }
+  ],
+  "cleanup": [
+    {
+      "kind": "owned-process-tree",
+      "pid": 187536,
+      "stopped": true,
+      "knownProcessCount": 8,
+      "remainingPids": [],
+      "outcomes": [
+        {
+          "pid": 190444,
+          "exitCode": 0
+        },
+        {
+          "pid": 188644,
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 190328,
+      "stopped": true,
+      "knownProcessCount": 8,
+      "remainingPids": [],
+      "outcomes": [
+        {
+          "pid": 189184,
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 183656,
+      "stopped": true,
+      "knownProcessCount": 7,
+      "remainingPids": [],
+      "outcomes": []
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 169840,
+      "stopped": true,
+      "knownProcessCount": 14,
+      "remainingPids": [],
+      "outcomes": []
+    }
+  ],
+  "browserCloseErrors": [],
+  "handleRelease": [
+    {
+      "pid": 187536,
+      "handlesReleased": true
+    },
+    {
+      "pid": 190328,
+      "handlesReleased": true
+    },
+    {
+      "pid": 183656,
+      "handlesReleased": true
+    },
+    {
+      "pid": 169840,
+      "handlesReleased": true
+    }
+  ],
+  "cleanupSucceeded": true,
+  "sourceProtectedFilesUnchanged": true,
+  "finishedAt": "2026-10-03T13:14:43.008Z"
+}

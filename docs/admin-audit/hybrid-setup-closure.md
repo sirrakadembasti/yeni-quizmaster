@@ -1,6 +1,33 @@
 # Hibrit taze kurulum kapanış kontrolü
 
-2 Ekim 2026. Sekiz terminal, bir BAT ve bir Git SH gerçek izole koşu tamamlandı; onu da başarısızdır. BAT'ta tam wizard/persistence ve üretim API admin girişi geçti, UI navigasyonu timeout oldu. SH'ta tam wizard/persistence geçti, API startup tek okuma kontrolü timeout oldu; API/UI login'e ulaşılmadı. İkisinde cleanup doğrulanamadı ve kaynak hash'leri korundu. Tam fresh kapanış kanıtlanmadı; yeni retry planlanmıyor. Kaynak incelemesi, `node --check` veya unit/fixture testleri taze kurulum başarısı değildir. Öğretmen paneli denetimi ve gerçek ekran okuyucu kabulü bekliyor.
+2 Ekim tarihsel sonucu: sekiz terminal, bir BAT ve bir Git SH gerçek izole koşunun tamamı tam kabulde başarısızdı. BAT'ta wizard/persistence ve API admin girişi geçti, UI navigasyonu timeout oldu. SH'ta wizard/persistence geçti, API startup timeout oldu; API/UI login'e ulaşılmadı. Cleanup doğrulanamadı; kaynak hash'leri korundu. Bu başarısız kayıtlar aşağıda korunur. 3 Ekim'de gerçek tekrarlar başlatıldı; güncel durum aşağıdadır. Kaynak incelemesi ve unit testleri fresh başarı yerine sayılmaz. Kullanıcı gerçek sesli ekran okuyucu kabulünü kapsamdan çıkardı; ARIA/klavye gereksinimleri korunur. Güncel hibrit kabulü tamamlandı; öğretmen paneli denetimi bu kapanış kapsamında başlamadı.
+
+## 3 Ekim 2026 güncel tekrar durumu
+
+İkinci BAT koşusu **tam geçti**, exit **0**: 13:07:32.905–13:14:43.008 UTC.
+Gerçek paket kurulumu, iki build, 14 migration, ilk admin, kalıcı ayarlar,
+yeniden giriş/kurulum koruması, üretim API ve Vite tarayıcı admin girişi geçti;
+`cleanupSucceeded` ve `sourceProtectedFilesUnchanged` true. [Sansürlenmiş sonuç](evidence/closure/hybrid/bat-second-passed/result.json).
+BAT tarihsel toplamı **1/2** tam başarıdır; ilk başarısızlık silinmez.
+
+Dokuzuncu terminal tanı koşusu bütün ürün aşamalarını, API ve tarayıcı girişini
+geçti; eski snapshot kodu cleanup'ı başarısız saydı, bu yüzden tam başarı
+değildir. Son JSON sonrası bekleyen runner Ctrl+C ile exit 1 kapatıldı.
+Dokuzuncu tanı koşusu bittiğinde terminal toplamı **0/9** idi; [tanı sonucu](evidence/closure/hybrid/terminal-ninth-diagnostic/result.json)
+ürün aşamalarını ve cleanup başarısızlığını ayrı gösterir. İkinci Git SH koşusu
+**tam geçti**, exit **0**: 13:59:05.376–14:09:50.009 UTC. Gerçek install/wizard,
+API ve Vite tarayıcı girişi, cleanup ve kaynak koruması geçti;
+[sansürlenmiş sonuç](evidence/closure/hybrid/sh-second-passed/result.json).
+Git SH tarihsel toplamı **1/2**; Linux/WSL kanıtı değildir. Onuncu terminal koşusu **tam geçti**, exit **0**: 14:10:59.825–14:16:26.729 UTC. Wizard/API/Vite admin girişi, cleanup ve kaynak koruması geçti; [sansürlenmiş sonuç](evidence/closure/hybrid/terminal-tenth-passed/result.json). Aynı güncel kodla son terminal/BAT/Git SH matrisi **3/3** tam geçti. Tarihsel toplamlar terminal **1/10**, BAT **1/2**, Git SH **1/2**; eski başarısızlıklar değişmedi. Admin hibrit kabulündeki bekleme kalktı; öğretmen paneli başlamadı.
+
+Gerçek CIM tanısı status 0 ve 358 satır döndürdü; tek geçersiz satır Windows
+System Idle **PID 0** idi. Snapshot artık yalnız sayısal PID 0'ı dışlar;
+geçersiz pozitif kimlikler hâlâ fail-closed kalır. Hata tanısı ham stdout/stderr
+ve geçersiz PID metnini saklamaz. Cleanup girişimlerinden sonra sahip olunan
+pipe/child handle'ları koşulsuz bırakılır; bu bırakma süreçlerin durduğunun
+kanıtı veya fixture silme izni sayılmaz. Odaklı VM/handle regresyonu
+**RED 7 geçti / 3 başarısız → GREEN 10/10**, 543.600 → 463.488 ms;
+gerçek kurulum veya CIM testi değildir. [Neden ve regresyon kanıtı](evidence/closure/hybrid/retry-2026-10-03-process-cleanup.json).
 
 ## Gerçek kurulum zinciri
 
@@ -26,7 +53,7 @@ Her komut ayrı fresh kopya ve ayrı boş bootstrap/wizard/API/arayüz portları
 
 Yukarıdaki üç komutun tamamı `--apply` ile ayrı fresh kopyada gerçek build/migrate/admin ve API/UI login kapanışını hedefler. BAT/SH `--apply` olmadan çalıştırılırsa yalnız gerçek fresh giriş noktası → paket kurulumu → web sihirbazı/preflight zincirini kapatır; böyle bir kısmi sonucu tam kurulum saymayın.
 
-| Giriş noktası | Güncel gerçek durum | Planlanan gerçek kapsam |
+| Giriş noktası | 2 Ekim tarihsel durum | Planlanan gerçek kapsam |
 |---|---|---|
 | Terminal `pnpm run setup` | Sekiz tamamlanmış koşu başarısız; yedincide tam wizard/apply/persistence geçti, sekizincide wizard navigasyonu timeout oldu | Fresh bootstrap, gerçek install, web formu, iki build, migration/admin/env/config/lock, persistence/reentry, gerçek API ve UI login |
 | Windows `kurulum.bat` | İlk gerçek full koşu başarısız; tam wizard/persistence ve üretim API admin girişi geçti, UI navigasyonu timeout/cleanup başarısız | Ayrı fresh bootstrap, gerçek install, web wizard, tam apply/artifact/persistence/reentry ve API/UI login |
@@ -80,7 +107,7 @@ Test-only süreç/pipe cleanup kusuru için gerçek owned fixture'ı koruyan fin
 
 Tanıda `/auth` document HTTP 200, Vite/main modül yanıtları ve Google Fonts HTTP 200 görüldü. Sınırlı event penceresinde 400+ yanıt, request failure veya page error yok; 30 yerel modül isteği hâlâ pending. Son tanıda document `interactive`, login elemanı yok; ilk DOM tanısı iki saniyede timeout oldu. Soğuk Vite modül hazırlama/yükleme gecikmesi bu kayıtla uyumludur; kesin neden veya ağın tüm koşu boyunca hatasızlığı kanıtlanmaz. Ana ajan yalnız sonraki `fresh-login` DOM navigasyon bütçesini 120 saniye (outer 125) yaptı; diğer navigasyonlar 30 saniye ve görünür login/auth/API kabul kontrolleri aynı kaldı. Bu bir performans onarımı veya geçti sonucu değildir; mevcut BAT başarısız kaydı değiştirilmez.
 
-Kalıcı BAT kanıtına yalnız yeni redactor ile sansürlenmiş result/progress/navigation JSON ve görsel olarak kontrol edilmiş fresh bootstrap/wizard PNG'leri alındı. Raw `.env`, cookie/parola içeren log veya browser storage kopyalanmadı. Sekiz terminal denemesinden sonra yeni aynı-zincir retry planlanmıyor; başarısızlıkları yeni bütçeyle geçmişe dönük başarı saymayın.
+Kalıcı BAT kanıtına yalnız yeni redactor ile sansürlenmiş result/progress/navigation JSON ve görsel olarak kontrol edilmiş fresh bootstrap/wizard PNG'leri alındı. Raw `.env`, cookie/parola içeren log veya browser storage kopyalanmadı. Sekiz terminal denemesinden sonraki 2 Ekim no-retry kararı tarihsel olarak korunur; 3 Ekim tekrarları bu kararı değiştirdi. Başarısızlıkları yeni bütçeyle geçmişe dönük başarı saymayın.
 
 ### İlk gerçek Git SH full koşusu — 2 Ekim
 
@@ -88,7 +115,7 @@ Kalıcı BAT kanıtına yalnız yeni redactor ile sansürlenmiş result/progress
 
 Pasif `fresh-app.log` sınıflaması: 652 bayt/altı dolu satır, belgelenmiş pnpm start/node dist çağrısı var; kaydedilen startup/listening, açık uygulama error veya warning işareti yok. Raw log kalıcı kanıta kopyalanmadı. Kaynak `until` yardımcısı, 120 saniyelik overall startup içinde her kontrolü en fazla 15 saniyeyle sınırlar; bu kontrol gerçek CSRF GET için 10 saniyelik request timeout'u kullanır ve transport hatasında false döndürür. `single check` sonucu bu kontrol sınırının aşıldığını gösterir; logda hata yokluğu uygulamanın sağlıklı olduğunu veya belirli ürün nedenini kanıtlamaz. Yeni 120 saniyelik fresh-login navigasyon bütçesine SH koşusu ulaşmadı; bu bütçe için başarı iddiası yoktur. Yalnız sansürlenmiş JSON/fresh PNG kanıtları saklandı. Git SH, Linux/WSL kurulumu kanıtı değildir.
 
-Mevcut matriste tam başarılı entrypoint yoktur: terminal **0/8**, BAT **0/1**, Git SH **0/1**. Geçen gerçek aşamalar ayrıca korunur; tam API/UI ve cleanup kapanışı eksiktir. Öğretmen paneli beklemede; gerçek ekran okuyucu ses/etkileşim kabulü de halen manuel doğrulama gerektirir. Ek fresh retry planlanmıyor.
+2 Ekim tarihsel matriste tam başarılı entrypoint yoktu: terminal **0/8**, BAT **0/1**, Git SH **0/1**. Geçen gerçek aşamalar korunur; o tarihte tam API/UI ve cleanup kapanışı eksikti. O tarihin no-retry kararı 3 Ekim tekrarlarıyla değişti. Sesli okuyucu kabulü 3 Ekim kullanıcı kararıyla kapsamdan çıkarıldı; güncel matrix ve hibrit bekleme durumu bu belgenin başında yer alır.
 
 Windows metadata sorgusu için isteğe bağlı `HYBRID_POWERSHELL` mutlak executable yolu eklendi; varsayılan PS5 yolu değişmedi. Sorgu `shell: false` ile çalışır, yine en fazla 10 saniyedir; başarısız/okunamayan/geçersiz PID/CreationDate metadata'sı cleanup'ı başarılı saymaz. [Gerçek helper kaynak unit'i](../../scripts/setup-harness-metadata.test.mjs) **RED 0/2**, exit **1**, **0,609 saniye** ardından **GREEN 2/2**, exit **0**, **0,258 saniye** geçti. Kontrollü query sonuçları exact executable seçimini, relative override reddini, timeout/invalid JSON fail-closed davranışını ve PS5/ISO tarihlerini sınar; gerçek process temizleme veya PS7 hız kanıtı değildir. Sandbox'taki gerçek PS5 snapshot probe'u 10,227 saniyede `ETIMEDOUT` verdi; PS7 sandbox çağrısı `EPERM` oldu. Bounded escalated PS7 probe kullanıcı tarafından iptal edildi ve sonuç/handle alınamadı; PS7 hızına veya eski süreç yokluğuna dair kanıt yoktur. Ayrı eski read-only Count checker'ı yalnız kendi session'ına Ctrl+C ile kapatıldı (exit 1, gecikmeli Count 393); bu ölçülmüş bounded başarı değildir. Sonraki gerçek BAT/SH koşusu seçilen interpreter'ı normal harness metadata yolunda doğrulamalıdır; bağımsız ayrıcalıklı probe veya kimliği doğrulanmamış PID sonlandırması yapılmaz.
 
@@ -135,4 +162,4 @@ $env:CHECKPOINT_DISABLE='1'
 pnpm run test tests/utils/setup-migration.test.ts --maxWorkers=1
 ```
 
-Sansürlenmiş fixture tanıları [kalıcı migration kanıt dizinindedir](./evidence/closure/hybrid/migration-diagnostics/); [RED/GREEN özeti](./evidence/closure/hybrid/migration-diagnostics/integration-red-green-summary.json) komutu, sonuçları ve sınırları birlikte kaydeder. Raw DEBUG/bootstrap logları, token/cookie/parola veya `.env` kopyalanmadı. Native/CLI probe ve gerçek integration regresyonu tam terminal/BAT/SH web kurulumu değildir. Sekiz terminal koşusu tarihsel başarısız aşama kanıtı olarak korunur; yedinci gerçek wizard migration/admin adımları geçti, ancak **tam terminal/BAT/SH fresh apply + API/UI login matrisi henüz kapanmadı**. Öğretmen paneli denetimi bu kanıtla başlamış sayılmaz.
+Sansürlenmiş fixture tanıları [kalıcı migration kanıt dizinindedir](./evidence/closure/hybrid/migration-diagnostics/); [RED/GREEN özeti](./evidence/closure/hybrid/migration-diagnostics/integration-red-green-summary.json) komutu, sonuçları ve sınırları birlikte kaydeder. Raw DEBUG/bootstrap logları, token/cookie/parola veya `.env` kopyalanmadı. Native/CLI probe ve gerçek integration regresyonu tam terminal/BAT/SH web kurulumu değildir. Sekiz terminal koşusu tarihsel başarısız aşama kanıtı olarak korunur; yedinci gerçek wizard migration/admin adımları geçti, ancak 2 Ekim tarihinde **tam terminal/BAT/SH fresh apply + API/UI login matrisi henüz kapanmamıştı**; 3 Ekim son aynı-kod matrisi 3/3 geçti. Öğretmen paneli denetimi bu kanıtla başlamış sayılmaz.

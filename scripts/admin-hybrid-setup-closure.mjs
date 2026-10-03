@@ -9,6 +9,7 @@ import net from 'node:net';
 import { spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
+import { releaseOwnedChildHandles } from './server-startup-child-cleanup.mjs';
 
 const source = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const entry = process.argv[2] || 'terminal';
@@ -245,15 +246,35 @@ function windowsProcessSnapshot(timeout = 10000) {
   const result = spawnSync(executable, ['-NoProfile', '-NonInteractive', '-Command',
     'Get-CimInstance Win32_Process | Select-Object ProcessId,ParentProcessId,CreationDate | ConvertTo-Json -Compress'],
   { windowsHide: true, shell: false, encoding: 'utf8', timeout: Math.min(10000, timeout), maxBuffer: 4 * 1024 * 1024 });
+  const diagnostic = { at: new Date().toISOString(), status: result.status,
+    errorCode: result.error?.code, stdoutBytes: Buffer.byteLength(result.stdout || ''),
+    stderrBytes: Buffer.byteLength(result.stderr || '') };
+  const record = () => {
+    if (typeof report !== 'undefined') report.processSnapshotDiagnostic = diagnostic;
+  };
+  record();
   if (result.error || result.status !== 0) return null;
   try {
     const parsed = JSON.parse(result.stdout);
-    const rows = Array.isArray(parsed) ? parsed : [parsed];
+    const rawRows = Array.isArray(parsed) ? parsed : [parsed];
+    // Windows reports System Idle as PID 0. It cannot be a spawned child or
+    // termination target; keep every positive PID subject to identity checks.
+    const rows = rawRows.filter(row => row?.ProcessId !== 0);
+    diagnostic.rowCount = rawRows.length;
+    diagnostic.excludedSystemIdleRows = rawRows.length - rows.length;
+    diagnostic.invalidRows = rows.filter(row => !row || !Number.isInteger(row.ProcessId) || row.ProcessId <= 0
+      || !Number.isInteger(row.ParentProcessId) || row.ParentProcessId < 0
+      || typeof row.CreationDate !== 'string' || !Number.isFinite(creationTime(row.CreationDate)))
+      .slice(0, 8).map(row => ({ pid: Number.isInteger(row?.ProcessId) ? row.ProcessId : undefined,
+        pidValid: Number.isInteger(row?.ProcessId) && row.ProcessId > 0,
+        parentValid: Number.isInteger(row?.ParentProcessId) && row.ParentProcessId >= 0,
+        creationValid: typeof row?.CreationDate === 'string' && Number.isFinite(creationTime(row.CreationDate)) }));
+    record();
     if (!rows.every(row => row && Number.isInteger(row.ProcessId) && row.ProcessId > 0
       && Number.isInteger(row.ParentProcessId) && row.ParentProcessId >= 0
       && typeof row.CreationDate === 'string' && Number.isFinite(creationTime(row.CreationDate)))) return null;
     return rows;
-  } catch { return null; }
+  } catch { diagnostic.invalidJson = true; record(); return null; }
 }
 function ownedTree(snapshot, rootPid) {
   if (!snapshot) return null;
@@ -510,6 +531,7 @@ try {
   closing = true;
   report.cleanup = [];
   const cleanupDeadline = Date.now() + 120000;
+  try {
   captureOwnedProcesses();
   if (browserServer) {
     report.browserCloseErrors = [];
@@ -570,6 +592,14 @@ try {
       await until(() => !isRunning(child.pid), 5000, 'owned process termination');
       report.cleanup.push({ kind: 'owned-process', pid: child.pid, stopped: true });
     } catch (error) { report.cleanup.push({ kind: 'owned-process', pid: child.pid, stopped: false, error: redact(error.message) }); }
+  }
+  } finally {
+    // Release only handles we own, after identity/termination attempts. This
+    // cannot establish process-tree absence or authorize fixture deletion.
+    report.handleRelease = children.map(({ child }) => ({
+      pid: Number.isInteger(child.pid) ? child.pid : undefined,
+      ...releaseOwnedChildHandles(child),
+    }));
   }
   report.cleanupSucceeded = report.cleanup.every(item => item.stopped);
   if (!report.cleanupSucceeded) {

@@ -1,0 +1,662 @@
+{
+  "at": "2026-10-03T13:14:01.929Z",
+  "phase": "fresh-login",
+  "outcome": "dom-and-selector-ready",
+  "url": "http://127.0.0.1:23671/auth",
+  "pending": [],
+  "events": [
+    {
+      "at": "2026-10-03T13:13:59.113Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/ui/table.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.121Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/layout/DashboardLayout.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.123Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/src/components/ui/popover.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.143Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/ui/dropdown-menu.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.143Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-dropdown-menu.js?v=095021fc",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.144Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/ui/dialog.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.146Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=8dcea602",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.146Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/ui/select.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.155Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-select.js?v=73a76b2b",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.166Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/ui/textarea.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.167Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/lib/quiz-delete.ts",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.171Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/date-fns.js?v=61da0beb",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.174Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/lib/admin-cache.ts",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.175Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-JSDL3R2D.js?v=28c10da2",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.191Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/management/AdminQueryState.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.205Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/management/DeleteConfirmModal.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.216Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/hooks/use-user-management.ts",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.217Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/management/UserManagementTable.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.230Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/print/PrintTools.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.255Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/management/UserFormModal.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.256Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/lib/export.ts",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.280Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/quiz/QuizSettings.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.281Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/quiz/AIQuestionGenerator.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.281Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/lib/content-save.ts",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.305Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/quiz/QuestionItem.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.307Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/src/components/ui/image-upload.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.308Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/src/components/ui/collapsible.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.321Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/lib/http-error.ts",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.322Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/ui/tabs.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.323Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=26ad00ff",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.424Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/ui/progress.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.425Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-progress.js?v=b9c8a60d",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.457Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/ui/scroll-area.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.458Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-scroll-area.js?v=3aecc64b",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.459Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/ui/alert-dialog.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.459Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-alert-dialog.js?v=073ad581",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.460Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/ui/switch.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.461Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-switch.js?v=d2bfbc40",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.471Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/ui/checkbox.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.472Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-slot.js?v=17f44773",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.472Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-checkbox.js?v=67d6fd3e",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.473Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/announcements/AnnouncementAuthor.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.474Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/management/GuardianAccounts.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.477Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/class-variance-authority.js?v=af300b75",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.478Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-NUEI6PJO.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.479Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-CNYJBM5F.js?v=28c10da2",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.481Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-toast.js?v=5cb2b133",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.482Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-CHMDBDKA.js?v=28c10da2",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.491Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-3NPK4D6Q.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.503Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-ERDHTNET.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.510Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-MULT35KZ.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.516Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-KLJ35E36.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.526Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-OCQTSGE3.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.534Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-7NBO2MDZ.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.544Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-ZQOM6QZ6.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.556Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-CVNSUOOV.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.556Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-UQXYN7VM.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.562Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-OFYHPEMR.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.563Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-SZVI26OM.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.581Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/clsx.js?v=c117bb5c",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.584Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-NCOIGT7R.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.585Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-label.js?v=ae97d369",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.609Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/ui/popover.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.610Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-popover.js?v=6d2ca4db",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.613Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=8dcea602",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.614Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-3XSWROZT.js?v=28c10da2",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.614Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-BHBBVLBB.js?v=28c10da2",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.639Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-dropdown-menu.js?v=095021fc",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.640Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-DOQQHRMS.js?v=28c10da2",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.641Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-INUBCJYD.js?v=28c10da2",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.642Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-JSDL3R2D.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.644Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-select.js?v=73a76b2b",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.645Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/tailwind-merge.js?v=efc0ee16",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.646Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-GIKKZJ33.js?v=28c10da2",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.660Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/ui/image-upload.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.660Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/src/components/ui/collapsible.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.661Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-collapsible.js?v=03d8876e",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:13:59.662Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=26ad00ff",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.663Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-progress.js?v=b9c8a60d",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.681Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-scroll-area.js?v=3aecc64b",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.682Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-alert-dialog.js?v=073ad581",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.685Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-switch.js?v=d2bfbc40",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.686Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-checkbox.js?v=67d6fd3e",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.695Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-CNYJBM5F.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.704Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-CHMDBDKA.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.705Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-popover.js?v=6d2ca4db",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.711Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-3XSWROZT.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.712Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-DOQQHRMS.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.713Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-INUBCJYD.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.716Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-BHBBVLBB.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.718Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/chunk-GIKKZJ33.js?v=28c10da2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.719Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/@radix-ui_react-collapsible.js?v=03d8876e",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:13:59.768Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/date-fns_locale.js?v=6998b461",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:14:01.266Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/node_modules/.vite/deps/recharts.js?v=bfd358cc",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:14:01.569Z",
+      "kind": "domcontentloaded",
+      "url": "http://127.0.0.1:23671/auth"
+    },
+    {
+      "at": "2026-10-03T13:14:01.587Z",
+      "kind": "load",
+      "url": "http://127.0.0.1:23671/auth"
+    },
+    {
+      "at": "2026-10-03T13:14:01.675Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/api/csrf-token",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:14:01.778Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/api/csrf-token",
+      "status": 200
+    },
+    {
+      "at": "2026-10-03T13:14:01.806Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:23671/api/auth/me",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-03T13:14:01.828Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:23671/api/auth/me",
+      "status": 401
+    }
+  ],
+  "document": {
+    "readyState": "complete",
+    "title": "QuizMaster - Admin Dashboard",
+    "installerPresent": false,
+    "wizardPresent": false,
+    "loginPresent": true
+  }
+}

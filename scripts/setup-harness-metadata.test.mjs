@@ -13,9 +13,10 @@ function actual(env = {}, result = { status: 0, stdout: '[]' }) {
     return helper(name);
   }).join('\n');
   const calls = [];
-  const context = { path: path.win32, process: { env }, spawnSync: (...args) => { calls.push(args); return result; } };
+  const report = {};
+  const context = { Buffer, report, path: path.win32, process: { env }, spawnSync: (...args) => { calls.push(args); return result; } };
   const api = vm.runInNewContext(`${definitions}\n({windowsMetadataExecutable,windowsProcessSnapshot,creationTime})`, context);
-  return { ...api, calls };
+  return { ...api, calls, report };
 }
 
 test('optional absolute interpreter selects exact executable with unchanged default and bounded shell-free query', () => {
@@ -42,4 +43,22 @@ test('invalid or unavailable metadata fails closed while PS5 and ISO creation da
   assert.equal(api.windowsProcessSnapshot()[0].ProcessId, 42);
   assert.equal(api.creationTime(iso), Date.parse(iso));
   assert.equal(api.creationTime(`/Date(${Date.parse(iso)})/`), Date.parse(iso));
+});
+
+test('Windows System Idle PID zero does not invalidate real child identities; malformed positive rows still fail closed', () => {
+  const owned = { ProcessId: 42, ParentProcessId: 1, CreationDate: '2026-10-03T12:12:04.377Z' };
+  const idle = { ProcessId: 0, ParentProcessId: 0, CreationDate: null };
+  const snapshot = actual({}, { status: 0, stdout: JSON.stringify([idle, owned]) }).windowsProcessSnapshot();
+  assert.ok(snapshot, 'The non-spawnable System Idle entry must not discard valid process identities');
+  assert.deepEqual(Array.from(snapshot, row => row.ProcessId), [42]);
+  const malformed = { ProcessId: 43, ParentProcessId: 1, CreationDate: null };
+  assert.equal(actual({}, { status: 0, stdout: JSON.stringify([idle, owned, malformed]) }).windowsProcessSnapshot(), null);
+});
+
+test('invalid process identity diagnostics never echo malformed values or process-query output', () => {
+  const sentinel = 'private-metadata-sentinel';
+  const api = actual({}, { status: 0, stdout: JSON.stringify({ ProcessId: sentinel, ParentProcessId: 1, CreationDate: 'invalid' }), stderr: sentinel });
+  assert.equal(api.windowsProcessSnapshot(), null);
+  assert.equal(JSON.stringify(api.report).includes(sentinel), false);
+  assert.equal(api.report.processSnapshotDiagnostic.invalidRows[0].pidValid, false);
 });
