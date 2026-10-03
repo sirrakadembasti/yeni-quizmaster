@@ -116,3 +116,7 @@ Katılım/yanıt sonrası soru değişikliği 409 ile reddedilir; cevap geçmiş
 Öğrenci taşırken kaynak ve hedef sınıf yetkili olmalıdır. Çıkarma yalnız belirtilen sınıfa ait öğrenci için yapılabilir. Önizleme kendi sınavlarınızla sınırlıdır. Sonuç raporları öğrenci/veli adresi, telefon ve kurtarma bilgilerini içermez.
 
 Kendi parola değişiminde mevcut parola doğrulanır. Profil/parola işlemi branş/sınıf atamalarınızı değiştirmez. AI özel sağlayıcısı genel internet üzerinde HTTPS kullanmalıdır; özel ağ adresleri ve redirect reddedilir.
+
+Sınav Sonuçları → Öğrenci Raporları bölümünde Doğru/Toplam alanı sıfır doğru cevabı da gösterir. Excel ve öğrenci filtresi Genel Bakış sekmesindedir; aynı filtre Öğrenci Raporları ve yazdırılan karnelere uygulanır.
+
+Parola sıfırlama bağlantısında gönderim sırasında “Güncelleniyor...” görünür ve tekrar gönderim engellenir. İstek başarısız olursa form değerleri korunur ve yeniden deneme açılır; geçersiz veya süresi dolmuş bağlantı için yeni bağlantı isteyin.

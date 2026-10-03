@@ -1,0 +1,32 @@
+{
+  "tool": "Independent pypdf extraction + PyMuPDF rendering",
+  "checks": [
+    {
+      "file": "report-all.pdf",
+      "pages": 1,
+      "zeroCount": 1,
+      "positiveCount": 13,
+      "expectedZero": 1,
+      "expectedPositive": 13,
+      "foreignDataAbsent": true,
+      "passed": true,
+      "renders": [
+        "report-all-page-1.png"
+      ]
+    },
+    {
+      "file": "report-zero.pdf",
+      "pages": 1,
+      "zeroCount": 1,
+      "positiveCount": 0,
+      "expectedZero": 1,
+      "expectedPositive": 0,
+      "foreignDataAbsent": true,
+      "passed": true,
+      "renders": [
+        "report-zero-page-1.png"
+      ]
+    }
+  ],
+  "passed": true
+}

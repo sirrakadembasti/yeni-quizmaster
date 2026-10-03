@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ export default function ResetPasswordPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const pendingRequest = useRef(false);
   const [isSuccess, setIsSuccess] = useState(false);
   
   const [password, setPassword] = useState("");
@@ -34,6 +35,7 @@ export default function ResetPasswordPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (pendingRequest.current) return;
     
     if (password !== confirmPassword) {
       toast({
@@ -62,6 +64,8 @@ export default function ResetPasswordPage() {
       return;
     }
 
+    pendingRequest.current = true;
+    setIsLoading(true);
     try {
       await authApi.resetPassword(token, password);
       
@@ -81,6 +85,7 @@ export default function ResetPasswordPage() {
         description: error.message || "Şifre sıfırlanırken bir sorun oluştu.",
       });
     } finally {
+      pendingRequest.current = false;
       setIsLoading(false);
     }
   };

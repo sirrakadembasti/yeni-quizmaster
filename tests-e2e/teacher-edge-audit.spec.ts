@@ -46,19 +46,41 @@ test('teacher results search and labelled assignment checkbox accessibility evid
 });
 
 test('password reset pending request disables duplicate submission', async ({ page }) => {
+  const pendingOut = 'docs/teacher-audit/evidence/defect-repairs';
+  mkdirSync(pendingOut, { recursive: true });
   let release!: () => void; let observed!: () => void;
+  let requestCount = 0;
   const gate = new Promise<void>(resolve => { release = resolve; });
   const started = new Promise<void>(resolve => { observed = resolve; });
-  await page.route('**/api/auth/reset-password', async route => { observed(); await gate; await route.continue(); });
+  await page.route('**/api/auth/reset-password', async route => { requestCount++; observed(); await gate; await route.continue(); });
   await page.goto('/reset-password?token=invalid-synthetic-audit-token');
   await page.getByLabel('Yeni Şifre', { exact: true }).fill('UnusedAuditPassword2026!');
   await page.getByLabel('Şifreyi Onayla', { exact: true }).fill('UnusedAuditPassword2026!');
-  const button = page.getByRole('button', { name: 'Şifreyi Güncelle', exact: true });
+  const button = page.locator('form button[type="submit"]');
   try {
     await button.click(); await started;
+    await expect(button).toBeDisabled();
+    await expect(button).toContainText('Güncelleniyor');
+    await page.locator('form').evaluate(form => {
+      (form as HTMLFormElement).requestSubmit(); (form as HTMLFormElement).requestSubmit();
+    });
+    expect(requestCount).toBe(1);
     const disabled = await button.isDisabled();
-    writeFileSync(`${out}/reset-pending.json`, JSON.stringify({ requestObserved: true, requestReleased: false, disabled, text: await button.textContent() }, null, 2));
-    await page.screenshot({ path: `${out}/reset-pending.png`, fullPage: true });
+    writeFileSync(`${pendingOut}/reset-pending.json`, JSON.stringify({ requestObserved: true, requestReleased: false, disabled, text: await button.textContent() }, null, 2));
+    await page.screenshot({ path: `${pendingOut}/reset-pending.png`, fullPage: true });
     expect(disabled).toBe(true);
+    const response = page.waitForResponse(r => new URL(r.url()).pathname === '/api/auth/reset-password');
+    release();
+    expect((await response).status()).toBe(400);
+    await expect(button).toBeEnabled();
+    await expect(button).toHaveText('Şifreyi Güncelle');
+    await expect(page.getByLabel('Yeni Şifre', { exact: true })).toHaveValue('UnusedAuditPassword2026!');
+    const retry = page.waitForResponse(r => new URL(r.url()).pathname === '/api/auth/reset-password');
+    await button.click();
+    expect((await retry).status()).toBe(400);
+    expect(requestCount).toBe(2);
+    await expect(button).toBeEnabled();
+    writeFileSync(`${pendingOut}/reset-pending-retry.json`, JSON.stringify({ requestCount, pendingDisabled: disabled,
+      rejectedStatus: 400, retryStatus: 400, retryEnabled: true, passwordPreserved: true }, null, 2));
   } finally { release(); }
 });

@@ -1,0 +1,19 @@
+{
+  "command": "pnpm --filter quiz-master-client exec vitest run src/test/admin-results.test.tsx src/test/reset-password-pending.test.tsx",
+  "red": {
+    "failed": 2,
+    "passed": 7,
+    "reasons": [
+      "Teacher API correctAnswersCount=0 renders no 0 / 1 cell",
+      "Pending reset submit button is enabled"
+    ]
+  },
+  "green": {
+    "passed": 9,
+    "failed": 0
+  },
+  "productionEdits": [
+    "Report canonical correctAnswersCount with nullish legacy fallback",
+    "Reset pending ref + loading/finally and preserved error retry"
+  ]
+}

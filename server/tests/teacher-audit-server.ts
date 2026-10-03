@@ -7,6 +7,7 @@ import bcrypt from 'bcryptjs';
 const require = createRequire(import.meta.url);
 const repo = resolve(import.meta.dirname, '../..');
 const root = mkdtempSync(join(repo, 'server/data/quizmaster-test-teacher-audit-'));
+console.log('TEACHER FIXTURE: native imports ready; disposable root created');
 for (const dir of ['server/data', 'server/uploads', 'client']) mkdirSync(join(root, dir), { recursive: true });
 for (const dir of ['server', 'client']) writeFileSync(join(root, dir, 'package.json'), '{}');
 const database = join(root, 'server/data/audit.db');
@@ -21,6 +22,7 @@ for (const key of ['EMAIL_USER', 'EMAIL_PASS', 'EMAIL_FROM', 'GEMINI_API_KEY', '
   'APP_BASE_PATH', 'FORCE_SECURE_COOKIES', 'DEPLOYMENT_CONFIG_PATH']) delete process.env[key];
 execFileSync(process.execPath, [require.resolve('prisma/build/index.js'), 'migrate', 'deploy',
   '--schema', join(repo, 'server/prisma/schema.prisma')], { env: process.env, stdio: 'pipe' });
+console.log('TEACHER FIXTURE: migrations deployed');
 const p = new PrismaClient();
 const password = await bcrypt.hash('TeacherAuditOnly2026!', 10);
 await p.user.createMany({ data: [

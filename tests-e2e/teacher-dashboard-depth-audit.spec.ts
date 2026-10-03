@@ -9,8 +9,10 @@ test.beforeEach(async ({ page, baseURL }) => {
   await login(page);
 });
 test.afterEach(async ({ page }, info) => {
-  mkdirSync('docs/teacher-audit/evidence/dashboard-depth', { recursive: true });
-  await page.screenshot({ path: `docs/teacher-audit/evidence/dashboard-depth/${info.title.replace(/[^a-zA-Z0-9-]+/g, '-')}.png`, fullPage: true });
+  const folder = info.title.includes('correct-answer')
+    ? 'docs/teacher-audit/evidence/defect-repairs' : 'docs/teacher-audit/evidence/dashboard-depth';
+  mkdirSync(folder, { recursive: true });
+  await page.screenshot({ path: `${folder}/${info.title.replace(/[^a-zA-Z0-9-]+/g, '-')}.png`, fullPage: true });
 });
 
 test('dashboard KPI and recent participation readbacks match the real teacher APIs', async ({ page }) => {

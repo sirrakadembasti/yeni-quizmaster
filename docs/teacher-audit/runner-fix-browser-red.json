@@ -1,0 +1,28 @@
+{
+  "startedAt": "2026-10-03T20:47:21.988Z",
+  "platform": "win32",
+  "node": "v22.23.2",
+  "cleanup": [
+    {
+      "name": "api",
+      "stopProven": true,
+      "handlesReleased": true
+    }
+  ],
+  "status": "runner-failed",
+  "error": "Isolated audit server readiness timed out",
+  "ports": [
+    {
+      "kind": "fixture-port",
+      "port": 5530,
+      "stopped": true
+    },
+    {
+      "kind": "fixture-port",
+      "port": 5531,
+      "stopped": true
+    }
+  ],
+  "cleanupSucceeded": true,
+  "finishedAt": "2026-10-03T20:49:23.988Z"
+}

@@ -76,6 +76,8 @@ tools/mailpit/*.exe
 /docs/admin-audit/test-results*/
 /docs/admin-audit/**/trace.zip
 /docs/teacher-audit/runtime.json
+/docs/teacher-audit/results-latest.json
+/docs/teacher-audit/runner-windows-port-guard.json
 /docs/teacher-audit/runtime-logs/
 /docs/teacher-audit/test-results*/
 /docs/teacher-audit/playwright-report*/

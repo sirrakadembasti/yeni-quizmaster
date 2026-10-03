@@ -17,5 +17,5 @@
 - [x] Inventory teacher routes, tabs and operations; create 29-row page-based tracking checklist.
 - [x] Run isolated teacher functional/API/E2E and desktop/mobile/keyboard checks; record console/network and empty/error/loading states. Per-case evidence and failed cohorts retained; this does not mean every variant passed.
 - [x] Report verified defects separately from UX/new-feature suggestions, with reproduction, evidence, priority and acceptance criteria.
-- [ ] Five-type survey edit/reopen complete acceptance: initial create/publish/API type readback reached; named final retry blocked by WSL unavailability. See teacher verification report.
+- [x] Five-type survey edit/reopen acceptance closed on 4 October with native Windows Chromium: all five contents edited, API IDs/types preserved and second reload/reopen verified. Earlier WSL unavailability retained as historical evidence; see teacher-audit/defect-repairs.md.
 - [x] Verify privacy/diff/source preservation and stage only owned files for the audit commit; no user client changes staged.

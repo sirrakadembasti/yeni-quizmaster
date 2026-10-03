@@ -1,5 +1,7 @@
 # Öğretmen paneli doğrulama raporu — 3 Ekim 2026
 
+**Güncel durum — 4 Ekim:** T-F01/T-F02 düzeltildi ve beş anket tipinin içerik düzenleme/reload/reopen kabulü native Windows Chromium'da tamamlandı. Son hedefli kohort **4/4**, birim regresyon **9/9**, iki gerçek XLSX ve iki PDF kontrolü geçti. [Düzeltme ve kapanış raporu](defect-repairs.md). Aşağıdaki eski kohortlar ve ilk bulgular tarihsel kanıttır; ayrı UX bulguları ve sınanmamış diğer varyantlar hâlâ açıktır.
+
 Linux/WSL kurulum kabulü tamamlandıktan sonra öğretmen paneli gerçek Chromium, gerçek Vite/API ve her koşuda yeni SQLite verisiyle incelendi. **Bütün özellikler hatasız kabul edilmedi.** Doğru cevap sayısının boş gösterilmesi ve parola sıfırlamada bekleyen isteğin yeniden gönderilebilmesi doğrulanmış işlevsel sorunlardır. Önizleme onay metni ayrıca yanıltıcıdır. Bu aşamada öğretmen ürün kodu değiştirilmedi; test altyapısı, kanıtlar ve çözüm planı eklendi.
 
 ## Kurulum ön koşulu ve izolasyon
@@ -34,10 +36,10 @@ Son ek koşular, aynı başlıklı testlerin tekrarlarıdır; bu tablo birleşti
 | Dashboard `/` | KPI ve son katılım gerçek `/dashboard/stats` + `/overview` ile karşılaştırma; kendi sınıf kartı, yeni sınav, işlem geçmişi bağlantıları | Geçti. Atamasız/yalnız ders öğretmeni/sorumlu öğretmen varyantları ayrı sınanmadı. |
 | Sınavlarım `/quizzes` | Arama/açıklama, temizle, ders/sınıf filtreleri, 10 kayıt sayfalama, taslak düzenle, yayınla→taslak, gerekçeli sil/iptal, API/reload; yabancı öğretmen GET/PATCH/PUT/DELETE engeli | Geçti. Ayrı listede sıralama kontrolü yok; özellik eksikliği hata olarak sayılmadı. |
 | Sınav oluştur/düzenle — **Sınav Ayarları, Sorular** | Eksik başlık, ders/sınıf, süre/karıştırma; gerçek taslak oluştur/güncelle/yayınla; soru/seçenek ekle-sil, yinelenen seçenek, doğru cevap indeks devamlılığı; gerçek PNG→WebP upload, kaydet/reopen/reload/asset GET | Geçti. Yanıtsız kayıt/idempotency'nin tüm öğretmen varyantları ve her limit sınırı yeniden çalıştırılmadı. |
-| Sınav Sonuçları — **Genel Bakış, Öğrenci Raporları** | Filtre/reset, sıfır puan, öğrenci raporları, gerçek Excel içeriği, tam/filtreli PDF, klavye sekmeleri, reload | **T-F01 başarısız:** doğru cevap sayısı boş. Aramada kalıcı etiket UX eksikliği. |
+| Sınav Sonuçları — **Genel Bakış, Öğrenci Raporları** | Filtre/reset, sıfır puan, öğrenci raporları, gerçek Excel içeriği, tam/filtreli PDF, klavye sekmeleri, reload | **T-F01 KAPANDI:** doğru/toplam, reload, filtre, gerçek XLSX/PDF geçti. Aramada kalıcı etiket UX önerisi sürüyor; bkz. defect-repairs.md. |
 | Sınıf İstatistikleri `/statistics` | Sınıf/tarih/API katılım-ortalama, Excel/PDF; geçersiz tarih/API400/UI hata, export disabled; yükleniyor/500/yeniden dene | Geçti. Çok sınıflı ağırlıklı ortalama, tamamlanmamış deneme ve tarih sınırlarının tüm varyantları sınanmadı. |
 | Anket Yönetimi — **Sonuçlar** | Canonical açık metin yanıtı, anket/tarih/reset, gerçek CSV içeriği ve kendi anketi; kontrollü hata/retry | Geçti. Her soru türünde gerçek öğrenci gönderimi bu öğretmen denetiminin konusu değildir. |
-| Anket Yönetimi — **Anket Oluştur → Anket Ayarları / Sorular** | İlk suite açık metin/rating ile gerçek oluştur/yayınla. Ek test beş canonical tipi GUI'de oluşturup yayınladı; API beş tip döndürdü. GET'te absent `correctAnswer` yanlış test beklentisi düzeltilmiştir | **KISMİ/BLOCKED:** beş tipin yeniden aç/düzenle akışının tamamı başarıyla doğrulanamadı. Son adla seçilmiş tekrar WSL erişim sorunu nedeniyle startup çıktısı vermedi. |
+| Anket Yönetimi — **Anket Oluştur → Anket Ayarları / Sorular** | İlk suite açık metin/rating ile gerçek oluştur/yayınla. Ek test beş canonical tipi GUI'de oluşturup yayınladı; API beş tip döndürdü. GET'te absent `correctAnswer` yanlış test beklentisi düzeltilmiştir | **KISMİ; BLOCKED kalktı:** beş tipin içerik düzenleme/API/readback/ikinci reload-reopen kabulü native Windows Chromium ile geçti. Diğer hedef sınıf/tip dönüşümü varyantları tamamlandı sayılmaz. |
 | Öğrenciler `/students` | Kendi sınıfı, arama/filtre, detay/klavye geri, Excel, yükleniyor/500/retry; yabancı öğrenci reddi; admin CRUD düğmelerinin bulunmaması | Geçti. Öğretmende kullanıcı yönetimi UI'si varmış gibi test üretilmedi. |
 | Sınıflarım `/classlist`, sınıf detayı | Sadece atanmış sınıf; arama, kart/detay/geri, öğrenci filtre, Excel, tam/tek öğrenci PDF; yabancı ve eksik sınıf API sınırları | Geçti. Yönetici sınıf atama/kapasite CRUD'u kapsam dışı. |
 | Öğrenci analizi, sonuç detayı | Arama/puan filtresi, boş veri/reset, sıfır puan, soru/yanıt, incele, Excel/PDF; yabancı/eksik sonuç reddi; studentId yok doğrudan rota | Geçti. Öğretmene admin-only veli/öğrenci düzenleme sekmeleri gösterilmiyor. |
@@ -47,12 +49,12 @@ Son ek koşular, aynı başlıklı testlerin tekrarlarıdır; bu tablo birleşti
 | Ayarlar — **Bildirimler** + bell | Ses tercihi/cache/reload, 26 kayıt sayfalama, okundu/sil, diğer öğretmenin bildirimini silme reddi | Geçti. Gerçek ses çalma ve canlı Socket olay teslimi doğrulanmadı. |
 | Ayarlar — **İşlem Geçmişi** | 55 kendi kaydı, 50 kayıt sayfalama, diğer öğretmenin geçmişinin dışlanması | Geçti. Altı aylık sınır, boş/hata ve ayrı history PDF varyantı sınanmadı. |
 | Ayarlar — **Güvenlik** | Uyumsuz parola/yanlış mevcut parola, gerçek değişiklik/yeni giriş/eski oturum sınırı/restore; tab deep link, invalid fallback, back/forward | Geçti. Parola politikalarının her sınır değeri bu koşuda çalıştırılmadı. |
-| Ortak shell, auth/public | Tema kalıcılığı, mobil menü/fokus; gerçek UI login ve güvenli çıkış, yanlış parola; server session'ın cookie korunarak süresinin dolması401/UI redirect; admin/veli/öğrenci yasak rota/API; reset eksik/geçersiz token | **T-F02 başarısız:** reset beklerken tekrar gönderim etkin. SMTP geçerli/expired reset token teslimi kapsam dışı. |
+| Ortak shell, auth/public | Tema kalıcılığı, mobil menü/fokus; gerçek UI login ve güvenli çıkış, yanlış parola; server session'ın cookie korunarak süresinin dolması401/UI redirect; admin/veli/öğrenci yasak rota/API; reset eksik/geçersiz token | **T-F02 KAPANDI:** bekleme, tek gönderim ve hata sonrası retry geçti. SMTP geçerli/expired reset token teslimi kapsam dışı. |
 | UI dışındaki ilgili servis yüzeyi | Öğretmenin question-bank API create/list/delete; geçersiz/yüksek boyutlu upload400; AI boş konu disabled, anahtarsız custom HTTPS yerel500, güvensiz HTTP400 | Geçti. Soru havuzu için ayrı UI yok; gerçek dış AI üretimi yapılmadı. |
 
 ## Doğrulanmış işlevsel hatalar
 
-### T-F01 — Öğrenci raporunda doğru cevap sayısı boş (orta)
+### T-F01 — Öğrenci raporunda doğru cevap sayısı boş (orta; 4 Ekim KAPANDI)
 
 - **Yer:** `/results` → Öğrenci Raporları → Doğru/Toplam.
 - **Yeniden üretim:** Bir sorulu tamamlanmış, doğru cevap sayısı 0 veya 1 olan sonucu açın; rapor sekmesine geçin. İzole fixture'da 14 sonuçta görülür.
@@ -61,7 +63,7 @@ Son ek koşular, aynı başlıklı testlerin tekrarlarıdır; bu tablo birleşti
 - **Önerilen kod çözümü:** Ortak typed sonuç modeli üzerinden `correctAnswersCount` kullanın; eski alan gerekiyorsa açık nullish fallback yapın, sıfırı koruyun. API alanını kırarak bütün istemcileri değiştirmeyin.
 - **Kabul:** Gerçek API ile iki satır için 0/1 ve 1/1 eşleşir; yüzde, CSV, filtre ve PDF değişmez; sıfır için truthy fallback yok. Mevcut depth testi ve yeni filtered PDF kontrolü geçer.
 
-### T-F02 — Parola sıfırlama isteği beklerken düğme kilitlenmiyor (orta)
+### T-F02 — Parola sıfırlama isteği beklerken düğme kilitlenmiyor (orta; 4 Ekim KAPANDI)
 
 - **Yer:** Öğretmenin kullandığı ortak `/reset-password` → Şifreyi Güncelle.
 - **Yeniden üretim:** Geçersiz sentetik token ile eşleşen geçerli parola yazın; gerçek reset API isteğini geciktirin ve gönderin. İstek gözlenip henüz bırakılmamışken düğme etkin kalır.
@@ -93,8 +95,8 @@ Editördeki ham `unnamedButtons: 1` sayacı ürün hatası sayılmadı: gerçek 
 
 | Sıra | İş / kod değişikliği | Fayda | Efor / başarılı sayılma |
 |---|---|---|---|
-| 1 | T-F01 results rapor alanını typed API alanına bağla | Öğretmen karnesi ve çıktı doğruluğu | Küçük; 0/1+1/1 real API/UI/PDF assertions geçmeli |
-| 2 | T-F02 reset loading+duplicate guard | Tek gönderim ve anlaşılır bekleme/hata kurtarma | Küçük; gecikmiş istek ve retry testi geçmeli |
+| 1 | **TAMAMLANDI:** T-F01 typed canonical rapor alanı | Öğretmen karnesi ve çıktı doğruluğu | Küçük; 0/1+1/1 real API/UI/PDF assertions geçmeli |
+| 2 | **TAMAMLANDI:** T-F02 reset loading+duplicate guard | Tek gönderim ve anlaşılır bekleme/hata kurtarma | Küçük; gecikmiş istek ve retry testi geçmeli |
 | 3 | T-U02 preview onay açıklamasını role göre ayır | Kaydedilme konusunda güvenilir geri bildirim | Küçük; öğretmen/student modal sözleşmeleri ayrı |
 | 4 | T-U04 print grafik kararlılığı; T-U01 search label, T-U03 kod wrap | Grafik güvenilirliği, okunabilirlik ve alan bağlamı | Küçük/Orta; hızlı print gerçek PDF, erişilebilir ad+390px ve uzun kod |
 | 5 | Assignment varyantları, çok sınıf/unfinished istatistik, profil alan validasyonu, canlı Socket gibi kalan kapsamı genişlet | Örneklenen veri dışında güveni artırır | Orta; [envanterde](inventory.md) kalan işlemler tek tek kanıtlanır |

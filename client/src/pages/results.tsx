@@ -41,7 +41,7 @@ import {
   Users
 } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
-import { quizApi, resultApi, classApi, categoryApi, userApi } from "@/lib/api";
+import { quizApi, resultApi, classApi, categoryApi, userApi, type StudentResult } from "@/lib/api";
 import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -558,7 +558,7 @@ export default function StatisticsPage() {
                     </TableHeader>
                     <TableBody>
                       {filteredResults.length > 0 ? (
-                        filteredResults.map((res, i) => (
+                        filteredResults.map((res: StudentResult, i) => (
                           <TableRow key={i} className="hover:bg-muted/30 border-border/30">
                             <TableCell className="py-4 px-6">
                               <div className="flex flex-col">
@@ -569,7 +569,7 @@ export default function StatisticsPage() {
                             <TableCell className="text-sm font-medium">{res.quizTitle || 'Sınav'}</TableCell>
                             <TableCell className="text-center">
                               <Badge variant="outline" className="font-bold tabular-nums">
-                                {res.correctAnswers} / {res.totalQuestions}
+                                {res.correctAnswersCount ?? res.correctAnswers ?? '—'} / {res.totalQuestions}
                               </Badge>
                             </TableCell>
                             <TableCell className="text-right py-4 px-6">

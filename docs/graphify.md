@@ -1,5 +1,9 @@
 # QuizMaster Graphify Mimari Haritası
 
+**4 Ekim 2026 öğretmen düzeltmeleri:** Gerçek yerel AST güncellemesi çıkış0 ile **2340 düğüm,6316 kenar,124 topluluk** üretti. Doğru cevap raporu, reset gönderim koruması ve Windows regresyon başlatıcısı son kaynaklardan çıkarıldı. `diagnose multigraph` çıkış0: eksik/sarkan/yinelenen/unverified uç0, self-loop4, producer suppression12. Bunlar ham üretici kaybının sıfır olduğunun kanıtı değildir. SQL parser bulunmadığı için14 SQL dosyası; Graphify ortamında pypdf olmadığı için PDF metni atlandı. LLM semantik etiketleri yenilenmedi. PDF doğruluğu Graphify dışındaki gerçek Chromium+pypdf/PyMuPDF testleriyle doğrulandı; [öğretmen kapanışı](teacher-audit/defect-repairs.md).
+
+Haritanın `built_at_commit` değeri `2c2e9fd` güncelleme başlangıcındaki HEAD'dir; commit öncesi çalışma ağacı, kullanıcının iki bağımsız client değişikliği dahil, haritaya alınır. Aşağıdaki3 Ekim sayıları tarihsel üretimleri anlatır.
+
 Bu belge, QuizMaster kod tabanının Graphify ile oluşturulan bilgi grafiğini incelemek ve güncellemek isteyen geliştiriciler içindir. Graphify uygulamanın çalışma zamanı bağımlılığı değildir; geliştirme, mimari keşif ve etki analizi aracıdır.
 
 ## Paylaşılan çıktılar

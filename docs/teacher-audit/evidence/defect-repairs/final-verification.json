@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-10-03T22:19:52.045Z",
+  "jsonFiles": 97,
+  "credentialPatternMatches": 0,
+  "productionDatabaseSha256": "8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158",
+  "productionDatabaseUnchanged": true,
+  "protectedUserDiff": "1\t1\tclient/src/lib/api.ts\n23\t9\tclient/src/pages/server-setup.tsx",
+  "protectedUserFilesExcludedFromCommit": true,
+  "componentFinal": {
+    "passed": 9,
+    "failed": 0,
+    "commandBudgetMs": 15000,
+    "workers": 1
+  },
+  "componentConcurrentAttempt": {
+    "passed": 8,
+    "failed": 1,
+    "error": "5-second default test timeout (STACK_TRACE_ERROR) during concurrent checks; no product source change before retry"
+  },
+  "frontendTypeCheckExitCode": 0,
+  "frontendBuildExitCode": 0,
+  "independentReview": "No actionable findings; latest runner changes subsequently verified with actual pending reset 1/1 and cleanup true",
+  "windowsPortGuard": {
+    "redPassed": 0,
+    "redFailed": 1,
+    "greenPassed": 1,
+    "greenFailed": 0,
+    "controlledHeldPortNotTerminated": true
+  },
+  "wslProbe": {
+    "firstSandboxResult": "E_ACCESSDENIED",
+    "authorizedReadOnlyRetryTimeoutMs": 15000,
+    "onlyOwnProbeStopped": true,
+    "systemConfigurationChanged": false
+  }
+}

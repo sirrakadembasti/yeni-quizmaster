@@ -3,9 +3,9 @@ import { cleanup, render, screen, within } from '@testing-library/react';
 import ResultsPage from '@/pages/results';
 import userEvent from '@testing-library/user-event';
 
-const data = vi.hoisted(() => ({ results: [] as any[], users: [] as any[] }));
+const data = vi.hoisted(() => ({ results: [] as any[], users: [] as any[], role: 'admin' }));
 const downloaded = vi.hoisted(() => ({ options: null as any, bytes: null as Uint8Array | null }));
-vi.mock('@/context/auth-context', () => ({ useAuth: () => ({ role: 'admin', user: { id: 'admin' } }) }));
+vi.mock('@/context/auth-context', () => ({ useAuth: () => ({ role: data.role, user: { id: 'admin' } }) }));
 vi.mock('@/components/layout/DashboardLayout', () => ({ DashboardLayout: ({ children }: any) => children }));
 // jsdom cannot consume a browser download. Keep the real workbook encoder and
 // replace only its DOM download boundary; E2E covers the real browser artifact.
@@ -18,7 +18,7 @@ vi.mock('@/lib/api', () => ({
     getAllQuizzes: async () => ({ quizzes: [{ id: 'exam', title: 'Mixed results exam' }] }),
     getAllAdminQuizzes: async () => ({ quizzes: [{ id: 'exam', title: 'Mixed results exam' }, { id: 'teacher-exam', title: 'Teacher exam' }] }),
   },
-  classApi: { getAllClasses: async () => ({ classes: [] }) },
+  classApi: { getAllClasses: async () => ({ classes: [] }), getTeacherClasses: async () => ({ classes: [] }) },
   categoryApi: { getAllCategories: async () => [] },
   userApi: { getAllUsers: async () => ({ users: data.users }) },
   resultApi: { getFilteredResults: async () => ({ results: data.results }) },
@@ -31,6 +31,7 @@ vi.mock('recharts', () => ({
   Tooltip: () => null, Cell: () => null,
 }));
 beforeEach(() => {
+  data.role = 'admin';
   window.history.replaceState({}, '', '/results');
   data.users = [];
   downloaded.options = null;
@@ -38,6 +39,19 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 const result = (status: string, score: number | null) => ({ quizId: 'exam', quizTitle: 'Mixed results exam', status, score });
+
+it('renders teacher correct-answer counts from the API including zero', async () => {
+  data.role = 'teacher';
+  data.results = [
+    { ...result('completed', 0), createdBy: 'admin', student: { name: 'Zero Student' }, correctAnswersCount: 0, totalQuestions: 1 },
+    { ...result('completed', 100), createdBy: 'admin', student: { name: 'Perfect Student' }, correctAnswersCount: 1, totalQuestions: 1 },
+  ];
+  render(<ResultsPage />);
+  await screen.findByText('Mixed results exam');
+  await userEvent.setup().click(screen.getByRole('tab', { name: 'Öğrenci Raporları' }));
+  expect(within(screen.getByText('Zero Student').closest('tr')!).getByText('0 / 1')).toBeVisible();
+  expect(within(screen.getByText('Perfect Student').closest('tr')!).getByText('1 / 1')).toBeVisible();
+});
 
 it('names every result filter using its visible label', async () => {
   data.results = [result('completed', 0)];

@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-10-03T19:19:21.759Z",
+  "startedAt": "2026-10-03T22:17:48.049Z",
   "status": "passed",
   "pageErrors": [],
   "consoleErrors": [],
@@ -7,7 +7,7 @@
   "responses": [
     {
       "status": 200,
-      "origin": "http://127.0.0.1:40554",
+      "origin": "http://127.0.0.1:22029",
       "pathname": "/graph.html",
       "queryKeys": []
     },
@@ -20,7 +20,7 @@
   ],
   "navigations": [
     {
-      "origin": "http://127.0.0.1:40554",
+      "origin": "http://127.0.0.1:22029",
       "pathname": "/graph.html",
       "queryKeys": []
     }
@@ -30,20 +30,20 @@
     "serverClosed": true
   },
   "graphJson": {
-    "nodes": 2317,
-    "edges": 6260,
-    "communities": 122,
-    "builtAtCommit": "1570797aeca197c07c4166dc55bf59d201757e08",
+    "nodes": 2340,
+    "edges": 6316,
+    "communities": 124,
+    "builtAtCommit": "2c2e9fd208e317377c932855f5744bffa7e2f99b",
     "helper": {
       "id": "server_setup_wizard_migration_deploysetupdatabase",
       "label": "deploySetupDatabase()",
       "source": "server/setup-wizard/migration.ts",
-      "degree": 6
+      "degree": 7
     }
   },
-  "servedOrigin": "http://127.0.0.1:40554",
+  "servedOrigin": "http://127.0.0.1:22029",
   "rendered": {
-    "stats": "2317 nodes · 6260 edges · 122 communities",
+    "stats": "2340 nodes · 6316 edges · 124 communities",
     "canvas": {
       "width": 1320,
       "height": 1000,
@@ -54,13 +54,13 @@
       "id": "server_setup_wizard_migration_deploysetupdatabase",
       "label": "deploySetupDatabase()",
       "source": "server/setup-wizard/migration.ts",
-      "degree": 6,
-      "connectedEdges": 6
+      "degree": 7,
+      "connectedEdges": 7
     },
     "selected": [
       "server_setup_wizard_migration_deploysetupdatabase"
     ]
   },
-  "selectedInfo": "deploySetupDatabase()\nType: code\nCommunity: applySetup\nSource: server/setup-wizard/migration.ts\nDegree: 6\nNeighbors (6)\napplySetup()\nserver.ts\nsetup-migration.test.ts\nmigration.ts\nGörsel haritayı açma\nIntegration and report",
-  "finishedAt": "2026-10-03T19:19:58.073Z"
+  "selectedInfo": "deploySetupDatabase()\nType: code\nCommunity: applySetup\nSource: server/setup-wizard/migration.ts\nDegree: 7\nNeighbors (7)\napplySetup()\nserver.ts\nsetup-migration.test.ts\nmigration.ts\n3 Ekim 2026 native Linux ve öğretmen denetimi sonrası güncel harita\nGörsel haritayı açma\nIntegration and report",
+  "finishedAt": "2026-10-03T22:18:31.836Z"
 }

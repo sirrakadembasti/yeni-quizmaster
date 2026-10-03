@@ -182,6 +182,16 @@ test.describe('Teacher audit: editor depth', () => {
       }
       await expect(cards.nth(1).getByLabel('En Yüksek Değer')).toHaveValue('8');
       phase('reopened GUI values verified');
+      for (let index = 0; index < reversed.length; index++) {
+        await cards.nth(index).getByLabel('Soru Metni', { exact: true }).fill(`${reversed[index].text} edited`);
+      }
+      await cards.nth(1).getByLabel('En Yüksek Değer').fill('9');
+      // Edit the first choice for every choice-bearing type, keeping its canonical type.
+      for (const index of [0, 3, 4]) {
+        await cards.nth(index).getByRole('textbox', { name: `${index + 1}. soru: 1. seçenek`, exact: true })
+          .fill(`${reversed[index].options[0]} edited`);
+      }
+      phase('all five question contents edited');
       await page.getByRole('tab', { name: 'Anket Ayarları', exact: true }).click();
       await page.getByLabel(/Anket Başlığı/).fill(`${title} edited`);
       const edited = await saveContent(page, 'surveys', 'Yayınla');
@@ -191,7 +201,27 @@ test.describe('Teacher audit: editor depth', () => {
       expect(readback.body.survey.title).toBe(`${title} edited`);
       expect(readback.body.questions.map((q: any) => q.id)).toEqual(stored.body.questions.map((q: any) => q.id));
       expect(readback.body.questions.map((q: any) => q.type)).toEqual(reversed.map(item => item.value));
+      expect(readback.body.questions.map((q: any) => q.text)).toEqual(reversed.map(item => `${item.text} edited`));
+      expect(readback.body.questions[1].config.max).toBe(9);
+      for (const index of [0, 3, 4]) {
+        expect(readback.body.questions[index].options).toEqual([`${reversed[index].options[0]} edited`, ...reversed[index].options.slice(1)]);
+      }
       phase('edited API readback verified', { status: readback.status, questionCount: readback.body.questions.length, preservedQuestionIds: true });
+      await page.reload();
+      await page.locator('.survey-result-card').filter({ hasText: `${title} edited` })
+        .getByRole('button', { name: 'Düzenle', exact: true }).click();
+      await page.getByRole('tab', { name: /^Sorular/ }).click();
+      await expect(cards).toHaveCount(5);
+      for (let index = 0; index < reversed.length; index++) {
+        await expect(cards.nth(index).getByLabel('Soru Metni', { exact: true })).toHaveValue(`${reversed[index].text} edited`);
+        await expect(cards.nth(index).getByLabel('Soru Türü', { exact: true })).toContainText(reversed[index].label);
+      }
+      await expect(cards.nth(1).getByLabel('En Yüksek Değer')).toHaveValue('9');
+      for (const index of [0, 3, 4]) {
+        await expect(cards.nth(index).getByRole('textbox', { name: `${index + 1}. soru: 1. seçenek`, exact: true }))
+          .toHaveValue(`${reversed[index].options[0]} edited`);
+      }
+      phase('edited GUI reloaded and verified', { questionCount: 5 });
     } catch (error) {
       originalError = error;
       phase('original failure', failure(error));
