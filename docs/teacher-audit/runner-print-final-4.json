@@ -1,0 +1,75 @@
+{
+  "startedAt": "2026-10-03T17:29:24.938Z",
+  "platform": "linux",
+  "node": "v22.23.2",
+  "status": "passed",
+  "ports": [
+    5530,
+    5531
+  ],
+  "cleanup": [
+    {
+      "kind": "owned-linux-process-tree",
+      "pid": 614,
+      "stopped": true,
+      "knownProcessCount": 12,
+      "remainingPids": [],
+      "outcomes": []
+    },
+    {
+      "kind": "owned-linux-process-tree",
+      "pid": 580,
+      "stopped": true,
+      "knownProcessCount": 3,
+      "remainingPids": [],
+      "outcomes": [
+        {
+          "pid": 592,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 605,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 580,
+          "signal": "SIGTERM"
+        }
+      ]
+    },
+    {
+      "kind": "owned-linux-process-tree",
+      "pid": 507,
+      "stopped": true,
+      "knownProcessCount": 6,
+      "remainingPids": [],
+      "outcomes": [
+        {
+          "pid": 524,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 540,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 507,
+          "signal": "SIGTERM"
+        }
+      ]
+    },
+    {
+      "kind": "fixture-port",
+      "port": 5530,
+      "stopped": true
+    },
+    {
+      "kind": "fixture-port",
+      "port": 5531,
+      "stopped": true
+    }
+  ],
+  "testExitCode": 0,
+  "cleanupSucceeded": true,
+  "finishedAt": "2026-10-03T17:30:44.656Z"
+}

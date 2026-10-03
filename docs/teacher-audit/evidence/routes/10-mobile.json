@@ -1,0 +1,38 @@
+{
+  "route": "/settings",
+  "viewport": "mobile",
+  "tabs": [
+    "Profil Bilgileri",
+    "Bildirimler",
+    "İşlem Geçmişi",
+    "Güvenlik"
+  ],
+  "tabStates": [
+    {
+      "name": "Profil Bilgileri",
+      "visiblePanels": 1
+    },
+    {
+      "name": "Bildirimler",
+      "visiblePanels": 1
+    },
+    {
+      "name": "İşlem Geçmişi",
+      "visiblePanels": 1
+    },
+    {
+      "name": "Güvenlik",
+      "visiblePanels": 1
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "apiHttpErrors": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 0,
+    "inputsWithoutLabel": []
+  }
+}

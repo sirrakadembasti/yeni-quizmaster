@@ -1,0 +1,32 @@
+{
+  "required": [
+    {
+      "value": "Teacher Audit Student 00",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Exam",
+      "present": true
+    },
+    {
+      "value": "0%",
+      "present": true
+    },
+    {
+      "value": "1 Toplam Sonuç",
+      "present": true
+    }
+  ],
+  "forbidden": [],
+  "controls": 0,
+  "tables": [
+    {
+      "left": 9.5,
+      "right": 708.5,
+      "width": 699,
+      "rows": 1
+    }
+  ],
+  "viewport": 718,
+  "overflowingRows": 0
+}

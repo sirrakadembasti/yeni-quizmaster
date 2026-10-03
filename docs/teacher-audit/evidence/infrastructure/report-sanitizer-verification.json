@@ -1,0 +1,8 @@
+{
+  "windows": {"passed": 4, "failed": 0, "skipped": 1, "durationMs": 1768.7584},
+  "nativeLinux": {"passed": 5, "failed": 0, "skipped": 0, "durationMs": 300.762951},
+  "nativeIncludesRealSymlinkRejection": true,
+  "firstDurableWindowsSanitation": {"files": 6, "redactions": 8},
+  "nativeSanitationBeforeStabilityCopy": {"files": 3, "redactions": 9},
+  "notes": "Counts are from actual tool output; recursive sanitation preserves titles and stats. Raw logs and temporary runtime files remain ignored."
+}

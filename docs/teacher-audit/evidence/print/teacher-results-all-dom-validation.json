@@ -1,0 +1,84 @@
+{
+  "required": [
+    {
+      "value": "Teacher Audit Student 00",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 01",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 02",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 03",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 04",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 05",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 06",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 07",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 08",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 09",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 10",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 11",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 12",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 13",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Exam",
+      "present": true
+    },
+    {
+      "value": "14 Toplam Sonuç",
+      "present": true
+    },
+    {
+      "value": "0%",
+      "present": true
+    }
+  ],
+  "forbidden": [],
+  "controls": 0,
+  "tables": [
+    {
+      "left": 9.5,
+      "right": 708.5,
+      "width": 699,
+      "rows": 14
+    }
+  ],
+  "viewport": 718,
+  "overflowingRows": 0
+}

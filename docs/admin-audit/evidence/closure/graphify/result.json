@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-10-03T14:45:56.137Z",
+  "startedAt": "2026-10-03T19:19:21.759Z",
   "status": "passed",
   "pageErrors": [],
   "consoleErrors": [],
@@ -7,7 +7,7 @@
   "responses": [
     {
       "status": 200,
-      "origin": "http://127.0.0.1:43340",
+      "origin": "http://127.0.0.1:40554",
       "pathname": "/graph.html",
       "queryKeys": []
     },
@@ -20,7 +20,7 @@
   ],
   "navigations": [
     {
-      "origin": "http://127.0.0.1:43340",
+      "origin": "http://127.0.0.1:40554",
       "pathname": "/graph.html",
       "queryKeys": []
     }
@@ -30,10 +30,10 @@
     "serverClosed": true
   },
   "graphJson": {
-    "nodes": 2206,
-    "edges": 6030,
-    "communities": 114,
-    "builtAtCommit": "5b83a1163e6a49d7d2c392350813823d2e91172f",
+    "nodes": 2317,
+    "edges": 6260,
+    "communities": 122,
+    "builtAtCommit": "1570797aeca197c07c4166dc55bf59d201757e08",
     "helper": {
       "id": "server_setup_wizard_migration_deploysetupdatabase",
       "label": "deploySetupDatabase()",
@@ -41,9 +41,9 @@
       "degree": 6
     }
   },
-  "servedOrigin": "http://127.0.0.1:43340",
+  "servedOrigin": "http://127.0.0.1:40554",
   "rendered": {
-    "stats": "2206 nodes · 6030 edges · 114 communities",
+    "stats": "2317 nodes · 6260 edges · 122 communities",
     "canvas": {
       "width": 1320,
       "height": 1000,
@@ -62,5 +62,5 @@
     ]
   },
   "selectedInfo": "deploySetupDatabase()\nType: code\nCommunity: applySetup\nSource: server/setup-wizard/migration.ts\nDegree: 6\nNeighbors (6)\napplySetup()\nserver.ts\nsetup-migration.test.ts\nmigration.ts\nGörsel haritayı açma\nIntegration and report",
-  "finishedAt": "2026-10-03T14:46:22.502Z"
+  "finishedAt": "2026-10-03T19:19:58.073Z"
 }

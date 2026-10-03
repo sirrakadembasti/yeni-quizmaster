@@ -1,0 +1,10 @@
+{
+  "scope": "Only previously observed Windows WSL launchers for this task; creation, parent and command checked",
+  "cancelledPids": [
+    220188,
+    221144
+  ],
+  "globalWslShutdown": false,
+  "guestCleanupVerified": false,
+  "reason": "WSL list probe exceeded 15000ms; new guest test and evidence copy produced no startup output"
+}

@@ -1,0 +1,5 @@
+{
+  "searchAccessibility": "- textbox \"Sınav veya ders ara...\"",
+  "assignmentCheckbox": "- checkbox \"Teacher Audit 7A\"",
+  "note": "Placeholder fallback is present; source lacks persistent search label. Labelled checkbox is not unnamed."
+}

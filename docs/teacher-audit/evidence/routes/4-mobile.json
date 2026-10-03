@@ -1,0 +1,33 @@
+{
+  "route": "/results",
+  "viewport": "mobile",
+  "tabs": [
+    "Genel Bakış",
+    "Öğrenci Raporları"
+  ],
+  "tabStates": [
+    {
+      "name": "Genel Bakış",
+      "visiblePanels": 1
+    },
+    {
+      "name": "Öğrenci Raporları",
+      "visiblePanels": 1
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "apiHttpErrors": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 0,
+    "inputsWithoutLabel": [
+      {
+        "type": null,
+        "placeholder": "Sınav veya ders ara..."
+      }
+    ]
+  }
+}

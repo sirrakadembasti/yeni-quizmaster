@@ -1,0 +1,28 @@
+{
+  "route": "/quizzes/teacher-audit-draft",
+  "viewport": "desktop",
+  "tabs": [
+    "Sınav Ayarları",
+    "Sorular (1)"
+  ],
+  "tabStates": [
+    {
+      "name": "Sınav Ayarları",
+      "visiblePanels": 1
+    },
+    {
+      "name": "Sorular (1)",
+      "visiblePanels": 1
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "apiHttpErrors": [],
+  "ux": {
+    "viewport": 1280,
+    "documentWidth": 1280,
+    "unnamedButtons": 1,
+    "inputsWithoutLabel": []
+  }
+}

@@ -2,12 +2,13 @@
   "recordedAt": "2026-10-03",
   "provenance": {
     "updateAndDiagnose": "Actual CLI exits and diagnostic counters reported by the coordinator; host-specific launcher not retained here.",
-    "graphAndVisual": "Independently checked against persisted graph.json and graphify/result.json."
+    "graphAndVisual": "Current graph counts, built_at_commit and actual visual acceptance independently checked against persisted graph.json and graphify/result.json; coordinator viewed current map and selected-info screenshots."
   },
   "update": {
     "operation": "graphify update .",
     "exitCode": 0,
-    "method": "local AST"
+    "method": "local AST",
+    "uncachedFiles": 537
   },
   "diagnose": {
     "operation": "graphify diagnose multigraph --graph graphify-out/graph.json",
@@ -17,18 +18,23 @@
     "exactDuplicateEdges": 0,
     "unverifiedNodes": 0,
     "selfLoops": 3,
+    "externalNodes": 0,
+    "rawValidEdges": 6260,
+    "graphType": "Graph",
+    "graphTypeEdges": 6260,
+    "producerSuppressionSites": 12,
     "scope": "Generated post-build graph; not proof of losslessness in the raw producer."
   },
   "graph": {
-    "nodes": 2206,
-    "edges": 6030,
-    "communities": 114,
-    "builtAtCommit": "5b83a1163e6a49d7d2c392350813823d2e91172f"
+    "nodes": 2317,
+    "edges": 6260,
+    "communities": 122,
+    "builtAtCommit": "1570797aeca197c07c4166dc55bf59d201757e08"
   },
   "labels": {
-    "saved": 115,
-    "currentCommunities": 114,
-    "hubRenamed": 17,
+    "saved": 114,
+    "currentCommunities": 122,
+    "hubRenamed": 32,
     "llmRelabel": false
   },
   "coverageLimits": {
@@ -43,44 +49,55 @@
     "command": "node scripts/graphify-admin-closure-visual.mjs",
     "exitCode": 0,
     "status": "passed",
-    "startedAt": "2026-10-03T14:45:56.137Z",
-    "finishedAt": "2026-10-03T14:46:22.502Z",
+    "startedAt": "2026-10-03T19:19:21.759Z",
+    "finishedAt": "2026-10-03T19:19:58.073Z",
     "result": "result.json",
     "realCdnRenderer": true,
     "rendererHttpStatus": 200,
     "mockedRenderer": false,
-    "renderedNodes": 2206,
-    "renderedEdges": 6030,
-    "renderedCommunities": 114,
-    "canvas": {
-      "width": 1320,
-      "height": 1000
-    },
+    "renderedNodes": 2317,
+    "renderedEdges": 6260,
+    "renderedCommunities": 122,
+    "canvas": { "width": 1320, "height": 1000 },
     "selectedHelper": {
       "label": "deploySetupDatabase()",
       "source": "server/setup-wizard/migration.ts",
       "degree": 6,
       "connectedEdges": 6,
-      "neighbors": [
-        "applySetup()",
-        "server.ts",
-        "setup-migration.test.ts",
-        "migration.ts",
-        "Görsel haritayı açma",
-        "Integration and report"
-      ]
+      "neighbors": ["applySetup()", "server.ts", "setup-migration.test.ts", "migration.ts",
+        "Görsel haritayı açma", "Integration and report"]
     },
     "pageErrors": 0,
     "consoleErrors": 0,
     "failedRequests": 0,
     "browserClosed": true,
     "serverClosed": true,
-    "screenshots": [
-      "overview.png",
-      "map.png",
-      "selected-info.png"
-    ]
+    "screenshots": ["overview.png", "map.png", "selected-info.png"],
+    "coordinatorViewedCurrentMapAndPanel": true,
+    "scope": "Current actual visual run; prior Windows visual counters remain separately historical."
   },
+  "history": [
+    {
+      "recordedAt": "2026-10-03",
+      "scope": "Previous Windows admin closure graph and visual check",
+      "graph": { "nodes": 2206, "edges": 6030, "communities": 114,
+        "builtAtCommit": "5b83a1163e6a49d7d2c392350813823d2e91172f" },
+      "updateExitCode": 0,
+      "diagnoseExitCode": 0,
+      "missingNodes": 0,
+      "danglingEdges": 0,
+      "exactDuplicateEdges": 0,
+      "unverifiedNodes": 0,
+      "selfLoops": 3,
+      "labels": { "saved": 115, "currentCommunities": 114, "hubRenamed": 17, "llmRelabel": false },
+      "visual": { "exitCode": 0, "status": "passed", "startedAt": "2026-10-03T14:45:56.137Z",
+        "finishedAt": "2026-10-03T14:46:22.502Z", "realCdnRenderer": true, "rendererHttpStatus": 200,
+        "canvas": { "width": 1320, "height": 1000 }, "selectedHelper": "deploySetupDatabase()",
+        "degree": 6, "connectedEdges": 6, "pageErrors": 0, "consoleErrors": 0, "failedRequests": 0,
+        "browserClosed": true, "serverClosed": true,
+        "artifactScope": "Historical counters only; shared visual artifact paths now contain the 19:19 actual visual run." }
+    }
+  ],
   "worktreeScope": {
     "userOriginalChangesIncludedInGraph": [
       "client/src/lib/api.ts",

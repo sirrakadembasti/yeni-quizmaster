@@ -1,0 +1,50 @@
+{
+  "startedAt": "2026-10-03T16:25:57.834Z",
+  "platform": "linux",
+  "node": "v22.23.2",
+  "status": "runner-failed",
+  "ports": [
+    5530,
+    5531
+  ],
+  "cleanup": [
+    {
+      "kind": "owned-linux-process-tree",
+      "pid": 469,
+      "stopped": true,
+      "knownProcessCount": 9,
+      "remainingPids": [],
+      "outcomes": [
+        {
+          "pid": 489,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 505,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 513,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 469,
+          "signal": "SIGTERM"
+        }
+      ]
+    },
+    {
+      "kind": "fixture-port",
+      "port": 5530,
+      "stopped": true
+    },
+    {
+      "kind": "fixture-port",
+      "port": 5531,
+      "stopped": true
+    }
+  ],
+  "error": "Isolated audit server readiness timed out",
+  "cleanupSucceeded": true,
+  "finishedAt": "2026-10-03T16:27:58.111Z"
+}

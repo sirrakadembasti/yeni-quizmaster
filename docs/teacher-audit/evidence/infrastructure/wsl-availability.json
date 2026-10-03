@@ -1,0 +1,6 @@
+{
+  "command": "wsl --list --verbose",
+  "timeoutMs": 15000,
+  "exitedWithinDeadline": false,
+  "onlyOwnedProbeStopped": true
+}

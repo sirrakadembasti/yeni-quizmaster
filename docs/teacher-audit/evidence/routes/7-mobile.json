@@ -1,0 +1,16 @@
+{
+  "route": "/students",
+  "viewport": "mobile",
+  "tabs": [],
+  "tabStates": [],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "apiHttpErrors": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 0,
+    "inputsWithoutLabel": []
+  }
+}

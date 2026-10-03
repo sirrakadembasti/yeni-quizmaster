@@ -1,0 +1,12 @@
+{
+  "recordedAt": "2026-10-03",
+  "distribution": "Ubuntu 22.04.5 LTS",
+  "wslVersion": 2,
+  "initialNativeNodePresent": false,
+  "inheritedWindowsPnpmRejected": true,
+  "provisioned": { "node": "22.23.2", "pnpm": "9.15.1", "playwright": "1.63.0", "nodeArchiveSha256Verified": true },
+  "browserDownload": { "firstTlsAttemptFailed": true, "automaticSecureRetryCompleted": true, "tlsVerificationDisabled": false },
+  "firstRunnerStart": { "exitCode": 1, "reachedHarness": false, "reachedInstallation": false, "reason": "Previously prepared /tmp source and Node paths were absent in the later WSL invocation." },
+  "retryStrategy": "User-cache tooling/source and a dedicated persistent fixture TMPDIR; no WSL system configuration change.",
+  "scope": "Preparation and environment checks only; not installer acceptance."
+}

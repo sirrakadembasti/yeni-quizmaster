@@ -1,0 +1,88 @@
+{
+  "required": [
+    {
+      "value": "Teacher Audit Student 00",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 01",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 02",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 03",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 04",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 05",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 06",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 07",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 08",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 09",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 10",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 11",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 12",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit Student 13",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit 7A",
+      "present": true
+    },
+    {
+      "value": "Sorumlu öğretmen",
+      "present": true
+    },
+    {
+      "value": "Öğrenci sayısı",
+      "present": true
+    },
+    {
+      "value": "14",
+      "present": true
+    }
+  ],
+  "forbidden": [],
+  "controls": 0,
+  "tables": [
+    {
+      "left": 1,
+      "right": 717,
+      "width": 716,
+      "rows": 14
+    }
+  ],
+  "viewport": 718,
+  "overflowingRows": 0
+}

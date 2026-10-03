@@ -1,0 +1,18 @@
+{
+  "title": "Sınıf İstatistikleri",
+  "required": [
+    "Teacher Audit 7A",
+    "Sınıf Bazında Ayrıntılı Sonuçlar",
+    "%100",
+    "%93",
+    "14"
+  ],
+  "forbidden": [
+    "Private Other Student",
+    "Private Other Exam",
+    "Private Other 7B"
+  ],
+  "format": "A4",
+  "bytes": 163601,
+  "source": "Chromium page.pdf with production print CSS"
+}

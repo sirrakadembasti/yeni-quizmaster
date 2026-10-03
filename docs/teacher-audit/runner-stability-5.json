@@ -1,0 +1,97 @@
+{
+  "startedAt": "2026-10-03T18:21:39.127Z",
+  "platform": "linux",
+  "node": "v22.23.2",
+  "status": "cleanup-failed",
+  "ports": [
+    5530,
+    5531
+  ],
+  "cleanup": [
+    {
+      "kind": "owned-linux-process-tree",
+      "pid": 598,
+      "stopped": true,
+      "knownProcessCount": 32,
+      "remainingPids": [],
+      "outcomes": []
+    },
+    {
+      "kind": "owned-linux-process-tree",
+      "pid": 563,
+      "stopped": true,
+      "knownProcessCount": 3,
+      "remainingPids": [],
+      "outcomes": [
+        {
+          "pid": 575,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 588,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 563,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 575,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 563,
+          "signal": "SIGKILL"
+        }
+      ]
+    },
+    {
+      "kind": "owned-linux-process-tree",
+      "pid": 492,
+      "stopped": true,
+      "knownProcessCount": 5,
+      "remainingPids": [],
+      "outcomes": [
+        {
+          "pid": 509,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 525,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 492,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 509,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 525,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 492,
+          "signal": "SIGKILL"
+        }
+      ]
+    },
+    {
+      "kind": "fixture-port",
+      "port": 5530,
+      "stopped": false,
+      "error": "Fixture port bind failed (EADDRINUSE)"
+    },
+    {
+      "kind": "fixture-port",
+      "port": 5531,
+      "stopped": false,
+      "error": "Fixture port bind failed (EADDRINUSE)"
+    }
+  ],
+  "testExitCode": 1,
+  "cleanupSucceeded": false,
+  "finishedAt": "2026-10-03T18:30:49.715Z"
+}

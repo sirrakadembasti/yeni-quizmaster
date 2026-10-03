@@ -1,0 +1,40 @@
+{
+  "stats": {
+    "totalQuizzes": 16,
+    "totalResults": 14,
+    "totalStudents": 14,
+    "averageStudentScore": 93
+  },
+  "recent": [
+    {
+      "title": "Teacher Audit Exam 11",
+      "participants": 0,
+      "audience": 14,
+      "rate": 0
+    },
+    {
+      "title": "Teacher Audit Exam 10",
+      "participants": 0,
+      "audience": 14,
+      "rate": 0
+    },
+    {
+      "title": "Teacher Audit Exam 09",
+      "participants": 0,
+      "audience": 14,
+      "rate": 0
+    },
+    {
+      "title": "Teacher Audit Exam 08",
+      "participants": 0,
+      "audience": 14,
+      "rate": 0
+    },
+    {
+      "title": "Teacher Audit Exam 07",
+      "participants": 0,
+      "audience": 14,
+      "rate": 0
+    }
+  ]
+}

@@ -10,6 +10,7 @@ import { spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import { releaseOwnedChildHandles } from './server-startup-child-cleanup.mjs';
+import { linuxProcessSnapshot, captureOwnedLinuxProcesses, cleanupOwnedLinuxProcesses, verifyFixturePortsReleased } from './linux-owned-process-cleanup.mjs';
 
 const source = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const entry = process.argv[2] || 'terminal';
@@ -51,6 +52,7 @@ for (const file of files.stdout.split('\0').filter(Boolean)) {
 for (const file of protectedFiles.slice(0, 5)) assert(!fs.existsSync(path.join(root, file)), `Fixture is not fresh: ${file}`);
 assert(!fs.existsSync(path.join(root, 'node_modules')));
 const report = { date: new Date().toISOString(), entry, fullApplyRequested: full, root, copiedSourceFiles: copied,
+  runtime: { platform: process.platform, node: process.version, arch: process.arch, osRelease: os.release() },
   initialState: 'source-only; no env/database/config/lock/node_modules', phases: [], status: 'running' };
 const save = () => fs.writeFileSync(path.join(evidence, 'result.json'), `${redact(JSON.stringify(report, null, 2))}\n`);
 const secrets = new Set();
@@ -125,7 +127,8 @@ for (const key of ['DATABASE_URL', 'SESSION_SECRET', 'NODE_ENV', 'PORT', 'HOST',
 const children = [];
 function launch(command, args, cwd, env, logName) {
   const launchedAt = Date.now();
-  const child = spawn(command, args, { cwd, env, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
+  const child = spawn(command, args, { cwd, env, windowsHide: true,
+    detached: process.platform === 'linux', stdio: ['ignore', 'pipe', 'pipe'] });
   const state = { child, output: '', exit: null, error: null, launchedAt, spawnCompletedAt: Date.now(), knownProcesses: new Map() };
   child.on('error', error => { state.error = error; });
   child.on('exit', code => { state.exit = code; });
@@ -298,6 +301,11 @@ function creationTime(value) {
   return match ? Number(match[1]) : Date.parse(value);
 }
 function captureOwnedProcesses() {
+  if (process.platform === 'linux' && children.length) {
+    const snapshot = linuxProcessSnapshot();
+    for (const state of children) captureOwnedLinuxProcesses(state, snapshot);
+    return;
+  }
   if (process.platform !== 'win32' || !children.length) return;
   const snapshot = windowsProcessSnapshot();
   if (!snapshot) { report.ownershipSnapshotError = 'Windows process ownership snapshot unavailable'; return; }
@@ -584,6 +592,10 @@ try {
         error: remaining === null ? 'Final identity/absence snapshot unavailable' : undefined });
       continue;
     }
+    if (process.platform === 'linux') {
+      report.cleanup.push(await cleanupOwnedLinuxProcesses(state, { timeoutMs: cleanupDeadline - Date.now() }));
+      continue;
+    }
     if (child.exitCode !== null || !isRunning(child.pid)) {
       report.cleanup.push({ kind: 'owned-process', pid: child.pid, stopped: true, alreadyExited: true }); continue;
     }
@@ -599,6 +611,11 @@ try {
     report.handleRelease = children.map(({ child }) => ({
       pid: Number.isInteger(child.pid) ? child.pid : undefined,
       ...releaseOwnedChildHandles(child),
+    }));
+  }
+  if (process.platform === 'linux') {
+    report.cleanup.push(...await verifyFixturePortsReleased(Object.values(report.ports), {
+      timeoutMs: Math.min(2000, Math.max(1, cleanupDeadline - Date.now())),
     }));
   }
   report.cleanupSucceeded = report.cleanup.every(item => item.stopped);

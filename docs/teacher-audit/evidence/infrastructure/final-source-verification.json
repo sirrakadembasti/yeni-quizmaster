@@ -1,0 +1,54 @@
+{
+  "source": "Actual coordinator command outputs before staging",
+  "productionDatabaseSha256": "8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158",
+  "productionDatabaseUnchanged": true,
+  "originalUserChanges": {
+    "client/src/lib/api.ts": {
+      "added": 1,
+      "removed": 1
+    },
+    "client/src/pages/server-setup.tsx": {
+      "added": 23,
+      "removed": 9
+    },
+    "includedInCommit": false
+  },
+  "routeEvidence": {
+    "records": 34,
+    "pageErrors": 0,
+    "consoleErrors": 0,
+    "failedRequests": 0,
+    "apiErrors": 0,
+    "documentOverflows": 0
+  },
+  "privacyScanBeforeThisRecord": {
+    "jsonFiles": 79,
+    "secretPatternMatches": 0,
+    "scope": "Durable teacher JSON and nine Linux setup JSON; raw logs and temporary results excluded"
+  },
+  "reportSanitizerFinalInvocation": {
+    "files": 7,
+    "additionalRedactions": 0,
+    "exitCode": 0
+  },
+  "diffCheckExitCode": 0,
+  "limitations": "Two known functional defects remain; five-type survey reopen/edit final acceptance blocked by later WSL unavailability. No all-tests-passed claim.",
+  "windowsPrecommitUnitRerun": {
+    "command": "node --test scripts/audit-server-readiness.test.mjs scripts/teacher-audit-report-sanitize.test.mjs",
+    "initial": {
+      "failed": 1,
+      "skipped": 1,
+      "passed": 6,
+      "exitCode": 1,
+      "failure": "First native Fetch readiness exceeded the unit-only 300 ms timeout; production timeout is 120000 ms."
+    },
+    "unchangedSourceRetry": {
+      "failed": 0,
+      "skipped": 1,
+      "firstReadinessDurationMs": 118.6627,
+      "passed": 7,
+      "exitCode": 0
+    },
+    "resolution": "No source change; Windows timing-sensitive unit test remains a harness reliability limitation."
+  }
+}

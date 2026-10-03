@@ -1,0 +1,66 @@
+{
+  "tool": "pypdf extraction and PyMuPDF rendering",
+  "checks": [
+    {
+      "pdf": "teacher-class-all.pdf",
+      "pages": 1,
+      "missing": [],
+      "forbidden": [],
+      "rendered": [
+        "teacher-class-all-page-1.png"
+      ],
+      "passed": true
+    },
+    {
+      "pdf": "teacher-class-filter.pdf",
+      "pages": 1,
+      "missing": [],
+      "forbidden": [],
+      "rendered": [
+        "teacher-class-filter-page-1.png"
+      ],
+      "passed": true
+    },
+    {
+      "pdf": "teacher-results-all.pdf",
+      "pages": 1,
+      "missing": [],
+      "forbidden": [],
+      "rendered": [
+        "teacher-results-all-page-1.png"
+      ],
+      "passed": true
+    },
+    {
+      "pdf": "teacher-results-zero-filter.pdf",
+      "pages": 1,
+      "missing": [],
+      "forbidden": [],
+      "rendered": [
+        "teacher-results-zero-filter-page-1.png"
+      ],
+      "passed": true
+    },
+    {
+      "pdf": "teacher-statistics.pdf",
+      "pages": 1,
+      "missing": [],
+      "forbidden": [],
+      "rendered": [
+        "teacher-statistics-page-1.png"
+      ],
+      "passed": true
+    },
+    {
+      "pdf": "teacher-student-zero.pdf",
+      "pages": 1,
+      "missing": [],
+      "forbidden": [],
+      "rendered": [
+        "teacher-student-zero-page-1.png"
+      ],
+      "passed": true
+    }
+  ],
+  "passed": true
+}

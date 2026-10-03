@@ -1,0 +1,20 @@
+{
+  "source": "Coordinator tool output for native runner session 98316; full guest report copy was blocked by later WSL unavailability",
+  "command": "teacher-audit-runner.mjs teacher-editor-depth-audit.spec.ts:86 teacher-print-audit.spec.ts teacher-dashboard-depth-audit.spec.ts:103 teacher-edge-audit.spec.ts:48 --timeout=180000",
+  "selectedTests": 6,
+  "passed": 4,
+  "failed": 2,
+  "status": "tests-failed",
+  "testExitCode": 1,
+  "cleanupSucceeded": true,
+  "tests": [
+    {"title": "teacher report correct-answer cells match persisted API counts including zero", "status": "failed"},
+    {"title": "password reset pending request disables duplicate submission", "status": "failed"},
+    {"title": "teacher results PDF includes all fourteen report rows then selected zero-score row", "status": "passed"},
+    {"title": "teacher class PDF includes fourteen students and filter metadata without unselected rows", "status": "passed"},
+    {"title": "teacher student-analysis PDF preserves zero-score report and student identity", "status": "passed"},
+    {"title": "teacher statistics PDF reports assigned class participation and average matching real API", "status": "passed"}
+  ],
+  "selectionLimit": "Survey test moved to line 87; selector line 86 selected no survey test. Named retry was attempted separately but WSL command did not produce startup output.",
+  "pdfArtifactLimit": "Final guest PDFs were not copied after WSL became unavailable. Earlier six PDF artifacts and their independent rendering remain available; a transient chart defect is recorded separately."
+}

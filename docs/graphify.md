@@ -24,46 +24,57 @@ Graphify raporundaki `Built from commit` alanı, komutun başladığı andaki HE
 
 1 Ekim 2026 kalan admin onarımlarından sonra harita tekrar üretildi: **2027 düğüm, 5705 kenar, 109 topluluk**. Arşiv/audit transaction'ı, sorumlu öğretmen bağının kaldırılması, kapasite/rol doğrulaması, ortak soru doğrulaması ve yeni E2E'ler çalışma ağacından çıkarıldı. Kullanıcının commit dışında korunan localhost düzenlemeleri de çalışma ağacının parçasıdır. Geçici yardımcı dosyalar üretimden önce kaldırıldı. Bu güncelleme AST içindir; 14 SQL dosyasında ayrıştırıcı eksikliği ve Markdown/görsel içerik için semantik LLM çıkarımı sınırı sürer. Güncel çalışma zamanı kanıtları [onarım doğrulama raporundadır](admin-audit/remaining-repairs-verification.md).
 
-3 Ekim 2026 süreç temizliği düzeltmesinden sonra harita güncellendi: **2206 düğüm, 6030 kenar,
-114 topluluk**; gerçek `graphify update .` işlemi çıkış **0** verdi. Ardından
+3 Ekim 2026 önceki Windows admin kapanışındaki tarihsel harita **2206 düğüm,
+6030 kenar, 114 topluluk** içeriyordu; update ve diagnose çıkış **0**, eksik/sarkan
+uç, duplicate ve unverified **0**, self-loop **3** idi. O aşamanın görsel kontrolü
+**14:45:56–14:46:22 UTC** arasında geçti: gerçek CDN HTTP 200, canvas 1320 × 1000,
+seçilen `deploySetupDatabase()` derece/bağlı kenar **6/6**, sayfa/konsol/istek
+hataları **0/0/0**. Bu tarihsel sayılar sonraki haritanın güncel sonucu değildir.
+
+### 3 Ekim 2026 native Linux ve öğretmen denetimi sonrası güncel harita
+
+Gerçek `graphify update .` çıkış **0** verdi: **2317 düğüm, 6260 kenar,
+122 topluluk**; **537 uncached dosya** işlendi. Linux süreç temizliği, rapor
+sansürleyicisi ve öğretmen denetimi kaynakları çalışma ağacından çıkarıldı.
 `graphify diagnose multigraph --graph graphify-out/graph.json` çıkış **0** ile
-eksik uç **0**, sarkan uç **0**, tam yinelenen kenar **0**, unverified **0** ve
-self-loop **3** kaydetti. Bu tanı oluşturulmuş son grafiği inceler; üretici ham
-çıktısında ilişki kaybı olmadığını tek başına kanıtlamaz.
+eksik uç **0**, sarkan uç **0**, tam yinelenen kenar **0**, unverified **0**,
+external **0** ve self-loop **3** kaydetti. Tanı 6260 geçerli ham kenar ve
+oluşturulan Graph tipinde 6260 kenar raporladı; **12 producer suppression site**
+notu ham üreticide ilişki kaybı olmadığının kanıtı değildir.
 
-Bu üretim yerel AST güncellemesidir. `tree_sitter_sql` eksikliği nedeniyle **14
-SQL dosyası** katkı vermedi; Graphify'nin kendi Python ortamında `pypdf` olmadığı
-için PDF metni çıkarılmadı. Bu, başka Python ortamıyla yapılmış gerçek export/PDF
-kontrollerinin yapılmadığı anlamına gelmez. Markdown, görsel ve belge semantiği
-için LLM çıkarımı yenilenmedi. **115 kayıtlı etiket / 114 güncel topluluk** ve
-merkez düğüm adıyla **17 yeniden adlandırma** kaydedildi; LLM yeniden etiketleme
-yapılmadı. Migration güvenliği, erişilebilirlik, kurulum ve runtime başarısı bu
-haritadan çıkarılamaz.
+Yerel AST üretiminde `tree_sitter_sql` eksikliği nedeniyle **14 SQL dosyası**
+katkı vermedi; Graphify Python ortamında `pypdf` olmadığı için PDF metni
+çıkarılmadı. Ayrı runtime ile gerçek öğretmen PDF kontrolleri bu sınırdan
+etkilenmez. Markdown, görsel ve belge semantiği için LLM çıkarımı yenilenmedi.
+**114 kayıtlı etiket / 122 güncel topluluk** ve merkez düğüm adıyla **32 yeniden
+adlandırma** kaydedildi; LLM yeniden etiketleme yapılmadı. Grafik migration,
+yetkilendirme, erişilebilirlik veya runtime güvenliğini tek başına kanıtlamaz.
 
-Grafik commit öncesi çalışma ağacını içerir: kullanıcıya ait `api.ts` ve
-`server-setup.tsx` localhost düzenlemeleri haritada bulunabilir, fakat bu kullanıcı
-hunk'ları commit kapsamı dışındadır. `built_at_commit` değeri
-`5b83a1163e6a49d7d2c392350813823d2e91172f`, üretim anındaki önceki HEAD'dir;
-tek başına yeni commit veya fresh kurulum kanıtı değildir. Güncellemeden sonra
-AST kaynakları değişmedi; sonraki Markdown/tanı kayıtları semantik olarak
-yenilenmiş sayılmaz. [Güncelleme/tanı kaydı](admin-audit/evidence/closure/graphify/graph-update-diagnostic.json)
-bu kapsamı saklar.
+Grafik commit öncesi çalışma ağacını içerir. `built_at_commit`
+**1570797aeca197c07c4166dc55bf59d201757e08** üretim anındaki HEAD'dir;
+kullanıcının `client/src/lib/api.ts` ve `client/src/pages/server-setup.tsx`
+localhost hunk'ları haritada bulunabilir, commit kapsamı dışındadır. Sonraki
+Markdown/tanı değişiklikleri semantik olarak yenilenmiş sayılmaz.
+[Güncelleme/tanı kaydı](admin-audit/evidence/closure/graphify/graph-update-diagnostic.json).
 
-Gerçek Chromium görsel kontrolü **3 Ekim 2026 14:45:56–14:46:22 UTC** arasında
-çıkış **0** ile geçti. Harita yalnız `graphify-out` dosyalarını sunan geçici
-loopback sunucudan açıldı; gerçek CDN `vis-network` isteği HTTP **200** verdi,
-renderer taklit edilmedi. Görünen canvas **1320 × 1000**, sayılan grafik
-**2206/6030/114** idi. Arama üzerinden `deploySetupDatabase()` seçildi;
-ayrıntı paneli `server/setup-wizard/migration.ts`, derece **6** ve **6 bağlı
-kenar** gösterdi. Komşular `applySetup()`, `server.ts`,
-`setup-migration.test.ts`, `migration.ts`, “Görsel haritayı açma” ve “Integration and report” idi. Son iki komşu mevcut belge düğümleridir; yeni semantik çıkarım kanıtı değildir. Sayfa/konsol/başarısız istek
-hataları **0/0/0**; yalnız bu runner'ın tarayıcısı ve sunucusu kapatıldı.
-[Gerçek sonuç](admin-audit/evidence/closure/graphify/result.json),
+Güncel haritanın gerçek Chromium görsel kontrolü **3 Ekim 2026
+19:19:21.759–19:19:58.073 UTC** arasında çıkış **0** ile geçti. Yalnız
+`graphify-out` sunan geçici loopback sunucudan açılan sayfada gerçek CDN
+`vis-network` isteği HTTP **200** verdi; renderer taklit edilmedi. Görünen
+canvas **1320 × 1000**, sayılan grafik **2317/6260/122** idi. Aramayla seçilen
+`deploySetupDatabase()` bilgi panelinde `server/setup-wizard/migration.ts`,
+derece **6** ve **6 bağlı kenar** gösterdi. Altı komşu `applySetup()`, `server.ts`,
+`setup-migration.test.ts`, `migration.ts`, “Görsel haritayı açma” ve
+“Integration and report” idi; belge komşuları yeni LLM çıkarımı kanıtı değildir.
+Sayfa/konsol/başarısız istek hataları **0/0/0**, yalnız runner'ın kendi tarayıcı
+ve sunucusunun kapanması true. Koordinatör güncel harita ve bilgi panelini
+görüntüleyip inceledi.
+[Güncel gerçek sonuç](admin-audit/evidence/closure/graphify/result.json),
 [genel görünüm](admin-audit/evidence/closure/graphify/overview.png),
 [seçili harita](admin-audit/evidence/closure/graphify/map.png) ve
-[bilgi paneli](admin-audit/evidence/closure/graphify/selected-info.png) korunur.
-Koordinatör harita ve panel görsellerini görüntüleyip inceledi. Bu görsel kontrol
-gerçek uygulama E2E'si, tam semantik çıkarım veya kurulum başarısı değildir.
+[bilgi paneli](admin-audit/evidence/closure/graphify/selected-info.png)
+bu güncel üretime aittir. Görsel geçiş uygulama E2E'si, tam semantik çıkarım,
+ham üretici kayıpsızlığı veya kurulum kabulü değildir.
 
 GitHub HTML dosyasını uygulama olarak çalıştırmaz. Depoyu indirdikten sonra `graphify-out/graph.html` dosyasını tarayıcıda açın.
 
