@@ -17,9 +17,9 @@
   "packageManager": "pnpm@9.15.1+sha512.1acb565e6193efbebda772702950469150cf12bcc764262e7587e71d19dc98a423dff9536e57ea44c49bdf790ff694e83c27be5faa23d67e0c033b583be4bfcf",
   "devDependencies": {
     "@playwright/test": "^1.63.0",
-    "concurrently": "^9.2.4",
-    "playwright": "^1.63.0"
+    "concurrently": "^9.2.4"
   },
+  "dependencies": { "playwright": "^1.63.0" },
   "pnpm": {
     "overrides": {
       "tar@<7.5.21": "^7.5.21",

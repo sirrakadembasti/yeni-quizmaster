@@ -1,0 +1,182 @@
+import express from 'express';
+import session from 'express-session';
+import request from 'supertest';
+import bcrypt from 'bcryptjs';
+import { randomUUID } from 'node:crypto';
+import { mkdtemp, rm } from 'node:fs/promises';
+import path from 'node:path';
+import { beforeEach, expect, it, vi } from 'vitest';
+
+const auth = vi.hoisted(() => ({ role: 'admin', version: 2, password: '' }));
+vi.mock('../../middleware/auth', () => ({
+  requireAuth: (req: any, res: any, next: any) => {
+    if (auth.role === 'anonymous') return res.sendStatus(401);
+    req.user = { id: 'admin', role: auth.role, sessionVersion: auth.version, password: auth.password };
+    req.session.userId = 'admin'; req.session.sessionVersion = auth.version; next();
+  },
+  requireRole: (roles: string[]) => (req: any, res: any, next: any) => roles.includes(req.user.role) ? next() : res.sendStatus(403),
+}));
+import { enqueueArchive, ArchiveJobError } from '../../services/archive-jobs';
+import { createArchiveRouter, getArchiveBackupRoot } from '../../api-routes/archive';
+import { exportArchive, verifyArchiveArtifact } from '../../services/archive-export';
+
+let year: any, jobs: any[], quizzes: any[], rules: any[], logs: any[], clock: Date, db: any;
+beforeEach(async () => {
+  clock = new Date('2026-01-01T00:00:00Z'); auth.role = 'admin'; auth.version = 2; auth.password = await bcrypt.hash('secret', 4);
+  year = { id: randomUUID(), label: '2025-2026', status: 'active', scheduledCloseAt: new Date('2026-07-14T21:05:00Z') };
+  jobs = []; rules = []; logs = []; quizzes = [{ id: randomUUID(), status: 'published', academicYear: null }];
+  db = {
+    academicYear: { findFirst: async () => year, findUnique: async ({ where }: any) => where.id === year.id ? year : null, findMany: async () => [year] },
+    quiz: { findMany: async ({ where }: any) => quizzes.filter(q => where.id.in.includes(q.id)) },
+    archiveSnapshotRow: { findFirst: async ({ where }: any) => jobs.flatMap(job => job.rows ?? []).find(row => row.entityType === where.entityType && where.entityId.in.includes(row.entityId)) ?? null },
+    studentResult: { count: async ({ where }: any) => where.quizId.in.includes(quizzes[0].id) ? 3 : 0 },
+    surveySubmission: { count: async ({ where }: any) => where.surveyId.in.includes(quizzes[0].id) ? 2 : 0 },
+    question: { count: async ({ where }: any) => where.quizId.in.includes(quizzes[0].id) ? 4 : 0 },
+    archiveSnapshot: {
+      findUnique: async ({ where }: any) => jobs.find(j => where.id ? j.id === where.id : j.annualKey === where.annualKey) ?? null,
+      findMany: async ({ where }: any = {}) => jobs.filter(job => !where?.status?.notIn?.includes(job.status)),
+      create: async ({ data }: any) => { const job = { id: randomUUID(), createdAt: clock, attempts: 0, status: 'queued', rows: [], ...data }; jobs.push(job); return job; },
+      updateMany: async ({ where, data }: any) => { const job = jobs.find(j => j.id === where.id && j.status === where.status); if (!job) return { count: 0 }; Object.assign(job, data); return { count: 1 }; },
+    },
+    user: { findUnique: async () => ({ id: 'admin', role: auth.role, password: auth.password, sessionVersion: auth.version }) },
+    class: { findMany: async ({ where }: any) => where.id.in.map((id: string) => ({ id })) },
+    academicTransitionRule: { findMany: async () => rules, deleteMany: async () => { rules = []; }, create: async ({ data }: any) => { rules.push(data); return data; } },
+    actionLog: { create: async ({ data }: any) => { logs.push(data); return data; }, findMany: async () => logs },
+    $transaction: async (fn: any) => fn(db),
+  };
+});
+function app(verifyArtifact = vi.fn()) {
+  const app = express(); app.use(express.json()); app.use(session({ secret: 'isolated-tests', resave: false, saveUninitialized: true }));
+  app.use('/archive', createArchiveRouter({ db, now: () => clock, backupRoot: 'server/data/backups', verifyArtifact })); return app;
+}
+it('requires explicit existing active content and never accepts annual mode through manual API', async () => {
+  for (const quizIds of [[], ['bad'], [randomUUID()]]) await expect(enqueueArchive(db, { mode: 'manual', quizIds })).rejects.toBeInstanceOf(ArchiveJobError);
+  quizzes[0].status = 'archived'; await expect(enqueueArchive(db, { mode: 'manual', quizIds: [quizzes[0].id] })).rejects.toThrow();
+  for (const mode of ['auto', 'annual']) expect((await request(app()).post('/archive').send({ mode, quizIds: [quizzes[0].id] })).status).toBe(400);
+  expect(jobs).toHaveLength(0);
+});
+it('persists frozen manual scope and deduplicates annual requests by year', async () => {
+  const manual = await enqueueArchive(db, { mode: 'manual', quizIds: [quizzes[0].id, quizzes[0].id], initiatedBy: 'admin' }, clock);
+  expect(JSON.parse(manual.scopeJson).quizIds).toEqual([quizzes[0].id]);
+  clock = new Date('2026-07-14T21:05:00Z');
+  const a = await enqueueArchive(db, { mode: 'annual' }, clock), b = await enqueueArchive(db, { mode: 'annual' }, clock);
+  expect(a.id).toBe(b.id); expect(jobs).toHaveLength(2);
+});
+it('enforces authentication and server close date', async () => {
+  auth.role = 'anonymous'; expect((await request(app()).get('/archive/years')).status).toBe(401);
+  auth.role = 'teacher'; expect((await request(app()).get('/archive/years')).status).toBe(403);
+  auth.role = 'admin'; expect((await request(app()).post('/archive/close-year').send({ now: '2099-01-01' })).status).toBe(409);
+  clock = new Date('2026-07-14T21:05:00Z'); expect((await request(app()).post('/archive/close-year').send({})).status).toBe(202);
+});
+it('retries only failed jobs without replacing immutable snapshot identity', async () => {
+  const job = await enqueueArchive(db, { mode: 'manual', quizIds: [quizzes[0].id] }, clock);
+  expect((await request(app()).post(`/archive/jobs/${job.id}/retry`)).status).toBe(409);
+  job.status = 'failed'; job.rows = [{ entityType: 'quiz', entityId: quizzes[0].id, dataJson: '{}' }]; job.attempts = 3;
+  const response = await request(app()).post(`/archive/jobs/${job.id}/retry`);
+  expect(response.status).toBe(202); expect(response.body.job.id).toBe(job.id); expect(job.rows).toHaveLength(1); expect(jobs).toHaveLength(1);
+});
+it('never exposes paths, raw errors, passwords or arbitrary log details', async () => {
+  const job = await enqueueArchive(db, { mode: 'manual', quizIds: [quizzes[0].id] }, clock);
+  job.artifactPath = 'secret-path'; job.lastError = 'password=secret'; logs.push({ id: 'ok', action: 'ARCHIVE_CREATED', details: JSON.stringify({ snapshotId: job.id, password: 'secret' }) }, { id: 'unrelated', action: 'LOGIN', details: job.id });
+  const meta = await request(app()).get(`/archive/jobs/${job.id}`), result = await request(app()).get(`/archive/jobs/${job.id}/logs`);
+  expect(JSON.stringify(meta.body)).not.toMatch(/secret|artifactPath/); expect(result.body.logs).toHaveLength(1); expect(JSON.stringify(result.body)).not.toMatch(/password|secret/);
+});
+it('requires correct password and scopes grants to snapshot, clock and session version', async () => {
+  const job = await enqueueArchive(db, { mode: 'manual', quizIds: [quizzes[0].id] }, clock); job.status = 'completed';
+  const verify = vi.fn().mockRejectedValue(new Error('no artifact')); const agent = request.agent(app(verify));
+  expect((await agent.get(`/archive/jobs/${job.id}/download`)).status).toBe(403);
+  expect((await agent.post(`/archive/jobs/${job.id}/download-authorize`).send({ password: 'wrong' })).status).toBe(403);
+  expect((await agent.post(`/archive/jobs/${job.id}/download-authorize`).send({ password: 'secret' })).status).toBe(200);
+  expect((await agent.get(`/archive/jobs/${job.id}/download`)).status).toBe(409); expect(verify).toHaveBeenCalledTimes(1);
+  clock = new Date(clock.getTime() + 300001); expect((await agent.get(`/archive/jobs/${job.id}/download`)).status).toBe(403);
+  clock = new Date('2026-01-01T00:00:00Z'); await agent.post(`/archive/jobs/${job.id}/download-authorize`).send({ password: 'secret' });
+  auth.version++; expect((await agent.get(`/archive/jobs/${job.id}/download`)).status).toBe(403);
+});
+it('validates explicit class transitions and locks mappings during annual processing', async () => {
+  const fromClassId = randomUUID(), toClassId = randomUUID();
+  expect((await request(app()).put(`/archive/years/${year.id}/rules`).send({ rules: [{ fromClassId, toClassId, graduate: true }] })).status).toBe(400);
+  expect((await request(app()).put(`/archive/years/${year.id}/rules`).send({ rules: [{ fromClassId, toClassId, graduate: false }] })).status).toBe(200);
+  expect(rules).toHaveLength(1);
+  clock = new Date('2026-07-14T21:05:00Z'); const job = await enqueueArchive(db, { mode: 'annual' }, clock); job.status = 'capturing';
+  expect((await request(app()).put(`/archive/years/${year.id}/rules`).send({ rules: [] })).status).toBe(409);
+});
+it('allows mapping repairs for unleased failed, queued or retry-wait annual jobs', async () => {
+  clock = new Date('2026-07-14T21:05:00Z'); const job = await enqueueArchive(db, { mode: 'annual' }, clock);
+  const rules = [{ fromClassId: randomUUID(), toClassId: null, graduate: true }];
+  for (const status of ['failed', 'queued', 'retry_wait']) {
+    job.status = status; job.leaseExpiresAt = null;
+    expect((await request(app()).put(`/archive/years/${year.id}/rules`).send({ rules })).status).toBe(200);
+  }
+  job.leaseExpiresAt = new Date(clock.getTime() + 10000);
+  expect((await request(app()).put(`/archive/years/${year.id}/rules`).send({ rules })).status).toBe(409);
+  job.leaseExpiresAt = null;
+  for (const status of ['files_generating', 'verified', 'completed']) {
+    job.status = status; expect((await request(app()).put(`/archive/years/${year.id}/rules`).send({ rules })).status).toBe(409);
+  }
+});
+it('rejects filesystem and public backup roots', () => {
+  for (const root of [path.parse(process.cwd()).root, path.resolve(process.cwd(), '..'), path.resolve('../public/backups'), path.resolve('uploads/backups'), path.resolve('../client/public/backups')]) expect(() => getArchiveBackupRoot(root)).toThrow();
+  expect(path.isAbsolute(getArchiveBackupRoot())).toBe(true);
+});
+it('rejects the production client static directory and every nested backup directory', () => {
+  for (const root of ['client/dist', 'client/dist/backups', 'client/dist/assets/archive', path.resolve('../client/dist/backups')]) {
+    expect(() => getArchiveBackupRoot(root)).toThrow(/public storage/);
+  }
+  expect(getArchiveBackupRoot('server/data/backups')).toBe(path.resolve('data/backups'));
+});
+it('blocks cross-snapshot grants and returns only a verified ZIP from frozen rows', async () => {
+  const directory = await mkdtemp(path.resolve('data/archive-api-'));
+  try {
+    const job = await enqueueArchive(db, { mode: 'manual', quizIds: [quizzes[0].id] }, clock);
+    job.rows = [{ entityType: 'quiz', entityId: quizzes[0].id, dataJson: JSON.stringify({ title: 'Frozen exam' }) }];
+    Object.assign(job, await exportArchive({ id: job.id, label: job.label, initiatedBy: job.initiatedBy, createdAt: job.createdAt, rows: job.rows }, directory, { pdfGenerator: async () => Buffer.from('%PDF-1.4\nFrozen report\n%%EOF') })); job.status = 'completed';
+    const expressApp = express(); expressApp.use(express.json()); expressApp.use(session({ secret: 'isolated-download', resave: false, saveUninitialized: true }));
+    expressApp.use('/archive', createArchiveRouter({ db, now: () => clock, backupRoot: directory, verifyArtifact: verifyArchiveArtifact }));
+    const agent = request.agent(expressApp);
+    await agent.post(`/archive/jobs/${job.id}/download-authorize`).send({ password: 'secret' });
+    expect((await agent.get(`/archive/jobs/${randomUUID()}/download`)).status).toBe(403);
+    await agent.post(`/archive/jobs/${job.id}/download-authorize`).send({ password: 'secret' });
+    quizzes[0].title = 'Changed live exam';
+    const response = await agent.get(`/archive/jobs/${job.id}/download`);
+    expect(response.status).toBe(200); expect(response.headers['content-disposition']).toContain('.zip'); expect(response.headers['cache-control']).toBe('no-store');
+    expect(response.headers['content-type']).toMatch(/zip/);
+    job.zipSha256 = 'corrupt'; expect((await agent.get(`/archive/jobs/${job.id}/download`)).status).toBe(409);
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
+it('rejects future annual enqueue and manual closed-year requests', async () => {
+  await expect(enqueueArchive(db, { mode: 'annual' }, clock)).rejects.toBeInstanceOf(ArchiveJobError);
+  await expect(enqueueArchive(db, { mode: 'manual', academicYearId: randomUUID(), quizIds: [quizzes[0].id] }, clock)).rejects.toBeInstanceOf(ArchiveJobError);
+  expect(jobs).toHaveLength(0);
+});
+it('returns the persisted annual winner when concurrent requests hit the unique key', async () => {
+  clock = new Date('2026-07-14T21:05:00Z');
+  db.archiveSnapshot.create = async ({ data }: any) => { jobs.push({ id: randomUUID(), ...data }); throw { code: 'P2002' }; };
+  const job = await enqueueArchive(db, { mode: 'annual' }, clock);
+  expect(job.id).toBe(jobs[0].id); expect(jobs).toHaveLength(1);
+});
+it('previews only the explicit scope with authoritative result, question and survey counts', async () => {
+  const response = await request(app()).post('/archive/preview').send({ quizIds: [quizzes[0].id, quizzes[0].id], academicYearId: year.id });
+  expect(response.status).toBe(200);
+  expect(response.body).toMatchObject({ quizzes: 1, results: 3, surveySubmissions: 2, questions: 4, quizIds: [quizzes[0].id], label: year.label, academicYearId: year.id });
+  expect(jobs).toHaveLength(0);
+});
+it('uses the same rejection predicates for manual preview and enqueue', async () => {
+  for (const body of [{ quizIds: [] }, { quizIds: [randomUUID()] }, { quizIds: [quizzes[0].id], academicYearId: randomUUID() }]) {
+    expect((await request(app()).post('/archive/preview').send(body)).status).toBeGreaterThanOrEqual(400);
+    expect((await request(app()).post('/archive').send(body)).status).toBeGreaterThanOrEqual(400);
+  }
+  for (const academicYear of [year.label, '2024-2025']) {
+    quizzes[0].academicYear = academicYear;
+    expect((await request(app()).post('/archive/preview').send({ quizIds: [quizzes[0].id] })).status).toBe(409);
+    expect((await request(app()).post('/archive').send({ quizIds: [quizzes[0].id] })).status).toBe(409);
+  }
+  expect(jobs).toHaveLength(0);
+});
+it('rejects frozen quiz overlap even when the previous capture job has failed', async () => {
+  const job = await enqueueArchive(db, { mode: 'manual', quizIds: [quizzes[0].id] }, clock);
+  job.status = 'failed'; job.rows = [{ entityType: 'quiz', entityId: quizzes[0].id, dataJson: '{}' }];
+  expect((await request(app()).post('/archive/preview').send({ quizIds: [quizzes[0].id] })).status).toBe(409);
+  expect((await request(app()).post('/archive').send({ quizIds: [quizzes[0].id] })).status).toBe(409);
+  expect(jobs).toHaveLength(1);
+});
+

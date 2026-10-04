@@ -34,9 +34,9 @@ Files: new archive capture/guard services and API middleware; migration triggers
 
 ## Task3 — Files and protected admin endpoints
 Files: archive exporter/packer; archive router; artifact verification tests; export dependencies only when required.
-- [ ] RED: four CSV groups, hierarchical PDF, manifest/meta/ZIP; sha256 matches bytes; traversal/unauthorized/expired grant rejected; fail before publish leaves no completed artifact.
-- [ ] GREEN: safe backup root + atomic directory publication; password step-up tokens scoped to snapshot/user/session; never publicly static-serve artifacts.
-- [ ] Verify actual PDF text/render and ZIP entries; commit `feat: export protected archive packages`.
+- [x] RED: missing exporter; relation-shaped course omission, foreign/null-class participant omission, input budget and public client/dist backup-root bypass reproduced before fixes.
+- [x] GREEN: four CSV groups, frozen JSON, hierarchical PDF, manifest/meta/ZIP; bounded capture/export; safe backup root + atomic publication; admin password/session-scoped verified downloads; scoped preview and jobs API. Playwright is a production dependency and Chromium preparation runs at install.
+- [x] Verify13/13 exporter tests including real Chromium,16/16 API tests,9/9 isolated DB integration, server build; independently extract/render all4 controlled PDF pages and verify ZIP CRC/SHA-256 (fixture ZIP9363ce2132011b96047718f3e0839944c1390a033a634b2a0261a9c754bcbbf5). Commit `feat: export protected archive packages`.
 
 ## Task4 — Durable worker and annual rollover
 Files: archive worker; academic transition service; server/index.ts worker wiring; clock/DB tests.

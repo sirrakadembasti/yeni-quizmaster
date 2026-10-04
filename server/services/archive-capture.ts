@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { MAX_SNAPSHOT_JSON_BYTES } from './archive-package';
 
 /** Copies business records atomically. No filesystem or external work belongs in this transaction. */
 export async function captureArchive(db: PrismaClient, snapshotId: string, lease?: { owner: string; now: () => Date }) {
@@ -57,9 +58,9 @@ export async function captureArchive(db: PrismaClient, snapshotId: string, lease
       ['announcement', ids ? [] : await tx.announcement.findMany({ orderBy: { id: 'asc' } })],
     ];
     if (groups.reduce((n, [, rows]) => n + rows.length, 0) > 250000) throw new Error('Snapshot exceeds record limit');
-    for (const [entityType, rows] of groups) {
-      for (const row of rows) await tx.archiveSnapshotRow.create({ data: { snapshotId, entityType, entityId: row.id, dataJson: JSON.stringify(row) } });
-    }
+    const prepared = groups.flatMap(([entityType, rows]) => rows.map(row => ({ entityType, entityId: row.id, dataJson: JSON.stringify(row) })));
+    if (prepared.reduce((bytes, row) => bytes + Buffer.byteLength(row.dataJson, 'utf8'), 0) > MAX_SNAPSHOT_JSON_BYTES) throw new Error('Snapshot exceeds byte limit');
+    for (const row of prepared) await tx.archiveSnapshotRow.create({ data: { snapshotId, ...row } });
     assertLease();
     return tx.archiveSnapshot.update({ where: { id: snapshotId }, data: { status: 'files_generating', capturedAt: lease?.now() ?? new Date() } });
   }, { maxWait: 10000, timeout: 120000 });

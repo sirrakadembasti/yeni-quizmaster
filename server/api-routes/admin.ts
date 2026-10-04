@@ -6,8 +6,10 @@ import { getEmailStatus, sendDirectEmail, verifyEmailTransport } from "../utils/
 import { issuePasswordReset } from "../services/password-reset";
 import { respondToClassError } from '../utils/class-errors';
 import { z } from 'zod';
+import archiveRouter from './archive';
 
 const router: Router = Router();
+router.use('/archive', archiveRouter);
 
 // ==================== LOG ROUTES ====================
 
@@ -272,15 +274,6 @@ router.get("/quizzes", requireAuth, requireRole(["admin"]), async (req: AuthRequ
     logger.error({ err: error }, "[GET /api/admin/quizzes] Error");
     res.status(500).json({ message: "Sistemdeki tüm sınavlar getirilemedi." });
   }
-});
-
-router.get('/archive/preview', requireAuth, requireRole(['admin']), async (_req: AuthRequest, res: Response) => {
-  try { res.json(await storage.getArchiveCandidates()); }
-  catch { res.status(500).json({ message: 'Arşiv adayları getirilemedi.' }); }
-});
-
-router.post("/archive", requireAuth, requireRole(["admin"]), (_req: AuthRequest, res: Response) => {
-  res.status(409).json({ message: 'Doğrudan arşivleme kapalıdır. Doğrulanmış arşiv iş akışını kullanın.' });
 });
 
 router.post("/promote-students", requireAuth, requireRole(["admin"]), (_req: AuthRequest, res: Response) => {

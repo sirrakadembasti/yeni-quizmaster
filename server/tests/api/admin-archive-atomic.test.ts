@@ -23,15 +23,12 @@ async function fixture() {
   return { quiz, result };
 }
 
-it('preview counts exactly the eligible archive candidates', async () => {
-  await fixture();
+it('preview counts only explicitly selected eligible content', async () => {
+  const { quiz } = await fixture();
   await db.quiz.create({ data: { title: 'Already archived preview', createdBy: actor.id, status: 'archived' } });
-  const response = await request(app).get('/admin/archive/preview');
+  const response = await request(app).post('/admin/archive/preview').send({ quizIds: [quiz.id] });
   expect(response.status).toBe(200);
-  expect(response.body).toEqual({
-    quizzes: await db.quiz.count({ where: { academicYear: null, status: { not: 'archived' } } }),
-    results: await db.studentResult.count({ where: { academicYear: null } }),
-  });
+  expect(response.body).toMatchObject({ quizIds: [quiz.id], quizzes: 1, results: 1, surveySubmissions: 0, questions: 0 });
 });
 
 it('legacy promotion requests cannot change enrollment', async () => {
@@ -65,7 +62,7 @@ it('legacy archive rejects requests before result updates', async () => {
   await db.$executeRawUnsafe("CREATE TRIGGER archive_result_failure BEFORE UPDATE ON StudentResult WHEN NEW.academicYear = '2030-2031' BEGIN SELECT RAISE(ABORT, 'Injected archive result failure'); END");
   try {
     const response = await request(app).post('/admin/archive').send({ academicYear: '2030-2031' });
-    expect(response.status).toBe(409);
+    expect(response.status).toBe(400);
     expect(await db.quiz.findUnique({ where: { id: quiz.id } })).toMatchObject({ status: 'published', academicYear: null });
     expect(await db.studentResult.findUnique({ where: { id: result.id } })).toMatchObject({ academicYear: null });
     expect(await db.actionLog.count({ where: { userId: actor.id, action: 'ARCHIVE_YEAR' } })).toBe(0);
@@ -76,7 +73,7 @@ it('legacy archive stays closed even when old audit insertion would fail', async
   const { quiz, result } = await fixture();
   await db.$executeRawUnsafe("CREATE TRIGGER archive_log_failure BEFORE INSERT ON ActionLog WHEN NEW.action = 'ARCHIVE_YEAR' BEGIN SELECT RAISE(ABORT, 'Injected archive log failure'); END");
   try {
-    expect((await request(app).post('/admin/archive').send({ academicYear: '2031-2032' })).status).toBe(409);
+    expect((await request(app).post('/admin/archive').send({ academicYear: '2031-2032' })).status).toBe(400);
     expect(await db.quiz.findUnique({ where: { id: quiz.id } })).toMatchObject({ status: 'published', academicYear: null });
     expect(await db.studentResult.findUnique({ where: { id: result.id } })).toMatchObject({ academicYear: null });
   } finally { await db.$executeRawUnsafe('DROP TRIGGER archive_log_failure'); }
@@ -87,11 +84,11 @@ it('legacy direct archive cannot bypass verified snapshot workflow', async () =>
   const archived = await db.quiz.create({ data: { title: 'Already archived', status: 'archived', createdBy: actor.id } });
   const historical = await db.quiz.create({ data: { title: 'Historical', status: 'published', academicYear: '2028-2029', createdBy: actor.id } });
   const response = await request(app).post('/admin/archive').send({ academicYear: '2032-2033' });
-  expect(response.status).toBe(409);
+  expect(response.status).toBe(400);
   expect(await db.quiz.findUnique({ where: { id: quiz.id } })).toMatchObject({ status: 'published', academicYear: null });
   expect(await db.studentResult.findUnique({ where: { id: result.id } })).toMatchObject({ academicYear: null });
   expect((await db.quiz.findUnique({ where: { id: archived.id } }))?.academicYear).toBeNull();
   expect((await db.quiz.findUnique({ where: { id: historical.id } }))?.academicYear).toBe('2028-2029');
   const retry = await request(app).post('/admin/archive').send({ academicYear: '2032-2033' });
-  expect(retry.status).toBe(409);
+  expect(retry.status).toBe(400);
 });
