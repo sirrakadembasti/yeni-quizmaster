@@ -35,7 +35,7 @@
       ],
       [
         "Kayıt sayısı",
-        "1",
+        "2",
         "",
         "",
         "",
@@ -64,6 +64,16 @@
         "Tarih"
       ],
       [
+        "Student Audit Exam",
+        "Audit Mathematics",
+        "0",
+        "0",
+        "2",
+        "0",
+        "Tamamlandı",
+        "04.10.2026 11:09:20"
+      ],
+      [
         "Student Audit Completed Exam",
         "Audit Mathematics",
         "0",
@@ -71,7 +81,7 @@
         "2",
         "0",
         "Tamamlandı",
-        "04.10.2026 02:08:59"
+        "04.10.2026 11:06:53"
       ]
     ]
   },
@@ -89,7 +99,7 @@
       ],
       [
         "Tamamlanan sınav",
-        "1",
+        "2",
         "",
         "",
         "",
@@ -141,7 +151,15 @@
         "0",
         "Tamamlandı",
         "0",
-        "04.10.2026 02:08:59"
+        "04.10.2026 11:06:53"
+      ],
+      [
+        "Student Audit Exam",
+        "Audit Mathematics",
+        "0",
+        "Tamamlandı",
+        "0",
+        "04.10.2026 11:09:20"
       ]
     ]
   },
@@ -149,7 +167,7 @@
     "file": "student-results-print.pdf",
     "status": "passed-text-rendered",
     "pages": 1,
-    "text": "QuizMaster Yönetim ve Sınav Sistemi Student Audit Learner · Ö ğ renci\nSınav Sonuçlarım\n04.10.2026 02:13:49\nÖ ğ renci\nStudent Audit Learner\nArama\nTümü\nDers\nTüm dersler\nDetaylı Sonuç Listesi\nQUIZ & DERS TAMAMLAMA DO Ğ RULUK SÜRE PUAN EYLEM\nStudent Audit Completed Exam\nAudit Mathematics\n04.10.2026\n02:08\n 02 0dk 0sn 0",
+    "text": "QuizMaster Yönetim ve Sınav Sistemi Student Audit Learner · Ö ğ renci\nSınav Sonuçlarım\n04.10.2026 11:12:49\nÖ ğ renci\nStudent Audit Learner\nArama\nTümü\nDers\nTüm dersler\nDetaylı Sonuç Listesi\nQUIZ & DERS TAMAMLAMA DO Ğ RULUK SÜRE PUAN EYLEM\nStudent Audit Exam\nAudit Mathematics\n04.10.2026\n11:09\n 02 0dk 6sn 0\nStudent Audit Completed Exam\nAudit Mathematics\n04.10.2026\n11:06\n 02 0dk 0sn 0",
     "renders": [
       "print-render\\student-results-page-1.png"
     ]

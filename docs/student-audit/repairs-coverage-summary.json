@@ -1,0 +1,346 @@
+{
+  "currentConfig": "playwright.student-audit.config.ts",
+  "total": 39,
+  "passed": 39,
+  "failed": 0,
+  "notRun": 0,
+  "skipped": 0,
+  "cohorts": [
+    {
+      "file": "results-repairs-final.json",
+      "stats": {
+        "startTime": "2026-10-04T08:07:26.888Z",
+        "duration": 734499.642,
+        "expected": 39,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "results-repairs-category.json",
+      "stats": {
+        "startTime": "2026-10-04T08:23:38.925Z",
+        "duration": 30640.595999999998,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "1c0f3e3e698de5c6cfac-8d627de79f9b132cf3fe",
+      "title": "start, answer, navigate, reload, resume, submit and persist scored result",
+      "file": "student-exams-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 46659
+    },
+    {
+      "id": "1c0f3e3e698de5c6cfac-0601204cc1fbbb24a38f",
+      "title": "published exam payloads and unfinished results keep the answer key confidential",
+      "file": "student-exams-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 7295
+    },
+    {
+      "id": "1c0f3e3e698de5c6cfac-32870dc7826e8f2ab0f5",
+      "title": "draft, foreign-class and unassigned exams reject both start and offline preparation",
+      "file": "student-exams-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 9822
+    },
+    {
+      "id": "1c0f3e3e698de5c6cfac-bd65ce1e0fc404545ea6",
+      "title": "foreign results cannot be read, answered, submitted or selected through query parameters",
+      "file": "student-exams-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 8882
+    },
+    {
+      "id": "1c0f3e3e698de5c6cfac-95d1574d09e2775aac32",
+      "title": "offline answers and queued submission sync to real persisted result on reconnection",
+      "file": "student-exams-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 11788
+    },
+    {
+      "id": "1c0f3e3e698de5c6cfac-df4b3fec6e5777b092f2",
+      "title": "rapid A to B to A keeps the final unsent answer after delayed saves and reload",
+      "file": "student-exams-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 13932
+    },
+    {
+      "id": "1c0f3e3e698de5c6cfac-e7d2ae22354edaa10633",
+      "title": "an answer saved offline survives reconnecting and reloading before submission",
+      "file": "student-exams-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 16672
+    },
+    {
+      "id": "ee61cf3dc53f2590e812-d9a36c095d294f54f582",
+      "title": "timed expiry rejects late answers and ignores queued changes while preserving saved answers",
+      "file": "student-exams-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 10588
+    },
+    {
+      "id": "ee61cf3dc53f2590e812-d2e2b0c0adf5f4eac7db",
+      "title": "resuming an expired timed exam automatically submits and renders the persisted result",
+      "file": "student-exams-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 15402
+    },
+    {
+      "id": "ee61cf3dc53f2590e812-5035ad9eda0458b274aa",
+      "title": "invalid UUID and foreign question payloads cannot change the current attempt",
+      "file": "student-exams-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 6783
+    },
+    {
+      "id": "ee61cf3dc53f2590e812-b34c2727e49d3bf9c2e4",
+      "title": "unanswered exam confirmation supports cancel and explicit zero-score submission",
+      "file": "student-exams-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 10710
+    },
+    {
+      "id": "ee61cf3dc53f2590e812-9cda6169677a87f995d5",
+      "title": "exam list search, completion filters and pagination keep counts and rows consistent",
+      "file": "student-exams-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 14941
+    },
+    {
+      "id": "cc98b7d896c265a978f3-7d71f453c7742dca8ce2",
+      "title": "S-N01 group 1: loaded student routes, aliases, reload, mobile and console",
+      "file": "student-navigation-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 56532
+    },
+    {
+      "id": "cc98b7d896c265a978f3-7f17da42533035895425",
+      "title": "S-N01 group 2: loaded student routes, aliases, reload, mobile and console",
+      "file": "student-navigation-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 66949
+    },
+    {
+      "id": "cc98b7d896c265a978f3-cfeaffec61b3eb1bb98d",
+      "title": "S-N02 anonymous protected route and server endpoints reject access",
+      "file": "student-navigation-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 11395
+    },
+    {
+      "id": "cc98b7d896c265a978f3-34777e65ede7ac9bf564",
+      "title": "S-N03 quiz search and result export/print use real student records",
+      "file": "student-navigation-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 15606
+    },
+    {
+      "id": "cc98b7d896c265a978f3-b29250562dc94a218b98",
+      "title": "S-N04 missing quiz back navigation stays in authorized student panel",
+      "file": "student-navigation-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 20343
+    },
+    {
+      "id": "cc98b7d896c265a978f3-4077d6349da7c75a8df0",
+      "title": "S-N05 stats display category names from real relation objects",
+      "file": "student-navigation-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 6013
+    },
+    {
+      "id": "cc98b7d896c265a978f3-0fccb7fc371a27c6c9b7",
+      "title": "S-N06 empty student and controlled survey failure observation",
+      "file": "student-navigation-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 10153
+    },
+    {
+      "id": "569510b3798cedfe5616-8a9aee50fd4ec95a6db9",
+      "title": "S-D01 dashboard all-results action with five own completed records opens authorized results",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 13177
+    },
+    {
+      "id": "569510b3798cedfe5616-8f3b2cb3c995e528f5b7",
+      "title": "S-D02 results search, score boundaries, sort order and reset reflect seeded records",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 15881
+    },
+    {
+      "id": "569510b3798cedfe5616-e2cb144728d3b19d962d",
+      "title": "S-D03 choosing an actual category preserves its completed results",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-category.json",
+      "durationMs": 22964
+    },
+    {
+      "id": "569510b3798cedfe5616-96c5c312db92377bef0b",
+      "title": "S-D04 loaded student routes have specific content, reload correctly and fit mobile width",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 64547
+    },
+    {
+      "id": "569510b3798cedfe5616-121284abb55d2317313c",
+      "title": "S-D05 mobile menu keyboard focus trap, Escape and notification popover work",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 5786
+    },
+    {
+      "id": "569510b3798cedfe5616-f30cfb4ce4e159e1d0fe",
+      "title": "S-D06 injected dashboard API failure must not claim all exams completed",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 8101
+    },
+    {
+      "id": "569510b3798cedfe5616-2258a9df04ea441e3bd8",
+      "title": "S-D07 injected survey API failure must show error and retry instead of empty success",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 4519
+    },
+    {
+      "id": "428713d66afe13c8cab4-5bad3448c76f798499c8",
+      "title": "true-false choices render, save and grade different correct values",
+      "file": "student-question-types-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 12532
+    },
+    {
+      "id": "428713d66afe13c8cab4-ffdfbe5f61f6acc852bd",
+      "title": "unsupported short-answer record shows fallback and normal exam API rejects unsupported types",
+      "file": "student-question-types-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 8934
+    },
+    {
+      "id": "428713d66afe13c8cab4-9506a77e32ecf42ee093",
+      "title": "real public image loads and shuffled questions retain order and saved answers across reload",
+      "file": "student-question-types-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 16374
+    },
+    {
+      "id": "6e68b040621d97b17e12-cf65fb46cc0f2cc1d0c8",
+      "title": "GUI password change revokes another live session, validates new login and restores original password",
+      "file": "student-shared-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 27042
+    },
+    {
+      "id": "6e68b040621d97b17e12-9f7495fa31660493d42d",
+      "title": "notification GUI paginates, marks read, deletes own fixture and denies foreign deletion",
+      "file": "student-shared-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 28723
+    },
+    {
+      "id": "6e68b040621d97b17e12-e1046d3b33de3263a070",
+      "title": "own history date API filter and GUI pagination exclude old and foreign fixture entries",
+      "file": "student-shared-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 47255
+    },
+    {
+      "id": "6e68b040621d97b17e12-53984b924298cdb66a2e",
+      "title": "student theme survives reload and mobile navigation traps focus and closes correctly",
+      "file": "student-shared-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 6764
+    },
+    {
+      "id": "ee60b689b271e41f19ef-057be88c12479f4b82a1",
+      "title": "all five survey types validate, submit once, persist real answers and remain completed after reload",
+      "file": "student-surveys-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 42857
+    },
+    {
+      "id": "ee60b689b271e41f19ef-864974255370f4bdb3fc",
+      "title": "foreign student cannot list, view or submit the own-class survey",
+      "file": "student-surveys-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 14187
+    },
+    {
+      "id": "ee60b689b271e41f19ef-0ce209e43b15661e36eb",
+      "title": "student profile is read-only in GUI and update API rejects changes",
+      "file": "student-surveys-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 10067
+    },
+    {
+      "id": "ee60b689b271e41f19ef-086aaf2baf34f75c5731",
+      "title": "student security form validates mismatch and incorrect current password without mutation",
+      "file": "student-surveys-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 7862
+    },
+    {
+      "id": "ee60b689b271e41f19ef-782cfc8f4a51b49b6fe0",
+      "title": "student notification sound preference persists and operation history is private",
+      "file": "student-surveys-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 17049
+    },
+    {
+      "id": "ee60b689b271e41f19ef-fc210aa3da925b04c33a",
+      "title": "student announcement target filtering is real and create/delete controls remain forbidden",
+      "file": "student-surveys-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-repairs-final.json",
+      "durationMs": 11105
+    }
+  ]
+}

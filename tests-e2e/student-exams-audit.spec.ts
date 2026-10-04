@@ -187,10 +187,52 @@ test.describe('Student exam real-server audit', () => {
     await shot(page, 'offline-synced');
   });
 
-  test('an answer saved offline survives reconnecting and reloading before submission', async ({ page, context }) => {
-    await resetAttempt();
+  test('rapid A to B to A keeps the final unsent answer after delayed saves and reload', async ({ page }) => {
+    const { questions } = await resetAttempt();
     await login(page);
-    await openExam(page);
+    const { resultId } = await openExam(page);
+    let releaseFirst!: () => void, releaseSecond!: () => void;
+    const firstGate = new Promise<void>(resolve => { releaseFirst = resolve; });
+    const secondGate = new Promise<void>(resolve => { releaseSecond = resolve; });
+    const url = `**/api/student/quiz/${resultId}/answer`;
+    const requests: string[] = [];
+    await page.route(url, async route => {
+      requests.push(route.request().postDataJSON().selectedOption);
+      if (requests.length === 1) await firstGate;
+      else if (requests.length === 2) await secondGate;
+      else { await route.abort('failed'); return; }
+      await route.continue(); // The successful writes use the actual API and SQLite.
+    });
+    try {
+      await page.getByRole('button', { name: 'A) A', exact: true }).click();
+      await expect.poll(() => requests.length).toBe(1);
+      await page.getByRole('button', { name: 'B) B', exact: true }).click();
+      await page.getByRole('button', { name: 'A) A', exact: true }).click();
+      const firstSaved = page.waitForResponse(r => r.url().endsWith(`/quiz/${resultId}/answer`) && r.status() === 200);
+      releaseFirst(); await firstSaved;
+      await expect.poll(() => requests.length).toBe(2);
+      const secondSaved = page.waitForResponse(r => r.url().endsWith(`/quiz/${resultId}/answer`) && r.status() === 200);
+      releaseSecond(); await secondSaved;
+      await expect.poll(() => requests.length).toBe(3);
+      expect(requests).toEqual(['A', 'B', 'A']);
+      const cached = await page.evaluate(key => JSON.parse(localStorage.getItem(key)!), cacheKey);
+      expect(cached.pendingAnswers[questions[0].id]).toBe('A');
+      const db = prisma();
+      try { expect(JSON.parse((await db.studentResult.findUniqueOrThrow({ where: { id: resultId } })).answers)[questions[0].id]).toBe('B'); }
+      finally { await db.$disconnect(); }
+      await page.unroute(url);
+      await page.reload();
+      await expect(page.getByRole('button', { name: 'A) A', exact: true })).toHaveClass(/(?:^|\s)border-primary(?:\s|$)/);
+      const verify = prisma();
+      try { expect(JSON.parse((await verify.studentResult.findUniqueOrThrow({ where: { id: resultId } })).answers)[questions[0].id]).toBe('A'); }
+      finally { await verify.$disconnect(); }
+    } finally { releaseFirst(); releaseSecond(); await page.unroute(url); }
+  });
+
+  test('an answer saved offline survives reconnecting and reloading before submission', async ({ page, context }) => {
+    const { questions } = await resetAttempt();
+    await login(page);
+    const { resultId } = await openExam(page);
     await context.setOffline(true);
     try {
       await page.getByRole('button', { name: 'B) B', exact: true }).click();
@@ -202,5 +244,16 @@ test.describe('Student exam real-server audit', () => {
     await shot(page, 'offline-answer-after-reload');
     await expect(page.getByRole('button', { name: 'B) B', exact: true })).toHaveClass(/(?:^|\s)border-primary(?:\s|$)/);
     await expect(page.getByText('1 cevaplandı', { exact: true })).toBeVisible();
+    const db = prisma();
+    try {
+      await expect.poll(async () => JSON.parse((await db.studentResult.findUniqueOrThrow({ where: { id: resultId } })).answers as string)[questions[0].id]).toBe('B');
+    } finally { await db.$disconnect(); }
+    await page.getByRole('button', { name: 'Sonraki', exact: true }).click();
+    await page.getByRole('button', { name: 'Quizi Bitir', exact: true }).click();
+    await page.getByRole('button', { name: 'Evet, Bitir', exact: true }).click();
+    await expect(page).toHaveURL(`/student/result/${resultId}`, { timeout: 20000 });
+    const result = (await (await api(page, 'GET', `/student/results/${resultId}`)).json()).result;
+    expect(result.status).toBe('completed');
+    expect(result.answers[questions[0].id]).toBe('B');
   });
 });

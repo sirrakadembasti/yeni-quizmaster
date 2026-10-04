@@ -112,6 +112,13 @@ test('S-D03 choosing an actual category preserves its completed results', async 
     mkdirSync('docs/student-audit/screenshots', { recursive: true });
     await page.screenshot({ path: 'docs/student-audit/screenshots/results-category-filter.png', fullPage: true });
     await expect(page.getByText('Student Audit Completed Exam', { exact: true })).toBeVisible();
+    await select(page, 'Ders / Kategori', 'Audit Empty Subject');
+    await expect(page.getByText('Student Audit Completed Exam', { exact: true })).toHaveCount(0);
+    await select(page, 'Ders / Kategori', 'Tüm Dersler');
+    await expect(page.getByText('Student Audit Completed Exam', { exact: true })).toBeVisible();
+    await select(page, 'Ders / Kategori', 'Audit Empty Subject');
+    await page.getByRole('button', { name: 'Filtreleri Temizle', exact: true }).click();
+    await expect(page.getByText('Student Audit Completed Exam', { exact: true })).toBeVisible();
 });
 
 test('S-D04 loaded student routes have specific content, reload correctly and fit mobile width', async ({ page }) => {
@@ -175,6 +182,17 @@ test('S-D06 injected dashboard API failure must not claim all exams completed', 
   await page.goto('/student/dashboard');
   await expect(page.locator('main')).toContainText('Depth controlled dashboard failure');
   await expect(page.getByText('Tüm Sınavları Tamamladın!', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('Ortalama Başarı', { exact: true })).toHaveCount(0);
+  const retry = page.getByRole('button', { name: /Tekrar dene|Yeniden dene/i });
+  await expect(retry).toBeVisible();
+  await page.unroute('**/api/student/results');
+  const recovered = page.waitForResponse(r => new URL(r.url()).pathname === '/api/student/results' && r.status() === 200);
+  await retry.click();
+  await recovered;
+  await expect(page.getByRole('heading', { level: 1, name: /Hoş Geldin, Student/ })).toBeVisible();
+  await expect(page.getByText('Ortalama Başarı', { exact: true })).toBeVisible();
+  await expect(page.getByText('Student Audit Completed Exam', { exact: true })).toBeVisible();
+  await expect(page.locator('main')).not.toContainText('Depth controlled dashboard failure');
 });
 
 test('S-D07 injected survey API failure must show error and retry instead of empty success', async ({ page }) => {
@@ -186,5 +204,13 @@ test('S-D07 injected survey API failure must show error and retry instead of emp
   await expect(page.getByText('Anketler yükleniyor...', { exact: true })).toHaveCount(0);
   await expect(page.getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })).toHaveCount(0);
   await expect(page.locator('main')).toContainText(/yüklenemedi|hata|Depth controlled survey failure/i);
-  await expect(page.getByRole('button', { name: /Tekrar dene|Yeniden dene/i })).toBeVisible();
+  const retry = page.getByRole('button', { name: /Tekrar dene|Yeniden dene/i });
+  await expect(retry).toBeVisible();
+  await page.unroute('**/api/surveys');
+  const recovered = page.waitForResponse(r => new URL(r.url()).pathname === '/api/surveys' && r.status() === 200);
+  await retry.click();
+  await recovered;
+  await expect(page.getByText('Student Audit Survey', { exact: true })).toBeVisible();
+  await expect(page.getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })).toHaveCount(0);
+  await expect(page.locator('main')).not.toContainText('Depth controlled survey failure');
 });

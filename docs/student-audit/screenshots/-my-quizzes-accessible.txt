@@ -5,9 +5,9 @@
   - button "S"
   - heading "Sınavlarım" [level=1]
   - paragraph: Size atanan sınavları buradan görebilir ve çözebilirsiniz.
-  - text: Çözülecek Sınavlar 3
+  - text: Çözülecek Sınavlar 2
   - paragraph: Yapılması gereken sınavlar
-  - text: Tamamlanan Sınavlar 1
+  - text: Tamamlanan Sınavlar 2
   - paragraph: Bitirilen sınavlar
   - textbox "Sınav adı veya konu ara..."
   - combobox: Tümü
@@ -64,7 +64,7 @@
           - paragraph: "%0.0"
         - cell "Detayları Gör":
           - button "Detayları Gör"
-      - row "Student Audit Exam Açıklama yok. Audit Mathematics Student Audit Teacher Orta 2 Süresiz Yapılacak Çevrimdışı Hazırla Başla":
+      - row "Student Audit Exam Açıklama yok. Audit Mathematics Student Audit Teacher Orta 2 Süresiz Tamamlandı %0.0 Detayları Gör":
         - cell "Student Audit Exam Açıklama yok.":
           - paragraph: Student Audit Exam
           - paragraph: Açıklama yok.
@@ -74,10 +74,11 @@
         - cell "Orta"
         - cell "2"
         - cell "Süresiz"
-        - cell "Yapılacak"
-        - cell "Çevrimdışı Hazırla Başla":
-          - button "Çevrimdışı Hazırla"
-          - button "Başla"
+        - cell "Tamamlandı %0.0":
+          - text: Tamamlandı
+          - paragraph: "%0.0"
+        - cell "Detayları Gör":
+          - button "Detayları Gör"
   - text: 4 kayıt · Sayfa 1/1
   - button "Önceki" [disabled]
   - button "Sonraki" [disabled]

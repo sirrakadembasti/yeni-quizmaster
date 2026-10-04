@@ -7,7 +7,7 @@
   - paragraph: Quiz performansınızın detaylı analizi
   - button "Excel"
   - button "PDF İndir"
-  - text: Tamamlanan Quiz 1
+  - text: Tamamlanan Quiz 2
   - paragraph: toplam katılım
   - text: Ortalama Puan 0%
   - paragraph: genel başarı ortalaması
@@ -16,10 +16,10 @@
   - text: Toplam Süre 0
   - paragraph: harcanan dakika
   - text: Quiz Bazlı Başarı Son katıldığınız quizlerin puanları
-  - img: Student Audit Completed Exam 0 25 50 75 100
+  - img: Student Audit Completed Exam Student Audit Exam 0 25 50 75 100
   - text: Ders Bazlı Ortalama Başarı Derslere göre ortalama performansınız
   - img: Audit Mathematics 0 25 50 75 100
-  - text: Son Quiz Sonuçları En son tamamladığınız 1 quiz ve detayları
+  - text: Son Quiz Sonuçları En son tamamladığınız 2 quiz ve detayları
   - table:
     - rowgroup:
       - row "Quiz Adı Ders Adı Puan Durum Tarih Süre":
@@ -30,6 +30,13 @@
         - columnheader "Tarih"
         - columnheader "Süre"
     - rowgroup:
+      - row "Student Audit Exam Audit Mathematics 0% Tamamlandı 04.10.2026 0 dk":
+        - cell "Student Audit Exam"
+        - cell "Audit Mathematics"
+        - cell "0%"
+        - cell "Tamamlandı"
+        - cell "04.10.2026"
+        - cell "0 dk"
       - row "Student Audit Completed Exam Audit Mathematics 0% Tamamlandı 04.10.2026 0 dk":
         - cell "Student Audit Completed Exam"
         - cell "Audit Mathematics"

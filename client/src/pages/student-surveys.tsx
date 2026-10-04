@@ -9,7 +9,7 @@ import { ClipboardList, CheckCircle2, ArrowRight } from "lucide-react";
 
 export default function StudentSurveysPage() {
   const [, navigate] = useLocation();
-  const { data, isLoading } = useQuery({ queryKey: ['student-surveys'], queryFn: () => surveyApi.getSurveys() });
+  const { data, isLoading, isError, error, refetch, isFetching } = useQuery({ queryKey: ['student-surveys'], queryFn: () => surveyApi.getSurveys() });
   const surveys = data?.surveys || [];
 
   return (
@@ -19,6 +19,10 @@ export default function StudentSurveysPage() {
           <div><h1 className="flex items-center gap-2 text-2xl font-bold"><ClipboardList className="h-7 w-7 text-primary" />Anketlerim</h1><p className="text-sm text-muted-foreground">Sınıfınıza atanmış güncel anketler.</p></div>
         </div>
         {isLoading ? <Card><CardContent className="p-6 text-center text-muted-foreground">Anketler yükleniyor...</CardContent></Card> :
+          isError ? <Card role="alert"><CardContent className="space-y-3 p-6 text-center">
+            <p className="text-destructive">Anketler yüklenemedi. {error instanceof Error ? error.message : 'Lütfen tekrar deneyin.'}</p>
+            <Button variant="outline" disabled={isFetching} onClick={() => refetch()}>Tekrar dene</Button>
+          </CardContent></Card> :
           surveys.length === 0 ? <Card className="border-dashed"><CardContent className="p-8 text-center text-muted-foreground">Yanıtlamanız gereken anket bulunmuyor.</CardContent></Card> :
           <div className="grid gap-3 md:grid-cols-2">
             {surveys.map((survey) => (

@@ -20,7 +20,9 @@ await p.user.createMany({ data: [
   { id: 'student-audit-teacher', name: 'Student Audit Teacher', email: 'student-audit-teacher@example.test', password, role: 'teacher' },
 ] });
 await p.category.create({ data: { id: category, name: 'Audit Mathematics' } });
+await p.category.create({ data: { id: '44444444-4444-4444-8444-444444444444', name: 'Audit Empty Subject' } });
 for (const [id, name] of [[ownClass, 'Student Audit 7A'], [otherClass, 'Private Other 7B']]) await p.class.create({ data: { id, name, classTeacher: { connect: { id: 'student-audit-teacher' } }, teachers: { connect: { id: 'student-audit-teacher' } }, assignedCategories: { connect: { id: category } } } });
+await p.class.update({ where: { id: ownClass }, data: { assignedCategories: { connect: { id: '44444444-4444-4444-8444-444444444444' } } } });
 for (const [id, email, cls, name] of [
   ['student-audit-student', 'student-audit@example.test', ownClass, 'Student Audit Learner'],
   ['student-audit-other-student', 'student-audit-other@example.test', otherClass, 'Private Other Learner'],

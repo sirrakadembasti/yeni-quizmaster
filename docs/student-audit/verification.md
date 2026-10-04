@@ -1,5 +1,7 @@
 # Öğrenci paneli doğrulama kaydı
 
+**İlk audit kaydı:** Aşağıdaki38 kontrol/6 kusur başlangıç durumudur. Altı kusurun sonraki onarımı ve tek tam koşuda39/39 geçen E2E kapsamı [onarım raporunda](defect-repairs.md) ve [güncel onarım özeti](repairs-coverage-summary.json) içinde ayrı tutulur.
+
 Tarih: 4 Ekim 2026. Öğrenci paneli incelemesi tamamlandı; ürün hatalarının onarımı bu değişikliğin kapsamına alınmadı. Güncel 38 E2E senaryosunun en son geçerli koşu sonuçları **32 geçti / 6 başarısız / 0 çalıştırılmadı / 0 atlandı**. Bu, tek bir yeşil koşu değildir: [kapsam özeti](coverage-summary.json) mevcut Playwright listesindeki test kimliklerini altı gerçek koşunun en son sonuçlarıyla eşleştirir. Başarısız altı test [altı açık kusurun](findings.md) regresyon kanıtıdır.
 
 ## Ortam ve veri güvenliği

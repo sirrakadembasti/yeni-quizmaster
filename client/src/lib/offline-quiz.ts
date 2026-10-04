@@ -20,6 +20,8 @@ export interface OfflineQuizSession {
   timerCapturedAt: string;
   cachedAt: string;
   pendingSubmit: boolean;
+  pendingAnswers?: Record<string, string>;
+  answerRevisions?: Record<string, number>;
 }
 
 const SESSION_PREFIX = 'quiz-master:offline-session:';
@@ -81,7 +83,44 @@ export function removeOfflineSession(userId: string, quizId: string) {
 
 export function updateOfflineAnswers(userId: string, quizId: string, answers: Record<string, string>) {
   const session = getOfflineSession(userId, quizId);
-  if (session) saveOfflineSession({ ...session, answers });
+  if (session) {
+    const pendingAnswers = { ...session.pendingAnswers };
+    const answerRevisions = { ...session.answerRevisions };
+    for (const [id, answer] of Object.entries(answers)) {
+      if (session.answers[id] !== answer) {
+        pendingAnswers[id] = answer;
+        answerRevisions[id] = (answerRevisions[id] || 0) + 1;
+      }
+    }
+    saveOfflineSession({ ...session, answers, pendingAnswers, answerRevisions });
+    return answerRevisions;
+  }
+}
+
+export function acknowledgeOfflineAnswer(userId: string, quizId: string, resultId: string, questionId: string, answer: string, revision: number | undefined) {
+  const session = getOfflineSession(userId, quizId);
+  if (!session || session.resultId !== resultId || session.pendingAnswers?.[questionId] !== answer || revision === undefined || session.answerRevisions?.[questionId] !== revision) return;
+  const pendingAnswers = { ...session.pendingAnswers };
+  delete pendingAnswers[questionId];
+  saveOfflineSession({ ...session, pendingAnswers });
+}
+
+// Never restore a different attempt or overwrite a newer server answer with a clean cache.
+export function reconcileOfflineSession(server: OfflineQuizSession, cached: OfflineQuizSession | null): OfflineQuizSession {
+  const sameAttempt = cached?.userId === server.userId && cached.quizId === server.quizId && cached.resultId === server.resultId;
+  const pendingAnswers: Record<string, string> = {};
+  const answerRevisions: Record<string, number> = sameAttempt ? { ...cached.answerRevisions } : {};
+  if (sameAttempt) {
+    const candidates = cached.pendingSubmit ? cached.answers : cached.pendingAnswers ?? Object.fromEntries(Object.entries(cached.answers).filter(([id]) => !Object.prototype.hasOwnProperty.call(server.answers, id)));
+    for (const question of server.questions) {
+      const answer = candidates[question.id];
+      if (typeof answer === 'string' && question.options?.includes(answer) && answer !== server.answers[question.id]) {
+        pendingAnswers[question.id] = answer;
+        answerRevisions[question.id] ||= 1;
+      }
+    }
+  }
+  return { ...server, answers: { ...server.answers, ...pendingAnswers }, pendingAnswers, answerRevisions, pendingSubmit: Boolean(sameAttempt && cached.pendingSubmit) };
 }
 
 export function markOfflineSubmit(userId: string, quizId: string, pendingSubmit: boolean) {

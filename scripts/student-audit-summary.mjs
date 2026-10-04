@@ -10,7 +10,8 @@ function flatten(suites) {
   return suites.flatMap(suite => [...(suite.specs || []).map(spec => ({ id: spec.id, title: spec.title, file: spec.file, tests: spec.tests })), ...flatten(suite.suites || [])]);
 }
 const cases = flatten(manifest.suites), latest = new Map(), cohorts = [];
-for (const name of ['browser','depth','closure','completion','verification','review']) {
+const repairs = process.argv.includes('--repairs');
+for (const name of repairs ? ['repairs-final','repairs-category'] : ['browser','depth','closure','completion','verification','review']) {
   const file = path.join(out, `results-${name}.json`);
   if (!fs.existsSync(file)) throw new Error(`Missing completed cohort ${name}`);
   const report = JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -23,5 +24,5 @@ for (const name of ['browser','depth','closure','completion','verification','rev
 const rows = cases.map(({id,title,file}) => ({id,title,file,...(latest.get(id) || {status:'not-run'})}));
 const summary = { currentConfig:'playwright.student-audit.config.ts', total:rows.length, passed:rows.filter(x=>x.status==='passed').length, failed:rows.filter(x=>['failed','timedOut','interrupted'].includes(x.status)).length, notRun:rows.filter(x=>x.status==='not-run').length, skipped:rows.filter(x=>x.status==='skipped').length, cohorts, cases:rows };
 if (summary.passed + summary.failed + summary.notRun + summary.skipped !== summary.total) throw new Error('Unknown outcome in coverage summary');
-fs.writeFileSync(path.join(out,'coverage-summary.json'), JSON.stringify(summary,null,2)+'\n');
+fs.writeFileSync(path.join(out,repairs ? 'repairs-coverage-summary.json' : 'coverage-summary.json'), JSON.stringify(summary,null,2)+'\n');
 console.log(JSON.stringify({total:summary.total,passed:summary.passed,failed:summary.failed,notRun:summary.notRun,skipped:summary.skipped}));

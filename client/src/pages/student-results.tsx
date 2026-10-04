@@ -487,7 +487,7 @@ export default function StudentResultsPage() {
                   <SelectContent>
                     <SelectItem value="all">Tüm Dersler</SelectItem>
                     {categories.map(cat => (
-                      <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                      <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

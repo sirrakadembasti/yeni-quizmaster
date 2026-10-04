@@ -1,0 +1,1541 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\.pnpm\\playwright@1.63.0\\node_modules\\playwright\\cli.js",
+      "test",
+      "-c",
+      "playwright.student-audit.config.ts"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.student-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/student-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "student-*-audit.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/student-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "student-exams-audit.spec.ts",
+      "file": "student-exams-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Student exam real-server audit",
+          "file": "student-exams-audit.spec.ts",
+          "line": 48,
+          "column": 6,
+          "specs": [
+            {
+              "title": "start, answer, navigate, reload, resume, submit and persist scored result",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 94424,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:39:56.549Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1c0f3e3e698de5c6cfac-8d627de79f9b132cf3fe",
+              "file": "student-exams-audit.spec.ts",
+              "line": 49,
+              "column": 7
+            },
+            {
+              "title": "published exam payloads and unfinished results keep the answer key confidential",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10183,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:41:35.697Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1c0f3e3e698de5c6cfac-0601204cc1fbbb24a38f",
+              "file": "student-exams-audit.spec.ts",
+              "line": 102,
+              "column": 7
+            },
+            {
+              "title": "draft, foreign-class and unassigned exams reject both start and offline preparation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18461,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:41:45.922Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1c0f3e3e698de5c6cfac-32870dc7826e8f2ab0f5",
+              "file": "student-exams-audit.spec.ts",
+              "line": 125,
+              "column": 7
+            },
+            {
+              "title": "foreign results cannot be read, answered, submitted or selected through query parameters",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18022,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:42:04.418Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1c0f3e3e698de5c6cfac-bd65ce1e0fc404545ea6",
+              "file": "student-exams-audit.spec.ts",
+              "line": 143,
+              "column": 7
+            },
+            {
+              "title": "offline answers and queued submission sync to real persisted result on reconnection",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19055,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:42:22.481Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1c0f3e3e698de5c6cfac-95d1574d09e2775aac32",
+              "file": "student-exams-audit.spec.ts",
+              "line": 162,
+              "column": 7
+            },
+            {
+              "title": "rapid A to B to A keeps the final unsent answer after delayed saves and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 22621,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:42:41.592Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1c0f3e3e698de5c6cfac-df4b3fec6e5777b092f2",
+              "file": "student-exams-audit.spec.ts",
+              "line": 190,
+              "column": 7
+            },
+            {
+              "title": "an answer saved offline survives reconnecting and reloading before submission",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 28113,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:43:04.240Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1c0f3e3e698de5c6cfac-e7d2ae22354edaa10633",
+              "file": "student-exams-audit.spec.ts",
+              "line": 232,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "student-exams-depth-audit.spec.ts",
+      "file": "student-exams-depth-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Student exam depth audit with isolated temporary records",
+          "file": "student-exams-depth-audit.spec.ts",
+          "line": 47,
+          "column": 6,
+          "specs": [
+            {
+              "title": "timed expiry rejects late answers and ignores queued changes while preserving saved answers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 26058,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:43:33.095Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee61cf3dc53f2590e812-d9a36c095d294f54f582",
+              "file": "student-exams-depth-audit.spec.ts",
+              "line": 48,
+              "column": 7
+            },
+            {
+              "title": "resuming an expired timed exam automatically submits and renders the persisted result",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 28986,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:43:59.182Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee61cf3dc53f2590e812-d2e2b0c0adf5f4eac7db",
+              "file": "student-exams-depth-audit.spec.ts",
+              "line": 77,
+              "column": 7
+            },
+            {
+              "title": "invalid UUID and foreign question payloads cannot change the current attempt",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15269,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:44:28.214Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee61cf3dc53f2590e812-5035ad9eda0458b274aa",
+              "file": "student-exams-depth-audit.spec.ts",
+              "line": 100,
+              "column": 7
+            },
+            {
+              "title": "unanswered exam confirmation supports cancel and explicit zero-score submission",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 22029,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:44:43.526Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee61cf3dc53f2590e812-b34c2727e49d3bf9c2e4",
+              "file": "student-exams-depth-audit.spec.ts",
+              "line": 121,
+              "column": 7
+            },
+            {
+              "title": "exam list search, completion filters and pagination keep counts and rows consistent",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 20382,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:45:05.589Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee61cf3dc53f2590e812-9cda6169677a87f995d5",
+              "file": "student-exams-depth-audit.spec.ts",
+              "line": 146,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "student-navigation-audit.spec.ts",
+      "file": "student-navigation-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "S-N01 group 1: loaded student routes, aliases, reload, mobile and console",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 84085,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:45:30.207Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-7d71f453c7742dca8ce2",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 8,
+          "column": 5
+        },
+        {
+          "title": "S-N01 group 2: loaded student routes, aliases, reload, mobile and console",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 72993,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:46:54.321Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-7f17da42533035895425",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 8,
+          "column": 5
+        },
+        {
+          "title": "S-N02 anonymous protected route and server endpoints reject access",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 20976,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:48:07.357Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-cfeaffec61b3eb1bb98d",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 37,
+          "column": 5
+        },
+        {
+          "title": "S-N03 quiz search and result export/print use real student records",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 32573,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:48:28.386Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-34777e65ede7ac9bf564",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 50,
+          "column": 5
+        },
+        {
+          "title": "S-N04 missing quiz back navigation stays in authorized student panel",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 38318,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:49:01.210Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-b29250562dc94a218b98",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 78,
+          "column": 5
+        },
+        {
+          "title": "S-N05 stats display category names from real relation objects",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9351,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:49:39.562Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-4077d6349da7c75a8df0",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 106,
+          "column": 5
+        },
+        {
+          "title": "S-N06 empty student and controlled survey failure observation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 32039,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:49:48.957Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-0fccb7fc371a27c6c9b7",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 113,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "student-navigation-depth-audit.spec.ts",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "S-D01 dashboard all-results action with five own completed records opens authorized results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 33846,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:50:21.734Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-8a9aee50fd4ec95a6db9",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 50,
+          "column": 5
+        },
+        {
+          "title": "S-D02 results search, score boundaries, sort order and reset reflect seeded records",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23454,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:50:55.656Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-8f3b2cb3c995e528f5b7",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 62,
+          "column": 5
+        },
+        {
+          "title": "S-D03 choosing an actual category preserves its completed results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10232,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:51:19.147Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-e2cb144728d3b19d962d",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 105,
+          "column": 5
+        },
+        {
+          "title": "S-D04 loaded student routes have specific content, reload correctly and fit mobile width",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 76910,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:51:29.407Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-96c5c312db92377bef0b",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 117,
+          "column": 5
+        },
+        {
+          "title": "S-D05 mobile menu keyboard focus trap, Escape and notification popover work",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6988,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:52:46.347Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-121284abb55d2317313c",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 144,
+          "column": 5
+        },
+        {
+          "title": "S-D06 injected dashboard API failure must not claim all exams completed",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9168,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:52:53.370Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-f30cfb4ce4e159e1d0fe",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 172,
+          "column": 5
+        },
+        {
+          "title": "S-D07 injected survey API failure must show error and retry instead of empty success",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7680,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:53:02.566Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-2258a9df04ea441e3bd8",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 191,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "student-question-types-audit.spec.ts",
+      "file": "student-question-types-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Student storage/API question types and real image audit",
+          "file": "student-question-types-audit.spec.ts",
+          "line": 65,
+          "column": 6,
+          "specs": [
+            {
+              "title": "true-false choices render, save and grade different correct values",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18786,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:53:10.416Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "428713d66afe13c8cab4-5bad3448c76f798499c8",
+              "file": "student-question-types-audit.spec.ts",
+              "line": 66,
+              "column": 7
+            },
+            {
+              "title": "unsupported short-answer record shows fallback and normal exam API rejects unsupported types",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11689,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:53:29.241Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "428713d66afe13c8cab4-ffdfbe5f61f6acc852bd",
+              "file": "student-question-types-audit.spec.ts",
+              "line": 91,
+              "column": 7
+            },
+            {
+              "title": "real public image loads and shuffled questions retain order and saved answers across reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 24104,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:53:40.963Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "428713d66afe13c8cab4-9506a77e32ecf42ee093",
+              "file": "student-question-types-audit.spec.ts",
+              "line": 119,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "student-shared-depth-audit.spec.ts",
+      "file": "student-shared-depth-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Student audit: shared depth",
+          "file": "student-shared-depth-audit.spec.ts",
+          "line": 10,
+          "column": 6,
+          "specs": [
+            {
+              "title": "GUI password change revokes another live session, validates new login and restores original password",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 55488,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:54:06.348Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6e68b040621d97b17e12-cf65fb46cc0f2cc1d0c8",
+              "file": "student-shared-depth-audit.spec.ts",
+              "line": 14,
+              "column": 7
+            },
+            {
+              "title": "notification GUI paginates, marks read, deletes own fixture and denies foreign deletion",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 47123,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:55:01.895Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6e68b040621d97b17e12-9f7495fa31660493d42d",
+              "file": "student-shared-depth-audit.spec.ts",
+              "line": 66,
+              "column": 7
+            },
+            {
+              "title": "own history date API filter and GUI pagination exclude old and foreign fixture entries",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 60260,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:55:49.121Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6e68b040621d97b17e12-e1046d3b33de3263a070",
+              "file": "student-shared-depth-audit.spec.ts",
+              "line": 121,
+              "column": 7
+            },
+            {
+              "title": "student theme survives reload and mobile navigation traps focus and closes correctly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13354,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:56:49.445Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6e68b040621d97b17e12-53984b924298cdb66a2e",
+              "file": "student-shared-depth-audit.spec.ts",
+              "line": 163,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "student-surveys-shared-audit.spec.ts",
+      "file": "student-surveys-shared-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Student audit: surveys and shared functions",
+          "file": "student-surveys-shared-audit.spec.ts",
+          "line": 15,
+          "column": 6,
+          "specs": [
+            {
+              "title": "all five survey types validate, submit once, persist real answers and remain completed after reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 66131,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:57:04.598Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-057be88c12479f4b82a1",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 19,
+              "column": 7
+            },
+            {
+              "title": "foreign student cannot list, view or submit the own-class survey",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 22409,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:58:10.803Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-864974255370f4bdb3fc",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 109,
+              "column": 7
+            },
+            {
+              "title": "student profile is read-only in GUI and update API rejects changes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 35971,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:58:33.249Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-0ce209e43b15661e36eb",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 128,
+              "column": 7
+            },
+            {
+              "title": "student security form validates mismatch and incorrect current password without mutation",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 34311,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeDisabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Şifreyi Güncelle', exact: true })\nExpected: disabled\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeDisabled\" getByRole('button', { name: 'Şifreyi Güncelle', exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Şifreyi Güncelle', exact: true })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeDisabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Şifreyi Güncelle', exact: true })\nExpected: disabled\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeDisabled\" getByRole('button', { name: 'Şifreyi Güncelle', exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Şifreyi Güncelle', exact: true })\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts:145:87",
+                        "location": {
+                          "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts",
+                          "column": 87,
+                          "line": 145
+                        },
+                        "snippet": "  143 |   test('student security form validates mismatch and incorrect current password without mutation', async ({ page }) => {\n  144 |     await page.goto('/settings?tab=security');\n> 145 |     await expect(page.getByRole('button', { name: 'Şifreyi Güncelle', exact: true })).toBeDisabled();\n      |                                                                                       ^\n  146 |     await page.getByLabel('Mevcut Şifre', { exact: true }).fill('[redacted]');\n  147 |     await page.getByLabel('Yeni Şifre', { exact: true }).fill('[redacted]');\n  148 |     await page.getByLabel('Yeni Şifre (Tekrar)', { exact: true }).fill('[redacted]');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts",
+                            "column": 87,
+                            "line": 145
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeDisabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Şifreyi Güncelle', exact: true })\nExpected: disabled\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeDisabled\" getByRole('button', { name: 'Şifreyi Güncelle', exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Şifreyi Güncelle', exact: true })\u001b[22m\n\n\n  143 |   test('student security form validates mismatch and incorrect current password without mutation', async ({ page }) => {\n  144 |     await page.goto('/settings?tab=security');\n> 145 |     await expect(page.getByRole('button', { name: 'Şifreyi Güncelle', exact: true })).toBeDisabled();\n      |                                                                                       ^\n  146 |     await page.getByLabel('Mevcut Şifre', { exact: true }).fill('[redacted]');\n  147 |     await page.getByLabel('Yeni Şifre', { exact: true }).fill('[redacted]');\n  148 |     await page.getByLabel('Yeni Şifre (Tekrar)', { exact: true }).fill('[redacted]');\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts:145:87"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:59:09.264Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-surveys-shared-aud-d7c2b-t-password-without-mutation\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-surveys-shared-aud-d7c2b-t-password-without-mutation\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts",
+                        "column": 87,
+                        "line": 145
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-086aaf2baf34f75c5731",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 143,
+              "column": 7
+            },
+            {
+              "title": "student notification sound preference persists and operation history is private",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 49522,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T08:00:42.530Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-782cfc8f4a51b49b6fe0",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 160,
+              "column": 7
+            },
+            {
+              "title": "student announcement target filtering is real and create/delete controls remain forbidden",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 48052,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T08:01:34.133Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-fc210aa3da925b04c33a",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 185,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-04T07:39:39.085Z",
+    "duration": 1373301.1530000002,
+    "expected": 38,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

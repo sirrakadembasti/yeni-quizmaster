@@ -1,5 +1,7 @@
 # Öğrenci paneli: bulgular ve geliştirme önerileri
 
+**Tarihsel başlangıç bulguları (`053138e`):** S-B01..S-B06 daha sonra düzeltildi; güncel doğrulama ve kapsam [onarım raporundadır](defect-repairs.md). Aşağıdaki açık hata anlatımları ilk denetimdeki davranışı ve tekrar adımlarını korur. UX/yeni özellik adayları altı onarımın kapsamı dışındadır.
+
 Tarih: 2026-10-04. Bu rapor gerçek öğrenci oturumu, ayrı test veritabanı ve tarayıcı denemelerinden doğrulanan kusurları; kaynak incelemesindeki UX adaylarından ve yeni özellik önerilerinden ayırır. Ürün dosyaları bu rapor için değiştirilmedi. Çalıştırma sonuçları ve kapsam sınırları ayrı doğrulama kaydında değerlendirilmelidir; rapor bütün sayfa/sekme/işlemlerin çalıştığını iddia etmez.
 
 Öncelik karşılığı: P0 kritik, P1 yüksek, P2 orta, P3 düşük. Bu incelemede doğrulanan P0 yoktur. [Son doğrulama ve kapsam](verification.md).
@@ -13,7 +15,7 @@ Tarih: 2026-10-04. Bu rapor gerçek öğrenci oturumu, ayrı test veritabanı ve
 - **Beklenen:** Henüz sunucuya aktarılmamış yerel B cevabı korunmalı, tekrar görünmeli ve daha sonra aynı cevabı gönderebilmelidir.
 - **Gerçek:** Yenilemeden önce seçilen B ve yerel kayıt görünür. Başarılı çevrimiçi başlatma isteği sonrasında eski sunucu cevapları yüklenir; B seçimi kaybolur.
 - **Etki:** Öğrenci emeği ve cevabı kaybolur; bağlantısı kararsız öğrencinin notunu etkileyebilir. Çevrimdışı *tam teslim kuyruğunun* yeniden bağlantıda başarıyla senkronize olması, gönderilmemiş tek cevap için bu kaybı ortadan kaldırmaz.
-- **Kanıt:** `results-browser.json`: “an answer saved offline survives reconnecting and reloading before submission” testi; `screenshots/exams-offline-unsent-answer.png` ve `screenshots/exams-offline-answer-after-reload.png`. Kaynak: `client/src/pages/student-quiz.tsx:89-114`, `setAnswers(data.existingAnswers || {})` ve aynı sunucu cevaplarıyla `saveOfflineSession` çağrısı yerel cevabı değiştirebiliyor.
+- **Kanıt:** `results-browser.json`: “an answer saved offline survives reconnecting and reloading before submission” testi; `historical-defects/exams-offline-unsent-answer.png` ve `historical-defects/exams-offline-answer-after-reload.png`. Kaynak: `client/src/pages/student-quiz.tsx:89-114`, `setAnswers(data.existingAnswers || {})` ve aynı sunucu cevaplarıyla `saveOfflineSession` çağrısı yerel cevabı değiştirebiliyor.
 - **Düzeltme:** Aynı kullanıcı/sınav/result oturumuna ait gönderilmemiş yerel cevapları çevrimiçi açılışta uzlaştır; doğrulanmış sunucu yanıtından önce yerel taslağı silme. Tamamlanmış/farklı oturuma ait eski taslağı aktarmamak için oturum kimliğini denetle.
 - **Kabul:** B çevrimdışı seçilir; bağlantı/yenileme sonrasında B ve cevap sayısı korunur; teslim sonrası gerçek DB'de B bulunur. Tam teslim kuyruğu, eski oturum, farklı kullanıcı ve süreli sınav kuralları da regresyona uğramaz.
 
@@ -57,7 +59,7 @@ Tarih: 2026-10-04. Bu rapor gerçek öğrenci oturumu, ayrı test veritabanı ve
 - **Beklenen:** Yükleme hatası ve tekrar deneme; başarılı boş listeden ayrı bir durum.
 - **Gerçek:** “Yanıtlamanız gereken anket bulunmuyor.” gösterilir.
 - **Etki:** Öğrenci atanmış anketi kaçırabilir; ağ/sunucu sorunu fark edilmez.
-- **Kanıt:** `results-depth.json`, S-D07; `survey-failure-observation.txt`, `screenshots/survey-controlled-failure.png`. Bu hata da **bilerek enjekte edilmiştir**. Kaynak: `student-surveys.tsx:12-22`.
+- **Kanıt:** `results-depth.json`, S-D07; `survey-failure-observation.txt`, `historical-defects/survey-controlled-failure.png`. Bu hata da **bilerek enjekte edilmiştir**. Kaynak: `student-surveys.tsx:12-22`.
 - **Düzeltme:** Query hata durumunu göster ve `refetch` düğmesi ekle. Detay sayfasında 403/404/ağ hatasını “bulunamadı” altında birleştirme davranışını ayrıca incele.
 - **Kabul:** 500'de boş liste mesajı yok; hata ve tekrar dene var. İstek düzeldiğinde gerçek kartlar yüklenir. Başarılı boş liste mesajı korunur.
 
@@ -68,7 +70,7 @@ Tarih: 2026-10-04. Bu rapor gerçek öğrenci oturumu, ayrı test veritabanı ve
 - **Beklenen:** Aynı derse ait tamamlanmış kayıt listede kalır; diğer dersler filtrelenir.
 - **Gerçek:** Seçim sonrasında görünür olan tamamlanmış kayıt kaybolur.
 - **Etki:** Ders bazında sonuç inceleme yanlış boş liste üretir; öğrenci geçmiş sonucunun olmadığını düşünebilir.
-- **Kanıt:** `results-closure.json`, S-D03; `screenshots/results-category-filter.png`. Test başlangıçta oluşturulmuş kategoriyi kullanır; sonradan eklenen kategorinin istemci önbelleğinde görünmemesi sorunu bu tekrarda yoktur. Kaynak: `student-results.tsx:489`, seçenek değeri `cat.name`; `:152`, seçilen değeri `item.id === filterCategory` ile arayan lookup.
+- **Kanıt:** `results-closure.json`, S-D03; `historical-defects/results-category-filter.png`. Test başlangıçta oluşturulmuş kategoriyi kullanır; sonradan eklenen kategorinin istemci önbelleğinde görünmemesi sorunu bu tekrarda yoktur. Kaynak: `student-results.tsx:489`, seçenek değeri `cat.name`; `:152`, seçilen değeri `item.id === filterCategory` ile arayan lookup.
 - **Düzeltme:** Seçim değeri ve filtre lookup'ı için aynı kategori kimliğini veya aynı normalize adı kullan; boş kategoriyi “Tüm Dersler”den ayır.
 - **Kabul:** Var olan gerçek ders seçimi, o dersin sonuçlarını korur; başka ders kaydı hariç kalır; “Tüm Dersler” ve filtre sıfırlama bütün izinli sonuçları geri getirir. Boş dersin boş durumu doğru gösterilir.
 

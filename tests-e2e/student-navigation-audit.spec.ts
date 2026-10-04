@@ -80,6 +80,27 @@ test('S-N04 missing quiz back navigation stays in authorized student panel', asy
   await page.goto('/student/quiz/does-not-exist');
   await page.getByRole('button', {name:/Geri|Dön/}).first().click();
   await expect(page).toHaveURL(/\/student\/quizzes$/);
+  await page.goto('/student/quiz/student-audit-completed-exam');
+  await expect(page.getByText('Bu sınav daha önce tamamlanmış.', { exact: true })).toBeVisible();
+  await page.getByRole('button', {name:'Quizlere Dön', exact:true}).click();
+  await expect(page).toHaveURL(/\/student\/quizzes$/);
+  const db = prisma(), emptyId = 'student-audit-repair-empty-exam';
+  try {
+    await db.quiz.create({data:{id:emptyId,title:'Repair Empty Exam',status:'published',contentType:'exam',createdBy:'student-audit-teacher',assignedClasses:{connect:{id:'11111111-1111-4111-8111-111111111111'}}}});
+    await page.goto(`/student/quiz/${emptyId}`);
+    await expect(page.getByText('Quizde Soru Yok', {exact:true})).toBeVisible();
+    await page.getByRole('button', {name:'Quizlere Geri Dön', exact:true}).click();
+    await expect(page).toHaveURL(/\/student\/quizzes$/);
+    await login(page,'student-audit-teacher@example.test');
+    await page.goto(`/student/quiz/${emptyId}`);
+    await expect(page.getByText('Quizde Soru Yok', {exact:true})).toBeVisible();
+    await page.getByRole('button', {name:'Quizlere Geri Dön', exact:true}).click();
+    await expect(page).toHaveURL(/\/quizzes$/);
+  } finally {
+    await db.studentResult.deleteMany({where:{quizId:emptyId}});
+    await db.quiz.deleteMany({where:{id:emptyId}});
+    await db.$disconnect();
+  }
 });
 
 test('S-N05 stats display category names from real relation objects', async ({page}) => {

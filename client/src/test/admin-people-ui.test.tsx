@@ -61,7 +61,10 @@ it('büyük öğretmen sınav geçmişinin sonraki sayfasına ulaşılır', asyn
   mount(<TeacherDetail />);
   fireEvent.click(await screen.findByRole('button', { name: 'Sonraki Sayfa' }));
   expect(screen.getByText('Sınav 11')).toBeVisible();
-  expect(screen.queryByText('Sınav 1')).not.toBeInTheDocument();
+  expect(screen.getByText('Sayfa 2 / 3')).toBeVisible();
+  // Off-page rows remain mounted for print; jsdom does not generate Tailwind CSS.
+  expect(screen.getByText('Sınav 1').parentElement?.parentElement).toHaveClass('hidden', 'print:flex');
+  expect(screen.getByText('Sınav 11').parentElement?.parentElement).toHaveClass('flex');
 });
 it('sınıftan çıkarma odaklanabilir adlandırılmış bir düğmedir ve beklerken tekrar gönderilmez', async () => {
   defaults(); let reject!: (error: Error) => void; api.remove.mockImplementation(() => new Promise((_r, j) => { reject = j; }));

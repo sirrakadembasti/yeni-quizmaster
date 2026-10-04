@@ -8,7 +8,7 @@
   - paragraph: Tamamladığınız tüm sınavların gelişmiş dökümü.
   - button "Excel"
   - button "Yazdır"
-  - text: Toplam 1 Kayıt Gelişmiş Sorgulama Paneli
+  - text: Toplam 2 Kayıt Gelişmiş Sorgulama Paneli
   - button "Filtreleri Temizle"
   - text: Sınav Adı
   - textbox "Sınav Adı":
@@ -30,11 +30,21 @@
         - columnheader "Puan"
         - columnheader "Eylem"
     - rowgroup:
-      - row "Student Audit Completed Exam Audit Mathematics 04.10.2026 09:23 0 2 0dk 0sn 0 İncele":
+      - row "Student Audit Exam Audit Mathematics 04.10.2026 11:09 0 2 0dk 6sn 0 İncele":
+        - cell "Student Audit Exam Audit Mathematics":
+          - paragraph: Student Audit Exam
+          - text: Audit Mathematics
+        - cell "04.10.2026 11:09"
+        - cell "0 2"
+        - cell "0dk 6sn"
+        - cell "0"
+        - cell "İncele":
+          - button "İncele"
+      - row "Student Audit Completed Exam Audit Mathematics 04.10.2026 11:06 0 2 0dk 0sn 0 İncele":
         - cell "Student Audit Completed Exam Audit Mathematics":
           - paragraph: Student Audit Completed Exam
           - text: Audit Mathematics
-        - cell "04.10.2026 09:23"
+        - cell "04.10.2026 11:06"
         - cell "0 2"
         - cell "0dk 0sn"
         - cell "0"

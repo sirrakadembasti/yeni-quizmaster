@@ -1,0 +1,192 @@
+{
+  "numTotalTestSuites": 1,
+  "numPassedTestSuites": 0,
+  "numFailedTestSuites": 1,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 15,
+  "numPassedTests": 14,
+  "numFailedTests": 1,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1791101338795,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "öğrenciler sorgu hatasını ve yeniden denemeyi gösterir",
+          "status": "passed",
+          "title": "öğrenciler sorgu hatasını ve yeniden denemeyi gösterir",
+          "duration": 492.4889000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "öğretmenler sorgu hatasını ve yeniden denemeyi gösterir",
+          "status": "passed",
+          "title": "öğretmenler sorgu hatasını ve yeniden denemeyi gösterir",
+          "duration": 133.97309999999925,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "sınıflar sorgu hatasını ve yeniden denemeyi gösterir",
+          "status": "passed",
+          "title": "sınıflar sorgu hatasını ve yeniden denemeyi gösterir",
+          "duration": 121.02669999999853,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "öğretmen detayı sorgu hatasını ve yeniden denemeyi gösterir",
+          "status": "passed",
+          "title": "öğretmen detayı sorgu hatasını ve yeniden denemeyi gösterir",
+          "duration": 162.3111000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "sınıf yönetimi sorgu hatasını ve yeniden denemeyi gösterir",
+          "status": "passed",
+          "title": "sınıf yönetimi sorgu hatasını ve yeniden denemeyi gösterir",
+          "duration": 528.3504000000012,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "veli yönetimi sorgu hatasını ve yeniden denemeyi gösterir",
+          "status": "passed",
+          "title": "veli yönetimi sorgu hatasını ve yeniden denemeyi gösterir",
+          "duration": 258.582699999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "öğretmenin on birinci sınavını da gösterir",
+          "status": "passed",
+          "title": "öğretmenin on birinci sınavını da gösterir",
+          "duration": 377.4390000000021,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "sınıf sayıları kullanıcı sorgusu bitmeden sıfır gibi sunulmaz",
+          "status": "passed",
+          "title": "sınıf sayıları kullanıcı sorgusu bitmeden sıfır gibi sunulmaz",
+          "duration": 18.545799999999872,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "büyük öğretmen sınav geçmişinin sonraki sayfasına ulaşılır",
+          "status": "failed",
+          "title": "büyük öğretmen sınav geçmişinin sonraki sayfasına ulaşılır",
+          "duration": 483.5162999999993,
+          "failureMessages": [
+            "Error: expect(element).not.toBeInTheDocument()\n\nexpected document not to contain element, found <span\n  class=\"text-sm font-bold text-foreground truncate\"\n>\n  Sınav 1\n</span> instead\n    at Proxy.__VITEST_EXTEND_ASSERTION__ (file:///F:/projeler/yeni-quizmaster-main/node_modules/.pnpm/@vitest+expect@4.1.11/node_modules/@vitest/expect/dist/index.js:1888:12)\n    at Proxy.<anonymous> (file:///F:/projeler/yeni-quizmaster-main/node_modules/.pnpm/@vitest+expect@4.1.11/node_modules/@vitest/expect/dist/index.js:1156:15)\n    at Proxy.methodWrapper (file:///F:/projeler/yeni-quizmaster-main/node_modules/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)\n    at F:/projeler/yeni-quizmaster-main/client/src/test/admin-people-ui.test.tsx:64:45\n    at file:///F:/projeler/yeni-quizmaster-main/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "sınıftan çıkarma odaklanabilir adlandırılmış bir düğmedir ve beklerken tekrar gönderilmez",
+          "status": "passed",
+          "title": "sınıftan çıkarma odaklanabilir adlandırılmış bir düğmedir ve beklerken tekrar gönderilmez",
+          "duration": 453.20920000000115,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "sorumlu öğretmenin bağımsız kalan dersini mevcut atamalardan açıklar",
+          "status": "passed",
+          "title": "sorumlu öğretmenin bağımsız kalan dersini mevcut atamalardan açıklar",
+          "duration": 230.81329999999798,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "öğretmen formu etiketlerle doldurulur ve seçili ders klavyeyle kaldırılır",
+          "status": "passed",
+          "title": "öğretmen formu etiketlerle doldurulur ve seçili ders klavyeyle kaldırılır",
+          "duration": 359.2343000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "öğrenci satırının işlem menüsü öğrencinin adıyla okunur",
+          "status": "passed",
+          "title": "öğrenci satırının işlem menüsü öğrencinin adıyla okunur",
+          "duration": 53.82839999999851,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "veli bağlantısı sorgu hatasını boş öğrenci listesi gibi sunmaz",
+          "status": "passed",
+          "title": "veli bağlantısı sorgu hatasını boş öğrenci listesi gibi sunmaz",
+          "duration": 416.46310000000085,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "veli bağlantısını kaldırırken yeniden istek engellenir ve hata mevcut bağı korur",
+          "status": "passed",
+          "title": "veli bağlantısını kaldırırken yeniden istek engellenir ve hata mevcut bağı korur",
+          "duration": 638.6477999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791101354060,
+      "endTime": 1791101358791.6477,
+      "status": "failed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/admin-people-ui.test.tsx"
+    }
+  ]
+}

@@ -2,11 +2,11 @@
   "date": "2026-10-04",
   "updateExitCode": 0,
   "diagnoseExitCode": 0,
-  "builtAtCommit": "38afee6b960649aad658bd1965ada7cc33bdd8c2",
-  "nodes": 2454,
-  "edges": 6536,
-  "communities": 137,
-  "studentAuditSourceNodes": 82,
+  "builtAtCommit": "053138e72aa141a4b5ddde08beb84af08d21fc2b",
+  "nodes": 2465,
+  "edges": 6556,
+  "communities": 130,
+  "studentAuditSourceNodes": 89,
   "missingEndpoints": 0,
   "danglingEndpoints": 0,
   "exactDuplicates": 0,
@@ -20,5 +20,9 @@
     "Graphify PDF extraction lacks pypdf; separate export verifier used",
     "LLM semantics and labels not refreshed",
     "Uncommitted user client changes included in working-tree graph"
-  ]
+  ],
+  "visualStatus": "passed",
+  "studentQuizDegree": 32,
+  "savedCommunityLabels": 137,
+  "hubRenamedCommunities": 45
 }
