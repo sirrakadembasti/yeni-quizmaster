@@ -1,0 +1,23 @@
+{
+  "startedAt": "2026-10-04T09:19:14.606Z",
+  "platform": "win32",
+  "node": "v22.23.2",
+  "cleanup": [],
+  "status": "cleanup-failed",
+  "error": "Fixture ports occupied",
+  "ports": [
+    {
+      "kind": "fixture-port",
+      "port": 5560,
+      "stopped": false,
+      "error": "Fixture port bind failed (EADDRINUSE)"
+    },
+    {
+      "kind": "fixture-port",
+      "port": 5561,
+      "stopped": true
+    }
+  ],
+  "cleanupSucceeded": false,
+  "finishedAt": "2026-10-04T09:19:14.686Z"
+}

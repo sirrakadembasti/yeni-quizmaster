@@ -92,3 +92,11 @@ tools/mailpit/*.exe
 /docs/student-audit/runner-fix.json
 /docs/student-audit/runner-windows-port-guard.json
 /docs/student-audit/student-results-export.csv
+
+# Parent audit isolated runtime; durable sanitized evidence is versioned.
+/docs/parent-audit/runtime.json
+/docs/parent-audit/results-latest.json
+/docs/parent-audit/runtime-logs/
+/docs/parent-audit/test-results*/
+/docs/parent-audit/playwright-report*/
+/docs/parent-audit/**/trace.zip

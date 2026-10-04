@@ -1,0 +1,21 @@
+{
+  "observations": [
+    {
+      "route": "/",
+      "overflow": false,
+      "text": "23\nP\nVeli Paneli\nÖğrenci Takibi\n\nBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.\n\nAda Audit Child · Parent Audit 7A\nAda Audit Child\n\nParent Audit 7A · parent-audit-child@example.test\n\nORTALAMA BAŞARI\n\n%0\n\nTAMAMLANAN SINAV\n\n1\n\nBEKLEYEN SINAV\n\n3\n\nSınav Sonuçları\nTümünü ve detayları gör\nSınav\tDers\tPuan\tTarih\nParent Audit Completed Exam\tAudit Mathematics\t%0\t04.10.2026\nAtanmış Sınavlar\nSınav\tDers\tDurum\nParent Audit Offline Exam\tAudit Mathematics\tBekliyor\nParent Audit Timed Exam\tAudit Mathematics\tBekliyor\nParent Audit Completed Exam\tAudit Mathematics\tTamamlandı\nParent Audit Exam\tAudit Mathematics\tBekliyor"
+    },
+    {
+      "route": "/parent/dashboard",
+      "overflow": false,
+      "text": "23\nP\nVeli Paneli\nÖğrenci Takibi\n\nBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.\n\nAda Audit Child · Parent Audit 7A\nAda Audit Child\n\nParent Audit 7A · parent-audit-child@example.test\n\nORTALAMA BAŞARI\n\n%0\n\nTAMAMLANAN SINAV\n\n1\n\nBEKLEYEN SINAV\n\n3\n\nSınav Sonuçları\nTümünü ve detayları gör\nSınav\tDers\tPuan\tTarih\nParent Audit Completed Exam\tAudit Mathematics\t%0\t04.10.2026\nAtanmış Sınavlar\nSınav\tDers\tDurum\nParent Audit Offline Exam\tAudit Mathematics\tBekliyor\nParent Audit Timed Exam\tAudit Mathematics\tBekliyor\nParent Audit Completed Exam\tAudit Mathematics\tTamamlandı\nParent Audit Exam\tAudit Mathematics\tBekliyor"
+    },
+    {
+      "route": "/parent/results",
+      "overflow": false,
+      "text": "23\nP\nSınav Sonuçları\n\nBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.\n\nAda Audit Child · Parent Audit 7A\nTamamlanan Sınavlar\nSınav\tDers\tPuan\tTarih\tİşlem\nParent Audit Completed Exam\tAudit Mathematics\t%0\t04.10.2026\t\nDetay"
+    }
+  ],
+  "errors": [],
+  "failed": []
+}

@@ -6,6 +6,8 @@ QuizMaster; yöneticiler, öğretmenler, öğrenciler ve veliler için rol taban
 
 Öğrenci panelinin ilk sayfa/sekme denetimi [doğrulama raporundadır](docs/student-audit/verification.md); [başlangıç bulguları](docs/student-audit/findings.md) tarihsel kayıttır. Altı hatanın düzeltmeleri, gerçek Chromium/API/veritabanı regresyonları ve güncel sınırlar [öğrenci onarım raporunda](docs/student-audit/defect-repairs.md) yer alır.
 
+Veli panelinin sayfa/sekme kapsamı [kontrol listesindedir](docs/parent-audit/inventory.md); gerçek tarayıcı/API denetimi ve kapsam sınırları [veli doğrulama raporunda](docs/parent-audit/verification.md), bulgular ve geliştirme sırası [veli bulgularında](docs/parent-audit/findings.md) yer alır.
+
 - [Yönetici kullanıcı kılavuzu](docs/admin-guide.md)
 - [Yönetici paneli test kapsamı, bulgular ve düzeltme durumu](docs/admin-audit/README.md)
 - [Öğretmen kullanıcı kılavuzu](docs/teacher-guide.md)

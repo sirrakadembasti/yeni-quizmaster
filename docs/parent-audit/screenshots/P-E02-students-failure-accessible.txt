@@ -1,0 +1,9 @@
+- main:
+  - button "Bildirimleri aç"
+  - button "Karanlık Moda Geç"
+  - button "P Parent Audit Guardian Veli"
+  - text: Veli Paneli
+  - heading "Öğrenci Takibi" [level=1]
+  - paragraph: Bağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.
+  - heading "Hesabınıza bağlı öğrenci bulunmuyor" [level=2]
+  - paragraph: Okul yöneticinizden veli hesabınızı öğrenciyle ilişkilendirmesini isteyin.

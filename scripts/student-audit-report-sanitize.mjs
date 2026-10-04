@@ -9,6 +9,8 @@ const fixtureSecrets = [
   'StudentAuditOnly2026!', 'WrongStudentAuditPassword!', 'StudentAuditTemporary2026!', 'MismatchStudentAuditPassword!', 'TemporaryAuditPassword2026!', 'UnusedAuditPassword2026!',
   'WrongAuditPassword!', 'IncorrectAuditPassword!', 'MismatchAuditPassword2026!',
   'isolated-student-audit-only-secret',
+  'ParentAuditTemporary2026!', 'WrongParentAuditPassword!', 'MismatchParentAuditPassword!',
+  'isolated-parent-audit-only-secret',
 ];
 const secretKey = /^(?:password|currentPassword|newPassword|confirmPassword|apiKey|customApiKey|csrfToken|sessionSecret|sessionId|sid|cookie|set-cookie|authorization|proxy-authorization|x-csrf-token|x-setup-csrf|SESSION_SECRET|EMAIL_PASS|GEMINI_API_KEY|OPENAI_API_KEY)$/i;
 

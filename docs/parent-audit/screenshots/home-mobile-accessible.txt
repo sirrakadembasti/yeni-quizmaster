@@ -1,0 +1,57 @@
+- main:
+  - button "Menüyü aç"
+  - button "Bildirimleri aç": "23"
+  - button "Karanlık Moda Geç"
+  - button "P"
+  - text: Veli Paneli
+  - heading "Öğrenci Takibi" [level=1]
+  - paragraph: Bağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.
+  - combobox: Ada Audit Child · Parent Audit 7A
+  - heading "Ada Audit Child" [level=2]
+  - paragraph: Parent Audit 7A · parent-audit-child@example.test
+  - paragraph: Ortalama Başarı
+  - paragraph: "%0"
+  - paragraph: Tamamlanan Sınav
+  - paragraph: "1"
+  - paragraph: Bekleyen Sınav
+  - paragraph: "3"
+  - text: Sınav Sonuçları
+  - link "Tümünü ve detayları gör":
+    - /url: /parent/results
+  - table:
+    - rowgroup:
+      - row "Sınav Ders Puan Tarih":
+        - columnheader "Sınav"
+        - columnheader "Ders"
+        - columnheader "Puan"
+        - columnheader "Tarih"
+    - rowgroup:
+      - row "Parent Audit Completed Exam Audit Mathematics %0 04.10.2026":
+        - cell "Parent Audit Completed Exam"
+        - cell "Audit Mathematics"
+        - cell "%0"
+        - cell "04.10.2026"
+  - text: Atanmış Sınavlar
+  - table:
+    - rowgroup:
+      - row "Sınav Ders Durum":
+        - columnheader "Sınav"
+        - columnheader "Ders"
+        - columnheader "Durum"
+    - rowgroup:
+      - row "Parent Audit Offline Exam Audit Mathematics Bekliyor":
+        - cell "Parent Audit Offline Exam"
+        - cell "Audit Mathematics"
+        - cell "Bekliyor"
+      - row "Parent Audit Timed Exam Audit Mathematics Bekliyor":
+        - cell "Parent Audit Timed Exam"
+        - cell "Audit Mathematics"
+        - cell "Bekliyor"
+      - row "Parent Audit Completed Exam Audit Mathematics Tamamlandı":
+        - cell "Parent Audit Completed Exam"
+        - cell "Audit Mathematics"
+        - cell "Tamamlandı"
+      - row "Parent Audit Exam Audit Mathematics Bekliyor":
+        - cell "Parent Audit Exam"
+        - cell "Audit Mathematics"
+        - cell "Bekliyor"
