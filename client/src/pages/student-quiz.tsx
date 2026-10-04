@@ -11,6 +11,7 @@ import { useAuth } from '@/context/auth-context';
 import { ChevronLeft, ChevronRight, AlertCircle, CheckCircle2, Eye, WifiOff, CloudUpload } from 'lucide-react';
 import {
   acknowledgeOfflineAnswer,
+  cacheOfflineCompletion,
   getOfflineSession,
   getOfflineRemainingSeconds,
   markOfflineSubmit,
@@ -115,6 +116,7 @@ export default function StudentQuiz() {
             timerCapturedAt: capturedAt,
             cachedAt: capturedAt,
             pendingSubmit: false,
+            started: true,
           }, getOfflineSession(user.id, quizId));
           setAnswers(session.answers);
           setSubmissionQueued(session.pendingSubmit);
@@ -135,6 +137,7 @@ export default function StudentQuiz() {
       } catch (err) {
         const cached = user ? getOfflineSession(user.id, quizId) : null;
         if (!isPreviewMode && cached && isRetryableError(err)) {
+          saveOfflineSession({ ...cached, started: true });
           setQuiz(cached.quiz);
           setQuestions(cached.questions);
           setResultId(cached.resultId);
@@ -241,7 +244,7 @@ export default function StudentQuiz() {
       }
 
       await quizApi.submitQuiz(resultId!, answers);
-      if (user) removeOfflineSession(user.id, quizId);
+      if (user) { cacheOfflineCompletion(user.id, quizId, resultId!); removeOfflineSession(user.id, quizId); }
       setSubmitted(true);
       
       // Show result
@@ -270,6 +273,7 @@ export default function StudentQuiz() {
       const cached = getOfflineSession(user.id, quizId);
       try {
         await quizApi.submitQuiz(resultId, cached?.answers || answers);
+        cacheOfflineCompletion(user.id, quizId, resultId);
         removeOfflineSession(user.id, quizId);
         setSubmissionQueued(false);
         setSubmitted(true);
@@ -518,6 +522,7 @@ export default function StudentQuiz() {
                 {currentQuestion.options.map((option, idx) => (
                   <button
                     key={idx}
+                    aria-pressed={answers[currentQuestion.id] === option}
                     disabled={submissionQueued}
                     onClick={() => handleAnswerChange(currentQuestion.id, option)}
                     className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
@@ -592,6 +597,8 @@ export default function StudentQuiz() {
               {questions.map((q, idx) => (
                 <button
                   key={q.id}
+                  aria-current={idx === currentQuestionIndex ? 'step' : undefined}
+                  aria-label={`Soru ${idx + 1}, ${answers[q.id] ? 'cevaplandı' : 'cevaplanmadı'}`}
                   onClick={() => setCurrentQuestionIndex(idx)}
                   className={`w-full aspect-square rounded-lg font-medium text-sm transition-all ${
                     idx === currentQuestionIndex
@@ -612,9 +619,9 @@ export default function StudentQuiz() {
         <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Sınavı Bitirmek İstiyor musunuz?</AlertDialogTitle>
+              <AlertDialogTitle>{isPreviewMode ? 'Önizlemeyi Bitirmek İstiyor musunuz?' : 'Sınavı Bitirmek İstiyor musunuz?'}</AlertDialogTitle>
               <AlertDialogDescription>
-                Sınavı bitirdiğinizde cevaplarınız kaydedilecek ve sonuç sayfasına yönlendirileceksiniz.
+                {isPreviewMode ? 'Önizleme tamamlanacak. Cevaplarınız ve sonuçlarınız kaydedilmeyecek.' : 'Sınavı bitirdiğinizde cevaplarınız kaydedilecek ve sonuç sayfasına yönlendirileceksiniz.'}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

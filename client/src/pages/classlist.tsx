@@ -113,7 +113,7 @@ export default function ClassesPage() {
                     <TableHead className="py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Açıklama</TableHead>
                     <TableHead className="py-4 text-center text-xs font-bold uppercase tracking-wider text-muted-foreground">Öğrenci Sayısı</TableHead>
                     <TableHead className="py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Sorumlu Öğretmen</TableHead>
-                    <TableHead className="py-4 pr-6 text-right text-xs font-bold uppercase tracking-wider text-muted-foreground">İşlemler</TableHead>
+                    <TableHead className="py-4 pr-6 text-right text-xs font-bold uppercase tracking-wider text-muted-foreground print:hidden">İşlemler</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -154,7 +154,7 @@ export default function ClassesPage() {
                               <span className="text-xs font-medium text-slate-400 dark:text-slate-500 italic">Atanmamış</span>
                             )}
                           </TableCell>
-                          <TableCell className="py-4 text-right pr-6">
+                          <TableCell className="py-4 text-right pr-6 print:hidden">
                             <Link href={`/classes/${cls.id}`}>
                               <Button variant="ghost" size="sm" className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 font-bold gap-1 rounded-xl">
                                 <Eye className="h-4 w-4" />

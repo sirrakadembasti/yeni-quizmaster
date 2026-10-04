@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { surveyApi } from "@/lib/api";
+import { ApiError } from "@/lib/http-error";
 import { useToast } from "@/hooks/use-toast";
 import { ClipboardCheck, Loader2 } from "lucide-react";
 
@@ -16,7 +17,7 @@ export default function TakeSurveyPage() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
-  const { data, isLoading } = useQuery({ queryKey: ['survey', id], queryFn: () => surveyApi.getSurvey(id!) , enabled: Boolean(id) });
+  const { data, isLoading, error, refetch } = useQuery({ queryKey: ['survey', id], queryFn: () => surveyApi.getSurvey(id!) , enabled: Boolean(id), retry: false });
   const mutation = useMutation({
     mutationFn: () => surveyApi.submitSurvey(id!, answers),
     onSuccess: () => {
@@ -28,7 +29,12 @@ export default function TakeSurveyPage() {
   });
 
   if (isLoading) return <DashboardLayout><div className="p-8 text-center text-muted-foreground">Anket yükleniyor...</div></DashboardLayout>;
-  if (!data) return <DashboardLayout><div className="p-8 text-center text-destructive">Anket bulunamadı.</div></DashboardLayout>;
+  if (error || !data) {
+    const message = error instanceof ApiError && error.status === 403 ? 'Bu ankete erişim yetkiniz yok.'
+      : !error || (error instanceof ApiError && error.status === 404) ? 'Anket bulunamadı.'
+      : 'Anket yüklenemedi. Lütfen yeniden deneyin.';
+    return <DashboardLayout><div role="alert" className="space-y-4 p-8 text-center text-destructive"><p>{message}</p><Button variant="outline" onClick={() => refetch()}>Yeniden Dene</Button></div></DashboardLayout>;
+  }
 
   const setAnswer = (questionId: string, value: unknown) => setAnswers((current) => ({ ...current, [questionId]: value }));
   const toggleMultiple = (questionId: string, option: string) => {
@@ -37,7 +43,7 @@ export default function TakeSurveyPage() {
   };
   const canSubmit = data.questions.length > 0 && data.questions.every((question) => {
     const value = answers[question.id];
-    return Array.isArray(value) ? value.length > 0 : value !== undefined && value !== null && value !== '';
+    return Array.isArray(value) ? value.length > 0 : typeof value === 'string' ? value.trim().length > 0 : value !== undefined && value !== null;
   });
 
   return (
@@ -47,12 +53,12 @@ export default function TakeSurveyPage() {
         {data.submitted ? <Card><CardContent className="p-8 text-center">Bu anketi daha önce yanıtladınız.</CardContent></Card> :
           data.questions.map((question, index) => (
             <Card key={question.id}>
-              <CardHeader className="pb-2"><CardTitle className="text-base">{index + 1}. {question.text}</CardTitle></CardHeader>
-              <CardContent className="space-y-2">
-                {question.type === 'open-text' && <Textarea maxLength={5000} className="min-h-[110px]" value={(answers[question.id] as string) || ''} onChange={(event) => setAnswer(question.id, event.target.value)} />}
-                {question.type === 'rating' && <div className="flex flex-wrap gap-2">{Array.from({ length: Number(question.config?.max || 5) }, (_, item) => item + 1).map((value) => <Button key={value} type="button" variant={answers[question.id] === value ? 'default' : 'outline'} size="sm" onClick={() => setAnswer(question.id, value)}>{value}</Button>)}</div>}
+              <CardHeader className="pb-2"><CardTitle id={`survey-question-${question.id}`} className="text-base">{index + 1}. {question.text}</CardTitle></CardHeader>
+              <CardContent role="group" aria-labelledby={`survey-question-${question.id}`} className="space-y-2">
+                {question.type === 'open-text' && <Textarea aria-labelledby={`survey-question-${question.id}`} maxLength={5000} className="min-h-[110px]" value={(answers[question.id] as string) || ''} onChange={(event) => setAnswer(question.id, event.target.value)} />}
+                {question.type === 'rating' && <div className="flex flex-wrap gap-2">{Array.from({ length: Number(question.config?.max || 5) }, (_, item) => item + 1).map((value) => <Button key={value} type="button" aria-pressed={answers[question.id] === value} variant={answers[question.id] === value ? 'default' : 'outline'} size="sm" onClick={() => setAnswer(question.id, value)}>{value}</Button>)}</div>}
                 {question.type === 'multiple-choice' && question.options?.map((option) => <label key={option} className="flex cursor-pointer items-center gap-3 rounded-lg border p-3"><Checkbox checked={Array.isArray(answers[question.id]) && (answers[question.id] as string[]).includes(option)} onCheckedChange={() => toggleMultiple(question.id, option)} /><span>{option}</span></label>)}
-                {['single-choice', 'likert'].includes(question.type) && question.options?.map((option) => <button key={option} type="button" className={"w-full rounded-lg border p-3 text-left transition-colors " + (answers[question.id] === option ? 'border-primary bg-primary/10 text-primary' : 'hover:bg-muted')} onClick={() => setAnswer(question.id, option)}>{option}</button>)}
+                {['single-choice', 'likert'].includes(question.type) && question.options?.map((option) => <button key={option} type="button" aria-pressed={answers[question.id] === option} className={"w-full rounded-lg border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring " + (answers[question.id] === option ? 'border-primary bg-primary/10 text-primary' : 'hover:bg-muted')} onClick={() => setAnswer(question.id, option)}>{option}</button>)}
               </CardContent>
             </Card>
           ))

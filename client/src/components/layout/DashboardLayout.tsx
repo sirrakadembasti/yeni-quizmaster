@@ -110,7 +110,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
     };
   }, [mobileNavigationOpen, hideNavigation]);
 
-  const { data: notificationsData } = useQuery({
+  const { data: notificationsData, isPending: notificationsLoading, isError: notificationsError, isFetching: notificationsFetching, refetch: retryNotifications } = useQuery({
     queryKey: ["notifications", "nav"],
     queryFn: () => notificationApi.getUserNotifications(1, 5),
     refetchInterval: 10000,
@@ -128,7 +128,8 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
     mutationFn: () => notificationApi.markAllAsRead(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
-    }
+    },
+    onError: () => toast.error("Bildirimler okundu olarak işaretlenemedi. Lütfen tekrar deneyin.")
   });
 
   const deleteNotificationMutation = useMutation({
@@ -307,6 +308,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
                     variant="ghost" 
                     size="sm" 
                     className="h-7 px-2 text-[10px] font-bold rounded-lg"
+                    disabled={markAllReadMutation.isPending}
                     onClick={() => markAllReadMutation.mutate()}
                   >
                     Hepsini Oku
@@ -315,7 +317,14 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
                 </div>
               </div>
               <ScrollArea className="h-[400px]">
-                {notifications.length > 0 ? (
+                {notificationsLoading ? (
+                  <div role="status" className="py-16 text-center text-xs text-muted-foreground">Bildirimler yükleniyor...</div>
+                ) : notificationsError ? (
+                  <div role="alert" className="flex flex-col items-center gap-3 py-16 text-center text-xs">
+                    <p>Bildirimler yüklenemedi.</p>
+                    <Button variant="outline" size="sm" disabled={notificationsFetching} onClick={() => retryNotifications()}>Yeniden dene</Button>
+                  </div>
+                ) : notifications.length > 0 ? (
                   <div className="divide-y divide-border/40">
                     {notifications.map((n: any) => (
                       <div key={n.id} className={cn(

@@ -1,0 +1,2716 @@
+{
+  "numTotalTestSuites": 78,
+  "numPassedTestSuites": 78,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 199,
+  "numPassedTests": 199,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1791125377436,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Auth Routes - Change Password"
+          ],
+          "fullName": "Auth Routes - Change Password should hash the new password before saving",
+          "status": "passed",
+          "title": "should hash the new password before saving",
+          "duration": 689.4124000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Auth Routes - Registration notifications"
+          ],
+          "fullName": "Auth Routes - Registration notifications creates an admin notification after a new registration",
+          "status": "passed",
+          "title": "creates an admin notification after a new registration",
+          "duration": 160.89210000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125570504,
+      "endTime": 1791125571354.892,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/auth.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "SMTP configuration"
+          ],
+          "fullName": "SMTP configuration reads Gmail settings lazily after module import",
+          "status": "passed",
+          "title": "reads Gmail settings lazily after module import",
+          "duration": 8.459700000000112,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "SMTP configuration"
+          ],
+          "fullName": "SMTP configuration uses port 465 as secure transport automatically",
+          "status": "passed",
+          "title": "uses port 465 as secure transport automatically",
+          "duration": 1.2805000000000746,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125616190,
+      "endTime": 1791125616200.2805,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/email-configuration.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Password reset flow"
+          ],
+          "fullName": "Password reset flow stores only a token hash and queues the raw token for the email",
+          "status": "passed",
+          "title": "stores only a token hash and queues the raw token for the email",
+          "duration": 83.48420000000033,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Password reset flow"
+          ],
+          "fullName": "Password reset flow does not reveal whether an email exists",
+          "status": "passed",
+          "title": "does not reveal whether an email exists",
+          "duration": 22.198300000000017,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Password reset flow"
+          ],
+          "fullName": "Password reset flow accepts a valid token, hashes the password and invalidates the token",
+          "status": "passed",
+          "title": "accepts a valid token, hashes the password and invalidates the token",
+          "duration": 304.02049999999963,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125577023,
+      "endTime": 1791125577433.0205,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/password-reset.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "socket session validation"
+          ],
+          "fullName": "socket session validation rejects an old session after password change",
+          "status": "passed",
+          "title": "rejects an old session after password change",
+          "duration": 4.674400000000105,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "socket session validation"
+          ],
+          "fullName": "socket session validation rejects removed sessions",
+          "status": "passed",
+          "title": "rejects removed sessions",
+          "duration": 1.008100000000013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "socket session validation"
+          ],
+          "fullName": "socket session validation rejects expired sessions",
+          "status": "passed",
+          "title": "rejects expired sessions",
+          "duration": 0.7795000000000982,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "socket session validation"
+          ],
+          "fullName": "socket session validation validates the reloaded session instead of a stale object",
+          "status": "passed",
+          "title": "validates the reloaded session instead of a stale object",
+          "duration": 0.6983999999999924,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125620554,
+      "endTime": 1791125620561.6985,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/socket-session.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "User parent data persistence"
+          ],
+          "fullName": "User parent data persistence persists parent fields on create and update",
+          "status": "passed",
+          "title": "persists parent fields on create and update",
+          "duration": 646.7580999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125566852,
+      "endTime": 1791125567498.758,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/storage-user-persistence.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "preview counts exactly the eligible archive candidates",
+          "status": "passed",
+          "title": "preview counts exactly the eligible archive candidates",
+          "duration": 1359.1183,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "invalid promotion items are rejected before changing enrollment",
+          "status": "passed",
+          "title": "invalid promotion items are rejected before changing enrollment",
+          "duration": 539.4552000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "quiz deletion and its audit log roll back together on a log failure",
+          "status": "passed",
+          "title": "quiz deletion and its audit log roll back together on a log failure",
+          "duration": 2253.6817,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "rolls quizzes and results back if result archiving fails",
+          "status": "passed",
+          "title": "rolls quizzes and results back if result archiving fails",
+          "duration": 1204.3132999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "rolls data back if the archive audit log fails",
+          "status": "passed",
+          "title": "rolls data back if the archive audit log fails",
+          "duration": 1929.827299999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "archives eligible data once and leaves historical or already archived quizzes unchanged",
+          "status": "passed",
+          "title": "archives eligible data once and leaves historical or already archived quizzes unchanged",
+          "duration": 1862.5221000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125501112,
+      "endTime": 1791125510262.5222,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/api/admin-archive-atomic.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Admin people audit: isolated current-behavior evidence"
+          ],
+          "fullName": "Admin people audit: isolated current-behavior evidence production serializer strips class detail student and nested teacher secrets",
+          "status": "passed",
+          "title": "production serializer strips class detail student and nested teacher secrets",
+          "duration": 58.73999999999978,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin people audit: isolated current-behavior evidence"
+          ],
+          "fullName": "Admin people audit: isolated current-behavior evidence production serializer strips assigned teacher class-student read secrets",
+          "status": "passed",
+          "title": "production serializer strips assigned teacher class-student read secrets",
+          "duration": 31.38929999999982,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin people audit: isolated current-behavior evidence"
+          ],
+          "fullName": "Admin people audit: isolated current-behavior evidence production serializer strips guardian-management nested student secrets",
+          "status": "passed",
+          "title": "production serializer strips guardian-management nested student secrets",
+          "duration": 32.06680000000051,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin people audit: isolated current-behavior evidence"
+          ],
+          "fullName": "Admin people audit: isolated current-behavior evidence teacher create persists selected courses and classes",
+          "status": "passed",
+          "title": "teacher create persists selected courses and classes",
+          "duration": 861.1886000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin people audit: isolated current-behavior evidence"
+          ],
+          "fullName": "Admin people audit: isolated current-behavior evidence invalid teacher assignment rejects the request without creating an account",
+          "status": "passed",
+          "title": "invalid teacher assignment rejects the request without creating an account",
+          "duration": 24.728799999999865,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin people audit: isolated current-behavior evidence"
+          ],
+          "fullName": "Admin people audit: isolated current-behavior evidence class course assignment rejects a student as teacher without creating an assignment",
+          "status": "passed",
+          "title": "class course assignment rejects a student as teacher without creating an assignment",
+          "duration": 30.72270000000026,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin people audit: isolated current-behavior evidence"
+          ],
+          "fullName": "Admin people audit: isolated current-behavior evidence responsible teacher rejects a student without modifying the class",
+          "status": "passed",
+          "title": "responsible teacher rejects a student without modifying the class",
+          "duration": 35.4424999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin people audit: isolated current-behavior evidence"
+          ],
+          "fullName": "Admin people audit: isolated current-behavior evidence invalid course IDs return a validation error and unknown courses return not found",
+          "status": "passed",
+          "title": "invalid course IDs return a validation error and unknown courses return not found",
+          "duration": 53.664200000000164,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin people audit: isolated current-behavior evidence"
+          ],
+          "fullName": "Admin people audit: isolated current-behavior evidence class enrollment rejects a full class without moving the student",
+          "status": "passed",
+          "title": "class enrollment rejects a full class without moving the student",
+          "duration": 555.9557000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin people audit: isolated current-behavior evidence"
+          ],
+          "fullName": "Admin people audit: isolated current-behavior evidence non-admin roles cannot use people mutation APIs",
+          "status": "passed",
+          "title": "non-admin roles cannot use people mutation APIs",
+          "duration": 38.693599999999606,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin people audit: isolated current-behavior evidence"
+          ],
+          "fullName": "Admin people audit: isolated current-behavior evidence removing responsible teacher revokes legacy access when no course assignment remains",
+          "status": "passed",
+          "title": "removing responsible teacher revokes legacy access when no course assignment remains",
+          "duration": 235.64210000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin people audit: isolated current-behavior evidence"
+          ],
+          "fullName": "Admin people audit: isolated current-behavior evidence new responsible teacher creation does not add a duplicate general class relation",
+          "status": "passed",
+          "title": "new responsible teacher creation does not add a duplicate general class relation",
+          "duration": 172.8090000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin people audit: isolated current-behavior evidence"
+          ],
+          "fullName": "Admin people audit: isolated current-behavior evidence changing responsible teacher keeps independent courses and unrelated secondary teachers",
+          "status": "passed",
+          "title": "changing responsible teacher keeps independent courses and unrelated secondary teachers",
+          "duration": 2833.6493999999993,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125552994,
+      "endTime": 1791125557960.6494,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/api/admin-audit-people.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Admin audit: quiz API current behavior"
+          ],
+          "fullName": "Admin audit: quiz API current behavior admin ordinary quiz list omits teacher exams while admin list includes them",
+          "status": "passed",
+          "title": "admin ordinary quiz list omits teacher exams while admin list includes them",
+          "duration": 75.83199999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin audit: quiz API current behavior"
+          ],
+          "fullName": "Admin audit: quiz API current behavior rejects an answer that is absent from selectable options",
+          "status": "passed",
+          "title": "rejects an answer that is absent from selectable options",
+          "duration": 51.05229999999983,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin audit: quiz API current behavior"
+          ],
+          "fullName": "Admin audit: quiz API current behavior rejects replacing all questions in a published exam with an empty list",
+          "status": "passed",
+          "title": "rejects replacing all questions in a published exam with an empty list",
+          "duration": 21.92579999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin audit: quiz API current behavior"
+          ],
+          "fullName": "Admin audit: quiz API current behavior quiz deletion passes actor and reason to the atomic audit operation",
+          "status": "passed",
+          "title": "quiz deletion passes actor and reason to the atomic audit operation",
+          "duration": 23.566100000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin audit: quiz API current behavior"
+          ],
+          "fullName": "Admin audit: quiz API current behavior rejects invalid options \"A\"",
+          "status": "passed",
+          "title": "rejects invalid options \"A\"",
+          "duration": 21.82679999999982,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin audit: quiz API current behavior"
+          ],
+          "fullName": "Admin audit: quiz API current behavior rejects invalid options \"A\"",
+          "status": "passed",
+          "title": "rejects invalid options \"A\"",
+          "duration": 19.36850000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin audit: quiz API current behavior"
+          ],
+          "fullName": "Admin audit: quiz API current behavior rejects invalid options \"A\"",
+          "status": "passed",
+          "title": "rejects invalid options \"A\"",
+          "duration": 21.354100000000017,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin audit: quiz API current behavior"
+          ],
+          "fullName": "Admin audit: quiz API current behavior rejects missing deletion reason and preserves the quiz on an audit failure",
+          "status": "passed",
+          "title": "rejects missing deletion reason and preserves the quiz on an audit failure",
+          "duration": 57.67610000000013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin audit: quiz API current behavior"
+          ],
+          "fullName": "Admin audit: quiz API current behavior rejects published creation without questions on /quizzes",
+          "status": "passed",
+          "title": "rejects published creation without questions on /quizzes",
+          "duration": 32.64649999999983,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin audit: quiz API current behavior"
+          ],
+          "fullName": "Admin audit: quiz API current behavior rejects published creation without questions on /surveys",
+          "status": "passed",
+          "title": "rejects published creation without questions on /surveys",
+          "duration": 34.14080000000013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin audit: quiz API current behavior"
+          ],
+          "fullName": "Admin audit: quiz API current behavior protects a published survey against empty replacement",
+          "status": "passed",
+          "title": "protects a published survey against empty replacement",
+          "duration": 19.044600000000173,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin audit: quiz API current behavior"
+          ],
+          "fullName": "Admin audit: quiz API current behavior rejects an empty publication through PATCH on /quizzes",
+          "status": "passed",
+          "title": "rejects an empty publication through PATCH on /quizzes",
+          "duration": 19.290300000000116,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin audit: quiz API current behavior"
+          ],
+          "fullName": "Admin audit: quiz API current behavior rejects an empty publication through PATCH on /surveys",
+          "status": "passed",
+          "title": "rejects an empty publication through PATCH on /surveys",
+          "duration": 19.464400000000296,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin audit: quiz API current behavior"
+          ],
+          "fullName": "Admin audit: quiz API current behavior rejects duplicate survey options and permits clearing draft questions",
+          "status": "passed",
+          "title": "rejects duplicate survey options and permits clearing draft questions",
+          "duration": 38.767199999999775,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin audit: quiz API current behavior"
+          ],
+          "fullName": "Admin audit: quiz API current behavior dashboard exam count includes survey records",
+          "status": "passed",
+          "title": "dashboard exam count includes survey records",
+          "duration": 20.917499999999563,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125573949,
+      "endTime": 1791125574427.9175,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/api/admin-audit-quizzes.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "AI SSRF boundaries"
+          ],
+          "fullName": "AI SSRF boundaries rejects private endpoint https://[::1]/",
+          "status": "passed",
+          "title": "rejects private endpoint https://[::1]/",
+          "duration": 155.47170000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "AI SSRF boundaries"
+          ],
+          "fullName": "AI SSRF boundaries rejects private endpoint https://[fc01::1]/",
+          "status": "passed",
+          "title": "rejects private endpoint https://[fc01::1]/",
+          "duration": 24.797300000000178,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "AI SSRF boundaries"
+          ],
+          "fullName": "AI SSRF boundaries rejects private endpoint https://169.254.169.254/",
+          "status": "passed",
+          "title": "rejects private endpoint https://169.254.169.254/",
+          "duration": 26.353299999999763,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "AI SSRF boundaries"
+          ],
+          "fullName": "AI SSRF boundaries rejects private endpoint https://localhost./",
+          "status": "passed",
+          "title": "rejects private endpoint https://localhost./",
+          "duration": 35.360999999999876,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "AI SSRF boundaries"
+          ],
+          "fullName": "AI SSRF boundaries rejects private endpoint https://[::ffff:127.0.0.1]/",
+          "status": "passed",
+          "title": "rejects private endpoint https://[::ffff:127.0.0.1]/",
+          "duration": 34.221000000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125591907,
+      "endTime": 1791125592184.221,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/api/ai-security.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "student announcement audience boundary"
+          ],
+          "fullName": "student announcement audience boundary does not expose a same-class parent notice while preserving student and all audiences",
+          "status": "passed",
+          "title": "does not expose a same-class parent notice while preserving student and all audiences",
+          "duration": 69.50530000000026,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125608648,
+      "endTime": 1791125608717.5054,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/api/announcement-audience.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "rejects creation and transfer into a full class without partial user updates",
+          "status": "passed",
+          "title": "rejects creation and transfer into a full class without partial user updates",
+          "duration": 1044.4436,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "counts active students only and checks reactivation",
+          "status": "passed",
+          "title": "counts active students only and checks reactivation",
+          "duration": 1594.9778,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "checks conversion into a student before removing existing teacher relationships",
+          "status": "passed",
+          "title": "checks conversion into a student before removing existing teacher relationships",
+          "duration": 1544.1356999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "allows metadata edits and same-class assignment for existing students in a legacy overfull class",
+          "status": "passed",
+          "title": "allows metadata edits and same-class assignment for existing students in a legacy overfull class",
+          "duration": 1880.3469000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "rejects shrinking below active enrollment and allows null unlimited capacity",
+          "status": "passed",
+          "title": "rejects shrinking below active enrollment and allows null unlimited capacity",
+          "duration": 1990.697299999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "checks bulk promotion capacity before moving students or stamping results",
+          "status": "passed",
+          "title": "checks bulk promotion capacity before moving students or stamping results",
+          "duration": 4309.871800000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "bulk promotion does not count inactive students as occupied seats",
+          "status": "passed",
+          "title": "bulk promotion does not count inactive students as occupied seats",
+          "duration": 1498.5902999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "inactive-only promotion adds no seats even when the target is already overfull",
+          "status": "passed",
+          "title": "inactive-only promotion adds no seats even when the target is already overfull",
+          "duration": 2286.0455,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "concurrent creation for the last seat admits exactly one student",
+          "status": "passed",
+          "title": "concurrent creation for the last seat admits exactly one student",
+          "duration": 616.0308000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "rejects invalid capacities and nonexistent classes with stable errors",
+          "status": "passed",
+          "title": "rejects invalid capacities and nonexistent classes with stable errors",
+          "duration": 249.5799999999981,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "direct assignment rejects nonstudents without creating enrollment",
+          "status": "passed",
+          "title": "direct assignment rejects nonstudents without creating enrollment",
+          "duration": 387.22130000000107,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "class creation rejects a nonteacher without writing the class",
+          "status": "passed",
+          "title": "class creation rejects a nonteacher without writing the class",
+          "duration": 643.331299999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "canonical teacher null takes precedence over the legacy teacherId alias",
+          "status": "passed",
+          "title": "canonical teacher null takes precedence over the legacy teacherId alias",
+          "duration": 806.1945000000014,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125511268,
+      "endTime": 1791125530123.1946,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/api/class-capacity.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Atomic content API using disposable Prisma database"
+          ],
+          "fullName": "Atomic content API using disposable Prisma database counts only active assigned students in the publication audience",
+          "status": "passed",
+          "title": "counts only active assigned students in the publication audience",
+          "duration": 2115.928,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Atomic content API using disposable Prisma database"
+          ],
+          "fullName": "Atomic content API using disposable Prisma database saves and retries the same UUID without duplicating content",
+          "status": "passed",
+          "title": "saves and retries the same UUID without duplicating content",
+          "duration": 2095.7600999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Atomic content API using disposable Prisma database"
+          ],
+          "fullName": "Atomic content API using disposable Prisma database rolls metadata and creation back when a foreign question ID is sent",
+          "status": "passed",
+          "title": "rolls metadata and creation back when a foreign question ID is sent",
+          "duration": 1657.1959000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Atomic content API using disposable Prisma database"
+          ],
+          "fullName": "Atomic content API using disposable Prisma database rejects question changes after participation and rolls metadata back",
+          "status": "passed",
+          "title": "rejects question changes after participation and rolls metadata back",
+          "duration": 992.4519,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Atomic content API using disposable Prisma database"
+          ],
+          "fullName": "Atomic content API using disposable Prisma database enforces ownership and teacher class assignment",
+          "status": "passed",
+          "title": "enforces ownership and teacher class assignment",
+          "duration": 1029.8793000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Atomic content API using disposable Prisma database"
+          ],
+          "fullName": "Atomic content API using disposable Prisma database validates exam answers and preserves open text survey questions",
+          "status": "passed",
+          "title": "validates exam answers and preserves open text survey questions",
+          "duration": 482.82700000000114,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Atomic content API using disposable Prisma database"
+          ],
+          "fullName": "Atomic content API using disposable Prisma database rejects duplicate selectable options without saving content",
+          "status": "passed",
+          "title": "rejects duplicate selectable options without saving content",
+          "duration": 22.629900000001726,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Atomic content API using disposable Prisma database"
+          ],
+          "fullName": "Atomic content API using disposable Prisma database rejects whitespace-equivalent selectable options in atomic exam saves",
+          "status": "passed",
+          "title": "rejects whitespace-equivalent selectable options in atomic exam saves",
+          "duration": 22.588999999999942,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Atomic content API using disposable Prisma database"
+          ],
+          "fullName": "Atomic content API using disposable Prisma database rejects whitespace-equivalent selectable options in atomic survey saves",
+          "status": "passed",
+          "title": "rejects whitespace-equivalent selectable options in atomic survey saves",
+          "duration": 22.285600000001068,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Atomic content API using disposable Prisma database"
+          ],
+          "fullName": "Atomic content API using disposable Prisma database clears metadata and keeps unchanged question IDs on response-lost retry after participation",
+          "status": "passed",
+          "title": "clears metadata and keeps unchanged question IDs on response-lost retry after participation",
+          "duration": 1807.7126000000007,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Atomic content API using disposable Prisma database"
+          ],
+          "fullName": "Atomic content API using disposable Prisma database does not report committed content as failed when publication notifications fail",
+          "status": "passed",
+          "title": "does not report committed content as failed when publication notifications fail",
+          "duration": 449.03149999999914,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Atomic content API using disposable Prisma database"
+          ],
+          "fullName": "Atomic content API using disposable Prisma database preserves existing legacy content and question IDs while requiring UUID for creation",
+          "status": "passed",
+          "title": "preserves existing legacy content and question IDs while requiring UUID for creation",
+          "duration": 1313.5755000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Atomic content API using disposable Prisma database"
+          ],
+          "fullName": "Atomic content API using disposable Prisma database rolls settings and question replacement back after an injected database write failure",
+          "status": "passed",
+          "title": "rolls settings and question replacement back after an injected database write failure",
+          "duration": 1030.7382000000016,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125534166,
+      "endTime": 1791125547211.7383,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/api/content-save.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Email Queue and Outbox Integration Tests"
+          ],
+          "fullName": "Email Queue and Outbox Integration Tests enqueues an email into the database with pending status",
+          "status": "passed",
+          "title": "enqueues an email into the database with pending status",
+          "duration": 270.84719999999993,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Email Queue and Outbox Integration Tests"
+          ],
+          "fullName": "Email Queue and Outbox Integration Tests retrieves email logs with stats and filtering",
+          "status": "passed",
+          "title": "retrieves email logs with stats and filtering",
+          "duration": 10.692399999999907,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Email Queue and Outbox Integration Tests"
+          ],
+          "fullName": "Email Queue and Outbox Integration Tests updates email status to failed when delivery fails",
+          "status": "passed",
+          "title": "updates email status to failed when delivery fails",
+          "duration": 525.5434,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Email Queue and Outbox Integration Tests"
+          ],
+          "fullName": "Email Queue and Outbox Integration Tests resets email status to pending upon retry request",
+          "status": "passed",
+          "title": "resets email status to pending upon retry request",
+          "duration": 542.9398999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Email Queue and Outbox Integration Tests"
+          ],
+          "fullName": "Email Queue and Outbox Integration Tests sendResetPasswordEmail pushes a password reset email into the queue",
+          "status": "passed",
+          "title": "sendResetPasswordEmail pushes a password reset email into the queue",
+          "duration": 409.7446,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Email Queue and Outbox Integration Tests"
+          ],
+          "fullName": "Email Queue and Outbox Integration Tests retrieves system logs accurately",
+          "status": "passed",
+          "title": "retrieves system logs accurately",
+          "duration": 548.0736000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Email Queue and Outbox Integration Tests"
+          ],
+          "fullName": "Email Queue and Outbox Integration Tests deletes an email log successfully",
+          "status": "passed",
+          "title": "deletes an email log successfully",
+          "duration": 598.2307000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125562950,
+      "endTime": 1791125565858.2307,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/api/email-queue.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Parent API"
+          ],
+          "fullName": "Parent API returns only students linked to the signed-in parent",
+          "status": "passed",
+          "title": "returns only students linked to the signed-in parent",
+          "duration": 64.63549999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Parent API"
+          ],
+          "fullName": "Parent API blocks a parent from opening an unlinked student overview",
+          "status": "passed",
+          "title": "blocks a parent from opening an unlinked student overview",
+          "duration": 20.64720000000034,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Parent API"
+          ],
+          "fullName": "Parent API blocks a parent from opening an unlinked exam result detail",
+          "status": "passed",
+          "title": "blocks a parent from opening an unlinked exam result detail",
+          "duration": 25.563100000000304,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Parent API"
+          ],
+          "fullName": "Parent API creates a parent account with a hashed password and links the student",
+          "status": "passed",
+          "title": "creates a parent account with a hashed password and links the student",
+          "duration": 215.0320999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Parent API"
+          ],
+          "fullName": "Parent API lets an admin replace a parent student list after validating every student",
+          "status": "passed",
+          "title": "lets an admin replace a parent student list after validating every student",
+          "duration": 26.160399999999754,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125582791,
+      "endTime": 1791125583144.1604,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/api/parent.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Admin password reset requests API"
+          ],
+          "fullName": "Admin password reset requests API lists tracked requests without exposing token values",
+          "status": "passed",
+          "title": "lists tracked requests without exposing token values",
+          "duration": 58.51469999999972,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin password reset requests API"
+          ],
+          "fullName": "Admin password reset requests API lets an admin initiate a reset for an existing user",
+          "status": "passed",
+          "title": "lets an admin initiate a reset for an existing user",
+          "duration": 63.8744999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin password reset requests API"
+          ],
+          "fullName": "Admin password reset requests API never returns token-bearing email bodies in the monitoring API",
+          "status": "passed",
+          "title": "never returns token-bearing email bodies in the monitoring API",
+          "duration": 20.022099999999682,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125601095,
+      "endTime": 1791125601238.0222,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/api/password-reset-admin.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Quizzes API Integration Tests",
+            "GET /api/quizzes/:id"
+          ],
+          "fullName": "Quizzes API Integration Tests GET /api/quizzes/:id should allow teacher to view their own quiz",
+          "status": "passed",
+          "title": "should allow teacher to view their own quiz",
+          "duration": 55.04399999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Quizzes API Integration Tests",
+            "GET /api/quizzes/:id"
+          ],
+          "fullName": "Quizzes API Integration Tests GET /api/quizzes/:id should block teacher from viewing another teacher's quiz (IDOR test)",
+          "status": "passed",
+          "title": "should block teacher from viewing another teacher's quiz (IDOR test)",
+          "duration": 21.79880000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Quizzes API Integration Tests",
+            "GET /api/quizzes/:id"
+          ],
+          "fullName": "Quizzes API Integration Tests GET /api/quizzes/:id should allow admin to view any quiz",
+          "status": "passed",
+          "title": "should allow admin to view any quiz",
+          "duration": 25.372400000000198,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Quizzes API Integration Tests",
+            "POST /api/quizzes"
+          ],
+          "fullName": "Quizzes API Integration Tests POST /api/quizzes should return 400 for invalid data (zod validation)",
+          "status": "passed",
+          "title": "should return 400 for invalid data (zod validation)",
+          "duration": 91.64260000000013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Quizzes API Integration Tests",
+            "POST /api/quizzes"
+          ],
+          "fullName": "Quizzes API Integration Tests POST /api/quizzes should create a quiz successfully",
+          "status": "passed",
+          "title": "should create a quiz successfully",
+          "duration": 37.890899999999874,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Quizzes API Integration Tests",
+            "PATCH /api/quizzes/:id"
+          ],
+          "fullName": "Quizzes API Integration Tests PATCH /api/quizzes/:id should block teacher from updating another teacher's quiz",
+          "status": "passed",
+          "title": "should block teacher from updating another teacher's quiz",
+          "duration": 21.080200000000332,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Quizzes API Integration Tests",
+            "PATCH /api/quizzes/:id"
+          ],
+          "fullName": "Quizzes API Integration Tests PATCH /api/quizzes/:id should reject survey payloads on the exam endpoint",
+          "status": "passed",
+          "title": "should reject survey payloads on the exam endpoint",
+          "duration": 23.185500000000047,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Quizzes API Integration Tests",
+            "PATCH /api/quizzes/:id"
+          ],
+          "fullName": "Quizzes API Integration Tests PATCH /api/quizzes/:id should update quiz successfully if owner",
+          "status": "passed",
+          "title": "should update quiz successfully if owner",
+          "duration": 24.280299999999897,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125585747,
+      "endTime": 1791125586052.2803,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/api/quizzes.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite preserves guardian links on profile and reset-token updates",
+          "status": "passed",
+          "title": "preserves guardian links on profile and reset-token updates",
+          "duration": 895.9323999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite preserves teacher assignments when role is omitted",
+          "status": "passed",
+          "title": "preserves teacher assignments when role is omitted",
+          "duration": 289.40359999999964,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite blocks parent access through generic result, class and quiz routes",
+          "status": "passed",
+          "title": "blocks parent access through generic result, class and quiz routes",
+          "duration": 149.28299999999945,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite filters parent announcements to explicit parent/all audiences",
+          "status": "passed",
+          "title": "filters parent announcements to explicit parent/all audiences",
+          "duration": 329.1414999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite blocks moving a student from an unauthorized source class",
+          "status": "passed",
+          "title": "blocks moving a student from an unauthorized source class",
+          "duration": 76.86509999999907,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite blocks removing a student who is not in the URL class",
+          "status": "passed",
+          "title": "blocks removing a student who is not in the URL class",
+          "duration": 36.91530000000057,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite hides correctness counters while exam is in progress",
+          "status": "passed",
+          "title": "hides correctness counters while exam is in progress",
+          "duration": 258.39110000000073,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite protects student profile from alternative PATCH route",
+          "status": "passed",
+          "title": "protects student profile from alternative PATCH route",
+          "duration": 38.634900000000926,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite requires current password for self password changes",
+          "status": "passed",
+          "title": "requires current password for self password changes",
+          "duration": 39.44030000000021,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite preserves question IDs on draft resynchronization",
+          "status": "passed",
+          "title": "preserves question IDs on draft resynchronization",
+          "duration": 932.7385000000013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite rejects changing questions after exam participation",
+          "status": "passed",
+          "title": "rejects changing questions after exam participation",
+          "duration": 9.221700000000055,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite accepts unchanged participated questions when only metadata is saved",
+          "status": "passed",
+          "title": "accepts unchanged participated questions when only metadata is saved",
+          "duration": 551.9886000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite saves uploaded image paths in exam questions",
+          "status": "passed",
+          "title": "saves uploaded image paths in exam questions",
+          "duration": 1198.4135999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite saves uploaded image paths in survey questions",
+          "status": "passed",
+          "title": "saves uploaded image paths in survey questions",
+          "duration": 454.2498999999989,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite retains question images in exam payload",
+          "status": "passed",
+          "title": "retains question images in exam payload",
+          "duration": 27.614199999999983,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite reuses one result for concurrent start requests",
+          "status": "passed",
+          "title": "reuses one result for concurrent start requests",
+          "duration": 740.7794999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite merges concurrent answer saves without dropping answers",
+          "status": "passed",
+          "title": "merges concurrent answer saves without dropping answers",
+          "duration": 1303.4611999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite makes repeated submission idempotent",
+          "status": "passed",
+          "title": "makes repeated submission idempotent",
+          "duration": 714.060300000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite renumbers promoted students without collisions in target class",
+          "status": "passed",
+          "title": "renumbers promoted students without collisions in target class",
+          "duration": 1741.9413999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Security regressions with isolated SQLite"
+          ],
+          "fullName": "Security regressions with isolated SQLite claims an email once across simultaneous workers",
+          "status": "passed",
+          "title": "claims an email once across simultaneous workers",
+          "duration": 495.5877999999975,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125487513,
+      "endTime": 1791125497801.588,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/api/security-regressions.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Student Exam Security & Timelimit Integration Tests"
+          ],
+          "fullName": "Student Exam Security & Timelimit Integration Tests should accept answer when submitted within time limit",
+          "status": "passed",
+          "title": "should accept answer when submitted within time limit",
+          "duration": 104.9976999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Student Exam Security & Timelimit Integration Tests"
+          ],
+          "fullName": "Student Exam Security & Timelimit Integration Tests should reject answer with 409 Conflict when exam time has expired",
+          "status": "passed",
+          "title": "should reject answer with 409 Conflict when exam time has expired",
+          "duration": 29.686499999999796,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Student Exam Security & Timelimit Integration Tests"
+          ],
+          "fullName": "Student Exam Security & Timelimit Integration Tests should block IDOR attempt to submit answer to another student session",
+          "status": "passed",
+          "title": "should block IDOR attempt to submit answer to another student session",
+          "duration": 22.494300000000294,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Student Exam Security & Timelimit Integration Tests"
+          ],
+          "fullName": "Student Exam Security & Timelimit Integration Tests should block answers to already completed exams with 400 Bad Request",
+          "status": "passed",
+          "title": "should block answers to already completed exams with 400 Bad Request",
+          "duration": 25.65159999999969,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125595303,
+      "endTime": 1791125595487.6516,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/api/student-exam.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Survey API"
+          ],
+          "fullName": "Survey API creates surveys through the dedicated survey endpoint with a fixed content type",
+          "status": "passed",
+          "title": "creates surveys through the dedicated survey endpoint with a fixed content type",
+          "duration": 117.47640000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Survey API"
+          ],
+          "fullName": "Survey API lists only surveys assigned to the student class",
+          "status": "passed",
+          "title": "lists only surveys assigned to the student class",
+          "duration": 32.56140000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Survey API"
+          ],
+          "fullName": "Survey API blocks a student from opening a survey assigned to another class",
+          "status": "passed",
+          "title": "blocks a student from opening a survey assigned to another class",
+          "duration": 34.20450000000028,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Survey API"
+          ],
+          "fullName": "Survey API stores survey answers without score or correct answer fields",
+          "status": "passed",
+          "title": "stores survey answers without score or correct answer fields",
+          "duration": 35.43289999999979,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Survey API"
+          ],
+          "fullName": "Survey API rejects duplicate submissions",
+          "status": "passed",
+          "title": "rejects duplicate submissions",
+          "duration": 42.977499999999964,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Survey API"
+          ],
+          "fullName": "Survey API returns aggregated results to admin",
+          "status": "passed",
+          "title": "returns aggregated results to admin",
+          "duration": 32.53600000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125588597,
+      "endTime": 1791125588892.536,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/api/survey.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Question image upload API"
+          ],
+          "fullName": "Question image upload API accepts PNG and stores an optimized WEBP in the served upload directory",
+          "status": "passed",
+          "title": "accepts PNG and stores an optimized WEBP in the served upload directory",
+          "duration": 317.4335000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Question image upload API"
+          ],
+          "fullName": "Question image upload API rejects unsupported files",
+          "status": "passed",
+          "title": "rejects unsupported files",
+          "duration": 18.710700000000088,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125603819,
+      "endTime": 1791125604155.7107,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/api/upload.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Users API Integration Tests",
+            "GET /api/users"
+          ],
+          "fullName": "Users API Integration Tests GET /api/users should return all users for admin",
+          "status": "passed",
+          "title": "should return all users for admin",
+          "duration": 66.09569999999985,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Users API Integration Tests",
+            "GET /api/users"
+          ],
+          "fullName": "Users API Integration Tests GET /api/users should return teacher and their students for teacher",
+          "status": "passed",
+          "title": "should return teacher and their students for teacher",
+          "duration": 24.893400000000383,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Users API Integration Tests",
+            "GET /api/users"
+          ],
+          "fullName": "Users API Integration Tests GET /api/users should return 403 for student",
+          "status": "passed",
+          "title": "should return 403 for student",
+          "duration": 29.78460000000041,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Users API Integration Tests",
+            "PATCH /api/users/:id"
+          ],
+          "fullName": "Users API Integration Tests PATCH /api/users/:id persists teacher course and class assignments, including explicit empty lists",
+          "status": "passed",
+          "title": "persists teacher course and class assignments, including explicit empty lists",
+          "duration": 81.85480000000007,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Users API Integration Tests",
+            "PATCH /api/users/:id"
+          ],
+          "fullName": "Users API Integration Tests PATCH /api/users/:id requires school management to update student profiles",
+          "status": "passed",
+          "title": "requires school management to update student profiles",
+          "duration": 22.319299999999657,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Users API Integration Tests",
+            "PATCH /api/users/:id"
+          ],
+          "fullName": "Users API Integration Tests PATCH /api/users/:id should block student from updating another user",
+          "status": "passed",
+          "title": "should block student from updating another user",
+          "duration": 20.587299999999686,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Users API Integration Tests",
+            "POST /api/users"
+          ],
+          "fullName": "Users API Integration Tests POST /api/users allows an admin to create a parent role account",
+          "status": "passed",
+          "title": "allows an admin to create a parent role account",
+          "duration": 196.30249999999978,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Users API Integration Tests"
+          ],
+          "fullName": "Users API Integration Tests soft-deletes a student without physically deleting the user",
+          "status": "passed",
+          "title": "soft-deletes a student without physically deleting the user",
+          "duration": 21.317199999999957,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin student and parent data updates"
+          ],
+          "fullName": "Admin student and parent data updates passes parent fields through the API when an admin updates a student",
+          "status": "passed",
+          "title": "passes parent fields through the API when an admin updates a student",
+          "duration": 26.691199999999753,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125579904,
+      "endTime": 1791125580397.6912,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/api/users.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Auth Middleware",
+            "requireAuth"
+          ],
+          "fullName": "Auth Middleware requireAuth should return 401 if session.userId is not present",
+          "status": "passed",
+          "title": "should return 401 if session.userId is not present",
+          "duration": 8.090999999999894,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Auth Middleware",
+            "requireAuth"
+          ],
+          "fullName": "Auth Middleware requireAuth should return 401 if user is not found in storage",
+          "status": "passed",
+          "title": "should return 401 if user is not found in storage",
+          "duration": 1.5217000000000098,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Auth Middleware",
+            "requireAuth"
+          ],
+          "fullName": "Auth Middleware requireAuth should populate req.user and call next if user exists",
+          "status": "passed",
+          "title": "should populate req.user and call next if user exists",
+          "duration": 1.0854999999999109,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Auth Middleware",
+            "requireAuth"
+          ],
+          "fullName": "Auth Middleware requireAuth should handle internal errors gracefully",
+          "status": "passed",
+          "title": "should handle internal errors gracefully",
+          "duration": 18.47490000000016,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Auth Middleware"
+          ],
+          "fullName": "Auth Middleware rejects sessions issued before password change",
+          "status": "passed",
+          "title": "rejects sessions issued before password change",
+          "duration": 0.8399999999999181,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Auth Middleware",
+            "requireRole"
+          ],
+          "fullName": "Auth Middleware requireRole should return 403 if req.user is undefined",
+          "status": "passed",
+          "title": "should return 403 if req.user is undefined",
+          "duration": 1.0579999999999927,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Auth Middleware",
+            "requireRole"
+          ],
+          "fullName": "Auth Middleware requireRole should return 403 if user role is not in allowed roles",
+          "status": "passed",
+          "title": "should return 403 if user role is not in allowed roles",
+          "duration": 1.7217000000000553,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Auth Middleware",
+            "requireRole"
+          ],
+          "fullName": "Auth Middleware requireRole should call next if user role is in allowed roles",
+          "status": "passed",
+          "title": "should call next if user role is in allowed roles",
+          "duration": 0.9488999999998668,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125609957,
+      "endTime": 1791125609991.949,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/middleware/auth.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "retentionCutoffs"
+          ],
+          "fullName": "retentionCutoffs her kayıt türü için yapılandırılmış gün kadar geriye gider",
+          "status": "passed",
+          "title": "her kayıt türü için yapılandırılmış gün kadar geriye gider",
+          "duration": 7.721199999999953,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125619263,
+      "endTime": 1791125619270.7212,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/services/data-retention.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Password reset request service"
+          ],
+          "fullName": "Password reset request service revokes old requests, stores only a token hash and links the email queue record",
+          "status": "passed",
+          "title": "revokes old requests, stores only a token hash and links the email queue record",
+          "duration": 9.629000000000019,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125613135,
+      "endTime": 1791125613144.629,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/services/password-reset.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "deployment configuration"
+          ],
+          "fullName": "deployment configuration malformed localhost URLs return validation issues instead of throwing",
+          "status": "passed",
+          "title": "malformed localhost URLs return validation issues instead of throwing",
+          "duration": 12.04320000000007,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deployment configuration"
+          ],
+          "fullName": "deployment configuration alt yolu tek biçime getirir ve geçersiz karakterleri reddeder",
+          "status": "passed",
+          "title": "alt yolu tek biçime getirir ve geçersiz karakterleri reddeder",
+          "duration": 1.4011000000000422,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deployment configuration"
+          ],
+          "fullName": "deployment configuration subpath profili için güvenli kurulum çıktıları üretir",
+          "status": "passed",
+          "title": "subpath profili için güvenli kurulum çıktıları üretir",
+          "duration": 2.848799999999983,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deployment configuration"
+          ],
+          "fullName": "deployment configuration localhost profili yerel deneme için kabul edilir ve proxy gerekmediğini yazar",
+          "status": "passed",
+          "title": "localhost profili yerel deneme için kabul edilir ve proxy gerekmediğini yazar",
+          "duration": 1.4646000000000186,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deployment configuration"
+          ],
+          "fullName": "deployment configuration localhost modunda / olmayan alt yol ve uzak adres reddedilir",
+          "status": "passed",
+          "title": "localhost modunda / olmayan alt yol ve uzak adres reddedilir",
+          "duration": 2.064799999999991,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125612189,
+      "endTime": 1791125612209.0647,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/utils/deployment-config.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "runtime deployment change gate"
+          ],
+          "fullName": "runtime deployment change gate is closed by default and only accepts the exact true value",
+          "status": "passed",
+          "title": "is closed by default and only accepts the exact true value",
+          "duration": 3.979699999999866,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125623713,
+      "endTime": 1791125623716.9797,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/utils/deployment-security.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "email worker retries"
+          ],
+          "fullName": "email worker retries attempts a failing message only once per worker pass and retries next pass",
+          "status": "passed",
+          "title": "attempts a failing message only once per worker pass and retries next pass",
+          "duration": 19.25130000000013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125611273,
+      "endTime": 1791125611292.2512,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/utils/email-worker.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Gmail-only email configuration"
+          ],
+          "fullName": "Gmail-only email configuration ignores alternative SMTP host, port and secure settings",
+          "status": "passed",
+          "title": "ignores alternative SMTP host, port and secure settings",
+          "duration": 4.00240000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Gmail-only email configuration"
+          ],
+          "fullName": "Gmail-only email configuration allows only Gmail submission ports 587 and 465",
+          "status": "passed",
+          "title": "allows only Gmail submission ports 587 and 465",
+          "duration": 2.708499999999958,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Gmail-only email configuration"
+          ],
+          "fullName": "Gmail-only email configuration fails explicitly when Gmail credentials are missing",
+          "status": "passed",
+          "title": "fails explicitly when Gmail credentials are missing",
+          "duration": 1.7113999999999123,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125614640,
+      "endTime": 1791125614648.7114,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/utils/email.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "external request transport protection"
+          ],
+          "fullName": "external request transport protection rejects a public hostname resolving to a private address",
+          "status": "passed",
+          "title": "rejects a public hostname resolving to a private address",
+          "duration": 27.96519999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external request transport protection"
+          ],
+          "fullName": "external request transport protection rejects mixed public/private DNS answers",
+          "status": "passed",
+          "title": "rejects mixed public/private DNS answers",
+          "duration": 1.9307000000000016,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external request transport protection"
+          ],
+          "fullName": "external request transport protection pins lookup even if DNS changes after validation",
+          "status": "passed",
+          "title": "pins lookup even if DNS changes after validation",
+          "duration": 74.5175999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external request transport protection"
+          ],
+          "fullName": "external request transport protection does not follow redirects with provider credentials",
+          "status": "passed",
+          "title": "does not follow redirects with provider credentials",
+          "duration": 2.9634000000000924,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external request transport protection"
+          ],
+          "fullName": "external request transport protection handles bodyless HTTP 204 without crashing",
+          "status": "passed",
+          "title": "handles bodyless HTTP 204 without crashing",
+          "duration": 3.225500000000011,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external request transport protection"
+          ],
+          "fullName": "external request transport protection handles bodyless HTTP 205 without crashing",
+          "status": "passed",
+          "title": "handles bodyless HTTP 205 without crashing",
+          "duration": 1.4477999999999156,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external request transport protection"
+          ],
+          "fullName": "external request transport protection blocks non-public address ::1",
+          "status": "passed",
+          "title": "blocks non-public address ::1",
+          "duration": 0.8460000000000036,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external request transport protection"
+          ],
+          "fullName": "external request transport protection blocks non-public address ::ffff:127.0.0.1",
+          "status": "passed",
+          "title": "blocks non-public address ::ffff:127.0.0.1",
+          "duration": 0.5271999999999935,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external request transport protection"
+          ],
+          "fullName": "external request transport protection blocks non-public address fc01::1",
+          "status": "passed",
+          "title": "blocks non-public address fc01::1",
+          "duration": 2.393100000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external request transport protection"
+          ],
+          "fullName": "external request transport protection blocks non-public address fe80::1",
+          "status": "passed",
+          "title": "blocks non-public address fe80::1",
+          "duration": 0.8351000000000113,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external request transport protection"
+          ],
+          "fullName": "external request transport protection blocks non-public address 169.254.169.254",
+          "status": "passed",
+          "title": "blocks non-public address 169.254.169.254",
+          "duration": 0.9216000000001259,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external request transport protection"
+          ],
+          "fullName": "external request transport protection blocks non-public address 100.64.0.1",
+          "status": "passed",
+          "title": "blocks non-public address 100.64.0.1",
+          "duration": 0.4153000000001157,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external request transport protection"
+          ],
+          "fullName": "external request transport protection blocks non-public address 198.18.0.1",
+          "status": "passed",
+          "title": "blocks non-public address 198.18.0.1",
+          "duration": 0.25769999999988613,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external request transport protection"
+          ],
+          "fullName": "external request transport protection allows public address 93.184.216.34",
+          "status": "passed",
+          "title": "allows public address 93.184.216.34",
+          "duration": 0.30349999999998545,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external request transport protection"
+          ],
+          "fullName": "external request transport protection allows public address 2606:4700:4700::1111",
+          "status": "passed",
+          "title": "allows public address 2606:4700:4700::1111",
+          "duration": 0.3464999999998781,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125605219,
+      "endTime": 1791125605341.3464,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/utils/external-request.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "secureJsonReplacer"
+          ],
+          "fullName": "secureJsonReplacer removes credentials and recovery secrets from nested JSON",
+          "status": "passed",
+          "title": "removes credentials and recovery secrets from nested JSON",
+          "duration": 6.61889999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125617080,
+      "endTime": 1791125617086.619,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/utils/json-security.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "notification policy"
+          ],
+          "fullName": "notification policy notifies admins only for teacher quiz actions",
+          "status": "passed",
+          "title": "notifies admins only for teacher quiz actions",
+          "duration": 3.808999999999969,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "notification policy"
+          ],
+          "fullName": "notification policy sends quiz submissions only to the teacher owner",
+          "status": "passed",
+          "title": "sends quiz submissions only to the teacher owner",
+          "duration": 0.6835000000000946,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "notification policy"
+          ],
+          "fullName": "notification policy matches announcement role and class without notifying the creator",
+          "status": "passed",
+          "title": "matches announcement role and class without notifying the creator",
+          "duration": 0.6564999999999372,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "notification policy"
+          ],
+          "fullName": "notification policy allows teachers to target only students in a selected class",
+          "status": "passed",
+          "title": "allows teachers to target only students in a selected class",
+          "duration": 0.6651000000000522,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "notification policy"
+          ],
+          "fullName": "notification policy targets a parent through children's classes rather than the parent's own class",
+          "status": "passed",
+          "title": "targets a parent through children's classes rather than the parent's own class",
+          "duration": 1.3028000000000475,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125617886,
+      "endTime": 1791125617894.3027,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/utils/notification-policy.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "student and guardian quiz scope"
+          ],
+          "fullName": "student and guardian quiz scope includes unassigned published exams only for classless students",
+          "status": "passed",
+          "title": "includes unassigned published exams only for classless students",
+          "duration": 3.4617000000000644,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "student and guardian quiz scope"
+          ],
+          "fullName": "student and guardian quiz scope matches any assigned class and excludes unrelated and classless students",
+          "status": "passed",
+          "title": "matches any assigned class and excludes unrelated and classless students",
+          "duration": 0.6451999999999316,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "student and guardian quiz scope"
+          ],
+          "fullName": "student and guardian quiz scope excludes drafts, archived exams, and surveys regardless of assignments",
+          "status": "passed",
+          "title": "excludes drafts, archived exams, and surveys regardless of assignments",
+          "duration": 0.5448000000000093,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "student and guardian quiz scope"
+          ],
+          "fullName": "student and guardian quiz scope excludes material and unknown content types even in the child's assigned class",
+          "status": "passed",
+          "title": "excludes material and unknown content types even in the child's assigned class",
+          "duration": 0.44060000000001764,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125621459,
+      "endTime": 1791125621464.4407,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/utils/quiz-scope-policy.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "SQLite session store"
+          ],
+          "fullName": "SQLite session store uses WAL to avoid rollback journal writes on every parallel session touch",
+          "status": "passed",
+          "title": "uses WAL to avoid rollback journal writes on every parallel session touch",
+          "duration": 1097.2388,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "SQLite session store"
+          ],
+          "fullName": "SQLite session store preserves session identity/version across concurrent reads and touches then revokes it",
+          "status": "passed",
+          "title": "preserves session identity/version across concurrent reads and touches then revokes it",
+          "duration": 382.83040000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "SQLite session store"
+          ],
+          "fullName": "SQLite session store does not return an expired session",
+          "status": "passed",
+          "title": "does not return an expired session",
+          "duration": 1020.4355,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125558940,
+      "endTime": 1791125561441.4355,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/utils/session-store.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "deploys all migrations into an absent SQLite DB under inherited warn logging and preserves existing data on rerun",
+          "status": "passed",
+          "title": "deploys all migrations into an absent SQLite DB under inherited warn logging and preserves existing data on rerun",
+          "duration": 57215.100699999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125421668,
+      "endTime": 1791125478883.1006,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/utils/setup-migration.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "setup wizard configuration"
+          ],
+          "fullName": "setup wizard configuration creates a production env without persisting the admin password",
+          "status": "passed",
+          "title": "creates a production env without persisting the admin password",
+          "duration": 10.359199999999873,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "setup wizard configuration"
+          ],
+          "fullName": "setup wizard configuration rejects weak passwords and non-Gmail mailboxes",
+          "status": "passed",
+          "title": "rejects weak passwords and non-Gmail mailboxes",
+          "duration": 4.07549999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "setup wizard configuration"
+          ],
+          "fullName": "setup wizard configuration accepts a local demo profile with localhost mode",
+          "status": "passed",
+          "title": "accepts a local demo profile with localhost mode",
+          "duration": 0.8110999999998967,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "setup wizard configuration"
+          ],
+          "fullName": "setup wizard configuration localhost env uses development NODE_ENV and vite origins",
+          "status": "passed",
+          "title": "localhost env uses development NODE_ENV and vite origins",
+          "duration": 1.4792999999999665,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "setup wizard configuration"
+          ],
+          "fullName": "setup wizard configuration corporate env keeps production NODE_ENV",
+          "status": "passed",
+          "title": "corporate env keeps production NODE_ENV",
+          "duration": 0.6795000000001892,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "setup wizard HTTP isolation"
+          ],
+          "fullName": "setup wizard HTTP isolation does not expose the page without the one-time token",
+          "status": "passed",
+          "title": "does not expose the page without the one-time token",
+          "duration": 47.115299999999934,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "setup wizard HTTP isolation"
+          ],
+          "fullName": "setup wizard HTTP isolation exchanges the URL token for an HttpOnly strict cookie",
+          "status": "passed",
+          "title": "exchanges the URL token for an HttpOnly strict cookie",
+          "duration": 24.87180000000035,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "setup wizard HTTP isolation"
+          ],
+          "fullName": "setup wizard HTTP isolation rejects state changes without cookie and CSRF proof",
+          "status": "passed",
+          "title": "rejects state changes without cookie and CSRF proof",
+          "duration": 66.0942,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791125598256,
+      "endTime": 1791125598413.0942,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/server/tests/utils/setup-wizard.test.ts"
+    }
+  ]
+}

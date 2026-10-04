@@ -20,6 +20,7 @@ export interface OfflineQuizSession {
   timerCapturedAt: string;
   cachedAt: string;
   pendingSubmit: boolean;
+  started?: boolean;
   pendingAnswers?: Record<string, string>;
   answerRevisions?: Record<string, number>;
 }
@@ -120,7 +121,7 @@ export function reconcileOfflineSession(server: OfflineQuizSession, cached: Offl
       }
     }
   }
-  return { ...server, answers: { ...server.answers, ...pendingAnswers }, pendingAnswers, answerRevisions, pendingSubmit: Boolean(sameAttempt && cached.pendingSubmit) };
+  return { ...server, answers: { ...server.answers, ...pendingAnswers }, pendingAnswers, answerRevisions, started: Boolean(server.started || (sameAttempt && cached.started)), pendingSubmit: Boolean(sameAttempt && cached.pendingSubmit) };
 }
 
 export function markOfflineSubmit(userId: string, quizId: string, pendingSubmit: boolean) {
@@ -128,12 +129,29 @@ export function markOfflineSubmit(userId: string, quizId: string, pendingSubmit:
   if (session) saveOfflineSession({ ...session, pendingSubmit });
 }
 
-export function saveOfflineQuizList(userId: string, quizzes: any[]) {
-  writeJson(`${LIST_PREFIX}${userId}`, quizzes);
+function displayResults(results: any[]): any[] {
+  const fields = new Set(['id', 'quizId', 'status', 'score']);
+  return results.filter(result => result && typeof result === 'object')
+    .map(result => Object.fromEntries(Object.entries(result).filter(([key]) => fields.has(key))));
 }
 
-export function getOfflineQuizList(userId: string) {
-  return readJson<any[]>(`${LIST_PREFIX}${userId}`) || [];
+export function saveOfflineQuizList(userId: string, quizzes: any[], results?: any[]) {
+  writeJson(`${LIST_PREFIX}${userId}`, { version: 1, quizzes, results: displayResults(results ?? getOfflineQuizResults(userId)) });
+}
+
+export function getOfflineQuizList(userId: string): any[] {
+  const cached = readJson<any>(`${LIST_PREFIX}${userId}`);
+  return Array.isArray(cached) ? cached : Array.isArray(cached?.quizzes) ? cached.quizzes : [];
+}
+
+export function getOfflineQuizResults(userId: string): any[] {
+  const cached = readJson<any>(`${LIST_PREFIX}${userId}`);
+  return Array.isArray(cached?.results) ? displayResults(cached.results) : [];
+}
+
+export function cacheOfflineCompletion(userId: string, quizId: string, resultId: string) {
+  const results = getOfflineQuizResults(userId).filter(result => result.quizId !== quizId);
+  saveOfflineQuizList(userId, getOfflineQuizList(userId), [...results, { id: resultId, quizId, status: 'completed' }]);
 }
 
 export function saveOfflineUser(user: User) {

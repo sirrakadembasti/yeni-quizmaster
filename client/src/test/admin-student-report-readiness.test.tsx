@@ -18,11 +18,11 @@ vi.mock('@/lib/api', () => ({
   parentApi: { getStudentGuardians: async () => ({ guardians: [] }), getParents: async () => ({ parents: [] }) },
 }));
 
-const student = { id: 'student', role: 'student', name: 'Çağrı Işık', email: 'cagri@example.test' };
+const student = { id: 'student-full-unique-identifier', role: 'student', name: 'Çağrı Işık', email: 'cagri@example.test' };
 let client: QueryClient;
 beforeEach(() => {
   vi.clearAllMocks();
-  window.history.replaceState({}, '', '/student/results?studentId=student');
+  window.history.replaceState({}, '', `/student/results?studentId=${student.id}`);
   fixture.options = null; fixture.bytes = null;
   fixture.getUser.mockResolvedValue({ user: student });
   fixture.getUsers.mockResolvedValue({ users: [] });
@@ -61,6 +61,7 @@ it('exports the loaded selected student identity and completed numeric zero rath
   const metadata = document.querySelector('.print-report-meta')!;
   expect(metadata).toHaveTextContent('Çağrı Işık');
   expect(metadata).not.toHaveTextContent('Audit Admin');
+  expect(screen.getByText(student.id)).toHaveClass('break-all');
 });
 
 it('keeps reports disabled and shows an identity error when the selected student cannot be resolved', async () => {

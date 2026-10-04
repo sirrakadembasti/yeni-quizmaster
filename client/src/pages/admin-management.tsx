@@ -435,7 +435,7 @@ const deleteClassMutation = useMutation({
                     <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2 pl-4 w-[30%]">Ders Adı</TableHead>
                     <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2 w-[40%]">Açıklama</TableHead>
                     <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2 text-center">Oluşturulma</TableHead>
-                    <TableHead className="text-right px-4 py-2 font-black text-[10px] text-muted-foreground uppercase tracking-widest">İşlemler</TableHead>
+                    <TableHead className="text-right px-4 py-2 font-black text-[10px] text-muted-foreground uppercase tracking-widest print:hidden">İşlemler</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -460,7 +460,7 @@ const deleteClassMutation = useMutation({
                         <TableCell className="text-center py-2">
                           <span className="text-xs font-bold text-foreground">{new Date(cat.createdAt).toLocaleDateString('tr-TR')}</span>
                         </TableCell>
-                        <TableCell className="text-right px-6">
+                        <TableCell className="text-right px-6 print:hidden">
                           <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
                             <Button aria-label={`${cat.name} dersini düzenle`} variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-indigo-600" onClick={(event) => { categoryDialogOpenerRef.current = event.currentTarget; setEditingCategory(cat); setCategoryName(cat.name); setCategoryDesc(cat.description || ""); setIsEditCategoryMode(true); setIsCategoryDialogOpen(true); }}>
                               <Edit2 className="h-4 w-4" />
@@ -580,7 +580,7 @@ const deleteClassMutation = useMutation({
                       <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2 pl-4">Kullanıcı Bilgileri</TableHead>
                       <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2">Sistem Rolü</TableHead>
                       <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2">İletişim</TableHead>
-                      <TableHead className="text-right px-4 py-2 font-black text-[10px] text-muted-foreground uppercase tracking-widest">İşlemler</TableHead>
+                      <TableHead className="text-right px-4 py-2 font-black text-[10px] text-muted-foreground uppercase tracking-widest print:hidden">İşlemler</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -616,7 +616,7 @@ const deleteClassMutation = useMutation({
                           <TableCell className="text-xs font-medium text-muted-foreground italic">
                             {u.phoneNumber || "No yok"}
                           </TableCell>
-                          <TableCell className="text-right px-6">
+                          <TableCell className="text-right px-6 print:hidden">
                             <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
                               <Button aria-label={`${u.name} kullanıcısını düzenle`} variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-indigo-600" onClick={() => { setSelectedUser(u); setIsEditUserMode(true); setIsUserDialogOpen(true); }}>
                                 <Edit2 className="h-4 w-4" />
@@ -811,8 +811,8 @@ const deleteClassMutation = useMutation({
                   <Select value={resetStatusFilter} onValueChange={value => { resetPages("password-resets"); setResetStatusFilter(value); }}><SelectTrigger aria-label="Şifre talebi durumu" className="md:w-48"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Tüm Durumlar</SelectItem><SelectItem value="pending">Bekleyen</SelectItem><SelectItem value="completed">Tamamlanan</SelectItem><SelectItem value="cancelled">İptal</SelectItem><SelectItem value="expired">Süresi Dolan</SelectItem><SelectItem value="failed">Hatalı</SelectItem></SelectContent></Select>
                 </div>
                 <Card className="overflow-hidden rounded-2xl">
-                  <Table><TableHeader><TableRow><TableHead>Kullanıcı</TableHead><TableHead>Talep Zamanı</TableHead><TableHead>Son Geçerlilik</TableHead><TableHead>Gönderim</TableHead><TableHead>Durum</TableHead><TableHead className="text-right">İşlemler</TableHead></TableRow></TableHeader><TableBody>
-                    {resetRequestsQuery.isPending || resetRequestsQuery.isError ? <TableRow><TableCell colSpan={6}><AdminQueryState queries={[resetRequestsQuery]} /></TableCell></TableRow> : resetRequests.length === 0 ? <TableRow><TableCell colSpan={6} className="h-24 text-center text-muted-foreground">Şifre sıfırlama talebi bulunmuyor.</TableCell></TableRow> : resetRequests.map((item: any) => <TableRow key={item.id}><TableCell><div className="font-bold">{item.user?.name || '-'}</div><div className="text-xs text-muted-foreground">{item.email}</div></TableCell><TableCell>{new Date(item.createdAt).toLocaleString('tr-TR')}</TableCell><TableCell>{new Date(item.expiresAt).toLocaleString('tr-TR')}</TableCell><TableCell><Badge variant="outline">{item.emailQueue?.status || 'kayıt yok'}</Badge></TableCell><TableCell><Badge variant={item.status === 'pending' ? 'default' : 'secondary'}>{item.status === 'pending' ? 'Bekliyor' : item.status === 'completed' ? 'Tamamlandı' : item.status === 'cancelled' ? 'İptal' : item.status === 'expired' ? 'Süresi doldu' : 'Hatalı'}</Badge></TableCell><TableCell className="text-right"><div className="flex justify-end gap-1">{item.status !== 'completed' && <Button size="sm" variant="outline" disabled={resendResetMutation.isPending} onClick={() => resendResetMutation.mutate(item.id)}><RotateCw className="mr-1 h-3.5 w-3.5" /> Yenile</Button>}{item.status === 'pending' && <Button size="sm" variant="destructive" disabled={cancelResetMutation.isPending} onClick={() => cancelResetMutation.mutate(item.id)}>İptal</Button>}</div></TableCell></TableRow>)}
+                  <Table><TableHeader><TableRow><TableHead>Kullanıcı</TableHead><TableHead>Talep Zamanı</TableHead><TableHead>Son Geçerlilik</TableHead><TableHead>Gönderim</TableHead><TableHead>Durum</TableHead><TableHead className="text-right print:hidden">İşlemler</TableHead></TableRow></TableHeader><TableBody>
+                    {resetRequestsQuery.isPending || resetRequestsQuery.isError ? <TableRow><TableCell colSpan={6}><AdminQueryState queries={[resetRequestsQuery]} /></TableCell></TableRow> : resetRequests.length === 0 ? <TableRow><TableCell colSpan={6} className="h-24 text-center text-muted-foreground">Şifre sıfırlama talebi bulunmuyor.</TableCell></TableRow> : resetRequests.map((item: any) => <TableRow key={item.id}><TableCell><div className="font-bold">{item.user?.name || '-'}</div><div className="text-xs text-muted-foreground">{item.email}</div></TableCell><TableCell>{new Date(item.createdAt).toLocaleString('tr-TR')}</TableCell><TableCell>{new Date(item.expiresAt).toLocaleString('tr-TR')}</TableCell><TableCell><Badge variant="outline">{item.emailQueue?.status || 'kayıt yok'}</Badge></TableCell><TableCell><Badge variant={item.status === 'pending' ? 'default' : 'secondary'}>{item.status === 'pending' ? 'Bekliyor' : item.status === 'completed' ? 'Tamamlandı' : item.status === 'cancelled' ? 'İptal' : item.status === 'expired' ? 'Süresi doldu' : 'Hatalı'}</Badge></TableCell><TableCell className="text-right print:hidden"><div className="flex justify-end gap-1">{item.status !== 'completed' && <Button size="sm" variant="outline" disabled={resendResetMutation.isPending} onClick={() => resendResetMutation.mutate(item.id)}><RotateCw className="mr-1 h-3.5 w-3.5" /> Yenile</Button>}{item.status === 'pending' && <Button size="sm" variant="destructive" disabled={cancelResetMutation.isPending} onClick={() => cancelResetMutation.mutate(item.id)}>İptal</Button>}</div></TableCell></TableRow>)}
                   </TableBody></Table>
                 </Card>
               </div>
@@ -911,7 +911,7 @@ const deleteClassMutation = useMutation({
                         <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2">Konu & Tip</TableHead>
                         <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2">Durum</TableHead>
                         <TableHead className="font-black text-[10px] text-muted-foreground uppercase tracking-widest py-2">Deneme</TableHead>
-                        <TableHead className="text-right px-4 py-2 font-black text-[10px] text-muted-foreground uppercase tracking-widest">İşlemler</TableHead>
+                        <TableHead className="text-right px-4 py-2 font-black text-[10px] text-muted-foreground uppercase tracking-widest print:hidden">İşlemler</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -958,7 +958,7 @@ const deleteClassMutation = useMutation({
                                 {item.attempts} / {item.maxAttempts}
                               </span>
                             </TableCell>
-                            <TableCell className="text-right px-6">
+                            <TableCell className="text-right px-6 print:hidden">
                               <div className="flex justify-end gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
                                 <Button 
                                   variant="ghost" 

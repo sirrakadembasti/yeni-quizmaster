@@ -58,7 +58,7 @@ describe('Offline AI router audit: provider mocked, no Google calls, no database
   });
   it('uses only explicit custom-provider key', async () => {
     mocks.fetch.mockResolvedValue(response(JSON.stringify([question])));
-    const result = await request(app()).post('/ai/generate-questions').send({ topic: 'Synthetic arithmetic', customBaseUrl: 'https://provider.example/v1/', customApiKey: 'synthetic-custom-key' });
+    const result = await request(app()).post('/ai/generate-questions').send({ topic: 'Synthetic arithmetic', count: 1, customBaseUrl: 'https://provider.example/v1/', customApiKey: 'synthetic-custom-key' });
     expect(result.status).toBe(200);
     expect(mocks.fetch.mock.calls[0][1].headers.Authorization).toBe('Bearer synthetic-custom-key');
   });
@@ -103,23 +103,77 @@ describe('Offline AI router audit: provider mocked, no Google calls, no database
     expect(result.status).toBe(502);
     expect(result.body.message).toContain('Timeout');
   });
-  it('records defect: empty generated array is accepted', async () => {
+  it('rejects an empty generated array', async () => {
     mocks.fetch.mockResolvedValue(response('[]'));
     const result = await request(app()).post('/ai/generate-questions').send({ topic: 'Synthetic arithmetic', count: 1 });
-    expect(result.status).toBe(200);
-    expect(result.body.questions).toEqual([]);
+    expect(result.status).toBe(500);
+    expect(result.body.questions).toBeUndefined();
   });
-  it('records defect: invalid answer silently selects option zero', async () => {
+  it('rejects an invalid answer instead of silently selecting option zero', async () => {
     mocks.fetch.mockResolvedValue(response(JSON.stringify([{ ...question, correctAnswer: 'missing' }])));
-    const result = await request(app()).post('/ai/generate-questions').send({ topic: 'Synthetic arithmetic' });
-    expect(result.status).toBe(200);
-    expect(result.body.questions[0].correctAnswerIndex).toBe(0);
-    expect(result.body.questions[0].options).not.toContain(result.body.questions[0].correctAnswer);
+    const result = await request(app()).post('/ai/generate-questions').send({ topic: 'Synthetic arithmetic', count: 1 });
+    expect(result.status).toBe(500);
+    expect(result.body.questions).toBeUndefined();
   });
-  it('records defect: missing topic and negative count reach provider', async () => {
+  it('rejects missing topic and negative count before reaching provider', async () => {
     mocks.fetch.mockResolvedValue(response(JSON.stringify([question])));
     const result = await request(app()).post('/ai/generate-questions').send({ count: -1 });
+    expect(result.status).toBe(400);
+    expect(mocks.fetch).not.toHaveBeenCalled();
+  });
+  it.each([
+    { topic: ' ' }, { topic: 123 }, { count: 0 }, { count: 11 }, { count: 1.5 }, { count: '2' },
+    { difficulty: 'expert' }, { model: ' ' }, { questionType: 'essay' }, { contentType: 'other' },
+    { customApiKey: 123 }, { customBaseUrl: 123 },
+  ])('rejects invalid generation input %# before provider call', async (invalid) => {
+    const result = await request(app()).post('/ai/generate-questions').send({ topic: 'Synthetic arithmetic', count: 1, ...invalid });
+    expect(result.status).toBe(400);
+    expect(mocks.fetch).not.toHaveBeenCalled();
+  });
+  it('rejects output count different from requested count', async () => {
+    mocks.fetch.mockResolvedValue(response(JSON.stringify([question])));
+    const result = await request(app()).post('/ai/generate-questions').send({ topic: 'Synthetic arithmetic', count: 2 });
+    expect(result.status).toBe(500);
+    expect(result.body.questions).toBeUndefined();
+  });
+  it.each([
+    { answer: 'A', options: ['83', '84', '85'], expected: '83' },
+    { answer: 'B', options: ['83', '84', '85'], expected: '84' },
+    { answer: '1', options: ['red', 'green', 'blue'], expected: 'green' },
+    { answer: 2, options: ['red', 'green', 'blue'], expected: 'blue' },
+    { answer: '4', options: ['3', '4', '5'], expected: '4' },
+  ])('normalizes answer $answer to option text before shuffling', async ({ answer, options, expected }) => {
+    mocks.fetch.mockResolvedValue(response(JSON.stringify([{ ...question, options, correctAnswer: answer }])));
+    const result = await request(app()).post('/ai/generate-questions').send({ topic: 'Synthetic arithmetic', count: 1 });
     expect(result.status).toBe(200);
-    expect(JSON.parse(mocks.fetch.mock.calls[0][1].body).messages[0].content).toContain('Generate -1');
+    const generated = result.body.questions[0];
+    expect(generated.correctAnswer).toBe(expected);
+    expect(generated.options[generated.correctAnswerIndex]).toBe(expected);
+  });
+  it.each([
+    { options: ['B', 'A', 'C'], correctAnswer: 'A' },
+    { options: ['1', '2', '3'], correctAnswer: '1' },
+    { options: ['same', 'same', 'other'], correctAnswer: 'same' },
+    { options: [], correctAnswer: 'A' },
+    { options: [' ', 'ok'], correctAnswer: 'ok' },
+  ])('rejects ambiguous or unusable choice answer %#', async (invalid) => {
+    mocks.fetch.mockResolvedValue(response(JSON.stringify([{ ...question, ...invalid }])));
+    const result = await request(app()).post('/ai/generate-questions').send({ topic: 'Synthetic arithmetic', count: 1 });
+    expect(result.status).toBe(500);
+    expect(result.body.questions).toBeUndefined();
+  });
+  it('rejects whitespace-only generated question text', async () => {
+    mocks.fetch.mockResolvedValue(response(JSON.stringify([{ ...question, text: '  ' }])));
+    const result = await request(app()).post('/ai/generate-questions').send({ topic: 'Synthetic arithmetic', count: 1 });
+    expect(result.status).toBe(500);
+  });
+  it('preserves all five unscored survey types', async () => {
+    const surveys = ['single-choice', 'multiple-choice', 'open-text', 'rating', 'likert'].map((type) => ({
+      text: 'Synthetic survey?', type, options: ['yes', 'no'], correctAnswer: null, config: type === 'rating' ? { max: 5 } : null,
+    }));
+    mocks.fetch.mockResolvedValue(response(JSON.stringify(surveys)));
+    const result = await request(app()).post('/ai/generate-questions').send({ topic: 'Synthetic survey', count: 5, contentType: 'survey' });
+    expect(result.status).toBe(200);
+    expect(result.body.questions).toEqual(surveys);
   });
 });

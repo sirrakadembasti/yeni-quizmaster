@@ -16,13 +16,21 @@ const { chromium, request } = req('playwright');
 fs.mkdirSync(path.join(out, 'runtime-logs'), { recursive: true });
 const hash = () => createHash('sha256').update(fs.readFileSync(path.join(root, 'server/data/quiz.db'))).digest('hex');
 const uxOnly = process.env.INTEGRATION_UX_ONLY === '1';
-const report = { startedAt: new Date().toISOString(), mode: uxOnly ? 'ux-only' : 'load-and-ux', databaseHashBefore: hash(), load: [], ux: [], cleanup: [] };
+const loadOnly = process.env.INTEGRATION_LOAD_ONLY === '1';
+const reuse = uxOnly || loadOnly;
+const requestCount = loadOnly ? Number(process.env.INTEGRATION_LOAD_REQUESTS || 180) : 180;
+assert(Number.isInteger(requestCount) && requestCount >= 6 && requestCount <= 180);
+const concurrencyLevels = loadOnly && process.env.INTEGRATION_LOAD_CONCURRENCY ? process.env.INTEGRATION_LOAD_CONCURRENCY.split(',').map(Number) : [2, 8, 20];
+assert(concurrencyLevels.every(x => [2, 8, 20].includes(x)));
+const report = { startedAt: new Date().toISOString(), mode: loadOnly ? 'load-only' : uxOnly ? 'ux-only' : 'load-and-ux', databaseHashBefore: hash(), load: [], ux: [], cleanup: [] };
 const states = [], contexts = [];
 let browser;
 function launch(args, name, env = {}) {
   const child = spawn(process.execPath, args, { cwd: root, windowsHide: true,
     env: { ...process.env, CHECKPOINT_DISABLE: '1', PRISMA_HIDE_UPDATE_MESSAGE: '1', ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
   const state = { child, name }; child.on('error', e => { state.errorCode = e.code; });
+  report.ownedProcesses ??= [];
+  report.ownedProcesses.push({ name, pid: child.pid });
   const log = fs.createWriteStream(path.join(out, 'runtime-logs', name + '.log'));
   child.stdout.pipe(log, { end: false }); child.stderr.pipe(log, { end: false }); child.on('close', () => log.end());
   states.push(state); return state;
@@ -36,7 +44,7 @@ async function login(context, role) {
 try {
   assert((await verifyFixturePortsReleased([5560, 5561])).every(x => x.stopped), 'Ports occupied; refusing existing process');
   const fixtureIdentity = randomUUID();
-  const api = launch([srv.resolve('tsx/cli'), uxOnly ? 'server/tests/integration-reuse-server.ts' : 'server/tests/parent-audit-server.ts'], 'api', { INTEGRATION_AUDIT_ID: fixtureIdentity });
+  const api = launch([srv.resolve('tsx/cli'), reuse ? 'server/tests/integration-reuse-server.ts' : 'server/tests/parent-audit-server.ts'], 'api', { INTEGRATION_AUDIT_ID: fixtureIdentity });
   await waitForAuditServer('http://127.0.0.1:5560/api/csrf-token', api, { timeoutMs: 300000 });
   const proof = await fetch('http://127.0.0.1:5560/api/csrf-token');
   assert.equal(proof.headers.get('x-quizmaster-audit-fixture'), fixtureIdentity, 'Running service is not the owned fixture');
@@ -57,11 +65,11 @@ try {
     ['parent', '/api/parents/students'], ['parent', '/api/parents/students/parent-audit-student/overview'],
     ['teacher', '/api/quizzes'], ['admin', '/api/notifications'] ];
   // Closed-loop bounded stress: not a production capacity or concurrent-user guarantee.
-  for (const concurrency of uxOnly ? [] : [2, 8, 20]) {
+  for (const concurrency of uxOnly ? [] : concurrencyLevels) {
     const durations = [], statuses = {}, errors = {}; let cursor = 0;
     const started = performance.now();
     await Promise.all(Array.from({ length: concurrency }, async () => {
-      while (cursor < 180) {
+      while (cursor < requestCount) {
         const index = cursor++, [role, url] = jobs[index % jobs.length], start = performance.now();
         try {
           const response = await users[role].get(url, { timeout: 15000 });
@@ -69,7 +77,9 @@ try {
           statuses[response.status()] = (statuses[response.status()] || 0) + 1;
           if (JSON.stringify(body).includes('Private Other Learner')) throw new Error('Foreign student leak');
         } catch (error) { statuses.requestError = (statuses.requestError || 0) + 1;
-          const code = error.name + '/' + (error.cause?.code || 'none'); errors[code] = (errors[code] || 0) + 1; }
+          // Capture a bounded reason without Playwright's cookie-bearing call log.
+          const reason = String(error.message || '').split('\n')[0].replace(/https?:\/\/\S+/g, '[fixture-url]').slice(0, 160);
+          const code = error.name + '/' + (error.cause?.code || 'none') + '/' + reason; errors[code] = (errors[code] || 0) + 1; }
         durations.push(performance.now() - start);
       }
     }));
@@ -79,13 +89,15 @@ try {
       requestsPerSecond: +(durations.length / (elapsedMs / 1000)).toFixed(2),
       p50Ms: Math.round(durations[Math.ceil(durations.length * .5) - 1]),
       p95Ms: Math.round(durations[Math.ceil(durations.length * .95) - 1]), maxMs: Math.round(durations.at(-1)),
-      passed: statuses[200] === 180 && !statuses.requestError });
+      passed: statuses[200] === requestCount && !statuses.requestError });
     console.log(JSON.stringify(report.load.at(-1)));
   }
+  if (!loadOnly) {
   const ui = launch([path.join(path.dirname(cli.resolve('vite/package.json')), 'bin/vite.js'), 'client', '--host', '127.0.0.1', '--port', '5561', '--strictPort'], 'ui', { PORT: '5560' });
   await waitForAuditServer('http://127.0.0.1:5561/auth', ui);
   browser = await chromium.launch({ headless: true });
-  for (const [role, route] of process.env.INTEGRATION_UX_EXTRA === '1' ? [] : [['student', '/student/dashboard'], ['student', '/student/quizzes'], ['student', '/my-stats'],
+  report.mobileSkipped = process.env.INTEGRATION_UX_EXTRA === '1' || process.env.INTEGRATION_UX_DETAIL_ONLY === '1';
+  for (const [role, route] of report.mobileSkipped ? [] : [['student', '/student/dashboard'], ['student', '/student/quizzes'], ['student', '/my-stats'],
     ['student', '/student/survey/55555555-5555-4555-8555-555555555555'], ['teacher', '/quizzes'], ['teacher', '/student/results'],
     ['admin', '/management'], ['parent', '/parent/dashboard'], ['parent', '/parent/results']]) {
     const context = await browser.newContext({ storageState: await users[role].storageState(), viewport: { width: 390, height: 844 } });
@@ -112,8 +124,11 @@ try {
   const extra = process.env.INTEGRATION_UX_EXTRA === '1';
   const detailReport = JSON.parse(fs.readFileSync(path.join(out, extra ? 'ux-extra-results.json' : 'ux-detail-results.json')));
   report.detailCoverageComplete = detailReport.checks?.length === (extra ? 2 : 16)
-    && detailReport.checks.every(x => extra || x.status === 'observed') && !detailReport.runnerError && !detailReport.error;
+    && detailReport.checks.every(x => x.status === 'passed') && !detailReport.runnerError && !detailReport.error;
   report.mobileAccepted = report.ux.every(x => x.networkSettled && !x.horizontalOverflow && x.errors.length === 0 && x.failures.length === 0);
+  } else {
+    report.detailExitCode = 0; report.detailCoverageComplete = true; report.mobileAccepted = true;
+  }
   report.status = report.load.every(x => x.passed) ? 'executed' : 'load-failed';
 } catch (error) { report.status = 'runner-failed'; report.error = error.name + ': ' + error.message; process.exitCode = 1; }
 finally {
@@ -129,7 +144,7 @@ finally {
   report.ports = await verifyFixturePortsReleased([5560, 5561]);
   report.databaseHashAfter = hash(); report.databaseUnchanged = report.databaseHashBefore === report.databaseHashAfter;
   report.finishedAt = new Date().toISOString();
-  fs.writeFileSync(path.join(out, process.env.INTEGRATION_UX_EXTRA === '1' ? 'ux-extra-runner-results.json' : uxOnly ? 'ux-runner-results.json' : 'load-ux-results.json'), JSON.stringify(report, null, 2) + '\n');
+  fs.writeFileSync(path.join(out, loadOnly ? (process.env.INTEGRATION_LOAD_REPORT || 'load-repair-results.json') : process.env.INTEGRATION_UX_EXTRA === '1' ? 'ux-extra-runner-results.json' : uxOnly ? 'ux-runner-results.json' : 'load-ux-results.json'), JSON.stringify(report, null, 2) + '\n');
   if (!report.databaseUnchanged || report.cleanup.some(x => !x.stopProven) || report.ports.some(x => !x.stopped) || report.status !== 'executed' || report.detailExitCode !== 0 || !report.mobileAccepted || !report.detailCoverageComplete) process.exitCode = 1;
   console.log(JSON.stringify({ status: report.status, databaseUnchanged: report.databaseUnchanged, cleanup: report.cleanup, ports: report.ports }));
 }

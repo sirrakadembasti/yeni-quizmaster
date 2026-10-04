@@ -12,6 +12,7 @@ assert(runtime.integrationIdentity && proof.headers.get('x-quizmaster-audit-fixt
 await proof.body.cancel();
 const browser = await chromium.launch({ headless: true });
 const contexts = [], report = { startedAt: new Date().toISOString(), checks: [] };
+let activeCheck = 'S-U06';
 async function pageFor(role) {
   const api = await request.newContext({ baseURL: 'http://127.0.0.1:5560' });
   const token = (await (await api.get('/api/csrf-token')).json()).csrfToken;
@@ -25,12 +26,16 @@ try {
   await student.goto('http://127.0.0.1:5561/student/quizzes');
   await student.getByText('Parent Audit Completed Exam', { exact: true }).waitFor();
   const onlineRow = await student.getByText('Parent Audit Completed Exam', { exact: true }).locator('xpath=ancestor::tr').innerText();
+  assert.match(onlineRow, /Tamamlandı/, 'Fixture must be completed before the transport failure');
   await student.route('**/api/student/quizzes', route => route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ message: 'Controlled offline failure' }) }));
   await student.route('**/api/student/results', route => route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ message: 'Controlled offline failure' }) }));
   await student.reload(); await student.getByText('Çevrimdışısınız.', { exact: false }).waitFor();
   const offlineRow = await student.getByText('Parent Audit Completed Exam', { exact: true }).locator('xpath=ancestor::tr').innerText();
+  assert.match(offlineRow, /Tamamlandı/, 'Completed cached result must stay completed');
+  assert(!offlineRow.includes('Yapılacak'), 'Offline fallback must not turn a completed exam into pending work');
   await student.screenshot({ path: path.join(out, 'ux-extra-offline.png'), fullPage: true });
-  report.checks.push({ id: 'S-U06', onlineRow, offlineRow, completedBecomesPending: onlineRow.includes('Tamamlandı') && offlineRow.includes('Yapılacak'), scope: 'Controlled503 triggers actual cached-list fallback; no DB writes' });
+  report.checks.push({ id: 'S-U06', status: 'passed', onlineRow, offlineRow, completedBecomesPending: false, scope: 'Controlled503 triggers actual cached-list fallback; no DB writes' });
+  activeCheck = 'A-U02';
   const admin = await pageFor('admin');
   await admin.route('**/api/student/results?studentId=parent-audit-student', async route => {
     const response = await route.fetch(), body = await response.json(), base = body.results[0];
@@ -45,11 +50,29 @@ try {
   await admin.goto('http://127.0.0.1:5561/student/results?studentId=parent-audit-student');
   await admin.getByText(/^LargeAuditRow-59 /).waitFor();
   const rows = await admin.getByText(/^LargeAuditRow-\d\d /).count();
+  assert.equal(rows, 60, 'Every long fixture result must render');
+  const firstRow = admin.getByText(/^LargeAuditRow-00 /).locator('xpath=ancestor::tr');
+  assert.equal((await firstRow.locator('td').nth(4).innerText()).trim(), '0', 'A zero score must remain zero');
+  const code = await admin.getByText('Öğrenci Kodu', { exact: true }).locator('..').innerText();
+  assert(code.includes('parent-audit-student'), 'Student identifier must be complete');
+  const actionHeader = admin.getByRole('columnheader', { name: 'Eylem', exact: true, includeHidden: true });
+  await actionHeader.waitFor();
+  await admin.emulateMedia({ media: 'print' });
+  const printActionCells = await actionHeader.evaluate(th => {
+    const index = [...th.parentElement.children].indexOf(th);
+    return [th, ...[...th.closest('table').querySelectorAll('tbody tr')].map(row => row.children[index])]
+      .map(cell => ({ tag: cell.tagName, display: getComputedStyle(cell).display }));
+  });
+  assert.equal(printActionCells.length, 61, 'Must check all sixty action cells and their header');
+  assert(printActionCells.every(cell => cell.display === 'none'), 'Print must hide every action header and cell');
   await admin.pdf({ path: path.join(out, 'ux-extra-large-report.pdf'), format: 'A4', printBackground: true });
+  await admin.emulateMedia({ media: 'screen' });
   await admin.screenshot({ path: path.join(out, 'ux-extra-large-report.png'), fullPage: true });
-  report.checks.push({ id: 'A-U02', sourceRows: 60, domRows: rows, zeroScoreIncluded: true,
+  report.checks.push({ id: 'A-U02', status: 'passed', sourceRows: 60, domRows: rows, zeroScoreIncluded: true, printActionCells,
     pdf: 'ux-extra-large-report.pdf', scope: '60 controlled real-shaped result records, long titles; PDF text/render assessed separately' });
-} catch (error) { report.error = error.name + ': ' + error.message.slice(0, 300); process.exitCode = 1; }
+  assert.equal(report.checks.length, 2);
+  assert(report.checks.every(check => check.status === 'passed'));
+} catch (error) { report.checks.push({ id: activeCheck, status: 'failed', reason: error.name + ': ' + error.message.slice(0, 300) }); report.error = error.name + ': ' + error.message.slice(0, 300); process.exitCode = 1; }
 finally {
   for (const context of contexts) await context.close(); await browser.close();
   report.finishedAt = new Date().toISOString();

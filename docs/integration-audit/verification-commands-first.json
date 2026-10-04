@@ -1,0 +1,14 @@
+{
+  "checks": [
+    {
+      "exitCode": 0,
+      "command": "pnpm --filter quiz-master-server run type-check"
+    },
+    {
+      "exitCode": 2,
+      "command": "pnpm --filter quiz-master-client run type-check"
+    }
+  ],
+  "startedAt": "2026-10-04T15:28:02.6741483Z",
+  "status": "failed"
+}

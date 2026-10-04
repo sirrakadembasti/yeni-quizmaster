@@ -46,19 +46,19 @@ const aiTestLimiter = rateLimit({
 // ==================== SCHEMAS ====================
 
 const QuestionSchema = z.object({
-  text: z.string().min(1, "Soru metni boş olamaz"),
+  text: z.string().trim().min(1, "Soru metni boş olamaz"),
   type: z.enum(["multiple-choice", "true-false", "short-answer"]),
-  options: z.array(z.string()).default([]),
-  correctAnswer: z.string().min(1, "Doğru cevap belirtilmelidir"),
+  options: z.array(z.string().trim().min(1)).default([]),
+  correctAnswer: z.union([z.string().trim().min(1, "Doğru cevap belirtilmelidir"), z.number().int().nonnegative()]),
 });
 
 const AIResponseSchema = z.array(QuestionSchema).or(z.object({
   questions: z.array(QuestionSchema)
 }));
 const SurveyQuestionSchema = z.object({
-  text: z.string().min(1, "Soru metni boş olamaz"),
+  text: z.string().trim().min(1, "Soru metni boş olamaz"),
   type: z.enum(["single-choice", "multiple-choice", "open-text", "rating", "likert"]),
-  options: z.array(z.string()).default([]),
+  options: z.array(z.string().trim().min(1)).default([]),
   correctAnswer: z.null().optional(),
   config: z.record(z.any()).optional().nullable(),
 });
@@ -66,6 +66,38 @@ const SurveyQuestionSchema = z.object({
 const SurveyResponseSchema = z.array(SurveyQuestionSchema).or(z.object({
   questions: z.array(SurveyQuestionSchema),
 }));
+
+const GenerateRequestSchema = z.object({
+  topic: z.string().trim().min(1, "Konu boş olamaz"),
+  count: z.number().int().min(1).max(10).default(3),
+  difficulty: z.enum(["easy", "medium", "hard"]).default("medium"),
+  model: z.string().trim().min(1, "Model belirtilmelidir").default("gemini-3.8-flash"),
+  customBaseUrl: z.string().optional(),
+  customApiKey: z.string().optional(),
+  questionType: z.enum(["multiple-choice", "true-false", "short-answer"]).default("multiple-choice"),
+  contentType: z.enum(["exam", "survey"]).default("exam"),
+});
+
+// Resolve against the original option order. Text, A/B/C letters and zero-based
+// indexes are supported only when they identify one unique option.
+function normalizeChoiceAnswer(options: string[], answer: string | number): string {
+  if (options.length < 2 || new Set(options).size !== options.length) {
+    throw new Error("AI seçenekleri boş veya belirsiz.");
+  }
+  const value = String(answer);
+  const candidates = new Set<number>();
+  options.forEach((option, index) => { if (option === value) candidates.add(index); });
+  if (/^[A-Z]$/i.test(value)) {
+    const index = value.toUpperCase().charCodeAt(0) - 65;
+    if (index < options.length) candidates.add(index);
+  }
+  if (/^(0|[1-9]\d*)$/.test(value)) {
+    const index = Number(value);
+    if (index < options.length) candidates.add(index);
+  }
+  if (candidates.size !== 1) throw new Error("AI doğru cevabı geçersiz veya belirsiz.");
+  return options[[...candidates][0]];
+}
 
 // ==================== AI UTILS ====================
 
@@ -180,6 +212,10 @@ router.post("/test-config", aiTestLimiter, requireAuth, requireRole(["admin", "t
 
 router.post("/generate-questions", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
+    const requestValidation = GenerateRequestSchema.safeParse(req.body);
+    if (!requestValidation.success) {
+      return res.status(400).json({ message: "Geçersiz soru üretme isteği. Konu, 1–10 soru sayısı ve model ayarlarını kontrol edin." });
+    }
     const {
       topic,
       count = 3,
@@ -189,7 +225,7 @@ router.post("/generate-questions", requireAuth, requireRole(["admin", "teacher"]
       customApiKey,
       questionType = "multiple-choice",
       contentType: requestedContentType = "exam"
-    } = req.body;
+    } = requestValidation.data;
 
     const contentType = requestedContentType === "survey" ? "survey" : "exam";
     const baseUrl = customBaseUrl || OFFICIAL_BASE_URL;
@@ -219,6 +255,7 @@ Use options for choice and likert questions. For rating use {"max":5} in config.
       : `Generate ${count} ${questionType} questions about "${topic}" at a ${difficulty} difficulty level.
 Respond ONLY with a valid JSON array of objects.
 Structure: {"text":"...","type":"multiple-choice","options":["A","B","C","D","E"],"correctAnswer":"A"}.
+For multiple-choice and true-false questions, correctAnswer must be the EXACT option text, not its letter or index. For short-answer questions, provide the answer text and an empty options array.
 Output ONLY raw JSON.`;
 
     const controller = new AbortController();
@@ -284,13 +321,19 @@ Output ONLY raw JSON.`;
         ? validation.data
         : validation.data.questions;
 
+      if (validatedQuestions.length !== count) {
+        return res.status(500).json({ message: "AI beklenen sayıda soru üretmedi. Lütfen yeniden deneyin." });
+      }
+
       if (contentType === "survey") {
         return res.json({ questions: validatedQuestions });
       }
 
       const questions = validatedQuestions.map((q) => {
         let options = [...q.options];
-        let correctText = q.correctAnswer;
+        const correctText = q.type === "short-answer"
+          ? String(q.correctAnswer)
+          : normalizeChoiceAnswer(options, q.correctAnswer);
 
         if (q.type === "multiple-choice" && options.length > 0) {
           // Shuffle options but keep correct answer reference
@@ -303,7 +346,8 @@ Output ONLY raw JSON.`;
         return {
           ...q,
           options,
-          correctAnswerIndex: options.indexOf(correctText) !== -1 ? options.indexOf(correctText) : 0
+          correctAnswer: correctText,
+          ...(q.type === "short-answer" ? {} : { correctAnswerIndex: options.indexOf(correctText) })
         };
       });
 

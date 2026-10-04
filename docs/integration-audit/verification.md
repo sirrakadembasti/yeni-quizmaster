@@ -1,5 +1,9 @@
 # SMTP, AI, Socket, yük ve UX doğrulaması — 4 Ekim 2026
 
+Bu belge **onarım öncesi denetimin tarihsel kaydıdır**. Sonraki kod düzeltmeleri ve yeniden testlerin güncel kabul durumu [onarım raporunda](defect-repairs.md) yer alır. Aşağıdaki başarısız AI/yük ve UX gözlemleri başlangıç bulgularını korur; güncel kodda hâlâ açık oldukları anlamına gelmez.
+
+Kullanıcı aynı test mesajının gelen kutusuna ulaştığını 4 Ekim'de doğruladı: [insan teslim doğrulaması](smtp-delivery-confirmation.json). Araçla kutu okunmadı ve e-posta tekrar gönderilmedi; `smtp-probe.json` ilk otomatik SMTP kabul kaydı olarak korunur.
+
 Bu koşu `6367b54d` sonrası çalışma ağacını inceledi. Ürün kodu değiştirilmedi; yeniden çalıştırılabilir test araçları ve kanıtlar eklendi. Kullanıcının `client/src/lib/api.ts` ve `client/src/pages/server-setup.tsx` düzenlemeleri korundu. Gerçek `server/data/quiz.db` SHA256 değeri koşuların öncesi/sonrası aynı: `8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158`.
 
 ## Sonuçlar

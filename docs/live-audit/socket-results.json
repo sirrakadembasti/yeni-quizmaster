@@ -1,30 +1,30 @@
 {
-  "generatedAt": "2026-10-04T12:12:09.329Z",
-  "fixture": "F:\\projeler\\yeni-quizmaster-main\\server\\data\\quizmaster-test-live-socket-UM4E5D",
-  "port": 40072,
+  "generatedAt": "2026-10-04T14:59:58.717Z",
+  "fixture": "F:\\projeler\\yeni-quizmaster-main\\server\\data\\quizmaster-test-live-socket-PgRX2I",
+  "port": 29842,
   "tests": [
     {
       "name": "anonymous handshake rejected",
       "status": "passed",
-      "durationMs": 242,
+      "durationMs": 48,
       "evidence": "Unauthorized"
     },
     {
       "name": "forged cookie rejected",
       "status": "passed",
-      "durationMs": 23,
+      "durationMs": 18,
       "evidence": "Unauthorized"
     },
     {
       "name": "foreign Origin rejected for websocket",
       "status": "passed",
-      "durationMs": 25,
+      "durationMs": 11,
       "evidence": "websocket error"
     },
     {
       "name": "foreign Origin rejected for polling",
       "status": "passed",
-      "durationMs": 1128,
+      "durationMs": 39,
       "evidence": "xhr poll error"
     },
     {
@@ -35,17 +35,17 @@
     {
       "name": "real polling authenticated",
       "status": "passed",
-      "durationMs": 3375
+      "durationMs": 77
     },
     {
       "name": "joining another user room disconnects client",
       "status": "passed",
-      "durationMs": 1187
+      "durationMs": 78
     },
     {
       "name": "quiz publish sends one live notification only to assigned student and admin",
       "status": "passed",
-      "durationMs": 7745,
+      "durationMs": 2136,
       "evidence": {
         "liveNotificationIdPersisted": true,
         "studentEvents": 1,
@@ -55,54 +55,54 @@
     {
       "name": "repeated publish does not duplicate notifications",
       "status": "passed",
-      "durationMs": 3497
+      "durationMs": 721
     },
     {
       "name": "class announcement delivered live with recipient isolation",
       "status": "passed",
-      "durationMs": 3430
+      "durationMs": 741
     },
     {
       "name": "registration emits persistent admin-only notification",
       "status": "passed",
-      "durationMs": 3997
+      "durationMs": 1357
     },
     {
       "name": "logout disconnects same session but preserves second login",
       "status": "passed",
-      "durationMs": 4856
+      "durationMs": 890
     },
     {
       "name": "password change disconnects all sessions and accepts only refreshed cookie",
       "status": "passed",
-      "durationMs": 10976
+      "durationMs": 3543
     },
     {
       "name": "packet middleware rejects DB-revoked session version",
       "status": "passed",
-      "durationMs": 3695
+      "durationMs": 1224
     },
     {
       "name": "removed SQLite session rejected during packet revalidation",
       "status": "passed",
-      "durationMs": 3412
+      "durationMs": 786
     },
     {
       "name": "expired SQLite session rejected during packet revalidation",
       "status": "passed",
-      "durationMs": 3466
+      "durationMs": 447
     },
     {
       "name": "inactive account handshake rejected",
       "status": "passed",
-      "durationMs": 2568
+      "durationMs": 359
     },
     {
       "name": "idle inactive client disconnected by real 30-second session timer",
       "status": "passed",
-      "durationMs": 31880,
+      "durationMs": 30488,
       "evidence": {
-        "elapsedMs": 30004
+        "elapsedMs": 30008
       }
     }
   ],

@@ -18,6 +18,15 @@ function dateInputValue(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
+function printClassLabel(name: string) {
+  const label = name.trim();
+  if (label.length <= 10) return [label];
+  const wordEnd = label.lastIndexOf(" ", 10);
+  const splitAt = wordEnd >= 4 ? wordEnd : 10;
+  const remainder = label.slice(splitAt).trim();
+  return [label.slice(0, splitAt), remainder.length > 10 ? `${remainder.slice(0, 9)}…` : remainder];
+}
+
 export default function ClassStatisticsPage() {
   const { user, role } = useAuth();
   useEffect(() => {
@@ -46,6 +55,7 @@ export default function ClassStatisticsPage() {
 
   const selectedClass = classesQuery.data?.classes.find((item) => item.id === classId)?.name;
   const data = analyticsQuery.data?.classes || [];
+  const printGroups = Array.from({ length: Math.ceil(data.length / 5) }, (_, index) => data.slice(index * 5, index * 5 + 5));
 
   // KPI Calculations
   const totals = useMemo(() => {
@@ -185,7 +195,7 @@ export default function ClassStatisticsPage() {
               {selectedClass ? `${selectedClass} Sınıfı Analizi` : "Sınıf Analiz Grafiği"}
             </CardTitle>
           </CardHeader>
-          <CardContent className="h-[320px] p-2 sm:p-4">
+          <CardContent className="h-[320px] p-2 sm:p-4 print:h-auto">
             {analyticsQuery.isLoading ? (
               <div className="flex h-full items-center justify-center text-muted-foreground text-sm">Veriler yükleniyor...</div>
             ) : analyticsQuery.isError ? (
@@ -195,6 +205,8 @@ export default function ClassStatisticsPage() {
                 Seçilen kriterlerde gösterilecek veri bulunamadı.
               </div>
             ) : (
+              <>
+              <div className="h-full print:hidden">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data} barGap={6} barCategoryGap="20%" margin={{ top: 12, right: 16, left: -10, bottom: 8 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.4} />
@@ -205,10 +217,35 @@ export default function ClassStatisticsPage() {
                     contentStyle={{ borderRadius: '8px', fontSize: '12px' }}
                   />
                   <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '8px' }} />
-                  <Bar dataKey="participationRate" name="Katılım Oranı" fill="#6366f1" maxBarSize={38} radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="averageScore" name="Ortalama Başarı" fill="#10b981" maxBarSize={38} radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="participationRate" name="Katılım Oranı" fill="#6366f1" maxBarSize={38} radius={[4, 4, 0, 0]} isAnimationActive={false} />
+                  <Bar dataKey="averageScore" name="Ortalama Başarı" fill="#10b981" maxBarSize={38} radius={[4, 4, 0, 0]} isAnimationActive={false} />
                 </BarChart>
               </ResponsiveContainer>
+              </div>
+              {/* Always rendered at final geometry: printing needs no animation or resize callback. */}
+              {printGroups.map((group, groupIndex) => (
+              <svg key={groupIndex} className="hidden print:block w-full print:h-[280px] break-inside-avoid" role="img" aria-label={printGroups.length === 1 ? "Sınıfların katılım ve başarı grafiği" : `Sınıfların katılım ve başarı grafiği bölüm ${groupIndex + 1}/${printGroups.length}`} viewBox="0 0 600 240">
+                {[0, 25, 50, 75, 100].map(value => (
+                  <g key={value}>
+                    <line x1="42" x2="588" y1={180 - value * 1.6} y2={180 - value * 1.6} stroke="#cbd5e1" />
+                    <text x="36" y={184 - value * 1.6} textAnchor="end" fontSize="10" fill="#334155">{value}%</text>
+                  </g>
+                ))}
+                {group.map((item, index) => {
+                  const groupWidth = 540 / group.length;
+                  const x = 48 + index * groupWidth + groupWidth / 2;
+                  return <g key={item.classId}>
+                    <title>{item.className}</title>
+                    <rect data-series="participationRate" x={x - 28} y={180 - Math.max(0, Math.min(item.participationRate, 100)) * 1.6} width="24" height={Math.max(0, Math.min(item.participationRate, 100)) * 1.6} fill="#6366f1" />
+                    <rect data-series="averageScore" x={x + 4} y={180 - Math.max(0, Math.min(item.averageScore, 100)) * 1.6} width="24" height={Math.max(0, Math.min(item.averageScore, 100)) * 1.6} fill="#10b981" />
+                    <text data-class-label x={x} y="197" textAnchor="middle" fontSize="11" fill="#334155">{printClassLabel(item.className).map((line, lineIndex) => <tspan key={lineIndex} x={x} dy={lineIndex === 0 ? 0 : 12}>{line}</tspan>)}</text>
+                  </g>;
+                })}
+                <rect x="160" y="220" width="10" height="10" fill="#6366f1" /><text x="176" y="229" fontSize="11" fill="#334155">Katılım Oranı</text>
+                <rect x="300" y="220" width="10" height="10" fill="#10b981" /><text x="316" y="229" fontSize="11" fill="#334155">Ortalama Başarı</text>
+              </svg>
+              ))}
+              </>
             )}
           </CardContent>
         </Card>

@@ -7,7 +7,7 @@ import { execFileSync } from 'node:child_process';
 import { createServer } from 'node:http';
 import express from 'express';
 import session from 'express-session';
-import connectSqlite3 from 'connect-sqlite3';
+import { createSessionStore } from '../utils/session-store';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
@@ -39,7 +39,7 @@ const auth = (await import('../api-routes/auth')).default;
 const quiz = (await import('../api-routes/quiz')).default;
 const announcements = (await import('../api-routes/announcement')).default;
 const notifications = (await import('../api-routes/notification')).default;
-const store: any = new (connectSqlite3(session))({ db: 'sessions.db', dir: join(fixture, 'server/data') });
+const store: any = createSessionStore(join(fixture, 'server/data'));
 const middleware = session({ store, secret: 'disposable-socket-audit-secret', name: 'quizmaster.sid', resave: false, saveUninitialized: false, cookie: { httpOnly: true, sameSite: 'lax', maxAge: 3600000 } });
 const app = express(); app.use(express.json(), middleware);
 app.use('/api/auth', auth); app.use('/api/quizzes', quiz); app.use('/api/announcements', announcements); app.use('/api/notifications', notifications);

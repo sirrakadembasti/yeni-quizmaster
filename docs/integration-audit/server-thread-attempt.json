@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-04",
+  "command": "pnpm --filter quiz-master-server run test --pool=threads --maxWorkers=1 --reporter=verbose --reporter=json",
+  "exitCode": 3221225477,
+  "windowsStatus": "0xC0000005 access violation",
+  "status": "incomplete-native-process-exit",
+  "completeJsonReportProduced": false,
+  "observed": "Migration, security, archive rollback and class-capacity assertions printed passed before process exit. Expected rollback errors were logged. Full suite not accepted.",
+  "nextCheck": "Repeat using existing default forks pool, one worker, same isolated database policy; no product assertion or timeout weakened"
+}

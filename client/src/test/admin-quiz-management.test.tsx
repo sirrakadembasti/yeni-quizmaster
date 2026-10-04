@@ -64,7 +64,7 @@ it.each([AdminQuizzesPage, QuizzesPage])('invalidates previously visited related
 });
 it('weights aggregate participation by students and score by completed attempts', async () => {
  state.classes = [{classId: 'a', className:'Small', studentCount:1, participantCount:1, participationRate:100, averageScore:100, completedCount:1}, {classId:'b', className:'Large', studentCount:99, participantCount:0, participationRate:0, averageScore:0, completedCount:0}];
- mount(<ClassStatisticsPage />); await screen.findByText('Small');
+ mount(<ClassStatisticsPage />); await screen.findByRole('cell', {name:'Small'});
  const participation = screen.getByText('Katılım Oranı', {selector:'p'}).parentElement!;
  expect(within(participation).getByText('%1')).toBeInTheDocument();
  expect(within(screen.getByText('Ortalama Başarı', {selector:'p'}).parentElement!).getByText('%100')).toBeInTheDocument();

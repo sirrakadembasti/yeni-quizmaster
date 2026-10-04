@@ -129,7 +129,7 @@ export default function AdminQuizzesPage() {
                 <TableHead className="font-bold">Sınıf</TableHead>
                 <TableHead className="font-bold">Durum</TableHead>
                 <TableHead className="font-bold">Oluşturulma Tarihi</TableHead>
-                <TableHead className="text-right font-bold">İşlemler</TableHead>
+                <TableHead className="text-right font-bold print:hidden">İşlemler</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -180,7 +180,7 @@ export default function AdminQuizzesPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">{format(new Date(quiz.createdAt), "dd MMM yyyy")}</TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right print:hidden">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button aria-label={`${quiz.title} işlemleri`} variant="ghost" size="icon" className="h-8 w-8">

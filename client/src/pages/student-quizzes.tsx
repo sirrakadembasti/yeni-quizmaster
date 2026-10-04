@@ -25,8 +25,10 @@ import { quizApi, resultApi } from "@/lib/api";
 import { useAuth } from "@/context/auth-context";
 import {
   getOfflineQuizList,
+  getOfflineQuizResults,
   getOfflineSession,
   normalizeOfflineQuestions,
+  reconcileOfflineSession,
   saveOfflineQuizList,
   saveOfflineSession,
 } from "@/lib/offline-quiz";
@@ -61,7 +63,7 @@ export default function StudentQuizzesPage() {
         setOfflineView(false);
         setError(null);
         if (user) {
-          saveOfflineQuizList(user.id, nextQuizzes);
+          saveOfflineQuizList(user.id, nextQuizzes, resultsData.results || []);
           setPreparedIds(new Set(nextQuizzes
             .filter(quiz => getOfflineSession(user.id, quiz.id))
             .map(quiz => quiz.id)));
@@ -70,7 +72,7 @@ export default function StudentQuizzesPage() {
         const cachedQuizzes = user ? getOfflineQuizList(user.id) : [];
         if (cachedQuizzes.length > 0) {
           setQuizzes(cachedQuizzes);
-          setResults([]);
+          setResults(getOfflineQuizResults(user!.id));
           setPreparedIds(new Set(cachedQuizzes
             .filter(quiz => getOfflineSession(user!.id, quiz.id))
             .map(quiz => quiz.id)));
@@ -92,7 +94,7 @@ export default function StudentQuizzesPage() {
       setPreparingId(quizId);
       setActionError(null);
       const data = await quizApi.prepareQuizOffline(quizId);
-      saveOfflineSession({
+      saveOfflineSession(reconcileOfflineSession({
         version: 1,
         userId: user.id,
         quizId,
@@ -104,7 +106,8 @@ export default function StudentQuizzesPage() {
         timerCapturedAt: data.preparedAt,
         cachedAt: data.preparedAt,
         pendingSubmit: false,
-      });
+        started: false,
+      }, getOfflineSession(user.id, quizId)));
       setPreparedIds(previous => new Set(previous).add(quizId));
     } catch (err) {
       setActionError(err instanceof Error ? err.message : "Sınav çevrimdışı kullanım için hazırlanamadı");
@@ -116,6 +119,9 @@ export default function StudentQuizzesPage() {
   const getQuizStatus = (quizId: string) => {
     const result = results.find(r => r.quizId === quizId);
     if (result?.status === 'completed') return 'completed';
+    const session = user ? getOfflineSession(user.id, quizId) : null;
+    if (session?.pendingSubmit) return 'pendingSubmit';
+    if (result?.status === 'in_progress' || session?.started || (session && Object.keys(session.answers).length > 0)) return 'inProgress';
     return 'pending';
   };
 
@@ -130,7 +136,7 @@ export default function StudentQuizzesPage() {
   useEffect(() => setCurrentPage(1), [searchTerm, filterStatus]);
   const totalPages = Math.max(1, Math.ceil(filteredQuizzes.length / pageSize));
   const paginatedQuizzes = filteredQuizzes.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-  const pendingCount = quizzes.filter(q => getQuizStatus(q.id) === "pending").length;
+  const pendingCount = quizzes.filter(q => getQuizStatus(q.id) !== "completed").length;
   const completedCount = quizzes.filter(q => getQuizStatus(q.id) === "completed").length;
 
   return (
@@ -182,24 +188,31 @@ export default function StudentQuizzesPage() {
         {/* Filters */}
         <div className="flex flex-col gap-4 md:flex-row">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <label htmlFor="student-quiz-search" className="mb-1 block text-sm font-medium">Sınav Ara</label>
+            <Search className="absolute left-3 bottom-3 h-4 w-4 text-muted-foreground" />
             <Input
+              id="student-quiz-search"
               placeholder="Sınav adı veya konu ara..."
               className="pl-10"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+          <div>
+          <label htmlFor="student-quiz-status" className="mb-1 block text-sm font-medium">Sınav Durumu</label>
           <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="md:w-48">
+            <SelectTrigger id="student-quiz-status" className="md:w-48">
               <SelectValue placeholder="Duruma göre filtrele" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Tümü</SelectItem>
               <SelectItem value="pending">Yapılacak</SelectItem>
               <SelectItem value="completed">Tamamlanan</SelectItem>
+              <SelectItem value="inProgress">Devam Ediyor</SelectItem>
+              <SelectItem value="pendingSubmit">Teslim Bekliyor</SelectItem>
             </SelectContent>
           </Select>
+          </div>
         </div>
 
         {/* Quizzes Grid */}
@@ -249,16 +262,16 @@ export default function StudentQuizzesPage() {
                         <TableCell className="text-center tabular-nums">{quiz.timeLimit ? `${quiz.timeLimit} dk` : "Süresiz"}</TableCell>
                         <TableCell>
                           {status === "completed"
-                            ? <div><Badge variant="outline" className="text-emerald-600">Tamamlandı</Badge><p className="mt-1 text-sm font-bold text-emerald-600">%{result?.score?.toFixed(1) || "0"}</p></div>
-                            : <Badge variant="secondary">Yapılacak</Badge>}
+                            ? <div><Badge variant="outline" className="text-emerald-600">Tamamlandı</Badge><p className="mt-1 text-sm font-bold text-emerald-600">{typeof result?.score === 'number' ? `%${result.score.toFixed(1)}` : 'Puan çevrimiçi görüntülenebilir'}</p></div>
+                            : <Badge variant="secondary">{status === 'pendingSubmit' ? 'Teslim Bekliyor' : status === 'inProgress' ? 'Devam Ediyor' : 'Yapılacak'}</Badge>}
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex flex-wrap justify-end gap-2">
-                            {status === "pending" ? <>
+                            {status !== "completed" ? <>
                               {!quiz.timeLimit && <Button variant="outline" size="sm" disabled={preparingId === quiz.id || offlineView} onClick={() => prepareOffline(quiz.id)}>
                                 <Download className="mr-1 h-4 w-4" />{preparedIds.has(quiz.id) ? "Çevrimdışı Hazır" : preparingId === quiz.id ? "Hazırlanıyor" : "Çevrimdışı Hazırla"}
                               </Button>}
-                              <Button size="sm" disabled={offlineView && !preparedIds.has(quiz.id)} onClick={() => setLocation(`/student/quiz/${quiz.id}`)}><Play className="mr-1 h-4 w-4" />Başla</Button>
+                              <Button size="sm" disabled={offlineView && !preparedIds.has(quiz.id)} onClick={() => setLocation(`/student/quiz/${quiz.id}`)}><Play className="mr-1 h-4 w-4" />{status === 'pendingSubmit' ? 'Teslim Durumu' : status === 'inProgress' ? 'Devam Et' : 'Başla'}</Button>
                             </> : <Button variant="outline" size="sm" onClick={() => setLocation(`/student/result/${result?.id}`)}>Detayları Gör</Button>}
                           </div>
                         </TableCell>
@@ -282,4 +295,3 @@ export default function StudentQuizzesPage() {
     </DashboardLayout>
   );
 }
-

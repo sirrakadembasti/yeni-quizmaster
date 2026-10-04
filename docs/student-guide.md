@@ -4,6 +4,8 @@
 
 Bu kılavuz `student` rolündeki kullanıcıların sınav, anket, sonuç, duyuru ve hesap işlemleri içindir.
 
+Güncel onarımların kabul kapsamı ve kanıtları: [Entegrasyon onarımları](integration-audit/defect-repairs.md).
+
 ## 1. Kayıt ve giriş
 
 Yeni hesap oluştururken adınızı, geçerli e-posta adresinizi ve şifrenizi girin. Açık kayıt yalnız öğrenci hesabı oluşturur; sınıfınızı kendiniz seçemezsiniz. Sınıf atamasını okul yönetimi yapar.
@@ -45,12 +47,16 @@ Yalnız yayınlanmış ve sınıfınıza atanmış sınavları görebilirsiniz.
 
 Anketlerde doğru/yanlış cevap ve puan yoktur. Gönderdiğiniz anket ikinci kez gönderilemez; durum **Tamamlandı/Gönderildi** olarak gösterilir.
 
+Açık uçlu soruda yalnız boşluk yazmak cevap sayılmaz. Anket yüklenemediğinde ekrandaki açıklama erişim, bulunamama veya sunucu hatasını belirtir; yeniden deneme sunulan hatalarda **Yeniden dene** ile tekrar yükleyin.
+
 ## 6. Sonuçlar ve istatistikler
 
 - **Sonuçlarım:** Sınav adı, ders, puan ve tarih listesi.
 - Sonuç detayında puan, süre ve soru incelemesi bulunur.
 - **İstatistiklerim:** Genel ortalama ve ders/sınav performansı.
 - Uygun sonuç ve istatistik ekranlarındaki **Excel** düğmesi `.xlsx`, **Yazdır / PDF** A4 uyumlu çıktı üretir.
+
+**İstatistiklerim > Yazdır / PDF olarak kaydet** tarayıcının yazdırma penceresini açar. PDF dosyası için bu pencerede PDF olarak kaydetmeyi seçin.
 
 Anket yanıtları sınav sonucu/puan ekranına eklenmez.
 
@@ -62,6 +68,8 @@ Duyuruda gönderen kişinin adı ve rolü açıkça gösterilir. Başka sınıfa
 - **Tüm Bildirimleri Gör** ile Ayarlar bildirim sekmesi açılır.
 - Bildirimi yanındaki silme düğmesiyle kaldırabilirsiniz.
 - Bildirim sesini üst menüden veya **Ayarlar > Bildirimler** alanından kapatıp açabilirsiniz.
+- Bildirimler yüklenirken yükleme mesajı görünür. Yükleme hatasında **Yeniden dene** seçeneğini kullanın; **Henüz bildirim yok** yalnız başarılı boş liste için gösterilir.
+- **Hepsini Oku** işlemi başarısız olursa hata mesajı görünür ve bildirimler okunmuş sayılmaz; işlemi tekrar deneyebilirsiniz.
 
 ## 8. Profil, sınıf numarası ve veli bilgileri
 
@@ -76,6 +84,10 @@ Süresiz sınav için:
 1. İnternet varken **Çevrimdışı Hazırla** düğmesine basın.
 2. **Çevrimdışı Hazır** durumunu gördükten sonra aynı cihaz ve tarayıcıda sınavı internetsiz açın.
 3. Cevaplayın ve teslim edin; bağlantı geldiğinde bekleyen teslim otomatik gönderilir.
+
+**Sınavlarım > Sınav durumu** filtresinde **Yapılacak**, **Tamamlanan**, **Devam Ediyor** ve **Teslim Bekliyor** ayrı seçeneklerdir. Başladığınız sınav için **Devam Et**, bekleyen teslim için **Teslim Durumu** düğmesini kullanın. Önceden bu tarayıcıda kaydedilmiş tamamlanma bilgisi, bağlantı kesildiğinde sınavı yeniden yapılacak olarak göstermez; puan önbellekte yoksa çevrimiçi görüntülenebileceği belirtilir.
+
+Aynı süresiz sınavı yeniden çevrimdışı hazırlamak, gönderilmemiş yerel cevapları veya bekleyen teslimi sıfırlamaz. Hazırlama başarısız olursa mevcut yerel kayıt korunur; bağlantıyı kontrol edip tekrar deneyin.
 
 Önemli sınırlar:
 

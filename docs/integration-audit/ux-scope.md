@@ -1,5 +1,7 @@
 # Kalan UX kapsamı — 4 Ekim 2026
 
+Bu liste onarım öncesindeki kapsam ve önerileri korur. S-U01–08, T-U01–04 ve baskı sütunu kusurlarının sonraki düzeltme/kabul durumu [onarım raporundadır](defect-repairs.md). Yeni özellik tablosu bu onarıma dahil değildir.
+
 Bu dosya ilk kaynak karşılaştırmasının kapsam listesidir. Sonraki gerçek Chromium, kontrollü ağ, çevrimdışı ve PDF kontrollerinin güncel sonuçları [doğrulama raporunda](verification.md), `ux-detail-results.json` ve `ux-extra-results.json` içindedir. Aşağıdaki “aday/henüz çalıştırılmadı” anlatımları bu listenin ilk hazırlanma aşamasını açıklar; son test durumu için doğrulama raporu esas alınır.
 
 Bu kayıt mevcut kaynak ve önceki denetim raporlarının salt okunur karşılaştırmasıdır. Bu çalışma sırasında yeni tarayıcı koşusu, sunucu veya ağır test paketi başlatılmadı; aşağıdaki kabul kontrolleri henüz çalıştırılacak adaylardır. Ürün kodu değiştirilmedi. Öncelik P2 orta, P3 düşük; efor göreli tahmindir.

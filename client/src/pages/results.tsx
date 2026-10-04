@@ -486,8 +486,10 @@ export default function StatisticsPage() {
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                       <CardTitle className="text-xl font-black">Sınav Detayları</CardTitle>
                       <div className="relative w-full sm:w-72">
-                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Label htmlFor="result-table-search" className="mb-1 block">Sınav veya ders ara</Label>
+                        <Search className="absolute left-3 bottom-2.5 h-4 w-4 text-muted-foreground" />
                         <Input 
+                          id="result-table-search"
                           placeholder="Sınav veya ders ara..." 
                           className="pl-9 h-9 rounded-xl bg-background/50 border-transparent focus:border-primary/20"
                           value={tableSearch}

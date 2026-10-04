@@ -1,0 +1,113 @@
+{
+  "generatedAt": "2026-10-04T12:12:09.329Z",
+  "fixture": "F:\\projeler\\yeni-quizmaster-main\\server\\data\\quizmaster-test-live-socket-UM4E5D",
+  "port": 40072,
+  "tests": [
+    {
+      "name": "anonymous handshake rejected",
+      "status": "passed",
+      "durationMs": 242,
+      "evidence": "Unauthorized"
+    },
+    {
+      "name": "forged cookie rejected",
+      "status": "passed",
+      "durationMs": 23,
+      "evidence": "Unauthorized"
+    },
+    {
+      "name": "foreign Origin rejected for websocket",
+      "status": "passed",
+      "durationMs": 25,
+      "evidence": "websocket error"
+    },
+    {
+      "name": "foreign Origin rejected for polling",
+      "status": "passed",
+      "durationMs": 1128,
+      "evidence": "xhr poll error"
+    },
+    {
+      "name": "real websocket authenticated and automatic user room",
+      "status": "passed",
+      "durationMs": 0
+    },
+    {
+      "name": "real polling authenticated",
+      "status": "passed",
+      "durationMs": 3375
+    },
+    {
+      "name": "joining another user room disconnects client",
+      "status": "passed",
+      "durationMs": 1187
+    },
+    {
+      "name": "quiz publish sends one live notification only to assigned student and admin",
+      "status": "passed",
+      "durationMs": 7745,
+      "evidence": {
+        "liveNotificationIdPersisted": true,
+        "studentEvents": 1,
+        "unrelatedStudentEvents": 0
+      }
+    },
+    {
+      "name": "repeated publish does not duplicate notifications",
+      "status": "passed",
+      "durationMs": 3497
+    },
+    {
+      "name": "class announcement delivered live with recipient isolation",
+      "status": "passed",
+      "durationMs": 3430
+    },
+    {
+      "name": "registration emits persistent admin-only notification",
+      "status": "passed",
+      "durationMs": 3997
+    },
+    {
+      "name": "logout disconnects same session but preserves second login",
+      "status": "passed",
+      "durationMs": 4856
+    },
+    {
+      "name": "password change disconnects all sessions and accepts only refreshed cookie",
+      "status": "passed",
+      "durationMs": 10976
+    },
+    {
+      "name": "packet middleware rejects DB-revoked session version",
+      "status": "passed",
+      "durationMs": 3695
+    },
+    {
+      "name": "removed SQLite session rejected during packet revalidation",
+      "status": "passed",
+      "durationMs": 3412
+    },
+    {
+      "name": "expired SQLite session rejected during packet revalidation",
+      "status": "passed",
+      "durationMs": 3466
+    },
+    {
+      "name": "inactive account handshake rejected",
+      "status": "passed",
+      "durationMs": 2568
+    },
+    {
+      "name": "idle inactive client disconnected by real 30-second session timer",
+      "status": "passed",
+      "durationMs": 31880,
+      "evidence": {
+        "elapsedMs": 30004
+      }
+    }
+  ],
+  "passed": 18,
+  "failed": 0,
+  "cleanupSucceeded": true,
+  "scope": "Production setupSocket, auth/quiz/announcement/notification routes and storage; real loopback websocket/polling; real disposable Prisma SQLite and connect-sqlite3 sessions. Express test composition excludes full index middleware (CSRF, rate limiter, proxy/TLS) and browser UX. No SMTP/AI worker or external network."
+}

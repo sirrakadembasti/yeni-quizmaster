@@ -6,7 +6,7 @@
   - heading "İstatistikler" [level=1]
   - paragraph: Quiz performansınızın detaylı analizi
   - button "Excel"
-  - button "PDF İndir"
+  - button "Yazdır / PDF olarak kaydet"
   - text: Tamamlanan Quiz 1
   - paragraph: toplam katılım
   - text: Ortalama Puan 0%

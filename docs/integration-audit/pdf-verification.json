@@ -4,7 +4,7 @@
       "file": "ux-detail-A-U01.pdf",
       "pages": 1,
       "nonemptyPages": true,
-      "actionsHeaderPrinted": true,
+      "actionsHeaderPrinted": false,
       "renderedPages": [
         1
       ]
@@ -13,7 +13,8 @@
       "file": "ux-detail-T-U03.pdf",
       "pages": 1,
       "nonemptyPages": true,
-      "truncatedStudentCodePrinted": true,
+      "fullStudentCodePrinted": true,
+      "actionsHeaderPrinted": false,
       "renderedPages": [
         1
       ]
@@ -22,13 +23,36 @@
       "file": "ux-detail-T-U04-fast.pdf",
       "pages": 1,
       "nonemptyPages": true,
+      "classLabelsPrinted": true,
       "renderedPages": [
         1
       ]
     },
     {
+      "file": "ux-detail-T-U04-filter-fast.pdf",
+      "pages": 1,
+      "nonemptyPages": true,
+      "classLabelsPrinted": true,
+      "renderedPages": [
+        1
+      ]
+    },
+    {
+      "file": "ux-detail-T-U04-many.pdf",
+      "pages": 3,
+      "nonemptyPages": true,
+      "expectedClasses": 30,
+      "printedClasses": 30,
+      "completeClasses": true,
+      "renderedPages": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
       "file": "ux-extra-large-report.pdf",
-      "pages": 8,
+      "pages": 7,
       "nonemptyPages": true,
       "expectedRows": 60,
       "printedRows": 60,
@@ -36,7 +60,7 @@
       "longTitleEnds": 60,
       "renderedPages": [
         1,
-        8
+        7
       ]
     }
   ],

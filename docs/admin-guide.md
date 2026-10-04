@@ -2,6 +2,8 @@
 
 Bu kılavuz `admin` rolündeki kullanıcıların okul yapısını, hesapları, sınavları, anketleri, raporları ve sistem kayıtlarını yönetmesi içindir.
 
+Güncel onarımların kabul kapsamı ve kanıtları: [Entegrasyon onarımları](integration-audit/defect-repairs.md).
+
 ## 1. Giriş ve güvenlik
 
 1. **Giriş Yap** ekranında yönetici e-postanızı ve şifrenizi kullanın.
@@ -94,6 +96,8 @@ Sınıf silmeden önce bağlı öğrenci, öğretmen, sınav ve anketleri kontro
 6. İsterseniz Gemini AI ile soru üretin ve sonuçları eklemeden önce kontrol edin.
 7. Taslak kaydedin; en az bir geçerli soru bulunduğunda yayınlayın.
 
+AI üretimi için konu, soru adedi ve sağlayıcı ayarlarının geçerli olması gerekir; sunucu geçersiz istekleri reddeder. Özel sağlayıcı adresi, anahtarı, model veya sağlayıcı seçimi değiştiğinde eski **HAZIR** göstergesi kaldırılır. Yeni ayarlarla yapılandırma testini tekrar çalıştırın ve üretilen soruları eklemeden önce inceleyin.
+
 Ayarlar, sorular ve yayın durumu birlikte kaydedilir. Kayıt yanıtı bağlantı nedeniyle alınamazsa aynı açık düzenleyicide yeniden deneyin; tekrar deneme ikinci bir taslak oluşturmaz. Katılım başladıktan sonra sorular değiştirilemez; reddedilen soru değişikliği ayarları da değiştirmez. Açıklamayı boşaltmak ve süreyi kapatmak kaydedildiğinde eski değerler kaldırılır.
 
 Görsel yüklemede yalnız desteklenen görsel dosyaları kullanın; istemci dosya boyutunu, sunucu dosya türünü ve piksel sınırını doğrular.
@@ -119,6 +123,8 @@ Yönetici sınav seçicisinde öğretmenlerin sınavları da görünür. Sonuç 
 
 Filtre seçiminiz yazdırma başlığında ve Excel dosyasında rapor bilgisi olarak yer alır.
 
+Öğrenci raporundaki **Öğrenci Kodu** tam kimliği gösterir; uzun kod satıra bölünür. Sınıf istatistiğinde veri yüklendiğinde baskı grafiği katılım ve başarı değerlerini tamamlanmış çubuklarla gösterir. Filtreyi değiştirdiğinizde yeni verinin yüklenmesini bekleyip yazdırın.
+
 ## 10. Duyurular ve bildirimler
 
 Yönetici okul geneline, role veya sınıfa duyuru gönderebilir. Duyuruda gönderen adı ve rolü alıcıya gösterilir.
@@ -128,6 +134,7 @@ Yönetici okul geneline, role veya sınıfa duyuru gönderebilir. Duyuruda gönd
 - Bildirim tek tek silinebilir.
 - Zil alanından veya **Ayarlar > Bildirimler** üzerinden ses açılıp kapatılabilir.
 - Gerçek zamanlı bağlantı varsa duyuru/bildirim anında; bağlantı yeniden kurulduğunda önbellek yenilenerek gösterilir.
+- Bildirim yükleme hatasında **Yeniden dene** seçeneği görünür; boş liste mesajı gösterilmez. **Hepsini Oku** başarısız olursa hata mesajı görünür ve okunma durumu korunur.
 
 ## 11. Loglar, e-posta ve şifre talepleri
 
@@ -148,6 +155,7 @@ Dört log bölümünde toplam kayıt ve sayfa bilgisi gösterilir; **Önceki / S
 - Excel dosyaları standart OpenXML öğe sırasıyla üretilir ve Microsoft Excel masaüstü uygulamasında onarım uyarısı vermeden açılacak şekilde doğrulanır.
 - Rapor başlığı, aktif filtreler, başlık biçimi, kenarlıklar, otomatik genişlik ve sabit başlık satırı çalışma kitabına eklenir.
 - **Yazdır** menüleri, düğmeleri ve filtre kontrollerini gizler; tarih, başlık, filtre özeti ve tabloyu A4'e sığdırır.
+- Tablo eylemlerinin **İşlemler / Eylem** başlıkları ve hücreleri baskıda gizlenir. Loglardaki işlem türü ve işlem detayları rapor verisi olarak korunur.
 - Dashboard sayfalarında yazdırma bulunmaz; anlamlı rapor/listelerde kullanılır.
 
 ## 13. Çevrimdışı sınav
@@ -155,6 +163,8 @@ Dört log bölümünde toplam kayıt ve sayfa bilgisi gösterilir; **Önceki / S
 Yalnız süresiz sınavlar öğrenci tarafından bağlantı varken cihaza hazırlanabilir. Cevap anahtarı pakete girmez; teslim ve puanlama sunucuda tamamlanır. Süreli sınavlar çevrimdışı başlatılamaz.
 
 Tarayıcı verilerini temizlemek veya cihaz değiştirmek bekleyen yerel cevapları kaybettirebilir.
+
+Öğrencinin **Sınavlarım** ekranında tamamlanan, devam eden ve teslim bekleyen sınavlar ayrı durumlarla gösterilir. Aynı süresiz sınavı yeniden çevrimdışı hazırlamak gönderilmemiş yerel cevapları veya bekleyen teslimi sıfırlamaz.
 
 ## 14. Sorun giderme
 
@@ -195,3 +205,5 @@ Katılımı başlamış sınavın veya yanıt alınmış anketin soruları deği
 [Migration ve bakım notları](guvenlik-ve-bakim.md).
 
 Öğretmen ayrıntısındaki sınav listesi ekranda sayfalansa da Excel ve baskı bütün ilgili sınavları içerir. Öğrenci analizinde kimlik ve sonuçlar yüklenene kadar Excel/Yazdır kapalıdır; yükleme hatasında görünen hata giderildikten sonra rapor alınabilir. Raporlarda seçili kişi ve sınıf filtreleri yer alır. [Dışa aktarma ve baskı doğrulama kapsamı](admin-audit/export-print-closure.md).
+
+Çok sınıflı istatistik raporlarında baskı grafikleri en çok beş sınıflık gruplara ayrılır; yazı boyutu sabit kalır. Uzun grafik etiketleri kısaltılabilir; tam sınıf adları ve bütün değerler ayrıntılı tabloda bulunur.

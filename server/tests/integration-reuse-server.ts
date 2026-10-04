@@ -17,4 +17,8 @@ for (const key of ['EMAIL_USER','EMAIL_PASS','EMAIL_FROM','GEMINI_API_KEY','OPEN
 process.chdir(root);
 const { installIntegrationAuditIdentity } = await import('./integration-audit-identity');
 installIntegrationAuditIdentity();
+if (process.env.INTEGRATION_PROFILE_OUTPUT) {
+  const { installIntegrationProfile } = await import('./integration-profile');
+  installIntegrationProfile();
+}
 await import('../index');

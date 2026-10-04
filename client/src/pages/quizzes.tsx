@@ -272,7 +272,7 @@ export default function QuizzesPage() {
                     <TableHead className="text-center">Süre</TableHead>
                     <TableHead className="text-center">Katılım</TableHead>
                     <TableHead>Durum</TableHead>
-                    <TableHead className="text-right">İşlemler</TableHead>
+                    <TableHead className="text-right print:hidden">İşlemler</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -293,7 +293,7 @@ export default function QuizzesPage() {
                       <TableCell className="text-center tabular-nums">{quiz.timeLimit ? `${quiz.timeLimit} dk` : "-"}</TableCell>
                       <TableCell className="text-center tabular-nums">{quiz.participantCount || 0}</TableCell>
                       <TableCell><Badge variant={quiz.status === "published" ? "default" : quiz.status === "archived" ? "secondary" : "outline"}>{quiz.status === "published" ? "Yayında" : quiz.status === "archived" ? "Arşivlenmiş" : "Taslak"}</Badge></TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right print:hidden">
                         <div className="flex justify-end gap-1">
                           <Button variant="outline" size="sm" onClick={() => setLocation(`/student/quiz/${quiz.id}`)}><Eye className="mr-1 h-4 w-4" />Önizle</Button>
                           <DropdownMenu>

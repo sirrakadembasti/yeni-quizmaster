@@ -6,25 +6,31 @@
   - heading "Parent Audit Survey" [level=1]
   - paragraph: Tüm soruları yanıtlayıp anketi gönderin.
   - text: 1. Audit open response
-  - textbox
+  - group "1. Audit open response":
+    - textbox "1. Audit open response"
   - text: 2. Audit rating
-  - button "1"
-  - button "2"
-  - button "3"
-  - button "4"
-  - button "5"
+  - group "2. Audit rating":
+    - button "1"
+    - button "2"
+    - button "3"
+    - button "4"
+    - button "5"
   - text: 3. Audit single choice
-  - button "A"
-  - button "B"
-  - button "C"
+  - group "3. Audit single choice":
+    - button "A"
+    - button "B"
+    - button "C"
   - text: 4. Audit multiple choice
-  - checkbox "A"
-  - text: A
-  - checkbox "B"
-  - text: B
-  - checkbox "C"
-  - text: C 5. Audit likert
-  - button "Katılmıyorum"
-  - button "Kararsızım"
-  - button "Katılıyorum"
+  - group "4. Audit multiple choice":
+    - checkbox "A"
+    - text: A
+    - checkbox "B"
+    - text: B
+    - checkbox "C"
+    - text: C
+  - text: 5. Audit likert
+  - group "5. Audit likert":
+    - button "Katılmıyorum"
+    - button "Kararsızım"
+    - button "Katılıyorum"
   - button "Anketi Gönder" [disabled]

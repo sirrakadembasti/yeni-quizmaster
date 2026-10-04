@@ -358,7 +358,7 @@ export default function AdminClassDetailPage() {
                 <TableHeader className="bg-muted/50">
                   <TableRow>
                     <TableHead className="pl-6 font-black text-[10px] uppercase py-3">Öğrenci</TableHead>
-                    <TableHead className="text-right pr-6 font-black text-[10px] uppercase py-3">İşlemler</TableHead>
+                    <TableHead className="text-right pr-6 font-black text-[10px] uppercase py-3 print:hidden">İşlemler</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -376,7 +376,7 @@ export default function AdminClassDetailPage() {
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell className="text-right pr-6">
+                        <TableCell className="text-right pr-6 print:hidden">
                           <Button variant="ghost" size="icon" aria-label={`${s.name} öğrencisini sınıftan çıkar`} disabled={removeStudentMutation.isPending} className="h-8 w-8 text-muted-foreground hover:text-red-500 focus-visible:ring-2" onClick={() => removeStudentMutation.mutate(s.id)}><Trash2 className="h-4 w-4" /></Button>
                         </TableCell>
                       </TableRow>

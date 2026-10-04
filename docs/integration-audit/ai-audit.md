@@ -1,5 +1,7 @@
 # AI integration audit
 
+Historical pre-repair audit. The answer fallback, input/output validation and stale readiness findings below were subsequently addressed; current acceptance and live-provider recheck are recorded in [defect-repairs.md](defect-repairs.md). Original failing results are retained under `before-repairs/` and original offline characterization results remain unchanged.
+
 ## Evidence and scope
 
 `ai-offline-results.json`: 22/22 cases passed with actual Express/auth/AI routes and provider responses mocked at `safeExternalFetch`. No application database or external provider calls. Three cases characterize current defects; passing does not mean these defects are repaired. These are route integration tests, not live Google/TLS tests.

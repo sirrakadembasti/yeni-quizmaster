@@ -269,7 +269,7 @@ export default function StudentDashboard() {
               <div className="space-y-4">
                 {completedResults.slice(0, 4).map((result) => {
                   const score = result.score || 0;
-                  const isSuccess = score >= 50;
+                  const isSuccess = score >= 70;
                   
                   return (
                     <Card key={result.id} className="hover:border-primary/30 transition-all hover:shadow-md group bg-card">
@@ -296,7 +296,8 @@ export default function StudentDashboard() {
                           <Button 
                             variant="ghost" 
                             size="icon"
-                            className="rounded-full opacity-0 group-hover:opacity-100 transition-opacity bg-primary/5 hover:bg-primary/10 hover:text-primary h-8 w-8"
+                            aria-label={`${result.quiz?.title || result.quizTitle || 'İsimsiz Sınav'} sonuç detaylarını gör`}
+                            className="rounded-full bg-primary/5 hover:bg-primary/10 hover:text-primary h-10 w-10 focus-visible:ring-2 focus-visible:ring-primary"
                             onClick={() => setLocation(`/student/result/${result.id}`)}
                           >
                             <ArrowRight className="h-4 w-4" />

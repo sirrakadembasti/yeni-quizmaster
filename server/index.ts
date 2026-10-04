@@ -4,7 +4,7 @@ import { registerRoutes } from "./api-routes/routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 import session from "express-session";
-import connectSqlite3 from "connect-sqlite3";
+import { createSessionStore } from "./utils/session-store";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
@@ -71,8 +71,6 @@ if (!sessionSecret) {
   process.exit(1);
 }
 
-const SQLiteStore = connectSqlite3(session);
-
 const app = express();
 const httpServer = createServer(app);
 
@@ -138,10 +136,7 @@ const isHttpsDeploy =
 const sessionDirectory = path.join(serverDirectory, "data");
 fs.mkdirSync(sessionDirectory, { recursive: true });
 const sessionMiddleware = session({
-  store: new SQLiteStore({
-    db: "sessions.db",
-    dir: sessionDirectory,
-  }) as any,
+  store: createSessionStore(sessionDirectory),
   secret: sessionSecret,
   resave: false,
   saveUninitialized: false,

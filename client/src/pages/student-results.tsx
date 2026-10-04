@@ -409,7 +409,7 @@ export default function StudentResultsPage() {
               <div className="flex items-center gap-2.5">
                 <div className="text-right hidden sm:block mr-1">
                   <p className="text-[9px] uppercase tracking-widest font-black text-muted-foreground">Öğrenci Kodu</p>    
-                  <p className="font-mono text-xs font-bold">{student.id.substring(0, 8)}</p>
+                  <p className="font-mono text-xs font-bold break-all">{student.id}</p>
                 </div>
                 <div className="h-8 w-[1px] bg-border mx-1 hidden sm:block" />
                 <Trophy className="h-6 w-6 text-amber-500" />
@@ -567,7 +567,7 @@ export default function StudentResultsPage() {
                         <th className="text-center py-5 px-6">Doğruluk</th>
                         <th className="text-center py-5 px-6">Süre</th>
                         <th className="text-center py-5 px-6">Puan</th>
-                        <th className="text-right py-5 px-8">Eylem</th>
+                        <th className="text-right py-5 px-8 print:hidden">Eylem</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/40">
@@ -618,7 +618,7 @@ export default function StudentResultsPage() {
                                 {score.toFixed(0)}
                               </div>
                             </td>
-                            <td className="py-5 px-8 text-right">
+                            <td className="py-5 px-8 text-right print:hidden">
                               <Button
                                 size="sm"
                                 className="h-10 px-6 rounded-xl font-bold gap-2 shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all"

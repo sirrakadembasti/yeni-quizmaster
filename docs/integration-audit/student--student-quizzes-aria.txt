@@ -9,8 +9,11 @@
   - paragraph: Yapılması gereken sınavlar
   - text: Tamamlanan Sınavlar 1
   - paragraph: Bitirilen sınavlar
-  - textbox "Sınav adı veya konu ara..."
-  - combobox: Tümü
+  - text: Sınav Ara
+  - textbox "Sınav Ara":
+    - /placeholder: Sınav adı veya konu ara...
+  - text: Sınav Durumu
+  - combobox "Sınav Durumu": Tümü
   - table:
     - rowgroup:
       - row "Sınav Ders / Öğretmen Zorluk Soru Süre Durum / Puan İşlemler":

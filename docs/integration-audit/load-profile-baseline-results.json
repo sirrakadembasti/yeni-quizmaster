@@ -1,0 +1,53 @@
+{
+  "startedAt": "2026-10-04T13:47:44.281Z",
+  "mode": "load-only",
+  "databaseHashBefore": "8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158",
+  "load": [
+    {
+      "concurrency": 20,
+      "requests": 60,
+      "statuses": {
+        "200": 59,
+        "requestError": 1
+      },
+      "errors": {
+        "Error/none/apiRequestContext.get: read ECONNRESET": 1
+      },
+      "elapsedMs": 24621,
+      "requestsPerSecond": 2.44,
+      "p50Ms": 7962,
+      "p95Ms": 9174,
+      "maxMs": 14354,
+      "passed": false
+    }
+  ],
+  "ux": [],
+  "cleanup": [
+    {
+      "name": "api",
+      "stopProven": true,
+      "handlesReleased": true
+    }
+  ],
+  "isolatedFixture": true,
+  "fixtureIdentityVerified": true,
+  "detailExitCode": 0,
+  "detailCoverageComplete": true,
+  "mobileAccepted": true,
+  "status": "load-failed",
+  "ports": [
+    {
+      "kind": "fixture-port",
+      "port": 5560,
+      "stopped": true
+    },
+    {
+      "kind": "fixture-port",
+      "port": 5561,
+      "stopped": true
+    }
+  ],
+  "databaseHashAfter": "8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158",
+  "databaseUnchanged": true,
+  "finishedAt": "2026-10-04T13:48:33.390Z"
+}

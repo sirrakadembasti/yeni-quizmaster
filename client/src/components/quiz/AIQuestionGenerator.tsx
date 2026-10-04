@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -63,6 +63,12 @@ export function AIQuestionGenerator({
   // Test States
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
+  const configRevision = useRef(0);
+
+  const invalidateConfigTest = () => {
+    configRevision.current += 1;
+    setTestResult(null);
+  };
 
   const { toast } = useToast();
 
@@ -75,6 +81,7 @@ export function AIQuestionGenerator({
   };
 
   const handleTestConfig = async () => {
+    const testedRevision = configRevision.current;
     setIsTesting(true);
     setTestResult(null);
     try {
@@ -84,6 +91,8 @@ export function AIQuestionGenerator({
         apiKey: customApiKey || undefined,
         model: activeModel
       });
+
+      if (testedRevision !== configRevision.current) return;
 
       setTestResult({
         success: response.success,
@@ -96,6 +105,7 @@ export function AIQuestionGenerator({
         toast({ title: "Hata", description: response.details || "Bağlantı kurulamadı.", variant: "destructive" });
       }
     } catch (error) {
+      if (testedRevision !== configRevision.current) return;
       setTestResult({
         success: false,
         message: "Bağlantı hatası."
@@ -249,7 +259,7 @@ export function AIQuestionGenerator({
                 Gemini 3.8 / 2.5 Destekli
               </Badge>
             </div>
-            <Select value={model} onValueChange={setModel} disabled={isGenerating}>
+            <Select value={model} onValueChange={(value) => { invalidateConfigTest(); setModel(value); }} disabled={isGenerating}>
               <SelectTrigger className="h-11">
                 <SelectValue />
               </SelectTrigger>
@@ -285,7 +295,7 @@ export function AIQuestionGenerator({
                   <Label className="text-[11px] font-bold uppercase tracking-widest text-primary/70">Base URL</Label>
                   <Input
                     value={customBaseUrl}
-                    onChange={(e) => setCustomBaseUrl(e.target.value)}
+                    onChange={(e) => { invalidateConfigTest(); setCustomBaseUrl(e.target.value); }}
                     placeholder="https://.../v1/"
                     className="bg-background"
                   />
@@ -296,7 +306,7 @@ export function AIQuestionGenerator({
                   <Input
                     type="password"
                     value={customApiKey}
-                    onChange={(e) => setCustomApiKey(e.target.value)}
+                    onChange={(e) => { invalidateConfigTest(); setCustomApiKey(e.target.value); }}
                     placeholder="Girilmezse sunucu anahtarı kullanılır"
                     className="bg-background"
                   />
@@ -307,6 +317,7 @@ export function AIQuestionGenerator({
                   <Input
                     value={model === "custom" ? customModel : model}
                     onChange={(e) => {
+                      invalidateConfigTest();
                       if (model === "custom") setCustomModel(e.target.value);
                       else {
                         setModel("custom");

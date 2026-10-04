@@ -2,6 +2,8 @@
 
 Bu kılavuz `teacher` rolündeki kullanıcıların yetkili oldukları ders ve sınıflarda sınav, anket, öğrenci sonucu ve duyuru süreçlerini yönetmesi içindir.
 
+Güncel onarımların kabul kapsamı ve kanıtları: [Entegrasyon onarımları](integration-audit/defect-repairs.md).
+
 ## 1. Giriş ve profil
 
 E-posta ve şifrenizle giriş yaptığınızda öğretmen dashboard'u açılır. Branşlarınız, sorumlu sınıflarınız ve dersine girdiğiniz sınıflar yetki kapsamınızı belirler.
@@ -35,6 +37,8 @@ Bu sınırlar yalnız arayüzde değil API ve veritabanı sorgularında da uygul
 
 **Yeni Sınav** yalnız sınav oluşturur; anket işlemleri **Anket Yönetimi** içindedir. Yetkiniz olmayan sınıf kimliği gönderilirse sunucu işlemi reddeder.
 
+AI üretiminde konu, soru adedi ve sağlayıcı alanlarını geçerli değerlerle doldurun. Sunucu geçersiz üretim isteğini reddeder. Özel sağlayıcı adresini, anahtarını, modelini veya sağlayıcı seçimini değiştirdiğinizde önceki **HAZIR** göstergesi kaldırılır; yeni ayarlarla yapılandırma testini tekrar çalıştırın. Üretilen soruları sınava eklemeden önce inceleyin.
+
 ## 4. Sınav yayını ve güvenlik
 
 - En az bir geçerli soru olmadan sınav yayınlanamaz.
@@ -43,6 +47,8 @@ Bu sınırlar yalnız arayüzde değil API ve veritabanı sorgularında da uygul
 - Sayfa yenileme süreyi sıfırlamaz; süre sunucu başlangıcına göre hesaplanır.
 - Sunucudaki süre dolduktan sonra yeni cevap kabul edilmez.
 - Tamamlanmamış sınavın cevap anahtarı öğrenciye gönderilmez.
+
+**Önizle** ile açılan sınavda bitirme onayı da önizleme olduğunu belirtir. Önizleme sonucunuz kaydedilmez ve öğrenci sonucu oluşturmaz.
 
 ## 5. Anket Yönetimi
 
@@ -62,6 +68,8 @@ Yalnız kendi oluşturduğunuz veya yetkili sınıflarınıza atanmış anketler
 - **Sınıf İstatistikleri** ekranında başlangıç/bitiş tarihi ile yetkili sınıfların katılım ve başarı grafiklerini karşılaştırın.
 - Öğrenci detayında yalnız sınav bilgisi ve sonuçları gösterilir; kişisel veli alanları gösterilmez.
 - Filtrelenmiş listeyi **Excel** ile indirin veya **Yazdır** ile A4/PDF çıktısı alın.
+
+Öğrenci raporundaki **Öğrenci Kodu** tam kimliği gösterir; uzun kod satıra bölünür. Sınıf istatistiği verileri yüklendiğinde baskı grafiği katılım ve başarı değerlerini tamamlanmış çubuklarla gösterir; filtre değişikliğinden sonra yeni verinin yüklenmesini bekleyin.
 
 ## 7. Öğrenciler ve sınıflar
 
@@ -85,12 +93,14 @@ Liste ve sınıf detayında **Excel** ve **Yazdır** seçenekleri; rapor başlı
 - **Tüm Bildirimleri Gör** Ayarlar bildirim sekmesini açar.
 - Bildirim sesi zil alanından veya Ayarlardan kapatılıp açılabilir.
 - Sınavı tamamlayan ilgili öğrencilerin bildirimleri sınavın öğretmenine yönlendirilir.
+- Yükleme hatasında **Yeniden dene** görünür; hata boş bildirim listesi olarak gösterilmez. **Hepsini Oku** başarısız olursa hata mesajı görünür ve bildirimlerin okunma durumu korunur.
 
 ## 9. Excel ve yazdırma
 
 - **Excel** düğmesi gerçek `.xlsx` dosyası indirir ve Türkçe karakterleri korur.
 - Başlık, seçili filtreler, tablo başlığı, otomatik sütun genişliği ve filtre satırı Excel dosyasına eklenir.
 - Yazdırmada yan menü, üst menü, düğmeler ve filtre kontrolleri gizlenir.
+- Rapor tablolarındaki **İşlemler / Eylem** başlıkları ve bu sütunların hücreleri de baskıda gizlenir; sonuç ve kimlik bilgileri korunur.
 - Dashboard'da yazdırma yoktur; rapor ve detay sayfalarında bulunur.
 
 ## 10. Çevrimdışı sınav
@@ -120,3 +130,5 @@ Kendi parola değişiminde mevcut parola doğrulanır. Profil/parola işlemi bra
 Sınav Sonuçları → Öğrenci Raporları bölümünde Doğru/Toplam alanı sıfır doğru cevabı da gösterir. Excel ve öğrenci filtresi Genel Bakış sekmesindedir; aynı filtre Öğrenci Raporları ve yazdırılan karnelere uygulanır.
 
 Parola sıfırlama bağlantısında gönderim sırasında “Güncelleniyor...” görünür ve tekrar gönderim engellenir. İstek başarısız olursa form değerleri korunur ve yeniden deneme açılır; geçersiz veya süresi dolmuş bağlantı için yeni bağlantı isteyin.
+
+Çok sınıflı istatistik raporlarında baskı grafikleri en çok beş sınıflık gruplara ayrılır; yazı boyutu sabit kalır. Uzun grafik etiketleri kısaltılabilir; tam sınıf adları ve bütün değerler ayrıntılı tabloda bulunur.
