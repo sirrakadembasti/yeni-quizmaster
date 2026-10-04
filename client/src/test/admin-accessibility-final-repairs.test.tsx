@@ -9,6 +9,10 @@ import StudentResults from '@/pages/student-results';
 vi.mock('@/components/layout/DashboardLayout', () => ({ DashboardLayout: ({ children }: any) => <main>{children}</main> }));
 vi.mock('@/context/auth-context', () => ({ useAuth: () => ({ role: 'admin', user: { id: 'admin', name: 'Audit Admin' } }) }));
 vi.mock('@/hooks/use-toast', () => ({ useToast: () => ({ toast: vi.fn() }) }));
+vi.mock('@/lib/archive-api', () => ({ archiveApi: {
+  years: async () => ({ years: [{ id: 'year', label: '2026-2027', status: 'active', scheduledCloseAt: '2027-07-14T21:05:00Z' }] }),
+  jobs: async () => ({ jobs: [] }), rules: async () => ({ rules: [] }),
+} }));
 vi.mock('@/lib/api', () => ({
   categoryApi: { getAllCategories: async () => [{ id: 'course', name: 'Türkçe', description: 'Dil dersi', createdAt: '2026-10-01T00:00:00Z' }] },
   classApi: { getAllClasses: async () => ({ classes: [{ id: 'class-a', name: '1-A' }, { id: 'class-b', name: '2-A' }] }) },
@@ -27,16 +31,15 @@ beforeEach(() => {
 afterEach(() => { cleanup(); client.clear(); vi.unstubAllGlobals(); });
 function mount(element: React.ReactNode) { render(<QueryClientProvider client={client}>{element}</QueryClientProvider>); }
 
-it('archive year and promotion selectors have meaningful visible-label names', async () => {
+it('archive transition selectors have meaningful visible-label names', async () => {
   mount(<Archive />);
   const user = userEvent.setup();
-  await screen.findByRole('tab', { name: 'Sınav Arşivi' });
-  expect.soft(screen.getByPlaceholderText('Örn: 2025-2026 Eğitim Yılı')).toHaveAccessibleName('Eğitim Yılı Etiketi');
-  await user.click(screen.getByRole('tab', { name: 'Sınıf Atlatma' }));
+  await screen.findByRole('tab', { name: 'Manuel Arşiv' });
+  await user.click(screen.getByRole('tab', { name: 'Sınıf Geçişi' }));
   const selectors = screen.getAllByRole('combobox');
   expect(selectors).toHaveLength(2);
-  expect.soft(selectors[0]).toHaveAccessibleName('Mevcut Sınıf (Kaynak)');
-  expect.soft(selectors[1]).toHaveAccessibleName('Yeni Sınıf (Hedef)');
+  expect.soft(selectors[0]).toHaveAccessibleName('1-A hedefi');
+  expect.soft(selectors[1]).toHaveAccessibleName('2-A hedefi');
 });
 
 it('student report search and filters expose names independent of their selected values', async () => {

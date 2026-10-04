@@ -69,9 +69,16 @@ export function createArchiveRouter(options: ArchiveRouterOptions = {}) {
     res.status(202).json({ job: archiveJobMetadata(job) });
   }));
   router.get('/years', wrap(async (_req, res) => {
-    await getOrCreateActiveYear(db, now());
+    const serverNow = now();
+    await getOrCreateActiveYear(db, serverNow);
     const years = await db.academicYear.findMany({ orderBy: [{ status: 'asc' }, { label: 'desc' }] });
-    res.json({ years });
+    res.json({
+      serverNow: serverNow.toISOString(),
+      years: years.map(year => ({
+        ...year,
+        canClose: year.status === 'active' && serverNow >= year.scheduledCloseAt,
+      })),
+    });
   }));
   router.get('/jobs', wrap(async (_req, res) => {
     const jobs = await db.archiveSnapshot.findMany({ orderBy: { createdAt: 'desc' }, take: 200 });

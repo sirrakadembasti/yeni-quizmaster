@@ -7,9 +7,14 @@ import ServerSetupPage from '@/pages/server-setup';
 import ManagementPage from '@/pages/admin-management';
 const mocks = vi.hoisted(() => ({ status: vi.fn(), logs: vi.fn(), retention: vi.fn(), confirm: vi.fn(() => true) }));
 vi.mock('@/components/layout/DashboardLayout', () => ({ DashboardLayout: ({ children }: any) => children }));
+vi.mock('@/lib/archive-api', () => ({ archiveApi: {
+  years: async () => ({ years: [{ id: 'year', label: '2026-2027', status: 'active', scheduledCloseAt: '2027-07-14T21:05:00Z' }] }),
+  jobs: async () => ({ jobs: Array.from({ length: 21 }, (_, i) => ({ id: String(i), label: `Archived exam ${i}`, status: 'completed', mode: 'manual', attempts: 1 })) }),
+  rules: async () => ({ rules: [] }), preview: async () => ({ quizzes: 1, results: 7, surveySubmissions: 0, questions: 2 }),
+} }));
 vi.mock('@/lib/api', () => ({
   classApi: { getAllClasses: async () => ({ classes: [] }) }, userApi: { getAllUsers: async () => ({ users: [] }) }, categoryApi: { getAllCategories: async () => [] },
-  quizApi: { getAllAdminQuizzes: async () => ({ quizzes: Array.from({ length: 21 }, (_, i) => ({ id: String(i), title: `Archived exam ${i}`, status: 'archived', academicYear: '2025-2026' })) }) },
+  quizApi: { getAllAdminQuizzes: async () => ({ quizzes: [{ id: 'q1', title: 'Selected exam', status: 'published', contentType: 'exam' }] }) },
   adminApi: { getArchiveCandidates: async () => ({ quizzes: 2, results: 7 }), archiveYear: vi.fn(), getLogs: mocks.logs },
   deploymentApi: { getStatus: mocks.status, runRetention: mocks.retention },
 }));
@@ -27,16 +32,16 @@ afterEach(() => { cleanup(); client.clear(); vi.unstubAllGlobals(); });
 function mount(component: any) { render(<QueryClientProvider client={client}>{component}</QueryClientProvider>); }
 it('archive history exposes the twenty-first record', async () => {
   mount(<ArchivePage />);
-  await screen.findByText('Archived exam 0');
+  await screen.findByRole('tab', { name: 'Geçmiş ve İşler' });
+  await userEvent.click(screen.getByRole('tab', { name: 'Geçmiş ve İşler' }));
+  await screen.findByText(/Archived exam 0/);
   await userEvent.click(screen.getByRole('button', { name: 'Sonraki' }));
-  expect(await screen.findByText('Archived exam 20')).toBeInTheDocument();
+  expect(await screen.findByText(/Archived exam 20/)).toBeInTheDocument();
 });
-it('archive confirmation shows exact candidate and result counts', async () => {
+it('archive preview shows only selected content and result counts', async () => {
   mount(<ArchivePage />);
-  await screen.findByText('Archived exam 0');
-  await userEvent.type(screen.getByPlaceholderText('Örn: 2025-2026 Eğitim Yılı'), '2026-2027');
-  await userEvent.click(screen.getByRole('button', { name: 'Sistemi Arşivle' }));
-  expect(await screen.findByText(/2 içerik ve 7 sonuç/)).toBeInTheDocument();
+  await userEvent.click(await screen.findByRole('checkbox', { name: /Selected exam/ }));
+  expect(await screen.findByText(/1 içerik, 7 sınav sonucu/)).toBeInTheDocument();
 });
 it('server refresh preserves unsaved profile edits', async () => {
   mount(<ServerSetupPage />);

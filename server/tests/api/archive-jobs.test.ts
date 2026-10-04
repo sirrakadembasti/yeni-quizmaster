@@ -49,6 +49,14 @@ function app(verifyArtifact = vi.fn()) {
   const app = express(); app.use(express.json()); app.use(session({ secret: 'isolated-tests', resave: false, saveUninitialized: true }));
   app.use('/archive', createArchiveRouter({ db, now: () => clock, backupRoot: 'server/data/backups', verifyArtifact })); return app;
 }
+it('reports annual eligibility from server time and updates at the exact boundary', async () => {
+  const early = await request(app()).get('/archive/years');
+  expect(early.body.serverNow).toBe(clock.toISOString());
+  expect(early.body.years[0].canClose).toBe(false);
+  clock = new Date(year.scheduledCloseAt);
+  const due = await request(app()).get('/archive/years');
+  expect(due.body.years[0].canClose).toBe(true);
+});
 it('requires explicit existing active content and never accepts annual mode through manual API', async () => {
   for (const quizIds of [[], ['bad'], [randomUUID()]]) await expect(enqueueArchive(db, { mode: 'manual', quizIds })).rejects.toBeInstanceOf(ArchiveJobError);
   quizzes[0].status = 'archived'; await expect(enqueueArchive(db, { mode: 'manual', quizIds: [quizzes[0].id] })).rejects.toThrow();
