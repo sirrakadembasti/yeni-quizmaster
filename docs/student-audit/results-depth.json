@@ -1,0 +1,1310 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\.pnpm\\playwright@1.63.0\\node_modules\\playwright\\cli.js",
+      "test",
+      "-c",
+      "playwright.student-audit.config.ts",
+      "student-exams-depth-audit.spec.ts",
+      "student-navigation-audit.spec.ts",
+      "student-navigation-depth-audit.spec.ts",
+      "student-surveys-shared-audit.spec.ts"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.student-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/student-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "student-*-audit.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/student-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "student-exams-depth-audit.spec.ts",
+      "file": "student-exams-depth-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Student exam depth audit with isolated temporary records",
+          "file": "student-exams-depth-audit.spec.ts",
+          "line": 47,
+          "column": 6,
+          "specs": [
+            {
+              "title": "timed expiry rejects late answers and ignores queued changes while preserving saved answers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 24714,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T23:09:33.270Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee61cf3dc53f2590e812-d9a36c095d294f54f582",
+              "file": "student-exams-depth-audit.spec.ts",
+              "line": 48,
+              "column": 7
+            },
+            {
+              "title": "resuming an expired timed exam automatically submits and renders the persisted result",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 20552,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T23:10:00.342Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee61cf3dc53f2590e812-d2e2b0c0adf5f4eac7db",
+              "file": "student-exams-depth-audit.spec.ts",
+              "line": 77,
+              "column": 7
+            },
+            {
+              "title": "invalid UUID and foreign question payloads cannot change the current attempt",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12062,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T23:10:20.945Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee61cf3dc53f2590e812-5035ad9eda0458b274aa",
+              "file": "student-exams-depth-audit.spec.ts",
+              "line": 100,
+              "column": 7
+            },
+            {
+              "title": "unanswered exam confirmation supports cancel and explicit zero-score submission",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15858,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T23:10:33.056Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee61cf3dc53f2590e812-b34c2727e49d3bf9c2e4",
+              "file": "student-exams-depth-audit.spec.ts",
+              "line": 121,
+              "column": 7
+            },
+            {
+              "title": "exam list search, completion filters and pagination keep counts and rows consistent",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 24547,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T23:10:48.952Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee61cf3dc53f2590e812-9cda6169677a87f995d5",
+              "file": "student-exams-depth-audit.spec.ts",
+              "line": 146,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "student-navigation-audit.spec.ts",
+      "file": "student-navigation-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "S-N01 student direct routes, aliases, reload, mobile and console evidence",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 120168,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-audit.spec.ts",
+                        "column": 16,
+                        "line": 19
+                      },
+                      "message": "Error: page.waitForLoadState: Test timeout of 120000ms exceeded.\n\n  17 |     await expect(page.locator('main')).toBeVisible();\n  18 |     await expect(page.locator('main')).not.toContainText(/yükleniyor/i);\n> 19 |     await page.waitForLoadState('networkidle');\n     |                ^\n  20 |     await page.setViewportSize({ width: 390, height: 844 });\n  21 |     observations.push({ route, text: (await page.locator('main').innerText()).slice(0,700), overflow: await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), unnamed: await page.locator('main').evaluate(el => Array.from(el.querySelectorAll('button,input,textarea')).filter(x => !x.getAttribute('aria-label') && !x.getAttribute('aria-labelledby') && !x.textContent?.trim() && !(x.id && document.querySelector(`label[for=\"${x.id}\"]`))).length) });\n  22 |     await page.screenshot({ path: `${out}/screenshots/${route.replace(/\\W+/g,'-') || 'home'}-mobile.png`, fullPage: true });\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-audit.spec.ts:19:16"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T23:11:13.560Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-audit-S-747ee-mobile-and-console-evidence\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-audit-S-747ee-mobile-and-console-evidence\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-449b6f1c1e2d1f3bd557",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 6,
+          "column": 5
+        },
+        {
+          "title": "S-N02 anonymous protected route and server endpoints reject access",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 20264,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T23:13:17.458Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-cfeaffec61b3eb1bb98d",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 29,
+          "column": 5
+        },
+        {
+          "title": "S-N03 quiz search and result export/print use real student records",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17812,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T23:13:38.184Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-34777e65ede7ac9bf564",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 42,
+          "column": 5
+        },
+        {
+          "title": "S-N04 missing quiz back navigation stays in authorized student panel",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 22385,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/student\\/quizzes$/\u001b[39m\nReceived string:  \u001b[31m\"http://127.0.0.1:5541/\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    32 × locator resolved to <html lang=\"en\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"http://127.0.0.1:5541/\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/student\\/quizzes$/\u001b[39m\nReceived string:  \u001b[31m\"http://127.0.0.1:5541/\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    32 × locator resolved to <html lang=\"en\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"http://127.0.0.1:5541/\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-audit.spec.ts:74:22",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-audit.spec.ts",
+                      "column": 22,
+                      "line": 74
+                    },
+                    "snippet": "  72 |   await page.goto('/student/quiz/does-not-exist');\n  73 |   await page.getByRole('button', {name:/Geri|Dön/}).first().click();\n> 74 |   await expect(page).toHaveURL(/\\/student\\/quizzes$/);\n     |                      ^\n  75 | });\n  76 |\n  77 | test('S-N05 stats display category names from real relation objects', async ({page}) => {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-audit.spec.ts",
+                        "column": 22,
+                        "line": 74
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/student\\/quizzes$/\u001b[39m\nReceived string:  \u001b[31m\"http://127.0.0.1:5541/\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    32 × locator resolved to <html lang=\"en\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"http://127.0.0.1:5541/\"\u001b[22m\n\n\n  72 |   await page.goto('/student/quiz/does-not-exist');\n  73 |   await page.getByRole('button', {name:/Geri|Dön/}).first().click();\n> 74 |   await expect(page).toHaveURL(/\\/student\\/quizzes$/);\n     |                      ^\n  75 | });\n  76 |\n  77 | test('S-N05 stats display category names from real relation objects', async ({page}) => {\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-audit.spec.ts:74:22"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T23:13:56.089Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-audit-S-1a561-in-authorized-student-panel\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-audit-S-1a561-in-authorized-student-panel\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-audit.spec.ts",
+                    "column": 22,
+                    "line": 74
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-b29250562dc94a218b98",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 70,
+          "column": 5
+        },
+        {
+          "title": "S-N05 stats display category names from real relation objects",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10703,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T23:14:21.095Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-4077d6349da7c75a8df0",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 77,
+          "column": 5
+        },
+        {
+          "title": "S-N06 empty student and controlled survey failure observation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11727,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T23:14:32.382Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-0fccb7fc371a27c6c9b7",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 84,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "student-navigation-depth-audit.spec.ts",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "S-D01 dashboard all-results action with five own completed records opens authorized results",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 31185,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/student\\/results$/\u001b[39m\nReceived string:  \u001b[31m\"http://127.0.0.1:5541/student/statistics\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    33 × locator resolved to <html lang=\"en\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"http://127.0.0.1:5541/student/statistics\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/student\\/results$/\u001b[39m\nReceived string:  \u001b[31m\"http://127.0.0.1:5541/student/statistics\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    33 × locator resolved to <html lang=\"en\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"http://127.0.0.1:5541/student/statistics\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:56:24\n    at withResults (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:31:5)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:50:3",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                      "column": 24,
+                      "line": 56
+                    },
+                    "snippet": "  54 |     await expect(all).toBeVisible();\n  55 |     await all.click();\n> 56 |     await expect(page).toHaveURL(/\\/student\\/results$/);\n     |                        ^\n  57 |     await expect(page.getByRole('heading', { level: 1, name: 'Sınav Sonuçlarım' })).toBeVisible();\n  58 |   });\n  59 | });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                        "column": 24,
+                        "line": 56
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/student\\/results$/\u001b[39m\nReceived string:  \u001b[31m\"http://127.0.0.1:5541/student/statistics\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    33 × locator resolved to <html lang=\"en\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"http://127.0.0.1:5541/student/statistics\"\u001b[22m\n\n\n  54 |     await expect(all).toBeVisible();\n  55 |     await all.click();\n> 56 |     await expect(page).toHaveURL(/\\/student\\/results$/);\n     |                        ^\n  57 |     await expect(page.getByRole('heading', { level: 1, name: 'Sınav Sonuçlarım' })).toBeVisible();\n  58 |   });\n  59 | });\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:56:24\n    at withResults (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:31:5)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:50:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T23:14:44.181Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-8336d-ds-opens-authorized-results\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-8336d-ds-opens-authorized-results\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                    "column": 24,
+                    "line": 56
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-8a9aee50fd4ec95a6db9",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 49,
+          "column": 5
+        },
+        {
+          "title": "S-D02 results search, score boundaries, sort order and reset reflect seeded records",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19068,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T23:15:17.123Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-8f3b2cb3c995e528f5b7",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 61,
+          "column": 5
+        },
+        {
+          "title": "S-D03 choosing an actual category preserves its completed results",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 120207,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T23:15:36.699Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-54d8b-erves-its-completed-results\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-54d8b-erves-its-completed-results\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-e2cb144728d3b19d962d",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 104,
+          "column": 5
+        },
+        {
+          "title": "S-D04 loaded student routes have specific content, reload correctly and fit mobile width",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 69665,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T23:17:39.429Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-96c5c312db92377bef0b",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 115,
+          "column": 5
+        },
+        {
+          "title": "S-D05 mobile menu keyboard focus trap, Escape and notification popover work",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8251,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T23:18:49.566Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-121284abb55d2317313c",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 142,
+          "column": 5
+        },
+        {
+          "title": "S-D06 injected dashboard API failure must not claim all exams completed",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 19943,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Tüm Sınavları Tamamladın!', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByText('Tüm Sınavları Tamamladın!', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Tüm Sınavları Tamamladın!', { exact: true })\u001b[22m\n\u001b[2m    33 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Tüm Sınavları Tamamladın!', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByText('Tüm Sınavları Tamamladın!', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Tüm Sınavları Tamamladın!', { exact: true })\u001b[22m\n\u001b[2m    33 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:175:78",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                      "column": 78,
+                      "line": 175
+                    },
+                    "snippet": "  173 |   await page.goto('/student/dashboard');\n  174 |   await expect(page.locator('main')).toContainText('Depth controlled dashboard failure');\n> 175 |   await expect(page.getByText('Tüm Sınavları Tamamladın!', { exact: true })).toHaveCount(0);\n      |                                                                              ^\n  176 | });\n  177 |\n  178 | test('S-D07 injected survey API failure must show error and retry instead of empty success', async ({ page }) => {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                        "column": 78,
+                        "line": 175
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Tüm Sınavları Tamamladın!', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByText('Tüm Sınavları Tamamladın!', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Tüm Sınavları Tamamladın!', { exact: true })\u001b[22m\n\u001b[2m    33 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n\n  173 |   await page.goto('/student/dashboard');\n  174 |   await expect(page.locator('main')).toContainText('Depth controlled dashboard failure');\n> 175 |   await expect(page.getByText('Tüm Sınavları Tamamladın!', { exact: true })).toHaveCount(0);\n      |                                                                              ^\n  176 | });\n  177 |\n  178 | test('S-D07 injected survey API failure must show error and retry instead of empty success', async ({ page }) => {\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:175:78"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T23:18:57.848Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-01431-t-claim-all-exams-completed\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-01431-t-claim-all-exams-completed\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                    "column": 78,
+                    "line": 175
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-f30cfb4ce4e159e1d0fe",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 170,
+          "column": 5
+        },
+        {
+          "title": "S-D07 injected survey API failure must show error and retry instead of empty success",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 20113,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })\u001b[22m\n\u001b[2m    33 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })\u001b[22m\n\u001b[2m    33 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:185:91",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                      "column": 91,
+                      "line": 185
+                    },
+                    "snippet": "  183 |   await failed;\n  184 |   await expect(page.getByText('Anketler yükleniyor...', { exact: true })).toHaveCount(0);\n> 185 |   await expect(page.getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })).toHaveCount(0);\n      |                                                                                           ^\n  186 |   await expect(page.locator('main')).toContainText(/yüklenemedi|hata|Depth controlled survey failure/i);\n  187 |   await expect(page.getByRole('button', { name: /Tekrar dene|Yeniden dene/i })).toBeVisible();\n  188 | });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                        "column": 91,
+                        "line": 185
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })\u001b[22m\n\u001b[2m    33 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n\n  183 |   await failed;\n  184 |   await expect(page.getByText('Anketler yükleniyor...', { exact: true })).toHaveCount(0);\n> 185 |   await expect(page.getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })).toHaveCount(0);\n      |                                                                                           ^\n  186 |   await expect(page.locator('main')).toContainText(/yüklenemedi|hata|Depth controlled survey failure/i);\n  187 |   await expect(page.getByRole('button', { name: /Tekrar dene|Yeniden dene/i })).toBeVisible();\n  188 | });\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:185:91"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T23:19:19.465Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-95105-ry-instead-of-empty-success\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-95105-ry-instead-of-empty-success\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                    "column": 91,
+                    "line": 185
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-2258a9df04ea441e3bd8",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 178,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "student-surveys-shared-audit.spec.ts",
+      "file": "student-surveys-shared-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Student audit: surveys and shared functions",
+          "file": "student-surveys-shared-audit.spec.ts",
+          "line": 15,
+          "column": 6,
+          "specs": [
+            {
+              "title": "all five survey types validate, submit once, persist real answers and remain completed after reload",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 29300,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[32m-   \"A\",\u001b[39m\n\u001b[2m    \"C\",\u001b[22m\n\u001b[31m+   \"A\",\u001b[39m\n\u001b[2m  ]\u001b[22m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[32m-   \"A\",\u001b[39m\n\u001b[2m    \"C\",\u001b[22m\n\u001b[31m+   \"A\",\u001b[39m\n\u001b[2m  ]\u001b[22m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts:90:77",
+                        "location": {
+                          "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts",
+                          "column": 77,
+                          "line": 90
+                        },
+                        "snippet": "  88 |       expect(stored.surveyId).toBe(surveyId);\n  89 |       expect(stored.answers).toHaveLength(5);\n> 90 |       for (const answer of stored.answers) expect(JSON.parse(answer.value)).toEqual(answers[answer.questionId as keyof typeof answers]);\n     |                                                                             ^\n  91 |       await page.reload();\n  92 |       await expect(listing.getByRole('button', { name: 'Tamamlandı', exact: true })).toBeDisabled();\n  93 |       await page.goto(`/student/survey/${surveyId}`);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts",
+                            "column": 77,
+                            "line": 90
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[32m-   \"A\",\u001b[39m\n\u001b[2m    \"C\",\u001b[22m\n\u001b[31m+   \"A\",\u001b[39m\n\u001b[2m  ]\u001b[22m\n\n  88 |       expect(stored.surveyId).toBe(surveyId);\n  89 |       expect(stored.answers).toHaveLength(5);\n> 90 |       for (const answer of stored.answers) expect(JSON.parse(answer.value)).toEqual(answers[answer.questionId as keyof typeof answers]);\n     |                                                                             ^\n  91 |       await page.reload();\n  92 |       await expect(listing.getByRole('button', { name: 'Tamamlandı', exact: true })).toBeDisabled();\n  93 |       await page.goto(`/student/survey/${surveyId}`);\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts:90:77"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T23:19:41.715Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-surveys-shared-aud-9360c-main-completed-after-reload\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-surveys-shared-aud-9360c-main-completed-after-reload\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts",
+                        "column": 77,
+                        "line": 90
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-057be88c12479f4b82a1",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 19,
+              "column": 7
+            },
+            {
+              "title": "foreign student cannot list, view or submit the own-class survey",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15156,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T23:20:13.413Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-864974255370f4bdb3fc",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 105,
+              "column": 7
+            },
+            {
+              "title": "student profile is read-only in GUI and update API rejects changes",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1035,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n    at login (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts:22:29)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts:17:41",
+                        "location": {
+                          "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts",
+                          "column": 29,
+                          "line": 22
+                        },
+                        "snippet": "   at student-audit-helpers.ts:22\n\n  20 |   const csrf = await (await page.request.get('/api/csrf-token')).json();\n  21 |   const response = await page.request.post('/api/auth/login', { data: { email, password: '[redacted]' }, headers: { 'x-csrf-token': [redacted]\n> 22 |   expect(response.status()).toBe(200);\n     |                             ^\n  23 | }\n  24 | export async function api(page: Page, method: string, url: string, data?: unknown) {\n  25 |   assertIsolatedRuntime();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts",
+                            "column": 29,
+                            "line": 22
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n\n   at student-audit-helpers.ts:22\n\n  20 |   const csrf = await (await page.request.get('/api/csrf-token')).json();\n  21 |   const response = await page.request.post('/api/auth/login', { data: { email, password: '[redacted]' }, headers: { 'x-csrf-token': [redacted]\n> 22 |   expect(response.status()).toBe(200);\n     |                             ^\n  23 | }\n  24 | export async function api(page: Page, method: string, url: string, data?: unknown) {\n  25 |   assertIsolatedRuntime();\n    at login (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts:22:29)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts:17:41"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T23:20:28.999Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-surveys-shared-aud-5b1d7--update-API-rejects-changes\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-surveys-shared-aud-5b1d7--update-API-rejects-changes\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts",
+                        "column": 29,
+                        "line": 22
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-0ce209e43b15661e36eb",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 124,
+              "column": 7
+            },
+            {
+              "title": "student security form validates mismatch and incorrect current password without mutation",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1708,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n    at login (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts:22:29)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts:17:41",
+                        "location": {
+                          "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts",
+                          "column": 29,
+                          "line": 22
+                        },
+                        "snippet": "   at student-audit-helpers.ts:22\n\n  20 |   const csrf = await (await page.request.get('/api/csrf-token')).json();\n  21 |   const response = await page.request.post('/api/auth/login', { data: { email, password: '[redacted]' }, headers: { 'x-csrf-token': [redacted]\n> 22 |   expect(response.status()).toBe(200);\n     |                             ^\n  23 | }\n  24 | export async function api(page: Page, method: string, url: string, data?: unknown) {\n  25 |   assertIsolatedRuntime();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts",
+                            "column": 29,
+                            "line": 22
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n\n   at student-audit-helpers.ts:22\n\n  20 |   const csrf = await (await page.request.get('/api/csrf-token')).json();\n  21 |   const response = await page.request.post('/api/auth/login', { data: { email, password: '[redacted]' }, headers: { 'x-csrf-token': [redacted]\n> 22 |   expect(response.status()).toBe(200);\n     |                             ^\n  23 | }\n  24 | export async function api(page: Page, method: string, url: string, data?: unknown) {\n  25 |   assertIsolatedRuntime();\n    at login (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts:22:29)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts:17:41"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T23:20:32.358Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-surveys-shared-aud-d7c2b-t-password-without-mutation\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-surveys-shared-aud-d7c2b-t-password-without-mutation\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts",
+                        "column": 29,
+                        "line": 22
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-086aaf2baf34f75c5731",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 139,
+              "column": 7
+            },
+            {
+              "title": "student notification sound preference persists and operation history is private",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1405,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n    at login (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts:22:29)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts:17:41",
+                        "location": {
+                          "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts",
+                          "column": 29,
+                          "line": 22
+                        },
+                        "snippet": "   at student-audit-helpers.ts:22\n\n  20 |   const csrf = await (await page.request.get('/api/csrf-token')).json();\n  21 |   const response = await page.request.post('/api/auth/login', { data: { email, password: '[redacted]' }, headers: { 'x-csrf-token': [redacted]\n> 22 |   expect(response.status()).toBe(200);\n     |                             ^\n  23 | }\n  24 | export async function api(page: Page, method: string, url: string, data?: unknown) {\n  25 |   assertIsolatedRuntime();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts",
+                            "column": 29,
+                            "line": 22
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n\n   at student-audit-helpers.ts:22\n\n  20 |   const csrf = await (await page.request.get('/api/csrf-token')).json();\n  21 |   const response = await page.request.post('/api/auth/login', { data: { email, password: '[redacted]' }, headers: { 'x-csrf-token': [redacted]\n> 22 |   expect(response.status()).toBe(200);\n     |                             ^\n  23 | }\n  24 | export async function api(page: Page, method: string, url: string, data?: unknown) {\n  25 |   assertIsolatedRuntime();\n    at login (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts:22:29)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts:17:41"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T23:20:37.285Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-surveys-shared-aud-c4575-peration-history-is-private\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-surveys-shared-aud-c4575-peration-history-is-private\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts",
+                        "column": 29,
+                        "line": 22
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-782cfc8f4a51b49b6fe0",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 156,
+              "column": 7
+            },
+            {
+              "title": "student announcement target filtering is real and create/delete controls remain forbidden",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1293,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n    at login (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts:22:29)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts:17:41",
+                        "location": {
+                          "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts",
+                          "column": 29,
+                          "line": 22
+                        },
+                        "snippet": "   at student-audit-helpers.ts:22\n\n  20 |   const csrf = await (await page.request.get('/api/csrf-token')).json();\n  21 |   const response = await page.request.post('/api/auth/login', { data: { email, password: '[redacted]' }, headers: { 'x-csrf-token': [redacted]\n> 22 |   expect(response.status()).toBe(200);\n     |                             ^\n  23 | }\n  24 | export async function api(page: Page, method: string, url: string, data?: unknown) {\n  25 |   assertIsolatedRuntime();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts",
+                            "column": 29,
+                            "line": 22
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n\n   at student-audit-helpers.ts:22\n\n  20 |   const csrf = await (await page.request.get('/api/csrf-token')).json();\n  21 |   const response = await page.request.post('/api/auth/login', { data: { email, password: '[redacted]' }, headers: { 'x-csrf-token': [redacted]\n> 22 |   expect(response.status()).toBe(200);\n     |                             ^\n  23 | }\n  24 | export async function api(page: Page, method: string, url: string, data?: unknown) {\n  25 |   assertIsolatedRuntime();\n    at login (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts:22:29)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-surveys-shared-audit.spec.ts:17:41"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T23:20:41.319Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-surveys-shared-aud-9991b-e-controls-remain-forbidden\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-surveys-shared-aud-9991b-e-controls-remain-forbidden\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-audit-helpers.ts",
+                        "column": 29,
+                        "line": 22
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-fc210aa3da925b04c33a",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 181,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-03T23:09:27.261Z",
+    "duration": 676166.346,
+    "expected": 13,
+    "skipped": 0,
+    "unexpected": 11,
+    "flaky": 0
+  }
+}

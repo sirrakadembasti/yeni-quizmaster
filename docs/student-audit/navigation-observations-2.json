@@ -1,0 +1,989 @@
+{
+  "observations": [
+    {
+      "route": "/my-stats",
+      "text": "1\nS\nİstatistikler\n\nQuiz performansınızın detaylı analizi\n\nExcel\nPDF İndir\nTamamlanan Quiz\n1\n\ntoplam katılım\n\nOrtalama Puan\n0%\n\ngenel başarı ortalaması\n\nGeçme Oranı\n0%\n\n0 başarılı sonuç\n\nToplam Süre\n0\n\nharcanan dakika\n\nQuiz Bazlı Başarı\nSon katıldığınız quizlerin puanları\nStudent Audit Completed Exam\n0\n25\n50\n75\n100\nDers Bazlı Ortalama Başarı\nDerslere göre ortalama performansınız\nAudit Mathematics\n0\n25\n50\n75\n100\nSon Quiz Sonuçları\nEn son tamamladığınız 1 quiz ve detayları\nQuiz Adı\tDers Adı\tPuan\tDurum\tTarih\tSüre\nStudent Audit Completed Exam\tAudit Mathematics\t0%\t\nTamamlandı\n\t04.10.2026\t0 dk",
+      "overflow": false,
+      "unnamed": 1
+    },
+    {
+      "route": "/student/surveys",
+      "text": "1\nS\nAnketlerim\n\nSınıfınıza atanmış güncel anketler.\n\nStudent Audit Survey\nBekliyor\n\nAçıklama eklenmemiş.\n\nAnketi Yanıtla",
+      "overflow": false,
+      "unnamed": 1
+    },
+    {
+      "route": "/student/survey/55555555-5555-4555-8555-555555555555",
+      "text": "1\nS\nStudent Audit Survey\n\nTüm soruları yanıtlayıp anketi gönderin.\n\n1. Audit open response\n2. Audit rating\n1\n2\n3\n4\n5\n3. Audit single choice\nABC\n4. Audit multiple choice\nA\nB\nC\n5. Audit likert\nKatılmıyorumKararsızımKatılıyorum\nAnketi Gönder",
+      "overflow": false,
+      "unnamed": 5
+    },
+    {
+      "route": "/student/result/student-audit-result",
+      "text": "1\nS\nSonuçlara Dön\nYazdır / PDF\nExcel\nStudent Audit Completed Exam\n\nPUAN\n\n0\n\nDOĞRU\n\n0\n\nYANLIŞ\n\n2\n\nSÜRE\n\n0:00\n\nSoru İncelemesi\nSoru 1\nYanlış\nAudit question 1?\n\nA\n\nDOĞRU CEVAP\n\nB\n\nSENIN CEVABIN\n\nC\n\nD\n\nSoru 2\nYanlış\nAudit question 2?\n\nA\n\nDOĞRU CEVAP\n\nB\n\nSENIN CEVABIN\n\nC\n\nD",
+      "overflow": false,
+      "unnamed": 1
+    },
+    {
+      "route": "/settings",
+      "text": "S\nHesap Ayarları\n\nProfilinizi, güvenliğinizi ve bildirimlerinizi buradan yönetin.\n\nYazdır\nProfil Bilgileri\nBildirimler\nİşlem Geçmişi\nGüvenlik\nKişisel Bilgiler\nAdınız ve iletişim bilgileriniz.\n\nBilgilendirme\n\nKişisel ve iletişim bilgilerinizde değişiklik yapmak istiyorsanız lütfen okul yönetimi ile iletişime geçiniz.\n\nAD SOYAD\nE-POSTA\nTELEFON\nADRES\nHesap Bilgileri\nStudent Audit Learner\nÖğrenci\nKatılma Tarihi\n4 Ekim 2026\nSınıf No\n1\nVeli Bilgileri\nKayıtlı veli ve iletişim bilgileriniz (Salt Okunur).\nDüzenlenemez\nVELI ADI SOYADI\nYAKINLIK DERECESI\nVELI TELEFONU\nVELI E-POSTASI\nVELI ADRESI",
+      "overflow": false,
+      "unnamed": 6
+    },
+    {
+      "route": "/announcements",
+      "text": "S\nDuyuru Merkezi\n\nÖnemli bilgilendirmeler ve güncel duyurular\n\nYazdır\nS\nStudent Audit Admin\nSistem Yöneticisi\n4 Ekim 2026, 09:23\nStudent Audit Announcement\nIsolated student audit content\nHEDEF:\nÖĞRENCİLERE\nDuyuru",
+      "overflow": false,
+      "unnamed": 1
+    }
+  ],
+  "errors": [],
+  "failed": [],
+  "responses": [
+    {
+      "path": "/api/csrf-token",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095119324.457,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.39,
+        "responseStart": 13.561,
+        "responseEnd": 291.026
+      }
+    },
+    {
+      "path": "/api/auth/me",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095119617.1519,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.42,
+        "responseStart": 15.241,
+        "responseEnd": 639.43
+      }
+    },
+    {
+      "path": "/api/notifications/preferences",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095120294.9,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.299,
+        "responseStart": 27.243,
+        "responseEnd": 451.981
+      }
+    },
+    {
+      "path": "/api/notifications",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095120306.111,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.59,
+        "responseStart": 453.651,
+        "responseEnd": 1830.646
+      }
+    },
+    {
+      "path": "/api/student/results",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095120307.177,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.49,
+        "responseStart": 453.717,
+        "responseEnd": 2270.061
+      }
+    },
+    {
+      "path": "/api/csrf-token",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095123417.0671,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.486,
+        "responseStart": 534.446,
+        "responseEnd": 535.773
+      }
+    },
+    {
+      "path": "/api/auth/me",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095123953.997,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.344,
+        "responseStart": 3069.241,
+        "responseEnd": 3070.623
+      }
+    },
+    {
+      "path": "/api/notifications/preferences",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095127057.14,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.464,
+        "responseStart": 27.346,
+        "responseEnd": 302.655
+      }
+    },
+    {
+      "path": "/api/notifications",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095127062.428,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.49,
+        "responseStart": 310.865,
+        "responseEnd": 3225.131
+      }
+    },
+    {
+      "path": "/api/student/results",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095127064.8333,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.471,
+        "responseStart": 6398.769,
+        "responseEnd": 6400.888
+      }
+    },
+    {
+      "path": "/api/notifications/preferences",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095133486.883,
+        "domainLookupStart": 0.501,
+        "domainLookupEnd": 1.099,
+        "connectStart": 1.099,
+        "secureConnectionStart": -1,
+        "connectEnd": 3.745,
+        "requestStart": 3.972,
+        "responseStart": 342.663,
+        "responseEnd": 344.067
+      }
+    },
+    {
+      "path": "/api/csrf-token",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095134953.594,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.482,
+        "responseStart": 288.448,
+        "responseEnd": 290.146
+      }
+    },
+    {
+      "path": "/api/auth/me",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095135245.3333,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.503,
+        "responseStart": 257.535,
+        "responseEnd": 259.174
+      }
+    },
+    {
+      "path": "/api/notifications",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095135550.38,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.434,
+        "responseStart": 56.154,
+        "responseEnd": 1017.729
+      }
+    },
+    {
+      "path": "/api/notifications/preferences",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095135545.4568,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.489,
+        "responseStart": 654.296,
+        "responseEnd": 657.338
+      }
+    },
+    {
+      "path": "/api/surveys",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095135552.261,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.385,
+        "responseStart": 1068.205,
+        "responseEnd": 2776.236
+      }
+    },
+    {
+      "path": "/api/notifications/preferences",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095136594.728,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.43,
+        "responseStart": 2003.858,
+        "responseEnd": 2006.833
+      }
+    },
+    {
+      "path": "/api/csrf-token",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095139204.3152,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.495,
+        "responseStart": 2843.646,
+        "responseEnd": 2846.396
+      }
+    },
+    {
+      "path": "/api/auth/me",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095142050.666,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.467,
+        "responseStart": 1750.952,
+        "responseEnd": 1752.196
+      }
+    },
+    {
+      "path": "/api/notifications/preferences",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095143835.3398,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.424,
+        "responseStart": 1037.615,
+        "responseEnd": 1039.663
+      }
+    },
+    {
+      "path": "/api/notifications",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095143841.101,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.383,
+        "responseStart": 1070.314,
+        "responseEnd": 1907.313
+      }
+    },
+    {
+      "path": "/api/surveys",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095143843.054,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.467,
+        "responseStart": 2511.39,
+        "responseEnd": 2514.179
+      }
+    },
+    {
+      "path": "/api/notifications/preferences",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095146374.275,
+        "domainLookupStart": 0.548,
+        "domainLookupEnd": 1.202,
+        "connectStart": 1.202,
+        "secureConnectionStart": -1,
+        "connectEnd": 2.811,
+        "requestStart": 4.283,
+        "responseStart": 328.139,
+        "responseEnd": 330.044
+      }
+    },
+    {
+      "path": "/api/csrf-token",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095147584.125,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.485,
+        "responseStart": 355.838,
+        "responseEnd": 357.473
+      }
+    },
+    {
+      "path": "/api/auth/me",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095147943.6829,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.343,
+        "responseStart": 538.671,
+        "responseEnd": 540.028
+      }
+    },
+    {
+      "path": "/api/notifications/preferences",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095148508.492,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.42,
+        "responseStart": 548.159,
+        "responseEnd": 550.144
+      }
+    },
+    {
+      "path": "/api/notifications",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095148513.2917,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.414,
+        "responseStart": 555.69,
+        "responseEnd": 827.34
+      }
+    },
+    {
+      "path": "/api/surveys/55555555-5555-4555-8555-555555555555",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095148514.705,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.41,
+        "responseStart": 567.442,
+        "responseEnd": 1053.588
+      }
+    },
+    {
+      "path": "/api/csrf-token",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095150396.294,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.476,
+        "responseStart": 527.258,
+        "responseEnd": 528.756
+      }
+    },
+    {
+      "path": "/api/auth/me",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095150926.496,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.468,
+        "responseStart": 773.303,
+        "responseEnd": 774.563
+      }
+    },
+    {
+      "path": "/api/notifications/preferences",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095151727.843,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.306,
+        "responseStart": 19.015,
+        "responseEnd": 296.44
+      }
+    },
+    {
+      "path": "/api/notifications",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095151732.0308,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.417,
+        "responseStart": 305.119,
+        "responseEnd": 532.746
+      }
+    },
+    {
+      "path": "/api/surveys/55555555-5555-4555-8555-555555555555",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095151734.1353,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.455,
+        "responseStart": 1062.104,
+        "responseEnd": 1067.293
+      }
+    },
+    {
+      "path": "/api/notifications/preferences",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095152049.898,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.605,
+        "responseStart": 1016.263,
+        "responseEnd": 1017.915
+      }
+    },
+    {
+      "path": "/api/csrf-token",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095154036.078,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.448,
+        "responseStart": 1062.113,
+        "responseEnd": 1064.264
+      }
+    },
+    {
+      "path": "/api/auth/me",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095155101.6182,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.449,
+        "responseStart": 717.289,
+        "responseEnd": 718.854
+      }
+    },
+    {
+      "path": "/api/notifications/preferences",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095155848.838,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.461,
+        "responseStart": 2931.451,
+        "responseEnd": 2933.206
+      }
+    },
+    {
+      "path": "/api/notifications",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095155853.6902,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.491,
+        "responseStart": 5691.969,
+        "responseEnd": 5694.201
+      }
+    },
+    {
+      "path": "/api/student/results/student-audit-result",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095155858.2139,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.43,
+        "responseStart": 5702.276,
+        "responseEnd": 6087.048
+      }
+    },
+    {
+      "path": "/api/csrf-token",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095162508.609,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.482,
+        "responseStart": 2929.482,
+        "responseEnd": 2930.972
+      }
+    },
+    {
+      "path": "/api/auth/me",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095165441.0842,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.47,
+        "responseStart": 2393.19,
+        "responseEnd": 2394.524
+      }
+    },
+    {
+      "path": "/api/notifications/preferences",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095167861.654,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.316,
+        "responseStart": 32.797,
+        "responseEnd": 362.873
+      }
+    },
+    {
+      "path": "/api/notifications",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095167866.3682,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.458,
+        "responseStart": 371.008,
+        "responseEnd": 2799.951
+      }
+    },
+    {
+      "path": "/api/student/results/student-audit-result",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095167867.8079,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.541,
+        "responseStart": 3139.862,
+        "responseEnd": 3142.487
+      }
+    },
+    {
+      "path": "/api/csrf-token",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095171749.319,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.488,
+        "responseStart": 1555.767,
+        "responseEnd": 1557.2
+      }
+    },
+    {
+      "path": "/api/auth/me",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095173308.452,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.335,
+        "responseStart": 351.101,
+        "responseEnd": 352.367
+      }
+    },
+    {
+      "path": "/api/notifications/preferences",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095173738.2952,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.4,
+        "responseStart": 28.373,
+        "responseEnd": -1
+      }
+    },
+    {
+      "path": "/api/csrf-token",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095174370.6328,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.43,
+        "responseStart": 1375.24,
+        "responseEnd": 1376.529
+      }
+    },
+    {
+      "path": "/api/auth/me",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095175748.558,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.328,
+        "responseStart": 996.894,
+        "responseEnd": 998.2
+      }
+    },
+    {
+      "path": "/api/notifications/preferences",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095176815.99,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.403,
+        "responseStart": 28.037,
+        "responseEnd": -1
+      }
+    },
+    {
+      "path": "/api/notifications",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095176824.796,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.422,
+        "responseStart": 23.338,
+        "responseEnd": -1
+      }
+    },
+    {
+      "path": "/api/csrf-token",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095177712.5261,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.474,
+        "responseStart": 610.692,
+        "responseEnd": 612.17
+      }
+    },
+    {
+      "path": "/api/auth/me",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095178326.2,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.452,
+        "responseStart": 1193.441,
+        "responseEnd": 1194.751
+      }
+    },
+    {
+      "path": "/api/notifications/preferences",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095179552.149,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.387,
+        "responseStart": 29.742,
+        "responseEnd": 545.802
+      }
+    },
+    {
+      "path": "/api/notifications",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095179557.028,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.687,
+        "responseStart": 25.726,
+        "responseEnd": 1006.336
+      }
+    },
+    {
+      "path": "/api/announcements",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095179561.093,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.419,
+        "responseStart": 544.584,
+        "responseEnd": 1983.757
+      }
+    },
+    {
+      "path": "/api/csrf-token",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095179558.978,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.456,
+        "responseStart": 1408.875,
+        "responseEnd": 1411.036
+      }
+    },
+    {
+      "path": "/api/csrf-token",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095182182.451,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.469,
+        "responseStart": 1119.117,
+        "responseEnd": 1120.453
+      }
+    },
+    {
+      "path": "/api/auth/me",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095183304.12,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.34,
+        "responseStart": 319.645,
+        "responseEnd": 321.086
+      }
+    },
+    {
+      "path": "/api/notifications/preferences",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095183656.496,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.293,
+        "responseStart": 26.981,
+        "responseEnd": 322.719
+      }
+    },
+    {
+      "path": "/api/notifications",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095183660.9248,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.417,
+        "responseStart": 344.605,
+        "responseEnd": -1
+      }
+    },
+    {
+      "path": "/api/csrf-token",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095183663.043,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.674,
+        "responseStart": 626.835,
+        "responseEnd": 629.109
+      }
+    },
+    {
+      "path": "/api/announcements",
+      "status": 200,
+      "timing": {
+        "startTime": 1791095183665.919,
+        "domainLookupStart": -1,
+        "domainLookupEnd": -1,
+        "connectStart": -1,
+        "secureConnectionStart": -1,
+        "connectEnd": -1,
+        "requestStart": 0.576,
+        "responseStart": 1211.096,
+        "responseEnd": 1214.036
+      }
+    }
+  ]
+}

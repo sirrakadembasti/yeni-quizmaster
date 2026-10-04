@@ -1,0 +1,41 @@
+- main:
+  - button "Menüyü aç"
+  - button "Bildirimleri aç"
+  - button "Karanlık Moda Geç"
+  - button "S"
+  - heading "Hesap Ayarları" [level=1]
+  - paragraph: Profilinizi, güvenliğinizi ve bildirimlerinizi buradan yönetin.
+  - button "Yazdır"
+  - tablist:
+    - tab "Profil Bilgileri" [selected]
+    - tab "Bildirimler"
+    - tab "İşlem Geçmişi"
+    - tab "Güvenlik"
+  - tabpanel "Profil Bilgileri":
+    - text: Kişisel Bilgiler Adınız ve iletişim bilgileriniz.
+    - paragraph: Bilgilendirme
+    - paragraph: Kişisel ve iletişim bilgilerinizde değişiklik yapmak istiyorsanız lütfen okul yönetimi ile iletişime geçiniz.
+    - text: Ad Soyad
+    - textbox "Ad Soyad" [disabled]: Student Audit Learner
+    - text: E-posta
+    - textbox "E-posta" [disabled]:
+      - /placeholder: email@example.com
+      - text: student-audit@example.test
+    - text: Telefon
+    - textbox "Telefon" [disabled]:
+      - /placeholder: 05xx xxx xx xx
+    - text: Adres
+    - textbox "Adres" [disabled]:
+      - /placeholder: İletişim adresi
+    - text: Hesap Bilgileri
+    - heading "Student Audit Learner" [level=4]
+    - text: Öğrenci Katılma Tarihi 4 Ekim 2026 Sınıf No 1 Veli Bilgileri Kayıtlı veli ve iletişim bilgileriniz (Salt Okunur). Düzenlenemez Veli Adı Soyadı
+    - textbox [disabled]: Belirtilmemiş
+    - text: Yakınlık Derecesi
+    - textbox [disabled]: Belirtilmemiş
+    - text: Veli Telefonu
+    - textbox [disabled]: Belirtilmemiş
+    - text: Veli E-Postası
+    - textbox [disabled]: Belirtilmemiş
+    - text: Veli Adresi
+    - textbox [disabled]: Belirtilmemiş

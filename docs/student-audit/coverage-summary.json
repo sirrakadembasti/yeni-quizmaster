@@ -1,0 +1,388 @@
+{
+  "currentConfig": "playwright.student-audit.config.ts",
+  "total": 38,
+  "passed": 32,
+  "failed": 6,
+  "notRun": 0,
+  "skipped": 0,
+  "cohorts": [
+    {
+      "file": "results-browser.json",
+      "stats": {
+        "startTime": "2026-10-03T22:55:51.522Z",
+        "duration": 591087.678,
+        "expected": 13,
+        "skipped": 0,
+        "unexpected": 5,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "results-depth.json",
+      "stats": {
+        "startTime": "2026-10-03T23:09:27.261Z",
+        "duration": 676166.346,
+        "expected": 13,
+        "skipped": 0,
+        "unexpected": 11,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "results-closure.json",
+      "stats": {
+        "startTime": "2026-10-04T06:10:42.124Z",
+        "duration": 425018.38,
+        "expected": 10,
+        "skipped": 0,
+        "unexpected": 3,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "results-completion.json",
+      "stats": {
+        "startTime": "2026-10-04T06:24:10.663Z",
+        "duration": 375261.49700000003,
+        "expected": 14,
+        "skipped": 0,
+        "unexpected": 2,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "results-verification.json",
+      "stats": {
+        "startTime": "2026-10-04T06:43:10.697Z",
+        "duration": 97545.397,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "results-review.json",
+      "stats": {
+        "startTime": "2026-10-04T06:59:50.489Z",
+        "duration": 31802.58,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "1c0f3e3e698de5c6cfac-8d627de79f9b132cf3fe",
+      "title": "start, answer, navigate, reload, resume, submit and persist scored result",
+      "file": "student-exams-audit.spec.ts",
+      "status": "passed",
+      "report": "results-closure.json",
+      "durationMs": 36646
+    },
+    {
+      "id": "1c0f3e3e698de5c6cfac-0601204cc1fbbb24a38f",
+      "title": "published exam payloads and unfinished results keep the answer key confidential",
+      "file": "student-exams-audit.spec.ts",
+      "status": "passed",
+      "report": "results-closure.json",
+      "durationMs": 6652
+    },
+    {
+      "id": "1c0f3e3e698de5c6cfac-32870dc7826e8f2ab0f5",
+      "title": "draft, foreign-class and unassigned exams reject both start and offline preparation",
+      "file": "student-exams-audit.spec.ts",
+      "status": "passed",
+      "report": "results-closure.json",
+      "durationMs": 13791
+    },
+    {
+      "id": "1c0f3e3e698de5c6cfac-bd65ce1e0fc404545ea6",
+      "title": "foreign results cannot be read, answered, submitted or selected through query parameters",
+      "file": "student-exams-audit.spec.ts",
+      "status": "passed",
+      "report": "results-closure.json",
+      "durationMs": 7976
+    },
+    {
+      "id": "1c0f3e3e698de5c6cfac-95d1574d09e2775aac32",
+      "title": "offline answers and queued submission sync to real persisted result on reconnection",
+      "file": "student-exams-audit.spec.ts",
+      "status": "passed",
+      "report": "results-closure.json",
+      "durationMs": 11921
+    },
+    {
+      "id": "1c0f3e3e698de5c6cfac-e7d2ae22354edaa10633",
+      "title": "an answer saved offline survives reconnecting and reloading before submission",
+      "file": "student-exams-audit.spec.ts",
+      "status": "failed",
+      "report": "results-closure.json",
+      "durationMs": 26367,
+      "error": "Error: expect(locator).toHaveClass(expected) failed\n\nLocator: getByRole('button', { name: 'B) B', exact: true })\nExpected pattern: /(?:^|\\s)border-primary(?:\\s|$)/\nReceived string:  \"w-full p-4 text-left rounded-lg border-2 transition-all border-border hover:border-primary/50\"\nTimeout: 15000ms\n\nCall log:\n  - Expect \"toHaveClass\" getByRole('button', { name: 'B) B', exact: true }) with timeout 15000ms\n  - waiting for getByRole('button', { name: 'B) B', exact: true })\n    33 × locator resolved to <button class=\"w-full p-4 text-left rounded-lg border-2 transition-all border-border hover:border-primary/50\">…</button>\n       - unexpected value \"w-full p-4 text-left rounded-lg border-2 transition-all border-border hover:border-primary/50\"\n"
+    },
+    {
+      "id": "ee61cf3dc53f2590e812-d9a36c095d294f54f582",
+      "title": "timed expiry rejects late answers and ignores queued changes while preserving saved answers",
+      "file": "student-exams-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-depth.json",
+      "durationMs": 24714
+    },
+    {
+      "id": "ee61cf3dc53f2590e812-d2e2b0c0adf5f4eac7db",
+      "title": "resuming an expired timed exam automatically submits and renders the persisted result",
+      "file": "student-exams-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-depth.json",
+      "durationMs": 20552
+    },
+    {
+      "id": "ee61cf3dc53f2590e812-5035ad9eda0458b274aa",
+      "title": "invalid UUID and foreign question payloads cannot change the current attempt",
+      "file": "student-exams-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-depth.json",
+      "durationMs": 12062
+    },
+    {
+      "id": "ee61cf3dc53f2590e812-b34c2727e49d3bf9c2e4",
+      "title": "unanswered exam confirmation supports cancel and explicit zero-score submission",
+      "file": "student-exams-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-depth.json",
+      "durationMs": 15858
+    },
+    {
+      "id": "ee61cf3dc53f2590e812-9cda6169677a87f995d5",
+      "title": "exam list search, completion filters and pagination keep counts and rows consistent",
+      "file": "student-exams-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-depth.json",
+      "durationMs": 24547
+    },
+    {
+      "id": "cc98b7d896c265a978f3-7d71f453c7742dca8ce2",
+      "title": "S-N01 group 1: loaded student routes, aliases, reload, mobile and console",
+      "file": "student-navigation-audit.spec.ts",
+      "status": "passed",
+      "report": "results-completion.json",
+      "durationMs": 59534
+    },
+    {
+      "id": "cc98b7d896c265a978f3-7f17da42533035895425",
+      "title": "S-N01 group 2: loaded student routes, aliases, reload, mobile and console",
+      "file": "student-navigation-audit.spec.ts",
+      "status": "passed",
+      "report": "results-completion.json",
+      "durationMs": 68817
+    },
+    {
+      "id": "cc98b7d896c265a978f3-cfeaffec61b3eb1bb98d",
+      "title": "S-N02 anonymous protected route and server endpoints reject access",
+      "file": "student-navigation-audit.spec.ts",
+      "status": "passed",
+      "report": "results-completion.json",
+      "durationMs": 11368
+    },
+    {
+      "id": "cc98b7d896c265a978f3-34777e65ede7ac9bf564",
+      "title": "S-N03 quiz search and result export/print use real student records",
+      "file": "student-navigation-audit.spec.ts",
+      "status": "passed",
+      "report": "results-completion.json",
+      "durationMs": 21638
+    },
+    {
+      "id": "cc98b7d896c265a978f3-b29250562dc94a218b98",
+      "title": "S-N04 missing quiz back navigation stays in authorized student panel",
+      "file": "student-navigation-audit.spec.ts",
+      "status": "failed",
+      "report": "results-completion.json",
+      "durationMs": 21249,
+      "error": "Error: expect(page).toHaveURL(expected) failed\n\nExpected pattern: /\\/student\\/quizzes$/\nReceived string:  \"http://127.0.0.1:5541/\"\nTimeout: 15000ms\n\nCall log:\n  - Expect \"toHaveURL\" with timeout 15000ms\n    33 × locator resolved to <html lang=\"en\">…</html>\n       - unexpected value \"http://127.0.0.1:5541/\"\n"
+    },
+    {
+      "id": "cc98b7d896c265a978f3-4077d6349da7c75a8df0",
+      "title": "S-N05 stats display category names from real relation objects",
+      "file": "student-navigation-audit.spec.ts",
+      "status": "passed",
+      "report": "results-completion.json",
+      "durationMs": 8173
+    },
+    {
+      "id": "cc98b7d896c265a978f3-0fccb7fc371a27c6c9b7",
+      "title": "S-N06 empty student and controlled survey failure observation",
+      "file": "student-navigation-audit.spec.ts",
+      "status": "passed",
+      "report": "results-verification.json",
+      "durationMs": 23796
+    },
+    {
+      "id": "569510b3798cedfe5616-8a9aee50fd4ec95a6db9",
+      "title": "S-D01 dashboard all-results action with five own completed records opens authorized results",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "status": "failed",
+      "report": "results-depth.json",
+      "durationMs": 31185,
+      "error": "Error: expect(page).toHaveURL(expected) failed\n\nExpected pattern: /\\/student\\/results$/\nReceived string:  \"http://127.0.0.1:5541/student/statistics\"\nTimeout: 15000ms\n\nCall log:\n  - Expect \"toHaveURL\" with timeout 15000ms\n    33 × locator resolved to <html lang=\"en\">…</html>\n       - unexpected value \"http://127.0.0.1:5541/student/statistics\"\n"
+    },
+    {
+      "id": "569510b3798cedfe5616-8f3b2cb3c995e528f5b7",
+      "title": "S-D02 results search, score boundaries, sort order and reset reflect seeded records",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-depth.json",
+      "durationMs": 19068
+    },
+    {
+      "id": "569510b3798cedfe5616-e2cb144728d3b19d962d",
+      "title": "S-D03 choosing an actual category preserves its completed results",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "status": "failed",
+      "report": "results-closure.json",
+      "durationMs": 23934,
+      "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByText('Student Audit Completed Exam', { exact: true })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByText('Student Audit Completed Exam', { exact: true }) with timeout 15000ms\n  - waiting for getByText('Student Audit Completed Exam', { exact: true })\n"
+    },
+    {
+      "id": "569510b3798cedfe5616-96c5c312db92377bef0b",
+      "title": "S-D04 loaded student routes have specific content, reload correctly and fit mobile width",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-depth.json",
+      "durationMs": 69665
+    },
+    {
+      "id": "569510b3798cedfe5616-121284abb55d2317313c",
+      "title": "S-D05 mobile menu keyboard focus trap, Escape and notification popover work",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-depth.json",
+      "durationMs": 8251
+    },
+    {
+      "id": "569510b3798cedfe5616-f30cfb4ce4e159e1d0fe",
+      "title": "S-D06 injected dashboard API failure must not claim all exams completed",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "status": "failed",
+      "report": "results-depth.json",
+      "durationMs": 19943,
+      "error": "Error: expect(locator).toHaveCount(expected) failed\n\nLocator:  getByText('Tüm Sınavları Tamamladın!', { exact: true })\nExpected: 0\nReceived: 1\nTimeout:  15000ms\n\nCall log:\n  - Expect \"toHaveCount\" getByText('Tüm Sınavları Tamamladın!', { exact: true }) with timeout 15000ms\n  - waiting for getByText('Tüm Sınavları Tamamladın!', { exact: true })\n    33 × locator resolved to 1 element\n       - unexpected value \"1\"\n"
+    },
+    {
+      "id": "569510b3798cedfe5616-2258a9df04ea441e3bd8",
+      "title": "S-D07 injected survey API failure must show error and retry instead of empty success",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "status": "failed",
+      "report": "results-depth.json",
+      "durationMs": 20113,
+      "error": "Error: expect(locator).toHaveCount(expected) failed\n\nLocator:  getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })\nExpected: 0\nReceived: 1\nTimeout:  15000ms\n\nCall log:\n  - Expect \"toHaveCount\" getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true }) with timeout 15000ms\n  - waiting for getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })\n    33 × locator resolved to 1 element\n       - unexpected value \"1\"\n"
+    },
+    {
+      "id": "428713d66afe13c8cab4-5bad3448c76f798499c8",
+      "title": "true-false choices render, save and grade different correct values",
+      "file": "student-question-types-audit.spec.ts",
+      "status": "passed",
+      "report": "results-verification.json",
+      "durationMs": 18702
+    },
+    {
+      "id": "428713d66afe13c8cab4-ffdfbe5f61f6acc852bd",
+      "title": "unsupported short-answer record shows fallback and normal exam API rejects unsupported types",
+      "file": "student-question-types-audit.spec.ts",
+      "status": "passed",
+      "report": "results-review.json",
+      "durationMs": 23274
+    },
+    {
+      "id": "428713d66afe13c8cab4-9506a77e32ecf42ee093",
+      "title": "real public image loads and shuffled questions retain order and saved answers across reload",
+      "file": "student-question-types-audit.spec.ts",
+      "status": "passed",
+      "report": "results-verification.json",
+      "durationMs": 31618
+    },
+    {
+      "id": "6e68b040621d97b17e12-cf65fb46cc0f2cc1d0c8",
+      "title": "GUI password change revokes another live session, validates new login and restores original password",
+      "file": "student-shared-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-closure.json",
+      "durationMs": 43200
+    },
+    {
+      "id": "6e68b040621d97b17e12-9f7495fa31660493d42d",
+      "title": "notification GUI paginates, marks read, deletes own fixture and denies foreign deletion",
+      "file": "student-shared-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-closure.json",
+      "durationMs": 43949
+    },
+    {
+      "id": "6e68b040621d97b17e12-e1046d3b33de3263a070",
+      "title": "own history date API filter and GUI pagination exclude old and foreign fixture entries",
+      "file": "student-shared-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-closure.json",
+      "durationMs": 48302
+    },
+    {
+      "id": "6e68b040621d97b17e12-53984b924298cdb66a2e",
+      "title": "student theme survives reload and mobile navigation traps focus and closes correctly",
+      "file": "student-shared-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-closure.json",
+      "durationMs": 10100
+    },
+    {
+      "id": "ee60b689b271e41f19ef-057be88c12479f4b82a1",
+      "title": "all five survey types validate, submit once, persist real answers and remain completed after reload",
+      "file": "student-surveys-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-completion.json",
+      "durationMs": 38415
+    },
+    {
+      "id": "ee60b689b271e41f19ef-864974255370f4bdb3fc",
+      "title": "foreign student cannot list, view or submit the own-class survey",
+      "file": "student-surveys-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-completion.json",
+      "durationMs": 13884
+    },
+    {
+      "id": "ee60b689b271e41f19ef-0ce209e43b15661e36eb",
+      "title": "student profile is read-only in GUI and update API rejects changes",
+      "file": "student-surveys-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-completion.json",
+      "durationMs": 11341
+    },
+    {
+      "id": "ee60b689b271e41f19ef-086aaf2baf34f75c5731",
+      "title": "student security form validates mismatch and incorrect current password without mutation",
+      "file": "student-surveys-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-completion.json",
+      "durationMs": 9869
+    },
+    {
+      "id": "ee60b689b271e41f19ef-782cfc8f4a51b49b6fe0",
+      "title": "student notification sound preference persists and operation history is private",
+      "file": "student-surveys-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-completion.json",
+      "durationMs": 16226
+    },
+    {
+      "id": "ee60b689b271e41f19ef-fc210aa3da925b04c33a",
+      "title": "student announcement target filtering is real and create/delete controls remain forbidden",
+      "file": "student-surveys-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-completion.json",
+      "durationMs": 13799
+    }
+  ]
+}

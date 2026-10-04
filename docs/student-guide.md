@@ -82,6 +82,7 @@ Süresiz sınav için:
 - Doğru cevaplar çevrimdışı pakette bulunmaz.
 - Tarayıcı verisini temizlemek, gizli pencere veya başka cihaz kullanmak cevapları kaybettirebilir.
 - Süreli sınav çevrimdışı hazırlanamaz veya başlatılamaz.
+- **4 Ekim 2026 denetiminde açık hata:** Henüz teslim kuyruğuna alınmamış çevrimdışı cevaplar, bağlantı geri geldikten sonra sayfa yenilenirse kaybolabiliyor. Yenilemeden önce teslimi yerel kuyruğa alın ve bağlantı dönünce sunucuya ulaştığını kontrol edin. Tam teslim kuyruğunun senkronizasyonu doğrulandı; tek cevap taslağının yenilemede korunması henüz düzeltilmedi. [Kanıt ve çözüm planı](student-audit/findings.md).
 - Çevrimiçi başlayan süreli sınavda bağlantı kesilirse sunucu süresi işlemeye devam eder.
 
 ## 10. Hesap güvenliği
@@ -94,7 +95,7 @@ Süresiz sınav için:
 
 - **Sınav/anket görünmüyor:** Sınıf atamasını ve yayın durumunu öğretmeninizle kontrol edin.
 - **Çevrimdışı sınav açılmıyor:** Aynı cihaz/tarayıcıda önceden hazırladığınızdan emin olun.
-- **Cevap aktarılmıyor:** Bağlantı geldikten sonra aynı sınavı tekrar açın ve bekleyen teslimi kontrol edin.
+- **Cevap aktarılmıyor:** Aynı açık sınavda bekleyen teslim durumunu kontrol edin; kuyruğa alınmamış çevrimdışı cevaplar varken sayfayı yenilemeyin. Bağlantı dönünce tamamlanmış sonucu görmeden tarayıcı verisini temizlemeyin.
 - **Süre az görünüyor:** Süre ilk sunucu başlangıcından beri devam eder; yenileme sıfırlamaz.
 - **Profil bilgisi yanlış:** Kendiniz değiştiremezsiniz; okul yönetimine başvurun.
 - **E-posta gelmedi:** Spam klasörünü kontrol edin ve yöneticiden Şifre Talepleri/E-posta Loglarını incelemesini isteyin.

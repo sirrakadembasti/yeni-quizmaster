@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-04",
+  "updateExitCode": 0,
+  "diagnoseExitCode": 0,
+  "builtAtCommit": "38afee6b960649aad658bd1965ada7cc33bdd8c2",
+  "nodes": 2454,
+  "edges": 6536,
+  "communities": 137,
+  "studentAuditSourceNodes": 82,
+  "missingEndpoints": 0,
+  "danglingEndpoints": 0,
+  "exactDuplicates": 0,
+  "unverified": 0,
+  "external": 0,
+  "selfLoops": 8,
+  "producerSuppressionSites": 12,
+  "limitations": [
+    "Post-build graph does not prove raw producer loss is zero",
+    "14 SQL files skipped: tree_sitter_sql missing",
+    "Graphify PDF extraction lacks pypdf; separate export verifier used",
+    "LLM semantics and labels not refreshed",
+    "Uncommitted user client changes included in working-tree graph"
+  ]
+}

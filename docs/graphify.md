@@ -1,5 +1,11 @@
 # QuizMaster Graphify Mimari Haritası
 
+**4 Ekim 2026 öğrenci denetimi sonrası güncel harita:** Son yerel AST üretimi çıkış0 ile **2454 düğüm, 6536 kenar, 137 topluluk** oluşturdu; öğrenci audit kaynaklarından82 düğüm içerir. `diagnose multigraph` çıkış0: eksik/sarkan/yinelenen/unverified/external uç0; self-loop8 ve producer suppression12. Bu tanı ham üretici ilişki kaybının sıfır olduğunu kanıtlamaz. `built_at_commit=38afee6b960649aad658bd1965ada7cc33bdd8c2` üretim başlangıcındaki HEAD'dir. Harita commit öncesi çalışma ağacını ve kullanıcının commit dışında korunan iki client düzenlemesini içerir.
+
+14 SQL dosyasında `tree_sitter_sql`, Graphify ortamında PDF metin çıkarımı için `pypdf` eksikliği sürer; Markdown/görsel semantiği ve LLM topluluk etiketleri yenilenmedi. Bu koşuda128 kayıtlı etiket/137 topluluk ve merkez adlarıyla41 yeniden adlandırma bildirildi. Öğrenci PDF'si ayrı Python runtime ile pypdf/pypdfium2 kullanılarak denetlendi. Görsel harita testi gerçek CDN renderer ile `StudentQuiz()` düğümünü seçer; [görsel sonuç](student-audit/graphify/result.json), [genel harita](student-audit/graphify/overview.png), [öğrenci bilgi paneli](student-audit/graphify/selected-info.png). Harita doğrulaması altı açık ürün kusurunun giderildiği anlamına gelmez; [öğrenci kapsam raporu](student-audit/verification.md).
+
+Aşağıdaki önceki üretim sayıları tarihsel kayıttır.
+
 **4 Ekim 2026 öğretmen düzeltmeleri:** Gerçek yerel AST güncellemesi çıkış0 ile **2340 düğüm,6316 kenar,124 topluluk** üretti. Doğru cevap raporu, reset gönderim koruması ve Windows regresyon başlatıcısı son kaynaklardan çıkarıldı. `diagnose multigraph` çıkış0: eksik/sarkan/yinelenen/unverified uç0, self-loop4, producer suppression12. Bunlar ham üretici kaybının sıfır olduğunun kanıtı değildir. SQL parser bulunmadığı için14 SQL dosyası; Graphify ortamında pypdf olmadığı için PDF metni atlandı. LLM semantik etiketleri yenilenmedi. PDF doğruluğu Graphify dışındaki gerçek Chromium+pypdf/PyMuPDF testleriyle doğrulandı; [öğretmen kapanışı](teacher-audit/defect-repairs.md).
 
 Haritanın `built_at_commit` değeri `2c2e9fd` güncelleme başlangıcındaki HEAD'dir; commit öncesi çalışma ağacı, kullanıcının iki bağımsız client değişikliği dahil, haritaya alınır. Aşağıdaki3 Ekim sayıları tarihsel üretimleri anlatır.

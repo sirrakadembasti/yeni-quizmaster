@@ -82,3 +82,13 @@ tools/mailpit/*.exe
 /docs/teacher-audit/test-results*/
 /docs/teacher-audit/playwright-report*/
 /docs/teacher-audit/**/trace.zip
+/docs/student-audit/runtime.json
+/docs/student-audit/results-latest.json
+/docs/student-audit/runtime-logs/
+/docs/student-audit/test-results*/
+/docs/student-audit/playwright-report*/
+/docs/student-audit/**/trace.zip
+/docs/student-audit/results-fix.json
+/docs/student-audit/runner-fix.json
+/docs/student-audit/runner-windows-port-guard.json
+/docs/student-audit/student-results-export.csv
