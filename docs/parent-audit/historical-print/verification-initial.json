@@ -1,0 +1,45 @@
+{
+  "status": "failed",
+  "files": [
+    {
+      "file": "announcements.pdf",
+      "pages": 1,
+      "expectedText": false,
+      "textExcerpt": "QuizMaster Y\u00f6netim ve S\u0131nav Sistemi Parent Audit Guardian \u00b7 Veli\nP Parent Audit Admin\n Sistem Y\u00f6neticisi\n4 Ekim 2026, 12:05\nP arent Audit All Announcem ent\nIsolated parent announcement\nHEDEF: HERKESE Duyuru\nP Parent Audit Admin\n Sistem Y\u00f6neticisi\n4 Ekim 2026, 12:05\nP arent Audit P arent Announcem ent\nIsolated parent announcement\nHEDEF: \u00d6 \u011e RETMENLE",
+      "foreignText": false,
+      "rendered": true
+    },
+    {
+      "file": "profile.pdf",
+      "pages": 1,
+      "expectedText": true,
+      "textExcerpt": "QuizMaster Y\u00f6netim ve S\u0131nav Sistemi Parent Audit Guardian \u00b7 Veli\nHesap Ayarlar\u0131\nProfilinizi, g\u00fcvenli \u011f inizi ve bildirimlerinizi buradan y\u00f6netin.\nKi \u015f isel Bilgiler\nAd\u0131n\u0131z ve ileti \u015f im bilgileriniz.\nAD SOYAD E-POSTA\nTELEFON ADRES\nHesap Bilgileri\nP arent Audit Guardian\nVeli\nKat\u0131lma Tarihi 4 Ekim 2026",
+      "foreignText": false,
+      "rendered": true
+    },
+    {
+      "file": "notifications.pdf",
+      "pages": 1,
+      "expectedText": true,
+      "textExcerpt": "QuizMaster Y\u00f6netim ve S\u0131nav Sistemi Parent Audit Guardian \u00b7 Veli\nHesap Ayarlar\u0131\nProfilinizi, g\u00fcvenli \u011f inizi ve bildirimlerinizi buradan y\u00f6netin.\nSon Bildirimler\nHesab\u0131n\u0131zla ilgili t\u00fcm g\u00fcncel aktiviteler.\nBildirim sesi\nAnl\u0131k bildirim uyar\u0131lar\u0131 a\u00e7\u0131k.\nSayfa 1 / 2\nParent Audit Notification 0\nIsolated parent notification\n4 Ekim 2026, 12:05\nParent Audit",
+      "foreignText": false,
+      "rendered": true
+    },
+    {
+      "file": "logs.pdf",
+      "pages": 3,
+      "expectedText": true,
+      "textExcerpt": "QuizMaster Y\u00f6netim ve S\u0131nav Sistemi Parent Audit Guardian \u00b7 Veli\nHesap Ayarlar\u0131\nProfilinizi, g\u00fcvenli \u011f inizi ve bildirimlerinizi buradan y\u00f6netin.\n\u0130\u015f lem Ge\u00e7mi \u015f i\nSon 6 ay i\u00e7inde ger\u00e7ekle \u015f tirdi \u011f iniz t\u00fcm sistem hareketleri.\n60 \u0130\u015f lem\n\u0130\u015e LEM DETAY TARIH\nLOGOUT User logged out 4 Eki 2026\n12:06:38\nLOGIN User logged in 4 Eki 2026\n12:06:34\nLOGOUT Use",
+      "foreignText": false,
+      "rendered": true
+    },
+    {
+      "file": "security.pdf",
+      "pages": 1,
+      "expectedText": false,
+      "textExcerpt": "QuizMaster Y\u00f6netim ve S\u0131nav Sistemi Parent Audit Guardian \u00b7 Veli\nHesap Ayarlar\u0131\nProfilinizi, g\u00fcvenli \u011f inizi ve bildirimlerinizi buradan y\u00f6netin.\n",
+      "foreignText": false,
+      "rendered": true
+    }
+  ]
+}

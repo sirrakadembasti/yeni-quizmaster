@@ -5,7 +5,7 @@
   - text: Veli Paneli
   - heading "Öğrenci Takibi" [level=1]
   - paragraph: Bağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.
-  - combobox: Beren Audit Child
+  - combobox "Öğrenci seçin": Beren Audit Child
   - heading "Beren Audit Child" [level=2]
   - paragraph: Sınıf atanmamış · parent-audit-empty@example.test
   - paragraph: Ortalama Başarı
@@ -13,10 +13,10 @@
   - paragraph: Tamamlanan Sınav
   - paragraph: "1"
   - paragraph: Bekleyen Sınav
-  - paragraph: "0"
+  - paragraph: "1"
   - text: Sınav Sonuçları
   - link "Tümünü ve detayları gör":
-    - /url: /parent/results
+    - /url: /parent/results?studentId=parent-audit-empty
   - table:
     - rowgroup:
       - row "Sınav Ders Puan Tarih":
@@ -38,5 +38,7 @@
         - columnheader "Ders"
         - columnheader "Durum"
     - rowgroup:
-      - row "Atanmış sınav bulunmuyor.":
-        - cell "Atanmış sınav bulunmuyor."
+      - row "Parent Audit Unassigned Exam Audit Mathematics Bekliyor":
+        - cell "Parent Audit Unassigned Exam"
+        - cell "Audit Mathematics"
+        - cell "Bekliyor"

@@ -91,7 +91,7 @@ test('logging out and signing in as a different parent clears the previous child
   await guiLogin(page, linkedParent.email);
   await expect(page.getByRole('heading', { name: children[0].name, exact: true })).toBeVisible();
   await page.getByRole('link', { name: 'Tümünü ve detayları gör', exact: true }).click();
-  await expect(page).toHaveURL(/\/parent\/results$/);
+  await expect(page).toHaveURL(/\/parent\/results\?studentId=parent-audit-student$/);
   const rows = page.getByRole('row').filter({ hasText: 'Parent Audit Completed Exam' });
   await expect(rows).toHaveCount(1);
   await rows.getByRole('button', { name: 'Detay', exact: true }).click();
@@ -104,7 +104,7 @@ test('logging out and signing in as a different parent clears the previous child
   for (const child of children) await expect(page.locator('main')).not.toContainText(child.name);
   expect((await api(page, 'GET', '/parents/results/parent-audit-result')).status()).toBe(403);
   await page.goto('/parent/results');
-  await expect(page.getByText('Tamamlanmış sınav bulunmuyor.', { exact: true })).toBeVisible();
+    await expect(page.getByText('Hesabınıza bağlı öğrenci bulunmuyor', { exact: true })).toBeVisible();
   await expect(page.locator('main')).not.toContainText('Parent Audit Completed Exam');
   await expect(page.getByText('Öğrencinin cevabı:', { exact: true })).toHaveCount(0);
   await shot(page, 'different-parent-cache');

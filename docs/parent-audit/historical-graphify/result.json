@@ -1,0 +1,66 @@
+{
+  "startedAt": "2026-10-04T09:50:46.029Z",
+  "status": "passed",
+  "pageErrors": [],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "responses": [
+    {
+      "status": 200,
+      "origin": "http://127.0.0.1:18117",
+      "pathname": "/graph.html",
+      "queryKeys": []
+    },
+    {
+      "status": 200,
+      "origin": "https://unpkg.com",
+      "pathname": "/vis-network@9.1.6/standalone/umd/vis-network.min.js",
+      "queryKeys": []
+    }
+  ],
+  "navigations": [
+    {
+      "origin": "http://127.0.0.1:18117",
+      "pathname": "/graph.html",
+      "queryKeys": []
+    }
+  ],
+  "cleanup": {
+    "browserClosed": true,
+    "serverClosed": true
+  },
+  "graphJson": {
+    "nodes": 2558,
+    "edges": 6734,
+    "communities": 142,
+    "builtAtCommit": "b1257ebd6094bacc4ca746e7c8d874b8d181159a",
+    "helper": {
+      "id": "client_src_pages_parent_results_parentresultspage",
+      "label": "ParentResultsPage()",
+      "source": "client/src/pages/parent-results.tsx",
+      "degree": 19
+    }
+  },
+  "servedOrigin": "http://127.0.0.1:18117",
+  "rendered": {
+    "stats": "2558 nodes · 6734 edges · 142 communities",
+    "canvas": {
+      "width": 1320,
+      "height": 1000,
+      "visibleWidth": 1320,
+      "visibleHeight": 1000
+    },
+    "helper": {
+      "id": "client_src_pages_parent_results_parentresultspage",
+      "label": "ParentResultsPage()",
+      "source": "client/src/pages/parent-results.tsx",
+      "degree": 19,
+      "connectedEdges": 19
+    },
+    "selected": [
+      "client_src_pages_parent_results_parentresultspage"
+    ]
+  },
+  "selectedInfo": "ParentResultsPage()\nType: code\nCommunity: Button\nSource: client/src/pages/parent-results.tsx\nDegree: 19\nNeighbors (19)\nDashboardLayout()\nBadge()\nButton\nCard\nCardContent\nCardHeader\nCardTitle\nSelectContent\nSelectItem\nSelectTrigger\nTable\nTableBody\nTableCell\nTableHead\nTableHeader\nTableRow\nResultDetail()\nparent-results.tsx\nApp.tsx",
+  "finishedAt": "2026-10-04T09:51:28.890Z"
+}

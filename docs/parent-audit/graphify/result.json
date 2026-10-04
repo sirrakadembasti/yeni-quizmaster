@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-10-04T09:50:46.029Z",
+  "startedAt": "2026-10-04T11:32:47.179Z",
   "status": "passed",
   "pageErrors": [],
   "consoleErrors": [],
@@ -7,7 +7,7 @@
   "responses": [
     {
       "status": 200,
-      "origin": "http://127.0.0.1:18117",
+      "origin": "http://127.0.0.1:64491",
       "pathname": "/graph.html",
       "queryKeys": []
     },
@@ -20,7 +20,7 @@
   ],
   "navigations": [
     {
-      "origin": "http://127.0.0.1:18117",
+      "origin": "http://127.0.0.1:64491",
       "pathname": "/graph.html",
       "queryKeys": []
     }
@@ -30,20 +30,20 @@
     "serverClosed": true
   },
   "graphJson": {
-    "nodes": 2558,
-    "edges": 6734,
-    "communities": 142,
-    "builtAtCommit": "b1257ebd6094bacc4ca746e7c8d874b8d181159a",
+    "nodes": 2583,
+    "edges": 6795,
+    "communities": 148,
+    "builtAtCommit": "411b56cbb160cfb5cf9ef1f6f00da4cb56054e12",
     "helper": {
       "id": "client_src_pages_parent_results_parentresultspage",
       "label": "ParentResultsPage()",
       "source": "client/src/pages/parent-results.tsx",
-      "degree": 19
+      "degree": 21
     }
   },
-  "servedOrigin": "http://127.0.0.1:18117",
+  "servedOrigin": "http://127.0.0.1:64491",
   "rendered": {
-    "stats": "2558 nodes · 6734 edges · 142 communities",
+    "stats": "2583 nodes · 6795 edges · 148 communities",
     "canvas": {
       "width": 1320,
       "height": 1000,
@@ -54,13 +54,13 @@
       "id": "client_src_pages_parent_results_parentresultspage",
       "label": "ParentResultsPage()",
       "source": "client/src/pages/parent-results.tsx",
-      "degree": 19,
-      "connectedEdges": 19
+      "degree": 21,
+      "connectedEdges": 21
     },
     "selected": [
       "client_src_pages_parent_results_parentresultspage"
     ]
   },
-  "selectedInfo": "ParentResultsPage()\nType: code\nCommunity: Button\nSource: client/src/pages/parent-results.tsx\nDegree: 19\nNeighbors (19)\nDashboardLayout()\nBadge()\nButton\nCard\nCardContent\nCardHeader\nCardTitle\nSelectContent\nSelectItem\nSelectTrigger\nTable\nTableBody\nTableCell\nTableHead\nTableHeader\nTableRow\nResultDetail()\nparent-results.tsx\nApp.tsx",
-  "finishedAt": "2026-10-04T09:51:28.890Z"
+  "selectedInfo": "ParentResultsPage()\nType: code\nCommunity: Button\nSource: client/src/pages/parent-results.tsx\nDegree: 21\nNeighbors (21)\nDashboardLayout()\nBadge()\nCard\nCardContent\nButton\nResultDetail()\nCardHeader\nCardTitle\nTable\nTableBody\nTableHead\nTableHeader\nTableRow\nTableCell\nSelectContent\nSelectItem\nSelectTrigger\nparent-result-image.test.tsx\nparent-results.tsx\nApp.tsx\nQuizMaster Graphify Mimari Haritası",
+  "finishedAt": "2026-10-04T11:33:21.145Z"
 }

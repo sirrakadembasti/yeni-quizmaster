@@ -32,6 +32,10 @@ Birden fazla öğrenci hesabınıza bağlıysa sağ üstteki öğrenci seçicisi
 
 gösterilir.
 
+Öğrenci seçimi bağlantıdaki `studentId` ile korunur. Öğrenci Takibi sayfasından sonuçlara geçtiğinizde, sayfayı yenilediğinizde veya tarayıcının geri düğmesini kullandığınızda aynı bağlı öğrenciyi izlersiniz. Bağlantıdaki öğrenci artık hesabınıza bağlı değilse ilk bağlı öğrenci seçilir.
+
+Sonuç detayında soru görseli, öğrencinin cevabı, doğru cevap ve **Doğru / Yanlış / Yanıtsız** durumu gösterilir. Görsel yüklenemezse açıklayıcı mesaj görüntülenir.
+
 ## 4. Erişim sınırları
 
 - Panel salt okunurdur; veli sınav başlatamaz, cevap değiştiremez veya öğrenci bilgisi güncelleyemez.
@@ -45,9 +49,14 @@ Bağlantı eksik veya yanlışsa okul yönetimiyle iletişime geçin.
 
 **Ayarlar** ekranında kendi profil ve güvenlik bilgilerinizi yönetin. Bildirim sekmesinde bildirim sesini açıp kapatabilir ve bildirimleri silebilirsiniz. Üst menü en fazla son 5 bildirimi gösterir.
 
+Aktif bağlı öğrencinizin sınıfına gönderilen veli duyuruları size de bildirilir. Aynı sınıfta birden fazla bağlı öğrenciniz varsa aynı duyuru için tek bildirim alırsınız.
+
+Profil yazdırılırken kaydedilmiş bilgiler kullanılır. Bildirimlerde mevcut sayfadaki tüm satırlar yazdırılır; sonraki sayfanın çıktısı için önce o sayfaya geçin. Güvenlik sekmesinde Yazdır düğmesi bulunmaz; tarayıcının yazdırması da parola alanlarını ve girilmiş değerleri gizler.
+
 ## 6. Sorun giderme
 
 - **Bağlı öğrenci yok:** Yöneticiden veli hesabınızı öğrenciyle ilişkilendirmesini isteyin.
+- **Bilgiler getirilemedi:** **Tekrar dene** düğmesini kullanın. Bağlantı hatası, öğrenci veya sınav kaydı olmadığı anlamına gelmez. Sonuç detayında listeye dönerek yeniden seçim yapabilirsiniz.
 - **Sonuç eksik:** Öğrencinin sınavı sunucuya teslim ettiğini doğrulayın.
 - **Şifre bağlantısı gelmedi:** Spam klasörünü kontrol edin; yöneticiden Şifre Talepleri ve E-posta Loglarını incelemesini isteyin.
 - **Yetkisiz erişim:** Doğru veli hesabıyla giriş yaptığınızdan ve öğrenci bağlantısının kaldırılmadığından emin olun.

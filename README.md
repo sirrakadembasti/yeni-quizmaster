@@ -8,6 +8,8 @@ QuizMaster; yöneticiler, öğretmenler, öğrenciler ve veliler için rol taban
 
 Veli panelinin sayfa/sekme kapsamı [kontrol listesindedir](docs/parent-audit/inventory.md); gerçek tarayıcı/API denetimi ve kapsam sınırları [veli doğrulama raporunda](docs/parent-audit/verification.md), bulgular ve geliştirme sırası [veli bulgularında](docs/parent-audit/findings.md) yer alır.
 
+Veli erişimi, sınıf bildirimleri, öğrenci seçimi, hata toparlama ve yazdırma düzeltmelerinin güncel kabul sonuçları [veli onarım raporundadır](docs/parent-audit/defect-repairs.md).
+
 - [Yönetici kullanıcı kılavuzu](docs/admin-guide.md)
 - [Yönetici paneli test kapsamı, bulgular ve düzeltme durumu](docs/admin-audit/README.md)
 - [Öğretmen kullanıcı kılavuzu](docs/teacher-guide.md)

@@ -4,21 +4,8 @@
   - button "P Parent Audit Guardian Veli"
   - heading "Sınav Sonuçları" [level=1]
   - paragraph: Bağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.
-  - combobox: Ada Audit Child · Parent Audit 7A
-  - text: Tamamlanan Sınavlar
-  - table:
-    - rowgroup:
-      - row "Sınav Ders Puan Tarih İşlem":
-        - columnheader "Sınav"
-        - columnheader "Ders"
-        - columnheader "Puan"
-        - columnheader "Tarih"
-        - columnheader "İşlem"
-    - rowgroup:
-      - row "Parent Audit Completed Exam Audit Mathematics %0 04.10.2026 Detay":
-        - cell "Parent Audit Completed Exam"
-        - cell "Audit Mathematics"
-        - cell "%0"
-        - cell "04.10.2026"
-        - cell "Detay":
-          - button "Detay"
+  - combobox "Öğrenci seçin": Ada Audit Child · Parent Audit 7A
+  - button "Sonuç listesine dön"
+  - alert:
+    - paragraph: Sonuç detayları getirilemedi. Controlled parent detail failure
+    - button "Tekrar dene"

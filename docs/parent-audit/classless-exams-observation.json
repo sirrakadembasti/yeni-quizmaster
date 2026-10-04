@@ -2,6 +2,8 @@
   "childIds": [
     "parent-audit-unassigned-exam"
   ],
-  "parentIds": [],
+  "parentIds": [
+    "parent-audit-unassigned-exam"
+  ],
   "status": 200
 }

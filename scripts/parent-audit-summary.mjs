@@ -10,8 +10,8 @@ function flatten(suites) {
   return suites.flatMap(suite => [...(suite.specs || []).map(spec => ({ id: spec.id, title: spec.title, file: spec.file, tests: spec.tests })), ...flatten(suite.suites || [])]);
 }
 const cases = flatten(manifest.suites), latest = new Map(), cohorts = [];
-const repairs = false;
-for (const name of ["baseline","depth","readiness","print"]) {
+const repairs = process.argv.includes('--repairs');
+for (const name of repairs ? ['repairs-final', 'repairs-review', 'repairs-types'] : ["baseline","depth","readiness","print"]) {
   const file = path.join(out, `results-${name}.json`);
   if (!fs.existsSync(file)) throw new Error(`Missing completed cohort ${name}`);
   const report = JSON.parse(fs.readFileSync(file, 'utf8'));

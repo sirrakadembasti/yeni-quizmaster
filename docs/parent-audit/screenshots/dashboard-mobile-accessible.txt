@@ -6,7 +6,7 @@
   - text: Veli Paneli
   - heading "Öğrenci Takibi" [level=1]
   - paragraph: Bağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.
-  - combobox: Ada Audit Child · Parent Audit 7A
+  - combobox "Öğrenci seçin": Ada Audit Child · Parent Audit 7A
   - heading "Ada Audit Child" [level=2]
   - paragraph: Parent Audit 7A · parent-audit-child@example.test
   - paragraph: Ortalama Başarı
@@ -17,7 +17,7 @@
   - paragraph: "3"
   - text: Sınav Sonuçları
   - link "Tümünü ve detayları gör":
-    - /url: /parent/results
+    - /url: /parent/results?studentId=parent-audit-student
   - table:
     - rowgroup:
       - row "Sınav Ders Puan Tarih":

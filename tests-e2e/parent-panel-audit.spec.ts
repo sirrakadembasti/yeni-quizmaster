@@ -158,7 +158,7 @@ test('P-F04 a question image is available in parent result detail', async ({ pag
   const p = prisma(), id = 'parent-audit-completed-exam-q1';
   const original = await p.question.findUniqueOrThrow({ where: { id } });
   try {
-    await p.question.update({ where: { id }, data: { imageUrl: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22%3E%3Crect width=%2220%22 height=%2220%22 fill=%22blue%22/%3E%3C/svg%3E' } });
+    await p.question.update({ where: { id }, data: { imageUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=' } });
     await login(page); await page.goto('/parent/results'); await page.getByRole('button', { name: 'Detay', exact: true }).click();
     await expect(page.getByText('Doğru: 0/2', { exact: true })).toBeVisible();
     const detail = await (await api(page, 'GET', '/parents/results/parent-audit-result')).json();

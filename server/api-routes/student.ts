@@ -6,6 +6,7 @@ import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { getIO } from "../socket";
 import { shouldNotifyQuizOwnerOfSubmission } from "../utils/notification-policy";
+import { isQuizVisibleToStudent } from "../utils/quiz-scope-policy";
 
 const router: Router = Router();
 
@@ -36,20 +37,7 @@ const submitSchema = z.object({
 
 router.get("/quizzes", requireAuth, requireRole(["student", "teacher", "admin"]), async (req: AuthRequest, res: Response) => {
   const allQuizzes = await storage.getAllQuizzes({ studentClassId: req.user!.classId });
-  const studentClassId = req.user!.classId;
-  
-  const quizzes = allQuizzes.filter(q => {
-    if (q.status !== "published" || q.contentType === "survey") return false;
-    const assignedClasses = (q as any).assignedClasses || [];
-    if (assignedClasses.length === 0) {
-      // Herhangi bir sınıfa atanmamış sınav:
-      // - Sınıfsız öğrenciler (serbest kullanıcılar) görebilir.
-      // - Sınıfı olan öğrenciler GÖREMEZ — yanlışlıkla yayınlanan sınavların
-      //   tüm okula sızmasını önler.
-      return !studentClassId;
-    }
-    return assignedClasses.some((c: any) => c.id === studentClassId);
-  });
+  const quizzes = allQuizzes.filter(quiz => isQuizVisibleToStudent(quiz, req.user!.classId));
   
   res.json({ quizzes });
 });
@@ -251,7 +239,7 @@ router.post("/quiz/:quizId/start", requireAuth, requireRole(["student", "teacher
   }
 });
 
-router.post("/quiz/:resultId/answer", requireAuth, async (req: AuthRequest, res: Response) => {
+router.post("/quiz/:resultId/answer", requireAuth, requireRole(["student"]), async (req: AuthRequest, res: Response) => {
   try {
     const validation = answerSchema.safeParse(req.body);
     if (!validation.success) {

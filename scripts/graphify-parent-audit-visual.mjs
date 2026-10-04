@@ -59,11 +59,11 @@ try {
   const candidates = graph.nodes.filter(node =>
     node.source_file?.replaceAll('\\', '/') === 'client/src/pages/parent-results.tsx' &&
     /^ParentResultsPage(?:\(\))?$/.test(node.label));
-  assert.equal(candidates.length, 1, 'Refreshed graph.json must contain the production migration helper');
+  assert.equal(candidates.length, 1, 'Refreshed graph.json must contain the parent results page');
   const helper = candidates[0];
   const endpoint = value => typeof value === 'object' ? value.id : value;
   const degree = edges.filter(edge => endpoint(edge.source ?? edge.from) === helper.id || endpoint(edge.target ?? edge.to) === helper.id).length;
-  assert(degree > 0, 'Production migration helper must have graph connections');
+  assert(degree > 0, 'Parent results page must have graph connections');
   report.graphJson = {
     nodes: graph.nodes.length, edges: edges.length,
     communities: new Set(graph.nodes.map(node => node.community).filter(value => value != null)).size,
@@ -124,6 +124,7 @@ try {
   }, helper.id);
   assert(report.rendered.canvas.visibleWidth > 0 && report.rendered.canvas.visibleHeight > 0);
   assert(report.rendered.helper.connectedEdges > 0);
+  assert.equal(report.rendered.helper.connectedEdges, degree, 'Canvas connections must match refreshed graph.json');
   report.selectedInfo = info;
   await page.screenshot({ path: path.join(outputRoot, 'map.png') });
   await page.locator('#info-panel').screenshot({ path: path.join(outputRoot, 'selected-info.png') });

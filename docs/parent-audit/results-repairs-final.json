@@ -1,0 +1,1974 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\.pnpm\\playwright@1.63.0\\node_modules\\playwright\\cli.js",
+      "test",
+      "-c",
+      "playwright.parent-audit.config.ts"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.parent-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/parent-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "parent-*-audit.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/parent-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "parent-backend-repairs-audit.spec.ts",
+      "file": "parent-backend-repairs-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P-B02: real class notices deduplicate siblings and exclude inactive or removed links",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 91218,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:23:08.955Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "53b062f3477d5c8aa2bf-37e3d0d6045b6fa7e8cd",
+          "file": "parent-backend-repairs-audit.spec.ts",
+          "line": 5,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "parent-boundaries-depth-audit.spec.ts",
+      "file": "parent-boundaries-depth-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "linked completed result permission and foreign overview/result rejection are checked independently of secret-field assertions",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4756,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:24:43.971Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "46ce5bf097207d1ba53f-867397d62b8401e6090a",
+          "file": "parent-boundaries-depth-audit.spec.ts",
+          "line": 34,
+          "column": 5
+        },
+        {
+          "title": "parent GUI login loads connected children and GUI logout denies a protected page and API",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 30378,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:24:48.825Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "46ce5bf097207d1ba53f-10071234058eb7e0cc96",
+          "file": "parent-boundaries-depth-audit.spec.ts",
+          "line": 61,
+          "column": 5
+        },
+        {
+          "title": "logging out and signing in as a different parent clears the previous children and result cache",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19436,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:25:19.306Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "46ce5bf097207d1ba53f-2a216dde7485f763c819",
+          "file": "parent-boundaries-depth-audit.spec.ts",
+          "line": 83,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "parent-page-repairs-audit.spec.ts",
+      "file": "parent-page-repairs-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P-R01 unlinked URL selection falls back safely without requesting foreign overview",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10101,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:25:38.810Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5c1c6bf27490c5dcde09-155f6f689921d808fa97",
+          "file": "parent-page-repairs-audit.spec.ts",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "P-R02 selected child survives reload and browser back without showing previous detail",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13349,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:25:48.982Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5c1c6bf27490c5dcde09-98a5776b11be34437cf4",
+          "file": "parent-page-repairs-audit.spec.ts",
+          "line": 20,
+          "column": 5
+        },
+        {
+          "title": "P-R03 late first-child overview response cannot replace selected second-child data",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6987,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:26:02.422Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5c1c6bf27490c5dcde09-a35f31bbeb6048b23b94",
+          "file": "parent-page-repairs-audit.spec.ts",
+          "line": 38,
+          "column": 5
+        },
+        {
+          "title": "P-R04 overview 403 shows explicit retry and hides metrics until real recovery",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9533,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:26:09.445Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5c1c6bf27490c5dcde09-e3632f4d2115481706c5",
+          "file": "parent-page-repairs-audit.spec.ts",
+          "line": 60,
+          "column": 5
+        },
+        {
+          "title": "P-R05 removed linked child is no longer selected or shown after reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 24086,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:26:19.009Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5c1c6bf27490c5dcde09-14980fd8bfc6de8abcdb",
+          "file": "parent-page-repairs-audit.spec.ts",
+          "line": 74,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "parent-panel-audit.spec.ts",
+      "file": "parent-panel-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P-N01 dashboard, home alias and results direct URLs, reload, mobile, keyboard and real network",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 59824,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:26:43.602Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-5eff7f2871033c098200",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 17,
+          "column": 5
+        },
+        {
+          "title": "P-F01 dashboard metrics, assigned exams and switching both linked students use real records",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15989,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:27:43.475Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-2b495852f85840279b90",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 44,
+          "column": 5
+        },
+        {
+          "title": "P-F02 results detail, correct and incorrect answers, back and child change",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 21129,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:27:59.513Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-2054b6ebf5cf2f7fda06",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 62,
+          "column": 5
+        },
+        {
+          "title": "P-F03 results link preserves dashboard selected child",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8777,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:28:20.688Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-56124dd5988e6bd9c321",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 79,
+          "column": 5
+        },
+        {
+          "title": "P-E01 genuinely unlinked parent empty dashboard and results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16879,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:28:29.499Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-b83416dbbf9a67df18e2",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 88,
+          "column": 5
+        },
+        {
+          "title": "P-E02 students API500 distinguishes failure from empty and retries real API",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6561,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:28:46.415Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-9bdbe189ac909e874b84",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 98,
+          "column": 7
+        },
+        {
+          "title": "P-E03 students API500 distinguishes failure from empty and retries real API",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5942,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:28:53.046Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-a9958de06b70dfbef64b",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 98,
+          "column": 7
+        },
+        {
+          "title": "P-E04 overview API500 displays failure and real retry",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8341,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:28:59.055Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-2984e080759e5361d5ec",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 113,
+          "column": 7
+        },
+        {
+          "title": "P-E05 overview API500 displays failure and real retry",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7615,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:29:07.524Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-606436c787967df034e7",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 113,
+          "column": 7
+        },
+        {
+          "title": "P-E06 result detail API500 is visible and retry recovers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6077,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:29:16.544Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-f5223bacf0b7497bb6a1",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 125,
+          "column": 5
+        },
+        {
+          "title": "P-E07 delayed overview advertises loading rather than empty",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6014,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:29:22.654Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-74f47f064686dfbdfa40",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 137,
+          "column": 5
+        },
+        {
+          "title": "P-A01 both student selectors expose a purpose label",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10458,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:29:28.698Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-ae983b68caa8258b163f",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 149,
+          "column": 5
+        },
+        {
+          "title": "P-F04 a question image is available in parent result detail",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8994,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:29:39.184Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-4b78b7be368392fa097d",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 157,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "parent-print-audit.spec.ts",
+      "file": "parent-print-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P-X01 announcements and settings render complete print output and security excludes password fields",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 24050,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:29:48.295Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8cd0abe1161bdad69ed3-868b2714092474ca1620",
+          "file": "parent-print-audit.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "P-X02 parent announcement audience badge names parents",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5283,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:30:12.426Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8cd0abe1161bdad69ed3-57f3dac4befb265d9dec",
+          "file": "parent-print-audit.spec.ts",
+          "line": 50,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "parent-security-audit.spec.ts",
+      "file": "parent-security-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Parent real API access boundaries",
+          "file": "parent-security-audit.spec.ts",
+          "line": 37,
+          "column": 6,
+          "specs": [
+            {
+              "title": "anonymous reads return 401 and student sessions cannot enter parent routes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12639,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:30:18.280Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-d6f61ca3510393dc39d5",
+              "file": "parent-security-audit.spec.ts",
+              "line": 38,
+              "column": 7
+            },
+            {
+              "title": "linked students and completed answers are visible without authentication secrets or foreign results",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10740,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:30:30.959Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-ce31fe5412792b2dee80",
+              "file": "parent-security-audit.spec.ts",
+              "line": 53,
+              "column": 7
+            },
+            {
+              "title": "parent cannot start exams, mutate child records, manage guardian links or archive data",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 20660,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:30:41.735Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-35c66f780615278c6a0a",
+              "file": "parent-security-audit.spec.ts",
+              "line": 88,
+              "column": 7
+            },
+            {
+              "title": "parent cannot answer a legacy in-progress attempt owned by their former student identity",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3599,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:31:02.426Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-85de66477dd4b3acd16b",
+              "file": "parent-security-audit.spec.ts",
+              "line": 122,
+              "column": 7
+            },
+            {
+              "title": "unfinished child results are absent from overview and cannot expose the answer key",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3961,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:31:06.055Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-64c014fbd108769111f4",
+              "file": "parent-security-audit.spec.ts",
+              "line": 143,
+              "column": 7
+            },
+            {
+              "title": "removing a guardian link revokes overview and result access in the existing session",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5948,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:31:10.056Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-ac2bd943f8d27031723d",
+              "file": "parent-security-audit.spec.ts",
+              "line": 160,
+              "column": 7
+            },
+            {
+              "title": "deactivating the linked student hides the child and denies previously authorized results",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4481,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:31:16.033Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-45ad3ea53b85e97ce109",
+              "file": "parent-security-audit.spec.ts",
+              "line": 179,
+              "column": 7
+            },
+            {
+              "title": "server-side parent session revocation returns 401 and protected page reload requires login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10118,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:31:20.548Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-7851c732a34808664c78",
+              "file": "parent-security-audit.spec.ts",
+              "line": 196,
+              "column": 7
+            },
+            {
+              "title": "classless child assigned exams match the exams visible in the child account",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6910,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:31:30.704Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-dacc22430c0a5cdedc2a",
+              "file": "parent-security-audit.spec.ts",
+              "line": 215,
+              "column": 7
+            },
+            {
+              "title": "class-targeted parent announcement creates a real notification for the linked parent",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16872,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:31:37.646Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-8422cfe3df24e1cf3000",
+              "file": "parent-security-audit.spec.ts",
+              "line": 230,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "parent-shared-audit.spec.ts",
+      "file": "parent-shared-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Parent audit: shared settings and announcements",
+          "file": "parent-shared-audit.spec.ts",
+          "line": 17,
+          "column": 6,
+          "specs": [
+            {
+              "title": "P-S01 parent edits own profile through GUI and reload persists actual DB values",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12560,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:31:54.611Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-3855b201dbe9ba49f65a",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 20,
+              "column": 7
+            },
+            {
+              "title": "P-S02 notification GUI paginates, marks read, deletes own record and rejects foreign deletion",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 51848,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:32:07.204Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-89c491cf1fb05a5e3902",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 47,
+              "column": 7
+            },
+            {
+              "title": "P-S03 notification sound preference persists after reload and is restored",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12221,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:32:59.087Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-f2cdf4a6426be1027fb3",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 91,
+              "column": 7
+            },
+            {
+              "title": "P-S04 own operation history paginates and excludes old and foreign entries",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 39603,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:33:11.347Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-bdbbfbdaaeac938a3321",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 108,
+              "column": 7
+            },
+            {
+              "title": "P-S05 security form rejects mismatch and incorrect current password without changing password",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5639,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:33:50.981Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-b267cc28a8eba2ee897f",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 144,
+              "column": 7
+            },
+            {
+              "title": "P-S06 dedicated parent changes password, revokes other session and new login works",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16257,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:33:56.654Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-d4f345bf4a7639534b09",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 167,
+              "column": 7
+            },
+            {
+              "title": "P-S07 parent sees intended announcements and cannot create or delete",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9695,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:34:12.944Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-1b081ec92c1f0778df09",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 198,
+              "column": 7
+            },
+            {
+              "title": "P-S08 announcement API error shows retry and recovers from the real server",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6353,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:34:22.685Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-37c20ce43495126f3972",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 228,
+              "column": 7
+            },
+            {
+              "title": "P-S09 mobile settings tabs work with keyboard and preserve query navigation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5497,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:34:29.074Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-e3c4819852e74523ed08",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 241,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "parent-shared-depth-audit.spec.ts",
+      "file": "parent-shared-depth-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P-A03 results student selector independently exposes a purpose label",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5273,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:34:34.669Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d57cf61ed978def519f0-5986fb07e96d249beded",
+          "file": "parent-shared-depth-audit.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "P-D01 settings notifications controlled API500 and real recovery",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5434,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:34:39.974Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d57cf61ed978def519f0-e497c2f06c65cabb0155",
+          "file": "parent-shared-depth-audit.spec.ts",
+          "line": 15,
+          "column": 7
+        },
+        {
+          "title": "P-D02 settings logs controlled API500 and real recovery",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6065,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:34:45.440Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d57cf61ed978def519f0-82a3658cbd8f3ac4515c",
+          "file": "parent-shared-depth-audit.spec.ts",
+          "line": 15,
+          "column": 7
+        },
+        {
+          "title": "P-A02 long valid child name and email remain inside mobile document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5711,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:34:51.533Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d57cf61ed978def519f0-0ff9105daa1494ebc3b8",
+          "file": "parent-shared-depth-audit.spec.ts",
+          "line": 27,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "parent-shared-role-repairs-audit.spec.ts",
+      "file": "parent-shared-role-repairs-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P-R shared settings print preserves admin profile and security screen",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 3625,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main input')\nExpected: not visible\nError: strict mode violation: locator('main input') resolved to 4 elements:\n    1) <input id=\"profile-name\" placeholder=\"Ad Soyad\" value=\"Parent Audit Admin\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('Ad Soyad')\n    2) <input type=\"email\" id=\"profile-email\" placeholder=\"email@example.com\" value=\"parent-audit-admin@example.test\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disa…/> aka getByPlaceholder('email@example.com')\n    3) <input value=\"\" id=\"profile-phone\" placeholder=\"05xx xxx xx xx\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('05xx xxx xx xx')\n    4) <input value=\"\" id=\"profile-address\" placeholder=\"İletişim adresi\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('İletişim adresi')\n\nCall log:\n\u001b[2m  - Expect \"not toBeVisible\" locator('main input') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main input')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main input')\nExpected: not visible\nError: strict mode violation: locator('main input') resolved to 4 elements:\n    1) <input id=\"profile-name\" placeholder=\"Ad Soyad\" value=\"Parent Audit Admin\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('Ad Soyad')\n    2) <input type=\"email\" id=\"profile-email\" placeholder=\"email@example.com\" value=\"parent-audit-admin@example.test\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disa…/> aka getByPlaceholder('email@example.com')\n    3) <input value=\"\" id=\"profile-phone\" placeholder=\"05xx xxx xx xx\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('05xx xxx xx xx')\n    4) <input value=\"\" id=\"profile-address\" placeholder=\"İletişim adresi\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('İletişim adresi')\n\nCall log:\n\u001b[2m  - Expect \"not toBeVisible\" locator('main input') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main input')\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-shared-role-repairs-audit.spec.ts:15:50",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-shared-role-repairs-audit.spec.ts",
+                      "column": 50,
+                      "line": 15
+                    },
+                    "snippet": "  13 |     await page.emulateMedia({ media: 'print' });\n  14 |     await expect(page.locator('main')).toContainText(email);\n> 15 |     await expect(page.locator('main input:visible')).toHaveCount(0);\n     |                                                  ^\n  16 |     await page.emulateMedia({ media: 'screen' });\n  17 |     await page.goto('/settings?tab=security');\n  18 |     await expect(page.getByLabel('Mevcut Şifre', { exact: true })).toBeVisible();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-shared-role-repairs-audit.spec.ts",
+                        "column": 50,
+                        "line": 15
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main input')\nExpected: not visible\nError: strict mode violation: locator('main input') resolved to 4 elements:\n    1) <input id=\"profile-name\" placeholder=\"Ad Soyad\" value=\"Parent Audit Admin\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('Ad Soyad')\n    2) <input type=\"email\" id=\"profile-email\" placeholder=\"email@example.com\" value=\"parent-audit-admin@example.test\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disa…/> aka getByPlaceholder('email@example.com')\n    3) <input value=\"\" id=\"profile-phone\" placeholder=\"05xx xxx xx xx\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('05xx xxx xx xx')\n    4) <input value=\"\" id=\"profile-address\" placeholder=\"İletişim adresi\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('İletişim adresi')\n\nCall log:\n\u001b[2m  - Expect \"not toBeVisible\" locator('main input') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main input')\u001b[22m\n\n\n  13 |     await page.emulateMedia({ media: 'print' });\n  14 |     await expect(page.locator('main')).toContainText(email);\n> 15 |     await expect(page.locator('main input:visible')).toHaveCount(0);\n     |                                                  ^\n  16 |     await page.emulateMedia({ media: 'screen' });\n  17 |     await page.goto('/settings?tab=security');\n  18 |     await expect(page.getByLabel('Mevcut Şifre', { exact: true })).toBeVisible();\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-shared-role-repairs-audit.spec.ts:15:50"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:34:57.309Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-shared-role-repairs-7efcb-profile-and-security-screen\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-shared-role-repairs-7efcb-profile-and-security-screen\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-shared-role-repairs-audit.spec.ts",
+                    "column": 50,
+                    "line": 15
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2dd3b6f178957f6b44eb-de53aec1f293828a3c0c",
+          "file": "parent-shared-role-repairs-audit.spec.ts",
+          "line": 9,
+          "column": 7
+        },
+        {
+          "title": "P-R shared settings print preserves teacher profile and security screen",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 5787,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main input')\nExpected: not visible\nError: strict mode violation: locator('main input') resolved to 4 elements:\n    1) <input id=\"profile-name\" placeholder=\"Ad Soyad\" value=\"Parent Audit Teacher\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('Ad Soyad')\n    2) <input type=\"email\" id=\"profile-email\" placeholder=\"email@example.com\" value=\"parent-audit-teacher@example.test\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed di…/> aka getByPlaceholder('email@example.com')\n    3) <input value=\"\" id=\"profile-phone\" placeholder=\"05xx xxx xx xx\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('05xx xxx xx xx')\n    4) <input value=\"\" id=\"profile-address\" placeholder=\"İletişim adresi\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('İletişim adresi')\n\nCall log:\n\u001b[2m  - Expect \"not toBeVisible\" locator('main input') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main input')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main input')\nExpected: not visible\nError: strict mode violation: locator('main input') resolved to 4 elements:\n    1) <input id=\"profile-name\" placeholder=\"Ad Soyad\" value=\"Parent Audit Teacher\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('Ad Soyad')\n    2) <input type=\"email\" id=\"profile-email\" placeholder=\"email@example.com\" value=\"parent-audit-teacher@example.test\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed di…/> aka getByPlaceholder('email@example.com')\n    3) <input value=\"\" id=\"profile-phone\" placeholder=\"05xx xxx xx xx\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('05xx xxx xx xx')\n    4) <input value=\"\" id=\"profile-address\" placeholder=\"İletişim adresi\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('İletişim adresi')\n\nCall log:\n\u001b[2m  - Expect \"not toBeVisible\" locator('main input') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main input')\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-shared-role-repairs-audit.spec.ts:15:50",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-shared-role-repairs-audit.spec.ts",
+                      "column": 50,
+                      "line": 15
+                    },
+                    "snippet": "  13 |     await page.emulateMedia({ media: 'print' });\n  14 |     await expect(page.locator('main')).toContainText(email);\n> 15 |     await expect(page.locator('main input:visible')).toHaveCount(0);\n     |                                                  ^\n  16 |     await page.emulateMedia({ media: 'screen' });\n  17 |     await page.goto('/settings?tab=security');\n  18 |     await expect(page.getByLabel('Mevcut Şifre', { exact: true })).toBeVisible();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-shared-role-repairs-audit.spec.ts",
+                        "column": 50,
+                        "line": 15
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main input')\nExpected: not visible\nError: strict mode violation: locator('main input') resolved to 4 elements:\n    1) <input id=\"profile-name\" placeholder=\"Ad Soyad\" value=\"Parent Audit Teacher\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('Ad Soyad')\n    2) <input type=\"email\" id=\"profile-email\" placeholder=\"email@example.com\" value=\"parent-audit-teacher@example.test\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed di…/> aka getByPlaceholder('email@example.com')\n    3) <input value=\"\" id=\"profile-phone\" placeholder=\"05xx xxx xx xx\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('05xx xxx xx xx')\n    4) <input value=\"\" id=\"profile-address\" placeholder=\"İletişim adresi\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('İletişim adresi')\n\nCall log:\n\u001b[2m  - Expect \"not toBeVisible\" locator('main input') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main input')\u001b[22m\n\n\n  13 |     await page.emulateMedia({ media: 'print' });\n  14 |     await expect(page.locator('main')).toContainText(email);\n> 15 |     await expect(page.locator('main input:visible')).toHaveCount(0);\n     |                                                  ^\n  16 |     await page.emulateMedia({ media: 'screen' });\n  17 |     await page.goto('/settings?tab=security');\n  18 |     await expect(page.getByLabel('Mevcut Şifre', { exact: true })).toBeVisible();\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-shared-role-repairs-audit.spec.ts:15:50"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:35:05.057Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-shared-role-repairs-c7a86-profile-and-security-screen\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-shared-role-repairs-c7a86-profile-and-security-screen\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-shared-role-repairs-audit.spec.ts",
+                    "column": 50,
+                    "line": 15
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2dd3b6f178957f6b44eb-c243db1ecdf09268d18f",
+          "file": "parent-shared-role-repairs-audit.spec.ts",
+          "line": 9,
+          "column": 7
+        },
+        {
+          "title": "P-R shared settings print preserves student profile and security screen",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6026,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main input')\nExpected: not visible\nError: strict mode violation: locator('main input') resolved to 9 elements:\n    1) <input disabled id=\"profile-name\" placeholder=\"Ad Soyad\" value=\"Ada Audit Child\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('Ad Soyad')\n    2) <input disabled type=\"email\" id=\"profile-email\" placeholder=\"email@example.com\" value=\"parent-audit-child@example.test\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-all…/> aka getByPlaceholder('email@example.com')\n    3) <input disabled value=\"\" id=\"profile-phone\" placeholder=\"05xx xxx xx xx\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('05xx xxx xx xx')\n    4) <input disabled value=\"\" id=\"profile-address\" placeholder=\"İletişim adresi\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('İletişim adresi')\n    5) <input disabled value=\"Belirtilmemiş\" class=\"flex h-9 w-full border border-input px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-xl bg-muted/30 cursor-not-allowed opacity-80\"/> aka locator('input').nth(4)\n    6) <input disabled value=\"Belirtilmemiş\" class=\"flex h-9 w-full border border-input px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-xl bg-muted/30 cursor-not-allowed opacity-80\"/> aka locator('input').nth(5)\n    7) <input disabled value=\"Belirtilmemiş\" class=\"flex h-9 w-full border border-input px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-xl bg-muted/30 cursor-not-allowed opacity-80\"/> aka locator('.grid > div:nth-child(3) > .flex')\n    8) <input disabled value=\"Belirtilmemiş\" class=\"flex h-9 w-full border border-input px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-xl bg-muted/30 cursor-not-allowed opacity-80\"/> aka locator('div:nth-child(4) > .flex')\n    9) <input disabled value=\"Belirtilmemiş\" class=\"flex h-9 w-full border border-input px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-xl bg-muted/30 cursor-not-allowed opacity-80\"/> aka locator('.sm\\\\:col-span-2 > .flex')\n\nCall log:\n\u001b[2m  - Expect \"not toBeVisible\" locator('main input') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main input')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main input')\nExpected: not visible\nError: strict mode violation: locator('main input') resolved to 9 elements:\n    1) <input disabled id=\"profile-name\" placeholder=\"Ad Soyad\" value=\"Ada Audit Child\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('Ad Soyad')\n    2) <input disabled type=\"email\" id=\"profile-email\" placeholder=\"email@example.com\" value=\"parent-audit-child@example.test\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-all…/> aka getByPlaceholder('email@example.com')\n    3) <input disabled value=\"\" id=\"profile-phone\" placeholder=\"05xx xxx xx xx\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('05xx xxx xx xx')\n    4) <input disabled value=\"\" id=\"profile-address\" placeholder=\"İletişim adresi\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('İletişim adresi')\n    5) <input disabled value=\"Belirtilmemiş\" class=\"flex h-9 w-full border border-input px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-xl bg-muted/30 cursor-not-allowed opacity-80\"/> aka locator('input').nth(4)\n    6) <input disabled value=\"Belirtilmemiş\" class=\"flex h-9 w-full border border-input px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-xl bg-muted/30 cursor-not-allowed opacity-80\"/> aka locator('input').nth(5)\n    7) <input disabled value=\"Belirtilmemiş\" class=\"flex h-9 w-full border border-input px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-xl bg-muted/30 cursor-not-allowed opacity-80\"/> aka locator('.grid > div:nth-child(3) > .flex')\n    8) <input disabled value=\"Belirtilmemiş\" class=\"flex h-9 w-full border border-input px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-xl bg-muted/30 cursor-not-allowed opacity-80\"/> aka locator('div:nth-child(4) > .flex')\n    9) <input disabled value=\"Belirtilmemiş\" class=\"flex h-9 w-full border border-input px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-xl bg-muted/30 cursor-not-allowed opacity-80\"/> aka locator('.sm\\\\:col-span-2 > .flex')\n\nCall log:\n\u001b[2m  - Expect \"not toBeVisible\" locator('main input') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main input')\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-shared-role-repairs-audit.spec.ts:15:50",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-shared-role-repairs-audit.spec.ts",
+                      "column": 50,
+                      "line": 15
+                    },
+                    "snippet": "  13 |     await page.emulateMedia({ media: 'print' });\n  14 |     await expect(page.locator('main')).toContainText(email);\n> 15 |     await expect(page.locator('main input:visible')).toHaveCount(0);\n     |                                                  ^\n  16 |     await page.emulateMedia({ media: 'screen' });\n  17 |     await page.goto('/settings?tab=security');\n  18 |     await expect(page.getByLabel('Mevcut Şifre', { exact: true })).toBeVisible();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-shared-role-repairs-audit.spec.ts",
+                        "column": 50,
+                        "line": 15
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main input')\nExpected: not visible\nError: strict mode violation: locator('main input') resolved to 9 elements:\n    1) <input disabled id=\"profile-name\" placeholder=\"Ad Soyad\" value=\"Ada Audit Child\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('Ad Soyad')\n    2) <input disabled type=\"email\" id=\"profile-email\" placeholder=\"email@example.com\" value=\"parent-audit-child@example.test\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-all…/> aka getByPlaceholder('email@example.com')\n    3) <input disabled value=\"\" id=\"profile-phone\" placeholder=\"05xx xxx xx xx\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('05xx xxx xx xx')\n    4) <input disabled value=\"\" id=\"profile-address\" placeholder=\"İletişim adresi\" class=\"flex h-9 w-full border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30\"/> aka getByPlaceholder('İletişim adresi')\n    5) <input disabled value=\"Belirtilmemiş\" class=\"flex h-9 w-full border border-input px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-xl bg-muted/30 cursor-not-allowed opacity-80\"/> aka locator('input').nth(4)\n    6) <input disabled value=\"Belirtilmemiş\" class=\"flex h-9 w-full border border-input px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-xl bg-muted/30 cursor-not-allowed opacity-80\"/> aka locator('input').nth(5)\n    7) <input disabled value=\"Belirtilmemiş\" class=\"flex h-9 w-full border border-input px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-xl bg-muted/30 cursor-not-allowed opacity-80\"/> aka locator('.grid > div:nth-child(3) > .flex')\n    8) <input disabled value=\"Belirtilmemiş\" class=\"flex h-9 w-full border border-input px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-xl bg-muted/30 cursor-not-allowed opacity-80\"/> aka locator('div:nth-child(4) > .flex')\n    9) <input disabled value=\"Belirtilmemiş\" class=\"flex h-9 w-full border border-input px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm rounded-xl bg-muted/30 cursor-not-allowed opacity-80\"/> aka locator('.sm\\\\:col-span-2 > .flex')\n\nCall log:\n\u001b[2m  - Expect \"not toBeVisible\" locator('main input') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main input')\u001b[22m\n\n\n  13 |     await page.emulateMedia({ media: 'print' });\n  14 |     await expect(page.locator('main')).toContainText(email);\n> 15 |     await expect(page.locator('main input:visible')).toHaveCount(0);\n     |                                                  ^\n  16 |     await page.emulateMedia({ media: 'screen' });\n  17 |     await page.goto('/settings?tab=security');\n  18 |     await expect(page.getByLabel('Mevcut Şifre', { exact: true })).toBeVisible();\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-shared-role-repairs-audit.spec.ts:15:50"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T10:35:13.256Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-shared-role-repairs-3f562-profile-and-security-screen\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-shared-role-repairs-3f562-profile-and-security-screen\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-shared-role-repairs-audit.spec.ts",
+                    "column": 50,
+                    "line": 15
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2dd3b6f178957f6b44eb-9847efe2041e488e3acd",
+          "file": "parent-shared-role-repairs-audit.spec.ts",
+          "line": 9,
+          "column": 7
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-04T10:23:03.306Z",
+    "duration": 735335.522,
+    "expected": 47,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

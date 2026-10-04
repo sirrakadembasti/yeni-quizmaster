@@ -36,6 +36,13 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { announcementApi, classApi } from "@/lib/api";
 
+const announcementAudienceLabels: Record<string, string> = {
+  all: 'HERKESE',
+  student: 'ÖĞRENCİLERE',
+  teacher: 'ÖĞRETMENLERE',
+  parent: 'VELİLERE',
+};
+
 export default function AnnouncementsPage() {
   const { role } = useAuth();
   const { toast } = useToast();
@@ -182,7 +189,7 @@ export default function AnnouncementsPage() {
                     <div className="flex flex-wrap items-center gap-2">
                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Hedef:</span>
                        <Badge variant="outline" className="rounded-lg text-[10px] font-bold uppercase">
-                         {ann.targetRole === 'all' ? 'HERKESE' : ann.targetRole === 'student' ? 'ÖĞRENCİLERE' : 'ÖĞRETMENLERE'}
+                          {announcementAudienceLabels[ann.targetRole] || 'HEDEF BELİRTİLMEMİŞ'}
                        </Badge>
                        {ann.targetClassId && (
                          <Badge variant="outline" className="rounded-lg border-emerald-500/25 bg-emerald-500/10 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
@@ -259,6 +266,7 @@ export default function AnnouncementsPage() {
                   <SelectContent className="rounded-xl">
                     {!isTeacher && <SelectItem value="all">Herkes</SelectItem>}
                     {!isTeacher && <SelectItem value="teacher">Öğretmenler</SelectItem>}
+                    {!isTeacher && <SelectItem value="parent">Veliler</SelectItem>}
                     <SelectItem value="student">Öğrenciler</SelectItem>
                   </SelectContent>
                 </Select>

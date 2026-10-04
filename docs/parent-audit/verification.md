@@ -1,5 +1,7 @@
 # Veli paneli sayfa/sekme doğrulaması
 
+Bu belge ilk denetimin tarihsel sonuçlarını korur. Düzeltme sonrası güncel kapsam ve kanıtlar [onarım raporundadır](defect-repairs.md).
+
 4 Ekim 2026. Başlangıç commit'i `b1257eb`; yalnız veli paneli denetlendi. Ürün koduna düzeltme uygulanmadı. Test dosyaları, izole fixture/başlatıcı ve raporlar eklendi. Kullanıcının `client/src/lib/api.ts` ve `client/src/pages/server-setup.tsx` değişiklikleri korunur ve bu audit commit'ine alınmaz.
 
 ## Son kapsam
@@ -35,12 +37,12 @@ Ham runtime logları, session/cookie bilgileri ve fixture DB'leri commit edilmez
 - Audit altyapısı `node --test scripts/parent-audit-windows-runner.test.mjs scripts/student-audit-report-sanitize.test.mjs`: **5 geçti/0 başarısız/1 symlink testi Windows'ta atlandı**, çıkış0. Dolu5560 portunda runner kullanıcının port sahibini öldürmeden ve gerçek DB'ye dokunmadan reddeder. [Port guard gözlemi](runner-windows-port-guard.json) bu kasıtlı reddi `cleanup-failed` diye kaydeder; dört normal E2E kohortunun temizliğinden ayrı bir negatif kontroldür.
 - Yeni server fixture `pnpm --filter quiz-master-server type-check` çıkış0. Ürün değiştirilmediğinden önceki panelin tam frontend regresyonu/derlemesi bu audit'te tekrarlanmadı; bu kohortun başarısı olarak sayılmadı.
 
-- [Legacy veli cevabı HTTP200/DB kaydı](legacy-answer-observation.json)
-- [Sınıfsız çocuk API kapsam farkı](classless-exams-observation.json)
-- [Sınıfa hedefli duyuru POST201/liste var/bildirim0](class-announcement-observation.json)
+- [Legacy veli cevabı HTTP200/DB kaydı](historical-observations/legacy-answer-observation.json)
+- [Sınıfsız çocuk API kapsam farkı](historical-observations/classless-exams-observation.json)
+- [Sınıfa hedefli duyuru POST201/liste var/bildirim0](historical-observations/class-announcement-observation.json)
 - [Rota/konsol/API/mobil gözlemleri](navigation-observations.json): başarılı taramada hata0; kontrollü hata testleri bu başarıya dahil edilmez.
 - [PDF metin/render doğrulaması](print/verification.json), Chromium çıktıları ve tüm render sayfaları `print/` altında. Fiziksel yazıcı/OS baskı diyalogu test edilmedi; window.print çağrısı sayacı+gerçek print CSS/PDF denetlendi.
-- [Güncel görsel Graphify testi](graphify/result.json); tanı ve parser/LLM sınırları [harita belgesinde](../graphify.md).
+- [Güncel görsel Graphify testi](historical-graphify/result.json); tanı ve parser/LLM sınırları [harita belgesinde](../graphify.md).
 - Harita AST güncellemesi ve multigraph exit0:2558 düğüm/6734 kenar/142 topluluk; eksik/sarkan/yinelenen/unverified/external uç0, self-loop11, suppression12. Gerçek renderer ParentResultsPage düğümünü19 bağlantıyla doğruladı; hata0 ve cleanup başarılı.
 
 ## Sınırlar ve veri bütünlüğü

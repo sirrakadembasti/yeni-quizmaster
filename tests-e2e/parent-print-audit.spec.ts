@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { mkdirSync } from 'node:fs';
-import { login } from './parent-audit-helpers';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { api, login } from './parent-audit-helpers';
 
-test('P-X01 announcements and all four settings tabs invoke print and render real browser PDF', async ({ page }) => {
+test('P-X01 announcements and settings render complete print output and security excludes password fields', async ({ page }) => {
   test.setTimeout(180000);
   await login(page); mkdirSync('docs/parent-audit/print', { recursive: true });
   await page.addInitScript(() => { (window as any).__printCalls = 0; window.print = () => { (window as any).__printCalls++; }; });
@@ -20,10 +20,34 @@ test('P-X01 announcements and all four settings tabs invoke print and render rea
         if (animation.effect?.getComputedTiming().iterations !== Infinity) animation.finish();
       }
     });
-    await page.getByRole('button', { name: 'Yazdır', exact: true }).click();
-    expect(await page.evaluate(() => (window as any).__printCalls)).toBe(1);
+    const printButton = page.getByRole('button', { name: 'Yazdır', exact: true });
+    if (name === 'security') {
+      await expect(printButton).toHaveCount(0);
+      await page.getByLabel('Mevcut Şifre', { exact: true }).fill('StudentAuditOnly2026!');
+      await page.getByLabel('Yeni Şifre', { exact: true }).fill('ParentAuditTemporary2026!');
+    } else {
+      await printButton.click();
+      expect(await page.evaluate(() => (window as any).__printCalls)).toBe(1);
+    }
+    if (name === 'notifications') {
+      const currentPageCount = await page.getByRole('button', { name: 'Bildirimi sil', exact: true }).count();
+      expect(currentPageCount).toBe(20);
+      writeFileSync('docs/parent-audit/print/source-notifications.json', JSON.stringify({ currentPageCount, expectedIds: Array.from({ length: 20 }, (_, i) => i) }, null, 2));
+    }
+    if (name === 'profile') {
+      const saved = await (await api(page, 'GET', '/auth/me')).json();
+      const profile = saved.user ?? saved;
+      writeFileSync('docs/parent-audit/print/source-profile.json', JSON.stringify({ name: profile.name, email: profile.email, phoneNumber: profile.phoneNumber, address: profile.address }, null, 2));
+    }
+    if (name === 'logs') {
+      const rows = page.locator('main tbody tr');
+      expect(await rows.count()).toBe(50);
+      const details = await rows.locator('td:nth-child(2)').allTextContents();
+      writeFileSync('docs/parent-audit/print/source-history.json', JSON.stringify({ currentPageCount: details.length, expectedDetails: details }, null, 2));
+    }
     await page.emulateMedia({ media: 'print' });
-    await expect(page.getByRole('button', { name: 'Yazdır', exact: true })).toBeHidden();
+    await expect(printButton).toBeHidden();
+    if (name === 'security') await expect(page.locator('main')).toContainText('Güvenlik Bilgileri');
     await page.pdf({ path: `docs/parent-audit/print/${name}.pdf`, format: 'A4', printBackground: true });
     await page.emulateMedia({ media: 'screen' });
   }

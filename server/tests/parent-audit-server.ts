@@ -49,7 +49,7 @@ await p.announcement.create({ data: { id: 'parent-audit-announcement', title: 'P
 await p.announcement.create({ data: { id: 'parent-audit-private-announcement', title: 'Private Teacher Announcement', content: 'Teachers only', createdBy: 'parent-audit-admin', targetRole: 'teacher' } });
 await p.notification.create({ data: { userId: 'parent-audit-student', title: 'Parent Audit Notification', message: 'Isolated notification' } });
 await p.user.createMany({ data: [
-{id: "parent-audit-parent",name:"Parent Audit Guardian",email:"parent-audit@example.test",password,role:"parent"},
+{id: "parent-audit-parent",name:"Parent Audit Guardian",email:"parent-audit@example.test",phoneNumber:"05550001122",address:"Parent audit fixture address",password,role:"parent"},
 {id: "parent-audit-no-links",name:"Empty Audit Guardian",email:"parent-audit-no-links@example.test",password,role:"parent"},
 {id: "parent-audit-security",name:"Security Audit Guardian",email:"parent-audit-security@example.test",password,role:"parent"}
 ] });

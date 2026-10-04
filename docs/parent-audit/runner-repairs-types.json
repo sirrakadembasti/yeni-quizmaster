@@ -1,0 +1,42 @@
+{
+  "startedAt": "2026-10-04T11:00:53.537Z",
+  "platform": "win32",
+  "node": "v22.23.2",
+  "cleanup": [
+    {
+      "name": "playwright",
+      "exited": true,
+      "exitCode": 0
+    },
+    {
+      "name": "ui",
+      "stopProven": true,
+      "handlesReleased": true
+    },
+    {
+      "name": "api",
+      "stopProven": true,
+      "handlesReleased": true
+    }
+  ],
+  "testExitCode": 0,
+  "sanitation": {
+    "file": "results-latest.json",
+    "redactions": 0
+  },
+  "status": "passed",
+  "ports": [
+    {
+      "kind": "fixture-port",
+      "port": 5560,
+      "stopped": true
+    },
+    {
+      "kind": "fixture-port",
+      "port": 5561,
+      "stopped": true
+    }
+  ],
+  "cleanupSucceeded": true,
+  "finishedAt": "2026-10-04T11:04:56.838Z"
+}

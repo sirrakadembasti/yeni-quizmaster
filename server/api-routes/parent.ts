@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { storage } from "../storage";
+import { isQuizVisibleToStudent } from "../utils/quiz-scope-policy";
 
 const router: Router = Router();
 const relationSchema = z.enum(["Anne", "Baba", "Diğer"]);
@@ -52,7 +53,7 @@ router.get("/students/:studentId/overview", requireAuth, requireRole(["parent"])
       storage.getResultsByStudent(student.id),
       storage.getAllQuizzes(),
     ]);
-    const quizzes = allQuizzes.filter((quiz: any) => quiz.contentType !== "survey" && quiz.status === "published" && (quiz.assignedClasses || []).some((classroom: any) => classroom.id === student.classId));
+    const quizzes = allQuizzes.filter(quiz => isQuizVisibleToStudent(quiz, student.classId));
     const completedResults = results.filter((result: any) => result.status === "completed");
     const { password, resetToken, resetTokenExpiry, ...safeStudent } = student as any;
     res.json({

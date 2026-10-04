@@ -5,4 +5,7 @@
   - text: Veli Paneli
   - heading "Öğrenci Takibi" [level=1]
   - paragraph: Bağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.
-  - combobox: Ada Audit Child · Parent Audit 7A
+  - combobox "Öğrenci seçin": Ada Audit Child · Parent Audit 7A
+  - alert:
+    - paragraph: Öğrenci bilgileri getirilemedi. Controlled parent overview failure
+    - button "Tekrar dene"

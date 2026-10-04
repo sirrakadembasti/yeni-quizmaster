@@ -1,5 +1,7 @@
 # Veli paneli kapsam ve kontrol listesi
 
+Onarım sonrası güncel kontrol kapsamı **50/50 geçti**: [son kapsam tablosu](repairs-coverage-summary.json), [düzeltme ve kabul raporu](defect-repairs.md). Aşağıdaki başlangıç kapsamı ve tarihsel denetim yöntemi korunur.
+
 Başlangıç: `b1257eb`. Ürün kodu değiştirilmeden, yalnız veli rolü ve bu role açık ortak sayfalar incelenir. Gerçek veri tabanı hash'i: `8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158`.
 
 ## Sayfa ve sekmeler

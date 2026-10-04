@@ -4,15 +4,4 @@
   - button "E Empty Audit Guardian Veli"
   - heading "Sınav Sonuçları" [level=1]
   - paragraph: Bağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.
-  - text: Tamamlanan Sınavlar
-  - table:
-    - rowgroup:
-      - row "Sınav Ders Puan Tarih İşlem":
-        - columnheader "Sınav"
-        - columnheader "Ders"
-        - columnheader "Puan"
-        - columnheader "Tarih"
-        - columnheader "İşlem"
-    - rowgroup:
-      - row "Tamamlanmış sınav bulunmuyor.":
-        - cell "Tamamlanmış sınav bulunmuyor."
+  - status: Öğrenciler yükleniyor...

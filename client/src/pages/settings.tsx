@@ -203,13 +203,13 @@ export default function SettingsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8 pb-12">
+      <div className="space-y-8 pb-12 print:pb-0">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-black text-foreground tracking-tight">Hesap Ayarları</h1>
             <p className="text-muted-foreground mt-1 font-medium">Profilinizi, güvenliğinizi ve bildirimlerinizi buradan yönetin.</p>
           </div>
-          <div className="flex gap-2 print:hidden">
+          {activeTab !== 'security' && <div className="flex gap-2 print:hidden">
             <Button 
               variant="outline" 
               onClick={() => window.print()}
@@ -217,7 +217,7 @@ export default function SettingsPage() {
             >
               <Printer className="h-4 w-4" /> Yazdır
             </Button>
-          </div>
+          </div>}
         </div>
 
         <Tabs value={activeTab} onValueChange={(tab) => { setActiveTab(tab); setLocation(`/settings?tab=${tab}`); }} className="space-y-6">
@@ -243,7 +243,20 @@ export default function SettingsPage() {
                   <CardTitle className="text-xl font-black">Kişisel Bilgiler</CardTitle>
                   <CardDescription>Adınız ve iletişim bilgileriniz.</CardDescription>
                 </CardHeader>
-                <form onSubmit={handleProfileUpdate}>
+                <dl className="hidden print:grid grid-cols-2 gap-4 px-6 py-4">
+                  {[
+                    ['Ad Soyad', user.name],
+                    ['E-posta', user.email],
+                    ['Telefon', user.phoneNumber],
+                    ['Adres', user.address],
+                  ].map(([label, value]) => (
+                    <div key={label} className="min-w-0">
+                      <dt className="text-xs font-bold text-muted-foreground">{label}</dt>
+                      <dd className="break-words whitespace-pre-wrap">{value || 'Belirtilmemiş'}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <form onSubmit={handleProfileUpdate} className="print:hidden">
                   <CardContent className="space-y-4 pt-6">
                     {user?.role === 'student' && (
                       <div className="mb-4 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-3 text-amber-900 dark:text-amber-200">
@@ -443,7 +456,8 @@ export default function SettingsPage() {
                     aria-label="Bildirim sesini aç veya kapat"
                   />
                 </div>
-                <ScrollArea className="h-[400px]">
+                <p className="hidden print:block px-4 py-2 text-sm">Baskı kapsamı: mevcut {notifications.length} bildirim; bölüm {notificationPage} / {notificationsData?.pagination?.totalPages ?? 1}.</p>
+                <ScrollArea className="settings-notification-scroll h-[400px]">
                   {notificationsLoading ? (
                     <p role="status" className="py-12 text-center text-muted-foreground">Bildirimler yükleniyor...</p>
                   ) : notificationsError ? (
@@ -455,7 +469,7 @@ export default function SettingsPage() {
                     <div className="divide-y divide-border/50">
                       {notifications.map((notification: any) => (
                         <div key={notification.id} className={cn(
-                          "p-4 hover:bg-muted/30 transition-colors flex items-start gap-4",
+                          "settings-notification-row p-4 hover:bg-muted/30 transition-colors flex items-start gap-4",
                           !notification.isRead && "bg-primary/5"
                         )}>
                           <div className={cn(
@@ -498,7 +512,7 @@ export default function SettingsPage() {
                   )}
                 </ScrollArea>
                 {(notificationsData?.pagination?.totalPages ?? 1) > 1 && (
-                  <div className="flex items-center justify-between border-t border-border/50 px-4 py-3">
+                  <div className="flex items-center justify-between border-t border-border/50 px-4 py-3 print:hidden">
                     <Button
                       variant="outline"
                       size="sm"
@@ -538,6 +552,7 @@ export default function SettingsPage() {
                 </div>
               </CardHeader>
               <CardContent className="p-0">
+                <p className="hidden print:block px-4 py-2 text-sm">Baskı kapsamı: mevcut {logs.length} işlem; bölüm {historyPage} / {historyTotalPages}.</p>
                 {logsLoading ? (
                   <div className="flex items-center justify-center py-20">
                     <Loader2 className="h-8 w-8 animate-spin text-primary opacity-20" />
@@ -599,7 +614,7 @@ export default function SettingsPage() {
                   </div>
                 )}
                 {!logsLoading && !logsError && historyTotalPages > 1 && (
-                  <div className="flex items-center justify-between border-t border-border/50 px-4 py-3">
+                  <div className="flex items-center justify-between border-t border-border/50 px-4 py-3 print:hidden">
                     <Button variant="outline" size="sm" disabled={historyPage <= 1} onClick={() => setHistoryPage(page => Math.max(1, page - 1))}>Önceki</Button>
                     <span className="text-xs font-medium text-muted-foreground">Sayfa {historyPage} / {historyTotalPages}</span>
                     <Button variant="outline" size="sm" disabled={historyPage >= historyTotalPages} onClick={() => setHistoryPage(page => page + 1)}>Sonraki</Button>
@@ -610,7 +625,11 @@ export default function SettingsPage() {
           </TabsContent>
 
           <TabsContent value="security" className="animate-in fade-in-50 duration-500">
-            <Card className="rounded-3xl border-border/50 shadow-sm overflow-hidden">
+            <div className="hidden print:block">
+              <h2 className="text-xl font-bold">Güvenlik Bilgileri</h2>
+              <p>Şifre değiştirme alanları gizlilik için yazdırılmaz. Şifrenizi uygulamadaki Güvenlik sekmesinden değiştirebilirsiniz.</p>
+            </div>
+            <Card className="rounded-3xl border-border/50 shadow-sm overflow-hidden print:hidden">
               <CardHeader className="bg-muted/20 border-b border-border/50">
                 <CardTitle className="text-xl font-black">Şifre Değiştir</CardTitle>
                 <CardDescription>Hesabınızı güvende tutmak için şifrenizi düzenli olarak güncelleyin.</CardDescription>
