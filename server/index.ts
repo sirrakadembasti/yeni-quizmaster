@@ -22,6 +22,10 @@ import { startEmailWorker } from "./utils/email";
 import { uploadsDirectory } from "./utils/upload-paths";
 import { getEffectiveDeploymentConfig } from "./utils/deployment-config";
 import { startDataRetentionWorker } from "./services/data-retention";
+import { createArchiveWorker } from './services/archive-worker';
+import { archiveDb } from './services/archive-db';
+import { getArchiveBackupRoot } from './api-routes/archive';
+import { createAnnualCaptureGuard } from './middleware/annual-capture-guard';
 
 // DNS Fallback: Windows/MEB ağında getaddrinfo ENOTFOUND hatalarını önler
 setupDnsFallback();
@@ -34,6 +38,8 @@ dotenv.config({ path: path.resolve(serverDirectory, ".env") });
 dotenv.config({ path: path.resolve(projectRoot, ".env") });
 
 const deploymentConfig = getEffectiveDeploymentConfig();
+const archiveWorker = createArchiveWorker({ db: archiveDb, backupRoot: getArchiveBackupRoot(), onError: error => logger.error({ err: error }, '[Archive] Persistent job failed') });
+process.once('exit', () => archiveWorker.stop());
 
 export { logger };
 
@@ -183,6 +189,7 @@ app.use(httpLogger);
     });
 
     // Initialize application routes
+    app.use(createAnnualCaptureGuard());
     await registerRoutes(httpServer, app);
 
     // API 404 Handler - If it starts with /api and reaches here, it's a 404
@@ -225,6 +232,7 @@ app.use(httpLogger);
         logger.info({ host, port, basePath: deploymentConfig.basePath }, "Server serving");
         startEmailWorker();
         startDataRetentionWorker();
+        archiveWorker.start();
       },
     );
   } catch (error) {
