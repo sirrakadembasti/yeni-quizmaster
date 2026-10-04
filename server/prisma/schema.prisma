@@ -25,6 +25,8 @@ model User {
   classNo     String? // Legacy/Optional student class code
   isActive    Boolean @default(true)
   deactivatedAt DateTime?
+  graduationYear String?
+  graduationDate DateTime?
 
   // Veli (Parent) Bilgileri
   parentName     String?
@@ -145,6 +147,8 @@ model Class {
 
   // Quizzes assigned to this class
   quizzes Quiz[] @relation("ClassQuizzes")
+  outgoingTransitionRules AcademicTransitionRule[] @relation("TransitionSourceClass")
+  incomingTransitionRules AcademicTransitionRule[] @relation("TransitionTargetClass")
 }
 
 model ClassTeacherCourse {
@@ -339,4 +343,66 @@ model PasswordResetRequest {
   @@index([status, createdAt])
   @@index([status, updatedAt])
   @@index([email])
+}
+
+model AcademicYear {
+  id               String   @id @default(uuid())
+  label            String   @unique
+  status           String   @default("active") // active, closed; singleton enforced by SQLite partial index
+  opensAt          DateTime
+  scheduledCloseAt DateTime
+  closedAt         DateTime?
+  snapshotId       String? // completed annual snapshot identity, assigned atomically at rollover
+  snapshots        ArchiveSnapshot[]
+  transitionRules  AcademicTransitionRule[]
+}
+
+model ArchiveSnapshot {
+  id              String   @id @default(uuid())
+  academicYearId  String
+  academicYear    AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  label           String
+  mode            String   // manual, annual
+  annualKey       String?  @unique
+  initiatedBy     String?  // actor identity only, retained if the live account changes
+  status          String   @default("queued")
+  scopeJson       String
+  attempts        Int      @default(0)
+  nextAttemptAt   DateTime?
+  leaseOwner      String?
+  leaseExpiresAt  DateTime?
+  lastError       String?
+  artifactPath    String?
+  zipSha256       String?
+  sizeBytes       Int?
+  createdAt       DateTime @default(now())
+  completedAt     DateTime?
+  rows            ArchiveSnapshotRow[]
+
+  @@index([status, nextAttemptAt])
+  @@index([academicYearId, createdAt])
+}
+
+model ArchiveSnapshotRow {
+  id         String @id @default(uuid())
+  snapshotId String
+  snapshot   ArchiveSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  entityType String
+  entityId   String
+  dataJson   String
+
+  @@unique([snapshotId, entityType, entityId])
+}
+
+model AcademicTransitionRule {
+  id          String @id @default(uuid())
+  yearId      String
+  year        AcademicYear @relation(fields: [yearId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  fromClassId String
+  fromClass   Class @relation("TransitionSourceClass", fields: [fromClassId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  toClassId   String?
+  toClass     Class? @relation("TransitionTargetClass", fields: [toClassId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  graduate    Boolean @default(false)
+
+  @@unique([yearId, fromClassId])
 }

@@ -17,14 +17,14 @@
 
 ## Task0 — Approved contract
 - [x] Save design and this tracked plan; review manual vs annual behavior, checksum and history scope.
-- [ ] Commit `docs: define academic archive contract`.
+- [x] Commit `docs: define academic archive contract` —74bab4d.
 
 ## Task1 — Persistent year/snapshot/job model
 Files: server/prisma/schema.prisma; new migration; server/services/academic-year.ts; server/tests/api/academic-year.test.ts.
 Interfaces: getOrCreateActiveYear(db, now), getYearSchedule(label), snapshot/job models and explicit transition rules.
-- [ ] RED: expect(getYearSchedule('2025-2026').toISOString()).toBe('2026-07-14T21:05:00.000Z'); invalid label rejects; duplicate annual job rejected by DB; isolated migration preserves old data.
-- [ ] GREEN: add active/closed years, snapshot rows, lease/retries, unique annual key, graduation fields, explicit class transition rules; generate Prisma client only.
-- [ ] Verify tests/type-check; commit `feat: persist academic years and archive jobs`.
+- [x] RED: expect(getYearSchedule('2025-2026').toISOString()).toBe('2026-07-14T21:05:00.000Z'); invalid label rejects; duplicate annual job rejected by DB; isolated migration preserves old data.
+- [x] GREEN: add active/closed years, snapshot rows, lease/retries, unique annual key, graduation fields, explicit class transition rules; generate Prisma client only.
+- [x] Verify16/16 focused tests + focused type-check; independent review approved. Commit `feat: persist academic years and archive jobs`.
 
 ## Task2 — Immutable capture and API/DB guards
 Files: new archive capture/guard services and API middleware; migration triggers; existing quiz/content/survey/result mutations; tests.
