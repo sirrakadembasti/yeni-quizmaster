@@ -28,9 +28,9 @@ Interfaces: getOrCreateActiveYear(db, now), getYearSchedule(label), snapshot/job
 
 ## Task2 — Immutable capture and API/DB guards
 Files: new archive capture/guard services and API middleware; migration triggers; existing quiz/content/survey/result mutations; tests.
-- [ ] RED: captured questions/results and archived parents reject update/delete/cascade; normal active edits work; injected capture failure leaves no partial copy; copied person data has no password/token.
-- [ ] GREEN: transactional copy, immutable snapshot triggers, live record job fences and archived guards with audit; scope selection and same-condition preview.
-- [ ] Verify API and direct SQLite regressions; commit `feat: enforce immutable archive snapshots`.
+- [x] RED: missing capture module; active result reparent bypass; unrelated manual user inclusion; absent capturedAt marker reproduced before their fixes.
+- [x] GREEN: transactional selected-scope copy with immutable business context, capture marker and lease fence; SQLite/API guards and audited denials; legacy direct archive/promotion/purge closed. Authoritative preview follows in Task3.
+- [x] Verify13/13 isolated SQLite/API tests, focused strict TypeScript and independent scoped review; commit `feat: enforce immutable archive snapshots`.
 
 ## Task3 — Files and protected admin endpoints
 Files: archive exporter/packer; archive router; artifact verification tests; export dependencies only when required.

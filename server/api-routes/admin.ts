@@ -279,65 +279,20 @@ router.get('/archive/preview', requireAuth, requireRole(['admin']), async (_req:
   catch { res.status(500).json({ message: 'Arşiv adayları getirilemedi.' }); }
 });
 
-router.post("/archive", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
-  try {
-    const { academicYear } = req.body;
-    if (typeof academicYear !== 'string' || !academicYear.trim() || academicYear.length > 50) {
-      return res.status(400).json({ message: "Eğitim yılı (academicYear) belirtilmelidir." });
-    }
-    const result = await storage.archiveQuizzesAndResults(academicYear.trim(), req.user!.id);
-
-    res.json({ message: "Yıl sonu arşivleme başarıyla tamamlandı.", ...result });
-  } catch (error) {
-    logger.error({ err: error }, "[POST /api/admin/archive] Error");
-    res.status(500).json({ message: "Arşivleme işlemi başarısız oldu." });
-  }
+router.post("/archive", requireAuth, requireRole(["admin"]), (_req: AuthRequest, res: Response) => {
+  res.status(409).json({ message: 'Doğrudan arşivleme kapalıdır. Doğrulanmış arşiv iş akışını kullanın.' });
 });
 
-router.post("/promote-students", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
-  try {
-    // academicYear opsiyoneldir. Verilirse, taşınmadan önce tamamlanmış
-    // sonuçlara yıl damgası vurulur — yeni sınıf istatistiklerini kirletmez.
-    const validation = z.object({ promotions: z.array(z.object({ fromClassId: z.string().uuid(), toClassId: z.string().uuid().nullable() })).min(1).max(100), academicYear: z.string().trim().min(1).max(50).optional() }).safeParse(req.body);
-    if (!validation.success) {
-      return res.status(400).json({ message: "Sınıf atlatma listesi (promotions) gereklidir." });
-    }
-    const { promotions, academicYear } = validation.data;
-
-    let totalPromoted = 0;
-    for (const promo of promotions) {
-      const count = await storage.promoteStudents(promo.fromClassId, promo.toClassId, academicYear || undefined);
-      totalPromoted += count;
-    }
-
-    // Log the action
-    await storage.createLog(req.user!.id, "PROMOTE_STUDENTS", `Öğrenci sınıf atlatma yapıldı. Toplam öğrenci: ${totalPromoted}${academicYear ? `. Yıl damgası: ${academicYear}` : ''}`);
-
-    res.json({ message: "Öğrenciler başarıyla yeni sınıflarına aktarıldı.", totalPromoted });
-  } catch (error) {
-    logger.error({ err: error }, "[POST /api/admin/promote-students] Error");
-    if (respondToClassError(error, res)) return;
-    res.status(500).json({ message: "Öğrenci sınıf atlatma başarısız oldu." });
-  }
+router.post("/promote-students", requireAuth, requireRole(["admin"]), (_req: AuthRequest, res: Response) => {
+  res.status(409).json({ message: 'Sınıf geçişleri doğrulanmış yıllık arşiv tamamlanınca otomatik uygulanır. Geçiş kurallarını arşiv sayfasında ayarlayın.' });
 });
 
-// GERİ ALINAMAZ: Belirtilen akademik yıla ait arşivlenmiş sınavları ve öğrenci
-// sonuçlarını veritabanından fiziksel olarak siler. Sadece admin yetkisiyle erişilebilir.
+// Historical records are immutable; the legacy destructive endpoint stays closed.
 router.post("/purge", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
   try {
-    const { academicYear } = req.body;
-    if (!academicYear) {
-      return res.status(400).json({ message: "Silinecek eğitim yılı (academicYear) belirtilmelidir." });
-    }
-
-    const result = await storage.purgeArchivedData(academicYear);
-    await storage.createLog(req.user!.id, "PURGE_ARCHIVED_DATA", `Arşiv silindi: ${academicYear}. Sınavlar: ${result.quizzesPurged}, Sonuçlar: ${result.resultsPurged}`);
-
-    res.json({ message: `${academicYear} yılına ait arşiv kalıcı olarak silindi.`, ...result });
-  } catch (error) {
-    logger.error({ err: error }, "[POST /api/admin/purge] Error");
-    res.status(500).json({ message: "Arşiv silme işlemi başarısız oldu." });
-  }
+    await storage.createLog(req.user!.id, 'ARCHIVE_WRITE_DENIED', 'Arşiv kalıcı silme isteği reddedildi.');
+  } catch (error) { logger.error({ err: error }, 'Archive purge denial audit failed'); }
+  return res.status(403).json({ message: 'Arşivler değişmez geçmiş kayıtlardır; kalıcı silme devre dışıdır.' });
 });
 
 export default router;

@@ -7,8 +7,14 @@ import { fromZodError } from "zod-validation-error";
 import { getIO } from "../socket";
 import { shouldNotifyQuizOwnerOfSubmission } from "../utils/notification-policy";
 import { isQuizVisibleToStudent } from "../utils/quiz-scope-policy";
+import { archiveContentGuard, archiveResultGuard } from '../middleware/archive-readonly';
 
 const router: Router = Router();
+router.use('/quiz/:id/:operation', (req, res, next) => {
+  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
+  return requireAuth(req, res, () => ['answer', 'submit'].includes(req.params.operation)
+    ? archiveResultGuard(req, res, next) : archiveContentGuard(req, res, next));
+});
 
 // Sınav başlatma ve teslim için kısıtlayıcı rate limiter.
 // Genel API limiti (1000 req/15dk) buradaki hassas işlemler için çok yüksek;

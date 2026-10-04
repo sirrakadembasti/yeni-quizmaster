@@ -34,12 +34,12 @@ it('preview counts exactly the eligible archive candidates', async () => {
   });
 });
 
-it('invalid promotion items are rejected before changing enrollment', async () => {
+it('legacy promotion requests cannot change enrollment', async () => {
   const cls = await db.class.create({ data: { name: 'Promotion validation '+randomUUID() } });
   await db.user.update({ where: { id: student.id }, data: { classId: cls.id } });
   for (const promotions of [[{ toClassId: null }], [{ fromClassId: cls.id }], [{ fromClassId: 'invalid', toClassId: null }]]) {
     const response = await request(app).post('/admin/promote-students').send({ promotions });
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(409);
     expect((await db.user.findUniqueOrThrow({ where: { id: student.id } })).classId).toBe(cls.id);
   }
 });
@@ -60,41 +60,38 @@ it('quiz deletion and its audit log roll back together on a log failure', async 
   expect(JSON.parse(log.details!)).toMatchObject({ quizId: quiz.id, title: quiz.title, reason: 'Duplicate exam', questions: 1, results: 1 });
 });
 
-it('rolls quizzes and results back if result archiving fails', async () => {
+it('legacy archive rejects requests before result updates', async () => {
   const { quiz, result } = await fixture();
   await db.$executeRawUnsafe("CREATE TRIGGER archive_result_failure BEFORE UPDATE ON StudentResult WHEN NEW.academicYear = '2030-2031' BEGIN SELECT RAISE(ABORT, 'Injected archive result failure'); END");
   try {
     const response = await request(app).post('/admin/archive').send({ academicYear: '2030-2031' });
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(409);
     expect(await db.quiz.findUnique({ where: { id: quiz.id } })).toMatchObject({ status: 'published', academicYear: null });
     expect(await db.studentResult.findUnique({ where: { id: result.id } })).toMatchObject({ academicYear: null });
     expect(await db.actionLog.count({ where: { userId: actor.id, action: 'ARCHIVE_YEAR' } })).toBe(0);
   } finally { await db.$executeRawUnsafe('DROP TRIGGER archive_result_failure'); }
 });
 
-it('rolls data back if the archive audit log fails', async () => {
+it('legacy archive stays closed even when old audit insertion would fail', async () => {
   const { quiz, result } = await fixture();
   await db.$executeRawUnsafe("CREATE TRIGGER archive_log_failure BEFORE INSERT ON ActionLog WHEN NEW.action = 'ARCHIVE_YEAR' BEGIN SELECT RAISE(ABORT, 'Injected archive log failure'); END");
   try {
-    expect((await request(app).post('/admin/archive').send({ academicYear: '2031-2032' })).status).toBe(500);
+    expect((await request(app).post('/admin/archive').send({ academicYear: '2031-2032' })).status).toBe(409);
     expect(await db.quiz.findUnique({ where: { id: quiz.id } })).toMatchObject({ status: 'published', academicYear: null });
     expect(await db.studentResult.findUnique({ where: { id: result.id } })).toMatchObject({ academicYear: null });
   } finally { await db.$executeRawUnsafe('DROP TRIGGER archive_log_failure'); }
 });
 
-it('archives eligible data once and leaves historical or already archived quizzes unchanged', async () => {
+it('legacy direct archive cannot bypass verified snapshot workflow', async () => {
   const { quiz, result } = await fixture();
   const archived = await db.quiz.create({ data: { title: 'Already archived', status: 'archived', createdBy: actor.id } });
   const historical = await db.quiz.create({ data: { title: 'Historical', status: 'published', academicYear: '2028-2029', createdBy: actor.id } });
-  const eligible = await db.quiz.count({ where: { academicYear: null, status: { not: 'archived' } } });
   const response = await request(app).post('/admin/archive').send({ academicYear: '2032-2033' });
-  expect(response.status).toBe(200);
-  expect(response.body.quizzesArchived).toBe(eligible);
-  expect(await db.quiz.findUnique({ where: { id: quiz.id } })).toMatchObject({ status: 'archived', academicYear: '2032-2033' });
-  expect(await db.studentResult.findUnique({ where: { id: result.id } })).toMatchObject({ academicYear: '2032-2033' });
+  expect(response.status).toBe(409);
+  expect(await db.quiz.findUnique({ where: { id: quiz.id } })).toMatchObject({ status: 'published', academicYear: null });
+  expect(await db.studentResult.findUnique({ where: { id: result.id } })).toMatchObject({ academicYear: null });
   expect((await db.quiz.findUnique({ where: { id: archived.id } }))?.academicYear).toBeNull();
   expect((await db.quiz.findUnique({ where: { id: historical.id } }))?.academicYear).toBe('2028-2029');
   const retry = await request(app).post('/admin/archive').send({ academicYear: '2032-2033' });
-  expect(retry.status).toBe(200);
-  expect(retry.body).toMatchObject({ quizzesArchived: 0, resultsArchived: 0 });
+  expect(retry.status).toBe(409);
 });

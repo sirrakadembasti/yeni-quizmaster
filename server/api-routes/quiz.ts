@@ -1,5 +1,6 @@
 import { questionImageUrlSchema } from "../utils/upload-paths";
 import { saveContentHandler } from './content-save';
+import { archiveContentGuard } from '../middleware/archive-readonly';
 import { Router, type Response, type Request } from "express";
 import { storage } from "../storage";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
@@ -12,6 +13,7 @@ import { shouldNotifyAdminAboutQuiz } from "../utils/notification-policy";
 import { hasInvalidQuestions } from "../utils/question-validation";
 
 const router: Router = Router();
+router.use('/:id', (req, res, next) => ['GET', 'HEAD', 'OPTIONS'].includes(req.method) ? next() : requireAuth(req, res, () => archiveContentGuard(req, res, next)));
 router.put('/:id/content', requireAuth, requireRole(['admin', 'teacher']), saveContentHandler('exam'));
 
 async function notifyAdminsAboutTeacherQuiz(

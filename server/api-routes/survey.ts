@@ -1,5 +1,6 @@
 import { questionImageUrlSchema } from "../utils/upload-paths";
 import { saveContentHandler } from './content-save';
+import { archiveContentGuard } from '../middleware/archive-readonly';
 import { Router, type Response } from "express";
 import { z } from "zod";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
@@ -8,6 +9,7 @@ import { storage } from "../storage";
 import { hasInvalidQuestions } from "../utils/question-validation";
 
 const router: Router = Router();
+router.use('/:id', (req, res, next) => ['GET', 'HEAD', 'OPTIONS'].includes(req.method) ? next() : requireAuth(req, res, () => archiveContentGuard(req, res, next)));
 router.put('/:id/content', requireAuth, requireRole(['admin', 'teacher']), saveContentHandler('survey'));
 
 const resultQuerySchema = z.object({

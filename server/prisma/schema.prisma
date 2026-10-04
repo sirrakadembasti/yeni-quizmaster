@@ -376,6 +376,7 @@ model ArchiveSnapshot {
   zipSha256       String?
   sizeBytes       Int?
   createdAt       DateTime @default(now())
+  capturedAt      DateTime?
   completedAt     DateTime?
   rows            ArchiveSnapshotRow[]
 

@@ -1,8 +1,10 @@
 import { Router, type Response } from "express";
 import { storage } from "../storage";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
+import { archiveResultGuard } from '../middleware/archive-readonly';
 
 const router: Router = Router();
+router.use('/:id', (req, res, next) => ['GET', 'HEAD', 'OPTIONS'].includes(req.method) ? next() : requireAuth(req, res, () => archiveResultGuard(req, res, next)));
 
 const csvCell = (value: unknown) => {
   const raw = value == null ? "" : String(value).replace(/\r?\n|\r/g, " ").trim();
