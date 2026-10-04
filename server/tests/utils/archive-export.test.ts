@@ -48,6 +48,25 @@ function unzipStored(zip: Buffer) {
 }
 
 describe('archive export', () => {
+  it('verifies worker produced snapshots from reordered API input and minimal frozen row fields', async () => {
+    const source = snapshot(); const backupRoot = await root();
+    const workerInput = {
+      id: source.id, label: source.label, createdAt: source.createdAt, initiatedBy: source.initiatedBy,
+      rows: source.rows.map((record, index) => ({ id: 'internal-' + index, snapshotId: source.id, ...record })),
+    };
+    const output = await exportArchive(workerInput, backupRoot, { pdfGenerator });
+    const apiInput = {
+      initiatedBy: source.initiatedBy, rows: [...source.rows].reverse().map(record => ({ dataJson: record.dataJson, entityId: record.entityId, entityType: record.entityType })),
+      createdAt: source.createdAt, label: source.label, id: source.id,
+    };
+    expect(await verifyArchiveArtifact(apiInput, backupRoot)).toEqual(output);
+    expect(await exportArchive(apiInput, backupRoot, { pdfGenerator: async () => { throw new Error('must reuse the verified worker package'); } })).toEqual(output);
+    const secondRoot = await root();
+    const secondOutput = await exportArchive(apiInput, secondRoot, { pdfGenerator });
+    expect(secondOutput.zipSha256).toBe(output.zipSha256);
+    const changed = { ...apiInput, rows: apiInput.rows.map(record => record.entityId === 'u1' && record.entityType === 'user' ? { ...record, dataJson: record.dataJson + ' ' } : record) };
+    await expect(verifyArchiveArtifact(changed, backupRoot)).rejects.toThrow(/metadata conflict/);
+  });
   it('renders capture shaped class course assignments without quizzes or teacher assignments', async () => {
     const input = snapshot();
     input.rows = input.rows.map(record => record.entityType === 'class' && record.entityId === 'c1' ? row('class', 'c1', { id: 'c1', name: '1/A', assignedCategories: [{ id: 'cat-empty' }] }) : record);

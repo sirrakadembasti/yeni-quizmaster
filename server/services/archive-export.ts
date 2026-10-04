@@ -36,6 +36,15 @@ function csv(rows: FrozenRow[]) {
   for (const row of rows) lines.push([row.entityType, row.entityId, ...columns.map(column => row.data[column])].map(csvCell).join(','));
   return Buffer.from('\ufeff' + lines.join('\r\n') + '\r\n', 'utf8');
 }
+function compareCodePoints(left: string, right: string) {
+  let a = 0, b = 0;
+  while (a < left.length && b < right.length) {
+    const leftPoint = left.codePointAt(a)!, rightPoint = right.codePointAt(b)!;
+    if (leftPoint !== rightPoint) return leftPoint - rightPoint;
+    a += leftPoint > 0xffff ? 2 : 1; b += rightPoint > 0xffff ? 2 : 1;
+  }
+  return a < left.length ? 1 : b < right.length ? -1 : 0;
+}
 function prepare(input: SnapshotExport) {
   if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$/.test(input.id) || /^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$/i.test(input.id)) throw new Error('Unsafe snapshot ID');
   const match = /^(\d{4})-(\d{4})$/.exec(input.label);
@@ -49,16 +58,21 @@ function prepare(input: SnapshotExport) {
     if (inputBytes > MAX_SNAPSHOT_JSON_BYTES) throw new Error('Archive input size limit exceeded');
   }
   const validTypes = Object.values(GROUPS).flat(), ids = new Set<string>();
-  const rows = input.rows.map(row => {
+  const sourceRows = input.rows.map(row => {
     if (!validTypes.includes(row.entityType) || typeof row.entityId !== 'string' || !row.entityId) throw new Error('Invalid snapshot row');
     const key = row.entityType + ':' + row.entityId;
     if (ids.has(key)) throw new Error('Duplicate snapshot row');
     ids.add(key);
+    // Only the public frozen row fields participate; internal Prisma IDs do not.
+    return { entityType: row.entityType, entityId: row.entityId, dataJson: row.dataJson };
+  }).sort((a, b) => compareCodePoints(a.entityType, b.entityType) || compareCodePoints(a.entityId, b.entityId));
+  const rows = sourceRows.map(row => {
     const data = JSON.parse(row.dataJson);
     if (!data || Array.isArray(data) || typeof data !== 'object') throw new Error('Invalid snapshot JSON');
     return { entityType: row.entityType, entityId: row.entityId, data };
   });
-  const meta: ArchiveMeta = { formatVersion: 1, snapshotId: input.id, academicYear: input.label, initiatedBy: input.initiatedBy, createdAt: input.createdAt.toISOString(), rowCount: rows.length, inputSha256: sha256(json({ ...input, createdAt: input.createdAt.toISOString() })) };
+  const source = { id: input.id, label: input.label, initiatedBy: input.initiatedBy, createdAt: input.createdAt.toISOString(), rows: sourceRows };
+  const meta: ArchiveMeta = { formatVersion: 1, snapshotId: input.id, academicYear: input.label, initiatedBy: input.initiatedBy, createdAt: input.createdAt.toISOString(), rowCount: rows.length, inputSha256: sha256(json(source)) };
   return { rows, meta };
 }
 async function ensureSafeDirectory(directory: string, create = false) {
