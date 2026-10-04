@@ -7,6 +7,8 @@ import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/context/auth-context";
 import { NotificationListener } from "@/components/NotificationListener";
+import { AcademicYearProvider, useAcademicYear } from "@/context/academic-year-context";
+import { AcademicRouteBoundary } from "@/components/academic-history/AcademicRouteBoundary";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 
@@ -244,6 +246,13 @@ function AppRouter() {
   );
 }
 
+function LiveNotificationListener() {
+  const { role } = useAuth();
+  const academic = useAcademicYear();
+  if (role === 'admin' && (!academic || academic.pending || academic.error || academic.year?.status === 'closed')) return null;
+  return <NotificationListener />;
+}
+
 function App() {
   const basePath = import.meta.env.BASE_URL === '/'
     ? ''
@@ -252,14 +261,18 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <SonnerToaster />
-          <NotificationListener />
-          <WouterRouter base={basePath}>
-            <AppRouter />
-          </WouterRouter>
-        </TooltipProvider>
+        <AcademicYearProvider>
+          <TooltipProvider>
+            <Toaster />
+            <SonnerToaster />
+            <LiveNotificationListener />
+            <WouterRouter base={basePath}>
+              <AcademicRouteBoundary>
+                <AppRouter />
+              </AcademicRouteBoundary>
+            </WouterRouter>
+          </TooltipProvider>
+        </AcademicYearProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

@@ -26,6 +26,7 @@ import { createArchiveWorker } from './services/archive-worker';
 import { archiveDb } from './services/archive-db';
 import { getArchiveBackupRoot } from './api-routes/archive';
 import { createAnnualCaptureGuard } from './middleware/annual-capture-guard';
+import { createAcademicContextGuard } from './middleware/academic-context';
 
 // DNS Fallback: Windows/MEB ağında getaddrinfo ENOTFOUND hatalarını önler
 setupDnsFallback();
@@ -190,6 +191,7 @@ app.use(httpLogger);
 
     // Initialize application routes
     app.use(createAnnualCaptureGuard());
+    app.use(createAcademicContextGuard());
     await registerRoutes(httpServer, app);
 
     // API 404 Handler - If it starts with /api and reaches here, it's a 404

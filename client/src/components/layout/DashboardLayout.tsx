@@ -51,6 +51,9 @@ import { tr } from "date-fns/locale";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { removeNotification, type NotificationPage } from "@/lib/notification-cache";
 import { toast } from "sonner";
+import { useAcademicYear } from '@/context/academic-year-context';
+import { AcademicYearSelector } from '@/components/academic-history/AcademicYearSelector';
+import { HistoricalWorkspace } from '@/components/academic-history/HistoricalWorkspace';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -64,6 +67,9 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
   const sidebarRef = useRef<HTMLElement>(null);
   const [isMobileNavigation, setIsMobileNavigation] = useState(() => typeof window.matchMedia !== "function" || !window.matchMedia("(min-width: 1024px)").matches);
   const { user, role, logout } = useAuth();
+  const academic = useAcademicYear();
+  const historical = role === 'admin' && academic?.year?.status === 'closed';
+  const liveContext = role !== 'admin' || !academic || (!!academic.year && !academic.pending && !academic.error && !historical);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -81,7 +87,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
     if (!mobileNavigationOpen || hideNavigation) return;
     const sidebar = sidebarRef.current;
     if (!sidebar) return;
-    const controls = () => Array.from(sidebar.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex="0"]'));
+    const controls = () => Array.from(sidebar.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), select:not([disabled]), [tabindex="0"]'));
     controls()[0]?.focus();
     const keydown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -115,13 +121,13 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
     queryFn: () => notificationApi.getUserNotifications(1, 5),
     refetchInterval: 10000,
     refetchOnWindowFocus: true,
-    enabled: !!user
+    enabled: !!user && liveContext
   });
 
   const { data: notificationPreferences } = useQuery({
     queryKey: ["notifications", "preferences"],
     queryFn: () => notificationApi.getPreferences(),
-    enabled: !!user
+    enabled: !!user && liveContext
   });
 
   const markAllReadMutation = useMutation({
@@ -235,6 +241,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
           </div>
         </div>
 
+        {role === 'admin' && <AcademicYearSelector />}
         <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto custom-scrollbar">
           {menuItems.map((item) => (
             <Link
@@ -277,7 +284,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
           </Button>
           <div className="flex items-center gap-2 sm:gap-3">
           {/* Notification Bell with Popover */}
-          <Popover>
+          {liveContext && <Popover>
             <PopoverTrigger asChild>
               <Button variant="ghost" size="icon" aria-label="Bildirimleri aç" className="relative rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-slate-50 dark:hover:bg-slate-800">
                 {notificationsMuted ? <VolumeX className="h-5 w-5" /> : <Bell className="h-5 w-5" />}
@@ -386,7 +393,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
                 </Link>
               </div>
             </PopoverContent>
-          </Popover>
+          </Popover>}
 
           {/* Theme Toggle */}
           <ThemeToggle />
@@ -442,7 +449,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
             <div>{user?.name} · {role === 'admin' ? 'Yönetici' : role === 'teacher' ? 'Öğretmen' : role === 'parent' ? 'Veli' : 'Öğrenci'}</div>
           </div>
           <div className="dashboard-page mx-auto w-full max-w-[1600px]">
-            {children}
+            {role === 'admin' && academic?.pending ? <p role="status">Eğitim yılı doğrulanıyor…</p> : role === 'admin' && academic?.error ? <div role="alert"><p>{academic.error}</p><Button onClick={academic.reload}>Yeniden dene</Button>{academic.years.find(year => year.status === 'active') && <Button variant="outline" onClick={() => void academic.selectYear(academic.years.find(year => year.status === 'active')!.id)}>Aktif yıla dön</Button>}</div> : historical ? <HistoricalWorkspace /> : children}
           </div>
         </div>
       </main>
