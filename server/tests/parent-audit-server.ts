@@ -65,4 +65,8 @@ mkdirSync(join(repo, 'docs/parent-audit'), { recursive: true });
 writeFileSync(join(repo, 'docs/parent-audit/runtime.json'), JSON.stringify({ root, database, ports: [5560,5561] }, null, 2));
 process.chdir(root);
 console.log('Disposable student fixture ready');
+if (process.env.INTEGRATION_AUDIT_ID) {
+  const { installIntegrationAuditIdentity } = await import('./integration-audit-identity');
+  installIntegrationAuditIdentity();
+}
 await import('../index');

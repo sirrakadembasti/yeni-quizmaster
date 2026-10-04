@@ -4,6 +4,8 @@ QuizMaster; yöneticiler, öğretmenler, öğrenciler ve veliler için rol taban
 
 ## Kullanıcı kılavuzları
 
+Gmail gerçek gönderimi, Gemini gerçek çağrısı, Socket bağlantıları, yerel yük ve kalan UX kontrolleri [4 Ekim entegrasyon raporunda](docs/integration-audit/verification.md) belgelenmiştir. Gmail gönderimi ve18 Socket kontrolü geçti; gerçek AI cevap eşleştirme hatası, yüksek eşzamanlılıkta istek hataları ve bazı UX/baskı kusurları doğrulandı. Bu sonuçlar uygulamanın bütünüyle hatasız olduğu anlamına gelmez.
+
 Öğrenci panelinin ilk sayfa/sekme denetimi [doğrulama raporundadır](docs/student-audit/verification.md); [başlangıç bulguları](docs/student-audit/findings.md) tarihsel kayıttır. Altı hatanın düzeltmeleri, gerçek Chromium/API/veritabanı regresyonları ve güncel sınırlar [öğrenci onarım raporunda](docs/student-audit/defect-repairs.md) yer alır.
 
 Veli panelinin sayfa/sekme kapsamı [kontrol listesindedir](docs/parent-audit/inventory.md); gerçek tarayıcı/API denetimi ve kapsam sınırları [veli doğrulama raporunda](docs/parent-audit/verification.md), bulgular ve geliştirme sırası [veli bulgularında](docs/parent-audit/findings.md) yer alır.

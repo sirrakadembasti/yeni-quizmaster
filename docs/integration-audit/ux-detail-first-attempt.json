@@ -1,0 +1,8 @@
+{
+  "status": "not-executed",
+  "reason": "The first coordinator runtime was already unavailable while this script waited for UI readiness; coordinator requested cancellation before restarting the runtime.",
+  "browserStarted": false,
+  "checksObserved": 0,
+  "fixtureWrites": 0,
+  "successfulUXClaims": 0
+}

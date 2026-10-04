@@ -1,0 +1,44 @@
+{
+  "files": [
+    {
+      "file": "ux-detail-A-U01.pdf",
+      "pages": 1,
+      "nonemptyPages": true,
+      "actionsHeaderPrinted": true,
+      "renderedPages": [
+        1
+      ]
+    },
+    {
+      "file": "ux-detail-T-U03.pdf",
+      "pages": 1,
+      "nonemptyPages": true,
+      "truncatedStudentCodePrinted": true,
+      "renderedPages": [
+        1
+      ]
+    },
+    {
+      "file": "ux-detail-T-U04-fast.pdf",
+      "pages": 1,
+      "nonemptyPages": true,
+      "renderedPages": [
+        1
+      ]
+    },
+    {
+      "file": "ux-extra-large-report.pdf",
+      "pages": 8,
+      "nonemptyPages": true,
+      "expectedRows": 60,
+      "printedRows": 60,
+      "completeRows": true,
+      "longTitleEnds": 60,
+      "renderedPages": [
+        1,
+        8
+      ]
+    }
+  ],
+  "visualReviewFile": "pdf-visual-review.json"
+}

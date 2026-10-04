@@ -1,0 +1,6 @@
+- main:
+  - button "Menüyü aç"
+  - button "Bildirimleri aç"
+  - button "Karanlık Moda Geç"
+  - button "A"
+  - paragraph: Dashboard yükleniyor...

@@ -1,0 +1,39 @@
+- main:
+  - button "Menüyü aç"
+  - button "Bildirimleri aç": "1"
+  - button "Karanlık Moda Geç"
+  - button "A"
+  - heading "İstatistikler" [level=1]
+  - paragraph: Quiz performansınızın detaylı analizi
+  - button "Excel"
+  - button "PDF İndir"
+  - text: Tamamlanan Quiz 1
+  - paragraph: toplam katılım
+  - text: Ortalama Puan 0%
+  - paragraph: genel başarı ortalaması
+  - text: Geçme Oranı 0%
+  - paragraph: 0 başarılı sonuç
+  - text: Toplam Süre 0
+  - paragraph: harcanan dakika
+  - text: Quiz Bazlı Başarı Son katıldığınız quizlerin puanları
+  - img: Parent Audit Completed Exam 0 25 50 75 100
+  - text: Ders Bazlı Ortalama Başarı Derslere göre ortalama performansınız
+  - img: Audit Mathematics 0 25 50 75 100
+  - text: Son Quiz Sonuçları En son tamamladığınız 1 quiz ve detayları
+  - table:
+    - rowgroup:
+      - row "Quiz Adı Ders Adı Puan Durum Tarih Süre":
+        - columnheader "Quiz Adı"
+        - columnheader "Ders Adı"
+        - columnheader "Puan"
+        - columnheader "Durum"
+        - columnheader "Tarih"
+        - columnheader "Süre"
+    - rowgroup:
+      - row "Parent Audit Completed Exam Audit Mathematics 0% Tamamlandı 04.10.2026 0 dk":
+        - cell "Parent Audit Completed Exam"
+        - cell "Audit Mathematics"
+        - cell "0%"
+        - cell "Tamamlandı"
+        - cell "04.10.2026"
+        - cell "0 dk"

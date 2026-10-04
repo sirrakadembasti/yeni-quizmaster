@@ -1,0 +1,12 @@
+{
+  "testKind": "real-official-Google-provider",
+  "configured": true,
+  "authorizedInvocation": true,
+  "status": "failed",
+  "providerRequests": 1,
+  "usesRealApplicationDatabase": false,
+  "probeHttpStatus": 402,
+  "probeSucceeded": false,
+  "providerErrorCategory": "unclassified",
+  "failureStage": "connection-probe"
+}

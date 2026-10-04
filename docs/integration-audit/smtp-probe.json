@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-04T12:11:03.450Z",
+  "host": "smtp.gmail.com",
+  "port": 587,
+  "authConfigured": true,
+  "sent": true,
+  "scope": "TLS, account authentication and authorized test message SMTP acceptance; inbox delivery unverified",
+  "transportVerified": true,
+  "acceptedCount": 1,
+  "rejectedCount": 0
+}

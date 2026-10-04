@@ -2,6 +2,8 @@
 
 Bu belge e-posta servisinin yapılandırmasını, parola sıfırlama iş akışını, yönetici ekranlarını ve ağ sorunlarını tek yerde açıklar.
 
+4 Ekim 2026 gerçek bağlantı kontrolünde587/STARTTLS, Gmail hesap doğrulaması ve kullanıcının izin verdiği adrese tek test gönderimi geçti; SMTP bir alıcıyı kabul etti. Gelen kutusu teslimi/okunma ve gerçek parola sıfırlama gönderimi bu koşuda doğrulanmadı. [Kanıt ve kapsam](integration-audit/verification.md), [gizli değer içermeyen transport sonucu](integration-audit/smtp-probe.json).
+
 ## 1. Desteklenen servis
 
 QuizMaster yalnız Gmail SMTP kullanır:

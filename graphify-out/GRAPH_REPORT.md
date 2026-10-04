@@ -1,17 +1,17 @@
 # Graph Report - yeni-quizmaster-main  (2026-10-04)
 
 ## Corpus Check
-- 726 files · ~1,563,630 words
+- 761 files · ~1,648,799 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 10 file(s) not represented in the graph (top: (none) 3, .bat 2, .example 2)
 
 ## Summary
-- 2583 nodes · 6795 edges · 148 communities (107 shown, 41 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 86 edges (avg confidence: 0.88)
+- 2708 nodes · 6994 edges · 154 communities (112 shown, 42 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 90 edges (avg confidence: 0.88)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `411b56cb`
+- Built from commit: `6367b54d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -48,7 +48,7 @@
 - quiz.ts
 - parent.ts
 - email.ts
-- class-variance-authority
+- input-group.tsx
 - carousel.tsx
 - QuizMaster Gmail E-Posta ve Parola Sıfırlama Kılavuzu
 - offline-quiz.ts
@@ -62,7 +62,7 @@
 - deployment.ts
 - chart.tsx
 - command.tsx
-- ai.ts
+- ai-live.test.ts
 - pagination.tsx
 - QuizMaster Graphify Mimari Haritası
 - package.json
@@ -83,7 +83,7 @@
 - types.d.ts
 - Bulgular
 - ref_node_fs
-- sw.js
+- live-socket-audit.ts
 - Confirmed code defects and acceptance criteria
 - Yönetici onarımlarının davranış sözleşmeleri
 - admin-audit-people-flows.spec.ts
@@ -107,19 +107,19 @@
 - student-audit-summary.mjs
 - Doğrulanmış hatalar
 - admin-audit.spec.ts
-- input-group.tsx
+- integration-load-ux.mjs
 - admin-student-report-request-race.test.tsx
 - Admin kalan doğrulamalar ve düzeltmeler
-- teacher-audit-windows-runner.mjs
+- Kalan UX kapsamı — 4 Ekim 2026
 - teacher-audit-runner.mjs
-- Öğrenci paneli hata onarımları
+- integration-ux-detail.mjs
 - admin-student-report-readiness.test.tsx
 - 2026-10-04-student-defect-repairs.md
 - teacher-audit/verification.md
 - Öğretmen paneli doğrulama raporu — 3 Ekim 2026
 - admin-inventory.test.tsx
-- @playwright/test
-- Yönetici paneli denetimi — 30 Eylül 2026
+- integration-smtp-probe.mjs
+- menubar.tsx
 - 2026-10-03-linux-setup-teacher-audit.md
 - prepare-linux-closure.sh
 - Gerçek etkileşimle doğrulanan kusurlar
@@ -130,24 +130,28 @@
 - 2026-10-04-student-panel-audit.md
 - refreshCsrfToken
 - navigation-menu.tsx
-- deployment-config.ts
-- deploySetupDatabase
+- applySetup
+- Admin verification closure implementation plan
 - graphify-parent-audit-visual.mjs
-- auth-context.tsx
+- queryClient.ts
 - admin-audit-system-flows.spec.ts
-- NotificationListener.tsx
+- main.tsx
 - graphify-student-audit-visual.mjs
-- admin-audit-server.ts
+- teacher-audit-windows-runner.mjs
 - Veli paneli sayfa/sekme doğrulaması
-- admin-critical-repairs.spec.ts
-- admin-quiz-repairs.spec.ts
+- scripts
+- integration-evidence-check.mjs
 - 2026-10-04-parent-panel-audit.md
-- admin-session-expiry.spec.ts
-- admin-history-pagination.test.tsx
-- admin-inventory-repairs.spec.ts
+- @playwright/test
+- http-error.ts
+- csrf.ts
 - admin-results.test.tsx
 - Veli paneli hata onarımları
-- admin-teacher-detail-export.test.tsx
+- integration-load-diagnostic.mjs
+- Veli paneli kapsam ve kontrol listesi
+- admin-history-pagination.test.tsx
+- SMTP, AI, Socket, yük ve UX doğrulaması — 4 Ekim 2026
+- Öğrenci paneli hata onarımları
 
 ## God Nodes (most connected - your core abstractions)
 1. `cn()` - 285 edges
@@ -170,21 +174,21 @@
   docs/admin-audit/people.md → client/src/lib/admin-cache.ts
 - `S-B01 — Çevrimdışı cevap, bağlantı geri gelip sayfa yenilendiğinde kayboluyor — P1` --references--> `saveOfflineSession()`  [INFERRED]
   docs/student-audit/findings.md → client/src/lib/offline-quiz.ts
-- `P-B01 — Veli kendi eski açık sınavına cevap yazabiliyor — yüksek` --references--> `requireAuth()`  [INFERRED]
-  docs/parent-audit/findings.md → server/middleware/auth.ts
+- `Graphify` --references--> `ParentResultsPage()`  [INFERRED]
+  docs/parent-audit/defect-repairs.md → client/src/pages/parent-results.tsx
 
 ## Import Cycles
 - None detected.
 
-## Communities (148 total, 41 thin omitted)
+## Communities (154 total, 42 thin omitted)
 
 ### Community 0 - "setup-bootstrap.mjs"
-Cohesion: 0.07
+Cohesion: 0.08
 Nodes (52): holder, appendLog(), authenticated(), authorizeMutation(), cookies(), csrfValue, getPnpmVersion(), handler() (+44 more)
 
 ### Community 1 - "express"
-Cohesion: 0.15
-Nodes (22): express, querySchema, router, categorySchema, router, classSchema, router, questionBankSchema (+14 more)
+Cohesion: 0.11
+Nodes (29): express, express-rate-limit, AIResponseSchema, aiTestLimiter, QuestionSchema, SurveyQuestionSchema, SurveyResponseSchema, querySchema (+21 more)
 
 ### Community 4 - "dependencies"
 Cohesion: 0.04
@@ -195,12 +199,12 @@ Cohesion: 0.06
 Nodes (39): SheetContent, SheetContentProps, SheetDescription, SheetFooter(), SheetHeader(), SheetOverlay, SheetTitle, sheetVariants (+31 more)
 
 ### Community 6 - "index.ts"
-Cohesion: 0.05
-Nodes (38): origLookup, connect-sqlite3, cors, csrf-sync, pino-http, sharp, @vitejs/plugin-react, router (+30 more)
+Cohesion: 0.06
+Nodes (31): origLookup, cors, pino-http, sharp, @tailwindcss/vite, vite, @vitejs/plugin-react, router (+23 more)
 
 ### Community 7 - "cn"
-Cohesion: 0.05
-Nodes (56): Avatar, AvatarFallback, AvatarImage, Breadcrumb, BreadcrumbEllipsis(), BreadcrumbItem, BreadcrumbLink, BreadcrumbList (+48 more)
+Cohesion: 0.06
+Nodes (48): AccordionContent, AccordionItem, AccordionTrigger, Avatar, AvatarFallback, AvatarImage, Breadcrumb, BreadcrumbEllipsis() (+40 more)
 
 ### Community 8 - "student-audit-helpers.ts"
 Cohesion: 0.12
@@ -208,7 +212,7 @@ Nodes (19): api(), assertIsolatedRuntime(), cached, forgetCachedLogin(), login()
 
 ### Community 9 - "client/package.json"
 Cohesion: 0.05
-Nodes (38): description, @types/node, typescript, vitest, zod, zod-validation-error, name, packageManager (+30 more)
+Nodes (36): description, @types/node, typescript, vitest, zod, zod-validation-error, name, packageManager (+28 more)
 
 ### Community 10 - "QuizMaster"
 Cohesion: 0.06
@@ -219,24 +223,24 @@ Cohesion: 0.08
 Nodes (34): before, bounded(), captureOwnedProcesses(), children, cleanEnv, completedPhase(), creationTime(), digest() (+26 more)
 
 ### Community 12 - "graphify-admin-closure-visual.mjs"
-Cohesion: 0.25
-Nodes (8): allowed, graphRoot, outputRoot, report, safeMessage(), safeUrl(), server, sourceRoot
+Cohesion: 0.09
+Nodes (17): allowed, graphRoot, outputRoot, report, safeMessage(), safeUrl(), server, sourceRoot (+9 more)
 
 ### Community 13 - "server/package.json"
-Cohesion: 0.06
-Nodes (28): cross-env, dotenv, dotenv-cli, esbuild, multer, nodemailer, prisma, tsx (+20 more)
+Cohesion: 0.07
+Nodes (28): cross-env, dotenv-cli, esbuild, multer, pino, pino-pretty, prisma, socket.io (+20 more)
 
 ### Community 15 - "compilerOptions"
 Cohesion: 0.09
 Nodes (22): compilerOptions, allowImportingTsExtensions, allowJs, baseUrl, esModuleInterop, isolatedModules, jsx, lib (+14 more)
 
 ### Community 16 - "student-quiz.tsx"
-Cohesion: 0.22
+Cohesion: 0.23
 Nodes (16): AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter(), AlertDialogHeader(), AlertDialogOverlay, AlertDialogTitle (+8 more)
 
 ### Community 17 - "Button"
-Cohesion: 0.06
-Nodes (193): ALL, AppRouter(), HomeRoute(), RedirectToAuth(), Role, RouteConfig, RouteGuard(), ROUTES (+185 more)
+Cohesion: 0.05
+Nodes (205): ALL, AppRouter(), HomeRoute(), RedirectToAuth(), Role, RouteConfig, RouteGuard(), ROUTES (+197 more)
 
 ### Community 18 - "use-toast.ts"
 Cohesion: 0.12
@@ -287,20 +291,20 @@ Cohesion: 0.11
 Nodes (21): ButtonGroup(), ButtonGroupSeparator(), ButtonGroupText(), buttonGroupVariants, FieldSeparator(), Item(), ItemActions(), ItemContent() (+13 more)
 
 ### Community 30 - "quiz.ts"
-Cohesion: 0.10
-Nodes (30): pino, pino-pretty, notify(), saveContentHandler(), schema, notifyAdminsAboutTeacherQuiz(), questionsArraySchema, questionSchema (+22 more)
+Cohesion: 0.12
+Nodes (27): notify(), saveContentHandler(), schema, notifyAdminsAboutTeacherQuiz(), questionsArraySchema, questionSchema, quizSchema, canAccessSurvey() (+19 more)
 
 ### Community 31 - "parent.ts"
-Cohesion: 0.11
-Nodes (14): quiz(), Yöntem ve kanıt sınırı, router, createParentSchema, guardianStudentsSchema, linkSchema, relationSchema, router (+6 more)
+Cohesion: 0.20
+Nodes (8): quiz(), createParentSchema, guardianStudentsSchema, linkSchema, relationSchema, updateParentSchema, isQuizVisibleToStudent(), QuizScope
 
 ### Community 32 - "email.ts"
-Cohesion: 0.24
-Nodes (12): originalEnv, original, fake, getEmailConfiguration(), getEmailStatus(), getTransporter(), processEmailQueue(), queueEmail() (+4 more)
+Cohesion: 0.16
+Nodes (16): hashResetToken(), issuePasswordReset(), originalEnv, original, fake, getPublicAppUrl(), getEmailConfiguration(), getEmailStatus() (+8 more)
 
-### Community 33 - "class-variance-authority"
-Cohesion: 0.18
-Nodes (12): Alert, AlertDescription, AlertTitle, alertVariants, ToggleGroup, ToggleGroupContext, ToggleGroupItem, Toggle (+4 more)
+### Community 33 - "input-group.tsx"
+Cohesion: 0.11
+Nodes (20): Alert, AlertDescription, AlertTitle, alertVariants, InputGroup(), InputGroupAddon(), inputGroupAddonVariants, InputGroupButton() (+12 more)
 
 ### Community 34 - "carousel.tsx"
 Cohesion: 0.17
@@ -311,8 +315,8 @@ Cohesion: 0.13
 Nodes (15): 10. Sorun giderme tablosu, 11. Bakım notları, 1. Desteklenen servis, 2. Gmail hesabını hazırlama, 3. Ortam değişkenleri, 4. Parola sıfırlama işleyişi, 5. Outbox kuyruğu, 6. Yönetici işlemleri (+7 more)
 
 ### Community 36 - "offline-quiz.ts"
-Cohesion: 0.25
-Nodes (17): acknowledgeOfflineAnswer(), clearOfflineUser(), getOfflineQuizList(), getOfflineRemainingSeconds(), getOfflineSession(), getOfflineUser(), markOfflineSubmit(), OfflineQuestion (+9 more)
+Cohesion: 0.26
+Nodes (16): acknowledgeOfflineAnswer(), clearOfflineUser(), getOfflineQuizList(), getOfflineSession(), getOfflineUser(), markOfflineSubmit(), OfflineQuestion, OfflineQuizSession (+8 more)
 
 ### Community 37 - "server.ts"
 Cohesion: 0.10
@@ -323,7 +327,7 @@ Cohesion: 0.19
 Nodes (12): FormControl, FormDescription, FormFieldContext, FormFieldContextValue, FormItem, FormItemContext, FormItemContextValue, FormLabel (+4 more)
 
 ### Community 39 - "parent-audit-windows-runner.mjs"
-Cohesion: 0.06
+Cohesion: 0.08
 Nodes (22): waitForAuditServer(), clientReq, out, report, req, root, serverReq, states (+14 more)
 
 ### Community 40 - "SQLite'tan PostgreSQL'e Geçiş Rehberi"
@@ -339,12 +343,12 @@ Cohesion: 0.14
 Nodes (13): 10. Çevrimdışı sınav, 11. Sorun giderme, 1. Giriş ve profil, 2. Öğretmen menüsü, 3. Sınav oluşturma, 4. Sınav yayını ve güvenlik, 5. Anket Yönetimi, 6. Sonuçlar ve sınıf istatistikleri (+5 more)
 
 ### Community 43 - "api-routes/auth.ts"
-Cohesion: 0.11
-Nodes (16): bcryptjs, socket.io, changePasswordSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, router (+8 more)
+Cohesion: 0.09
+Nodes (17): bcryptjs, dotenv, changePasswordSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, router (+9 more)
 
 ### Community 44 - "deployment.ts"
-Cohesion: 0.23
-Nodes (9): requireRuntimeChanges(), router, runtimeDeploymentChangesAllowed(), retentionCutoffs(), RetentionPolicy, runDataRetention(), startDataRetentionWorker(), getEffectiveDeploymentConfig() (+1 more)
+Cohesion: 0.16
+Nodes (18): requireRuntimeChanges(), runtimeDeploymentChangesAllowed(), retentionCutoffs(), RetentionPolicy, runDataRetention(), startDataRetentionWorker(), buildDeploymentArtifacts(), defaultRetention (+10 more)
 
 ### Community 45 - "chart.tsx"
 Cohesion: 0.27
@@ -354,9 +358,9 @@ Nodes (10): ChartConfig, ChartContainer, ChartContext, ChartContextProps, ChartL
 Cohesion: 0.20
 Nodes (10): Command, CommandDialog(), CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator (+2 more)
 
-### Community 47 - "ai.ts"
-Cohesion: 0.13
-Nodes (14): express-rate-limit, AIResponseSchema, aiTestLimiter, QuestionSchema, router, SurveyQuestionSchema, SurveyResponseSchema, app (+6 more)
+### Community 47 - "ai-live.test.ts"
+Cohesion: 0.09
+Nodes (15): AI integration audit, Cases, Evidence and scope, Findings, Re-run, evidence, root, mocks (+7 more)
 
 ### Community 48 - "pagination.tsx"
 Cohesion: 0.24
@@ -375,12 +379,12 @@ Cohesion: 0.25
 Nodes (7): DrawerContent, DrawerDescription, DrawerFooter(), DrawerHeader(), DrawerOverlay, DrawerTitle, vaul
 
 ### Community 52 - "devDependencies"
-Cohesion: 0.06
-Nodes (31): devDependencies, cross-env, dotenv, dotenv-cli, esbuild, supertest, tsx, @types/connect-sqlite3 (+23 more)
+Cohesion: 0.12
+Nodes (16): devDependencies, cross-env, dotenv, dotenv-cli, esbuild, supertest, tsx, @types/connect-sqlite3 (+8 more)
 
 ### Community 53 - "ref_vitest"
-Cohesion: 0.07
-Nodes (29): express-session, @prisma/client, supertest, router, router, router, router, router (+21 more)
+Cohesion: 0.06
+Nodes (33): express-session, @prisma/client, supertest, router, router, router, router, router (+25 more)
 
 ### Community 54 - "QuizMaster Veli Kullanıcı Kılavuzu"
 Cohesion: 0.22
@@ -399,16 +403,16 @@ Cohesion: 0.25
 Nodes (7): compilerOptions, allowSyntheticDefaultImports, composite, module, moduleResolution, skipLibCheck, include
 
 ### Community 58 - "utils.ts"
-Cohesion: 0.06
-Nodes (23): Calendar(), CalendarDayButton(), InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, PopoverContent, RadioGroup (+15 more)
+Cohesion: 0.07
+Nodes (20): Calendar(), CalendarDayButton(), HoverCardContent, InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, RadioGroup (+12 more)
 
 ### Community 59 - "Öğrenci paneli doğrulama kaydı"
 Cohesion: 0.29
 Nodes (7): Dosya çıktısı ve soru türleri, Koşu geçmişi ve hatalı varsayımların düzeltilmesi, Ortam ve veri güvenliği, Sayfa ve sekme kapsamı, Yeniden çalıştırma, Öncelikli sonraki plan, Öğrenci paneli doğrulama kaydı
 
 ### Community 61 - "ref_node_module"
-Cohesion: 0.06
-Nodes (23): @tailwindcss/vite, vite, require, database, p, repo, require, root (+15 more)
+Cohesion: 0.04
+Nodes (34): db, p, repo, require, root, require, database, p (+26 more)
 
 ### Community 62 - "Kalan yönetici onarımları — doğrulama"
 Cohesion: 0.25
@@ -419,8 +423,8 @@ Cohesion: 0.12
 Nodes (12): auditCookies, diagnosticsByPage, open(), openManagementLogView(), PageDiagnostics, pathnameOnly(), redactDiagnosticMessage(), RequestDiagnostic (+4 more)
 
 ### Community 64 - "@testing-library/react"
-Cohesion: 0.19
-Nodes (5): mocks, renderEditor(), boundary, @testing-library/react, @testing-library/user-event
+Cohesion: 0.16
+Nodes (6): mocks, renderEditor(), fixture, boundary, @testing-library/react, @testing-library/user-event
 
 ### Community 65 - "types.d.ts"
 Cohesion: 0.50
@@ -431,8 +435,12 @@ Cohesion: 0.09
 Nodes (22): Bulgular, Düzeltme durumu — ikinci paket, Düzeltme durumu — ilk paket, Ek araştırma / doğrulanmamış riskler, Nihai tarayıcı doğrulaması, Q01 — P1 — Anket soru türünü değiştiren ardışık güncellemeler birbirini eziyor, Q02 — P1 — Seçenek silince doğru cevap başka seçeneğe kayıyor, Q03 — P1 — Başarısız kayıt kısmi değişiklik/tekrar denemede mükerrer taslak bırakıyor (+14 more)
 
 ### Community 67 - "ref_node_fs"
-Cohesion: 0.09
+Cohesion: 0.08
 Nodes (16): finder, scriptDir, repository, requireServer, scriptRoot, actual(), helper(), source (+8 more)
+
+### Community 68 - "live-socket-audit.ts"
+Cohesion: 0.09
+Nodes (22): APP_SHELL, connect-sqlite3, app, clientRequire, clients, database, db, event() (+14 more)
 
 ### Community 69 - "Confirmed code defects and acceptance criteria"
 Cohesion: 0.10
@@ -450,13 +458,9 @@ Nodes (8): api(), cleanup(), createClass(), createStudent(), Fixtures, isolatedR
 Cohesion: 0.29
 Nodes (7): Empty(), EmptyContent(), EmptyDescription(), EmptyHeader(), EmptyMedia(), emptyMediaVariants, EmptyTitle()
 
-### Community 82 - "README.md"
-Cohesion: 0.12
-Nodes (10): Doğrulama ve Graphify, Güvenlik ve veri bütünlüğü bakımı — 30 Eylül 2026, İşletim sınırları ve sonraki çalışmalar, Uygulanan düzeltmeler, Veritabanı ve mevcut kurulum, Altyapı ve izolasyon, Sayfa ve sekmeler, Veli paneli kapsam ve kontrol listesi (+2 more)
-
 ### Community 83 - "Doğrulanmış bulgular"
-Cohesion: 0.12
-Nodes (17): Başarılı mevcut kontroller, Doğrulanmış bulgular, Düzeltme durumu — ikinci paket, Düzeltme durumu — ilk paket, Ek statik kusurlar ve ürün kararı gerektiren noktalar, Ekran ve eylem envanteri, Koordinatör tarayıcı doğrulaması — 30 Eylül 2026, PE-01 — P1: yeni öğretmenin seçtiği ders ve sınıflar sessizce kayboluyor (+9 more)
+Cohesion: 0.11
+Nodes (18): Başarılı mevcut kontroller, Doğrulanmış bulgular, Düzeltme durumu — ikinci paket, Düzeltme durumu — ilk paket, Ek statik kusurlar ve ürün kararı gerektiren noktalar, Ekran ve eylem envanteri, Koordinatör tarayıcı doğrulaması — 30 Eylül 2026, PE-01 — P1: yeni öğretmenin seçtiği ders ve sınıflar sessizce kayboluyor (+10 more)
 
 ### Community 86 - "admin-audit-people-flows-p-4e8a0-n-selected-course-and-class/error-context.md"
 Cohesion: 0.33
@@ -479,8 +483,8 @@ Cohesion: 0.25
 Nodes (7): Admin accessibility closure coverage, Final full-run runtime evidence, Final initial-run defects and focused repair evidence, Initial full-run runtime evidence, Label repair and unit regression evidence, Reader availability and limits, Run scope
 
 ### Community 100 - "Admin export and print closure"
-Cohesion: 0.25
-Nodes (7): Admin export and print closure, Confirmed changes, Final PDF visual and text QA, PR04: teacher-detail print pagination, Scope, Scope notes, Survey landscape diagnosis and measured fix
+Cohesion: 0.15
+Nodes (12): Admin export and print closure, Confirmed changes, Final PDF visual and text QA, PR04: teacher-detail print pagination, Scope, Scope notes, Survey landscape diagnosis and measured fix, Doğrulama ve Graphify (+4 more)
 
 ### Community 101 - "student-audit-summary.mjs"
 Cohesion: 0.15
@@ -494,9 +498,9 @@ Nodes (15): Doğrulanmış hatalar, Kullanıcı deneyimi iyileştirmeleri, P-B01
 Cohesion: 0.33
 Nodes (5): cookies, isolatedRoot, login(), routes, runtime
 
-### Community 104 - "input-group.tsx"
-Cohesion: 0.28
-Nodes (8): InputGroup(), InputGroupAddon(), inputGroupAddonVariants, InputGroupButton(), inputGroupButtonVariants, InputGroupInput(), InputGroupText(), InputGroupTextarea()
+### Community 104 - "integration-load-ux.mjs"
+Cohesion: 0.09
+Nodes (11): { chromium, request }, cli, contexts, out, report, req, root, srv (+3 more)
 
 ### Community 105 - "admin-student-report-request-race.test.tsx"
 Cohesion: 0.33
@@ -506,17 +510,17 @@ Nodes (3): api, studentA, studentB
 Cohesion: 0.33
 Nodes (6): Admin kalan doğrulamalar ve düzeltmeler, Doğrulanmış hatalar ve kabul kriterleri, Güncel doğrulama durumu, HY06 / kritik — derlenen API açılmıyor, Ortam sınırları ve verilerin korunması, UX iyileştirmeleri ve yeni özellik önerileri
 
-### Community 110 - "teacher-audit-windows-runner.mjs"
-Cohesion: 0.16
-Nodes (13): allowedFile(), defaultDirectory, fixtureSecrets, samePath(), sanitizeTeacherAuditReport(), sanitizeTeacherAuditReportFile(), clientReq, out (+5 more)
+### Community 110 - "Kalan UX kapsamı — 4 Ekim 2026"
+Cohesion: 0.33
+Nodes (5): Bu alt görevin doğrulama sınırı, Kalan UX kapsamı — 4 Ekim 2026, Kusur sayılmayan yeni özellikler, Somut kalan UX kontrol listesi, Tarihsel kusurlarla karıştırılmaması gereken kapanışlar
 
 ### Community 111 - "teacher-audit-runner.mjs"
 Cohesion: 0.19
 Nodes (19): captureOwnedLinuxProcesses(), cleanupOwnedLinuxProcesses(), exited(), linuxProcessSnapshot(), nonnegative(), parseLinuxProcessStat(), positive(), sameIdentity() (+11 more)
 
-### Community 112 - "Öğrenci paneli hata onarımları"
-Cohesion: 0.40
-Nodes (5): Değişiklikler, Kanıt ve koşu geçmişi, Son doğrulama, Uyumluluk sınırları, Öğrenci paneli hata onarımları
+### Community 112 - "integration-ux-detail.mjs"
+Cohesion: 0.18
+Nodes (6): {chromium,request}, contexts, out, report, root, runtime
 
 ### Community 115 - "teacher-audit/verification.md"
 Cohesion: 0.12
@@ -527,104 +531,124 @@ Cohesion: 0.17
 Nodes (12): Doğrulanmış işlevsel hatalar, Kurulum ön koşulu ve izolasyon, Sayfa ve sekme bazında kapsam, Son ortam sınırı, T-F01 — Öğrenci raporunda doğru cevap sayısı boş (orta; 4 Ekim KAPANDI), T-F02 — Parola sıfırlama isteği beklerken düğme kilitlenmiyor (orta; 4 Ekim KAPANDI), Test kayıtları nasıl okunmalı?, UX iyileştirmeleri (+4 more)
 
 ### Community 117 - "admin-inventory.test.tsx"
-Cohesion: 0.22
-Nodes (6): Toaster(), ToasterProps, AuthProvider(), fixture, mount(), next-themes
+Cohesion: 0.18
+Nodes (8): App(), Toaster(), ToasterProps, AuthProvider(), fixture, mount(), next-themes, sonner
 
-### Community 119 - "Yönetici paneli denetimi — 30 Eylül 2026"
-Cohesion: 0.40
-Nodes (5): Ortam ve kanıt sınırı, Sayfa ve sekme kontrol listesi, Tekrar çalıştırma, Yönetici paneli denetimi — 30 Eylül 2026, Öncelik ve yapılacak değişiklikler
+### Community 118 - "integration-smtp-probe.mjs"
+Cohesion: 0.20
+Nodes (9): nodemailer, configured, dotenv, env, nodemailer, report, require, root (+1 more)
+
+### Community 119 - "menubar.tsx"
+Cohesion: 0.11
+Nodes (12): Menubar, MenubarCheckboxItem, MenubarContent, MenubarItem, MenubarLabel, MenubarRadioItem, MenubarSeparator, MenubarShortcut() (+4 more)
 
 ### Community 122 - "Gerçek etkileşimle doğrulanan kusurlar"
 Cohesion: 0.17
 Nodes (12): Doğrulanan olumlu davranışlar ve geri çekilen şüpheler, Gerçek etkileşimle doğrulanan kusurlar, Kaynak UX bulguları ve henüz doğrulanmayan adaylar, S-B01 — Çevrimdışı cevap, bağlantı geri gelip sayfa yenilendiğinde kayboluyor — P1, S-B02 — Sınav hata ekranından dönüş öğrenciyi yetkisiz rotaya gönderiyor — P1, S-B03 — Dashboard “Tüm Sonuçları Gör” bağlantısı 404'e gidiyor — P1, S-B04 — Dashboard veri hatası sırasında “Tüm Sınavları Tamamladın” diyor — P2, S-B05 — Anket API hatası “Anket bulunmuyor” olarak gösteriliyor — P2 (+4 more)
 
 ### Community 123 - "config.ts"
-Cohesion: 0.27
-Nodes (6): buildServerEnv(), envValue(), gmailAddress, SetupPayload, setupPayloadSchema, payload
+Cohesion: 0.24
+Nodes (7): buildServerEnv(), envValue(), gmailAddress, SetupPayload, setupPayloadSchema, payload, DeploymentConfig
+
+### Community 124 - "remaining-repairs-verification.md"
+Cohesion: 0.25
+Nodes (6): Ortam ve kanıt sınırı, Sayfa ve sekme kontrol listesi, Tekrar çalıştırma, Yönetici paneli denetimi — 30 Eylül 2026, Öncelik ve yapılacak değişiklikler, İkinci admin onarım paketi — doğrulama
 
 ### Community 125 - "parent-audit-summary.mjs"
-Cohesion: 0.15
-Nodes (12): cases, cli, cohorts, flatten(), latest, manifest, out, repairs (+4 more)
+Cohesion: 0.09
+Nodes (18): { chromium, request }, contexts, out, report, root, runtime, cases, cli (+10 more)
 
 ### Community 128 - "refreshCsrfToken"
-Cohesion: 0.20
-Nodes (7): apiFetch(), getCsrfToken(), handleResponse(), refreshCsrfToken(), contentSaveApi, ApiError, isRetryableError()
+Cohesion: 0.29
+Nodes (6): apiFetch(), getCsrfToken(), handleResponse(), refreshCsrfToken(), contentSaveApi, deleteQuizWithReason()
 
 ### Community 129 - "navigation-menu.tsx"
 Cohesion: 0.28
 Nodes (8): NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle, NavigationMenuViewport, @radix-ui/react-navigation-menu
 
-### Community 130 - "deployment-config.ts"
-Cohesion: 0.18
-Nodes (16): publicAppUrl(), toDeploymentConfig(), applySetup(), createFirstAdmin(), markStep(), buildDeploymentArtifacts(), defaultRetention, DeploymentConfig (+8 more)
+### Community 130 - "applySetup"
+Cohesion: 0.24
+Nodes (9): 3 Ekim 2026 native Linux ve öğretmen denetimi sonrası güncel harita, Görsel haritayı açma, publicAppUrl(), toDeploymentConfig(), deploySetupDatabase(), SetupCommand, applySetup(), createFirstAdmin() (+1 more)
 
-### Community 131 - "deploySetupDatabase"
-Cohesion: 0.18
-Nodes (10): 3 Ekim 2026 native Linux ve öğretmen denetimi sonrası güncel harita, Görsel haritayı açma, Accessibility verification, Admin verification closure implementation plan, Export and print verification, Fresh hybrid setup, Global constraints, Integration and report (+2 more)
+### Community 131 - "Admin verification closure implementation plan"
+Cohesion: 0.29
+Nodes (6): Accessibility verification, Admin verification closure implementation plan, Export and print verification, Fresh hybrid setup, Global constraints, Integration and report
 
 ### Community 132 - "graphify-parent-audit-visual.mjs"
 Cohesion: 0.25
 Nodes (8): allowed, graphRoot, outputRoot, report, safeMessage(), safeUrl(), server, sourceRoot
 
-### Community 133 - "auth-context.tsx"
-Cohesion: 0.20
-Nodes (11): AuthContext, AuthContextType, UserRole, authApi, ParentStudent, User, apiRequest(), getQueryFn() (+3 more)
+### Community 133 - "queryClient.ts"
+Cohesion: 0.47
+Nodes (5): apiRequest(), getQueryFn(), queryClient, throwIfResNotOk(), UnauthorizedBehavior
 
 ### Community 134 - "admin-audit-system-flows.spec.ts"
 Cohesion: 0.25
 Nodes (3): expectedParent, isolatedRoot, runtime
 
-### Community 135 - "NotificationListener.tsx"
-Cohesion: 0.16
-Nodes (9): App(), ErrorBoundary, NotificationListener(), notificationApi, NotificationPage, prependNotification(), react-dom, socket.io-client (+1 more)
-
 ### Community 136 - "graphify-student-audit-visual.mjs"
 Cohesion: 0.25
 Nodes (8): allowed, graphRoot, outputRoot, report, safeMessage(), safeUrl(), server, sourceRoot
 
-### Community 137 - "admin-audit-server.ts"
-Cohesion: 0.33
-Nodes (5): db, p, repo, require, root
+### Community 137 - "teacher-audit-windows-runner.mjs"
+Cohesion: 0.16
+Nodes (13): allowedFile(), defaultDirectory, fixtureSecrets, samePath(), sanitizeTeacherAuditReport(), sanitizeTeacherAuditReportFile(), clientReq, out (+5 more)
 
 ### Community 138 - "Veli paneli sayfa/sekme doğrulaması"
 Cohesion: 0.40
 Nodes (5): Kanıtlar, Koşular ve test aracı düzeltmeleri, Son kapsam, Sınırlar ve veri bütünlüğü, Veli paneli sayfa/sekme doğrulaması
 
-### Community 139 - "admin-critical-repairs.spec.ts"
-Cohesion: 0.33
-Nodes (4): db, { PrismaClient }, root, runtime
+### Community 139 - "scripts"
+Cohesion: 0.13
+Nodes (15): scripts, build, db:create-admin, db:deploy, db:generate, db:migrate, db:seed, db:status (+7 more)
 
-### Community 140 - "admin-quiz-repairs.spec.ts"
-Cohesion: 0.33
-Nodes (4): prisma, { PrismaClient }, root, runtime
+### Community 140 - "integration-evidence-check.mjs"
+Cohesion: 0.18
+Nodes (10): dotenv, env, files, hash, pdf, root, secrets, smtp (+2 more)
 
-### Community 142 - "admin-session-expiry.spec.ts"
-Cohesion: 0.33
-Nodes (5): root, runtime, serverRequire, sessionFile, sqlite
+### Community 144 - "csrf.ts"
+Cohesion: 0.22
+Nodes (8): csrf-sync, csrfSynchronisedProtection, generateToken, getTokenFromRequest, getTokenFromState, revokeToken, storeTokenInState, sync
 
 ### Community 146 - "Veli paneli hata onarımları"
+Cohesion: 0.40
+Nodes (5): Değişiklik ve kabul sözleşmeleri, Doğrulama, Graphify, Veli paneli hata onarımları, Veri, kurulum ve kapsam sınırları
+
+### Community 147 - "integration-load-diagnostic.mjs"
+Cohesion: 0.33
+Nodes (4): cookie, report, root, runtime
+
+### Community 148 - "Veli paneli kapsam ve kontrol listesi"
 Cohesion: 0.50
-Nodes (4): Değişiklik ve kabul sözleşmeleri, Doğrulama, Veli paneli hata onarımları, Veri, kurulum ve kapsam sınırları
+Nodes (4): Altyapı ve izolasyon, Sayfa ve sekmeler, Veli paneli kapsam ve kontrol listesi, Yetki ve veri akışı kontrol listesi
+
+### Community 152 - "SMTP, AI, Socket, yük ve UX doğrulaması — 4 Ekim 2026"
+Cohesion: 0.40
+Nodes (5): Doğrulanmış sorunlar ve öneriler, SMTP, AI, Socket, yük ve UX doğrulaması — 4 Ekim 2026, Sonuçlar, Yeniden çalıştırma ve kapsam, Yük ölçümleri
+
+### Community 153 - "Öğrenci paneli hata onarımları"
+Cohesion: 0.40
+Nodes (5): Değişiklikler, Kanıt ve koşu geçmişi, Son doğrulama, Uyumluluk sınırları, Öğrenci paneli hata onarımları
 
 ## Knowledge Gaps
-- **944 isolated node(s):** `name`, `version`, `type`, `description`, `dev` (+939 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1333 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **41 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **1019 isolated node(s):** `name`, `version`, `type`, `description`, `dev` (+1014 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1425 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **42 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `cn()` connect `cn` to `class-variance-authority`, `carousel.tsx`, `navigation-menu.tsx`, `sidebar.tsx`, `form.tsx`, `input-group.tsx`, `client/package.json`, `chart.tsx`, `command.tsx`, `student-quiz.tsx`, `Button`, `empty.tsx`, `drawer.tsx`, `pagination.tsx`, `use-toast.ts`, `utils.ts`, `item.tsx`?**
+- **Why does `cn()` connect `cn` to `input-group.tsx`, `carousel.tsx`, `navigation-menu.tsx`, `sidebar.tsx`, `form.tsx`, `client/package.json`, `chart.tsx`, `command.tsx`, `student-quiz.tsx`, `Button`, `empty.tsx`, `drawer.tsx`, `pagination.tsx`, `use-toast.ts`, `menubar.tsx`, `utils.ts`, `item.tsx`?**
   _High betweenness centrality (0.153) - this node is a cross-community bridge._
-- **Why does `QuizMaster Graphify Mimari Haritası` connect `QuizMaster Graphify Mimari Haritası` to `deploySetupDatabase`, `offline-quiz.ts`, `student-quiz.tsx`, `Button`, `README.md`?**
-  _High betweenness centrality (0.100) - this node is a cross-community bridge._
-- **Why does `IStorage` connect `IStorage` to `PrismaStorage`, `ref_vitest`?**
-  _High betweenness centrality (0.072) - this node is a cross-community bridge._
+- **Why does `QuizMaster Graphify Mimari Haritası` connect `QuizMaster Graphify Mimari Haritası` to `applySetup`, `offline-quiz.ts`, `student-quiz.tsx`, `Button`, `README.md`?**
+  _High betweenness centrality (0.107) - this node is a cross-community bridge._
+- **Why does `PrismaStorage` connect `PrismaStorage` to `IStorage`, `.getGuardianStudents`, `.syncQuestions`, `ref_vitest`, `writeTransaction`, `Kalan yönetici onarımları — doğrulama`?**
+  _High betweenness centrality (0.063) - this node is a cross-community bridge._
 - **What connects `name`, `version`, `type` to the rest of the system?**
-  _944 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _1019 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `setup-bootstrap.mjs` be split into smaller, more focused modules?**
-  _Cohesion score 0.07330827067669173 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07743496672716274 - nodes in this community are weakly interconnected._
 - **Should `express` be split into smaller, more focused modules?**
-  _Cohesion score 0.14634146341463414 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.10784313725490197 - nodes in this community are weakly interconnected._
 - **Should `IStorage` be split into smaller, more focused modules?**
   _Cohesion score 0.02 - nodes in this community are weakly interconnected._

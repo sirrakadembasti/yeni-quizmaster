@@ -100,3 +100,6 @@ tools/mailpit/*.exe
 /docs/parent-audit/test-results*/
 /docs/parent-audit/playwright-report*/
 /docs/parent-audit/**/trace.zip
+
+# Isolated integration checks: raw server logs contain session metadata.
+/docs/integration-audit/runtime-logs/

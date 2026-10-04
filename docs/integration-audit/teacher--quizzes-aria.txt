@@ -1,0 +1,122 @@
+- main:
+  - button "Menüyü aç"
+  - button "Bildirimleri aç"
+  - button "Karanlık Moda Geç"
+  - button "P"
+  - heading "Sınavlarım" [level=1]
+  - paragraph: Hazırladığınız sınavları listeleyin ve filtreleyin.
+  - button "Yazdır"
+  - button "Yeni Sınav Oluştur"
+  - textbox "Sınav adı veya açıklama ile ara":
+    - /placeholder: Sınav adı veya açıklama ile ara...
+  - text: Ders Filtresi
+  - combobox "Ders Filtresi": Tüm Dersler
+  - text: Sınıf Filtresi
+  - combobox "Sınıf Filtresi": Tüm Sınıflar
+  - button "Filtreleri Temizle"
+  - table:
+    - rowgroup:
+      - row "Sınav Ders Sınıflar Soru Süre Katılım Durum İşlemler":
+        - columnheader "Sınav"
+        - columnheader "Ders"
+        - columnheader "Sınıflar"
+        - columnheader "Soru"
+        - columnheader "Süre"
+        - columnheader "Katılım"
+        - columnheader "Durum"
+        - columnheader "İşlemler"
+    - rowgroup:
+      - row "Parent Audit Offline Exam Açıklama yok. Audit Mathematics Parent Audit 7A 2 - 0 Yayında Önizle Parent Audit Offline Exam işlemleri":
+        - cell "Parent Audit Offline Exam Açıklama yok.":
+          - paragraph: Parent Audit Offline Exam
+          - paragraph: Açıklama yok.
+        - cell "Audit Mathematics"
+        - cell "Parent Audit 7A"
+        - cell "2"
+        - cell "-"
+        - cell "0"
+        - cell "Yayında"
+        - cell "Önizle Parent Audit Offline Exam işlemleri":
+          - button "Önizle"
+          - button "Parent Audit Offline Exam işlemleri"
+      - row "Parent Audit Unassigned Exam Açıklama yok. Audit Mathematics Atanmamış 2 - 0 Yayında Önizle Parent Audit Unassigned Exam işlemleri":
+        - cell "Parent Audit Unassigned Exam Açıklama yok.":
+          - paragraph: Parent Audit Unassigned Exam
+          - paragraph: Açıklama yok.
+        - cell "Audit Mathematics"
+        - cell "Atanmamış"
+        - cell "2"
+        - cell "-"
+        - cell "0"
+        - cell "Yayında"
+        - cell "Önizle Parent Audit Unassigned Exam işlemleri":
+          - button "Önizle"
+          - button "Parent Audit Unassigned Exam işlemleri"
+      - row "Parent Audit Timed Exam Açıklama yok. Audit Mathematics Parent Audit 7A 2 1 dk 0 Yayında Önizle Parent Audit Timed Exam işlemleri":
+        - cell "Parent Audit Timed Exam Açıklama yok.":
+          - paragraph: Parent Audit Timed Exam
+          - paragraph: Açıklama yok.
+        - cell "Audit Mathematics"
+        - cell "Parent Audit 7A"
+        - cell "2"
+        - cell "1 dk"
+        - cell "0"
+        - cell "Yayında"
+        - cell "Önizle Parent Audit Timed Exam işlemleri":
+          - button "Önizle"
+          - button "Parent Audit Timed Exam işlemleri"
+      - row "Private Other Exam Açıklama yok. Audit Mathematics Private Other 7B 2 - 1 Yayında Önizle Private Other Exam işlemleri":
+        - cell "Private Other Exam Açıklama yok.":
+          - paragraph: Private Other Exam
+          - paragraph: Açıklama yok.
+        - cell "Audit Mathematics"
+        - cell "Private Other 7B"
+        - cell "2"
+        - cell "-"
+        - cell "1"
+        - cell "Yayında"
+        - cell "Önizle Private Other Exam işlemleri":
+          - button "Önizle"
+          - button "Private Other Exam işlemleri"
+      - row "Parent Audit Draft Açıklama yok. Audit Mathematics Parent Audit 7A 2 - 0 Taslak Önizle Parent Audit Draft işlemleri":
+        - cell "Parent Audit Draft Açıklama yok.":
+          - paragraph: Parent Audit Draft
+          - paragraph: Açıklama yok.
+        - cell "Audit Mathematics"
+        - cell "Parent Audit 7A"
+        - cell "2"
+        - cell "-"
+        - cell "0"
+        - cell "Taslak"
+        - cell "Önizle Parent Audit Draft işlemleri":
+          - button "Önizle"
+          - button "Parent Audit Draft işlemleri"
+      - row "Parent Audit Completed Exam Açıklama yok. Audit Mathematics Parent Audit 7A 2 - 2 Yayında Önizle Parent Audit Completed Exam işlemleri":
+        - cell "Parent Audit Completed Exam Açıklama yok.":
+          - paragraph: Parent Audit Completed Exam
+          - paragraph: Açıklama yok.
+        - cell "Audit Mathematics"
+        - cell "Parent Audit 7A"
+        - cell "2"
+        - cell "-"
+        - cell "2"
+        - cell "Yayında"
+        - cell "Önizle Parent Audit Completed Exam işlemleri":
+          - button "Önizle"
+          - button "Parent Audit Completed Exam işlemleri"
+      - row "Parent Audit Exam Açıklama yok. Audit Mathematics Parent Audit 7A 2 - 0 Yayında Önizle Parent Audit Exam işlemleri":
+        - cell "Parent Audit Exam Açıklama yok.":
+          - paragraph: Parent Audit Exam
+          - paragraph: Açıklama yok.
+        - cell "Audit Mathematics"
+        - cell "Parent Audit 7A"
+        - cell "2"
+        - cell "-"
+        - cell "0"
+        - cell "Yayında"
+        - cell "Önizle Parent Audit Exam işlemleri":
+          - button "Önizle"
+          - button "Parent Audit Exam işlemleri"
+  - text: 7 kayıt · Sayfa 1/1
+  - button "Önceki" [disabled]
+  - button "Sonraki" [disabled]

@@ -1,0 +1,83 @@
+{
+  "startedAt": "2026-10-04T12:03:51.892Z",
+  "databaseHashBefore": "8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158",
+  "load": [
+    {
+      "concurrency": 2,
+      "requests": 180,
+      "statuses": {
+        "200": 178,
+        "requestError": 2
+      },
+      "elapsedMs": 162027,
+      "requestsPerSecond": 1.11,
+      "p50Ms": 1694,
+      "p95Ms": 3647,
+      "maxMs": 4900,
+      "passed": false
+    },
+    {
+      "concurrency": 8,
+      "requests": 180,
+      "statuses": {
+        "200": 175,
+        "requestError": 5
+      },
+      "elapsedMs": 118475,
+      "requestsPerSecond": 1.52,
+      "p50Ms": 4594,
+      "p95Ms": 10244,
+      "maxMs": 14534,
+      "passed": false
+    },
+    {
+      "concurrency": 20,
+      "requests": 180,
+      "statuses": {
+        "200": 161,
+        "requestError": 19
+      },
+      "elapsedMs": 88333,
+      "requestsPerSecond": 2.04,
+      "p50Ms": 8542,
+      "p95Ms": 15010,
+      "maxMs": 15042,
+      "passed": false
+    }
+  ],
+  "ux": [],
+  "cleanup": [
+    {
+      "name": "ui",
+      "stopProven": false,
+      "handlesReleased": true,
+      "error": "Owned child termination failed"
+    },
+    {
+      "name": "api",
+      "stopProven": false,
+      "handlesReleased": true,
+      "error": "Owned child termination failed"
+    }
+  ],
+  "isolatedFixture": true,
+  "status": "runner-failed",
+  "error": "Error: browserType.launch: spawn EPERM\nCall log:\n\u001b[2m  - <launching> C:\\Users\\ahmet\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1243\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\ahmet\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-kHAM48 --remote-debugging-pipe --no-startup-window\u001b[22m\n",
+  "ports": [
+    {
+      "kind": "fixture-port",
+      "port": 5560,
+      "stopped": false,
+      "error": "Fixture port bind failed (EADDRINUSE)"
+    },
+    {
+      "kind": "fixture-port",
+      "port": 5561,
+      "stopped": false,
+      "error": "Fixture port bind failed (EADDRINUSE)"
+    }
+  ],
+  "databaseHashAfter": "8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158",
+  "databaseUnchanged": true,
+  "finishedAt": "2026-10-04T12:14:43.678Z"
+}
