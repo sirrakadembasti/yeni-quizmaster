@@ -4,9 +4,10 @@ import path from 'node:path';
 import net from 'node:net';
 import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
-import { spawn, spawnSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { waitForAuditServer } from './audit-server-readiness.mjs';
 import { verifyFixturePortsReleased } from './linux-owned-process-cleanup.mjs';
+import { launchOwned, cleanupOwned } from './academic-owned-process.mjs';
 const repo = path.resolve(import.meta.dirname, '..');
 const req = createRequire(path.join(repo, 'server/package.json'));
 const clientReq = createRequire(path.join(repo, 'client/package.json'));
@@ -20,10 +21,7 @@ let ports = [];
 let cancelled = false;
 const cancel = () => {
   cancelled = true;
-  for (const child of children) if (child.pid && child.exitCode === null && child.signalCode === null) {
-    if (process.platform === 'win32') spawnSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], { windowsHide: true, timeout: 15000, stdio: 'ignore' });
-    else { try { process.kill(-child.pid, 'SIGTERM'); } catch {} }
-  }
+  for (const state of children) void cleanupOwned(state).catch(error => { state.cleanupError = error; });
 };
 process.once('SIGINT', cancel);
 process.once('SIGTERM', cancel);
@@ -36,12 +34,9 @@ async function port() {
 }
 // Only operating-system runtime variables are inherited; credentials are absent.
 const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => /^(PATH|SYSTEMROOT|WINDIR|TEMP|TMP|COMSPEC|PATHEXT|LOCALAPPDATA|APPDATA|USERPROFILE|HOME)$/i.test(key)));
-function launch(args, cwd = root) {
+async function launch(args, cwd = root) {
   if (cancelled) throw new Error('Fixture run cancelled');
-  const child = spawn(process.execPath, args, { cwd, env, windowsHide: true, detached: process.platform !== 'win32', stdio: 'inherit' });
-  const state = { child, errorCode: null };
-  child.on('error', error => { state.errorCode = error.code; });
-  children.push(child); return state;
+  return launchOwned(args, { cwd, env, onState: state => children.push(state) });
 }
 try {
   for (const directory of ['server/data', 'server/uploads', 'client', 'artifacts']) fs.mkdirSync(path.join(root, directory), { recursive: true });
@@ -50,7 +45,7 @@ try {
   fs.writeFileSync(path.join(root, '.env'), '# Disposable fixture: no credentials\n');
   fs.writeFileSync(path.join(root, 'server/.env'), '# Disposable fixture: no credentials\n');
   if (process.argv.includes('--startup-failure-smoke')) {
-    const failed = launch([path.join(root, 'absent-entry.mjs')]);
+    const failed = await launch([path.join(root, 'absent-entry.mjs')]);
     let rejected = false;
     try { await waitForAuditServer('http://127.0.0.1:1', failed, { timeoutMs: 5000 }); }
     catch { rejected = true; }
@@ -77,15 +72,15 @@ try {
   console.log(`Disposable migrations completed in ${Date.now() - migrationStart}ms`);
   const entry = path.join(root, 'entry.mjs');
   fs.writeFileSync(entry, `import { createRequire } from 'node:module';\nconst require = createRequire(${JSON.stringify(path.join(repo, 'server/package.json'))});\nconst { PrismaClient } = require('@prisma/client');\nconst bcrypt = require('bcryptjs');\nconst db = new PrismaClient();\ntry { await db.user.create({ data: { id: 'academic-admin', name: 'Synthetic Academic Admin', email: 'academic-admin@example.test', role: 'admin', password: await bcrypt.hash('AcademicFixtureOnly2026!', 10) } }); } finally { await db.$disconnect(); }\nawait import(${JSON.stringify('file:///' + path.join(repo, 'server/index.ts').replaceAll('\\', '/'))});\n`);
-  const api = launch([req.resolve('tsx/cli'), entry]);
+  const api = await launch(['--import', req.resolve('tsx'), entry]);
   await waitForAuditServer(`http://127.0.0.1:${apiPort}/api/csrf-token`, api);
   const viteEntry = path.join(root, 'ui.mjs');
   fs.writeFileSync(viteEntry, `import { loadConfigFromFile, createServer } from ${JSON.stringify('file:///' + clientReq.resolve('vite').replaceAll('\\', '/'))};\nconst loaded = await loadConfigFromFile({ command: 'serve', mode: 'development' }, ${JSON.stringify(path.join(repo, 'client/vite.config.ts'))});\nconst server = await createServer({ ...loaded.config, configFile: false, root: ${JSON.stringify(path.join(repo, 'client'))}, envDir: ${JSON.stringify(root)}, server: { ...loaded.config.server, host: '127.0.0.1', port: ${uiPort}, strictPort: true } });\nawait server.listen();\n`);
-  const ui = launch([viteEntry]);
+  const ui = await launch([viteEntry]);
   await waitForAuditServer(runtime.baseURL + '/auth', ui);
   if (!process.argv.includes('--smoke')) {
-    const tests = launch([path.join(path.dirname(rootReq.resolve('playwright/package.json')), 'cli.js'), 'test', '-c', path.join(repo, 'playwright.academic-archive.config.ts'), ...process.argv.slice(2)], repo);
-    process.exitCode = await new Promise(resolve => { tests.child.once('exit', code => resolve(code ?? 1)); tests.child.once('error', () => resolve(1)); });
+    const tests = await launch([path.join(path.dirname(rootReq.resolve('playwright/package.json')), 'cli.js'), 'test', '-c', path.join(repo, 'playwright.academic-archive.config.ts'), ...process.argv.slice(2)], repo);
+    process.exitCode = await tests.finished;
   } else {
     const { chromium } = rootReq('playwright');
     const browser = await chromium.launch();
@@ -112,18 +107,9 @@ try {
   throw error;
 } finally {
   const cleanupErrors = [];
-  for (const child of children.reverse()) {
+  for (const state of children.reverse()) {
     try {
-    if (child.exitCode !== null || child.signalCode !== null) continue;
-    const exited = new Promise(resolve => child.once('exit', resolve));
-    if (process.platform === 'win32') {
-      const stopped = spawnSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], { windowsHide: true, encoding: 'utf8', timeout: 15000 });
-      if (stopped.status !== 0) console.error(`Owned taskkill diagnostic (PID ${child.pid}, status ${stopped.status}): ${stopped.stdout ?? ''}${stopped.stderr ?? ''}`);
-      // taskkill can report a raced parent exit after stopping its descendants;
-      // await the child exit and independently prove both ports are released.
-      if (stopped.error) throw new Error(`Owned fixture termination failed: ${stopped.error.code}`);
-    } else process.kill(-child.pid, 'SIGTERM');
-    await Promise.race([exited, new Promise((_, reject) => { const timer = setTimeout(() => reject(new Error('Owned fixture process did not exit')), 15000); timer.unref(); })]);
+      await cleanupOwned(state);
     } catch (error) { cleanupErrors.push(error); }
   }
   if (ports.length && !(await verifyFixturePortsReleased(ports)).every(result => result.stopped)) cleanupErrors.push(new Error('Owned fixture ports remain occupied'));
