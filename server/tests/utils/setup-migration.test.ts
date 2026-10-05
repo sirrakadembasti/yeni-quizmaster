@@ -19,10 +19,18 @@ it('deploys all migrations into an absent SQLite DB under inherited warn logging
   const database = join(fixture, 'fresh.db');
   const databaseUrl = 'file:' + database.replaceAll('\\', '/');
   const inherited = { ...process.env, RUST_LOG: 'warn', CHECKPOINT_DISABLE: '1' };
-  const execute: SetupCommand = async (args, extraEnv) => execFileSync(process.execPath, [pnpmScript, ...args], {
-    cwd: dirname(serverRoot), shell: false, windowsHide: true, timeout: 120000,
-    env: { ...inherited, ...extraEnv }, encoding: 'utf8',
-  });
+  const execute: SetupCommand = async (args, extraEnv) => {
+    const started = Date.now();
+    try {
+      return execFileSync(process.execPath, [pnpmScript, ...args], {
+        cwd: dirname(serverRoot), shell: false, windowsHide: true, timeout: 120000,
+        env: { ...inherited, ...extraEnv }, encoding: 'utf8',
+      });
+    } catch (failure) {
+      const error = failure as Error & { stdout?: string; stderr?: string; status?: number; signal?: string };
+      throw new Error(`Isolated migration command failed after ${Date.now() - started}ms (status=${error.status}, signal=${error.signal})\n${error.message}\nstdout:\n${error.stdout ?? ''}\nstderr:\n${error.stderr ?? ''}`, { cause: error });
+    }
+  };
   const prisma = new PrismaClient({ datasources: { db: { url: databaseUrl } } });
   try {
     expect(existsSync(database), 'A fresh install has no database file to precreate').toBe(false);
