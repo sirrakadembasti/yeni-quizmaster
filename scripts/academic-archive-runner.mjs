@@ -4,6 +4,7 @@ import path from 'node:path';
 import net from 'node:net';
 import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
+import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { waitForAuditServer } from './audit-server-readiness.mjs';
 import { verifyFixturePortsReleased } from './linux-owned-process-cleanup.mjs';
@@ -72,7 +73,7 @@ try {
   console.log(`Disposable migrations completed in ${Date.now() - migrationStart}ms`);
   const entry = path.join(root, 'entry.mjs');
   fs.writeFileSync(entry, `import { createRequire } from 'node:module';\nconst require = createRequire(${JSON.stringify(path.join(repo, 'server/package.json'))});\nconst { PrismaClient } = require('@prisma/client');\nconst bcrypt = require('bcryptjs');\nconst db = new PrismaClient();\ntry { await db.user.create({ data: { id: 'academic-admin', name: 'Synthetic Academic Admin', email: 'academic-admin@example.test', role: 'admin', password: await bcrypt.hash('AcademicFixtureOnly2026!', 10) } }); } finally { await db.$disconnect(); }\nawait import(${JSON.stringify('file:///' + path.join(repo, 'server/index.ts').replaceAll('\\', '/'))});\n`);
-  const api = await launch(['--import', req.resolve('tsx'), entry]);
+  const api = await launch(['--import', pathToFileURL(req.resolve('tsx')).href, entry]);
   await waitForAuditServer(`http://127.0.0.1:${apiPort}/api/csrf-token`, api);
   const viteEntry = path.join(root, 'ui.mjs');
   fs.writeFileSync(viteEntry, `import { loadConfigFromFile, createServer } from ${JSON.stringify('file:///' + clientReq.resolve('vite').replaceAll('\\', '/'))};\nconst loaded = await loadConfigFromFile({ command: 'serve', mode: 'development' }, ${JSON.stringify(path.join(repo, 'client/vite.config.ts'))});\nconst server = await createServer({ ...loaded.config, configFile: false, root: ${JSON.stringify(path.join(repo, 'client'))}, envDir: ${JSON.stringify(root)}, server: { ...loaded.config.server, host: '127.0.0.1', port: ${uiPort}, strictPort: true } });\nawait server.listen();\n`);
