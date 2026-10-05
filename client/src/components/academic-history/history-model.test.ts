@@ -19,4 +19,27 @@ describe('academic history navigation', () => {
     expect(historicalSection('/student/quiz/123')).toBe('quiz');
     expect(historicalSection('/guardian-management')).toBe('guardianLink');
   });
+  it.each([
+    ['/management','', 'category','records'],
+    ['/management','?tab=categories','category','records'],
+    ['/management','?tab=classes','class','records'],
+    ['/management','?tab=users','user','records'],
+    ['/management','?tab=logs','user','unsupported'],
+    ['/management','?tab=invalid','category','records'],
+    ['/students','?studentId=one','student','records'],
+    ['/teachers/one','','teacher','records'],
+    ['/admin/classes/one','','class','records'],
+    ['/classlist','','class','records'],
+    ['/quizzes/one','?tab=questions','question','records'],
+    ['/admin-quizzes','?contentType=survey','survey','records'],
+    ['/survey-results','?surveyId=one','surveyAnswer','records'],
+    ['/statistics','','result','statistics'],
+    ['/settings','','user','unsupported'],
+  ])('maps admin route %s %s to its historical equivalent',(path,search,section,view)=>{
+    expect(historicalRoute(path,search)).toMatchObject({section,view});
+  });
+  it('preserves survey detail scope and explains unsupported management logs',()=>{
+    expect(historicalRoute('/survey-results','?surveyId=one')).toMatchObject({quizId:'one'});
+    expect(historicalRoute('/management','?tab=logs').notice).toMatch(/günlükleri/);
+  });
 });

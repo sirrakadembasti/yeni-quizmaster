@@ -39,7 +39,8 @@ import {
 } from "lucide-react";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useLocation } from "wouter";
+import { useLocation, useSearch } from "wouter";
+import { managementTab } from '@/components/academic-history/history-model';
 import { categoryApi, classApi, userApi, adminApi, type Category } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -71,7 +72,13 @@ export default function AdminManagementPage() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState("categories");
+  const routeSearch = useSearch();
+  const activeTab = managementTab(routeSearch);
+  const setActiveTab = (value:string) => {
+    const params=new URLSearchParams(routeSearch);
+    params.set('tab',managementTab(`?tab=${encodeURIComponent(value)}`));
+    setLocation(`/management?${params}`,{replace:true});
+  };
 
   // Dialog States
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);

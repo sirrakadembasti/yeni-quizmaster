@@ -49,7 +49,7 @@ export function createAcademicHistoryRouter({ db = archiveDb, now = () => new Da
     const indexes = new Map([...byType].map(([kind,rows]) => [kind,new Map(rows.map(row => [row.id,row]))]));
     const lookup = (kind: string,id: unknown) => indexes.get(kind)?.get(id);
     const kind = type === 'student' || type === 'teacher' ? 'user' : type === 'survey' ? 'quiz' : type;
-    const enriched = (byType.get(kind) ?? []).filter(row => type === 'student' || type === 'teacher' ? row.role === type : type === 'survey' ? row.type === 'survey' : type === 'quiz' ? row.type !== 'survey' : true).map(row => ({ ...row,
+    const enriched = (byType.get(kind) ?? []).filter(row => type === 'student' || type === 'teacher' ? row.role === type : type === 'survey' ? row.contentType === 'survey' : type === 'quiz' ? row.contentType === 'exam' : true).map(row => ({ ...row,
       ...(row.classId ? { className:lookup('class',row.classId)?.name ?? 'Arşivde sınıf yok' } : {}),
       ...(row.targetClassId ? { targetClassName:lookup('class',row.targetClassId)?.name ?? 'Arşivde sınıf yok' } : {}),
       ...(row.teacherId ? { teacherName:lookup('user',row.teacherId)?.name } : {}),
@@ -73,10 +73,10 @@ export function createAcademicHistoryRouter({ db = archiveDb, now = () => new Da
       const rowClassId=row.classId??lookup('user',rowStudentId)?.classId;
       const classMatch=!classId || row.id===classId || rowClassId===classId || row.targetClassId===classId || row.assignedClassIds?.includes(classId) || row.managedClassIds?.includes(classId) || row.classes?.some((item:{id:string})=>item.id===classId);
       const teacherMatch=!teacherId || (kind==='user' && row.id===teacherId) || row.teacherId===teacherId || row.createdBy===teacherId || row.classTeacherId===teacherId || row.teachers?.some((item:{id:string})=>item.id===teacherId);
-      return classMatch && teacherMatch && (!studentId || rowStudentId===studentId || (kind==='user' && row.id===studentId)) && (!entityId || row.id===entityId) && (!quizId || rowQuizId===quizId || (kind==='quiz' && row.id===quizId)) && (showStatistics!=='true' || kind!=='result' || lookup('quiz',row.quizId)?.type!=='survey') && (!search || JSON.stringify(row).toLocaleLowerCase('tr').includes(search.toLocaleLowerCase('tr')));
+      return classMatch && teacherMatch && (!studentId || rowStudentId===studentId || (kind==='user' && row.id===studentId)) && (!entityId || row.id===entityId) && (!quizId || rowQuizId===quizId || (kind==='quiz' && row.id===quizId)) && (showStatistics!=='true' || kind!=='result' || lookup('quiz',row.quizId)?.contentType==='exam') && (!search || JSON.stringify(row).toLocaleLowerCase('tr').includes(search.toLocaleLowerCase('tr')));
     });
     const students=(byType.get('user')??[]).filter(row=>row.role==='student' && (!classId || row.classId===classId) && (!studentId || row.id===studentId));
-    const examResults=enriched.filter(row=>kind==='result' && typeof row.score==='number' && lookup('quiz',row.quizId)?.type!=='survey');
+    const examResults=enriched.filter(row=>kind==='result' && typeof row.score==='number' && lookup('quiz',row.quizId)?.contentType==='exam');
     const average=(rows:any[])=>rows.length ? rows.reduce((sum,row)=>sum+row.score,0)/rows.length : null;
     const classStatistics=(byType.get('class')??[]).filter(row=>!classId || row.id===classId).map(cls=>{const results=examResults.filter(row=>lookup('user',row.studentId)?.classId===cls.id);return {classId:cls.id,className:cls.name,students:students.filter(row=>row.classId===cls.id).length,scoredExamResults:results.length,averageScore:average(results)};});
     const statistics={students:students.length,scoredExamResults:examResults.length,averageScore:average(examResults),classes:classStatistics};

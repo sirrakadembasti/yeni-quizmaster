@@ -1,0 +1,73 @@
+import { test, expect } from '@playwright/test';
+import { randomUUID } from 'node:crypto';
+import { assertIsolatedRuntime, prisma, login, api } from './academic-archive-helpers';
+import { captureArchive } from '../server/services/archive-capture';
+
+test('actual captured history separates exam/survey data and preserves management tabs across year changes',async({page})=>{
+  assertIsolatedRuntime();
+  const db=prisma();
+  let yearId:string,examId:string,surveyId:string,studentId:string,teacherId:string,classId:string;
+  try {
+    const teacher=await db.user.create({data:{name:'Frozen History Teacher',email:randomUUID()+'@example.test',password:'synthetic',role:'teacher'}});
+    const cls=await db.class.create({data:{name:'Frozen History Class',classTeacherId:teacher.id,teachers:{connect:{id:teacher.id}}}});
+    const next=await db.class.create({data:{name:'Current History Class'}});
+    const student=await db.user.create({data:{name:'Frozen History Student',email:randomUUID()+'@example.test',password:'synthetic',role:'student',classId:cls.id}});
+    const course=await db.category.create({data:{name:'Frozen History Course',teachers:{connect:{id:teacher.id}},classes:{connect:{id:cls.id}}}});
+    const assignment=await db.classTeacherCourse.create({data:{classId:cls.id,teacherId:teacher.id,categoryId:course.id}});
+    const exam=await db.quiz.create({data:{title:'History Exam Only',contentType:'exam',createdBy:teacher.id,categoryId:course.id,assignedClasses:{connect:{id:cls.id}}}});
+    const survey=await db.quiz.create({data:{title:'History Survey Only',contentType:'survey',createdBy:teacher.id,assignedClasses:{connect:{id:cls.id}}}});
+    await db.question.create({data:{quizId:exam.id,text:'Frozen exam question',type:'short-answer',correctAnswer:'yes',order:0}});
+    const question=await db.question.create({data:{quizId:survey.id,text:'Frozen survey question',type:'short-answer',order:0}});
+    await db.studentResult.create({data:{studentId:student.id,quizId:exam.id,status:'completed',score:80}});
+    await db.studentResult.create({data:{studentId:student.id,quizId:survey.id,status:'completed',score:10}});
+    const submission=await db.surveySubmission.create({data:{studentId:student.id,surveyId:survey.id}});
+    await db.surveyAnswer.create({data:{submissionId:submission.id,questionId:question.id,value:'Frozen survey answer'}});
+    const active=await db.academicYear.findFirst({where:{status:'active'}});
+    const year=active??await db.academicYear.create({data:{label:'2026-2027',opensAt:new Date(),scheduledCloseAt:new Date('2027-09-01')}});
+    // Hold a valid fixture lease so the running worker cannot claim this seed
+    // between its creation and direct capture on a 15-second worker tick.
+    const leaseOwner='history-fixture-'+randomUUID();
+    const snapshot=await db.archiveSnapshot.create({data:{academicYearId:year.id,label:year.label,mode:'annual',scopeJson:'{}',leaseOwner,leaseExpiresAt:new Date(Date.now()+120000)}});
+    await captureArchive(db,snapshot.id,{owner:leaseOwner,now:()=>new Date()});
+    await db.archiveSnapshot.update({where:{id:snapshot.id},data:{status:'completed',completedAt:new Date(),leaseOwner:null,leaseExpiresAt:null}});
+    await db.academicYear.update({where:{id:year.id},data:{status:'closed',snapshotId:snapshot.id}});
+    await db.academicYear.create({data:{label:'2027-2028',opensAt:new Date(),scheduledCloseAt:new Date('2028-09-01')}});
+    await db.user.update({where:{id:student.id},data:{name:'Current History Student',classId:next.id}});
+    await db.user.update({where:{id:teacher.id},data:{name:'Current History Teacher'}});
+    await db.class.update({where:{id:cls.id},data:{name:'Renamed History Class',teachers:{set:[]},classTeacherId:null}});
+    await db.category.update({where:{id:course.id},data:{name:'Current History Course'}});
+    await db.classTeacherCourse.delete({where:{id:assignment.id}});
+    yearId=year.id;examId=exam.id;surveyId=survey.id;studentId=student.id;teacherId=teacher.id;classId=cls.id;
+  } finally {await db.$disconnect();}
+  await login(page);
+  await page.goto('/management',{waitUntil:'domcontentloaded'});
+  await page.getByRole('tab',{name:'Sınıflar',exact:true}).click();
+  await expect(page).toHaveURL(/tab=classes/);
+  await page.getByLabel('Eğitim yılı',{exact:true}).selectOption(yearId);
+  const history=page.getByRole('region',{name:'Geçmiş eğitim yılı arşivi'});
+  await expect(history.getByRole('tab',{name:'Sınıflar',exact:true})).toHaveAttribute('aria-selected','true');
+  await expect(history.getByRole('cell',{name:'Frozen History Class',exact:true})).toBeVisible();
+  await page.reload({waitUntil:'domcontentloaded'});
+  await expect(history.getByRole('tab',{name:'Sınıflar',exact:true})).toHaveAttribute('aria-selected','true');
+  await history.getByRole('tab',{name:'Sınavlar',exact:true}).click();
+  await expect(history.getByRole('cell',{name:'History Exam Only',exact:true})).toBeVisible();
+  await expect(history.getByRole('cell',{name:'History Survey Only',exact:true})).toHaveCount(0);
+  await history.getByRole('tab',{name:'Anketler',exact:true}).click();
+  await expect(history.getByRole('cell',{name:'History Survey Only',exact:true})).toBeVisible();
+  await expect(history.getByRole('cell',{name:'History Exam Only',exact:true})).toHaveCount(0);
+  await page.goto(`/survey-results?surveyId=${surveyId}`,{waitUntil:'domcontentloaded'});
+  await expect(history.getByRole('cell',{name:'Frozen survey answer',exact:true})).toBeVisible();
+  await expect(history.getByRole('cell',{name:'Frozen History Student',exact:true})).toBeVisible();
+  await page.goto(`/quizzes/${examId}?tab=questions`,{waitUntil:'domcontentloaded'});
+  await expect(history.getByRole('cell',{name:'Frozen exam question',exact:true})).toBeVisible();
+  await page.goto(`/statistics?classId=${classId}`,{waitUntil:'domcontentloaded'});
+  await expect(history.getByLabel('Dondurulmuş sınav istatistikleri')).toContainText('Ortalama puan: 80.00');
+  const assignmentResponse=await api(page,'GET',`/admin/academic-history/years/${yearId}/rows?type=teacherAssignment&teacherId=${teacherId}`);
+  expect(assignmentResponse.status()).toBe(200);expect((await assignmentResponse.json()).rows[0]).toMatchObject({teacherName:'Frozen History Teacher',courseName:'Frozen History Course',className:'Frozen History Class'});
+  const studentResponse=await api(page,'GET',`/admin/academic-history/years/${yearId}/rows?type=student&studentId=${studentId}`);
+  expect((await studentResponse.json()).rows[0]).toMatchObject({name:'Frozen History Student',className:'Frozen History Class'});
+  await page.goto('/management?tab=logs',{waitUntil:'domcontentloaded'});
+  await expect(history.getByRole('note')).toContainText('günlükleri');
+  await expect(history.getByRole('table')).toHaveCount(0);
+  await expect(history.getByRole('tablist')).toHaveCount(0);
+});

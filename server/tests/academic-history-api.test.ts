@@ -37,11 +37,14 @@ describe('frozen historical API and session enforcement',()=>{
   it('scopes a result id and student id, joins announcement target class, and returns exam aggregates',async()=>{
     const {app,db}=setup();
     const student='00000000-0000-4000-8000-000000000011', cls='00000000-0000-4000-8000-000000000012', result='00000000-0000-4000-8000-000000000013';
-    const rows=[['user',{id:student,name:'Frozen Student',role:'student',classId:cls}],['class',{id:cls,name:'Class at closure'}],['quiz',{id:'exam',type:'exam',title:'Exam'}],['result',{id:result,studentId:student,quizId:'exam',score:80,status:'completed'}],['result',{id:'other',studentId:'other-student',quizId:'exam',score:20,status:'completed'}],['announcement',{id:'note',title:'For class',targetClassId:cls}]];
+    const rows=[['user',{id:student,name:'Frozen Student',role:'student',classId:cls}],['class',{id:cls,name:'Class at closure'}],['quiz',{id:'exam',contentType:'exam',title:'Exam'}],['quiz',{id:'survey',contentType:'survey',title:'Survey'}],['result',{id:result,studentId:student,quizId:'exam',score:80,status:'completed'}],['result',{id:'survey-result',studentId:student,quizId:'survey',score:10,status:'completed'}],['result',{id:'other',studentId:'other-student',quizId:'exam',score:20,status:'completed'}],['announcement',{id:'note',title:'For class',targetClassId:cls}]];
     db.archiveSnapshotRow.findMany.mockResolvedValue(rows.map(([entityType,data]:any)=>({entityType,entityId:data.id,dataJson:JSON.stringify(data)})));
     const one=await request(app).get(`/api/admin/academic-history/years/${yearId}/rows?type=result&entityId=${result}&studentId=${student}`);expect(one.status).toBe(200);expect(one.body.rows).toHaveLength(1);expect(one.body.rows[0].id).toBe(result);
     const announcement=await request(app).get(`/api/admin/academic-history/years/${yearId}/rows?type=announcement&classId=${cls}`);expect(announcement.body.rows[0].targetClassName).toBe('Class at closure');
     const stats=await request(app).get(`/api/admin/academic-history/years/${yearId}/rows?type=result&classId=${cls}&statistics=true`);expect(stats.body.statistics).toMatchObject({scoredExamResults:1,averageScore:80,students:1});
+    expect(stats.body.rows).toHaveLength(1);
+    expect((await request(app).get(`/api/admin/academic-history/years/${yearId}/rows?type=survey`)).body.rows.map((row:any)=>row.id)).toEqual(['survey']);
+    expect((await request(app).get(`/api/admin/academic-history/years/${yearId}/rows?type=quiz`)).body.rows.map((row:any)=>row.id)).toEqual(['exam']);
     expect((await request(app).get(`/api/admin/academic-history/years/${yearId}/rows?type=result&studentId=invalid`)).status).toBe(400);
   });
   it('persists past context then rejects and audits direct writes and live reads',async()=>{
