@@ -136,7 +136,7 @@ describe('durable worker orchestration', () => {
     s.db.archiveSnapshot.findFirst.mockImplementation(async ({ where }: any) => where.mode === 'manual' ? null : { ...s.job });
     await createArchiveWorker({ db: s.db, backupRoot: '/backup', now: () => s.now, capture, export: s.generate, verify: s.verify }).tick();
     expect(capture).not.toHaveBeenCalled(); expect(s.job.attempts).toBe(0); expect(s.generate).not.toHaveBeenCalled();
-    expect(s.db.archiveSnapshot.count).toHaveBeenCalledWith({ where: { academicYearId: 'year', mode: 'manual', status: { not: 'completed' } } });
+    expect(s.db.archiveSnapshot.count).toHaveBeenCalledWith({ where: { academicYearId: 'year', mode: 'manual', status: { notIn: ['completed', 'cancelled'] } } });
   });
   it('keeps processing a runnable manual job while the annual candidate is blocked', async () => {
     const s = setup(); const annual = { ...s.job, id: 'annual', mode: 'annual' };

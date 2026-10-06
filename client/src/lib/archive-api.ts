@@ -1,6 +1,7 @@
 import { apiFetch, handleResponse } from './api';
 export interface AcademicYear { id: string; label: string; status: string; scheduledCloseAt: string; closedAt?: string | null; canClose?: boolean }
-export interface ArchiveJob { id: string; academicYearId: string; label: string; mode: string; status: string; attempts: number; createdAt: string; completedAt?: string | null; error?: string | null; sizeBytes?: number | null; zipSha256?: string | null }
+export interface ArchiveBlocker { id: string; status: string; code?: string; reason: string; remedy: string }
+export interface ArchiveJob { id: string; academicYearId: string; label: string; mode: string; status: string; attempts: number; createdAt: string; completedAt?: string | null; error?: string | null; sizeBytes?: number | null; zipSha256?: string | null; recoveryCount?: number; lifetimeAttempts?: number; blockers?: ArchiveBlocker[]; canCancel?: boolean }
 export interface TransitionRule { fromClassId: string; toClassId: string | null; graduate: boolean }
 export interface ArchivePreview { quizzes: number; results: number; surveySubmissions: number; questions: number }
 const base = '/api/admin/archive';
@@ -17,6 +18,7 @@ export const archiveApi = {
   create: (quizIds: string[], academicYearId?: string) => request<{ job: ArchiveJob }>('', 'POST', { mode: 'manual', quizIds, academicYearId }),
   closeYear: (academicYearId: string) => request<{ job: ArchiveJob }>('/close-year', 'POST', { academicYearId }),
   retry: (id: string) => request<{ job: ArchiveJob }>(`/jobs/${idPath(id)}/retry`, 'POST'),
+  cancel: (id: string) => request<{ job: ArchiveJob }>(`/jobs/${idPath(id)}/cancel`, 'POST'),
   rules: (id: string) => request<{ rules: TransitionRule[] }>(`/years/${idPath(id)}/rules`),
   saveRules: (id: string, rules: TransitionRule[]) => request<{ rules: TransitionRule[] }>(`/years/${idPath(id)}/rules`, 'PUT', { rules }),
   authorizeDownload: (id: string, password: string) => request<{ expiresAt: number }>(`/jobs/${idPath(id)}/download-authorize`, 'POST', { password }),

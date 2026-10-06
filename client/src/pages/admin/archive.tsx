@@ -12,8 +12,8 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
-const statuses: Record<string, string> = { queued: 'Sırada', capturing: 'Veriler kopyalanıyor', files_generating: 'Dosyalar hazırlanıyor', verified: 'Dosyalar doğrulandı', completed: 'Tamamlandı', retry_wait: 'Yeniden deneme bekleniyor', failed: 'Başarısız' };
-const running = (status: string) => !['completed', 'failed'].includes(status);
+const statuses: Record<string, string> = { queued: 'Sırada', capturing: 'Veriler kopyalanıyor', files_generating: 'Dosyalar hazırlanıyor', verified: 'Dosyalar doğrulandı', completed: 'Tamamlandı', retry_wait: 'Yeniden deneme bekleniyor', failed: 'Başarısız', cancelled: 'Kopyalama başlamadan iptal edildi' };
+const running = (status: string) => !['completed', 'failed', 'cancelled'].includes(status);
 const ruleLocked = (status: string) => ['capturing', 'files_generating', 'verified'].includes(status);
 
 export default function ArchivePage() {
@@ -60,23 +60,27 @@ export default function ArchivePage() {
     }
   }, [jobs.data?.jobs, queryClient]);
   const fail = (err: Error) => { setError(err.message); setFeedback(''); };
-  const acceptJob = ({ job }: { job: ArchiveJob }) => { setError(''); setSelected([]); setFeedback('Arşiv işlemi kuyruğa alındı. İlerlemeyi aşağıdan izleyebilirsiniz.'); setFocusJob(job.id); void queryClient.invalidateQueries({ queryKey: ['archive-jobs'] }); };
+  const refreshJob = (id: string) => { void queryClient.invalidateQueries({ queryKey: ['archive-jobs'] }); void queryClient.invalidateQueries({ queryKey: ['archive-job', id] }); void queryClient.invalidateQueries({ queryKey: ['archive-job-logs', id] }); };
+  const acceptJob = ({ job }: { job: ArchiveJob }) => { setError(''); setSelected([]); setFeedback('Arşiv işlemi kuyruğa alındı. İlerlemeyi aşağıdan izleyebilirsiniz.'); setFocusJob(job.id); refreshJob(job.id); };
   const create = useMutation({ mutationFn: () => archiveApi.create(selected, active?.id), onSuccess: acceptJob, onError: fail });
   const close = useMutation({ mutationFn: () => archiveApi.closeYear(active!.id), onSuccess: acceptJob, onError: fail });
-  const retry = useMutation({ mutationFn: archiveApi.retry, onSuccess: acceptJob, onError: fail });
+  const retry = useMutation({ mutationFn: (id: string) => archiveApi.retry(id), onSuccess: acceptJob, onError: fail });
+  const cancel = useMutation({ mutationFn: (id: string) => archiveApi.cancel(id), onSuccess: ({ job }) => { setError(''); setFocusJob(job.id); setFeedback('Kopyalama başlamadan arşiv iptal edildi. İş verileri korunur; yıllık arşiv devam edebilir.'); refreshJob(job.id); }, onError: fail });
   const missing = classes.filter(cls => !targets[cls.id]);
   const ruleValues: TransitionRule[] = classes.map(cls => ({ fromClassId: cls.id, toClassId: targets[cls.id] === 'graduate' ? null : targets[cls.id], graduate: targets[cls.id] === 'graduate' }));
   const save = useMutation({ mutationFn: () => archiveApi.saveRules(active!.id, ruleValues), onSuccess: data => { queryClient.setQueryData(['archive-rules', active?.id], data); setRulesDirty(false); setError(''); setFeedback('Sınıf geçiş kuralları kaydedildi. Öğrenciler doğrulanmış yıl sonu arşivinden sonra taşınacak.'); }, onError: fail });
   const download = useMutation({ mutationFn: async () => { await archiveApi.authorizeDownload(downloadJob!.id, password); setPassword(''); await archiveApi.download(downloadJob!.id); }, onSuccess: () => { setDownloadJob(null); setError(''); setFeedback('Doğrulanmış arşiv indirmesi başlatıldı.'); }, onError: err => { setPassword(''); fail(err); } });
   const queries = [years, classesQuery, quizzesQuery, jobs];
   if (queries.some(query => query.isPending || query.isError)) return <DashboardLayout><AdminQueryState queries={queries} /></DashboardLayout>;
-  const busy = create.isPending || close.isPending || retry.isPending;
+  const busy = create.isPending || close.isPending || retry.isPending || cancel.isPending;
   const previewReady = selected.length > 0 && selected === previewIds && preview.isSuccess && !preview.isFetching;
   const rulesReady = rules.isSuccess && !rulesDirty && missing.length === 0;
   const due = !!active?.canClose;
   const annualRunning = jobs.data?.jobs.some(job => job.academicYearId === active?.id && job.mode === 'annual' && running(job.status));
   const rulesLocked = jobs.data?.jobs.some(job => job.academicYearId === active?.id && job.mode === 'annual' && ruleLocked(job.status));
   const allJobs = jobs.data?.jobs ?? [];
+  const focusedJob = jobQuery.data?.job;
+  const blockers = allJobs.filter(job => job.mode === 'annual' && job.academicYearId === active?.id).flatMap(job => job.blockers ?? []);
   const pages = Math.max(1, Math.ceil(allJobs.length / 20));
   return <DashboardLayout><div className="space-y-4">
     <h1 className="text-2xl font-bold">Yıl Sonu ve Arşiv İşlemleri</h1>
@@ -94,12 +98,20 @@ export default function ArchivePage() {
         <p>Otomatik kapanış 15 Temmuz 00:05 (Europe/Istanbul). Bu yılın sınırı: {active ? new Date(active.scheduledCloseAt).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }) : '—'}.</p>
         <p>Yılın bütün iş verileri arşivlenir. Dosyalar doğrulandıktan sonra kayıtlı sınıf geçişleri uygulanır ve yeni eğitim yılı açılır. Öğretmen atamaları değişmez.</p>
         {!due && <p>Kapanış zamanı henüz gelmedi.</p>}{!rulesReady && <p role="status">Yıl sonu için bütün sınıfların geçiş kurallarını kaydedin.</p>}
+        {blockers.length > 0 && <div role="status" className="space-y-2"><p>Yıllık arşiv aşağıdaki manuel işlerin tamamlanmasını bekliyor:</p>{blockers.map(blocker => <div key={blocker.id}><p>İş {blocker.id}: {blocker.reason} {blocker.remedy}</p><Button variant="outline" aria-label={`İşi Aç: ${blocker.id}`} onClick={() => setFocusJob(blocker.id)}>İşi Aç</Button></div>)}</div>}
         <Button disabled={!due || !rulesReady || busy || annualRunning} onClick={() => close.mutate()}>Yılı Kapat</Button>
       </CardContent></Card></TabsContent>
       <TabsContent value="history" className="space-y-3">
         <Card><CardHeader><CardTitle>Tamamlanan Eğitim Yılları</CardTitle></CardHeader><CardContent>{years.data?.years.filter(year => year.status === 'closed').map(year => <p key={year.id}>{year.label} — Tamamlandı{year.closedAt ? ` (${new Date(year.closedAt).toLocaleDateString('tr-TR')})` : ''}</p>)}{!years.data?.years.some(year => year.status === 'closed') && <p>Henüz tamamlanan eğitim yılı yok.</p>}</CardContent></Card>
         <Card><CardHeader><CardTitle>Arşiv İşleri</CardTitle></CardHeader><CardContent className="space-y-3">
-          {!allJobs.length && <p>Henüz arşiv işi yok.</p>}{allJobs.slice((Math.min(page, pages) - 1) * 20, Math.min(page, pages) * 20).map(job => <div key={job.id} className="border rounded-lg p-3 space-y-2"><p>{job.label} — {job.mode === 'annual' ? 'Yıllık' : 'Manuel'} — {statuses[job.status] ?? job.status}</p><p className="text-xs text-muted-foreground">{job.createdAt && new Date(job.createdAt).toLocaleString('tr-TR')} · Deneme: {job.attempts}</p>{job.error && <p role="alert">{job.error}</p>}<Button variant="outline" onClick={() => setFocusJob(job.id)}>İlerleme ve Kayıtlar</Button> {job.status === 'failed' && <Button disabled={retry.isPending || job.attempts >= 20} onClick={() => retry.mutate(job.id)}>Yeniden Dene</Button>} {job.status === 'completed' && <Button onClick={() => { setPassword(''); setError(''); setDownloadJob(job); }}>Arşivi İndir</Button>}</div>)}
+          {!allJobs.length && <p>Henüz arşiv işi yok.</p>}{allJobs.slice((Math.min(page, pages) - 1) * 20, Math.min(page, pages) * 20).map(job => <div key={job.id} className="border rounded-lg p-3 space-y-2">
+            <p>{job.label} — {job.mode === 'annual' ? 'Yıllık' : 'Manuel'} — {statuses[job.status] ?? job.status}</p>
+            <p className="text-xs text-muted-foreground">İş {job.id} · {job.createdAt && new Date(job.createdAt).toLocaleString('tr-TR')} · Bu döngüde deneme: {job.attempts} · Toplam deneme: {job.lifetimeAttempts ?? job.attempts} · Yönetici kurtarması: {job.recoveryCount ?? 0}</p>
+            {job.error && <p role="alert">{job.error}</p>}
+            {job.blockers?.map(blocker => <p key={blocker.id}>Beklenen iş {blocker.id}: {blocker.reason} {blocker.remedy}</p>)}
+            {job.status === 'failed' && <p>Yeniden Dene aynı dondurulmuş verilerle yeni, sınırlı bir deneme döngüsü başlatır. Bozuk tamamlanmamış paket gerekçesiyle karantinaya alınır.</p>}
+            <Button variant="outline" onClick={() => setFocusJob(job.id)}>İlerleme ve Kayıtlar</Button> {job.status === 'failed' && <Button disabled={retry.isPending || cancel.isPending} onClick={() => retry.mutate(job.id)}>Yeniden Dene</Button>} {job.status === 'failed' && job.canCancel && <Button variant="outline" disabled={cancel.isPending || retry.isPending} onClick={() => cancel.mutate(job.id)}>Kopyalama başlamadan iptal</Button>} {job.status === 'completed' && <Button onClick={() => { setPassword(''); setError(''); setDownloadJob(job); }}>Arşivi İndir</Button>}
+          </div>)}
           {pages > 1 && <div className="flex gap-3"><Button disabled={page <= 1} onClick={() => setPage(value => value - 1)}>Önceki</Button><span>{Math.min(page, pages)} / {pages}</span><Button disabled={page >= pages} onClick={() => setPage(value => value + 1)}>Sonraki</Button></div>}
         </CardContent></Card>
       </TabsContent>
@@ -109,7 +121,16 @@ export default function ArchivePage() {
         {missing.length > 0 && <p>{missing.length} sınıfın hedefi eksik.</p>}<Button disabled={!active || !rules.isSuccess || missing.length > 0 || !rulesDirty || save.isPending || rulesLocked} onClick={() => save.mutate()}>Geçiş Kurallarını Kaydet</Button>
       </CardContent></Card></TabsContent>
     </Tabs>
-    {focusJob && <Card><CardHeader><CardTitle>İş İlerlemesi</CardTitle></CardHeader><CardContent className="space-y-2"><AdminQueryState queries={[jobQuery, logs]} />{jobQuery.data && <p role="status">{statuses[jobQuery.data.job.status] ?? jobQuery.data.job.status}</p>}{jobQuery.data?.job.error && <p role="alert">{jobQuery.data.job.error}</p>}{logs.data?.logs.map(log => <p key={log.id} className="text-sm">{new Date(log.createdAt).toLocaleString('tr-TR')} — {log.action}</p>)}</CardContent></Card>}
+    {focusJob && <Card role="region" aria-label="Seçilen arşiv işi"><CardHeader><CardTitle>İş İlerlemesi</CardTitle></CardHeader><CardContent className="space-y-2">
+      <AdminQueryState queries={[jobQuery, logs]} />
+      {focusedJob && <><p>İş {focusedJob.id}</p><p role="status">{statuses[focusedJob.status] ?? focusedJob.status}</p></>}
+      {focusedJob?.error && <p role="alert">{focusedJob.error}</p>}
+      {jobQuery.isSuccess && focusedJob?.status === 'failed' && <div className="flex flex-wrap gap-2">
+        <Button aria-label={`Yeniden Dene: ${focusedJob.id}`} disabled={busy || jobQuery.isFetching} onClick={() => retry.mutate(focusedJob.id)}>Yeniden Dene</Button>
+        {focusedJob.canCancel && <Button variant="outline" aria-label={`Kopyalama başlamadan iptal: ${focusedJob.id}`} disabled={busy || jobQuery.isFetching} onClick={() => cancel.mutate(focusedJob.id)}>Kopyalama başlamadan iptal</Button>}
+      </div>}
+      {logs.data?.logs.map(log => <p key={log.id} className="text-sm">{new Date(log.createdAt).toLocaleString('tr-TR')} — {log.action}</p>)}
+    </CardContent></Card>}
     <Dialog open={!!downloadJob} onOpenChange={open => { if (!open && !download.isPending) { setDownloadJob(null); setPassword(''); } }}><DialogContent><DialogTitle>Arşiv İndirme Doğrulaması</DialogTitle><DialogDescription>Tamamlanan arşivi indirmek için yönetici şifrenizi tekrar doğrulayın.</DialogDescription><form className="space-y-3" onSubmit={event => { event.preventDefault(); if (password && downloadJob?.status === 'completed') download.mutate(); }}><Label htmlFor="archive-password">Yönetici şifresi</Label><Input id="archive-password" type="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} disabled={download.isPending} />{error && <p role="alert">{error}</p>}<Button type="submit" disabled={!password || download.isPending}>Şifreyi Doğrula ve İndir</Button></form></DialogContent></Dialog>
   </div></DashboardLayout>;
 }

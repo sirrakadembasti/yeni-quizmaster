@@ -6,7 +6,7 @@ export default defineConfig({
   ...base,
   test: {
     ...base.test,
-    include: ['tests/api/archive-worker-integration.test.ts'],
+    include: ['tests/api/archive-worker-integration.test.ts', 'tests/api/archive-retention.test.ts'],
     testTimeout: 120000,
     hookTimeout: 120000,
   },

@@ -1,12 +1,20 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
-import { copyFile, readFile, writeFile } from 'node:fs/promises';
+import { copyFile, readFile, writeFile, readdir } from 'node:fs/promises';
+import express from 'express';
+import request from 'supertest';
 import path from 'node:path';
 import { getOrCreateActiveYear, getYearSchedule } from '../../services/academic-year';
 import { enqueueArchive } from '../../services/archive-jobs';
 import { exportArchive, verifyArchiveArtifact, type SnapshotExport } from '../../services/archive-export';
 import { createArchiveWorker } from '../../services/archive-worker';
+const recoveryAuth = vi.hoisted(() => ({ id: '' }));
+vi.mock('../../middleware/auth', () => ({
+  requireAuth: (req: any, _res: any, next: any) => { req.user = { id: recoveryAuth.id, role: 'admin' }; next(); },
+  requireRole: () => (_req: any, _res: any, next: any) => next(),
+}));
+import { createArchiveRouter } from '../../api-routes/archive';
 
 // Each case starts from the migrated, empty global-setup DB. No captured job can
 // leak its write fence into another case, and no production datasource is used.
@@ -58,6 +66,181 @@ async function inputFor(id: string): Promise<SnapshotExport> {
   rows.sort((a, b) => a.entityType.localeCompare(b.entityType) || a.entityId.localeCompare(b.entityId));
   return { id, label: job.label, createdAt: job.createdAt, initiatedBy: job.initiatedBy, rows };
 }
+function recoveryApp(adminId: string) {
+  recoveryAuth.id = adminId;
+  const app = express(); app.use(express.json());
+  app.use('/archive', createArchiveRouter({ db, now, backupRoot: root }));
+  return app;
+}
+
+it.each([5, 20])('recovers an exhausted manual capture (%s attempts), preserves frozen rows and unblocks exactly one annual rollover', async attempts => {
+  const f = await fixture();
+  const job = await enqueueArchive(db, { mode: 'manual', quizIds: [f.quiz.id], initiatedBy: f.admin.id }, clock);
+  await worker({ maxAttempts: 1, export: async (input, directory) => {
+    const artifact = await realExport(input, directory);
+    await writeFile(artifact.artifactPath, 'corrupt published package');
+    return artifact;
+  } }).tick();
+  await db.archiveSnapshot.update({ where: { id: job.id }, data: { attempts } });
+  const rows = await db.archiveSnapshotRow.findMany({ where: { snapshotId: job.id }, orderBy: { id: 'asc' } });
+  clock = getYearSchedule(f.year.label);
+  await worker().tick();
+  const annual = await db.archiveSnapshot.findFirstOrThrow({ where: { mode: 'annual' } });
+  expect(annual.status).toBe('queued');
+  expect((await db.academicYear.findUniqueOrThrow({ where: { id: f.year.id } })).status).toBe('active');
+  const app = recoveryApp(f.admin.id);
+  const blocked = await request(app).get(`/archive/jobs/${annual.id}`);
+  expect(blocked.body.job.blockers).toEqual([expect.objectContaining({ id: job.id, status: 'failed' })]);
+  const retried = await request(app).post(`/archive/jobs/${job.id}/retry`);
+  expect(retried.status).toBe(202);
+  expect(retried.body.job.attempts).toBe(0);
+  const quarantine = await readdir(path.join(root, '.quarantine'));
+  expect(quarantine).toHaveLength(1);
+  const quarantined = path.join(root, '.quarantine', quarantine[0]);
+  expect(await readFile(path.join(quarantined, 'package', 'archive.zip'), 'utf8')).toBe('corrupt published package');
+  expect(JSON.parse(await readFile(path.join(quarantined, 'reason.json'), 'utf8'))).toMatchObject({ snapshotId: job.id, reason: 'artifact_integrity_failed' });
+  await worker().tick();
+  expect((await db.archiveSnapshot.findUniqueOrThrow({ where: { id: job.id } })).status).toBe('completed');
+  expect(await db.archiveSnapshotRow.findMany({ where: { snapshotId: job.id }, orderBy: { id: 'asc' } })).toEqual(rows);
+  await worker().tick();
+  await worker().tick();
+  expect((await db.archiveSnapshot.findUniqueOrThrow({ where: { id: annual.id } })).status).toBe('completed');
+  expect(await db.archiveSnapshot.count({ where: { mode: 'annual' } })).toBe(1);
+  expect(await db.academicYear.count()).toBe(2);
+  expect(await db.actionLog.count({ where: { action: 'ARCHIVE_RECOVERY_REQUESTED', details: { contains: job.id } } })).toBe(1);
+  expect(await db.actionLog.count({ where: { action: 'ARCHIVE_ARTIFACT_QUARANTINED', details: { contains: job.id } } })).toBe(1);
+  expect(await db.actionLog.count({ where: { action: 'ARCHIVE_CREATED', details: { contains: annual.id } } })).toBe(1);
+});
+
+it('each explicit recovery has another bounded automatic cycle and audits failures without losing frozen rows', async () => {
+  const f = await fixture();
+  const job = await enqueueArchive(db, { mode: 'manual', quizIds: [f.quiz.id], initiatedBy: f.admin.id }, clock);
+  const fail = () => worker({ maxAttempts: 2, export: async () => { throw new Error('Synthetic export unavailable'); } }).tick();
+  await fail();
+  clock = (await db.archiveSnapshot.findUniqueOrThrow({ where: { id: job.id } })).nextAttemptAt!;
+  await fail();
+  expect((await db.archiveSnapshot.findUniqueOrThrow({ where: { id: job.id } })).status).toBe('failed');
+  const rows = await db.archiveSnapshotRow.findMany({ where: { snapshotId: job.id }, orderBy: { id: 'asc' } });
+  expect((await request(recoveryApp(f.admin.id)).post(`/archive/jobs/${job.id}/retry`)).status).toBe(202);
+  await fail();
+  clock = (await db.archiveSnapshot.findUniqueOrThrow({ where: { id: job.id } })).nextAttemptAt!;
+  await fail();
+  const exhausted = await db.archiveSnapshot.findUniqueOrThrow({ where: { id: job.id } });
+  expect(exhausted).toMatchObject({ status: 'failed', attempts: 2 });
+  await worker().tick();
+  expect((await db.archiveSnapshot.findUniqueOrThrow({ where: { id: job.id } })).attempts).toBe(2);
+  expect(await db.archiveSnapshotRow.findMany({ where: { snapshotId: job.id }, orderBy: { id: 'asc' } })).toEqual(rows);
+  expect(await db.actionLog.count({ where: { action: 'ARCHIVE_FAILED', details: { contains: job.id } } })).toBe(2);
+});
+
+it('refuses completed artifact repair even when its published ZIP has been corrupted', async () => {
+  const f = await fixture();
+  const job = await enqueueArchive(db, { mode: 'manual', quizIds: [f.quiz.id], initiatedBy: f.admin.id }, clock);
+  await worker().tick();
+  const completed = await db.archiveSnapshot.findUniqueOrThrow({ where: { id: job.id } });
+  await writeFile(completed.artifactPath!, 'corrupt completed package');
+  expect((await request(recoveryApp(f.admin.id)).post(`/archive/jobs/${job.id}/retry`)).status).toBe(409);
+  expect(await readFile(completed.artifactPath!, 'utf8')).toBe('corrupt completed package');
+  expect(await db.archiveSnapshot.findUniqueOrThrow({ where: { id: job.id } })).toEqual(completed);
+});
+
+it('automatic annual failure creates both an administrator notification and an email outbox item', async () => {
+  const f = await fixture();
+  clock = getYearSchedule(f.year.label);
+  await worker({ maxAttempts: 1, export: async () => { throw new Error('Synthetic annual failure'); } }).tick();
+  const job = await db.archiveSnapshot.findFirstOrThrow({ where: { mode: 'annual' } });
+  expect(job.status).toBe('failed');
+  expect(await db.notification.count({ where: { userId: f.admin.id, message: { contains: job.id } } })).toBe(1);
+  expect(await db.emailQueue.count({ where: { to: f.admin.email, type: 'system_alert', body: { contains: job.id } } })).toBe(1);
+});
+
+it('concurrent administrator recoveries reserve exactly one owner and reject the competing request', async () => {
+  const f = await fixture();
+  const job = await enqueueArchive(db, { mode: 'manual', quizIds: [f.quiz.id], initiatedBy: f.admin.id }, clock);
+  await worker({ maxAttempts: 1, export: async () => { throw new Error('Synthetic failed export'); } }).tick();
+  const app = recoveryApp(f.admin.id);
+  const responses = await Promise.all([request(app).post(`/archive/jobs/${job.id}/retry`), request(app).post(`/archive/jobs/${job.id}/retry`)]);
+  expect(responses.map(response => response.status).sort()).toEqual([202, 409]);
+  expect(await db.actionLog.count({ where: { action: 'ARCHIVE_RECOVERY_REQUESTED', details: { contains: job.id } } })).toBe(1);
+});
+
+it('failed recovery audit rolls back the retry reset, releases its own lease and retains the quarantine evidence', async () => {
+  const f = await fixture();
+  const job = await enqueueArchive(db, { mode: 'manual', quizIds: [f.quiz.id], initiatedBy: f.admin.id }, clock);
+  await worker({ maxAttempts: 1, export: async (input, directory) => {
+    const artifact = await realExport(input, directory);
+    await writeFile(artifact.artifactPath, 'Synthetic damaged unpublished ZIP');
+    return artifact;
+  } }).tick();
+  const before = await db.archiveSnapshot.findUniqueOrThrow({ where: { id: job.id } });
+  const rows = await db.archiveSnapshotRow.findMany({ where: { snapshotId: job.id }, orderBy: { id: 'asc' } });
+  await db.$executeRawUnsafe("CREATE TRIGGER fail_recovery_audit BEFORE INSERT ON ActionLog WHEN NEW.action='ARCHIVE_RECOVERY_REQUESTED' BEGIN SELECT RAISE(ABORT,'synthetic recovery audit failure'); END");
+  expect((await request(recoveryApp(f.admin.id)).post(`/archive/jobs/${job.id}/retry`)).status).toBe(409);
+  expect(await db.archiveSnapshot.findUniqueOrThrow({ where: { id: job.id } })).toMatchObject({ status: 'failed', attempts: before.attempts, capturedAt: before.capturedAt, leaseOwner: null, leaseExpiresAt: null });
+  expect(await db.archiveSnapshotRow.findMany({ where: { snapshotId: job.id }, orderBy: { id: 'asc' } })).toEqual(rows);
+  const quarantine = path.join(root, '.quarantine', (await readdir(path.join(root, '.quarantine')))[0]);
+  expect(JSON.parse(await readFile(path.join(quarantine, 'reason.json'), 'utf8'))).toMatchObject({ snapshotId: job.id, reason: 'artifact_integrity_failed' });
+  expect(await db.actionLog.count({ where: { action: 'ARCHIVE_RECOVERY_REQUESTED', details: { contains: job.id } } })).toBe(0);
+  expect(await db.actionLog.count({ where: { action: 'ARCHIVE_RECOVERY_FAILED', details: { contains: job.id } } })).toBe(1);
+  await db.$executeRawUnsafe('DROP TRIGGER fail_recovery_audit');
+  expect((await request(recoveryApp(f.admin.id)).post(`/archive/jobs/${job.id}/retry`)).status).toBe(202);
+  await worker().tick();
+  expect((await db.archiveSnapshot.findUniqueOrThrow({ where: { id: job.id } })).status).toBe('completed');
+});
+
+it('explicitly cancelling a failed pre-capture job whose quiz was deleted unblocks one annual rollover', async () => {
+  const f = await fixture();
+  const manual = await enqueueArchive(db, { mode: 'manual', quizIds: [f.other.id], initiatedBy: f.admin.id }, clock);
+  await db.archiveSnapshot.update({ where: { id: manual.id }, data: { status: 'failed', attempts: 20, lastError: 'Selected content is missing' } });
+  await db.quiz.delete({ where: { id: f.other.id } });
+  clock = getYearSchedule(f.year.label);
+  await worker().tick();
+  const annual = await db.archiveSnapshot.findFirstOrThrow({ where: { mode: 'annual' } });
+  expect(annual.status).toBe('queued');
+  const response = await request(recoveryApp(f.admin.id)).post(`/archive/jobs/${manual.id}/cancel`);
+  expect(response.status).toBe(202);
+  expect(response.body.job.status).toBe('cancelled');
+  expect(await db.archiveSnapshotRow.count({ where: { snapshotId: manual.id } })).toBe(0);
+  await worker().tick(); await worker().tick();
+  expect((await db.archiveSnapshot.findUniqueOrThrow({ where: { id: annual.id } })).status).toBe('completed');
+  expect(await db.academicYear.count()).toBe(2);
+  expect(await db.actionLog.count({ where: { action: 'ARCHIVE_CANCELLED', details: { contains: manual.id } } })).toBe(1);
+});
+
+it('API and SQLite refuse cancellation of any captured manual archive', async () => {
+  const f = await fixture();
+  const manual = await enqueueArchive(db, { mode: 'manual', quizIds: [f.quiz.id], initiatedBy: f.admin.id }, clock);
+  await worker({ maxAttempts: 1, export: async () => { throw new Error('Synthetic export unavailable'); } }).tick();
+  const job = await db.archiveSnapshot.findUniqueOrThrow({ where: { id: manual.id } });
+  expect(job.capturedAt).not.toBeNull();
+  const rows = await db.archiveSnapshotRow.findMany({ where: { snapshotId: job.id }, orderBy: { id: 'asc' } });
+  expect.soft((await request(recoveryApp(f.admin.id)).post(`/archive/jobs/${job.id}/cancel`)).status).toBe(409);
+  await expect(db.archiveSnapshot.update({ where: { id: job.id }, data: { status: 'cancelled' } })).rejects.toThrow();
+  expect(await db.archiveSnapshot.findUniqueOrThrow({ where: { id: job.id } })).toEqual(job);
+  expect(await db.archiveSnapshotRow.findMany({ where: { snapshotId: job.id }, orderBy: { id: 'asc' } })).toEqual(rows);
+});
+
+it('quarantines a null manifest and completes the same captured snapshot without changing frozen rows', async () => {
+  const f = await fixture();
+  const job = await enqueueArchive(db, { mode: 'manual', quizIds: [f.quiz.id], initiatedBy: f.admin.id }, clock);
+  await worker({ maxAttempts: 1, export: async (input, directory) => {
+    const artifact = await realExport(input, directory);
+    await writeFile(path.join(path.dirname(artifact.artifactPath), 'checksums.json'), 'null');
+    return artifact;
+  } }).tick();
+  const failed = await db.archiveSnapshot.findUniqueOrThrow({ where: { id: job.id } });
+  expect(failed.status).toBe('failed');
+  const rows = await db.archiveSnapshotRow.findMany({ where: { snapshotId: job.id }, orderBy: { id: 'asc' } });
+  expect((await request(recoveryApp(f.admin.id)).post(`/archive/jobs/${job.id}/retry`)).status).toBe(202);
+  const quarantine = path.join(root, '.quarantine', (await readdir(path.join(root, '.quarantine')))[0]);
+  expect(await readFile(path.join(quarantine, 'package', 'checksums.json'), 'utf8')).toBe('null');
+  await worker().tick();
+  const completed = await db.archiveSnapshot.findUniqueOrThrow({ where: { id: job.id } });
+  expect(completed).toMatchObject({ status: 'completed', capturedAt: failed.capturedAt });
+  expect(await db.archiveSnapshotRow.findMany({ where: { snapshotId: job.id }, orderBy: { id: 'asc' } })).toEqual(rows);
+  const artifact = await verifyArchiveArtifact(await inputFor(job.id), root);
+  expect(completed.zipSha256).toBe(artifact.zipSha256);
+});
 
 it('annual capture boundary rejects newly inserted quizzes and students during export', async () => {
   const f = await fixture();

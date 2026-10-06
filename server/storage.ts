@@ -1736,7 +1736,8 @@ export class PrismaStorage implements IStorage {
         },
       });
       const actionLogs = await tx.actionLog.deleteMany({
-        where: { createdAt: { lt: cutoffs.actionLogsBefore } },
+        // Archive audit also stores durable recovery cycles and lifetime attempt totals.
+        where: { createdAt: { lt: cutoffs.actionLogsBefore }, action: { not: { startsWith: 'ARCHIVE_' } } },
       });
 
       return {

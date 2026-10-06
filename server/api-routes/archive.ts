@@ -5,7 +5,7 @@ import path from 'node:path';
 import { z } from 'zod';
 import { requireAuth, requireRole, type AuthRequest } from '../middleware/auth';
 import { archiveDb } from '../services/archive-db';
-import { ArchiveJobError, enqueueArchive, previewArchive, UUID } from '../services/archive-jobs';
+import { ArchiveJobError, enqueueArchive, previewArchive, recoverArchive, cancelUncapturedArchive, archiveFailureReason, UUID } from '../services/archive-jobs';
 import { getOrCreateActiveYear } from '../services/academic-year';
 import { verifyArchiveArtifact } from '../services/archive-export';
 import { getProjectRoot } from '../utils/project-paths';
@@ -48,6 +48,17 @@ export function createArchiveRouter(options: ArchiveRouterOptions = {}) {
     if (!job) throw new ArchiveJobError(404, 'Arşiv bulunamadı.');
     return job;
   };
+  const metadataFor = async (job: ArchiveSnapshot) => {
+    const [manual, recoveries, rowCount] = await Promise.all([
+      job.mode === 'annual' && job.status !== 'completed' ? db.archiveSnapshot.findMany({ where: { academicYearId: job.academicYearId, mode: 'manual', status: { notIn: ['completed', 'cancelled'] } }, orderBy: { createdAt: 'asc' } }) : [],
+      db.actionLog.findMany({ where: { action: 'ARCHIVE_RECOVERY_REQUESTED', details: { contains: job.id } }, select: { action: true, details: true } }),
+      job.mode === 'manual' && job.status === 'failed' && !job.capturedAt ? db.archiveSnapshotRow.count({ where: { snapshotId: job.id } }) : 1,
+    ]);
+    const history = recoveries.filter(log => { try { return log.action === 'ARCHIVE_RECOVERY_REQUESTED' && JSON.parse(log.details ?? '{}').snapshotId === job.id; } catch { return false; } });
+    return { ...archiveJobMetadata(job), recoveryCount: history.length, lifetimeAttempts: job.attempts + history.reduce((sum, log) => sum + (Number(JSON.parse(log.details!).previousAttempts) || 0), 0),
+      canCancel: rowCount === 0 && !job.artifactPath && !job.zipSha256 && job.sizeBytes == null && (!job.leaseExpiresAt || job.leaseExpiresAt <= now()),
+      blockers: manual.filter(blocker => blocker.academicYearId === job.academicYearId && blocker.mode === 'manual' && !['completed', 'cancelled'].includes(blocker.status)).map(blocker => ({ id: blocker.id, status: blocker.status, ...archiveFailureReason(blocker.lastError), remedy: blocker.status === 'failed' ? 'Geçmiş ve İşler sekmesinde Yeniden Dene ile aynı verileri kurtarın. Kopyalama başlamadıysa açık iptal seçeneği kullanılabilir.' : 'Manuel arşivin doğrulanıp tamamlanmasını bekleyin; başarısız olursa Yeniden Dene ile kurtarın.' })) };
+  };
   router.post('/', wrap(async (req, res) => {
     const parsed = manualSchema.safeParse(req.body);
     if (!parsed.success) throw new ArchiveJobError(400, 'Manuel arşiv için açık içerik seçimi gereklidir.');
@@ -82,9 +93,9 @@ export function createArchiveRouter(options: ArchiveRouterOptions = {}) {
   }));
   router.get('/jobs', wrap(async (_req, res) => {
     const jobs = await db.archiveSnapshot.findMany({ orderBy: { createdAt: 'desc' }, take: 200 });
-    res.json({ jobs: jobs.map(archiveJobMetadata) });
+    res.json({ jobs: await Promise.all(jobs.map(metadataFor)) });
   }));
-  router.get('/jobs/:id', wrap(async (req, res) => res.json({ job: archiveJobMetadata(await jobFor(req.params.id)) })));
+  router.get('/jobs/:id', wrap(async (req, res) => res.json({ job: await metadataFor(await jobFor(req.params.id)) })));
   router.get('/jobs/:id/logs', wrap(async (req, res) => {
     const job = await jobFor(req.params.id);
     const logs = await db.actionLog.findMany({ where: { action: { startsWith: 'ARCHIVE_' }, details: { contains: job.id } }, orderBy: { createdAt: 'desc' }, take: 500 });
@@ -92,14 +103,14 @@ export function createArchiveRouter(options: ArchiveRouterOptions = {}) {
     res.json({ logs: filtered.map(log => ({ id: log.id, action: log.action, userId: log.userId, createdAt: log.createdAt, snapshotId: job.id })) });
   }));
   router.post('/jobs/:id/retry', wrap(async (req, res) => {
-    const job = await jobFor(req.params.id);
-    if (job.status !== 'failed' || job.attempts >= 20) throw new ArchiveJobError(409, 'Bu arşiv yeniden başlatılamaz.');
-    await db.$transaction(async tx => {
-      const updated = await tx.archiveSnapshot.updateMany({ where: { id: job.id, status: 'failed', attempts: { lt: 20 } }, data: { status: 'retry_wait', nextAttemptAt: now(), leaseOwner: null, leaseExpiresAt: null, lastError: null } });
-      if (updated.count !== 1) throw new ArchiveJobError(409, 'Arşiv durumu değişti.');
-      await tx.actionLog.create({ data: { userId: req.user!.id, action: 'ARCHIVE_RETRY', details: JSON.stringify({ snapshotId: job.id }) } });
-    });
-    res.status(202).json({ job: archiveJobMetadata(await jobFor(job.id)) });
+    await jobFor(req.params.id);
+    const job = await recoverArchive(db, { id: req.params.id, actorId: req.user!.id, backupRoot: getArchiveBackupRoot(options.backupRoot) }, now);
+    res.status(202).json({ job: await metadataFor(job) });
+  }));
+  router.post('/jobs/:id/cancel', wrap(async (req, res) => {
+    await jobFor(req.params.id);
+    const job = await cancelUncapturedArchive(db, req.params.id, req.user!.id, now());
+    res.status(202).json({ job: await metadataFor(job) });
   }));
   router.post('/jobs/:id/download-authorize', wrap(async (req, res) => {
     delete req.session.archiveDownloadGrant;

@@ -195,7 +195,9 @@ async function verifyDirectory(directory: string, meta: ArchiveMeta): Promise<Ar
   }
   if (!files.get('meta.json')!.equals(json(meta))) throw new Error('Archive snapshot metadata conflict');
   const checksums = JSON.parse(files.get('checksums.json')!.toString('utf8'));
+  if (!checksums || typeof checksums !== 'object' || Array.isArray(checksums) || Object.getPrototypeOf(checksums) !== Object.prototype) throw new Error('Invalid archive manifest');
   if (Object.keys(checksums).sort().join('|') !== [...PAYLOAD_NAMES].sort().join('|')) throw new Error('Invalid archive manifest');
+  if (Object.values(checksums).some(value => typeof value !== 'string' || !/^[a-f0-9]{64}$/.test(value))) throw new Error('Invalid archive manifest');
   for (const name of PAYLOAD_NAMES) if (checksums[name] !== sha256(files.get(name)!)) throw new Error('Archive payload checksum mismatch');
   const zipPath = path.join(directory, 'archive.zip'), stat = await lstat(zipPath);
   if (!stat.isFile() || stat.isSymbolicLink() || stat.size > MAX_PACKAGE_BYTES) throw new Error('Unsafe archive ZIP');
@@ -206,6 +208,41 @@ async function verifyDirectory(directory: string, meta: ArchiveMeta): Promise<Ar
 export async function verifyArchiveArtifact(input: SnapshotExport, backupRoot: string): Promise<ArchiveArtifact> {
   const { meta } = prepare(input), root = await ensureSafeDirectory(backupRoot);
   return verifyDirectory(path.join(root, input.label, input.id), meta);
+}
+/** Called only by explicitly reserved failed-job recovery, never by automatic export or download. */
+export async function prepareArchiveRecovery(input: SnapshotExport, backupRoot: string, details: { actorId: string; previousAttempts: number; assertOwned: () => Promise<void> }): Promise<string | null> {
+  const { meta } = prepare(input), absoluteRoot = path.resolve(backupRoot);
+  if (!await exists(absoluteRoot)) return null;
+  const root = await ensureSafeDirectory(absoluteRoot), yearPath = path.join(root, input.label);
+  if (!await exists(yearPath)) return null;
+  const year = await ensureSafeDirectory(yearPath), target = path.join(year, input.id);
+  if (!await exists(target)) return null;
+  await ensureSafeDirectory(target);
+  // Reject links anywhere inside a partial package before moving it. Quarantine never follows links.
+  let entries = 0;
+  async function inspect(directory: string) {
+    for (const name of await readdir(directory)) {
+      if (++entries > 10000) throw new Error('Unsafe archive recovery entry limit');
+      const file = path.join(directory, name), stat = await lstat(file);
+      if (stat.isSymbolicLink() || (!stat.isFile() && !stat.isDirectory())) throw new Error('Unsafe archive recovery symlink or special file');
+      if (stat.isDirectory()) await inspect(file);
+    }
+  }
+  await inspect(target);
+  try { await verifyDirectory(target, meta); return null; }
+  catch (error: any) {
+    // Permission/I/O failures and unsafe paths require storage repair; only integrity failures are quarantined.
+    if (!(error instanceof SyntaxError) && error.code !== 'ENOENT' && !/^(Archive contains|Archive snapshot metadata conflict|Invalid archive manifest|Archive payload checksum mismatch|Archive ZIP verification failed|Unsafe archive payload|Unsafe archive ZIP)/.test(error.message ?? '')) throw error;
+  }
+  await details.assertOwned();
+  const quarantineRoot = await ensureSafeDirectory(path.join(root, '.quarantine'), true);
+  const quarantine = await mkdtemp(path.join(quarantineRoot, input.label + '-' + input.id + '-'));
+  // The durable manifest survives even if a subsequent audit transaction fails or the process restarts.
+  await writeFile(path.join(quarantine, 'reason.json'), json({ snapshotId: input.id, academicYear: input.label, reason: 'artifact_integrity_failed', actorId: details.actorId, previousAttempts: details.previousAttempts, quarantinedAt: new Date().toISOString() }), { flag: 'wx', mode: 0o600 });
+  await ensureSafeDirectory(year); await ensureSafeDirectory(target); await ensureSafeDirectory(quarantine);
+  await details.assertOwned();
+  await rename(target, path.join(quarantine, 'package'));
+  return path.relative(root, quarantine);
 }
 export async function exportArchive(input: SnapshotExport, backupRoot: string, options: ArchiveExportOptions = {}): Promise<ArchiveArtifact> {
   const { rows, meta } = prepare(input);

@@ -67,7 +67,7 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
   const owned = (id: string) => ({ id, leaseOwner: owner, leaseExpiresAt: { gt: now() } });
   async function assertOwned(tx: any, id: string) {
     const job = await tx.archiveSnapshot.findUniqueOrThrow({ where: { id } });
-    if (job.leaseOwner !== owner || !job.leaseExpiresAt || job.leaseExpiresAt <= now() || ['completed', 'failed'].includes(job.status)) throw new LeaseLost();
+    if (job.leaseOwner !== owner || !job.leaseExpiresAt || job.leaseExpiresAt <= now() || ['completed', 'failed', 'cancelled'].includes(job.status)) throw new LeaseLost();
     return job;
   }
   async function patchOwned(id: string, data: Record<string, unknown>) {
@@ -75,7 +75,7 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
     if (changed.count !== 1) throw new LeaseLost();
   }
   async function hasPendingManual(tx: any, yearId: string) {
-    return await tx.archiveSnapshot.count({ where: { academicYearId: yearId, mode: 'manual', status: { not: 'completed' } } }) > 0;
+    return await tx.archiveSnapshot.count({ where: { academicYearId: yearId, mode: 'manual', status: { notIn: ['completed', 'cancelled'] } } }) > 0;
   }
   async function notify(tx: any, job: any, action: string) {
     const admins = await tx.user.findMany({ where: { role: 'admin', isActive: true }, select: { id: true, email: true } });
@@ -83,7 +83,10 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
     const actorId = actor?.id ?? admins[0]?.id;
     if (actorId) await tx.actionLog.create({ data: { userId: actorId, action, details: JSON.stringify({ snapshotId: job.id, academicYear: job.label, attempts: job.attempts }) } });
     // Existing outbox delivers later; this service never opens SMTP connections.
-    if (action === 'ARCHIVE_FAILED') for (const admin of admins) await tx.emailQueue.create({ data: { to: admin.email, subject: `Eğitim yılı arşivi başarısız: ${job.label}`, body: `Arşiv ${job.id} tamamlanamadı. Yönetim panelinden arşiv durumunu inceleyin.`, type: 'system_alert' } });
+    if (action === 'ARCHIVE_FAILED') for (const admin of admins) {
+      await tx.emailQueue.create({ data: { to: admin.email, subject: `Eğitim yılı arşivi başarısız: ${job.label}`, body: `Arşiv ${job.id} tamamlanamadı. Yönetim panelinden arşiv durumunu inceleyin.`, type: 'system_alert' } });
+      if (job.mode === 'annual') await tx.notification.create({ data: { userId: admin.id, title: `Eğitim yılı arşivi başarısız: ${job.label}`, message: `Arşiv ${job.id} tamamlanamadı. Yıl kapanmadı; Yıl Sonu ve Arşiv İşlemleri sayfasında sorunu giderip Yeniden Dene ile kurtarın.`, type: 'error' } });
+    }
   }
   async function finalize(id: string) {
     await db.$transaction(async tx => {
