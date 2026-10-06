@@ -2,6 +2,7 @@ import type { Prisma, PrismaClient, ArchiveSnapshot, AcademicYear } from '@prism
 import { getOrCreateActiveYear } from './academic-year';
 import { randomUUID } from 'node:crypto';
 import { prepareArchiveRecovery } from './archive-export';
+import { readTransitionPlan, transitionIssue, TransitionPlanError } from './archive-transition';
 
 export class ArchiveJobError extends Error {
   constructor(public status: number, message: string) { super(message); }
@@ -35,6 +36,24 @@ export async function previewArchive(db: PrismaClient, input: ManualInput, now =
       tx.question.count({ where: { quizId: { in: quizIds } } }),
     ]);
     return { academicYearId: year.id, label: year.label, quizIds, quizzes: quizIds.length, results, surveySubmissions, questions };
+  });
+}
+/** A recovered annual job must preview its captured membership, not a new scope. */
+export async function previewAnnualTransition(db: PrismaClient, yearId: string) {
+  return db.$transaction(async tx => {
+    const year = await tx.academicYear.findUnique({ where: { id: yearId } });
+    if (!year) throw new ArchiveJobError(404, 'Eğitim yılı bulunamadı.');
+    if (year.status !== 'active') throw new ArchiveJobError(409, 'Yalnız etkin yılın geçişi önkontrolden geçirilebilir.');
+    const job = await tx.archiveSnapshot.findUnique({ where: { annualKey: year.label } });
+    const frozen = job?.capturedAt ? (await tx.archiveSnapshotRow.findMany({ where: { snapshotId: job.id, entityType: 'user' }, orderBy: { entityId: 'asc' } })).map(row => JSON.parse(row.dataJson)) : undefined;
+    const source = frozen ? 'snapshot' : 'live';
+    try {
+      const { summary } = await readTransitionPlan(tx, year.id, frozen);
+      return { academicYearId: year.id, label: year.label, ready: true, source, summary, issues: [] };
+    } catch (error) {
+      if (!(error instanceof TransitionPlanError)) throw error;
+      return { academicYearId: year.id, label: year.label, ready: false, source, summary: null, issues: [transitionIssue(error)] };
+    }
   });
 }
 export async function enqueueArchive(db: PrismaClient, input: ArchiveEnqueueInput, now = new Date()): Promise<ArchiveSnapshot> {

@@ -31,6 +31,7 @@ beforeEach(async () => {
   const submission = await db.surveySubmission.create({ data: { surveyId: quiz.id, studentId: student.id } });
   const answer = await db.surveyAnswer.create({ data: { submissionId: submission.id, questionId: question.id, value: 'Original' } });
   const year = await db.academicYear.create({ data: { label: '2025-2026', opensAt: new Date('2025-09-01'), scheduledCloseAt: new Date('2026-07-15') } });
+  await db.academicTransitionRule.create({ data: { yearId: year.id, fromClassId: cls.id, graduate: true } });
   const job = await db.archiveSnapshot.create({ data: { mode: 'annual', academicYearId: year.id, label: year.label, scopeJson: '{}' } }); jobId = job.id;
   ids = { User: student.id, Class: cls.id, Category: cat.id, ClassTeacherCourse: assignment.id, GuardianStudent: guardian.id, Announcement: announcement.id, QuestionBank: bank.id, Quiz: quiz.id, Question: question.id, StudentResult: result.id, SurveySubmission: submission.id, SurveyAnswer: answer.id };
   await captureArchive(db, job.id);
@@ -99,6 +100,7 @@ it('permit admission rejects expired leases and entities outside the verified ca
 it('rule repair remains usable for a dormant failed annual job and freezes again under a live lease', async () => {
   const job = await db.archiveSnapshot.findUniqueOrThrow({ where: { id: jobId } });
   await db.archiveSnapshot.update({ where: { id: jobId }, data: { status: 'failed', leaseOwner: null, leaseExpiresAt: null } });
+  await db.academicTransitionRule.deleteMany({ where: { yearId: job.academicYearId } });
   const rule = await db.academicTransitionRule.create({ data: { yearId: job.academicYearId, fromClassId: ids.Class, graduate: true } });
   await db.academicTransitionRule.update({ where: { id: rule.id }, data: { graduate: false, toClassId: ids.Class } });
   await db.archiveSnapshot.update({ where: { id: jobId }, data: { status: 'retry_wait', leaseOwner: 'repair-worker', leaseExpiresAt: new Date(Date.now() + 180000) } });

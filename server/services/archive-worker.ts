@@ -4,47 +4,8 @@ import { getOrCreateActiveYear, getYearSchedule } from './academic-year';
 import { enqueueArchive } from './archive-jobs';
 import { captureArchive } from './archive-capture';
 import { exportArchive, verifyArchiveArtifact, type ArchiveArtifact, type SnapshotExport } from './archive-export';
-
-type Student = { id: string; role: string; isActive: boolean; classId: string | null; studentNo?: number | null };
-type Transition = { fromClassId: string; toClassId: string | null; graduate: boolean };
-type PlannedStudent = { id: string; classId: string | null; studentNo: number | null; graduate: boolean };
-/** Compute the final population before writing. Never iterate a newly promoted class. */
-export function planStudentTransition(frozen: Student[], current: Student[], classes: { id: string; maxStudents: number | null }[], rules: Transition[]): PlannedStudent[] {
-  const initial = frozen.filter(s => s.role === 'student' && s.classId !== null).sort((a, b) => a.id.localeCompare(b.id));
-  const live = new Map(current.map(s => [s.id, s])), classMap = new Map(classes.map(c => [c.id, c]));
-  const ruleMap = new Map(rules.map(r => [r.fromClassId, r]));
-  if (ruleMap.size !== rules.length) throw new Error('Duplicate transition mapping');
-  for (const rule of rules) {
-    if (!classMap.has(rule.fromClassId) || (rule.graduate ? rule.toClassId !== null : !rule.toClassId || !classMap.has(rule.toClassId))) throw new Error('Invalid transition mapping');
-  }
-  const moving = new Set(initial.map(s => s.id));
-  const counts = new Map<string, number>(), numbers = new Map<string, Set<number>>();
-  for (const student of current.filter(s => !moving.has(s.id) && s.classId !== null)) {
-    if (student.role === 'student' && student.isActive) counts.set(student.classId!, (counts.get(student.classId!) ?? 0) + 1);
-    if (student.studentNo !== null && student.studentNo !== undefined) {
-      const reserved = numbers.get(student.classId!) ?? new Set<number>();
-      if (!Number.isSafeInteger(student.studentNo) || student.studentNo < 1 || reserved.has(student.studentNo)) throw new Error('Invalid or colliding student number');
-      reserved.add(student.studentNo); numbers.set(student.classId!, reserved);
-    }
-  }
-  const plan = initial.map(student => {
-    const actual = live.get(student.id);
-    if (!actual || actual.role !== 'student' || actual.isActive !== student.isActive || actual.classId !== student.classId) throw new Error('Frozen student membership changed');
-    const rule = ruleMap.get(student.classId!);
-    if (!rule || (rule.graduate ? rule.toClassId !== null : !rule.toClassId || !classMap.has(rule.toClassId))) throw new Error('Missing or invalid transition mapping');
-    if (rule.graduate) return { id: student.id, classId: null, studentNo: null, graduate: true };
-    const destination = rule.toClassId!, count = (counts.get(destination) ?? 0) + (student.isActive ? 1 : 0), capacity = classMap.get(destination)!.maxStudents;
-    if (capacity !== null && (!Number.isSafeInteger(capacity) || capacity < count)) throw new Error('Target class capacity exceeded');
-    counts.set(destination, count);
-    const reserved = numbers.get(destination) ?? new Set<number>();
-    let number = 1;
-    while (reserved.has(number) && number <= 2147483647) number++;
-    if (number > 2147483647) throw new Error('Student number range exhausted');
-    reserved.add(number); numbers.set(destination, reserved);
-    return { id: student.id, classId: destination, studentNo: number, graduate: false };
-  });
-  return plan;
-}
+import { readTransitionPlan, type PlannedStudent, type TransitionRule as Transition, type TransitionSummary } from './archive-transition';
+export { planStudentTransition } from './archive-transition';
 
 export const retryDelay = (attempt: number) => Math.min(3600000, 30000 * 2 ** Math.min(20, Math.max(0, attempt - 1)));
 class LeaseLost extends Error { constructor() { super('Archive lease lost'); } }
@@ -77,11 +38,11 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
   async function hasPendingManual(tx: any, yearId: string) {
     return await tx.archiveSnapshot.count({ where: { academicYearId: yearId, mode: 'manual', status: { notIn: ['completed', 'cancelled'] } } }) > 0;
   }
-  async function notify(tx: any, job: any, action: string) {
+  async function notify(tx: any, job: any, action: string, transitionSummary?: TransitionSummary) {
     const admins = await tx.user.findMany({ where: { role: 'admin', isActive: true }, select: { id: true, email: true } });
     const actor = job.initiatedBy && await tx.user.findUnique({ where: { id: job.initiatedBy }, select: { id: true } });
     const actorId = actor?.id ?? admins[0]?.id;
-    if (actorId) await tx.actionLog.create({ data: { userId: actorId, action, details: JSON.stringify({ snapshotId: job.id, academicYear: job.label, attempts: job.attempts }) } });
+    if (actorId) await tx.actionLog.create({ data: { userId: actorId, action, details: JSON.stringify({ snapshotId: job.id, academicYear: job.label, attempts: job.attempts, ...(transitionSummary ? { transitionSummary } : {}) }) } });
     // Existing outbox delivers later; this service never opens SMTP connections.
     if (action === 'ARCHIVE_FAILED') for (const admin of admins) {
       await tx.emailQueue.create({ data: { to: admin.email, subject: `Eğitim yılı arşivi başarısız: ${job.label}`, body: `Arşiv ${job.id} tamamlanamadı. Yönetim panelinden arşiv durumunu inceleyin.`, type: 'system_alert' } });
@@ -97,7 +58,7 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
       quiz: { table: 'Quiz', columns: ['status', 'academicYear'] },
       result: { table: 'StudentResult', columns: ['academicYear'] },
       academicYear: { table: 'AcademicYear', columns: ['status', 'closedAt', 'snapshotId'] },
-      snapshot: { table: 'ArchiveSnapshot', columns: ['status', 'completedAt', 'leaseOwner', 'leaseExpiresAt', 'lastError', 'nextAttemptAt'] },
+      snapshot: { table: 'ArchiveSnapshot', columns: ['status', 'completedAt', 'leaseOwner', 'leaseExpiresAt', 'lastError', 'nextAttemptAt', 'transitionSummaryJson'] },
     };
     const { table, columns } = definitions[kind];
     if (Object.keys(changes).some(key => !columns.includes(key))) throw new Error('Invalid finalization capability');
@@ -123,14 +84,12 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
       const rows = await tx.archiveSnapshotRow.findMany({ where: { snapshotId: id }, orderBy: [{ entityType: 'asc' }, { entityId: 'asc' }] });
       let plan: PlannedStudent[] = [];
       let inheritedRules: Transition[] = [];
+      let transitionSummary: TransitionSummary | undefined;
       if (job.mode === 'annual') {
         const frozen = rows.filter(r => r.entityType === 'user').map(r => JSON.parse(r.dataJson));
-        const [current, classes, rules] = await Promise.all([
-          tx.user.findMany({ select: { id: true, role: true, isActive: true, classId: true, studentNo: true } }),
-          tx.class.findMany({ select: { id: true, maxStudents: true } }),
-          tx.academicTransitionRule.findMany({ where: { yearId: year.id } }),
-        ]);
-        plan = planStudentTransition(frozen, current, classes, rules);
+        const validated = await readTransitionPlan(tx, year.id, frozen);
+        const { rules } = validated;
+        plan = validated.students; transitionSummary = validated.summary;
         inheritedRules = rules.map(({ fromClassId, toClassId, graduate }) => ({ fromClassId, toClassId, graduate })).sort((a, b) => a.fromClassId.localeCompare(b.fromClassId));
       } else if (job.mode !== 'manual') throw new Error('Invalid archive mode');
       // Archived quizzes from older manual snapshots are untouched. Triggers allow only this verified transition.
@@ -171,10 +130,10 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
           transitionRules: { create: inheritedRules },
         } });
       }
-      await notify(tx, job, 'ARCHIVE_COMPLETED');
+      await notify(tx, job, 'ARCHIVE_COMPLETED', transitionSummary);
       // Recheck with the clock immediately before the last mutation. A stale transaction rolls back entirely.
       await assertOwned(tx, id);
-      const completion = { status: 'completed', completedAt: now(), leaseOwner: null, leaseExpiresAt: null, lastError: null, nextAttemptAt: null };
+      const completion = { status: 'completed', completedAt: now(), leaseOwner: null, leaseExpiresAt: null, lastError: null, nextAttemptAt: null, ...(transitionSummary ? { transitionSummaryJson: JSON.stringify(transitionSummary) } : {}) };
       await permit(tx, job, 'snapshot', id, completion);
       const changed = await tx.archiveSnapshot.updateMany({ where: { ...owned(id), status: 'verified' }, data: completion });
       if (changed.count !== 1) throw new LeaseLost();
@@ -206,12 +165,14 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
       if (['queued', 'capturing', 'retry_wait'].includes(claimed.status)) {
         if (claimed.mode === 'annual' && await hasPendingManual(db, claimed.academicYearId)) throw new ManualPending();
         await patchOwned(claimed.id, { leaseExpiresAt: new Date(now().getTime() + leaseMs) });
+        if (claimed.mode === 'annual' && !claimed.capturedAt) await readTransitionPlan(db, claimed.academicYearId);
         await (options.capture ?? captureArchive)(db, claimed.id, { owner, now });
       }
       await assertOwned(db, claimed.id);
       const job = await db.archiveSnapshot.findUniqueOrThrow({ where: { id: claimed.id } });
       const rows = await db.archiveSnapshotRow.findMany({ where: { snapshotId: job.id }, orderBy: [{ entityType: 'asc' }, { entityId: 'asc' }] });
       rows.sort((a, b) => a.entityType.localeCompare(b.entityType) || a.entityId.localeCompare(b.entityId));
+      if (job.mode === 'annual') await readTransitionPlan(db, job.academicYearId, rows.filter(row => row.entityType === 'user').map(row => JSON.parse(row.dataJson)));
       const input: SnapshotExport = { id: job.id, label: job.label, createdAt: job.createdAt, initiatedBy: job.initiatedBy, rows };
       if (job.status !== 'verified') await (options.export ?? exportArchive)(input, backupRoot);
       const artifact = await (options.verify ?? verifyArchiveArtifact)(input, backupRoot);

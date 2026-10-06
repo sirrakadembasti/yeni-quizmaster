@@ -38,6 +38,7 @@ const resultStudentSelect = {
   id: true, name: true, classId: true, studentNo: true,
   class: { select: { id: true, name: true } },
 } satisfies Prisma.UserSelect;
+const activeQuizWhere = { academicYear: null, status: { not: 'archived' } } satisfies Prisma.QuizWhereInput;
 
 export interface IStorage {
   // Category methods
@@ -110,7 +111,7 @@ export interface IStorage {
   // Student Result methods
   getResultsByStudent(studentId: string, teacherId?: string): Promise<StudentResult[]>;
   getFilteredResults(filters: { quizId?: string; categoryId?: string; classId?: string; studentId?: string; createdBy?: string }): Promise<StudentResult[]>;
-  getResultsByQuiz(quizId: string): Promise<StudentResult[]>;
+  getResultsByQuiz(quizId: string, options?: { activeOnly?: boolean }): Promise<StudentResult[]>;
   getLiveResults(quizId: string): Promise<StudentResult[]>;
   getStudentQuizResult(studentId: string, quizId: string): Promise<StudentResult | undefined>;
   createResult(result: Prisma.StudentResultUncheckedCreateInput & { answers?: any }): Promise<StudentResult>;
@@ -821,15 +822,17 @@ export class PrismaStorage implements IStorage {
   async getAllQuizzes(filters?: { studentClassId?: string | null }): Promise<Quiz[]> {
     const quizzes = await prisma.quiz.findMany({
       where: filters && "studentClassId" in filters ? {
+        ...activeQuizWhere,
         status: "published", contentType: "exam",
         assignedClasses: filters.studentClassId ? { some: { id: filters.studentClassId } } : { none: {} },
-      } : undefined,
+      } : activeQuizWhere,
       include: {
         _count: {
           select: { 
             questions: true,
             results: {
               where: {
+                academicYear: null,
                 student: { role: 'student' }
               }
             },
@@ -862,13 +865,14 @@ export class PrismaStorage implements IStorage {
 
   async getQuizzesByCreator(teacherId: string): Promise<Quiz[]> {
     const quizzes = await prisma.quiz.findMany({
-      where: { createdBy: teacherId },
+      where: { ...activeQuizWhere, createdBy: teacherId },
       include: {
         _count: {
           select: { 
             questions: true,
             results: {
               where: {
+                academicYear: null,
                 student: { role: 'student' }
               }
             },
@@ -1188,11 +1192,12 @@ export class PrismaStorage implements IStorage {
 
   // Student Result methods
   async getFilteredResults(filters: { quizId?: string; categoryId?: string; classId?: string; studentId?: string; createdBy?: string }): Promise<StudentResult[]> {
-    const where: Prisma.StudentResultWhereInput = {};
+    const where: Prisma.StudentResultWhereInput = { academicYear: null };
     if (filters.quizId) where.quizId = filters.quizId;
     if (filters.studentId) where.studentId = filters.studentId;
     if (filters.classId) where.student = { classId: filters.classId };
     where.quiz = {
+      ...activeQuizWhere,
       contentType: 'exam',
       ...(filters.categoryId ? { categoryId: filters.categoryId } : {}),
       ...(filters.createdBy ? { createdBy: filters.createdBy } : {}),
@@ -1211,10 +1216,7 @@ export class PrismaStorage implements IStorage {
     })) as unknown as StudentResult[];
   }
   async getResultsByStudent(studentId: string, teacherId?: string): Promise<StudentResult[]> {
-    const where: any = { studentId };
-    if (teacherId) {
-      where.quiz = { createdBy: teacherId };
-    }
+    const where: Prisma.StudentResultWhereInput = { studentId, academicYear: null, quiz: { ...activeQuizWhere, ...(teacherId ? { createdBy: teacherId } : {}) } };
 
     const results = await prisma.studentResult.findMany({
       where,
@@ -1236,9 +1238,9 @@ export class PrismaStorage implements IStorage {
     })) as unknown as StudentResult[];
   }
 
-  async getResultsByQuiz(quizId: string): Promise<StudentResult[]> {
+  async getResultsByQuiz(quizId: string, options?: { activeOnly?: boolean }): Promise<StudentResult[]> {
     const results = await prisma.studentResult.findMany({
-      where: { quizId },
+      where: { quizId, ...(options?.activeOnly ? { academicYear: null, quiz: activeQuizWhere } : {}) },
       include: { student: { select: resultStudentSelect } },
       orderBy: { score: 'desc' }
     });
@@ -1368,7 +1370,7 @@ export class PrismaStorage implements IStorage {
   // Sistem genelinde tamamlanan sınav istatistiklerini tek sorguda hesaplar
   async getAdminStats(): Promise<{ totalResults: number; averageStudentScore: number }> {
     const agg = await prisma.studentResult.aggregate({
-      where: { status: 'completed', score: { not: null } },
+      where: { status: 'completed', score: { not: null }, academicYear: null, quiz: { ...activeQuizWhere, contentType: 'exam' } },
       _count: { id: true },
       _avg: { score: true },
     });
@@ -1390,6 +1392,8 @@ export class PrismaStorage implements IStorage {
             id: true,
             results: {
               where: {
+                academicYear: null,
+                quiz: { ...activeQuizWhere, contentType: 'exam' },
                 status: 'completed',
                 submittedAt: { gte: startDate, lte: endDate },
                 score: { not: null },
@@ -1423,6 +1427,7 @@ export class PrismaStorage implements IStorage {
     const quizzes = await prisma.quiz.findMany({
       where: {
         status: 'published',
+        academicYear: null,
         contentType: 'exam',
         ...(role === 'teacher' ? { createdBy: userId } : {}),
       },
@@ -1436,7 +1441,7 @@ export class PrismaStorage implements IStorage {
           },
         },
         results: {
-          where: { status: 'completed' },
+          where: { status: 'completed', academicYear: null },
           select: { studentId: true },
         },
       },

@@ -35,6 +35,7 @@ beforeEach(async () => {
     surveySubmission: { count: async ({ where }: any) => where.surveyId.in.includes(quizzes[0].id) ? 2 : 0 },
     question: { count: async ({ where }: any) => where.quizId.in.includes(quizzes[0].id) ? 4 : 0 },
     archiveSnapshot: {
+      findFirst: async ({ where }: any) => jobs.filter(job => job.mode === where.mode && job.status === where.status).sort((a, b) => b.label.localeCompare(a.label))[0] ?? null,
       findUnique: async ({ where }: any) => jobs.find(j => where.id ? j.id === where.id : j.annualKey === where.annualKey) ?? null,
       findUniqueOrThrow: async ({ where }: any) => jobs.find(j => j.id === where.id),
       findMany: async ({ where, take, orderBy }: any = {}) => {

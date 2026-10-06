@@ -5,7 +5,8 @@ import path from 'node:path';
 import { z } from 'zod';
 import { requireAuth, requireRole, type AuthRequest } from '../middleware/auth';
 import { archiveDb } from '../services/archive-db';
-import { ArchiveJobError, enqueueArchive, previewArchive, recoverArchive, cancelUncapturedArchive, archiveFailureReason, UUID } from '../services/archive-jobs';
+import { ArchiveJobError, enqueueArchive, previewArchive, previewAnnualTransition, recoverArchive, cancelUncapturedArchive, archiveFailureReason, UUID } from '../services/archive-jobs';
+import type { TransitionSummary } from '../services/archive-transition';
 import { getOrCreateActiveYear } from '../services/academic-year';
 import { verifyArchiveArtifact } from '../services/archive-export';
 import { getProjectRoot } from '../utils/project-paths';
@@ -24,11 +25,20 @@ export function getArchiveBackupRoot(configured = process.env.ARCHIVE_BACKUP_ROO
   })) throw new Error('Archive backup root cannot be a filesystem root or public storage');
   return root;
 }
+const transitionSummaryFor = (job: ArchiveSnapshot): TransitionSummary | null => {
+  if (job.mode !== 'annual' || job.status !== 'completed' || !job.transitionSummaryJson) return null;
+  try {
+    const summary = JSON.parse(job.transitionSummaryJson);
+    if (['promoted', 'graduated', 'skippedInactive', 'skippedGraduated', 'skippedClassless'].some(key => !Number.isSafeInteger(summary[key]) || summary[key] < 0) || !Array.isArray(summary.transitions)) return null;
+    return { promoted: summary.promoted, graduated: summary.graduated, skippedInactive: summary.skippedInactive, skippedGraduated: summary.skippedGraduated, skippedClassless: summary.skippedClassless, transitions: summary.transitions.map((row: any) => ({ fromClassId: row.fromClassId, fromClassName: row.fromClassName, toClassId: row.toClassId, toClassName: row.toClassName, graduate: row.graduate, students: row.students })) };
+  } catch { return null; }
+};
 export const archiveJobMetadata = (job: ArchiveSnapshot) => ({
   id: job.id, academicYearId: job.academicYearId, label: job.label, mode: job.mode, status: job.status,
   initiatedBy: job.initiatedBy, attempts: job.attempts, createdAt: job.createdAt, completedAt: job.completedAt,
   nextAttemptAt: job.nextAttemptAt, zipSha256: job.zipSha256, sizeBytes: job.sizeBytes,
   error: job.lastError ? 'Arşiv işlemi başarısız oldu. Yeniden deneyebilirsiniz.' : null,
+  transitionSummary: transitionSummaryFor(job),
 });
 interface ArchiveRouterOptions { db?: PrismaClient; now?: () => Date; backupRoot?: string; verifyArtifact?: typeof verifyArchiveArtifact }
 const manualSchema = z.object({ mode: z.literal('manual').optional(), academicYearId: z.string().uuid().optional(), quizIds: z.array(z.string().uuid()).min(1).max(10000) }).strict();
@@ -82,9 +92,14 @@ export function createArchiveRouter(options: ArchiveRouterOptions = {}) {
   router.get('/years', wrap(async (_req, res) => {
     const serverNow = now();
     await getOrCreateActiveYear(db, serverNow);
-    const years = await db.academicYear.findMany({ orderBy: [{ status: 'asc' }, { label: 'desc' }] });
+    const [years, latestCompletedAnnual] = await Promise.all([
+      db.academicYear.findMany({ orderBy: [{ status: 'asc' }, { label: 'desc' }] }),
+      // Recent job pagination must not hide the last completed year transition.
+      db.archiveSnapshot.findFirst({ where: { mode: 'annual', status: 'completed' }, orderBy: [{ label: 'desc' }, { completedAt: 'desc' }, { id: 'desc' }] }),
+    ]);
     res.json({
       serverNow: serverNow.toISOString(),
+      latestCompletedAnnual: latestCompletedAnnual ? archiveJobMetadata(latestCompletedAnnual) : null,
       years: years.map(year => ({
         ...year,
         canClose: year.status === 'active' && serverNow >= year.scheduledCloseAt,
@@ -143,6 +158,10 @@ export function createArchiveRouter(options: ArchiveRouterOptions = {}) {
     const year = await db.academicYear.findUnique({ where: { id: req.params.id } });
     if (!year) throw new ArchiveJobError(404, 'Eğitim yılı bulunamadı.');
     res.json({ rules: await db.academicTransitionRule.findMany({ where: { yearId: year.id }, orderBy: { fromClassId: 'asc' } }) });
+  }));
+  router.get('/years/:id/transition-preview', wrap(async (req, res) => {
+    if (!UUID.test(req.params.id)) throw new ArchiveJobError(400, 'Geçersiz yıl kimliği.');
+    res.json(await previewAnnualTransition(db, req.params.id));
   }));
   router.put('/years/:id/rules', wrap(async (req, res) => {
     const parsed = ruleSchema.safeParse(req.body);

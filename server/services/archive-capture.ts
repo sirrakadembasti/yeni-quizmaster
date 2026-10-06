@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { MAX_SNAPSHOT_JSON_BYTES } from './archive-package';
+import { buildStudentTransition } from './archive-transition';
 
 /** Copies business records atomically. No filesystem or external work belongs in this transaction. */
 export async function captureArchive(db: PrismaClient, snapshotId: string, lease?: { owner: string; now: () => Date }) {
@@ -57,6 +58,13 @@ export async function captureArchive(db: PrismaClient, snapshotId: string, lease
       ['questionBank', ids ? [] : await tx.questionBank.findMany({ orderBy: { id: 'asc' } })],
       ['announcement', ids ? [] : await tx.announcement.findMany({ orderBy: { id: 'asc' } })],
     ];
+    // Validate the exact users/classes being copied under this same writer
+    // transaction. A late arrival or capacity change must never commit an
+    // invalid capture fence that would prevent administrators repairing it.
+    if (job.mode === 'annual') {
+      const rules = await tx.academicTransitionRule.findMany({ where: { yearId: job.academicYearId } });
+      buildStudentTransition(users, users, classes, rules);
+    }
     if (groups.reduce((n, [, rows]) => n + rows.length, 0) > 250000) throw new Error('Snapshot exceeds record limit');
     const prepared = groups.flatMap(([entityType, rows]) => rows.map(row => ({ entityType, entityId: row.id, dataJson: JSON.stringify(row) })));
     if (prepared.reduce((bytes, row) => bytes + Buffer.byteLength(row.dataJson, 'utf8'), 0) > MAX_SNAPSHOT_JSON_BYTES) throw new Error('Snapshot exceeds byte limit');

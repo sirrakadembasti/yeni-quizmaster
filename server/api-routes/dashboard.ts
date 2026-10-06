@@ -53,7 +53,7 @@ router.get("/stats", requireAuth, requireRole(["teacher", "admin"]), async (req:
     let completedResultsCount = 0;
 
     for (const quiz of quizzes) {
-      const results = await storage.getResultsByQuiz(quiz.id);
+      const results = await storage.getResultsByQuiz(quiz.id, { activeOnly: true });
       totalResultsCount += results.length;
       results.forEach(r => {
         if (r.status === 'completed' && r.score !== null) {

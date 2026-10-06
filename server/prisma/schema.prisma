@@ -378,6 +378,7 @@ model ArchiveSnapshot {
   createdAt       DateTime @default(now())
   capturedAt      DateTime?
   completedAt     DateTime?
+  transitionSummaryJson String? // immutable annual outcome, committed with rollover even without an audit actor
   rows            ArchiveSnapshotRow[]
 
   @@index([status, nextAttemptAt])

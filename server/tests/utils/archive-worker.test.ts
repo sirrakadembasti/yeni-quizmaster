@@ -14,13 +14,40 @@ describe('annual frozen student transition', () => {
   it('requires explicit coverage without interpreting class names', () => {
     expect(() => planStudentTransition(students, students, classes, rules.slice(0, 1))).toThrow(/mapping/);
   });
-  it('moves inactive enrolled students and graduates them without counting inactive arrivals against capacity', () => {
+  it('keeps inactive students in their initial classes without requiring mappings', () => {
     const inactive = students.map(student => ({ ...student, isActive: false }));
-    expect(planStudentTransition(inactive, inactive, classes.map(c => ({ ...c, maxStudents: 0 })), rules)).toEqual([{ id: 'a', classId: 'two', studentNo: 1, graduate: false }, { id: 'b', classId: null, studentNo: null, graduate: true }]);
+    expect(planStudentTransition(inactive, inactive, classes, [])).toEqual([]);
+  });
+  it('never promotes a former graduate even if the account was reactivated', () => {
+    const graduates = students.map(student => ({ ...student, graduationYear: '2024-2025', graduationDate: new Date('2025-07-14T21:05:00Z') }));
+    expect(planStudentTransition(graduates, graduates, classes, [])).toEqual([]);
+  });
+  it('leaves classless students without invented destinations', () => {
+    const classless = students.map(student => ({ ...student, classId: null }));
+    expect(planStudentTransition(classless, classless, classes, [])).toEqual([]);
+  });
+  it('uses one frozen hop for cycles and releases every departing number', () => {
+    expect(planStudentTransition(students, students, classes, [{ fromClassId: 'one', toClassId: 'two', graduate: false }, { fromClassId: 'two', toClassId: 'one', graduate: false }])).toEqual([
+      { id: 'a', classId: 'two', studentNo: 1, graduate: false }, { id: 'b', classId: 'one', studentNo: 1, graduate: false },
+    ]);
+  });
+  it('rejects a self-target instead of presenting it as a promotion', () => {
+    expect(() => planStudentTransition(students, students, classes, [{ fromClassId: 'one', toClassId: 'one', graduate: false }, rules[1]])).toThrow(/mapping/);
+  });
+  it('revalidates frozen graduation fields and student numbers', () => {
+    expect(() => planStudentTransition(students, [{ ...students[0], graduationYear: '2024-2025' }, students[1]], classes, rules)).toThrow(/changed/);
+    expect(() => planStudentTransition(students, [{ ...students[0], studentNo: 7 }, students[1]], classes, rules)).toThrow(/changed/);
+  });
+  it('preserves stationary former graduate numbers and active occupancy', () => {
+    const enrolled = [students[0], { ...students[1], studentNo: 2 }];
+    const former = { id: 'former', role: 'student', isActive: true, classId: 'two', studentNo: 1, graduationYear: '2024-2025' };
+    expect(() => planStudentTransition([...enrolled, former], [...enrolled, former], classes, rules)).toThrow(/capacity/);
+    expect(planStudentTransition([...enrolled, { ...former, isActive: false }], [...enrolled, { ...former, isActive: false }], classes, rules)[0].studentNo).toBe(2);
   });
   it('counts new active arrivals and reserves inactive student numbers', () => {
     expect(() => planStudentTransition(students, [...students, { id: 'new', role: 'student', isActive: true, classId: 'two', studentNo: 2 }], classes, rules)).toThrow(/capacity/);
-    expect(planStudentTransition(students, [...students, { id: 'inactive', role: 'student', isActive: false, classId: 'two', studentNo: 1 }], classes, rules)[0].studentNo).toBe(2);
+    const distinct = [students[0], { ...students[1], studentNo: 2 }];
+    expect(planStudentTransition(distinct, [...distinct, { id: 'inactive', role: 'student', isActive: false, classId: 'two', studentNo: 1 }], classes, rules)[0].studentNo).toBe(2);
   });
 });
 
@@ -38,6 +65,8 @@ describe('durable worker orchestration', () => {
     const db: any = { academicYear: { findFirst: vi.fn(async () => ({ id: 'year', label: job.label, status: 'active', scheduledCloseAt: new Date('2027-07-14T21:05:00Z') })) }, archiveSnapshot: { findFirst: vi.fn(async () => job.status === 'completed' ? null : { ...job }), findUniqueOrThrow: vi.fn(async () => ({ ...job })), updateMany, update: vi.fn(async ({ data }: any) => Object.assign(job, data)) }, archiveSnapshotRow: { findMany: vi.fn(async () => [{ entityType: 'user', entityId: 'z', dataJson: '{}' }, { entityType: 'class', entityId: 'b', dataJson: '{}' }]) }, user: { findMany: vi.fn(async () => []) }, quiz: { updateMany: vi.fn() }, actionLog: { create: vi.fn() }, emailQueue: { create: vi.fn() } };
     db.academicYear.findUniqueOrThrow = vi.fn(async () => ({ id: 'year', label: job.label, status: 'active' }));
     db.archiveSnapshot.count = vi.fn(async () => 0);
+    db.class = { findMany: vi.fn(async () => []) };
+    db.academicTransitionRule = { findMany: vi.fn(async () => []) };
     db.$transaction = async (fn: any) => { const before = { ...job }; try { return await fn(db); } catch (error) { Object.assign(job, before); throw error; } };
     db.$executeRawUnsafe = vi.fn(async (sql: string) => sql.startsWith('INSERT INTO ArchiveFinalizationPermit') ? 1 : 0);
     const artifact: any = { artifactPath: '/backup/archive.zip', zipSha256: 'abc', sizeBytes: 5 };

@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { AdminQueryState } from '@/components/management/AdminQueryState';
 import { classApi, quizApi } from '@/lib/api';
-import { archiveApi, type ArchiveJob, type TransitionRule } from '@/lib/archive-api';
+import { archiveApi, type ArchiveJob, type TransitionRule, type TransitionSummary } from '@/lib/archive-api';
 import { useAcademicYear } from '@/context/academic-year-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,6 +15,9 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/compone
 const statuses: Record<string, string> = { queued: 'Sırada', capturing: 'Veriler kopyalanıyor', files_generating: 'Dosyalar hazırlanıyor', verified: 'Dosyalar doğrulandı', completed: 'Tamamlandı', retry_wait: 'Yeniden deneme bekleniyor', failed: 'Başarısız', cancelled: 'Kopyalama başlamadan iptal edildi' };
 const running = (status: string) => !['completed', 'failed', 'cancelled'].includes(status);
 const ruleLocked = (status: string) => ['capturing', 'files_generating', 'verified'].includes(status);
+function TransitionCounts({ summary }: { summary: TransitionSummary }) {
+  return <div className="space-y-2"><p>{summary.promoted} terfi · {summary.graduated} mezuniyet</p><p>Korunan kayıtlar: {summary.skippedInactive} pasif · {summary.skippedGraduated} önceki mezun · {summary.skippedClassless} sınıfsız</p>{summary.transitions.map(row => <p key={row.fromClassId}>{row.fromClassName} → {row.graduate ? 'Mezuniyet' : row.toClassName} — {row.students} aktif öğrenci</p>)}</div>;
+}
 
 export default function ArchivePage() {
   const queryClient = useQueryClient();
@@ -39,6 +42,7 @@ export default function ArchivePage() {
   const classes = classesQuery.data?.classes ?? [];
   const quizzes = (quizzesQuery.data?.quizzes ?? []).filter(quiz => quiz.status !== 'archived' && !(quiz as any).academicYear);
   const rules = useQuery({ queryKey: ['archive-rules', active?.id], queryFn: () => archiveApi.rules(active!.id), enabled: !!active });
+  const transitions = useQuery({ queryKey: ['archive-transition-preview', active?.id], queryFn: () => archiveApi.transitionPreview(active!.id), enabled: !!active, refetchInterval: 15000 });
   const preview = useQuery({ queryKey: ['archive-preview', active?.id, previewIds], queryFn: ({ signal }) => archiveApi.preview(previewIds, active?.id, signal), enabled: previewIds.length > 0 && !!active });
   const jobQuery = useQuery({ queryKey: ['archive-job', focusJob], queryFn: () => archiveApi.job(focusJob!), enabled: !!focusJob, refetchInterval: query => query.state.data && running(query.state.data.job.status) ? 2000 : false });
   const logs = useQuery({ queryKey: ['archive-job-logs', focusJob], queryFn: () => archiveApi.logs(focusJob!), enabled: !!focusJob, refetchInterval: focusJob && running(jobQuery.data?.job.status ?? 'queued') ? 2000 : false });
@@ -54,9 +58,11 @@ export default function ArchivePage() {
     void queryClient.invalidateQueries({ queryKey: ['/api/admin/quizzes'] });
     void queryClient.invalidateQueries({ queryKey: ['/api/classes'] });
     void queryClient.invalidateQueries({ queryKey: ['archive-jobs'] });
+    void queryClient.invalidateQueries({ queryKey: ['archive-transition-preview'] });
     if (completed.some(job => job.mode === 'annual')) {
       void queryClient.invalidateQueries({ queryKey: ['academic-year-context'] });
-      academicRef.current?.reload();
+      const currentYear = academicRef.current?.year;
+      if (currentYear?.status === 'active' && completed.some(job => job.mode === 'annual' && job.academicYearId === currentYear.id)) academicRef.current?.reload();
     }
   }, [jobs.data?.jobs, queryClient]);
   const fail = (err: Error) => { setError(err.message); setFeedback(''); };
@@ -67,18 +73,19 @@ export default function ArchivePage() {
   const retry = useMutation({ mutationFn: (id: string) => archiveApi.retry(id), onSuccess: acceptJob, onError: fail });
   const cancel = useMutation({ mutationFn: (id: string) => archiveApi.cancel(id), onSuccess: ({ job }) => { setError(''); setFocusJob(job.id); setFeedback('Kopyalama başlamadan arşiv iptal edildi. İş verileri korunur; yıllık arşiv devam edebilir.'); refreshJob(job.id); }, onError: fail });
   const missing = classes.filter(cls => !targets[cls.id]);
-  const ruleValues: TransitionRule[] = classes.map(cls => ({ fromClassId: cls.id, toClassId: targets[cls.id] === 'graduate' ? null : targets[cls.id], graduate: targets[cls.id] === 'graduate' }));
-  const save = useMutation({ mutationFn: () => archiveApi.saveRules(active!.id, ruleValues), onSuccess: data => { queryClient.setQueryData(['archive-rules', active?.id], data); setRulesDirty(false); setError(''); setFeedback('Sınıf geçiş kuralları kaydedildi. Öğrenciler doğrulanmış yıl sonu arşivinden sonra taşınacak.'); }, onError: fail });
+  const ruleValues: TransitionRule[] = classes.filter(cls => !!targets[cls.id]).map(cls => ({ fromClassId: cls.id, toClassId: targets[cls.id] === 'graduate' ? null : targets[cls.id], graduate: targets[cls.id] === 'graduate' }));
+  const save = useMutation({ mutationFn: () => archiveApi.saveRules(active!.id, ruleValues), onSuccess: data => { queryClient.setQueryData(['archive-rules', active?.id], data); setRulesDirty(false); void queryClient.invalidateQueries({ queryKey: ['archive-transition-preview', active?.id] }); setError(''); setFeedback('Sınıf geçiş kuralları kaydedildi. Öğrenciler doğrulanmış yıl sonu arşivinden sonra taşınacak.'); }, onError: fail });
   const download = useMutation({ mutationFn: async () => { await archiveApi.authorizeDownload(downloadJob!.id, password); setPassword(''); await archiveApi.download(downloadJob!.id); }, onSuccess: () => { setDownloadJob(null); setError(''); setFeedback('Doğrulanmış arşiv indirmesi başlatıldı.'); }, onError: err => { setPassword(''); fail(err); } });
   const queries = [years, classesQuery, quizzesQuery, jobs];
   if (queries.some(query => query.isPending || query.isError)) return <DashboardLayout><AdminQueryState queries={queries} /></DashboardLayout>;
   const busy = create.isPending || close.isPending || retry.isPending || cancel.isPending;
   const previewReady = selected.length > 0 && selected === previewIds && preview.isSuccess && !preview.isFetching;
-  const rulesReady = rules.isSuccess && !rulesDirty && missing.length === 0;
+  const rulesReady = rules.isSuccess && !rulesDirty && transitions.isSuccess && !transitions.isFetching && transitions.data.ready;
   const due = !!active?.canClose;
   const annualRunning = jobs.data?.jobs.some(job => job.academicYearId === active?.id && job.mode === 'annual' && running(job.status));
   const rulesLocked = jobs.data?.jobs.some(job => job.academicYearId === active?.id && job.mode === 'annual' && ruleLocked(job.status));
   const allJobs = jobs.data?.jobs ?? [];
+  const completedTransition = years.data?.latestCompletedAnnual ?? allJobs.filter(job => job.mode === 'annual' && job.status === 'completed').sort((a, b) => b.label.localeCompare(a.label))[0];
   const focusedJob = jobQuery.data?.job;
   const blockers = allJobs.filter(job => job.mode === 'annual' && job.academicYearId === active?.id).flatMap(job => job.blockers ?? []);
   const pages = Math.max(1, Math.ceil(allJobs.length / 20));
@@ -97,7 +104,7 @@ export default function ArchivePage() {
       <TabsContent value="annual"><Card><CardHeader><CardTitle>Eğitim Yılını Kapat</CardTitle></CardHeader><CardContent className="space-y-3">
         <p>Otomatik kapanış 15 Temmuz 00:05 (Europe/Istanbul). Bu yılın sınırı: {active ? new Date(active.scheduledCloseAt).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }) : '—'}.</p>
         <p>Yılın bütün iş verileri arşivlenir. Dosyalar doğrulandıktan sonra kayıtlı sınıf geçişleri uygulanır ve yeni eğitim yılı açılır. Öğretmen atamaları değişmez.</p>
-        {!due && <p>Kapanış zamanı henüz gelmedi.</p>}{!rulesReady && <p role="status">Yıl sonu için bütün sınıfların geçiş kurallarını kaydedin.</p>}
+        {!due && <p>Kapanış zamanı henüz gelmedi.</p>}{!rulesReady && <p role="status">Yıl sonu için Sınıf Geçişi sekmesindeki önkontrolü tamamlayın ve kuralları kaydedin.</p>}
         {blockers.length > 0 && <div role="status" className="space-y-2"><p>Yıllık arşiv aşağıdaki manuel işlerin tamamlanmasını bekliyor:</p>{blockers.map(blocker => <div key={blocker.id}><p>İş {blocker.id}: {blocker.reason} {blocker.remedy}</p><Button variant="outline" aria-label={`İşi Aç: ${blocker.id}`} onClick={() => setFocusJob(blocker.id)}>İşi Aç</Button></div>)}</div>}
         <Button disabled={!due || !rulesReady || busy || annualRunning} onClick={() => close.mutate()}>Yılı Kapat</Button>
       </CardContent></Card></TabsContent>
@@ -116,9 +123,11 @@ export default function ArchivePage() {
         </CardContent></Card>
       </TabsContent>
       <TabsContent value="rules"><Card><CardHeader><CardTitle>Kalıcı Sınıf Geçiş Kuralları</CardTitle></CardHeader><CardContent className="space-y-3">
-        <p>Her kaynak sınıf için açıkça hedef sınıf veya mezuniyet seçin. Öğrenci hesapları mezuniyette korunur. Öğretmen atamaları değişmez.</p><AdminQueryState queries={active ? [rules] : []} />
+        <p>Aktif öğrencisi bulunan her kaynak sınıf için hedef sınıf veya mezuniyet seçin. Pasif öğrenciler, önceki mezunlar ve sınıfsız kayıtlar korunur. Her aktif öğrenci başlangıç sınıfından bir defa geçer. Öğretmen atamaları değişmez.</p><AdminQueryState queries={active ? [rules] : []} />
         {classes.map(cls => <div key={cls.id} className="flex flex-wrap items-center gap-3"><Label htmlFor={`target-${cls.id}`}>{cls.name} hedefi</Label><select id={`target-${cls.id}`} className="border rounded-md p-2 bg-background" disabled={!active || rulesLocked || save.isPending} value={targets[cls.id] ?? ''} onChange={event => { setRulesDirty(true); setTargets(values => ({ ...values, [cls.id]: event.target.value })); }}><option value="">Hedef seçin</option><option value="graduate">Mezuniyet</option>{classes.filter(target => target.id !== cls.id).map(target => <option key={target.id} value={target.id}>{target.name}</option>)}</select><span className="text-muted-foreground text-sm">{cls._count?.students ?? 0} öğrenci</span></div>)}
-        {missing.length > 0 && <p>{missing.length} sınıfın hedefi eksik.</p>}<Button disabled={!active || !rules.isSuccess || missing.length > 0 || !rulesDirty || save.isPending || rulesLocked} onClick={() => save.mutate()}>Geçiş Kurallarını Kaydet</Button>
+        {missing.length > 0 && <p>{missing.length} sınıfın hedefi seçilmedi. Önkontrol yalnız geçişe uygun aktif öğrencilerin kaynak sınıfları için hedef ister.</p>}<Button disabled={!active || !rules.isSuccess || !rulesDirty || save.isPending || rulesLocked} onClick={() => save.mutate()}>Geçiş Kurallarını Kaydet</Button>
+        <section role="region" aria-label="Geçiş önkontrolü" className="rounded-lg border p-3 space-y-2"><h2 className="font-semibold">{active?.label} geçiş önkontrolü</h2><AdminQueryState queries={active ? [transitions] : []} />{rulesDirty && <p role="status">Önkontrol kayıtlı kuralları kullanır. Değişiklikleri kaydedin.</p>}{transitions.data?.source === 'snapshot' && <p>Dondurulmuş arşivdeki başlangıç üyelikleri kullanılıyor.</p>}{transitions.data?.summary && <TransitionCounts summary={transitions.data.summary} />}{transitions.data?.issues.map((issue, index) => <p role="alert" key={`${issue.code}-${index}`}>{issue.message}{issue.fromClassId && ` Kaynak: ${classes.find(cls => cls.id === issue.fromClassId)?.name ?? issue.fromClassId}.`}{issue.toClassId && ` Hedef: ${classes.find(cls => cls.id === issue.toClassId)?.name ?? issue.toClassId}.`}</p>)}<Button variant="outline" disabled={!active || transitions.isFetching} onClick={() => void transitions.refetch()}>Önkontrolü Yenile</Button></section>
+        {completedTransition && <section role="region" aria-label="Tamamlanan sınıf geçişi" className="rounded-lg border p-3 space-y-2"><h2 className="font-semibold">Tamamlanan geçiş: {completedTransition.label}</h2>{completedTransition.transitionSummary ? <TransitionCounts summary={completedTransition.transitionSummary} /> : <p>Bu eski arşivde kayıtlı geçiş özeti bulunmuyor.</p>}</section>}
       </CardContent></Card></TabsContent>
     </Tabs>
     {focusJob && <Card role="region" aria-label="Seçilen arşiv işi"><CardHeader><CardTitle>İş İlerlemesi</CardTitle></CardHeader><CardContent className="space-y-2">

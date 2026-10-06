@@ -9,6 +9,7 @@ import { getOrCreateActiveYear, getYearSchedule } from '../../services/academic-
 import { enqueueArchive } from '../../services/archive-jobs';
 import { exportArchive, verifyArchiveArtifact, type SnapshotExport } from '../../services/archive-export';
 import { createArchiveWorker } from '../../services/archive-worker';
+import { captureArchive } from '../../services/archive-capture';
 const recoveryAuth = vi.hoisted(() => ({ id: '' }));
 vi.mock('../../middleware/auth', () => ({
   requireAuth: (req: any, _res: any, next: any) => { req.user = { id: recoveryAuth.id, role: 'admin' }; next(); },
@@ -316,9 +317,8 @@ it('annual due rollover includes manually archived content, moves the initial ch
   const movedA = await db.user.findUniqueOrThrow({ where: { id: f.sa.id } });
   const movedInactive = await db.user.findUniqueOrThrow({ where: { id: f.inactive.id } });
   expect(movedA.classId).toBe(f.b.id);
-  expect(movedInactive.classId).toBe(f.b.id);
-  expect(movedInactive.isActive).toBe(false);
-  expect(new Set([movedA.studentNo, movedInactive.studentNo, teacher.studentNo]).size).toBe(3);
+  expect(movedInactive).toEqual(f.inactive);
+  expect(movedA.studentNo).not.toBe(teacher.studentNo);
   expect(movedA.classNo).toBeNull();
   expect((await db.user.findUniqueOrThrow({ where: { id: f.sb.id } })).classId).toBe(f.c.id);
   const graduated = await db.user.findUniqueOrThrow({ where: { id: f.sc.id } });
@@ -334,7 +334,191 @@ it('annual due rollover includes manually archived content, moves the initial ch
   const shape = (rows: typeof rules) => rows.map(({ fromClassId, toClassId, graduate }) => ({ fromClassId, toClassId, graduate })).sort((x, y) => x.fromClassId.localeCompare(y.fromClassId));
   expect(shape(copied)).toEqual(shape(rules));
   expect(copied.every(r => !rules.some(old => old.id === r.id))).toBe(true);
+  const completed = await request(recoveryApp(f.admin.id)).get(`/archive/jobs/${annual.id}`);
+  expect(completed.body.job.transitionSummary).toMatchObject({ promoted: 2, graduated: 1, skippedInactive: 1, skippedGraduated: 0, skippedClassless: 0 });
   await verifyArchiveArtifact(await inputFor(annual.id), root);
+});
+
+it('preserves inactive, former graduate and classless accounts while persisting the exact annual outcome', async () => {
+  const f = await fixture();
+  const former = await db.user.create({ data: { name: 'Former graduate', email: randomUUID() + '@example.test', password: 'synthetic', role: 'student', isActive: true, classId: f.a.id, studentNo: 3, graduationYear: '2024-2025', graduationDate: new Date('2025-07-14T21:05:00Z') } });
+  const classless = await db.user.create({ data: { name: 'Classless', email: randomUUID() + '@example.test', password: 'synthetic', role: 'student' } });
+  // The reactivated former graduate remains a stationary occupied seat.
+  await db.class.update({ where: { id: f.a.id }, data: { maxStudents: 2 } });
+  clock = getYearSchedule(f.year.label);
+  await worker().tick();
+  const annual = await db.archiveSnapshot.findFirstOrThrow({ where: { mode: 'annual' } });
+  expect(annual.status).toBe('completed');
+  expect(await db.user.findUniqueOrThrow({ where: { id: former.id } })).toEqual(former);
+  expect(await db.user.findUniqueOrThrow({ where: { id: classless.id } })).toEqual(classless);
+  expect(await db.user.findUniqueOrThrow({ where: { id: f.inactive.id } })).toEqual(f.inactive);
+  const summary = { promoted: 2, graduated: 1, skippedInactive: 1, skippedGraduated: 1, skippedClassless: 1 };
+  const completion = await db.actionLog.findFirstOrThrow({ where: { action: 'ARCHIVE_COMPLETED', details: { contains: annual.id } } });
+  expect(JSON.parse(completion.details!).transitionSummary).toMatchObject(summary);
+  expect((await request(recoveryApp(f.admin.id)).get(`/archive/jobs/${annual.id}`)).body.job.transitionSummary).toMatchObject(summary);
+  const restartedDb = new PrismaClient({ datasources: { db: { url: databaseUrl } } });
+  try {
+    expect((await request(createAppFor(restartedDb, f.admin.id)).get(`/archive/jobs/${annual.id}`)).body.job.transitionSummary).toMatchObject(summary);
+  } finally { await restartedDb.$disconnect(); }
+});
+
+function createAppFor(client: PrismaClient, adminId: string) {
+  recoveryAuth.id = adminId;
+  const app = express(); app.use(express.json()); app.use('/archive', createArchiveRouter({ db: client, now, backupRoot: root })); return app;
+}
+
+it.each(['missing mapping', 'capacity', 'number collision'])('rejects an invalid annual %s before capture and any filesystem generation', async reason => {
+  const f = await fixture();
+  if (reason === 'missing mapping') await db.academicTransitionRule.deleteMany({ where: { yearId: f.year.id, fromClassId: f.a.id } });
+  if (reason === 'capacity') {
+    await db.user.create({ data: { name: 'Stationary graduate', email: randomUUID() + '@example.test', password: 'synthetic', role: 'student', classId: f.b.id, studentNo: 3, graduationYear: '2024-2025' } });
+  }
+  if (reason === 'number collision') {
+    // Reproduce a legacy invalid number. SQLite's unique index still remains intact.
+    await db.user.update({ where: { id: f.inactive.id }, data: { studentNo: 0 } });
+  }
+  const generate = vi.fn(realExport);
+  clock = getYearSchedule(f.year.label);
+  await worker({ export: generate, maxAttempts: 1 }).tick();
+  const job = await db.archiveSnapshot.findFirstOrThrow({ where: { mode: 'annual' } });
+  expect(job).toMatchObject({ status: 'failed', capturedAt: null, artifactPath: null });
+  expect(await db.archiveSnapshotRow.count({ where: { snapshotId: job.id } })).toBe(0);
+  expect(generate).not.toHaveBeenCalled();
+  expect(await db.academicYear.count()).toBe(1);
+});
+
+it('preview shows missing mappings before closing and accepts empty inactive-only source classes', async () => {
+  const f = await fixture();
+  await db.academicTransitionRule.deleteMany({ where: { yearId: f.year.id, fromClassId: f.a.id } });
+  const app = recoveryApp(f.admin.id);
+  const rejected = await request(app).get(`/archive/years/${f.year.id}/transition-preview`);
+  expect(rejected.status).toBe(200);
+  expect(rejected.body).toMatchObject({ ready: false, issues: [expect.objectContaining({ code: 'missing_mapping', fromClassId: f.a.id })] });
+  await db.user.update({ where: { id: f.sa.id }, data: { isActive: false } });
+  const accepted = await request(app).get(`/archive/years/${f.year.id}/transition-preview`);
+  expect(accepted.status).toBe(200);
+  expect(accepted.body).toMatchObject({ ready: true, issues: [], summary: { promoted: 1, graduated: 1, skippedInactive: 2 } });
+});
+
+it('final transaction revalidates a rule changed after preflight and writes no partial transition or summary', async () => {
+  const f = await fixture();
+  clock = getYearSchedule(f.year.label);
+  await worker({ verify: async (input, directory) => {
+    const artifact = await verifyArchiveArtifact(input, directory);
+    // Test-only fault injection; no guard or finalization capability is weakened.
+    await db.academicTransitionRule.deleteMany({ where: { yearId: f.year.id, fromClassId: f.a.id } });
+    return artifact;
+  } }).tick();
+  const job = await db.archiveSnapshot.findFirstOrThrow({ where: { mode: 'annual' } });
+  expect(job.status).toBe('retry_wait');
+  expect((await db.user.findUniqueOrThrow({ where: { id: f.sa.id } })).classId).toBe(f.a.id);
+  expect(await db.academicYear.count()).toBe(1);
+  expect(await db.actionLog.count({ where: { action: 'ARCHIVE_COMPLETED', details: { contains: job.id } } })).toBe(0);
+  expect((await request(recoveryApp(f.admin.id)).get(`/archive/jobs/${job.id}`)).body.job.transitionSummary).toBeNull();
+});
+
+it('preview uses captured students on retry and finalizes the repaired rules without recapturing', async () => {
+  const f = await fixture();
+  clock = getYearSchedule(f.year.label);
+  await worker({ maxAttempts: 1, export: async () => { throw new Error('Synthetic storage unavailable'); } }).tick();
+  const job = await db.archiveSnapshot.findFirstOrThrow({ where: { mode: 'annual' } });
+  const rows = await db.archiveSnapshotRow.findMany({ where: { snapshotId: job.id }, orderBy: { id: 'asc' } });
+  await db.academicTransitionRule.deleteMany({ where: { yearId: f.year.id, fromClassId: f.a.id } });
+  const app = recoveryApp(f.admin.id);
+  const preview = await request(app).get(`/archive/years/${f.year.id}/transition-preview`);
+  expect(preview.status).toBe(200);
+  expect(preview.body).toMatchObject({ ready: false, source: 'snapshot', issues: [expect.objectContaining({ code: 'missing_mapping' })] });
+  await db.academicTransitionRule.create({ data: { yearId: f.year.id, fromClassId: f.a.id, toClassId: f.b.id } });
+  expect((await request(app).get(`/archive/years/${f.year.id}/transition-preview`)).body.ready).toBe(true);
+  expect((await request(app).post(`/archive/jobs/${job.id}/retry`)).status).toBe(202);
+  await worker().tick();
+  expect((await db.archiveSnapshot.findUniqueOrThrow({ where: { id: job.id } })).status).toBe('completed');
+  expect(await db.archiveSnapshotRow.findMany({ where: { snapshotId: job.id }, orderBy: { id: 'asc' } })).toEqual(rows);
+});
+
+it('restart catches up three missed July boundaries without phantom years or repeated graduates', async () => {
+  const f = await fixture();
+  clock = new Date(getYearSchedule(`${Number(f.year.label.slice(0, 4)) + 2}-${Number(f.year.label.slice(5)) + 2}`).getTime() + 1);
+  // Each tick is a fresh process-style worker using the persisted active year.
+  await worker().tick(); await worker().tick(); await worker().tick(); await worker().tick();
+  expect(await db.academicYear.count({ where: { status: 'closed' } })).toBe(3);
+  expect(await db.archiveSnapshot.count({ where: { mode: 'annual', status: 'completed' } })).toBe(3);
+  expect(await db.academicYear.count()).toBe(4);
+  expect(await db.user.findUniqueOrThrow({ where: { id: f.inactive.id } })).toEqual(f.inactive);
+  const oldest = await db.user.findUniqueOrThrow({ where: { id: f.sc.id } });
+  expect(oldest.graduationYear).toBe(f.year.label);
+  expect(await db.user.count({ where: { role: 'student', isActive: true, classId: { not: null } } })).toBe(0);
+});
+
+it('annual workers with separate clients complete one promotion and one durable summary at the July boundary', async () => {
+  const f = await fixture();
+  clock = getYearSchedule(f.year.label);
+  const secondDb = new PrismaClient({ datasources: { db: { url: databaseUrl } } });
+  let release!: () => void, entered!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; }), started = new Promise<void>(resolve => { entered = resolve; });
+  const first = worker({ owner: 'annual-one', export: async (input, directory) => { const artifact = await realExport(input, directory); entered(); await gate; return artifact; } });
+  const pending = first.tick();
+  await started;
+  try { await worker({ db: secondDb, owner: 'annual-two' }).tick(); }
+  finally { release(); await pending; await secondDb.$disconnect(); }
+  await worker().tick();
+  expect(await db.archiveSnapshot.count({ where: { mode: 'annual', status: 'completed' } })).toBe(1);
+  expect(await db.actionLog.count({ where: { action: 'ARCHIVE_COMPLETED' } })).toBe(1);
+  expect((await db.user.findUniqueOrThrow({ where: { id: f.sa.id } })).classId).toBe(f.b.id);
+  expect((await db.user.findUniqueOrThrow({ where: { id: f.sb.id } })).classId).toBe(f.c.id);
+});
+
+it('persists automatic transition counts with no administrator account and protects them from raw tampering', async () => {
+  const f = await fixture();
+  await db.user.delete({ where: { id: f.admin.id } });
+  clock = getYearSchedule(f.year.label);
+  await worker().tick();
+  const annual = await db.archiveSnapshot.findFirstOrThrow({ where: { mode: 'annual' } });
+  expect(annual.status).toBe('completed');
+  const [persisted] = await db.$queryRawUnsafe<Array<{ transitionSummaryJson: string }>>('SELECT transitionSummaryJson FROM ArchiveSnapshot WHERE id=?', annual.id);
+  expect(JSON.parse(persisted.transitionSummaryJson)).toMatchObject({ promoted: 2, graduated: 1, skippedInactive: 1, skippedGraduated: 0, skippedClassless: 0 });
+  expect(await db.actionLog.count({ where: { action: 'ARCHIVE_COMPLETED' } })).toBe(0);
+  await expect(db.$executeRawUnsafe("UPDATE ArchiveSnapshot SET transitionSummaryJson='{}' WHERE id=?", annual.id)).rejects.toThrow(/READ_ONLY|SUMMARY/);
+  const [unchanged] = await db.$queryRawUnsafe<Array<{ transitionSummaryJson: string }>>('SELECT transitionSummaryJson FROM ArchiveSnapshot WHERE id=?', annual.id);
+  expect(unchanged).toEqual(persisted);
+});
+
+it('rejects forged transition outcomes on snapshot insert and before verified finalization', async () => {
+  const f = await fixture();
+  await expect(db.$executeRawUnsafe("INSERT INTO ArchiveSnapshot(id,academicYearId,label,mode,status,scopeJson,createdAt,transitionSummaryJson) VALUES(?,?,?,'annual','queued','{}',?,'{}')", randomUUID(), f.year.id, f.year.label, clock.getTime())).rejects.toThrow(/SUMMARY/);
+  const job = await enqueueArchive(db, { mode: 'manual', quizIds: [f.quiz.id], initiatedBy: f.admin.id }, clock);
+  await expect(db.$executeRawUnsafe("UPDATE ArchiveSnapshot SET transitionSummaryJson='{}' WHERE id=?", job.id)).rejects.toThrow(/SUMMARY/);
+});
+
+it.each(['eligible arrival', 'capacity change'])('capture validates an annual %s atomically after the worker preflight', async fault => {
+  const f = await fixture();
+  clock = getYearSchedule(f.year.label);
+  const generate = vi.fn(realExport);
+  await worker({ maxAttempts: 1, export: generate, capture: async (client, id, lease) => {
+    if (fault === 'eligible arrival') await client.user.create({ data: { name: 'Concurrent eligible student', email: randomUUID() + '@example.test', password: 'synthetic', role: 'student', classId: f.b.id, studentNo: 3 } });
+    else await client.class.update({ where: { id: f.b.id }, data: { maxStudents: 0 } });
+    return captureArchive(client, id, lease);
+  } }).tick();
+  const annual = await db.archiveSnapshot.findFirstOrThrow({ where: { mode: 'annual' } });
+  expect(annual).toMatchObject({ status: 'failed', capturedAt: null, artifactPath: null });
+  expect(await db.archiveSnapshotRow.count({ where: { snapshotId: annual.id } })).toBe(0);
+  expect(generate).not.toHaveBeenCalled();
+  // The failed preflight must leave business data repairable, without a capture fence.
+  await expect(db.class.update({ where: { id: f.b.id }, data: { maxStudents: 3 } })).resolves.toMatchObject({ maxStudents: 3 });
+});
+
+it('returns the latest completed annual outcome even after two hundred newer manual archives', async () => {
+  const f = await fixture();
+  clock = getYearSchedule(f.year.label);
+  await worker().tick();
+  const annual = await db.archiveSnapshot.findFirstOrThrow({ where: { mode: 'annual' } });
+  const active = await db.academicYear.findFirstOrThrow({ where: { status: 'active' } });
+  await db.archiveSnapshot.createMany({ data: Array.from({ length: 201 }, (_, index) => ({ academicYearId: active.id, label: active.label, mode: 'manual', status: 'completed', scopeJson: '{}', createdAt: new Date(clock.getTime() + index + 1) })) });
+  const app = recoveryApp(f.admin.id);
+  expect((await request(app).get('/archive/jobs')).body.jobs.some((job: any) => job.id === annual.id)).toBe(false);
+  const years = await request(app).get('/archive/years');
+  expect(years.status).toBe(200);
+  expect(years.body.latestCompletedAnnual).toMatchObject({ id: annual.id, label: f.year.label, transitionSummary: { promoted: 2, graduated: 1, skippedInactive: 1 } });
 });
 
 it('completion audit failure rolls the whole rollover back and retry reuses frozen rows and the verified filesystem artifact', async () => {

@@ -3,14 +3,14 @@ import { act, cleanup, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ArchivePage from '@/pages/admin/archive';
-const mocks = vi.hoisted(() => ({ years: vi.fn(), create: vi.fn(), close: vi.fn(), save: vi.fn(), authorize: vi.fn(), download: vi.fn(), retry: vi.fn(), cancel: vi.fn(), jobs: vi.fn(), job: vi.fn(), rules: vi.fn() }));
+const mocks = vi.hoisted(() => ({ years: vi.fn(), create: vi.fn(), close: vi.fn(), save: vi.fn(), authorize: vi.fn(), download: vi.fn(), retry: vi.fn(), cancel: vi.fn(), jobs: vi.fn(), job: vi.fn(), rules: vi.fn(), transitions: vi.fn() }));
 vi.mock('@/components/layout/DashboardLayout', () => ({ DashboardLayout: ({ children }: any) => children }));
 vi.mock('@/lib/api', () => ({ classApi: { getAllClasses: async () => ({ classes: [{ id: 'c1', name: '9-A', _count: { students: 3 } }, { id: 'c2', name: '10-A', _count: { students: 2 } }] }) }, quizApi: { getAllAdminQuizzes: async () => ({ quizzes: [{ id: 'q1', title: 'Matematik', status: 'published', contentType: 'exam' }, { id: 'q2', title: 'Görüş anketi', status: 'published', contentType: 'survey' }, { id: 'old', title: 'Geçmiş içerik', status: 'archived' }] }) }, adminApi: { getArchiveCandidates: async () => ({ quizzes: 2, results: 7 }) } }));
-vi.mock('@/lib/archive-api', () => ({ archiveApi: { years: mocks.years, jobs: mocks.jobs, job: mocks.job, rules: mocks.rules, saveRules: mocks.save, preview: async (ids: string[]) => ({ quizzes: ids.length, results: ids.length * 3, surveySubmissions: 0 }), create: mocks.create, closeYear: mocks.close, retry: mocks.retry, cancel: mocks.cancel, authorizeDownload: mocks.authorize, download: mocks.download, logs: async () => ({ logs: [] }) } }));
+vi.mock('@/lib/archive-api', () => ({ archiveApi: { years: mocks.years, jobs: mocks.jobs, job: mocks.job, rules: mocks.rules, transitionPreview: mocks.transitions, saveRules: mocks.save, preview: async (ids: string[]) => ({ quizzes: ids.length, results: ids.length * 3, surveySubmissions: 0 }), create: mocks.create, closeYear: mocks.close, retry: mocks.retry, cancel: mocks.cancel, authorizeDownload: mocks.authorize, download: mocks.download, logs: async () => ({ logs: [] }) } }));
 let client: QueryClient;
 const activeYear = { id: 'y1', label: '2026-2027', status: 'active', scheduledCloseAt: '2027-07-14T21:05:00.000Z', canClose: false };
 const savedRules = { rules: [{ fromClassId: 'c1', toClassId: 'c2', graduate: false }, { fromClassId: 'c2', toClassId: null, graduate: true }] };
-beforeEach(() => { vi.clearAllMocks(); client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } }); mocks.years.mockResolvedValue({ years: [activeYear], serverNow: '2026-10-05T00:00:00Z' }); mocks.jobs.mockResolvedValue({ jobs: [] }); mocks.job.mockResolvedValue({ job: { id: 'job', label: '2026-2027', status: 'completed', mode: 'manual' } }); mocks.rules.mockResolvedValue({ rules: [] }); mocks.create.mockResolvedValue({ job: { id: 'job', label: '2026-2027', status: 'queued', mode: 'manual' } }); });
+beforeEach(() => { vi.clearAllMocks(); client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } }); mocks.years.mockResolvedValue({ years: [activeYear], serverNow: '2026-10-05T00:00:00Z' }); mocks.jobs.mockResolvedValue({ jobs: [] }); mocks.job.mockResolvedValue({ job: { id: 'job', label: '2026-2027', status: 'completed', mode: 'manual' } }); mocks.rules.mockResolvedValue({ rules: [] }); mocks.transitions.mockResolvedValue({ ready: true, source: 'live', issues: [], summary: { promoted: 3, graduated: 2, skippedInactive: 1, skippedGraduated: 0, skippedClassless: 1, transitions: [] } }); mocks.create.mockResolvedValue({ job: { id: 'job', label: '2026-2027', status: 'queued', mode: 'manual' } }); });
 afterEach(() => { cleanup(); client.clear(); });
 function mount() { render(<QueryClientProvider client={client}><ArchivePage /></QueryClientProvider>); }
 it('archives only explicitly selected active content after scoped preview', async () => {
@@ -155,4 +155,44 @@ it.each([false, true])('opens and recovers an old blocker outside the visible hi
     expect(await screen.findByText(/kuyruğa alındı/)).toBeInTheDocument();
     expect(mocks.retry.mock.calls[0][0]).toBe(old.id);
   }
+});
+
+it('shows active and completed transition counts without using live class student totals', async () => {
+  mocks.jobs.mockResolvedValue({ jobs: [{ id: 'annual-done', academicYearId: 'previous', label: '2025-2026', mode: 'annual', status: 'completed', attempts: 1, transitionSummary: { promoted: 19, graduated: 7, skippedInactive: 4, skippedGraduated: 2, skippedClassless: 3, transitions: [] } }] });
+  mount(); await screen.findByRole('checkbox', { name: /Matematik/ });
+  await userEvent.click(screen.getByRole('tab', { name: 'Sınıf Geçişi' }));
+  const upcoming = await screen.findByRole('region', { name: 'Geçiş önkontrolü' });
+  expect(upcoming).toHaveTextContent('3 terfi'); expect(upcoming).toHaveTextContent('2 mezuniyet');
+  expect(upcoming).toHaveTextContent('1 pasif'); expect(upcoming).toHaveTextContent('1 sınıfsız');
+  const completed = screen.getByRole('region', { name: 'Tamamlanan sınıf geçişi' });
+  expect(completed).toHaveTextContent('2025-2026'); expect(completed).toHaveTextContent('19 terfi');
+  expect(completed).toHaveTextContent('7 mezuniyet'); expect(completed).toHaveTextContent('4 pasif');
+  expect(completed).toHaveTextContent('2 önceki mezun'); expect(completed).toHaveTextContent('3 sınıfsız');
+});
+
+it('shows a capacity preflight issue and blocks annual close despite complete saved mappings', async () => {
+  mocks.years.mockResolvedValue({ years: [{ ...activeYear, canClose: true }] }); mocks.rules.mockResolvedValue(savedRules);
+  mocks.transitions.mockResolvedValue({ ready: false, source: 'live', summary: null, issues: [{ code: 'capacity_exceeded', message: '10-A hedef sınıfının kapasitesi aşılıyor.' }] });
+  mount(); await screen.findByRole('checkbox', { name: /Matematik/ });
+  await userEvent.click(screen.getByRole('tab', { name: 'Sınıf Geçişi' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('10-A hedef sınıfının kapasitesi aşılıyor.');
+  await userEvent.click(screen.getByRole('tab', { name: 'Yıl Sonu' }));
+  expect(screen.getByRole('button', { name: 'Yılı Kapat' })).toBeDisabled();
+});
+
+it('allows annual close when the server preflight accepts an unmapped inactive-only class', async () => {
+  mocks.years.mockResolvedValue({ years: [{ ...activeYear, canClose: true }] });
+  mocks.rules.mockResolvedValue({ rules: [savedRules.rules[0]] });
+  mount(); await screen.findByRole('checkbox', { name: /Matematik/ });
+  await userEvent.click(screen.getByRole('tab', { name: 'Yıl Sonu' }));
+  await vi.waitFor(() => expect(screen.getByRole('button', { name: 'Yılı Kapat' })).toBeEnabled());
+});
+
+it('shows the authoritative latest annual summary outside the bounded recent job list', async () => {
+  mocks.years.mockResolvedValue({ years: [activeYear], latestCompletedAnnual: { id: 'older-annual', label: '2025-2026', mode: 'annual', status: 'completed', transitionSummary: { promoted: 29, graduated: 9, skippedInactive: 4, skippedGraduated: 2, skippedClassless: 3, transitions: [] } } });
+  mocks.jobs.mockResolvedValue({ jobs: [{ id: 'recent-manual', academicYearId: 'y1', mode: 'manual', status: 'completed' }] });
+  mount(); await screen.findByRole('checkbox', { name: /Matematik/ });
+  await userEvent.click(screen.getByRole('tab', { name: 'Sınıf Geçişi' }));
+  const completed = await screen.findByRole('region', { name: 'Tamamlanan sınıf geçişi' });
+  expect(completed).toHaveTextContent('2025-2026'); expect(completed).toHaveTextContent('29 terfi'); expect(completed).toHaveTextContent('9 mezuniyet');
 });
