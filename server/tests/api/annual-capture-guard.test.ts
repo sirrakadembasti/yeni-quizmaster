@@ -30,3 +30,22 @@ it('does not interfere with current-year operations without a captured annual jo
   expect((await request(app).post('/api/quizzes')).status).toBe(200);
   expect(db.actionLog.create).not.toHaveBeenCalled();
 });
+it.each([['patch', '/api/auth/me'], ['post', '/api/auth/register']])('freezes profile and registration business writes: %s %s', async (method, path) => {
+  const { app, db } = fixture(true);
+  expect((await (request(app) as any)[method](path)).status).toBe(423);
+  expect(db.actionLog.create).toHaveBeenCalledWith({ data: expect.objectContaining({ action: 'ARCHIVE_WRITE_DENIED' }) });
+});
+it.each(['/api/auth/login', '/api/auth/logout', '/api/auth/change-password', '/api/auth/forgot-password', '/api/auth/reset-password', '/api/notifications/preferences'])('keeps the operational route available: %s', async path => {
+  expect((await request(fixture(true).app).post(path)).status).toBe(200);
+});
+it.each(['/api/admin/password-reset-requests', '/api/admin/password-reset-requests/fixture-id/resend', '/api/admin/password-reset-requests/fixture-id/cancel'])('keeps administrator password reset operations available: %s', async path => {
+  const { app, db } = fixture(true);
+  expect((await request(app).post(path)).status).toBe(200);
+  expect(db.actionLog.create).not.toHaveBeenCalled();
+});
+it('continues to freeze administrative business and unsupported reset-request mutations', async () => {
+  const { app } = fixture(true);
+  expect((await request(app).post('/api/admin/users')).status).toBe(423);
+  expect((await request(app).post('/api/admin/password-reset-requests/fixture-id/delete')).status).toBe(423);
+  expect((await request(app).patch('/api/admin/password-reset-requests')).status).toBe(423);
+});

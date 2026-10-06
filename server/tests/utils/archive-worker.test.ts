@@ -39,6 +39,7 @@ describe('durable worker orchestration', () => {
     db.academicYear.findUniqueOrThrow = vi.fn(async () => ({ id: 'year', label: job.label, status: 'active' }));
     db.archiveSnapshot.count = vi.fn(async () => 0);
     db.$transaction = async (fn: any) => { const before = { ...job }; try { return await fn(db); } catch (error) { Object.assign(job, before); throw error; } };
+    db.$executeRawUnsafe = vi.fn(async (sql: string) => sql.startsWith('INSERT INTO ArchiveFinalizationPermit') ? 1 : 0);
     const artifact: any = { artifactPath: '/backup/archive.zip', zipSha256: 'abc', sizeBytes: 5 };
     const generate = vi.fn(async () => artifact), verify = vi.fn(async () => artifact);
     return { db, now, job, generate, verify };

@@ -1,10 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
+import path from 'node:path';
 import { assertIsolatedRuntime, prisma, login, api } from './academic-archive-helpers';
 import { captureArchive } from '../server/services/archive-capture';
+import { createArchiveWorker } from '../server/services/archive-worker';
 
 test('actual captured history separates exam/survey data and preserves management tabs across year changes',async({page})=>{
-  assertIsolatedRuntime();
+  test.setTimeout(120000);
+  const runtime=assertIsolatedRuntime();
   const db=prisma();
   let yearId:string,examId:string,surveyId:string,studentId:string,teacherId:string,classId:string;
   try {
@@ -24,14 +27,15 @@ test('actual captured history separates exam/survey data and preserves managemen
     await db.surveyAnswer.create({data:{submissionId:submission.id,questionId:question.id,value:'Frozen survey answer'}});
     const active=await db.academicYear.findFirst({where:{status:'active'}});
     const year=active??await db.academicYear.create({data:{label:'2026-2027',opensAt:new Date(),scheduledCloseAt:new Date('2027-09-01')}});
-    // Hold a valid fixture lease so the running worker cannot claim this seed
-    // between its creation and direct capture on a 15-second worker tick.
+    await db.academicTransitionRule.create({data:{yearId:year.id,fromClassId:cls.id,toClassId:next.id}});
+    // A future fixture clock reclaims this live-to-server lease without allowing
+    // the running worker to race the seed. SQL still checks its real wall clock.
     const leaseOwner='history-fixture-'+randomUUID();
     const snapshot=await db.archiveSnapshot.create({data:{academicYearId:year.id,label:year.label,mode:'annual',scopeJson:'{}',leaseOwner,leaseExpiresAt:new Date(Date.now()+120000)}});
     await captureArchive(db,snapshot.id,{owner:leaseOwner,now:()=>new Date()});
-    await db.archiveSnapshot.update({where:{id:snapshot.id},data:{status:'completed',completedAt:new Date(),leaseOwner:null,leaseExpiresAt:null}});
-    await db.academicYear.update({where:{id:year.id},data:{status:'closed',snapshotId:snapshot.id}});
-    await db.academicYear.create({data:{label:'2027-2028',opensAt:new Date(),scheduledCloseAt:new Date('2028-09-01')}});
+    const fixtureClock=new Date(Date.now()+120001);
+    await createArchiveWorker({db,backupRoot:path.join(runtime.root,'artifacts'),owner:leaseOwner,now:()=>new Date(fixtureClock)}).tick();
+    expect((await db.archiveSnapshot.findUniqueOrThrow({where:{id:snapshot.id}})).status).toBe('completed');
     await db.user.update({where:{id:student.id},data:{name:'Current History Student',classId:next.id}});
     await db.user.update({where:{id:teacher.id},data:{name:'Current History Teacher'}});
     await db.class.update({where:{id:cls.id},data:{name:'Renamed History Class',teachers:{set:[]},classTeacherId:null}});

@@ -72,7 +72,19 @@ try {
   if (migration.status !== 0) throw new Error(`Disposable migration failed: ${migration.error?.message ?? ''}\n${migration.stdout}\n${migration.stderr}`);
   console.log(`Disposable migrations completed in ${Date.now() - migrationStart}ms`);
   const entry = path.join(root, 'entry.mjs');
-  fs.writeFileSync(entry, `import { createRequire } from 'node:module';\nconst require = createRequire(${JSON.stringify(path.join(repo, 'server/package.json'))});\nconst { PrismaClient } = require('@prisma/client');\nconst bcrypt = require('bcryptjs');\nconst db = new PrismaClient();\ntry { await db.user.create({ data: { id: 'academic-admin', name: 'Synthetic Academic Admin', email: 'academic-admin@example.test', role: 'admin', password: await bcrypt.hash('AcademicFixtureOnly2026!', 10) } }); } finally { await db.$disconnect(); }\nawait import(${JSON.stringify('file:///' + path.join(repo, 'server/index.ts').replaceAll('\\', '/'))});\n`);
+  const nodemailerEsm = path.resolve(path.dirname(req.resolve('nodemailer')), '../esm/nodemailer.js');
+  fs.writeFileSync(entry, `import { createRequire } from 'node:module';
+const { disableAcademicFixtureEmailDelivery, isolateAcademicFixture } = await import(${JSON.stringify(pathToFileURL(path.join(repo, 'scripts/academic-fixture-email.mjs')).href)});
+isolateAcademicFixture();
+const require = createRequire(${JSON.stringify(path.join(repo, 'server/package.json'))});
+disableAcademicFixtureEmailDelivery(require('nodemailer'));
+disableAcademicFixtureEmailDelivery((await import(${JSON.stringify(pathToFileURL(nodemailerEsm).href)})).default);
+const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
+const db = new PrismaClient();
+try { await db.user.create({ data: { id: 'academic-admin', name: 'Synthetic Academic Admin', email: 'academic-admin@example.test', role: 'admin', password: await bcrypt.hash('AcademicFixtureOnly2026!', 10) } }); } finally { await db.$disconnect(); }
+await import(${JSON.stringify(pathToFileURL(path.join(repo, 'server/index.ts')).href)});
+`);
   const api = await launch(['--import', pathToFileURL(req.resolve('tsx')).href, entry]);
   await waitForAuditServer(`http://127.0.0.1:${apiPort}/api/csrf-token`, api);
   const viteEntry = path.join(root, 'ui.mjs');

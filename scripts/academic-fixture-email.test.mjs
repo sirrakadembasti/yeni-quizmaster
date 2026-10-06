@@ -1,0 +1,70 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import net from 'node:net';
+import tls from 'node:tls';
+import dns from 'node:dns';
+import { disableAcademicFixtureEmailDelivery, isolateAcademicFixture } from './academic-fixture-email.mjs';
+
+test('academic fixture preload blocks send/verify before any real transport can be created', async t => {
+  const repo = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+  const data = path.join(repo, 'server/data');
+  const root = fs.mkdtempSync(path.join(data, 'quizmaster-test-academic-email-'));
+  const previousUrl = process.env.DATABASE_URL;
+  t.after(() => {
+    if (previousUrl === undefined) delete process.env.DATABASE_URL; else process.env.DATABASE_URL = previousUrl;
+    if (path.dirname(path.resolve(root)) !== data || !path.basename(root).startsWith('quizmaster-test-academic-email-')) throw new Error('Unsafe fixture cleanup');
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+  const database = path.join(root, 'server/data/academic.db');
+  const marker = path.join(root, 'runtime.json');
+  fs.writeFileSync(marker, JSON.stringify({ root, database }));
+  process.env.DATABASE_URL = 'file:' + database.replaceAll('\\', '/');
+  let realTransportCalls = 0;
+  const original = () => { realTransportCalls++; throw new Error('Real SMTP transport must never open'); };
+  const nodemailer = { createTransport: original };
+  assert.throws(() => disableAcademicFixtureEmailDelivery(nodemailer, ''), /marker required/);
+  assert.equal(nodemailer.createTransport, original);
+  fs.writeFileSync(marker, JSON.stringify({ root: data, database }));
+  assert.throws(() => disableAcademicFixtureEmailDelivery(nodemailer, marker), /Unsafe academic/);
+  assert.equal(nodemailer.createTransport, original);
+  fs.writeFileSync(marker, JSON.stringify({ root, database }));
+  disableAcademicFixtureEmailDelivery(nodemailer, marker);
+  const transport = nodemailer.createTransport();
+  await assert.rejects(transport.sendMail({ to: 'synthetic@example.test' }), { code: 'ACADEMIC_FIXTURE_EMAIL_DELIVERY_DISABLED' });
+  await assert.rejects(transport.verify(), { code: 'ACADEMIC_FIXTURE_EMAIL_DELIVERY_DISABLED' });
+  assert.equal(realTransportCalls, 0);
+});
+test('independent fixture isolation denies external sockets/DNS/env reads and preserves loopback admission', async t => {
+  const repo = path.dirname(path.dirname(fileURLToPath(import.meta.url))), data = path.join(repo, 'server/data');
+  const root = fs.mkdtempSync(path.join(data, 'quizmaster-test-academic-email-'));
+  const previousUrl = process.env.DATABASE_URL, nativeConnect = net.Socket.prototype.connect, nativeTls = tls.connect;
+  let isolation, originalCalls = 0;
+  t.after(() => {
+    isolation?.restore(); net.Socket.prototype.connect = nativeConnect; tls.connect = nativeTls;
+    if (previousUrl === undefined) delete process.env.DATABASE_URL; else process.env.DATABASE_URL = previousUrl;
+    if (path.dirname(path.resolve(root)) !== data || !path.basename(root).startsWith('quizmaster-test-academic-email-')) throw new Error('Unsafe fixture cleanup');
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+  const database = path.join(root, 'server/data/academic.db'), marker = path.join(root, 'runtime.json');
+  fs.writeFileSync(marker, JSON.stringify({ root, database }));
+  process.env.DATABASE_URL = 'file:' + database.replaceAll('\\', '/');
+  // Even a broken blockade cannot reach the native network in this regression.
+  net.Socket.prototype.connect = function () { originalCalls++; return this; };
+  tls.connect = () => { originalCalls++; return {}; };
+  isolation = isolateAcademicFixture(marker);
+  const socket = new net.Socket();
+  assert.throws(() => socket.connect({ host: 'external.example.test', port: 465 }), { code: 'ACADEMIC_FIXTURE_OUTBOUND_BLOCKED' });
+  assert.throws(() => tls.connect({ host: 'external.example.test', port: 465 }), { code: 'ACADEMIC_FIXTURE_OUTBOUND_BLOCKED' });
+  await assert.rejects(dns.promises.lookup('external.example.test'), { code: 'ACADEMIC_FIXTURE_OUTBOUND_BLOCKED' });
+  await assert.rejects(new dns.promises.Resolver().resolve4('external.example.test'), { code: 'ACADEMIC_FIXTURE_OUTBOUND_BLOCKED' });
+  assert.equal(originalCalls, 0);
+  assert.equal(socket.connect({ host: '127.0.0.1', port: 80 }), socket);
+  assert.equal(originalCalls, 1);
+  assert.deepEqual(await dns.promises.lookup('localhost'), { address: '127.0.0.1', family: 4 });
+  assert.throws(() => fs.readFileSync(path.join(repo, 'server/.env.fixture-probe')), { code: 'ENOENT' });
+  assert.equal(isolation.state.deniedEnvironmentReads, 1);
+  assert.equal(isolation.state.deniedConnections, 4);
+});

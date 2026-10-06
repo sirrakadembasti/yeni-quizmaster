@@ -27,9 +27,14 @@ beforeEach(async () => {
   databaseUrl = 'file:' + file.split('\\').join('/');
   db = new PrismaClient({ datasources: { db: { url: databaseUrl } } });
   root = path.join(path.dirname(template), 'artifacts-' + randomUUID());
-  clock = new Date('2026-06-01T00:00:00Z');
+  // Production triggers check a real SQLite lease clock. Calendar boundaries
+  // are still tested by advancing this clock to the next persisted July close.
+  clock = new Date();
 });
-afterEach(async () => { await db.$disconnect(); });
+afterEach(async () => {
+  expect(await db.$queryRawUnsafe('SELECT * FROM ArchiveFinalizationPermit')).toEqual([]);
+  await db.$disconnect();
+});
 const now = () => new Date(clock);
 const pdf = async () => Buffer.from('%PDF-1.4\nSynthetic integration fixture\n%%EOF');
 const realExport = (input: SnapshotExport, directory: string) => exportArchive(input, directory, { pdfGenerator: pdf });
@@ -303,7 +308,8 @@ it('annual due rollover includes manually archived content, moves the initial ch
   expect(annual.status).toBe('completed');
   expect((await db.academicYear.findUniqueOrThrow({ where: { id: f.year.id } })).snapshotId).toBe(annual.id);
   const next = await db.academicYear.findFirstOrThrow({ where: { status: 'active' } });
-  expect(next.label).toBe('2026-2027');
+  const nextStart = Number(f.year.label.slice(5));
+  expect(next.label).toBe(`${nextStart}-${nextStart + 1}`);
   expect(next.scheduledCloseAt).toEqual(getYearSchedule(next.label));
   expect(await db.quiz.findUniqueOrThrow({ where: { id: f.quiz.id } })).toEqual(previousQuiz);
   expect(await db.studentResult.findUniqueOrThrow({ where: { id: f.result.id } })).toEqual(previousResult);
@@ -462,4 +468,22 @@ it('a worker-completed artifact verifies with the download API input shape and d
   expect(artifact.zipSha256).toBe(job.zipSha256);
   expect(artifact.sizeBytes).toBe(job.sizeBytes);
   expect(await readFile(artifact.artifactPath)).toEqual(await readFile(job.artifactPath!));
+});
+it('SQLite expiry during finalization rolls back all entity writes and consumes no leftover permits', async () => {
+  const f = await fixture();
+  const people = await db.user.findMany({ orderBy: { id: 'asc' } });
+  clock = getYearSchedule(f.year.label);
+  await db.$executeRawUnsafe("CREATE TRIGGER expire_finalization_lease AFTER UPDATE ON Quiz WHEN NEW.status='archived' BEGIN UPDATE ArchiveSnapshot SET leaseExpiresAt=1 WHERE status='verified'; END");
+  await worker().tick();
+  const job = await db.archiveSnapshot.findFirstOrThrow({ where: { mode: 'annual' } });
+  expect(job.status).toBe('retry_wait');
+  expect(await db.user.findMany({ orderBy: { id: 'asc' } })).toEqual(people);
+  expect((await db.quiz.findUniqueOrThrow({ where: { id: f.quiz.id } })).status).toBe('published');
+  expect((await db.studentResult.findUniqueOrThrow({ where: { id: f.result.id } })).academicYear).toBeNull();
+  expect(await db.academicYear.count()).toBe(1);
+  expect(await db.$queryRawUnsafe('SELECT * FROM ArchiveFinalizationPermit')).toEqual([]);
+  await db.$executeRawUnsafe('DROP TRIGGER expire_finalization_lease');
+  clock = job.nextAttemptAt!;
+  await worker().tick();
+  expect((await db.archiveSnapshot.findUniqueOrThrow({ where: { id: job.id } })).status).toBe('completed');
 });

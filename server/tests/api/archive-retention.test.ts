@@ -1,13 +1,25 @@
-import { afterAll, expect, it } from 'vitest';
+import { afterAll, beforeAll, expect, it, vi } from 'vitest';
 import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 import path from 'node:path';
-import { storage, closeStorage } from '../../storage';
+import { copyFile } from 'node:fs/promises';
 
 const url = process.env.DATABASE_URL ?? '';
 if (!url.startsWith('file:') || !path.basename(path.dirname(url.slice(5))).startsWith('quizmaster-test-')) throw new Error('Disposable retention datasource required');
-const db = new PrismaClient();
-afterAll(async () => { await db.$disconnect(); await closeStorage(); });
+let db: PrismaClient, storage: typeof import('../../storage').storage, closeStorage: typeof import('../../storage').closeStorage;
+beforeAll(async () => {
+  const file = path.join(path.dirname(url.slice(5)), 'retention-' + randomUUID() + '.db');
+  await copyFile(url.slice(5), file);
+  const copyUrl = 'file:' + file.split('\\').join('/');
+  db = new PrismaClient({ datasources: { db: { url: copyUrl } } });
+  vi.resetModules();
+  vi.stubEnv('DATABASE_URL', copyUrl);
+  ({ storage, closeStorage } = await import('../../storage'));
+});
+afterAll(async () => {
+  try { await db.$disconnect(); await closeStorage(); }
+  finally { vi.unstubAllEnvs(); }
+});
 
 it('retains old archive audit evidence and lifetime retry accounting while pruning operational logs', async () => {
   const user = await db.user.create({ data: { name: 'Synthetic retention admin', email: randomUUID() + '@example.test', password: 'synthetic', role: 'admin' } });

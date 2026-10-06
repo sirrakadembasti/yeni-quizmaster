@@ -88,6 +88,31 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
       if (job.mode === 'annual') await tx.notification.create({ data: { userId: admin.id, title: `Eğitim yılı arşivi başarısız: ${job.label}`, message: `Arşiv ${job.id} tamamlanamadı. Yıl kapanmadı; Yıl Sonu ve Arşiv İşlemleri sayfasında sorunu giderip Yeniden Dene ile kurtarın.`, type: 'error' } });
     }
   }
+  // Private, transaction-scoped capabilities. The database checks the captured
+  // entity, verified artifact, owner and real-time lease again on every write.
+  // Only the exact rollover fields are persisted; no User secrets enter permits.
+  async function permit(tx: any, job: any, kind: 'user' | 'quiz' | 'result' | 'academicYear' | 'snapshot', id: string, changes: Record<string, unknown>) {
+    const definitions = {
+      user: { table: 'User', columns: ['classId', 'classNo', 'studentNo', 'isActive', 'deactivatedAt', 'graduationYear', 'graduationDate'] },
+      quiz: { table: 'Quiz', columns: ['status', 'academicYear'] },
+      result: { table: 'StudentResult', columns: ['academicYear'] },
+      academicYear: { table: 'AcademicYear', columns: ['status', 'closedAt', 'snapshotId'] },
+      snapshot: { table: 'ArchiveSnapshot', columns: ['status', 'completedAt', 'leaseOwner', 'leaseExpiresAt', 'lastError', 'nextAttemptAt'] },
+    };
+    const { table, columns } = definitions[kind];
+    if (Object.keys(changes).some(key => !columns.includes(key))) throw new Error('Invalid finalization capability');
+    const values: any[] = [job.id, owner, kind];
+    const before = columns.map(column => `'${column}',"${column}"`).join(',');
+    const after = columns.map(column => {
+      if (!Object.prototype.hasOwnProperty.call(changes, column)) return `'${column}',"${column}"`;
+      const value = changes[column];
+      values.push(value instanceof Date ? value.getTime() : typeof value === 'boolean' ? Number(value) : value);
+      return `'${column}',?`;
+    }).join(',');
+    values.push(id);
+    const count = await tx.$executeRawUnsafe(`INSERT INTO ArchiveFinalizationPermit(snapshotId,owner,entityType,entityId,oldValues,newValues) SELECT ?,?,?,id,json_object(${before}),json_object(${after}) FROM "${table}" WHERE id=?`, ...values);
+    if (count !== 1) throw new Error('Finalization capability target missing');
+  }
   async function finalize(id: string) {
     await db.$transaction(async tx => {
       const job = await assertOwned(tx, id);
@@ -110,17 +135,36 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
       } else if (job.mode !== 'manual') throw new Error('Invalid archive mode');
       // Archived quizzes from older manual snapshots are untouched. Triggers allow only this verified transition.
       for (const row of rows.filter(r => r.entityType === 'quiz')) {
-        await tx.quiz.updateMany({ where: { id: row.entityId, status: { not: 'archived' } }, data: { status: 'archived', academicYear: job.label } });
+        const quiz = await tx.quiz.findUniqueOrThrow({ where: { id: row.entityId }, select: { status: true } });
+        if (quiz.status !== 'archived') {
+          const changes = { status: 'archived', academicYear: job.label };
+          await permit(tx, job, 'quiz', row.entityId, changes);
+          await tx.quiz.update({ where: { id: row.entityId }, data: changes });
+        }
+        const results = rows.filter(r => r.entityType === 'result').filter(r => {
+          const result = JSON.parse(r.dataJson);
+          return result.quizId === row.entityId && result.academicYear === null;
+        });
+        for (const result of results) await permit(tx, job, 'result', result.entityId, { academicYear: job.label });
         await tx.studentResult.updateMany({ where: { quizId: row.entityId, academicYear: null }, data: { academicYear: job.label } });
       }
       if (job.mode === 'annual') {
         // Release all migrating numbers first, so chains and cycles cannot violate the unique index.
-        if (plan.length) await tx.user.updateMany({ where: { id: { in: plan.map(s => s.id) } }, data: { studentNo: null } });
-        for (const student of plan) await tx.user.update({ where: { id: student.id }, data: student.graduate
-          ? { classId: null, classNo: null, studentNo: null, isActive: false, deactivatedAt: now(), graduationYear: job.label, graduationDate: now() }
-          : { classId: student.classId, classNo: null, studentNo: student.studentNo } });
+        if (plan.length) {
+          for (const student of plan) await permit(tx, job, 'user', student.id, { studentNo: null });
+          await tx.user.updateMany({ where: { id: { in: plan.map(s => s.id) } }, data: { studentNo: null } });
+        }
+        for (const student of plan) {
+          const changes = student.graduate
+            ? { classId: null, classNo: null, studentNo: null, isActive: false, deactivatedAt: now(), graduationYear: job.label, graduationDate: now() }
+            : { classId: student.classId, classNo: null, studentNo: student.studentNo };
+          await permit(tx, job, 'user', student.id, changes);
+          await tx.user.update({ where: { id: student.id }, data: changes });
+        }
         const start = Number(job.label.slice(5)), nextLabel = `${start}-${start + 1}`;
-        await tx.academicYear.update({ where: { id: year.id }, data: { status: 'closed', closedAt: now(), snapshotId: id } });
+        const yearChanges = { status: 'closed', closedAt: now(), snapshotId: id };
+        await permit(tx, job, 'academicYear', year.id, yearChanges);
+        await tx.academicYear.update({ where: { id: year.id }, data: yearChanges });
         await tx.academicYear.create({ data: {
           label: nextLabel, status: 'active', opensAt: year.scheduledCloseAt, scheduledCloseAt: getYearSchedule(nextLabel),
           // Fresh rule identities let administrators edit the active year independently.
@@ -130,8 +174,12 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
       await notify(tx, job, 'ARCHIVE_COMPLETED');
       // Recheck with the clock immediately before the last mutation. A stale transaction rolls back entirely.
       await assertOwned(tx, id);
-      const changed = await tx.archiveSnapshot.updateMany({ where: { ...owned(id), status: 'verified' }, data: { status: 'completed', completedAt: now(), leaseOwner: null, leaseExpiresAt: null, lastError: null, nextAttemptAt: null } });
+      const completion = { status: 'completed', completedAt: now(), leaseOwner: null, leaseExpiresAt: null, lastError: null, nextAttemptAt: null };
+      await permit(tx, job, 'snapshot', id, completion);
+      const changed = await tx.archiveSnapshot.updateMany({ where: { ...owned(id), status: 'verified' }, data: completion });
       if (changed.count !== 1) throw new LeaseLost();
+      const remaining = await tx.$executeRawUnsafe('DELETE FROM ArchiveFinalizationPermit WHERE snapshotId=?', id);
+      if (remaining !== 0) throw new Error('Unconsumed finalization capabilities');
     }, { maxWait: 10000, timeout: 120000 });
   }
   async function tick() {

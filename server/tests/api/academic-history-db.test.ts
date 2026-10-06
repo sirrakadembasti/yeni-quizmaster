@@ -1,14 +1,25 @@
 import express from 'express';
 import session from 'express-session';
 import request from 'supertest';
-import { afterAll, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, expect, it, vi } from 'vitest';
 import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 vi.mock('../../services/archive-db', () => ({ archiveDb: {} }));
 vi.mock('../../middleware/auth', () => ({ requireAuth: (req:any,_res:any,next:any) => { req.user={id:'fixture',role:'admin'}; next(); }, requireRole: () => (_req:any,_res:any,next:any) => next() }));
 import { createAcademicHistoryRouter } from '../../api-routes/academic-history';
 import { captureArchive } from '../../services/archive-capture';
-const db=new PrismaClient();
+import { createArchiveWorker } from '../../services/archive-worker';
+import { exportArchive } from '../../services/archive-export';
+import path from 'node:path';
+import { copyFile } from 'node:fs/promises';
+let db:PrismaClient;
+beforeAll(async()=>{
+  const template=process.env.DATABASE_URL!.slice(5);
+  if(!path.basename(path.dirname(template)).startsWith('quizmaster-test-'))throw new Error('Disposable history database required');
+  const copy=path.join(path.dirname(template),'history-'+randomUUID()+'.db');
+  await copyFile(template,copy);
+  db=new PrismaClient({datasources:{db:{url:'file:'+copy.split('\\').join('/')}}});
+});
 afterAll(async()=>{await db.$disconnect();});
 it('captures real contentType values and serves separated, frozen exam/survey history',async()=>{
   const teacher=await db.user.create({data:{name:'Closure Teacher',email:randomUUID()+'@example.test',password:'synthetic',role:'teacher'}});
@@ -26,11 +37,13 @@ it('captures real contentType values and serves separated, frozen exam/survey hi
   await db.studentResult.create({data:{studentId:student.id,quizId:survey.id,status:'completed',score:10}});
   const submission=await db.surveySubmission.create({data:{surveyId:survey.id,studentId:student.id}});
   await db.surveyAnswer.create({data:{submissionId:submission.id,questionId:question.id,value:'Frozen answer'}});
-  const year=await db.academicYear.create({data:{label:'History-'+randomUUID(),opensAt:new Date(),scheduledCloseAt:new Date('2027-09-01')}});
-  const snapshot=await db.archiveSnapshot.create({data:{academicYearId:year.id,label:year.label,mode:'annual',scopeJson:'{}'}});
+  const year=await db.academicYear.create({data:{label:'2025-2026',opensAt:new Date(),scheduledCloseAt:new Date('2099-09-01')}});
+  await db.academicTransitionRule.create({data:{yearId:year.id,fromClassId:cls.id,toClassId:nextClass.id}});
+  const snapshot=await db.archiveSnapshot.create({data:{academicYearId:year.id,label:year.label,mode:'annual',scopeJson:'{}',initiatedBy:teacher.id}});
   await captureArchive(db,snapshot.id);
-  await db.archiveSnapshot.update({where:{id:snapshot.id},data:{status:'completed',completedAt:new Date()}});
-  await db.academicYear.update({where:{id:year.id},data:{status:'closed',snapshotId:snapshot.id}});
+  const backupRoot=path.join(path.dirname(process.env.DATABASE_URL!.slice(5)),'history-artifacts');
+  await createArchiveWorker({db,backupRoot,export:(input,root)=>exportArchive(input,root,{pdfGenerator:async()=>Buffer.from('%PDF-1.4\nSynthetic history fixture\n%%EOF')})}).tick();
+  expect((await db.archiveSnapshot.findUniqueOrThrow({where:{id:snapshot.id}})).status).toBe('completed');
   await db.user.update({where:{id:student.id},data:{name:'Live Student',classId:nextClass.id}});
   await db.user.update({where:{id:teacher.id},data:{name:'Live Teacher'}});
   await db.class.update({where:{id:cls.id},data:{name:'Live Class',teachers:{set:[]},classTeacherId:null}});
