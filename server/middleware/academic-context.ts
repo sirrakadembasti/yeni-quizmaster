@@ -8,6 +8,13 @@ export function historicalRequestPolicy(method: string, path: string, snapshotId
   const read = ['GET','HEAD','OPTIONS'].includes(method);
   if (read && ['/api/auth/me','/api/csrf-token'].includes(path)) return null;
   if (method==='POST' && ['/api/auth/login','/api/auth/logout','/api/auth/forgot-password','/api/auth/reset-password'].includes(path)) return null;
+  if (method==='POST' && path==='/api/auth/change-password') return null;
+  if ((method==='GET' && ['/api/notifications','/api/notifications/preferences'].includes(path)) ||
+      (method==='PATCH' && path==='/api/notifications/preferences') ||
+      (method==='POST' && path==='/api/notifications/mark-read') ||
+      (method==='DELETE' && /^\/api\/notifications\/(?!preferences$|mark-read$)[^/]+$/.test(path))) return null;
+  if ((['GET','POST'].includes(method) && path==='/api/admin/password-reset-requests') ||
+      (method==='POST' && /^\/api\/admin\/password-reset-requests\/[^/]+\/(resend|cancel)$/.test(path))) return null;
   if (path === '/api/admin/academic-history/context' && ['GET','POST'].includes(method)) return null;
   if (read && path.startsWith('/api/admin/academic-history/')) return null;
   const download=path.match(/^\/api\/admin\/archive\/jobs\/([^/]+)\/(download|download-authorize)$/);
@@ -23,7 +30,10 @@ export function createAcademicContextGuard(db: PrismaClient = archiveDb) {
       if (req.user?.role !== 'admin') return next();
       let selectedSnapshot:string|undefined;
       if (/^\/api\/admin\/archive\/jobs\/[^/]+\/download(?:-authorize)?\/?$/i.test(req.path)) {
-        try {const year=await db.academicYear.findUnique({where:{id:context.academicYearId}});if(year?.status==='closed') selectedSnapshot=year.snapshotId??undefined;}
+        try {
+          const year=await db.academicYear.findUnique({where:{id:context.academicYearId}});
+          if(year?.status==='closed' && year.snapshotId){const snapshot=await db.archiveSnapshot.findUnique({where:{id:year.snapshotId}});if(snapshot?.mode==='annual' && snapshot.status==='completed' && snapshot.academicYearId===year.id && snapshot.label===year.label)selectedSnapshot=snapshot.id;}
+        }
         catch {return res.status(503).json({message:'Geçmiş arşiv bağlamı doğrulanamadı.'});}
       }
       const status = historicalRequestPolicy(req.method, req.path,selectedSnapshot);

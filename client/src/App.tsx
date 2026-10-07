@@ -249,7 +249,7 @@ function AppRouter() {
 function LiveNotificationListener() {
   const { role } = useAuth();
   const academic = useAcademicYear();
-  if (role === 'admin' && (!academic || academic.pending || academic.error || academic.year?.status === 'closed')) return null;
+  if (role === 'admin' && (!academic || academic.pending || academic.error || !academic.year)) return null;
   return <NotificationListener />;
 }
 

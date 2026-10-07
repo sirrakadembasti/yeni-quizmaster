@@ -3,7 +3,6 @@ import type { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import { requireAuth, requireRole, type AuthRequest } from '../middleware/auth';
 import { archiveDb } from '../services/archive-db';
-import { getOrCreateActiveYear } from '../services/academic-year';
 import '../middleware/academic-context';
 const types = ['user','student','teacher','class','category','teacherAssignment','quiz','survey','question','result','surveySubmission','surveyAnswer','guardianLink','announcement','questionBank'] as const;
 class HistoryError extends Error { constructor(public status: number, message: string) { super(message); } }
@@ -21,10 +20,18 @@ export function createAcademicHistoryRouter({ db = archiveDb, now = () => new Da
     return { year, snapshot };
   };
   router.get('/context', wrap(async (req,res) => {
-    const active = await getOrCreateActiveYear(db, now());
-    const years = await db.academicYear.findMany({ select: { id:true,label:true,status:true,snapshotId:true }, orderBy: { label: 'desc' } });
+    const active = await db.academicYear.findFirst({ where: { status: 'active' }, select: { id:true,label:true,status:true,snapshotId:true } });
+    if (!active) throw new HistoryError(503,'Aktif eğitim yılı doğrulanamadı.');
+    const candidates = await db.academicYear.findMany({ select: { id:true,label:true,status:true,snapshotId:true }, orderBy: { label: 'desc' } });
+    const years = [active];
+    for (const year of candidates) {
+      if (year.status !== 'closed' || !year.snapshotId) continue;
+      const snapshot = await db.archiveSnapshot.findUnique({ where: { id: year.snapshotId } });
+      if (snapshot && snapshot.academicYearId === year.id && snapshot.label === year.label && snapshot.mode === 'annual' && snapshot.status === 'completed') years.push(year);
+    }
     const context = req.session.academicYearContext;
-    res.json({ years, academicYearId: context?.userId === req.user!.id && context.historical ? context.academicYearId : active.id });
+    const selected = context?.userId === req.user!.id && context.historical ? context.academicYearId : active.id;
+    res.json({ years, academicYearId: selected, ...(!years.some(year=>year.id===selected) ? { invalidSelection:true } : {}) });
   }));
   router.post('/context', wrap(async (req,res) => {
     const parsed = z.object({ academicYearId: z.string().uuid() }).strict().safeParse(req.body);

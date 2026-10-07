@@ -5,9 +5,13 @@ import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { notificationApi } from "@/lib/api";
 import { prependNotification, type NotificationPage } from "@/lib/notification-cache";
+import { useAcademicYear } from '@/context/academic-year-context';
 
 export function NotificationListener() {
-  const { user, isAuthenticated } = useAuth();
+  const { user, role, isAuthenticated } = useAuth();
+  const academic = useAcademicYear();
+  const historicalRef = useRef(false);
+  historicalRef.current = role === 'admin' && (!!academic?.pending || !!academic?.error || academic?.year?.status === 'closed');
   const queryClient = useQueryClient();
   const { data: preferences } = useQuery({
     queryKey: ["notifications", "preferences"],
@@ -50,7 +54,7 @@ export function NotificationListener() {
         current => prependNotification(current, notification, 20)
       );
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      if (mutedRef.current) return;
+      if (mutedRef.current || historicalRef.current) return;
 
       if (notification.type === "success") {
         toast.success(notification.title, { description: notification.message });

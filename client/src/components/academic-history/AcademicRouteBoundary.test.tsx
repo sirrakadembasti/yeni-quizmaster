@@ -19,12 +19,12 @@ describe('route boundary refresh safety',()=>{
     resolve({json:async()=>({years,academicYearId:'active'})});
     expect(await screen.findByText('Current page 2026-2027')).toBeInTheDocument();
   });
-  it('restores only this user past choice before any direct route mounts',async()=>{
+  it('honors the same-session server past choice before any direct route mounts',async()=>{
     localStorage.setItem('academic-year:other-user','active');localStorage.setItem('academic-year:admin-1','past');
     localStorage.setItem('academic-year-mode:admin-1','historical');
-    vi.mocked(apiFetch).mockResolvedValue({json:async()=>({years,academicYearId:'active'})} as Response);
-    mount();await waitFor(()=>expect(apiFetch).toHaveBeenCalledTimes(2));
-    expect(JSON.parse(vi.mocked(apiFetch).mock.calls[1][1]!.body as string)).toEqual({academicYearId:'past'});
+    vi.mocked(apiFetch).mockResolvedValue({json:async()=>({years,academicYearId:'past'})} as Response);
+    mount();await waitFor(()=>expect(apiFetch).toHaveBeenCalledTimes(1));
+    expect(vi.mocked(apiFetch).mock.calls[0][1]!.method).toBe('GET');
     expect(screen.queryByText(/Current page/)).not.toBeInTheDocument();
   });
 });

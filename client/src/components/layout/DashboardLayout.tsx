@@ -69,7 +69,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
   const { user, role, logout } = useAuth();
   const academic = useAcademicYear();
   const historical = role === 'admin' && academic?.year?.status === 'closed';
-  const liveContext = role !== 'admin' || !academic || (!!academic.year && !academic.pending && !academic.error && !historical);
+  const sessionContext = role !== 'admin' || !academic || (!!academic.year && !academic.pending && !academic.error);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -121,13 +121,13 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
     queryFn: () => notificationApi.getUserNotifications(1, 5),
     refetchInterval: 10000,
     refetchOnWindowFocus: true,
-    enabled: !!user && liveContext
+    enabled: !!user && sessionContext
   });
 
   const { data: notificationPreferences } = useQuery({
     queryKey: ["notifications", "preferences"],
     queryFn: () => notificationApi.getPreferences(),
-    enabled: !!user && liveContext
+    enabled: !!user && sessionContext
   });
 
   const markAllReadMutation = useMutation({
@@ -284,7 +284,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
           </Button>
           <div className="flex items-center gap-2 sm:gap-3">
           {/* Notification Bell with Popover */}
-          {liveContext && <Popover>
+          {sessionContext && <Popover>
             <PopoverTrigger asChild>
               <Button variant="ghost" size="icon" aria-label="Bildirimleri aç" className="relative rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-slate-50 dark:hover:bg-slate-800">
                 {notificationsMuted ? <VolumeX className="h-5 w-5" /> : <Bell className="h-5 w-5" />}
@@ -297,7 +297,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
             </PopoverTrigger>
             <PopoverContent align="end" className="w-80 sm:w-96 p-0 rounded-2xl shadow-2xl border-border/60 overflow-hidden bg-white dark:bg-slate-900">
               <div className="p-4 border-b bg-muted/20 dark:bg-muted/5 flex items-center justify-between">
-                <h3 className="font-black text-sm uppercase tracking-wider">Bildirimler</h3>
+                <h3 className="font-black text-sm uppercase tracking-wider">{historical ? 'Mevcut oturum bildirimleri' : 'Bildirimler'}</h3>
                 <div className="flex items-center gap-1">
                   <Button
                     variant="ghost"
@@ -370,7 +370,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
                             <p className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
                               <Clock className="h-3 w-3" /> {format(new Date(n.createdAt), "d MMM, HH:mm", { locale: tr })}
                             </p>
-                            {n.type === 'announcement' && (
+                            {n.type === 'announcement' && !historical && (
                               <Link href="/announcements" className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-0.5 hover:underline">
                                 Detay <ExternalLink className="h-2.5 w-2.5" />
                               </Link>
@@ -388,9 +388,9 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
                 )}
               </ScrollArea>
               <div className="p-3 border-t bg-slate-50 dark:bg-slate-800/20 text-center">
-                <Link href="/settings?tab=notifications" className="text-[11px] font-black text-indigo-600 dark:text-indigo-400 hover:underline uppercase tracking-tighter">
+                {historical ? <p className="text-xs text-muted-foreground">Bu bildirimler mevcut oturuma aittir. Ayrıntılar ve tüm bildirimler için aktif yıla dönün.</p> : <Link href="/settings?tab=notifications" className="text-[11px] font-black text-indigo-600 dark:text-indigo-400 hover:underline uppercase tracking-tighter">
                   Tüm Bildirimleri Gör
-                </Link>
+                </Link>}
               </div>
             </PopoverContent>
           </Popover>}
