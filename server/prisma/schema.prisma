@@ -380,6 +380,8 @@ model ArchiveSnapshot {
   completedAt     DateTime?
   transitionSummaryJson String? // immutable annual outcome, committed with rollover even without an audit actor
   rows            ArchiveSnapshotRow[]
+  historyProjections ArchiveHistoryProjection[]
+  historyReadiness ArchiveHistoryReady[]
 
   @@index([status, nextAttemptAt])
   @@index([academicYearId, createdAt])
@@ -392,8 +394,32 @@ model ArchiveSnapshotRow {
   entityType String
   entityId   String
   dataJson   String
+  historyProjections ArchiveHistoryProjection[]
 
   @@unique([snapshotId, entityType, entityId])
+  @@index([entityType, entityId, snapshotId])
+}
+
+// Rebuildable versioned search membership, derived exclusively from immutable rows.
+model ArchiveHistoryProjection {
+  sourceRowId String
+  sourceRow ArchiveSnapshotRow @relation(fields: [sourceRowId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  version String
+  snapshotId String
+  snapshot ArchiveSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  sourceJson String
+  searchText String
+  @@id([sourceRowId, version])
+  @@index([snapshotId, version])
+}
+
+model ArchiveHistoryReady {
+  snapshotId String
+  snapshot ArchiveSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  version String
+  rowCount Int
+  inputSha256 String
+  @@id([snapshotId, version])
 }
 
 model AcademicTransitionRule {

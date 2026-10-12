@@ -70,7 +70,7 @@ async function inputFor(id: string): Promise<SnapshotExport> {
   const rows = await db.archiveSnapshotRow.findMany({ where: { snapshotId: id } });
   // The verifier hashes the precise exported input, including row order.
   rows.sort((a, b) => a.entityType.localeCompare(b.entityType) || a.entityId.localeCompare(b.entityId));
-  return { id, label: job.label, createdAt: job.createdAt, initiatedBy: job.initiatedBy, rows };
+  return { id, label: job.label, createdAt: job.createdAt, capturedAt: job.capturedAt, initiatedBy: job.initiatedBy, rows };
 }
 function recoveryApp(adminId: string) {
   recoveryAuth.id = adminId;
@@ -647,7 +647,7 @@ it('a worker-completed artifact verifies with the download API input shape and d
   // callers describe the same frozen input and must accept the same artifact.
   const artifact = await verifyArchiveArtifact({
     id: job.id, label: job.label, initiatedBy: job.initiatedBy,
-    createdAt: job.createdAt, rows: job.rows,
+    createdAt: job.createdAt, capturedAt: job.capturedAt, rows: job.rows,
   }, root);
   expect(artifact.zipSha256).toBe(job.zipSha256);
   expect(artifact.sizeBytes).toBe(job.sizeBytes);

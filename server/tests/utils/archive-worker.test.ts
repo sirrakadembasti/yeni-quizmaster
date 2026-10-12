@@ -115,8 +115,22 @@ describe('durable worker orchestration', () => {
     const events: string[] = [], initial = [{ id: 'student-a', role: 'student', isActive: true, classId: 'one', studentNo: 1 }, { id: 'student-b', role: 'student', isActive: true, classId: 'two', studentNo: 1 }];
     s.db.archiveSnapshotRow.findMany.mockResolvedValue(initial.map(u => ({ entityType: 'user', entityId: u.id, dataJson: JSON.stringify(u) })));
     s.db.user.findMany.mockImplementation(async ({ where }: any) => where?.role === 'admin' ? [] : [...initial, { id: 'teacher', role: 'teacher', isActive: true, classId: null, studentNo: null }]);
-    s.db.user.updateMany = vi.fn(async () => { events.push('release-numbers'); });
-    s.db.user.update = vi.fn(async (args: any) => { events.push(args.where.id); });
+    const moved:Array<Record<string,unknown>>=[];
+    s.db.user.updateMany = vi.fn(async ({where}:any) => { events.push('release-numbers'); return {count:where.id.in.length}; });
+    const execute=s.db.$executeRawUnsafe;
+    s.db.$executeRawUnsafe=vi.fn(async(sql:string,...values:any[])=>{
+      if(sql.startsWith('WITH changes')&&sql.includes('INSERT INTO ArchiveFinalizationPermit'))return (values.length-5)/4;
+      if(sql.startsWith('WITH changes')&&sql.includes('UPDATE "User"')){
+        const count=(values.length-3)/4;
+        for(let index=0;index<count;index++){
+          const [id,classId,studentNo,graduate]=values.slice(index*4,index*4+4);events.push(id);
+          moved.push({id,classId,classNo:null,studentNo,...(graduate?{isActive:false,graduationYear:values[values.length-2]}:{})});
+        }
+        return count;
+      }
+      if(sql.startsWith('INSERT INTO ArchiveFinalizationPermit')&&sql.includes('FROM "User"'))return values.length-4;
+      return execute(sql,...values);
+    });
     s.db.class = { findMany: vi.fn(async () => [{ id: 'one', maxStudents: 1 }, { id: 'two', maxStudents: 1 }]) };
     s.db.academicTransitionRule = { findMany: vi.fn(async () => [{ fromClassId: 'one', toClassId: 'two', graduate: false }, { fromClassId: 'two', toClassId: null, graduate: true }]) };
     s.db.academicYear.findUniqueOrThrow.mockResolvedValue({ id: 'year', label: s.job.label, status: 'active', scheduledCloseAt: s.now });
@@ -126,8 +140,8 @@ describe('durable worker orchestration', () => {
     s.db.archiveSnapshot.updateMany = vi.fn(async (args: any) => { if (args.data.status === 'completed') events.push('complete'); return update(args); });
     await createArchiveWorker({ db: s.db, backupRoot: '/backup', now: () => s.now, export: s.generate, verify: s.verify }).tick();
     expect(events).toEqual(['release-numbers', 'student-a', 'student-b', 'close-year', 'open-year', 'complete']);
-    expect(s.db.user.update.mock.calls.map((call: any) => call[0].where.id)).not.toContain('teacher');
-    expect(s.db.user.update.mock.calls[1][0].data).toMatchObject({ classId: null, classNo: null, studentNo: null, isActive: false, graduationYear: '2025-2026' });
+    expect(moved.map(student=>student.id)).not.toContain('teacher');
+    expect(moved[1]).toMatchObject({ classId: null, classNo: null, studentNo: null, isActive: false, graduationYear: '2025-2026' });
     expect(s.db.academicYear.create.mock.calls[0][0].data).toMatchObject({ label: '2026-2027', status: 'active', scheduledCloseAt: new Date('2027-07-14T21:05:00Z') });
     expect(s.db.academicYear.create.mock.calls[0][0].data.transitionRules).toEqual({ create: [{ fromClassId: 'one', toClassId: 'two', graduate: false }, { fromClassId: 'two', toClassId: null, graduate: true }] });
     expect(s.job.status).toBe('completed');

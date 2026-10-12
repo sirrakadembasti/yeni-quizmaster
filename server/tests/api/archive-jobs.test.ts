@@ -147,7 +147,7 @@ it('blocks cross-snapshot grants and returns only a verified ZIP from frozen row
   try {
     const job = await enqueueArchive(db, { mode: 'manual', quizIds: [quizzes[0].id] }, clock);
     job.rows = [{ entityType: 'quiz', entityId: quizzes[0].id, dataJson: JSON.stringify({ title: 'Frozen exam' }) }];
-    Object.assign(job, await exportArchive({ id: job.id, label: job.label, initiatedBy: job.initiatedBy, createdAt: job.createdAt, rows: job.rows }, directory, { pdfGenerator: async () => Buffer.from('%PDF-1.4\nFrozen report\n%%EOF') })); job.status = 'completed';
+    Object.assign(job, await exportArchive({ id: job.id, label: job.label, initiatedBy: job.initiatedBy, createdAt: job.createdAt, capturedAt: job.capturedAt, rows: job.rows }, directory, { pdfGenerator: async () => Buffer.from('%PDF-1.4\nFrozen report\n%%EOF') })); job.status = 'completed';
     const expressApp = express(); expressApp.use(express.json()); expressApp.use(session({ secret: 'isolated-download', resave: false, saveUninitialized: true }));
     expressApp.use('/archive', createArchiveRouter({ db, now: () => clock, backupRoot: directory, verifyArtifact: verifyArchiveArtifact }));
     const agent = request.agent(expressApp);

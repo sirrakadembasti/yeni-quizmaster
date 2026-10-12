@@ -1,4 +1,5 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { historySqlFixture } from './utils/history-sql-fixture';
 import express from 'express';
 import session from 'express-session';
 import request from 'supertest';
@@ -10,6 +11,8 @@ import { createAcademicContextGuard } from '../middleware/academic-context';
 const yearId='00000000-0000-4000-8000-000000000001';
 const activeId='00000000-0000-4000-8000-000000000002';
 const activeYear={id:activeId,label:'2026-2027',status:'active',snapshotId:null};
+const fixtures:Array<ReturnType<typeof historySqlFixture>>=[];
+afterEach(async()=>{await Promise.all(fixtures.splice(0).map(fixture=>fixture.close()));});
 function setup(snapshotStatus='completed', snapshotLabel='2025-2026') {
   const closedYear={id:yearId,label:'2025-2026',status:'closed',snapshotId:'snapshot'};
   const db:any={academicYear:{findUnique:vi.fn(async({where}:any)=>where.id===activeId?activeYear:closedYear),findFirst:vi.fn(async()=>activeYear),findMany:vi.fn(async()=>[closedYear,activeYear])},archiveSnapshot:{findUnique:vi.fn(async()=>({id:'snapshot',academicYearId:yearId,label:snapshotLabel,mode:'annual',status:snapshotStatus})),findMany:vi.fn(async()=>[{id:'snapshot',academicYearId:yearId,label:snapshotLabel,mode:'annual',status:snapshotStatus}])},archiveSnapshotRow:{findMany:vi.fn(async()=>[
@@ -17,6 +20,12 @@ function setup(snapshotStatus='completed', snapshotLabel='2025-2026') {
     {entityType:'class',entityId:'class',dataJson:JSON.stringify({id:'class',name:'Old Class'})},
     {entityType:'result',entityId:'result',dataJson:JSON.stringify({id:'result',studentId:'student',score:90})},
   ])},actionLog:{create:vi.fn(async()=>({}))}};
+  const source=db.archiveSnapshotRow.findMany;
+  const fixture=historySqlFixture(()=>source());fixtures.push(fixture);
+  db.$queryRawUnsafe=fixture.query;
+  db.rawTransfers=fixture.transfers;
+  db.archiveSnapshotRow={findMany:vi.fn(fixture.find)};
+  db.setRows=(rows:any[])=>source.mockResolvedValue(rows);
   const app=express();app.use(express.json());app.use(session({secret:'test-academic-history',resave:false,saveUninitialized:false}));
   app.use(createAcademicContextGuard(db));app.use('/api/admin/academic-history',createAcademicHistoryRouter({db}));
   app.get('/api/users',(_req,res)=>res.json({live:true}));app.delete('/api/users/:id',(_req,res)=>res.json({deleted:true}));
@@ -26,12 +35,61 @@ function setup(snapshotStatus='completed', snapshotLabel='2025-2026') {
   return {app,db};
 }
 describe('frozen historical API and session enforcement',()=>{
+  it('returns all 600 class teacher names without transferring their unrelated frozen account payloads',async()=>{
+    const {app,db}=setup();
+    const teachers=Array.from({length:600},(_,index)=>({id:'teacher-'+index,name:'Frozen Teacher '+index,role:'teacher',address:'Unrelated address '.repeat(1000),managedClassIds:['not-needed-'+index]}));
+    db.setRows([{entityType:'class',entityId:'class',dataJson:JSON.stringify({id:'class',name:'Many teachers',teachers:teachers.map(row=>({id:row.id}))})},...teachers.map(row=>({entityType:'user',entityId:row.id,dataJson:JSON.stringify(row)}))]);
+    const result=await request(app).get(`/api/admin/academic-history/years/${yearId}/rows?type=class&pageSize=1`);
+    expect(result.status).toBe(200);expect(result.body.rows[0].teacherNames).toEqual(teachers.map(row=>row.name));
+    expect(db.rawTransfers.filter((row:any)=>row.entityType==='user')).toHaveLength(0);
+    expect(db.rawTransfers).toHaveLength(1);
+  });
+  it('enriches 100 distinct survey answer chains using scalar aliases instead of 600 full dependency JSON rows',async()=>{
+    const {app,db}=setup();const rows:any[]=[];
+    for(let index=0;index<100;index++)for(const [entityType,data]of [
+      ['surveyAnswer',{id:'answer-'+index,submissionId:'submission-'+index,questionId:'question-'+index,value:'Frozen answer '+index}],
+      ['surveySubmission',{id:'submission-'+index,studentId:'student-'+index,surveyId:'survey-'+index}],
+      ['question',{id:'question-'+index,quizId:'survey-'+index,text:'Frozen question '+index,options:'Unrelated options '.repeat(100)}],
+      ['quiz',{id:'survey-'+index,title:'Frozen survey '+index,contentType:'survey',description:'Unrelated description '.repeat(100)}],
+      ['user',{id:'student-'+index,name:'Frozen student '+index,classId:'class-'+index,address:'Unrelated address '.repeat(100)}],
+      ['class',{id:'class-'+index,name:'Frozen class '+index,teachers:[{id:'unused-teacher-'+index}]}],
+    ]as Array<[string,any]>)rows.push({entityType,entityId:data.id,dataJson:JSON.stringify(data)});
+    db.setRows(rows);
+    const result=await request(app).get(`/api/admin/academic-history/years/${yearId}/rows?type=surveyAnswer&pageSize=100`);
+    expect(result.status).toBe(200);expect(result.body.rows).toHaveLength(100);
+    for(const row of result.body.rows){const index=row.id.slice('answer-'.length);expect(row).toMatchObject({studentName:'Frozen student '+index,studentClassName:'Frozen class '+index,contentTitle:'Frozen survey '+index,questionText:'Frozen question '+index});}
+    expect(db.rawTransfers).toHaveLength(100);expect(db.rawTransfers.every((row:any)=>row.entityType==='surveyAnswer')).toBe(true);
+  });
+  it('preserves enriched Unicode search and literal percent/underscore semantics in real SQLite',async()=>{
+    const {app,db}=setup();
+    const names=['ÉCOLE ÑANDÚ ΟΣ Москва İZMİR IĞDIR','literal%_name','literalXXname'];
+    db.setRows([
+      ...names.map((name,index)=>({entityType:'user',entityId:'student-'+index,dataJson:JSON.stringify({id:'student-'+index,name,role:'student'})})),
+      {entityType:'quiz',entityId:'quiz',dataJson:JSON.stringify({id:'quiz',title:'Frozen Quiz',contentType:'exam'})},
+      ...names.map((_name,index)=>({entityType:'result',entityId:'result-'+index,dataJson:JSON.stringify({id:'result-'+index,studentId:'student-'+index,quizId:'quiz',score:80})})),
+    ]);
+    for(const search of ['école','ñandú','ος','москва','izmir','ığdır']){
+      const result=await request(app).get(`/api/admin/academic-history/years/${yearId}/rows`).query({type:'result',search});
+      expect(result.status).toBe(200);expect(result.body.rows.map((row:any)=>row.id)).toEqual(['result-0']);
+    }
+    const literal=await request(app).get(`/api/admin/academic-history/years/${yearId}/rows`).query({type:'result',search:'%_'});
+    expect(literal.status).toBe(200);expect(literal.body.rows.map((row:any)=>row.id)).toEqual(['result-1']);
+  });
+  it('loads only original-row aliases rather than the connected frozen school graph',async()=>{
+    const {app,db}=setup();
+    const rows:any[]=[{entityType:'result',entityId:'result',dataJson:JSON.stringify({id:'result',studentId:'student',quizId:'quiz',score:80})},{entityType:'user',entityId:'student',dataJson:JSON.stringify({id:'student',name:'Frozen Student',classId:'class',managedClassIds:['extra-0']})},{entityType:'class',entityId:'class',dataJson:JSON.stringify({id:'class',name:'Frozen Class',teachers:[{id:'teacher-0'}]})},{entityType:'quiz',entityId:'quiz',dataJson:JSON.stringify({id:'quiz',title:'Frozen Quiz',contentType:'exam',createdBy:'teacher-0'})}];
+    for(let index=0;index<600;index++)rows.push({entityType:'user',entityId:'teacher-'+index,dataJson:JSON.stringify({id:'teacher-'+index,name:'Teacher '+index,managedClassIds:['extra-'+index]})},{entityType:'class',entityId:'extra-'+index,dataJson:JSON.stringify({id:'extra-'+index,name:'Class '+index,teachers:[{id:'teacher-'+((index+1)%600)}]})});
+    db.setRows(rows);
+    const result=await request(app).get(`/api/admin/academic-history/years/${yearId}/rows?type=result&pageSize=1`);
+    expect(result.status).toBe(200);expect(result.body.rows[0]).toMatchObject({studentName:'Frozen Student',studentClassName:'Frozen Class',contentTitle:'Frozen Quiz'});
+    expect(db.rawTransfers.map((row:any)=>row.entityId)).toEqual(['result']);
+  });
   it('keeps snapshot names/class and bounds query input without live tables',async()=>{
     const {app,db}=setup();
     const result=await request(app).get(`/api/admin/academic-history/years/${yearId}/rows?type=result`);
     expect(result.status).toBe(200);expect(result.body.rows[0]).toMatchObject({studentName:'Frozen Name',studentClassName:'Old Class'});
     expect((await request(app).get(`/api/admin/academic-history/years/${yearId}/rows?pageSize=1000`)).status).toBe(400);
-    expect(db.archiveSnapshotRow.findMany).toHaveBeenCalledTimes(1);
+    expect(db.rawTransfers.map((row:any)=>row.entityType)).toEqual(['result']);
   });
   it('missing/incomplete annual snapshot errors without fallback',async()=>{
     const {app,db}=setup('failed');expect((await request(app).get(`/api/admin/academic-history/years/${yearId}/rows`)).status).toBe(409);
@@ -44,7 +102,7 @@ describe('frozen historical API and session enforcement',()=>{
     const {app,db}=setup();
     const student='00000000-0000-4000-8000-000000000011', cls='00000000-0000-4000-8000-000000000012', result='00000000-0000-4000-8000-000000000013';
     const rows=[['user',{id:student,name:'Frozen Student',role:'student',classId:cls}],['class',{id:cls,name:'Class at closure'}],['quiz',{id:'exam',contentType:'exam',title:'Exam'}],['quiz',{id:'survey',contentType:'survey',title:'Survey'}],['result',{id:result,studentId:student,quizId:'exam',score:80,status:'completed'}],['result',{id:'survey-result',studentId:student,quizId:'survey',score:10,status:'completed'}],['result',{id:'other',studentId:'other-student',quizId:'exam',score:20,status:'completed'}],['announcement',{id:'note',title:'For class',targetClassId:cls}]];
-    db.archiveSnapshotRow.findMany.mockResolvedValue(rows.map(([entityType,data]:any)=>({entityType,entityId:data.id,dataJson:JSON.stringify(data)})));
+    db.setRows(rows.map(([entityType,data]:any)=>({entityType,entityId:data.id,dataJson:JSON.stringify(data)})));
     const one=await request(app).get(`/api/admin/academic-history/years/${yearId}/rows?type=result&entityId=${result}&studentId=${student}`);expect(one.status).toBe(200);expect(one.body.rows).toHaveLength(1);expect(one.body.rows[0].id).toBe(result);
     const announcement=await request(app).get(`/api/admin/academic-history/years/${yearId}/rows?type=announcement&classId=${cls}`);expect(announcement.body.rows[0].targetClassName).toBe('Class at closure');
     const stats=await request(app).get(`/api/admin/academic-history/years/${yearId}/rows?type=result&classId=${cls}&statistics=true`);expect(stats.body.statistics).toMatchObject({scoredExamResults:1,averageScore:80,students:1});

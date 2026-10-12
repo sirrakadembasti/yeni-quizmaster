@@ -118,7 +118,7 @@ export async function recoverArchive(db: PrismaClient, input: { id: string; acto
   }, 60000);
   heartbeat.unref?.();
   try {
-    const quarantine = await prepareArchiveRecovery({ id: job.id, label: job.label, initiatedBy: job.initiatedBy, createdAt: job.createdAt, rows: job.rows }, input.backupRoot, {
+    const quarantine = await prepareArchiveRecovery({ id: job.id, label: job.label, initiatedBy: job.initiatedBy, createdAt: job.createdAt, capturedAt: job.capturedAt, rows: job.rows }, input.backupRoot, {
       actorId: input.actorId, previousAttempts: job.attempts, assertOwned: async () => {
         if (heartbeatError) throw heartbeatError;
         const current = await db.archiveSnapshot.findUnique({ where: { id: job.id } });

@@ -5,6 +5,7 @@ import { enqueueArchive } from './archive-jobs';
 import { captureArchive } from './archive-capture';
 import { exportArchive, verifyArchiveArtifact, type ArchiveArtifact, type SnapshotExport } from './archive-export';
 import { readTransitionPlan, type PlannedStudent, type TransitionRule as Transition, type TransitionSummary } from './archive-transition';
+import { warmCompletedHistory } from './archive-history-projection';
 export { planStudentTransition } from './archive-transition';
 
 export const retryDelay = (attempt: number) => Math.min(3600000, 30000 * 2 ** Math.min(20, Math.max(0, attempt - 1)));
@@ -52,14 +53,15 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
   // Private, transaction-scoped capabilities. The database checks the captured
   // entity, verified artifact, owner and real-time lease again on every write.
   // Only the exact rollover fields are persisted; no User secrets enter permits.
-  async function permit(tx: any, job: any, kind: 'user' | 'quiz' | 'result' | 'academicYear' | 'snapshot', id: string, changes: Record<string, unknown>) {
-    const definitions = {
+  const definitions = {
       user: { table: 'User', columns: ['classId', 'classNo', 'studentNo', 'isActive', 'deactivatedAt', 'graduationYear', 'graduationDate'] },
       quiz: { table: 'Quiz', columns: ['status', 'academicYear'] },
       result: { table: 'StudentResult', columns: ['academicYear'] },
       academicYear: { table: 'AcademicYear', columns: ['status', 'closedAt', 'snapshotId'] },
       snapshot: { table: 'ArchiveSnapshot', columns: ['status', 'completedAt', 'leaseOwner', 'leaseExpiresAt', 'lastError', 'nextAttemptAt', 'transitionSummaryJson'] },
     };
+  async function permitBatch(tx: any, job: any, kind: keyof typeof definitions, ids: string[], changes: Record<string, unknown>) {
+    if (!ids.length) return;
     const { table, columns } = definitions[kind];
     if (Object.keys(changes).some(key => !columns.includes(key))) throw new Error('Invalid finalization capability');
     const values: any[] = [job.id, owner, kind];
@@ -70,9 +72,25 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
       values.push(value instanceof Date ? value.getTime() : typeof value === 'boolean' ? Number(value) : value);
       return `'${column}',?`;
     }).join(',');
-    values.push(id);
-    const count = await tx.$executeRawUnsafe(`INSERT INTO ArchiveFinalizationPermit(snapshotId,owner,entityType,entityId,oldValues,newValues) SELECT ?,?,?,id,json_object(${before}),json_object(${after}) FROM "${table}" WHERE id=?`, ...values);
-    if (count !== 1) throw new Error('Finalization capability target missing');
+    values.push(...ids);
+    const count = await tx.$executeRawUnsafe(`INSERT INTO ArchiveFinalizationPermit(snapshotId,owner,entityType,entityId,oldValues,newValues) SELECT ?,?,?,id,json_object(${before}),json_object(${after}) FROM "${table}" WHERE id IN (${ids.map(()=>'?').join(',')})`, ...values);
+    if (count !== ids.length) throw new Error('Finalization capability target missing');
+  }
+  const permit = (tx:any,job:any,kind:keyof typeof definitions,id:string,changes:Record<string,unknown>) => permitBatch(tx,job,kind,[id],changes);
+  async function moveStudents(tx:any,job:any,students:PlannedStudent[]) {
+    // CTE inputs contain only the validated one-step plan. The existing triggers
+    // compare and consume an exact capability for every row, including no-ops.
+    const at=now().getTime();
+    for(let start=0;start<students.length;start+=100){
+      const batch=students.slice(start,start+100),values=batch.flatMap(student=>[student.id,student.classId,student.studentNo,Number(student.graduate)]);
+      const cte=`WITH changes(id,classId,studentNo,graduate) AS (VALUES ${batch.map(()=>'(?,?,?,?)').join(',')})`;
+      const before=definitions.user.columns.map(column=>`'${column}',u."${column}"`).join(',');
+      const after="'classId',c.classId,'classNo',NULL,'studentNo',c.studentNo,'isActive',CASE WHEN c.graduate=1 THEN 0 ELSE u.isActive END,'deactivatedAt',CASE WHEN c.graduate=1 THEN ? ELSE u.deactivatedAt END,'graduationYear',CASE WHEN c.graduate=1 THEN ? ELSE u.graduationYear END,'graduationDate',CASE WHEN c.graduate=1 THEN ? ELSE u.graduationDate END";
+      const admitted=await tx.$executeRawUnsafe(`${cte} INSERT INTO ArchiveFinalizationPermit(snapshotId,owner,entityType,entityId,oldValues,newValues) SELECT ?,?,'user',u.id,json_object(${before}),json_object(${after}) FROM "User" u JOIN changes c ON c.id=u.id`,...values,job.id,owner,at,job.label,at);
+      if(admitted!==batch.length)throw new Error('Finalization capability target missing');
+      const changed=await tx.$executeRawUnsafe(`${cte} UPDATE "User" AS u SET classId=(SELECT classId FROM changes WHERE id=u.id),classNo=NULL,studentNo=(SELECT studentNo FROM changes WHERE id=u.id),isActive=(SELECT CASE WHEN graduate=1 THEN 0 ELSE u.isActive END FROM changes WHERE id=u.id),deactivatedAt=(SELECT CASE WHEN graduate=1 THEN ? ELSE u.deactivatedAt END FROM changes WHERE id=u.id),graduationYear=(SELECT CASE WHEN graduate=1 THEN ? ELSE u.graduationYear END FROM changes WHERE id=u.id),graduationDate=(SELECT CASE WHEN graduate=1 THEN ? ELSE u.graduationDate END FROM changes WHERE id=u.id) WHERE id IN (SELECT id FROM changes)`,...values,at,job.label,at);
+      if(changed!==batch.length)throw new Error('Incomplete student transition');
+    }
   }
   async function finalize(id: string) {
     await db.$transaction(async tx => {
@@ -81,7 +99,7 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
       if (job.status !== 'verified' || !job.zipSha256 || !job.artifactPath) throw new Error('Archive must be verified before finalization');
       const year = await tx.academicYear.findUniqueOrThrow({ where: { id: job.academicYearId } });
       if (year.status !== 'active' || year.label !== job.label) throw new Error('Academic year is no longer active');
-      const rows = await tx.archiveSnapshotRow.findMany({ where: { snapshotId: id }, orderBy: [{ entityType: 'asc' }, { entityId: 'asc' }] });
+      const rows = await tx.archiveSnapshotRow.findMany({ where: { snapshotId: id, entityType: { in: ['user','quiz','result'] } }, orderBy: [{ entityType: 'asc' }, { entityId: 'asc' }] });
       let plan: PlannedStudent[] = [];
       let inheritedRules: Transition[] = [];
       let transitionSummary: TransitionSummary | undefined;
@@ -93,33 +111,30 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
         inheritedRules = rules.map(({ fromClassId, toClassId, graduate }) => ({ fromClassId, toClassId, graduate })).sort((a, b) => a.fromClassId.localeCompare(b.fromClassId));
       } else if (job.mode !== 'manual') throw new Error('Invalid archive mode');
       // Archived quizzes from older manual snapshots are untouched. Triggers allow only this verified transition.
-      for (const row of rows.filter(r => r.entityType === 'quiz')) {
-        const quiz = await tx.quiz.findUniqueOrThrow({ where: { id: row.entityId }, select: { status: true } });
-        if (quiz.status !== 'archived') {
-          const changes = { status: 'archived', academicYear: job.label };
-          await permit(tx, job, 'quiz', row.entityId, changes);
-          await tx.quiz.update({ where: { id: row.entityId }, data: changes });
-        }
-        const results = rows.filter(r => r.entityType === 'result').filter(r => {
-          const result = JSON.parse(r.dataJson);
-          return result.quizId === row.entityId && result.academicYear === null;
-        });
-        for (const result of results) await permit(tx, job, 'result', result.entityId, { academicYear: job.label });
-        await tx.studentResult.updateMany({ where: { quizId: row.entityId, academicYear: null }, data: { academicYear: job.label } });
+      const quizIds=rows.filter(row=>row.entityType==='quiz').map(row=>row.entityId),quizSet=new Set(quizIds);
+      for(let start=0;start<quizIds.length;start+=500){
+        const ids=quizIds.slice(start,start+500),quizzes=await tx.quiz.findMany({where:{id:{in:ids}},select:{id:true,status:true}});
+        if(quizzes.length!==ids.length)throw new Error('Finalization content missing');
+        const pending=quizzes.filter(quiz=>quiz.status!=='archived').map(quiz=>quiz.id),changes={status:'archived',academicYear:job.label};
+        await permitBatch(tx,job,'quiz',pending,changes);
+        if(pending.length && (await tx.quiz.updateMany({where:{id:{in:pending},status:{not:'archived'}},data:changes})).count!==pending.length)throw new Error('Incomplete content finalization');
+      }
+      const resultIds=rows.filter(row=>{if(row.entityType!=='result')return false;const result=JSON.parse(row.dataJson);return result.academicYear===null&&quizSet.has(result.quizId);}).map(row=>row.entityId);
+      for(let start=0;start<resultIds.length;start+=500){
+        const ids=resultIds.slice(start,start+500),changes={academicYear:job.label};
+        await permitBatch(tx,job,'result',ids,changes);
+        if((await tx.studentResult.updateMany({where:{id:{in:ids},academicYear:null},data:changes})).count!==ids.length)throw new Error('Incomplete result finalization');
       }
       if (job.mode === 'annual') {
         // Release all migrating numbers first, so chains and cycles cannot violate the unique index.
         if (plan.length) {
-          for (const student of plan) await permit(tx, job, 'user', student.id, { studentNo: null });
-          await tx.user.updateMany({ where: { id: { in: plan.map(s => s.id) } }, data: { studentNo: null } });
+          for(let start=0;start<plan.length;start+=500){
+            const ids=plan.slice(start,start+500).map(student=>student.id);
+            await permitBatch(tx,job,'user',ids,{studentNo:null});
+            if((await tx.user.updateMany({where:{id:{in:ids}},data:{studentNo:null}})).count!==ids.length)throw new Error('Incomplete student number release');
+          }
         }
-        for (const student of plan) {
-          const changes = student.graduate
-            ? { classId: null, classNo: null, studentNo: null, isActive: false, deactivatedAt: now(), graduationYear: job.label, graduationDate: now() }
-            : { classId: student.classId, classNo: null, studentNo: student.studentNo };
-          await permit(tx, job, 'user', student.id, changes);
-          await tx.user.update({ where: { id: student.id }, data: changes });
-        }
+        await moveStudents(tx,job,plan);
         const start = Number(job.label.slice(5)), nextLabel = `${start}-${start + 1}`;
         const yearChanges = { status: 'closed', closedAt: now(), snapshotId: id };
         await permit(tx, job, 'academicYear', year.id, yearChanges);
@@ -173,7 +188,7 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
       const rows = await db.archiveSnapshotRow.findMany({ where: { snapshotId: job.id }, orderBy: [{ entityType: 'asc' }, { entityId: 'asc' }] });
       rows.sort((a, b) => a.entityType.localeCompare(b.entityType) || a.entityId.localeCompare(b.entityId));
       if (job.mode === 'annual') await readTransitionPlan(db, job.academicYearId, rows.filter(row => row.entityType === 'user').map(row => JSON.parse(row.dataJson)));
-      const input: SnapshotExport = { id: job.id, label: job.label, createdAt: job.createdAt, initiatedBy: job.initiatedBy, rows };
+      const input: SnapshotExport = { id: job.id, label: job.label, createdAt: job.createdAt, capturedAt:job.capturedAt, initiatedBy: job.initiatedBy, rows };
       if (job.status !== 'verified') await (options.export ?? exportArchive)(input, backupRoot);
       const artifact = await (options.verify ?? verifyArchiveArtifact)(input, backupRoot);
       if (heartbeatError) throw heartbeatError;
@@ -195,5 +210,5 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
       if (!(error instanceof LeaseLost) && !(error instanceof ManualPending)) options.onError?.(error);
     } finally { if (heartbeat) clearInterval(heartbeat); busy = false; }
   }
-  return { tick, start() { if (!timer) { timer = setInterval(() => { void tick(); }, intervalMs); timer.unref?.(); void tick(); } }, stop() { if (timer) clearInterval(timer); timer = undefined; } };
+  return { tick, start() { if (!timer) { timer = setInterval(() => { void tick(); }, intervalMs); timer.unref?.(); void warmCompletedHistory(db,options.onError).catch(error=>options.onError?.(error)); void tick(); } }, stop() { if (timer) clearInterval(timer); timer = undefined; } };
 }

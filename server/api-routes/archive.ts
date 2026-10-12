@@ -147,7 +147,7 @@ export function createArchiveRouter(options: ArchiveRouterOptions = {}) {
     const job = await jobFor(req.params.id, true);
     if (job.status !== 'completed') throw new ArchiveJobError(409, 'Arşiv henüz hazır değil.');
     let artifact;
-    try { artifact = await verify({ id: job.id, label: job.label, initiatedBy: job.initiatedBy, createdAt: job.createdAt, rows: (job as any).rows }, getArchiveBackupRoot(options.backupRoot)); }
+    try { artifact = await verify({ id: job.id, label: job.label, initiatedBy: job.initiatedBy, createdAt: job.createdAt, capturedAt: job.capturedAt, rows: (job as any).rows }, getArchiveBackupRoot(options.backupRoot)); }
     catch { throw new ArchiveJobError(409, 'Arşiv dosyası doğrulanamadı.'); }
     if (artifact.zipSha256 !== job.zipSha256 || artifact.sizeBytes !== job.sizeBytes) throw new ArchiveJobError(409, 'Arşiv özeti doğrulanamadı.');
     res.setHeader('Cache-Control', 'no-store');

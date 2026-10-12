@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client';
+import { randomUUID } from 'node:crypto';
+import { prepareCapturedHistory } from './archive-history-projection';
 import { MAX_SNAPSHOT_JSON_BYTES } from './archive-package';
 import { buildStudentTransition } from './archive-transition';
 
@@ -66,10 +68,18 @@ export async function captureArchive(db: PrismaClient, snapshotId: string, lease
       buildStudentTransition(users, users, classes, rules);
     }
     if (groups.reduce((n, [, rows]) => n + rows.length, 0) > 250000) throw new Error('Snapshot exceeds record limit');
-    const prepared = groups.flatMap(([entityType, rows]) => rows.map(row => ({ entityType, entityId: row.id, dataJson: JSON.stringify(row) })));
+    const prepared = groups.flatMap(([entityType, rows]) => rows.map(row => ({ id: randomUUID(), snapshotId, entityType, entityId: row.id, dataJson: JSON.stringify(row) })));
     if (prepared.reduce((bytes, row) => bytes + Buffer.byteLength(row.dataJson, 'utf8'), 0) > MAX_SNAPSHOT_JSON_BYTES) throw new Error('Snapshot exceeds byte limit');
-    for (const row of prepared) await tx.archiveSnapshotRow.create({ data: { snapshotId, ...row } });
+    // Prisma partitions each batch to the SQLite parameter limit. Every row still
+    // passes the existing insert trigger in this same atomic capture transaction.
+    for (let start = 0; start < prepared.length; start += 1000) {
+      const batch = prepared.slice(start, start + 1000);
+      const inserted = await tx.archiveSnapshotRow.createMany({ data: batch });
+      if (inserted.count !== batch.length) throw new Error('Incomplete snapshot capture');
+    }
     assertLease();
-    return tx.archiveSnapshot.update({ where: { id: snapshotId }, data: { status: 'files_generating', capturedAt: lease?.now() ?? new Date() } });
+    const captured = await tx.archiveSnapshot.update({ where: { id: snapshotId }, data: { status: 'files_generating', capturedAt: lease?.now() ?? new Date() } });
+    await prepareCapturedHistory(tx,snapshotId,prepared);
+    return captured;
   }, { maxWait: 10000, timeout: 120000 });
 }
