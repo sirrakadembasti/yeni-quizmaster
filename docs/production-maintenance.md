@@ -11,7 +11,7 @@ pnpm maintenance backup --project F:\kurulumlar\quizmaster --name before-upgrade
 pnpm maintenance restore --backup F:\kurulumlar\quizmaster\server\backups\before-upgrade --project F:\kurulumlar\quizmaster-restored
 ```
 
-Linux/terminal eşdeğeri `node scripts/maintenance.mjs backup --project /opt/quizmaster --name before-upgrade` ve `node scripts/maintenance.mjs restore --backup /opt/quizmaster/server/backups/before-upgrade --project /opt/quizmaster-restored` komutlarıdır. Linux'ta gerçek bakım provası henüz yapılmadı; bu örnek doğrulanmış Linux kabulü değildir.
+Linux/terminal eşdeğeri `node scripts/maintenance.mjs backup --project /opt/quizmaster --name before-upgrade` ve `node scripts/maintenance.mjs restore --backup /opt/quizmaster/server/backups/before-upgrade --project /opt/quizmaster-restored` komutlarıdır. 12 Ekim native Ubuntu 22.04/WSL2 (Linux 6.18.33.2, Node 22.23.2) bakım turu 6/6 geçti; SH üzerinden yükseltme bu kabulün kapsamına dahil değildir.
 
 Hedef bağımsız olmalı; `server/.env`, `server/data` veya `server/uploads` mevcutsa geri yükleme reddedilir. Boş veri alanına restore edin, aynı sürümün uygulama kodunu ve bağımlılıklarını bu hedefe yerleştirin. Git klonundaki `server/data/README.md` bile mevcut veri dizini sayılır; komut otomatik silmez. Çalışan kuruluma restore veya yedek üzerine tekrar yazma yapılmaz. Sürüm yükseltme ve sürümle birlikte geri dönüş sonraki prova görevleridir.
 
@@ -34,6 +34,7 @@ Canlı DB okunmadı; yalnız hash'i karşılaştırıldı. Kullanıcının `clie
 | --- | --- |
 | `pnpm run test:maintenance` | 6/6: gerçek native SQLite WAL/main/session turu, özel paket dizini, config, dinleyen IPv6/exported port, bozuk/eksik/fazladan/path/junction/tekrar hedef reddi, CLI |
 | `pnpm run test:setup` | 14/14 mevcut kurulum regresyonu |
+| Linux native bakım | Ubuntu/WSL2 üzerinde aynı 6 test 6/6, sıfır skip, exit 0; önceki izole Linux kurulumunun native bağımlılıkları ayrı test kopyasına bağlandı, güncel bakım kaynakları çalıştırıldı. WAL/session/hash/path/IPv6/exported port ve CLI kontrolleri, sahip olunan fixture temizliği geçti. Taze bağımlılık kurulumu ve web/SH yükseltmesi kanıtı değildir. |
 | Archive export dosyası | 28/28; taşınan gerçek ZIP manifesti ve sabit SHA, yanlış kimlik/bozulma reddi. PDF üreticisi test stub'ıdır; önceki gerçek PDF kabulünün yerine geçmez. |
 | Gerçek DB + assets API | 10/10, 2 dosya; yeni izole 22-migration şema, kullanıcı/sınıf/ders/sınav/anket/sonuç ilişkileri, offline backup→bağımsız restore, geçmiş yıl/görsel, immutable satır güncelleme reddi. Auth middleware burada test fixture'ıdır. |
 | Gerçek Chromium restore smoke | Geçti; kaynak admin hesabı bakım yedeğinden ayrı dizine taşındı, gerçek auth API ile giriş, arşiv sayfası, yıl seçici, mobil yenileme, masaüstü/mobil ekran görüntüleri. İş ilişkilerinin tamamı bu tarayıcı senaryosunda yeniden sınanmadı; üstteki gerçek DB/API testi kapsar. |

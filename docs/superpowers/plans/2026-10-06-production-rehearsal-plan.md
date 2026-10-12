@@ -23,6 +23,8 @@ Mevcut tam uygulama yedeği ile akademik iş verisi export'u arasındaki sınır
 
 ## Görev 2 — Hibrit sürüm yükseltme
 
+Görev 1 commit'i `ad71da5`. Ardından gerçek Ubuntu 22.04/WSL2 üzerinde güncel bakım kodu 6/6 (skip 0), exit 0 geçti; mevcut izole native Linux bağımlılıkları kullanıldı, yeni bakım fixture'ı silindi. Linux fresh-install/SH-upgrade veya browser kabulü bununla kapanmadı. Kaynak/protected hash'ler değişmedi.
+
 Görev 1 Windows kabulü (12 Ekim): native bakım 6/6, kurulum regresyonu 14/14, export 28/28 + son ek full ZIP relocation kontrolü 1/1, gerçek 22-migration DB/assets 10/10, gerçek auth ile ayrı restore dizininde Chromium masaüstü/mobil erişimi geçti. Immutable completed snapshot aynen kaldı; güncelleme reddedildi, taşınan soru görseli güncel canonical root + pinned ZIP SHA ile açıldı. Backend tsc exit 0. [Bakım belgesi](../../production-maintenance.md) komutları ve sınırları açıklar. Browser veritabanı dosya adı yalnız mevcut outbound fixture guard'ına uyum için restore sonrasında academic.db olarak değiştirildi; gerçek standart quiz.db/config taşınabilirliği native ve gerçek DB/API kabulünde sınandı. Linux bakım turu, bütün iş ilişkilerinin aynı browser senaryosunda tekrarı, upgrade/rollback ve performans henüz başarılı kabul edilmedi. Ayrı Görev 1 commit'i kontrol sonrası kaydedilir.
 
 Önceki desteklenen sürümün izole kurulumunu hazırla. Terminal, Windows BAT ve Linux/SH giriş noktalarıyla ve sonraki web adımlarıyla gerçek yükseltme yap. Migration, veri/dosya/ayar korunumu, oturum davranışı, yeniden başlatma ve süreç temizliğini doğrula. Yükseltmenin tekrar çalıştırılması ve yarıda kesilmesi senaryolarını sınayıp hataları düzelt.
