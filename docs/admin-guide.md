@@ -185,7 +185,17 @@ Paneldeki **Sunucu Durumu** ekranı normal kullanımda salt okunurdur. Profil ka
 
 ### Yıl sonu arşivi ve kalıcı silme
 
-**Arşiv > Sınav Arşivi** yıl etiketi olmayan, henüz arşivlenmemiş içeriklerle etiketsiz öğrenci sonuçlarının güncel aday sayısını gösterir. Onayı inceleyip eğitim yılı etiketini girin. Veri veya işlem kaydı yazımında hata olursa bütün işlem geri alınır; aynı işlemi yeniden deneyebilirsiniz. Önceden arşivlenen içerikler yeniden etiketlenmez. Arşiv geçmişinin sonraki sayfalarına **Sonraki** düğmesiyle ulaşılır.
+**Arşiv** ekranında manuel arşiv, seçtiğiniz kapsamın değişmez kopyasını ve indirilebilir paketini oluşturur. Mevcut kayıtları silmez, eğitim yılını kapatmaz ve öğrencileri taşımaz. Başlatmadan önce kapsam ve dönem bilgisini kontrol edin. İş durumunu takip edin; tamamlanmış ZIP indirmesi admin parolasının doğrulanmasını gerektirir.
+
+Yıllık iş **15 Temmuz 00:05 Europe/Istanbul** zamanında başlar. Sunucu kapalıysa açılışta kaçırılan kalıcı iş ele alınır. Capture, dosya üretimi/doğrulaması ve son veritabanı geçişi ayrı aşamalardır. Paket doğrulanmadan yıl kapanmaz, öğrenci terfi/mezuniyeti yapılmaz. Aynı yıl tekrarlanan iş yeni geçiş yaratmaz. Kapanan yılın sınav/anketleri aktif listelerden ayrılır; fiziksel olarak silinmez.
+
+**Sınıf Geçişi** sekmesinde kaynak sınıf → hedef veya mezuniyet kuralını kaydedin. Önkontrol; eksik hedef, kapasite ve öğrenci numarası çakışmalarını gösterir. Aktif öğrenciler başlangıç üyeliğine göre bir kez ilerler; son sınıflar mezuniyet bilgisiyle pasifleşir. Önceden pasif olanlar, eski mezunlar ve sınıfsız öğrenciler otomatik taşınmaz. Öğretmenlerin ders/sınıf/şube bağlantıları korunur. Tamamlanmış yıllık işin geçiş özeti aynı sekmede görülebilir.
+
+Başarısız işin kimliği ve nedeni ekranda gösterilir. Düzeltme sonrasında açık kurtarma/yeniden deneme işlemini kullanın; dondurulmuş kaynak satırlar silinmez. İptal, yalnız henüz veri yakalamamış ve lease'i olmayan başarısız manuel iş için mümkündür. Tamamlanmış arşiv değiştirilemez. Dosya bozulmuşsa bildirilen bütünlük hatası giderilmeden paket başarılı kabul edilmez.
+
+Sol menünün üstündeki **Eğitim yılı** listesinde aktif yıl ilk sıradadır; yeni oturum aktif yılda başlar. Bilinçli seçilmiş geçmiş yıl aynı oturumdaki yenilemede korunur. Geçmişe geçince dönem etiketi ve salt okunur uyarısı görünür; değişiklik işlemleri kapatılır. Geçmiş veriler canlı kayıtlardan doldurulmaz. Sistem/işletim ekranları geçmiş iş verisini temsil etmediğinde bunu açıklar. Aktif yıla aynı listeden dönün. Arşiv verisi eskiyse arama dizini hazırlığı sırasında bekleme/tekrar deneme mesajı gösterilebilir.
+
+Paket dizini, PDF parçaları, görsel desteği ve boyut sınırları [arşiv dosya sözleşmesinde](academic-archive-review/artifacts.md); test edilmiş davranışlar ve kalan sınırlar [doğrulama kaydında](academic-archive-review/verification.md) açıklanır.
 
 Kalıcı sınav silme, bağlı sonuçları da kaldırır. Silme penceresinde gerekçe girilmesi zorunludur; gerekçe ve etkilenen kayıt sayıları işlem geçmişinde saklanır. İşlem kaydı yazılamazsa sınav da silinmez.
 
@@ -197,6 +207,8 @@ Kalıcı sınav silme, bağlı sonuçları da kaldırır. Silme penceresinde ger
 - **Bildirim geç görünüyor:** Oturumu ve Socket.IO bağlantısını kontrol edin; sayfayı yenileyerek sunucu listesini tekrar alın.
 
 ## Bakım sonrası veri ve oturum kuralları
+
+12 Ekim arşiv kabulünde seçili manuel arşiv, parola onaylı ZIP indirme, yıllık kapanış/terfi/mezuniyet, hata kurtarma ve geçmiş yıl görünümü ayrı gerçek tarayıcı senaryolarıyla doğrulandı. Geçmiş yıl canlı veriden doldurulmaz; hazırlık sürerse tekrar deneme durumu gösterilir. Aktif yıla dönerek normal işlemlere devam edin. [Kabul kapsamı ve sınırlar](academic-archive-review/verification.md).
 
 Profil/parola sıfırlama talebi öğretmen atamalarını ve veli bağlantılarını korur; temizleme yalnız gerçek rol değişiminde yapılır. Öğrenci profilini okul yönetimi düzenler. Öz parola değişimi mevcut parolanın doğrulanmasını gerektirir; parola/rol değişikliği eski oturumları geçersiz kılar.
 

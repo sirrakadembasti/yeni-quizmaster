@@ -467,3 +467,15 @@ Güncellemeden önce veritabanı ve uploads yedeği alın. Migration uygulanmı�
 Kimliği doğrulanmış genel API/sınav limitleri kullanıcı bazındadır. Dar auth limiti IP+hedef hesap/token kullanır; `/me` ve çıkış buna dahil değildir. Çok sunuculu dağıtım merkezi session/rate-limit store ve Socket.IO adaptörü gerektirir.
 
 Anket şeması uyumu: 20260930120000_nullable_survey_answers migration'ı Question.correctAnswer alanını nullable yapar. SQLite tablo yeniden oluşturması bütün soru sütunlarını ve UUID'leri kopyalar; SurveyAnswer bağlantıları korunur. Yedek ve bakım penceresiyle birlikte db:deploy çalıştırın.
+
+## Akademik arşiv işletimi — 7 Ekim 2026
+
+12 Ekim güncel kaynak kabulü tamamlandı: backend 412/412, frontend 272/272, ayrı gerçek DB/hacim 74/74, setup 14/14, tip kontrolleri ve üretim build geçti. Beş tarayıcı senaryosu doğrulanmış boş migration şablonu ve izole kaynak bundle'ı kullandı. Bu opt-in, varsayılan geliştirme açılışını veya taze hibrit kurulumu doğrulamaz; önceki 3 Ekim kurulum sonuçları yeni 22-migration sürümü için başarı diye kullanılmaz. Yeni sürüm yedek/geri yükleme ve terminal/BAT/SH yükseltme/geri dönüşü ayrı üretim provasında doğrulanacaktır.
+
+Terminal, BAT/SH ve web yapılandırma adımları birlikte kullanılan hibrit kurulum akışı korunur. Akademik arşiv için Chromium'un sunucu hesabında çalışabildiğini ayrıca doğrulayın; gerekiyorsa aynı hesapla `pnpm exec playwright install chromium` çalıştırın. Bağımlılık kurmak veya derlemeyi geçirmek PDF üretimini tek başına doğrulamaz.
+
+`ARCHIVE_BACKUP_ROOT`, kalıcı akademik paket dizinini belirler. Varsayılan dizin `server/data/backups` altındadır. Bu dizinin (özellikle dışarıda yapılandırılmışsa) veritabanıyla birlikte tam uygulama yedeğine dahil edildiğini ayrıca kontrol edin. Akademik ZIP parolaları/oturumları/SMTP ayarlarını içermez ve sunucu geri yükleme yedeği yerine kullanılamaz. Yedekleme ve yükseltme provası [ayrı planda](superpowers/plans/2026-10-06-production-rehearsal-plan.md) yer alır; henüz doğrulanmamış prova tamamlanmış sayılmaz.
+
+Yeni sürüm additive migration'larla capture sınırlarını, değişmez geçiş özetini, geçmiş arama projeksiyonunu ve lookup indeksini ekler. Önce mevcut DB, uploads, session/config ve paket dizinlerinin tutarlı yedeğini alın; sonra `db:deploy` ve build/restart adımlarını uygulayın. Uygulanmış migration dosyalarını değiştirmeyin. Salt eski kodu checkout etmek veritabanını önceki şemaya döndürmez.
+
+Sunucu açılışı, kaçırılmış yıllık işleri ve tamamlanmış eski arşivlerin arama hazırlığını ele alır. Eski arşivde hazırlık sürerken geçmiş sorgusu açık hazırlık/tekrar deneme yanıtı verebilir; canlı veriye geçmez. Otomatik kapanış İstanbul saatiyle 15 Temmuz 00:05'tedir; başarısız işin nedeni ve kurtarma işlemi admin Arşiv ekranında takip edilir. Dosya ve geçiş kabul sınırları [arşiv paketi](academic-archive-review/artifacts.md) ve [doğrulama](academic-archive-review/verification.md) belgelerindedir.

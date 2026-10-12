@@ -48,6 +48,18 @@ Graphify gerçek CLI ile yerel AST üzerinden üretilir. Paylaşılan çıktıla
 
 ## İşletim sınırları ve sonraki çalışmalar
 
+12 Ekim arşiv kapanışında gerçek veritabanı/trigger, dosya bütünlüğü, salt okunur geçmiş ve kurtarma testleri tamamlandı; backend 412/412, frontend 272/272 ve ayrı hacim turu 74/74 geçti. Test dosyaları artık pristine migration şablonundan bağımsız veritabanı kopyaları kullanır; canlı DB bu kontrollere dahil değildir. İlk geçmiş hazırlığının izole 50k ölçümü 154,366 saniyedir; eşzamanlı canlı yazma gecikmesi henüz ölçülmedi. Tam uygulama yedeği/geri yükleme, yükseltme/geri dönüş ve paket küçültme [sonraki onaylı provadadır](superpowers/plans/2026-10-06-production-rehearsal-plan.md). [Kanıt ve başarısız eski denemeler](academic-archive-review/verification.md).
+
+### Akademik arşiv sınırı — 7 Ekim 2026
+
+Yıllık capture, iş verilerini değişmez snapshot olarak yakalar. API koruması ve SQLite trigger'ları; kişi/sınıf/ders/atama, veli bağlantısı, duyuru, soru bankası, sınav/soru/sonuç/anket ve implicit ilişki yazmalarını yakalanmış yıl için sınırlar. Worker'ın terfi/mezuniyet ve yıl kapanış yazmaları yalnız doğrulanmış artifact, geçerli sahiplik/lease ve aynı son transaction içindeki exact eski/yeni satır izinleriyle yapılır. Tamamlanmış kaynak ve geçiş özeti değişmezdir. Bu, veritabanı dosyasını değiştirebilen sunucu yöneticisine karşı bir güvenlik sınırı olarak sunulmaz.
+
+Geçmiş yıl bağlamında UI ve doğrudan API iş verisi mutasyonları reddedilir. Giriş/çıkış, parola kurtarma ve oturum bildirimi gibi açık işletim istisnaları korunur; bunlar geçmiş veriyi düzenleme izni vermez. Yeni giriş aktif dönemi alır; aynı oturumdaki sekmeler bağlam değişimini ortak oturumla doğrular, bekleyen değişiklik sırasında eski iş ekranı yazmaya açık bırakılmaz.
+
+`20261009_archive_history_projection` migration'ı asıl immutable satırları değiştirmeyen, kaynak byte eşitliği ve tam satır sayısı doğrulanan sürümlü arama projeksiyonu ekler. Hazır projeksiyon yayın kaydı değişmezdir. Fingerprint uygulama düzeyinde hesaplanır; SQL trigger'ın türetilmiş arama metnini kriptografik olarak yeniden hesapladığı iddia edilmez. `20261010_archive_entity_lookup` yalnız lookup indeksi ekler; önceki yazma korumalarını kaldırmaz.
+
+Arşiv ZIP indirmesi admin yetkisi ve parola onayı gerektirir. Yerel raster görseller, paket ve görsel özetleriyle doğrulanır; keyfi dosya yolu veya uzak URL üzerinden okunmaz. Görsel sunumu her istekte bütün ZIP özetini akışla kontrol eder; büyük pakette bunun IO maliyeti vardır. Gizli kimlik doğrulama ve sunucu ayarları akademik pakete dahil edilmez. [Dosya sözleşmesi](academic-archive-review/artifacts.md) ve [güncel kabul kanıtları](academic-archive-review/verification.md), eski 30 Eylül test sayılarından ayrı değerlendirilmelidir.
+
 - SMTP teslimi en az bir kez yaklaşımıdır. SMTP kabulü ile DB durum kaydı arasında süreç kapanırsa veya gönderim lease süresini aşarsa yinelenen e-posta mümkündür.
 - SQLite, dosya tabanlı oturum ve bellekte rate-limit tek sunucu düzenini korur. Birden fazla instance için merkezi oturum/limit deposu ve PostgreSQL geçişi ayrı işletim çalışmasıdır.
 - MFA, e-posta doğrulama ve kayıt onay politikası yeni ürün akışlarıdır; eklenmemiştir.

@@ -21,6 +21,8 @@ Veli erişimi, sınıf bildirimleri, öğrenci seçimi, hata toparlama ve yazdı
 - [Graphify mimari haritası ve geliştirici kılavuzu](docs/graphify.md)
 - [SQLite'tan PostgreSQL'e geçiş kılavuzu](docs/postgresql-gecis-rehberi.md)
 - [Sunucu, domain ve reverse proxy kurulum kılavuzu](docs/sunucu-kurulum-kilavuzu.md)
+- [Akademik arşiv paketi ve bütünlük sözleşmesi](docs/academic-archive-review/artifacts.md)
+- [Akademik arşiv kabul testleri ve doğrulama sınırları](docs/academic-archive-review/verification.md)
 
 ## Güncel özellikler
 
@@ -29,6 +31,7 @@ Veli erişimi, sınıf bildirimleri, öğrenci seçimi, hata toparlama ve yazdı
 - **Anket Yönetimi:** Sınavdan ayrılmış oluşturma ve sonuç akışı; tek seçim, çoklu seçim, açık uçlu, derecelendirme ve Likert soru türleri.
 - **Yetkilendirme:** Öğretmen yalnız yetkili olduğu sınıfları, öğrencileri, sınavları ve anketleri görür. Veli yalnız kendisiyle ilişkilendirilen öğrencilerin salt okunur sınav sonuçlarına ve soru/cevap detaylarına erişir.
 - **Öğrenci yaşam döngüsü:** Sınıf içinde benzersiz otomatik öğrenci numarası, manuel değişikliğe kapalı alan ve sınav/sınıf geçmişini koruyan pasife alma.
+- **Eğitim yılı ve arşiv:** Manuel arşiv seçili iş verilerini korur; yılı kapatmaz veya öğrenci taşımaz. 15 Temmuz 00:05 İstanbul yıllık işi, doğrulanmış ZIP/PDF paketi sonrasında yılı kapatır, önkontrolden geçen aktif öğrencileri bir kez ilerletir ve son sınıfları mezun eder. Öğretmen atamaları korunur. Admin menüsündeki yıl seçici tamamlanmış geçmiş dönemleri salt okunur açar; yeni girişte aktif yıl seçilir. Akademik paket tam sunucu geri yükleme yedeği değildir.
 - **Yönetici işlem tutarlılığı:** Arşiv ve kalıcı sınav silme işlemleri işlem kaydıyla birlikte tamamlanır veya geri alınır. Sınıf kapasitesi aktif öğrencilere uygulanır; sorumlu öğretmen değişiminde bağımsız ders atamaları korunur. Ayrıntılar [onarım sözleşmelerindedir](docs/admin-audit/repair-contracts.md).
 - **Raporlama:** Anket, sınav sonucu, sınıf istatistiği, öğrenci, öğretmen ve sınıf ekranlarında A4 uyumlu yazdırma; uygun ekranlarda biçimlendirilmiş `.xlsx` Excel çıktısı.
 - **Türkçe Excel desteği:** Dışa aktarımlar gerçek Excel çalışma kitabı üretir; Türkçe karakter, sütun genişliği, başlık, filtre bilgisi ve sabit başlık satırı korunur.
@@ -436,6 +439,8 @@ Komutlar, veri doğrulama sorguları, oturum deposu kararı, geri dönüş plan�
 - Çevrimdışı teslim bekliyor: aynı cihaz ve tarayıcıyla sınavı açıp bağlantının geri gelmesini bekleyin.
 
 ## Güvenlik ve veri bütünlüğü bakımı
+
+12 Ekim 2026 akademik arşiv kabulü: backend genel regresyonu 412/412, frontend 272/272, ayrı gerçek DB/hacim kabulü 74/74; beş ayrı gerçek Chromium arşiv senaryosu, PDF/ZIP/görsel bütünlüğü, tip kontrolleri ve üretim derlemesi geçti. [Arşiv doğrulaması](docs/academic-archive-review/verification.md) kullanılan izole ortamı ve sınırları açıklar. Bu sonuçlar yeni sürümün terminal/BAT/SH kurulum-yükseltme provasının yerine geçmez; [onaylı üretim provası](docs/superpowers/plans/2026-10-06-production-rehearsal-plan.md) sonraki aşamadır.
 
 30 Eylül 2026 bakımında yetki/rol ilişkileri, sınav/anket geçmişi, eşzamanlı kayıt, oturumlar, AI dış bağlantıları ve çevrimdışı kuyruk güçlendirildi. [Bakım notları](docs/guvenlik-ve-bakim.md) ayrıntıları ve işletim sınırlarını açıklar.
 
