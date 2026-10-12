@@ -12,6 +12,8 @@
     "build": "pnpm --filter quiz-master-server build && pnpm --filter quiz-master-client build",
     "install-all": "pnpm install && cd client && pnpm install && cd ../server && pnpm install",
     "test:setup": "node --test scripts/setup-bootstrap.test.mjs scripts/find-port-holder.test.mjs",
+    "maintenance": "node scripts/maintenance.mjs",
+    "test:maintenance": "node --test scripts/maintenance-backup.test.mjs scripts/maintenance-native.test.mjs scripts/maintenance-cli.test.mjs",
     "test:e2e": "playwright test"
   },
   "packageManager": "pnpm@9.15.1+sha512.1acb565e6193efbebda772702950469150cf12bcc764262e7587e71d19dc98a423dff9536e57ea44c49bdf790ff694e83c27be5faa23d67e0c033b583be4bfcf",

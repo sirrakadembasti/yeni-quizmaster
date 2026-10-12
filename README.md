@@ -442,6 +442,8 @@ Komutlar, veri doğrulama sorguları, oturum deposu kararı, geri dönüş plan�
 
 12 Ekim 2026 akademik arşiv kabulü: backend genel regresyonu 412/412, frontend 272/272, ayrı gerçek DB/hacim kabulü 74/74; beş ayrı gerçek Chromium arşiv senaryosu, PDF/ZIP/görsel bütünlüğü, tip kontrolleri ve üretim derlemesi geçti. [Arşiv doğrulaması](docs/academic-archive-review/verification.md) kullanılan izole ortamı ve sınırları açıklar. Bu sonuçlar yeni sürümün terminal/BAT/SH kurulum-yükseltme provasının yerine geçmez; [onaylı üretim provası](docs/superpowers/plans/2026-10-06-production-rehearsal-plan.md) sonraki aşamadır.
 
+Yerel SQLite uygulama verisi için `pnpm maintenance backup --project <kurulum> --name <ad>` ve `pnpm maintenance restore --backup <yedek> --project <bağımsız-boş-veri-hedefi>` komutları eklendi. Önce tüm uygulama süreçlerini durdurun. Native WAL/session turu, gerçek şema/taşınan arşiv API'si ve geri yüklenen admin hesabıyla Chromium girişi doğrulandı; kullanım, özel ayar kapsamı ve sınırlar [bakım belgesinde](docs/production-maintenance.md) açıklanır. Yükseltme/rollback/yük provası ayrı görevlerdir.
+
 30 Eylül 2026 bakımında yetki/rol ilişkileri, sınav/anket geçmişi, eşzamanlı kayıt, oturumlar, AI dış bağlantıları ve çevrimdışı kuyruk güçlendirildi. [Bakım notları](docs/guvenlik-ve-bakim.md) ayrıntıları ve işletim sınırlarını açıklar.
 
 Mevcut kurulumlarda tutarlı SQLite yedeği alın; `pnpm install`, `pnpm --filter quiz-master-server db:deploy`, `pnpm build` ve sunucu yeniden başlatma adımlarını uygulayın. Migration mevcut kayıtları koruyarak oturum sürümü, e-posta sahiplenme alanı ve sonuç indeksleri ekler; anket sorularının boş doğru cevap alanını migration geçmişiyle uyumlu hale getirir.

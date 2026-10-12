@@ -11,16 +11,21 @@ import { captureArchive } from '../../services/archive-capture';
 import { createArchiveWorker } from '../../services/archive-worker';
 import { exportArchive } from '../../services/archive-export';
 import path from 'node:path';
-import { copyFile } from 'node:fs/promises';
+import { copyFile, cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {createApplicationBackup,restoreApplicationBackup} from '../../../scripts/maintenance-lib.mjs';
 let db:PrismaClient;
+let databasePath:string;
+const maintenanceRoots:string[]=[];
 beforeAll(async()=>{
   const template=process.env.DATABASE_URL!.slice(5);
   if(!path.basename(path.dirname(template)).startsWith('quizmaster-test-'))throw new Error('Disposable history database required');
   const copy=path.join(path.dirname(template),'history-'+randomUUID()+'.db');
+  databasePath=copy;
   await copyFile(template,copy);
   db=new PrismaClient({datasources:{db:{url:'file:'+copy.split('\\').join('/')}}});
 });
-afterAll(async()=>{await db.$disconnect();});
+afterAll(async()=>{await db.$disconnect();for(const root of maintenanceRoots){if(path.dirname(root)!==tmpdir()||!path.basename(root).startsWith('quizmaster-history-restore-'))throw new Error('Unsafe fixture cleanup');await rm(root,{recursive:true,force:true});}});
 it('captures real contentType values and serves separated, frozen exam/survey history',async()=>{
   const teacher=await db.user.create({data:{name:'Closure Teacher',email:randomUUID()+'@example.test',password:'synthetic',role:'teacher'}});
   const cls=await db.class.create({data:{name:'Closure Class',classTeacherId:teacher.id,teachers:{connect:{id:teacher.id}}}});
@@ -31,7 +36,7 @@ it('captures real contentType values and serves separated, frozen exam/survey hi
   const exam=await db.quiz.create({data:{title:'Captured Exam',createdBy:teacher.id,contentType:'exam',categoryId:course.id,assignedClasses:{connect:{id:cls.id}}}});
   const survey=await db.quiz.create({data:{title:'Captured Survey',createdBy:teacher.id,contentType:'survey',assignedClasses:{connect:{id:cls.id}}}});
   const question=await db.question.create({data:{quizId:survey.id,text:'Closure survey question',type:'short-answer',order:0}});
-  await db.question.create({data:{quizId:exam.id,text:'Closure exam question',type:'short-answer',correctAnswer:'yes',order:0}});
+  const examQuestion=await db.question.create({data:{quizId:exam.id,text:'Closure exam question',type:'short-answer',correctAnswer:'yes',imageUrl:'/uploads/frozen.png',order:0}});
   await db.studentResult.create({data:{studentId:student.id,quizId:exam.id,status:'completed',score:80}});
   // A legacy scored survey result must never enter exam statistics.
   await db.studentResult.create({data:{studentId:student.id,quizId:survey.id,status:'completed',score:10}});
@@ -42,14 +47,16 @@ it('captures real contentType values and serves separated, frozen exam/survey hi
   const snapshot=await db.archiveSnapshot.create({data:{academicYearId:year.id,label:year.label,mode:'annual',scopeJson:'{}',initiatedBy:teacher.id}});
   await captureArchive(db,snapshot.id);
   const backupRoot=path.join(path.dirname(process.env.DATABASE_URL!.slice(5)),'history-artifacts');
-  await createArchiveWorker({db,backupRoot,export:(input,root)=>exportArchive(input,root,{pdfGenerator:async()=>Buffer.from('%PDF-1.4\nSynthetic history fixture\n%%EOF')})}).tick();
+  const uploadsRoot=path.join(path.dirname(process.env.DATABASE_URL!.slice(5)),'history-uploads');await mkdir(uploadsRoot,{recursive:true});
+  await writeFile(path.join(uploadsRoot,'frozen.png'),Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jF7sAAAAASUVORK5CYII=','base64'));
+  await createArchiveWorker({db,backupRoot,export:(input,root)=>exportArchive(input,root,{uploadsRoot,pdfGenerator:async()=>Buffer.from('%PDF-1.4\nSynthetic history fixture\n%%EOF')})}).tick();
   expect((await db.archiveSnapshot.findUniqueOrThrow({where:{id:snapshot.id}})).status).toBe('completed');
   await db.user.update({where:{id:student.id},data:{name:'Live Student',classId:nextClass.id}});
   await db.user.update({where:{id:teacher.id},data:{name:'Live Teacher'}});
   await db.class.update({where:{id:cls.id},data:{name:'Live Class',teachers:{set:[]},classTeacherId:null}});
   await db.category.update({where:{id:course.id},data:{name:'Live Course '+randomUUID()}});
   await db.classTeacherCourse.delete({where:{id:assignment.id}});
-  const app=express();app.use(express.json());app.use(session({secret:'synthetic-history',resave:false,saveUninitialized:false}));app.use('/history',createAcademicHistoryRouter({db}));app.get('/session',(req,res)=>res.json({context:req.session.academicYearContext??null}));
+  const app=express();app.use(express.json());app.use(session({secret:'synthetic-history',resave:false,saveUninitialized:false}));app.use('/history',createAcademicHistoryRouter({db,backupRoot}));app.get('/session',(req,res)=>res.json({context:req.session.academicYearContext??null}));
   const rows=async(type:string,query='')=>{const response=await request(app).get(`/history/years/${year.id}/rows?type=${type}${query}`);expect(response.status).toBe(200);return response.body;};
   expect((await rows('survey')).rows.map((row:any)=>row.id)).toEqual([survey.id]);
   expect((await rows('quiz')).rows.map((row:any)=>row.id)).toEqual([exam.id]);
@@ -65,4 +72,28 @@ it('captures real contentType values and serves separated, frozen exam/survey hi
   const selected=(await agent.get('/session')).body.context;
   const refreshed=await agent.get('/history/context');expect(refreshed.status).toBe(200);expect(refreshed.body.academicYearId).toBe(year.id);expect((await agent.get('/session')).body.context).toEqual(selected);
   expect((await agent.post('/history/context').send({academicYearId:active.id})).status).toBe(200);expect((await agent.get('/history/context')).body.academicYearId).toBe(active.id);
+
+  // Actual application schema + completed immutable archive, moved through the
+  // offline maintenance implementation rather than an API verifier stub.
+  const frozen=await db.archiveSnapshot.findUniqueOrThrow({where:{id:snapshot.id}});
+  const source=await mkdtemp(path.join(tmpdir(),'quizmaster-history-restore-'));maintenanceRoots.push(source);
+  const target=await mkdtemp(path.join(tmpdir(),'quizmaster-history-restore-'));maintenanceRoots.push(target);
+  await mkdir(path.join(source,'server/data'),{recursive:true});
+  const sourceArchives=path.join(source,'private-archives');await cp(backupRoot,sourceArchives,{recursive:true});
+  await cp(uploadsRoot,path.join(source,'server/uploads'),{recursive:true});
+  await writeFile(path.join(source,'server/.env'),`DATABASE_URL=file:../data/quiz.db\nPORT=64239\nHOST=127.0.0.1\nARCHIVE_BACKUP_ROOT=${sourceArchives.replaceAll('\\','/')}\nSESSION_SECRET=synthetic-restoration-only\n`);
+  await db.$disconnect();await copyFile(databasePath,path.join(source,'server/data/quiz.db'));
+  const backup=await createApplicationBackup(source,{name:'application-schema'});await restoreApplicationBackup(backup.backupRoot,target);
+  const restored=new PrismaClient({datasources:{db:{url:'file:'+path.join(target,'server/data/quiz.db').replaceAll('\\','/')}}});
+  try{
+    expect(await restored.archiveSnapshot.findUniqueOrThrow({where:{id:snapshot.id}})).toEqual(frozen);
+    await expect(restored.archiveSnapshot.update({where:{id:snapshot.id},data:{artifactPath:'changed'}})).rejects.toThrow();
+    const restoredApp=express();restoredApp.use(express.json());restoredApp.use(session({secret:'synthetic-restored',resave:false,saveUninitialized:false}));restoredApp.use('/history',createAcademicHistoryRouter({db:restored,backupRoot:path.join(target,'server/data/backups')}));
+    const response=await request(restoredApp).get(`/history/years/${year.id}/rows?type=question&quizId=${exam.id}`);
+    expect(response.status).toBe(200);expect(response.body.rows[0].id).toBe(examQuestion.id);
+    const assetUrl=response.body.rows[0].imageAssetUrl;expect(assetUrl).toContain('/assets/');
+    const asset=await request(restoredApp).get(assetUrl.replace('/api/admin/academic-history','/history'));
+    expect(asset.status).toBe(200);expect(asset.body).toEqual(await readFile(path.join(uploadsRoot,'frozen.png')));
+    expect((await request(restoredApp).get('/history/context')).body.years.map((item:any)=>item.id)).toEqual([active.id,year.id]);
+  }finally{await restored.$disconnect();}
 });

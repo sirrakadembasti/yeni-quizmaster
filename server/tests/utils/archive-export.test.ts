@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { mkdtemp, readFile, readdir, rm, writeFile, mkdir, symlink } from 'node:fs/promises';
+import { mkdtemp, readFile, readdir, rm, writeFile, mkdir, symlink, cp } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
@@ -7,6 +7,7 @@ import { exportArchive, verifyArchiveArtifact, prepareArchiveRecovery, type Snap
 import { packArchive,sha256 } from '../../services/archive-package';
 import sharp from 'sharp';
 import {archiveReport} from '../../services/archive-report';
+import {verifiedImageManifest} from '../../services/archive-asset-manifest';
 
 const roots: string[] = [];
 async function root() { const value = await mkdtemp(path.join(tmpdir(), 'archive-export-test-')); roots.push(value); return value; }
@@ -80,6 +81,17 @@ function unzipStored(zip: Buffer) {
 }
 
 describe('archive export', () => {
+  it('authenticates a relocated package without changing the immutable snapshot locator',async()=>{
+    const input=snapshot(),original=await root(),restored=await root();
+    const artifact=await exportArchive(input,original,{pdfGenerator});
+    await cp(path.join(original,input.label),path.join(restored,input.label),{recursive:true});
+    const frozen={id:input.id,label:input.label,artifactPath:artifact.artifactPath,zipSha256:artifact.zipSha256};
+    await expect(verifiedImageManifest(frozen,restored)).resolves.toMatchObject({formatVersion:2});
+    await expect(verifyArchiveArtifact(input,restored)).resolves.toMatchObject({zipSha256:artifact.zipSha256,artifactPath:path.join(restored,input.label,input.id,'archive.zip')});
+    await expect(verifiedImageManifest({...frozen,artifactPath:path.join(original,input.label,'different-job','archive.zip')},restored)).rejects.toThrow(/identity|path/i);
+    await writeFile(path.join(restored,input.label,input.id,'archive.zip'),'tampered');
+    await expect(verifiedImageManifest(frozen,restored)).rejects.toThrow(/checksum/i);
+  });
   it('rejects missing PDFs and forged duplicate unlisted or unsafe PDF indexes even after checksums are rebuilt',async()=>{
     for(const condition of ['duplicate','unsafe','unlisted','omitted','missing-file']){
       const input={...snapshot(),id:'pdf-index-'+condition,rows:Array.from({length:101},(_,index)=>row('quiz','quiz-'+String(index).padStart(3,'0'),{id:'quiz-'+String(index).padStart(3,'0'),title:'Quiz '+index,assignedClassIds:[]}))};

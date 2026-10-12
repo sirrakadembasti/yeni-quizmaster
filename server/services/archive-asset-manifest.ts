@@ -5,12 +5,20 @@ import { lstat, open } from 'node:fs/promises';
 import { MAX_PACKAGE_BYTES, sha256 } from './archive-package';
 import type { ArchiveManifest } from './archive-export';
 
+/** Recorded paths identify immutable jobs; only the current configured root is read.
+ * A restore may move that root, including between Windows and Unix hosts. */
+export function archiveArtifactLocation(snapshot:{id:string;label:string;artifactPath:string|null},backupRoot:string):string{
+  if(!snapshot.artifactPath||!/^[A-Za-z0-9_-]+$/.test(snapshot.id)||!/^\d{4}-\d{4}$/.test(snapshot.label))throw new Error('Archive identity mismatch');
+  const parts=snapshot.artifactPath.replace(/\\/g,'/').split('/');
+  if(parts.some(part=>part==='.'||part==='..')||parts.slice(-3).join('/')!==`${snapshot.label}/${snapshot.id}/archive.zip`)throw new Error('Archive path mismatch');
+  return path.resolve(backupRoot,snapshot.label,snapshot.id,'archive.zip');
+}
+
 /** The immutable completed-job ZIP hash authenticates its embedded manifest.
  * Read only directory metadata plus ZIP bytes; never load snapshot business rows. */
 export async function verifiedImageManifest(snapshot:{id:string;label:string;artifactPath:string|null;zipSha256:string|null},backupRoot:string):Promise<ArchiveManifest|null>{
   if(!snapshot.artifactPath||!snapshot.zipSha256)throw new Error('Archive artifact missing');
-  const expected=path.resolve(backupRoot,snapshot.label,snapshot.id,'archive.zip');
-  if(path.resolve(snapshot.artifactPath)!==expected)throw new Error('Archive path mismatch');
+  const expected=archiveArtifactLocation(snapshot,backupRoot);
   const parsed=path.parse(expected);let directory=parsed.root;
   for(const component of path.dirname(expected).slice(parsed.root.length).split(path.sep).filter(Boolean)){
     directory=path.join(directory,component);const stat=await lstat(directory);if(!stat.isDirectory()||stat.isSymbolicLink())throw new Error('Unsafe archive path');

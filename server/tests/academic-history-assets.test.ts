@@ -30,6 +30,14 @@ describe('authenticated frozen question images',()=>{
     const {app,name}=await setup();const url=`/history/years/${yearId}/assets/${name}`;
     expect((await request(app).get(url)).status).toBe(401);expect((await request(app).get(url).set('x-role','teacher')).status).toBe(403);expect((await request(app).get(url).set('x-role','student')).status).toBe(403);
   });
+  it('serves a restored package at the current root and rejects a different recorded job',async()=>{
+    const {app,name,bytes,db}=await setup();
+    const snapshot=await db.archiveSnapshot.findUnique();
+    db.archiveSnapshot.findUnique.mockResolvedValue({...snapshot,artifactPath:`C:\\previous-install\\archives\\2025-2026\\${snapshotId}\\archive.zip`});
+    expect((await request(app).get(`/history/years/${yearId}/assets/${name}`).set('x-role','admin')).body).toEqual(bytes);
+    db.archiveSnapshot.findUnique.mockResolvedValue({...snapshot,artifactPath:`/previous/2025-2026/different-job/archive.zip`});
+    expect((await request(app).get(`/history/years/${yearId}/assets/${name}`).set('x-role','admin')).status).toBe(409);
+  });
   it.each(['missing','failed','manual','wrong-year','wrong-label'])('rejects an asset whose annual snapshot becomes %s',async condition=>{
     const {app,name,db}=await setup();db.archiveSnapshot.findUnique.mockResolvedValue(condition==='missing'?null:{id:snapshotId,academicYearId:condition==='wrong-year'?'other':yearId,label:condition==='wrong-label'?'2024-2025':'2025-2026',mode:condition==='manual'?'manual':'annual',status:condition==='failed'?'failed':'completed'});
     expect((await request(app).get(`/history/years/${yearId}/assets/${name}`).set('x-role','admin')).status).toBe(409);

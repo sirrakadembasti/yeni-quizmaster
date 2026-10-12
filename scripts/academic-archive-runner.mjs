@@ -16,7 +16,8 @@ const rootReq = createRequire(path.join(repo, 'package.json'));
 const protectedFiles = ['server/data/quiz.db', 'client/src/lib/api.ts', 'client/src/pages/server-setup.tsx'];
 const hashes = () => protectedFiles.map(file => createHash('sha256').update(fs.readFileSync(path.join(repo, file))).digest('hex'));
 const before = hashes();
-const root = fs.mkdtempSync(path.join(repo, 'server/data/quizmaster-test-academic-'));
+let root = fs.mkdtempSync(path.join(repo, 'server/data/quizmaster-test-academic-'));
+const ownedRoots=[root];
 const children = [];
 let ports = [];
 let cancelled = false;
@@ -60,9 +61,9 @@ try {
   let uiPort = await port();
   while (uiPort === apiPort) uiPort = await port();
   ports = [apiPort, uiPort];
-  const database = path.join(root, 'server/data/academic.db');
+  let database = path.join(root, 'server/data/academic.db');
   const runtime = { root, database, ports: [apiPort, uiPort], baseURL: `http://127.0.0.1:${uiPort}` };
-  const runtimeFile = path.join(root, 'runtime.json');
+  let runtimeFile = path.join(root, 'runtime.json');
   fs.writeFileSync(runtimeFile, JSON.stringify(runtime));
   Object.assign(env, { DATABASE_URL: 'file:' + database.replaceAll('\\', '/'), SESSION_SECRET: 'disposable-academic-fixture-secret', PORT: String(apiPort), HOST: '127.0.0.1', NODE_ENV: 'development', FRONTEND_URL: runtime.baseURL, ALLOWED_ORIGINS: runtime.baseURL, ARCHIVE_BACKUP_ROOT: path.join(root, 'artifacts'), CHECKPOINT_DISABLE: '1', PRISMA_HIDE_UPDATE_MESSAGE: '1', RUST_LOG: 'info', ACADEMIC_ARCHIVE_RUNTIME: runtimeFile });
   const migrationStart = Date.now();
@@ -88,7 +89,7 @@ try {
     await req('esbuild').build({ entryPoints: [path.join(repo, 'server/index.ts')], outfile: serverEntry, bundle: true, packages: 'external', platform: 'node', target: 'node20', format: 'cjs', logLevel: 'warning' });
     console.log(`Owned server source bundle built in ${Date.now() - buildStart}ms`);
   }
-  const entry = path.join(root, 'entry.mjs');
+  let entry = path.join(root, 'entry.mjs');
   const nodemailerEsm = path.resolve(path.dirname(req.resolve('nodemailer')), '../esm/nodemailer.js');
   fs.writeFileSync(entry, `import { createRequire } from 'node:module';
 const trace = step => console.log('ACADEMIC_STARTUP ' + step);
@@ -101,18 +102,45 @@ disableAcademicFixtureEmailDelivery((await import(${JSON.stringify(pathToFileURL
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 const db = new PrismaClient(); trace('database-client');
-try { await db.user.create({ data: { id: 'academic-admin', name: 'Synthetic Academic Admin', email: 'academic-admin@example.test', role: 'admin', password: await bcrypt.hash('AcademicFixtureOnly2026!', 10) } }); trace('admin-seeded'); } finally { await db.$disconnect(); }
+try { await db.user.upsert({ where:{id:'academic-admin'}, update:{}, create: { id: 'academic-admin', name: 'Synthetic Academic Admin', email: 'academic-admin@example.test', role: 'admin', password: await bcrypt.hash('AcademicFixtureOnly2026!', 10) } }); trace('admin-seeded'); } finally { await db.$disconnect(); }
 trace('server-import');
 await import(${JSON.stringify(pathToFileURL(serverEntry).href)});
 trace('server-imported');
 `);
+  if(process.argv.includes('--restore-smoke')){
+    if(!bundled)throw new Error('Restoration smoke requires the owned source bundle');
+    const seed=path.join(root,'seed.mjs');
+    const entrySource=fs.readFileSync(entry,'utf8');fs.writeFileSync(seed,entrySource.split("trace('server-import');")[0]);
+    const seedJob=await launch([seed]);if(await seedJob.finished!==0)throw new Error('Restoration source seeding failed');await cleanupOwned(seedJob);
+    const sourceDb=new (req('@prisma/client').PrismaClient)({datasources:{db:{url:env.DATABASE_URL}}});
+    let expectedAdmin;
+    try{expectedAdmin=await sourceDb.user.findUniqueOrThrow({where:{id:'academic-admin'},select:{id:true,email:true,role:true,password:true,sessionVersion:true}});}finally{await sourceDb.$disconnect();}
+    fs.copyFileSync(database,path.join(root,'server/data/quiz.db'));
+    fs.writeFileSync(path.join(root,'server/.env'),`DATABASE_URL=file:../data/quiz.db\nHOST=127.0.0.1\nPORT=${apiPort}\nARCHIVE_BACKUP_ROOT=${path.join(root,'artifacts').replaceAll('\\','/')}\nSESSION_SECRET=disposable-academic-fixture-secret\n`);
+    const {createApplicationBackup,restoreApplicationBackup}=await import('./maintenance-lib.mjs');
+    const backup=await createApplicationBackup(root,{name:'browser-restoration'});
+    const restoredRoot=fs.mkdtempSync(path.join(repo,'server/data/quizmaster-test-academic-'));ownedRoots.push(restoredRoot);
+    await restoreApplicationBackup(backup.backupRoot,restoredRoot);
+    // The existing outbound-isolation guard deliberately uses academic.db.
+    // Only this owned test changes its filename after validating quiz.db restore.
+    const restoredDatabase=path.join(restoredRoot,'server/data/academic.db');fs.renameSync(path.join(restoredRoot,'server/data/quiz.db'),restoredDatabase);
+    fs.copyFileSync(serverEntry,path.join(restoredRoot,'server/index.cjs'));serverEntry=path.join(restoredRoot,'server/index.cjs');
+    fs.writeFileSync(path.join(restoredRoot,'package.json'),'{"type":"module"}');fs.writeFileSync(path.join(restoredRoot,'server/package.json'),'{}');fs.mkdirSync(path.join(restoredRoot,'client'));fs.writeFileSync(path.join(restoredRoot,'.env'),'# Restored synthetic fixture only\n');
+    root=restoredRoot;database=restoredDatabase;runtime.root=root;runtime.database=database;runtimeFile=path.join(root,'runtime.json');fs.writeFileSync(runtimeFile,JSON.stringify(runtime));
+    Object.assign(env,{DATABASE_URL:'file:'+database.replaceAll('\\','/'),ARCHIVE_BACKUP_ROOT:path.join(root,'server/data/backups'),ACADEMIC_ARCHIVE_RUNTIME:runtimeFile});
+    const seedStart=entrySource.indexOf('try { await db.user.upsert('),seedEnd=entrySource.indexOf("trace('server-import');");
+    if(seedStart<0||seedEnd<=seedStart)throw new Error('Source seed section not found');
+    const restoredEntry=entrySource.slice(0,seedStart)+`try { const expected=${JSON.stringify(expectedAdmin)}; const actual=await db.user.findUniqueOrThrow({where:{id:expected.id},select:{id:true,email:true,role:true,password:true,sessionVersion:true}}); if(Object.keys(expected).some(key=>actual[key]!==expected[key]))throw new Error('Restored admin identity/hash mismatch'); trace('restored-admin-verified'); } finally { await db.$disconnect(); }\n`+entrySource.slice(seedEnd);
+    entry=path.join(root,'entry.mjs');fs.writeFileSync(entry,restoredEntry.replace(pathToFileURL(path.join(ownedRoots[0],'server/index.cjs')).href,pathToFileURL(serverEntry).href));
+    console.log('Offline maintenance backup restored into an independent browser fixture');
+  }
   const api = await launch(bundled ? [entry] : ['--import', pathToFileURL(req.resolve('tsx')).href, entry]);
   await waitForAuditServer(`http://127.0.0.1:${apiPort}/api/csrf-token`, api);
   const viteEntry = path.join(root, 'ui.mjs');
   fs.writeFileSync(viteEntry, `import { loadConfigFromFile, createServer } from ${JSON.stringify('file:///' + clientReq.resolve('vite').replaceAll('\\', '/'))};\nconst loaded = await loadConfigFromFile({ command: 'serve', mode: 'development' }, ${JSON.stringify(path.join(repo, 'client/vite.config.ts'))});\nconst server = await createServer({ ...loaded.config, configFile: false, root: ${JSON.stringify(path.join(repo, 'client'))}, envDir: ${JSON.stringify(root)}, server: { ...loaded.config.server, host: '127.0.0.1', port: ${uiPort}, strictPort: true } });\nawait server.listen();\n`);
   const ui = await launch([viteEntry]);
   await waitForAuditServer(runtime.baseURL + '/auth', ui);
-  if (!process.argv.includes('--smoke')) {
+  if (!process.argv.includes('--smoke')&&!process.argv.includes('--restore-smoke')) {
     const tests = await launch([path.join(path.dirname(rootReq.resolve('playwright/package.json')), 'cli.js'), 'test', '-c', path.join(repo, 'playwright.academic-archive.config.ts'), ...process.argv.slice(2)], repo);
     process.exitCode = await tests.finished;
   } else {
@@ -132,6 +160,13 @@ trace('server-imported');
       await page.goto(runtime.baseURL + '/archive', { waitUntil: 'domcontentloaded' });
       await page.getByRole('heading', { name: /Arşiv/ }).first().waitFor({ state: 'visible', timeout: 30000 });
       await page.getByLabel('Eğitim yılı', { exact: true }).waitFor({ state: 'visible', timeout: 30000 });
+      if(process.argv.includes('--restore-smoke')){
+        const evidence=path.join(repo,'.superpowers/sdd/2026-10-05-academic-archive-review-plan');fs.mkdirSync(evidence,{recursive:true});
+        await page.screenshot({path:path.join(evidence,'production-restored-admin-desktop.png'),fullPage:true});
+        await page.setViewportSize({width:390,height:844});await page.reload({waitUntil:'domcontentloaded'});
+        await page.getByRole('heading',{name:/Arşiv/}).first().waitFor({state:'visible',timeout:30000});
+        await page.screenshot({path:path.join(evidence,'production-restored-admin-mobile.png'),fullPage:true});
+      }
       console.log('Isolated Chromium navigation and admin login passed');
     } finally { await browser.close(); }
   }
@@ -149,8 +184,10 @@ trace('server-imported');
   if (ports.length && !(await verifyFixturePortsReleased(ports)).every(result => result.stopped)) cleanupErrors.push(new Error('Owned fixture ports remain occupied'));
   if (JSON.stringify(before) !== JSON.stringify(hashes())) cleanupErrors.push(new Error('Protected database or user files changed'));
   if (cleanupErrors.length) throw new AggregateError(cleanupErrors, 'Fixture cleanup failed; root preserved for diagnosis');
-  if (path.dirname(root) !== path.join(repo, 'server/data') || !path.basename(root).startsWith('quizmaster-test-academic-')) throw new Error('Unsafe fixture cleanup target');
-  fs.rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
+  for(const ownedRoot of ownedRoots){
+    if (path.dirname(ownedRoot) !== path.join(repo, 'server/data') || !path.basename(ownedRoot).startsWith('quizmaster-test-academic-')) throw new Error('Unsafe fixture cleanup target');
+    fs.rmSync(ownedRoot, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
+  }
   console.log('Owned fixture removed; protected file hashes preserved');
   process.removeListener('SIGINT', cancel);
   process.removeListener('SIGTERM', cancel);

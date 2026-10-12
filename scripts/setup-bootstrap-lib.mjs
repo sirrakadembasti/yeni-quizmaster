@@ -31,6 +31,7 @@ export function getSetupPaths(projectRoot) {
     dataRoot,
     uploadsRoot,
     backupsRoot,
+    archiveBackupsRoot: path.join(dataRoot, "backups"),
     env: path.join(serverRoot, ".env"),
     quizDb: path.join(dataRoot, "quiz.db"),
     quizDbWal: path.join(dataRoot, "quiz.db-wal"),
@@ -150,6 +151,7 @@ function backupItems(paths) {
     { source: paths.pending, destination: path.join("server", "data", "installation.pending") },
     { source: paths.deploymentConfig, destination: path.join("server", "data", "deployment-config.json") },
     { source: paths.setupArtifacts, destination: path.join("server", "data", "setup-artifacts") },
+    { source: paths.archiveBackupsRoot, destination: path.join("server", "data", "backups") },
     { source: paths.uploadsRoot, destination: path.join("server", "uploads") },
   ];
 }

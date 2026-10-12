@@ -11,7 +11,7 @@ import { lstat, readFile } from 'node:fs/promises';
 import { verifyArchiveArtifact, type ArchiveManifest, type SnapshotExport, type ArchiveArtifact } from '../services/archive-export';
 import { sha256 } from '../services/archive-package';
 import { getArchiveBackupRoot } from './archive';
-import { verifiedImageManifest } from '../services/archive-asset-manifest';
+import { archiveArtifactLocation, verifiedImageManifest } from '../services/archive-asset-manifest';
 const types = ['user','student','teacher','class','category','teacherAssignment','quiz','survey','question','result','surveySubmission','surveyAnswer','guardianLink','announcement','questionBank'] as const;
 class HistoryError extends Error { constructor(public status: number, message: string) { super(message); } }
 export function createAcademicHistoryRouter({ db = archiveDb, now = () => new Date(), backupRoot, verifyArtifact=verifyArchiveArtifact }: { db?: PrismaClient; now?: () => Date; backupRoot?:string; verifyArtifact?:(input:SnapshotExport,root:string)=>Promise<ArchiveArtifact> } = {}) {
@@ -57,8 +57,7 @@ export function createAcademicHistoryRouter({ db = archiveDb, now = () => new Da
     const {snapshot}=await snapshotFor(req.params.yearId);
     try{
       const root=getArchiveBackupRoot(backupRoot);
-      const expected=path.resolve(root,snapshot.label,snapshot.id,'archive.zip');
-      if(!snapshot.artifactPath||path.resolve(snapshot.artifactPath)!==expected)throw new Error('Artifact identity mismatch');
+      const expected=archiveArtifactLocation(snapshot,root);
       let manifest:ArchiveManifest|null;
       if(verifyArtifact===verifyArchiveArtifact)manifest=await verifiedImageManifest(snapshot,root);
       else{
