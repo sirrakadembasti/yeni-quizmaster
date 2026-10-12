@@ -66,26 +66,47 @@ try {
   fs.writeFileSync(runtimeFile, JSON.stringify(runtime));
   Object.assign(env, { DATABASE_URL: 'file:' + database.replaceAll('\\', '/'), SESSION_SECRET: 'disposable-academic-fixture-secret', PORT: String(apiPort), HOST: '127.0.0.1', NODE_ENV: 'development', FRONTEND_URL: runtime.baseURL, ALLOWED_ORIGINS: runtime.baseURL, ARCHIVE_BACKUP_ROOT: path.join(root, 'artifacts'), CHECKPOINT_DISABLE: '1', PRISMA_HIDE_UPDATE_MESSAGE: '1', RUST_LOG: 'info', ACADEMIC_ARCHIVE_RUNTIME: runtimeFile });
   const migrationStart = Date.now();
-  // Windows measured 14/17 migrations in 120s; allow 17 at that observed
-  // rate plus 30s CLI startup, with a hard bound independent of browser tests.
-  const migration = spawnSync(process.execPath, [req.resolve('prisma/build/index.js'), 'migrate', 'deploy', '--schema', path.join(root, 'server/prisma/schema.prisma')], { cwd: root, env, windowsHide: true, encoding: 'utf8', timeout: 180000 });
+  // With 22 migrations, two serial Windows runs (one kept awake) reached
+  // 19/22 at the old 180s bound. 180*22/19 + 30s startup rounds to 240s.
+  // This bounds only disposable setup, not PDF/transaction/browser tests.
+  // An explicit opt-in can reuse an independently verified empty test schema.
+  // This is browser isolation, not evidence of a fresh installation.
+  const template = process.env.ACADEMIC_MIGRATION_TEMPLATE;
+  const migration = template
+    ? spawnSync('python', [path.join(repo, 'scripts/academic-migration-template.py'), template, database], { cwd: repo, env, windowsHide: true, encoding: 'utf8', timeout: 30000 })
+    : spawnSync(process.execPath, [req.resolve('prisma/build/index.js'), 'migrate', 'deploy', '--schema', path.join(root, 'server/prisma/schema.prisma')], { cwd: root, env, windowsHide: true, encoding: 'utf8', timeout: 240000 });
   if (migration.status !== 0) throw new Error(`Disposable migration failed: ${migration.error?.message ?? ''}\n${migration.stdout}\n${migration.stderr}`);
-  console.log(`Disposable migrations completed in ${Date.now() - migrationStart}ms`);
+  console.log(`${template ? 'Verified empty migration template copied' : 'Disposable migrations completed'} in ${Date.now() - migrationStart}ms`);
+  // Diagnostic opt-in: same current server sources, bundled inside the owned
+  // fixture. Dependencies remain external and resolve to server/node_modules.
+  // This distinguishes TypeScript loader cost from application initialization.
+  const bundled = process.env.ACADEMIC_BUNDLE_SERVER === '1';
+  let serverEntry = path.join(repo, 'server/index.ts');
+  if (bundled) {
+    serverEntry = path.join(root, 'server/index.cjs');
+    const buildStart = Date.now();
+    await req('esbuild').build({ entryPoints: [path.join(repo, 'server/index.ts')], outfile: serverEntry, bundle: true, packages: 'external', platform: 'node', target: 'node20', format: 'cjs', logLevel: 'warning' });
+    console.log(`Owned server source bundle built in ${Date.now() - buildStart}ms`);
+  }
   const entry = path.join(root, 'entry.mjs');
   const nodemailerEsm = path.resolve(path.dirname(req.resolve('nodemailer')), '../esm/nodemailer.js');
   fs.writeFileSync(entry, `import { createRequire } from 'node:module';
+const trace = step => console.log('ACADEMIC_STARTUP ' + step);
+trace('entry');
 const { disableAcademicFixtureEmailDelivery, isolateAcademicFixture } = await import(${JSON.stringify(pathToFileURL(path.join(repo, 'scripts/academic-fixture-email.mjs')).href)});
-isolateAcademicFixture();
+isolateAcademicFixture(); trace('isolation');
 const require = createRequire(${JSON.stringify(path.join(repo, 'server/package.json'))});
 disableAcademicFixtureEmailDelivery(require('nodemailer'));
 disableAcademicFixtureEmailDelivery((await import(${JSON.stringify(pathToFileURL(nodemailerEsm).href)})).default);
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
-const db = new PrismaClient();
-try { await db.user.create({ data: { id: 'academic-admin', name: 'Synthetic Academic Admin', email: 'academic-admin@example.test', role: 'admin', password: await bcrypt.hash('AcademicFixtureOnly2026!', 10) } }); } finally { await db.$disconnect(); }
-await import(${JSON.stringify(pathToFileURL(path.join(repo, 'server/index.ts')).href)});
+const db = new PrismaClient(); trace('database-client');
+try { await db.user.create({ data: { id: 'academic-admin', name: 'Synthetic Academic Admin', email: 'academic-admin@example.test', role: 'admin', password: await bcrypt.hash('AcademicFixtureOnly2026!', 10) } }); trace('admin-seeded'); } finally { await db.$disconnect(); }
+trace('server-import');
+await import(${JSON.stringify(pathToFileURL(serverEntry).href)});
+trace('server-imported');
 `);
-  const api = await launch(['--import', pathToFileURL(req.resolve('tsx')).href, entry]);
+  const api = await launch(bundled ? [entry] : ['--import', pathToFileURL(req.resolve('tsx')).href, entry]);
   await waitForAuditServer(`http://127.0.0.1:${apiPort}/api/csrf-token`, api);
   const viteEntry = path.join(root, 'ui.mjs');
   fs.writeFileSync(viteEntry, `import { loadConfigFromFile, createServer } from ${JSON.stringify('file:///' + clientReq.resolve('vite').replaceAll('\\', '/'))};\nconst loaded = await loadConfigFromFile({ command: 'serve', mode: 'development' }, ${JSON.stringify(path.join(repo, 'client/vite.config.ts'))});\nconst server = await createServer({ ...loaded.config, configFile: false, root: ${JSON.stringify(path.join(repo, 'client'))}, envDir: ${JSON.stringify(root)}, server: { ...loaded.config.server, host: '127.0.0.1', port: ${uiPort}, strictPort: true } });\nawait server.listen();\n`);
