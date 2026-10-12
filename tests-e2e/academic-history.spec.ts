@@ -5,6 +5,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { assertIsolatedRuntime, prisma, login, api } from './academic-archive-helpers';
 import { captureArchive } from '../server/services/archive-capture';
 import { createArchiveWorker } from '../server/services/archive-worker';
+import { exportArchive } from '../server/services/archive-export';
 const diagnosticTimelines=new WeakMap<object,Record<string,unknown>[]>();
 
 test.afterEach(async({page},info)=>{
@@ -30,6 +31,9 @@ test.afterEach(async({page},info)=>{
 test('actual captured history separates exam/survey data and preserves management tabs across year changes',async({page})=>{
   test.setTimeout(120000);
   const runtime=assertIsolatedRuntime();
+  const imageBytes=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jF7sAAAAASUVORK5CYII=','base64');
+  const uploadsRoot=path.join(runtime.root,'server','uploads');mkdirSync(uploadsRoot,{recursive:true});
+  const imageName=randomUUID()+'.png',imageFile=path.join(uploadsRoot,imageName);writeFileSync(imageFile,imageBytes);
   await page.context().exposeBinding('academicContextDiagnostic',({page:source},row)=>{
     const allowed=['at','type','path','method','status','name','phase','nonce','invalid'];
     const safe=Object.fromEntries(allowed.filter(key=>['string','number','boolean'].includes(typeof row?.[key])).map(key=>[key,row[key]]));
@@ -81,7 +85,7 @@ test('actual captured history separates exam/survey data and preserves managemen
     const assignment=await db.classTeacherCourse.create({data:{classId:cls.id,teacherId:teacher.id,categoryId:course.id}});
     const exam=await db.quiz.create({data:{title:'History Exam Only',contentType:'exam',createdBy:teacher.id,categoryId:course.id,assignedClasses:{connect:{id:cls.id}}}});
     const survey=await db.quiz.create({data:{title:'History Survey Only',contentType:'survey',createdBy:teacher.id,assignedClasses:{connect:{id:cls.id}}}});
-    await db.question.create({data:{quizId:exam.id,text:'Frozen exam question',type:'short-answer',correctAnswer:'yes',order:0}});
+    await db.question.create({data:{quizId:exam.id,text:'Frozen exam question',type:'short-answer',correctAnswer:'yes',order:0,imageUrl:'/uploads/'+imageName}});
     const question=await db.question.create({data:{quizId:survey.id,text:'Frozen survey question',type:'short-answer',order:0}});
     await db.studentResult.create({data:{studentId:student.id,quizId:exam.id,status:'completed',score:80}});
     await db.studentResult.create({data:{studentId:student.id,quizId:survey.id,status:'completed',score:10}});
@@ -96,8 +100,9 @@ test('actual captured history separates exam/survey data and preserves managemen
     const snapshot=await db.archiveSnapshot.create({data:{academicYearId:year.id,label:year.label,mode:'annual',scopeJson:'{}',leaseOwner,leaseExpiresAt:new Date(Date.now()+120000)}});
     await captureArchive(db,snapshot.id,{owner:leaseOwner,now:()=>new Date()});
     const fixtureClock=new Date(Date.now()+120001);
-    await createArchiveWorker({db,backupRoot:path.join(runtime.root,'artifacts'),owner:leaseOwner,now:()=>new Date(fixtureClock)}).tick();
+    await createArchiveWorker({db,backupRoot:path.join(runtime.root,'artifacts'),owner:leaseOwner,now:()=>new Date(fixtureClock),export:(input,root)=>exportArchive(input,root,{uploadsRoot})}).tick();
     expect((await db.archiveSnapshot.findUniqueOrThrow({where:{id:snapshot.id}})).status).toBe('completed');
+    writeFileSync(imageFile,'Synthetic live upload changed after publication');
     await db.user.update({where:{id:student.id},data:{name:'Current History Student',classId:next.id}});
     await db.user.update({where:{id:teacher.id},data:{name:'Current History Teacher'}});
     await db.class.update({where:{id:cls.id},data:{name:'Renamed History Class',teachers:{set:[]},classTeacherId:null}});
@@ -141,6 +146,13 @@ test('actual captured history separates exam/survey data and preserves managemen
   await expect(history.getByRole('cell',{name:'Frozen History Student',exact:true})).toBeVisible();
   await page.goto(`/quizzes/${examId}?tab=questions`,{waitUntil:'domcontentloaded'});
   await expect(history.getByRole('cell',{name:'Frozen exam question',exact:true})).toBeVisible();
+  await history.getByRole('button',{name:'Ayrıntıları görüntüle',exact:true}).click();
+  const frozenImage=history.getByRole('img',{name:'Dondurulmuş soru görseli',exact:true});await expect(frozenImage).toBeVisible();
+  const imageUrl=(await frozenImage.getAttribute('src'))!;
+  expect(imageUrl).toMatch(new RegExp('^/api/admin/academic-history/years/'+yearId+'/assets/[a-f0-9]{64}\\.png$'));
+  await expect.poll(()=>frozenImage.evaluate((image:HTMLImageElement)=>image.complete&&image.naturalWidth===1)).toBe(true);
+  const frozenImageResponse=await api(page,'GET',imageUrl);expect(frozenImageResponse.status()).toBe(200);expect(await frozenImageResponse.body()).toEqual(imageBytes);
+  expect(await history.locator('img[src^="/uploads/"]').count()).toBe(0);
   await page.goto(`/statistics?classId=${classId}`,{waitUntil:'domcontentloaded'});
   await expect(history.getByLabel('Dondurulmuş sınav istatistikleri')).toContainText('Ortalama puan: 80.00');
   const assignmentResponse=await api(page,'GET',`/admin/academic-history/years/${yearId}/rows?type=teacherAssignment&teacherId=${teacherId}`);

@@ -46,9 +46,11 @@ export default defineConfig({
     testTimeout: 30000,
     hookTimeout: 30000,
     globalSetup: ['tests/global-setup.ts'],
+    setupFiles: ['tests/file-db-setup.ts'],
     include: ['tests/**/*.test.ts'],
     env: {
       DATABASE_URL: 'file:' + path.join(testDirectory, 'test.db').split('\\').join('/'),
+      QUIZMASTER_TEST_TEMPLATE: path.join(testDirectory, 'migration-template.db'),
     },
   },
   resolve: {

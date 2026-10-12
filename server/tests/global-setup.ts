@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
-import { rmSync } from 'node:fs';
-import { basename, dirname, resolve, relative, isAbsolute } from 'node:path';
+import { copyFileSync, constants, rmSync } from 'node:fs';
+import { basename, dirname, join, resolve, relative, isAbsolute } from 'node:path';
 const require = createRequire(import.meta.url);
 export default function setup(project: any) {
   const url = project.config.env.DATABASE_URL;
@@ -16,5 +16,12 @@ export default function setup(project: any) {
     cwd: dirname(require.resolve('../package.json')),
     env: { ...process.env, DATABASE_URL: url }, stdio: 'pipe',
   });
+  const template = join(testDir, 'migration-template.db');
+  if (resolve(project.config.env.QUIZMASTER_TEST_TEMPLATE) !== template) {
+    throw new Error('Test migration template must stay in the owned fixture');
+  }
+  // The migration child has exited and no test client has opened this DB.
+  // Keep a pristine source: ordinary API tests must not pollute later files.
+  copyFileSync(url.slice(5), template, constants.COPYFILE_EXCL);
   return () => rmSync(testDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
 }

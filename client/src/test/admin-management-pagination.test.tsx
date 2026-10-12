@@ -63,7 +63,8 @@ it.each([['Dersler', 'categories'], ['Sınıflar', 'classes'], ['Kullanıcılar'
 });
 it('ders kaydetme beklerken tekrar gönderim engellenir ve hata formu korur', async () => {
   let reject!: (error: Error) => void; api.createCategory.mockImplementation(() => new Promise((_r, j) => { reject = j; }));
-  mount(); await userEvent.click(screen.getByRole('button', { name: 'Yeni Ders Ekle' }));
+  mount(); await userEvent.click(screen.getByRole('tab', { name: 'Dersler' }));
+  await userEvent.click(screen.getByRole('button', { name: 'Yeni Ders Ekle' }));
   await userEvent.type(screen.getByPlaceholderText('Örn: GÖRSEL PROGRAMLAMA'), 'Matematik');
   const save = screen.getByRole('button', { name: 'Dersi Kaydet' }); await userEvent.click(save);
   await waitFor(() => expect(save).toBeDisabled()); reject(new Error('500 kayıt başarısız'));

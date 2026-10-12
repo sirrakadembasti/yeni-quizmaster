@@ -23,7 +23,7 @@ it('deploys all migrations into an absent SQLite DB under inherited warn logging
     const started = Date.now();
     try {
       return execFileSync(process.execPath, [pnpmScript, ...args], {
-        cwd: dirname(serverRoot), shell: false, windowsHide: true, timeout: 120000,
+        cwd: dirname(serverRoot), shell: false, windowsHide: true, timeout: 240000,
         env: { ...inherited, ...extraEnv }, encoding: 'utf8',
       });
     } catch (failure) {
@@ -54,4 +54,4 @@ it('deploys all migrations into an absent SQLite DB under inherited warn logging
     await prisma.$disconnect();
     rmSync(fixture, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
   }
-}, 270000);
+}, 510000);

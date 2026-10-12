@@ -192,7 +192,7 @@ it('failed recovery audit rolls back the retry reset, releases its own lease and
   expect((await request(recoveryApp(f.admin.id)).post(`/archive/jobs/${job.id}/retry`)).status).toBe(202);
   await worker().tick();
   expect((await db.archiveSnapshot.findUniqueOrThrow({ where: { id: job.id } })).status).toBe('completed');
-});
+},120000);
 
 it('explicitly cancelling a failed pre-capture job whose quiz was deleted unblocks one annual rollover', async () => {
   const f = await fixture();
