@@ -1,6 +1,6 @@
 # Üretime hazırlık provası
 
-Durum: Kullanıcı 6 Ekim 2026'da uygulamayı ve bulunan hataların düzeltilmesini onayladı. Bu çalışma, akademik arşiv planının bütün görevleri, belge/Graphify güncellemeleri ve son commit'i tamamlandıktan sonra yürütülecek. Kullanıcının çevrimiçi olması beklenmeyecek.
+Durum (13 Ekim 2026): Akademik arşiv kapanışı tamamlandı. Görev 1 yedek/restore ve Görev 2 terminal/BAT/SH hibrit yükseltme kabulü tamamlandı; Görev 3 geri dönüş provası sürüyor, Görev 4 performans/paket küçültme ve son Graphify/belge/push kapanışı bekliyor. Kullanıcı uygulamayı ve bulunan hataların düzeltilmesini onayladı; çevrimiçi olması beklenmeyecek. Aşağıdaki tarihli ara kayıtlar geçmiş denemeleri açıklar; güncel kabul sonuçları bunların sonrasındaki kapanış kaydıdır.
 
 7 Ekim ek talimatı: Arşiv görevleri kapandıktan sonra ilgili Markdown/README ve Graphify güncellenip commit edilecek ve GitHub'a push yapılacak. Sonraki üretim provasında doğrulanan değişiklikler de aynı güvenli yayın akışıyla kaydedilir; tamamlanmamış kontroller başarı olarak sunulmaz. Yerel ve README'de belirtilen uzak `main` geçmişlerinin ortak commit'i bulunmadığından uzak geçmişi değiştirmeden yeni bir `codex/` dalı kullanılır; force push yapılmaz.
 
@@ -33,11 +33,13 @@ Görev 1 Windows kabulü (12 Ekim): native bakım 6/6, kurulum regresyonu 14/14,
 
 13 Ekim devam kontrolü: güvenlik/UX düzeltmeleri `8bbb5150a3629dfd95775dcf185c16d1fc64eaaa` ile uzak dalda exact SHA doğrulandı. Kullanıcının iki dosyası ve canlı DB hash'leri değişmedi. Native Linux generated Prisma kontrolünde formatter boşlukları yanlış hata oluşturuyordu; yalnız yorum/boşlukları dışlayan, quoted değerler dahil bütün lexical tokenları koruyan karşılaştırmayla şema/veri/22 migration/integrity/FK/kapalı port kontrolü exit 0 geçti. Son SH gerçek tekrar ayrıca error döndü; iş logu inceleniyor, tam tekrar kabulü hâlâ açık. Önceki turda bağlantı kopması ve süreç cleanup deadline hatası birbirinden ayrıldı; sonraki `/proc` kontrolünde fixture süreçleri yoktu. Düşük Windows kullanılabilir bellek gözlendi ancak WSL kernel kaydında OOM kanıtı bulunmadı; bağlantı hatasının kök nedeni OOM olarak ilan edilmedi. BAT eski oturum/generated-client/tekrar/browser kabulü kapanmadı.
 
+13 Ekim sonraki gerçek BAT turu: kaynak kısıtı düzeldikten sonra başlatıcı ve özgün eski oturum doğrulaması çalıştı. `NODE_ENV=production` mirasıyla gerçek install devDependencies'ı kaldırdı; build esbuild bulunamadığı için başarısız oldu, yedek ve mevcut DB korundu. `9cf56f5` ile install'a `--prod=false`, Paketleri Kur/Onar'a aynı flag ve `CI=true` eklendi. Komut sözleşmesi ve production HTTP/onarım negatifleri RED→GREEN; son Windows bakım/upgrade/UI regresyonu 20/20 exit 0. Yerel file-package compiler denemesi önceki kodda da geçtiği için regresyon kanıtı kabul edilmedi ve testten kaldırıldı.
+
+Görev 2 son kapanış: son kodla gerçek BAT/web ikinci turu ve başarı arayüzü yerleşmesini bekleyen üçüncü tam turu exit 0 geçti. Özgün ilk sürüm oturumu, yedi koleksiyon, generated şemanın tüm tokenları, 22 migration/integrity/FK, görsel/reload ve sahip olunan süreç/portlar doğrulandı. Native Linux SH/web son production-policy tekrarı exit 0; altı koleksiyon/tam şema ve gerçek web/görsel/süreç/port kabulü geçti. Başarı ekranları görsel olarak incelendi. Terminal kabulüyle birlikte Görev 2 tamamlandı; ayrıntılar ve cache/ortam sınırları [yükseltme sonuçlarında](../../production-upgrade-rehearsal-results.md).
+
 ## Görev 3 — Hatalı yükseltmeden geri dönüş
 
-13 Ekim sonraki gerçek BAT turu: kaynak kısıtı düzeldikten sonra başlatıcı ve özgün eski oturum doğrulaması çalıştı. `NODE_ENV=production` mirasıyla gerçek install devDependencies'ı kaldırdı; build esbuild bulunamadığı için başarısız oldu, yedek ve mevcut DB korundu. Install'a `--prod=false`, Paketleri Kur/Onar'a aynı flag ve `CI=true` eklendi. Komut sözleşmesi ve production HTTP/onarım negatifleri RED→GREEN; son Windows bakım/upgrade/UI regresyonu 20/20 exit 0. Yerel file-package compiler denemesi önceki kodda da geçtiği için regresyon kanıtı kabul edilmedi ve testten kaldırıldı. Gerçek uygulama install/build/browser tekrarı yeniden sürüyor; Görev 2 henüz kapanmadı.
-
-Ayrıntılı uygulama sırası [rollback prova planında](2026-10-13-upgrade-rollback-rehearsal-plan.md). Plan yazıldı; gerçek hata/kurtarma provaları henüz yapılmadı.
+Ayrıntılı uygulama sırası [rollback prova planında](2026-10-13-upgrade-rollback-rehearsal-plan.md). Bağımsız korumalı runner ile gerçek dört hata/kurtarma matrisi sürüyor; henüz tam senaryo kabulü verilmedi.
 
 Dosya, migration, bağımlılık veya açılış aşamalarında kontrollü hata üret. Son çalışan sürüme ve doğru veri yedeğine dön; veritabanı ile uygulama sürümünün birlikte tutarlı olduğunu doğrula. Canlı veriyi değiştirmeden başarısız geri dönüşün nasıl bildirildiğini ve tekrar kurtarmayı test et. Otomatik/manuel geri dönüş sözleşmesini belgelerle uyumlu hale getir.
 
