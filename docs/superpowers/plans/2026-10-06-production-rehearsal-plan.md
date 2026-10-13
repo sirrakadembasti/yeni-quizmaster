@@ -35,6 +35,8 @@ Görev 1 Windows kabulü (12 Ekim): native bakım 6/6, kurulum regresyonu 14/14,
 
 ## Görev 3 — Hatalı yükseltmeden geri dönüş
 
+13 Ekim sonraki gerçek BAT turu: kaynak kısıtı düzeldikten sonra başlatıcı ve özgün eski oturum doğrulaması çalıştı. `NODE_ENV=production` mirasıyla gerçek install devDependencies'ı kaldırdı; build esbuild bulunamadığı için başarısız oldu, yedek ve mevcut DB korundu. Install'a `--prod=false`, Paketleri Kur/Onar'a aynı flag ve `CI=true` eklendi. Komut sözleşmesi ve production HTTP/onarım negatifleri RED→GREEN; son Windows bakım/upgrade/UI regresyonu 20/20 exit 0. Yerel file-package compiler denemesi önceki kodda da geçtiği için regresyon kanıtı kabul edilmedi ve testten kaldırıldı. Gerçek uygulama install/build/browser tekrarı yeniden sürüyor; Görev 2 henüz kapanmadı.
+
 Ayrıntılı uygulama sırası [rollback prova planında](2026-10-13-upgrade-rollback-rehearsal-plan.md). Plan yazıldı; gerçek hata/kurtarma provaları henüz yapılmadı.
 
 Dosya, migration, bağımlılık veya açılış aşamalarında kontrollü hata üret. Son çalışan sürüme ve doğru veri yedeğine dön; veritabanı ile uygulama sürümünün birlikte tutarlı olduğunu doğrula. Canlı veriyi değiştirmeden başarısız geri dönüşün nasıl bildirildiğini ve tekrar kurtarmayı test et. Otomatik/manuel geri dönüş sözleşmesini belgelerle uyumlu hale getir.

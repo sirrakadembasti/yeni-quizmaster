@@ -36,7 +36,15 @@ const args = process.argv.slice(2);
 if (args.length === 1 && args[0] === '--version') {
   fs.appendFileSync(process.env.RUNTIME_TEST_CALLS, '--version\\n');
   console.log('9.15.1');
-} else if (args.join(' ') === 'install --frozen-lockfile') {
+} else if (args[0] === 'install' && args.includes('--frozen-lockfile')) {
+  if (process.env.NODE_ENV === 'production' && !args.includes('--prod=false')) {
+    console.error('Controlled install excluded the wizard/build tools');
+    process.exit(91);
+  }
+  if (process.env.CI !== 'true') {
+    console.error('Controlled modules replacement would require confirmation');
+    process.exit(92);
+  }
   // Controlled dependency evidence only; no real packages are installed.
   for (const relative of ['node_modules/.pnpm', 'server/node_modules', 'client/node_modules'])
     fs.mkdirSync(path.join(process.cwd(), relative), { recursive: true });
@@ -51,7 +59,7 @@ if (args.length === 1 && args[0] === '--version') {
 } else process.exit(90);
 `);
   const bootstrapPort = await port();
-  const env = { ...process.env, npm_execpath: mockPnpm, RUNTIME_TEST_CALLS: calls,
+  const env = { ...process.env, NODE_ENV: 'production', CI: 'false', npm_execpath: mockPnpm, RUNTIME_TEST_CALLS: calls,
     SETUP_BOOTSTRAP_PORT: String(bootstrapPort), SETUP_WIZARD_PORT: String(await port()) };
   delete env.SETUP_TOKEN;
   const child = spawn(process.execPath, [path.join(scripts, 'setup-bootstrap.mjs'), '--no-open'], {
@@ -127,7 +135,9 @@ if (args.length === 1 && args[0] === '--version') {
     throw new Error('Controlled bootstrap job did not reach expected state');
   };
   assert.equal((await mutation('/api/install')).status, 202);
-  await waitForStatus(value => value.packagesReady && value.job.status === 'success');
+  const installed = await waitForStatus(value => value.job.type === 'dependencies' && ['success','error'].includes(value.job.status));
+  assert.equal(installed.job.status,'success','Production launch must retain the wizard/build dependencies');
+  assert.equal(installed.packagesReady,true);
   assert.equal((await mutation('/api/wizard')).status, 202);
   const handoff = await waitForStatus(value => value.job.wizardUrl && value.job.status === 'error');
   fs.mkdirSync(path.join(root, 'server/data'), { recursive: true });

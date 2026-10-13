@@ -24,7 +24,7 @@ async function fixture(t){
 test('upgrade saves a verified backup before commands and preserves configuration and installation identity',async t=>{
   const root=await fixture(t),env=await fs.readFile(path.join(root,'server/.env')),calls=[];
   const result=await upgradeApplication(root,{run:async args=>{assert.equal((await fs.readdir(path.join(root,'server/backups'))).length,1);calls.push(args);}});
-  assert.deepEqual(calls,[['install','--frozen-lockfile'],['build'],['--filter','quiz-master-server','db:deploy'],['--filter','quiz-master-server','db:status']]);
+  assert.deepEqual(calls,[['install','--frozen-lockfile','--prod=false'],['build'],['--filter','quiz-master-server','db:deploy'],['--filter','quiz-master-server','db:status']]);
   assert.deepEqual(await fs.readFile(path.join(root,'server/.env')),env);
   assert.equal(await fs.readFile(path.join(root,'server/data/installation.lock'),'utf8'),'synthetic-installation');
   assert.ok(JSON.parse(await fs.readFile(path.join(result.backupRoot,'manifest.json'),'utf8')).files.some(file=>file.backup==='server/data/quiz.db'));

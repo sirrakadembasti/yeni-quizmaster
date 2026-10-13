@@ -125,7 +125,7 @@ pnpm run setup
 İlk ekran yalnız `127.0.0.1:5049` üzerinde açılır. Burada:
 
 - uygulamanın bulunduğu dizin ve çalışma ortamı gösterilir,
-- `pnpm install --frozen-lockfile` **Paketleri Kur / Onar** ile çalıştırılır (sihirbaza geçiş bu adım bitmeden açılmaz),
+- `pnpm install --frozen-lockfile --prod=false` **Paketleri Kur / Onar** ile etkileşimsiz çalıştırılır; production ortamında da sihirbaz/derleme araçları kurulur (sihirbaza geçiş bu adım bitmeden açılmaz),
 - gerçek pnpm çıktısı ve hata bilgisi ekranda izlenir,
 - 5050 (sihirbaz) portu doluysa süreç PID ile gösterilir ve durdurulması istenir.
 
@@ -173,7 +173,7 @@ pnpm --filter quiz-master-server start
 Geliştirme yapmak isteyenler production sihirbazı yerine manuel geliştirme akışını kullanabilir:
 
 ```bash
-pnpm install --frozen-lockfile
+pnpm install --frozen-lockfile --prod=false
 # server/.env.example dosyasını server/.env olarak kopyalayıp yer tutucuları değiştirin
 pnpm --filter quiz-master-server db:migrate
 pnpm --filter quiz-master-server db:seed   # yalnız geliştirme/demo verisi
@@ -432,7 +432,7 @@ Komutlar, veri doğrulama sorguları, oturum deposu kararı, geri dönüş plan�
 
 ## Sorun giderme
 
-- `concurrently bulunamadı`: proje kökünde `pnpm install --frozen-lockfile` çalıştırın.
+- `concurrently bulunamadı`: proje kökünde `pnpm install --frozen-lockfile --prod=false` çalıştırın. Production ortamında kurulum/derleme araçları da gereklidir.
 - Prisma istemcisi hazır değil: `pnpm --filter quiz-master-server exec prisma generate` çalıştırın.
 - Vite API için `ECONNREFUSED`: backend'in yapılandırılan `PORT` üzerinde çalıştığını kontrol edin; varsayılan `5000`'dir. Vite, süreç ortamı → `server/.env` → kök `.env` sırasıyla yalnız `PORT` değerini okuyarak API, yükleme ve Socket.IO isteklerini aynı sunucuya iletir. Port değişince Vite'ı yeniden başlatın.
 - Gmail zaman aşımı: kurumsal ağın `587/465` çıkışını engelleyip engellemediğini kontrol edin; DNS/proxy değiştirmeden izinli bir ağda deneyin.

@@ -30,7 +30,9 @@ export async function upgradeApplication(projectRoot,{run,onProgress=()=>{},sign
     const backup=await createApplicationBackup(root,{name:'upgrade-'+owner});backupRoot=backup.backupRoot;
     onProgress('Verified private backup: '+backupRoot+'\n');
     const runner=run??(args=>runUpgradeCommand(root,args,onProgress,signal));
-    for(const [name,args]of [['install',['install','--frozen-lockfile']],['build',['build']],['migrate',['--filter','quiz-master-server','db:deploy']],['status',['--filter','quiz-master-server','db:status']]]){
+    // Compilation tools are needed even when a production service launches
+    // maintenance. pnpm otherwise omits/removes devDependencies before build.
+    for(const [name,args]of [['install',['install','--frozen-lockfile','--prod=false']],['build',['build']],['migrate',['--filter','quiz-master-server','db:deploy']],['status',['--filter','quiz-master-server','db:status']]]){
       if(signal?.aborted)throw new Error('Upgrade cancelled');
       step=name;onProgress('Upgrade step: '+step+'\n');await runner(args);
     }

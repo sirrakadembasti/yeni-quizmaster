@@ -86,6 +86,7 @@ function startPnpmJob(type, args, successMessage) {
 
   // Sihirbaz SETUP_PORT okur; bootstrap portu ile karışmasın diye ayrı tut.
   const childEnv = { ...process.env, FORCE_COLOR: "0" };
+  if (type === "dependencies") childEnv.CI = "true";
   if (type === "wizard") {
     if (wizardPort === port) {
       throw new Error(`Kurulum sihirbazı portu (${wizardPort}) kurulum başlangıcı ile aynı olamaz. SETUP_WIZARD_PORT değerini değiştirin.`);
@@ -302,7 +303,7 @@ async function handler(req, res) {
 
   try {
     if (requestUrl.pathname === "/api/install") {
-      startPnpmJob("dependencies", ["install", "--frozen-lockfile"], "Paket ve kütüphane kurulumu tamamlandı.");
+      startPnpmJob("dependencies", ["install", "--frozen-lockfile", "--prod=false"], "Paket ve kütüphane kurulumu tamamlandı.");
       return json(res, 202, { message: "Paket kurulumu başlatıldı." });
     }
     if (requestUrl.pathname === "/api/upgrade") {
