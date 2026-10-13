@@ -1,6 +1,6 @@
 # Üretime hazırlık provası
 
-Durum (13 Ekim 2026): Akademik arşiv kapanışı tamamlandı. Görev 1 yedek/restore ve Görev 2 terminal/BAT/SH hibrit yükseltme kabulü tamamlandı; Görev 3 geri dönüş provası sürüyor, Görev 4 performans/paket küçültme ve son Graphify/belge/push kapanışı bekliyor. Kullanıcı uygulamayı ve bulunan hataların düzeltilmesini onayladı; çevrimiçi olması beklenmeyecek. Aşağıdaki tarihli ara kayıtlar geçmiş denemeleri açıklar; güncel kabul sonuçları bunların sonrasındaki kapanış kaydıdır.
+Durum (14 Ekim 2026): Akademik arşiv kapanışı ve Görev 1 yedek/restore, Görev 2 terminal/BAT/SH hibrit yükseltme, Görev 3 geri dönüş kabulü tamamlandı. Görev 4 performans/paket küçültme uygulanıyor; son Graphify/belge/push kapanışı bekliyor. Kullanıcı uygulamayı ve bulunan hataların düzeltilmesini onayladı; çevrimiçi olması beklenmeyecek. Aşağıdaki tarihli ara kayıtlar geçmiş denemeleri açıklar; güncel kabul sonuçları bunların sonrasındaki kapanış kaydıdır.
 
 7 Ekim ek talimatı: Arşiv görevleri kapandıktan sonra ilgili Markdown/README ve Graphify güncellenip commit edilecek ve GitHub'a push yapılacak. Sonraki üretim provasında doğrulanan değişiklikler de aynı güvenli yayın akışıyla kaydedilir; tamamlanmamış kontroller başarı olarak sunulmaz. Yerel ve README'de belirtilen uzak `main` geçmişlerinin ortak commit'i bulunmadığından uzak geçmişi değiştirmeden yeni bir `codex/` dalı kullanılır; force push yapılmaz.
 
@@ -39,7 +39,7 @@ Görev 2 son kapanış: son kodla gerçek BAT/web ikinci turu ve başarı arayü
 
 ## Görev 3 — Hatalı yükseltmeden geri dönüş
 
-Ayrıntılı uygulama sırası [rollback prova planında](2026-10-13-upgrade-rollback-rehearsal-plan.md). Bağımsız korumalı runner ile gerçek dört hata/kurtarma matrisi sürüyor; henüz tam senaryo kabulü verilmedi.
+Ayrıntılı uygulama sırası [rollback prova planında](2026-10-13-upgrade-rollback-rehearsal-plan.md). Windows'ta gerçek frozen install, derleme, kısmi migration ve açılış hatası sonrası bağımsız eski kaynak/yedek kurtarması 4/4 geçti. Native Ubuntu/WSL'de gerçek kısmi migration hatası ve eski kaynak/yedek kurtarması 1/1 geçti; diğer üç Linux hata aşaması tekrarlanmadı. Her kabulde yedi veri koleksiyonu, özgün oturum, eski generated şema/17 migration, integrity/FK, ayar/görsel, arşiv/yenileme ve sahip olunan süreç/port kapanışı doğrulandı. Bozuk yedek yayımlanmadı, mevcut veri ezilmedi. Önbellek ve ilk runner/hardened recheck ayrımı [geri dönüş sonuçlarında](../../production-rollback-rehearsal-results.md) açıklanır. Otomatik rollback eklenmedi; kod ve veri birlikte manuel kurtarılır.
 
 Dosya, migration, bağımlılık veya açılış aşamalarında kontrollü hata üret. Son çalışan sürüme ve doğru veri yedeğine dön; veritabanı ile uygulama sürümünün birlikte tutarlı olduğunu doğrula. Canlı veriyi değiştirmeden başarısız geri dönüşün nasıl bildirildiğini ve tekrar kurtarmayı test et. Otomatik/manuel geri dönüş sözleşmesini belgelerle uyumlu hale getir.
 

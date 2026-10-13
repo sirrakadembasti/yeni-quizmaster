@@ -448,6 +448,8 @@ Kurulu sistemi verileri koruyarak güncellemek için onaylı sürüm kodunu yerl
 
 30 Eylül 2026 bakımında yetki/rol ilişkileri, sınav/anket geçmişi, eşzamanlı kayıt, oturumlar, AI dış bağlantıları ve çevrimdışı kuyruk güçlendirildi. [Bakım notları](docs/guvenlik-ve-bakim.md) ayrıntıları ve işletim sınırlarını açıklar.
 
+14 Ekim hatalı yükseltme kurtarma kabulü: Windows dört hata aşaması ve native Linux kısmi migration hatası sonrası bağımsız eski kaynak/yedekle geri dönüş geçti. Özgün oturum, yedi iş koleksiyonu, eski şema/17 migration, integrity/FK, ayar/görsel ve süreç/port kapanışı korundu. Otomatik rollback yoktur; [kurtarma işlemi](docs/production-maintenance.md#hatalı-yükseltmeden-geri-dönüş) ve [platform bazında kanıtlar/sınırlar](docs/production-rollback-rehearsal-results.md) açıklanır. Performans ve frontend paket ölçümü sonraki ayrı görevdir.
+
 Mevcut kurulumlarda tutarlı SQLite yedeği alın; `pnpm install`, `pnpm --filter quiz-master-server db:deploy`, `pnpm build` ve sunucu yeniden başlatma adımlarını uygulayın. Migration mevcut kayıtları koruyarak oturum sürümü, e-posta sahiplenme alanı ve sonuç indeksleri ekler; anket sorularının boş doğru cevap alanını migration geçmişiyle uyumlu hale getirir.
 
 Backend testleri geçici SQLite ve taklit SMTP kullanır. Kontroller: `pnpm --filter quiz-master-server test`, `pnpm --filter quiz-master-client exec vitest run`, `pnpm -r type-check` ve `pnpm build`.
