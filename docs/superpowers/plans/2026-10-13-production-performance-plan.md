@@ -39,6 +39,6 @@
 **Files:** guarded production Chromium runner/tests, `docs/production-performance-results.md` ve üst plan/bakım/README (parent günceller).
 
 - [ ] Dört rol direct/refresh/izin-red/returnUrl/back/alias/base-path, admin geçmiş yıl salt okunur, yeni chunk hata ekranı ve kurtarma akışlarını gerçek browser ile çalıştır; screenshot/network/pageerror kanıtı kaydet.
-- [ ] Taze profilde offline prepare→daha önce açılmamış sınav URL'si→offline reload/cevap→queued submit→reconnect/tek kayıt DB doğrula.
+- [ ] Taze profilde offline prepare→daha önce açılmamış sınav URL'si→offline reload/soru görseli/cevap→queued submit→reconnect/tek kayıt DB doğrula. Resim veya storage/kota reddi yeniden üretilirse public asset cache'ini kullanmadan kullanıcı offline session'ı içinde dar düzeltme yap; yanlış hazır durumu ve queued cevap kaybını negatif testle reddet.
 - [ ] Gerçekçi yükte hata bulunduysa dar düzeltme ve aynı workload tekrarını raporla. Önce/sonra JS/gzip, CSS, p50/p95/p99/max/errors ve host sınırlarını yaz.
 - [ ] Task-scoped bağımsız spec/quality review; gerekli fix ve tekrar. Protected3hash/süreç/port kanıtı ve staged guard sonrası ayrı görev commit'i. Son Graphify/Markdown/push üst plan kapanışında yapılır.
