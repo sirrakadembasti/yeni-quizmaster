@@ -182,6 +182,8 @@ pnpm build
 
 Derleme sonunda `client/dist` ve kökte `dist/index.cjs` bulunmalıdır. Derleme yapılan Node ana sürümü ile üretimdeki Node ana sürümü aynı tutulmalıdır. Sunucuyu workspace kökünden `pnpm --filter quiz-master-server start` ile çalıştırın; paket komutu pnpm'in native bağımlılık çözümlemesini de sağlar. SQLite3 ve Sharp build dışında bırakılır, kurulu `node_modules` gerektirir; yalnız `dist/index.cjs` dosyasını başka bir yere taşımak bağımsız dağıtım oluşturmaz.
 
+Kurulu sürüm yükseltmesinde app/worker süreçlerini durdurup onaylı kaynakları veri/ayar dizinlerini ezmeden yerleştirin. `pnpm run upgrade --project <kurulum>` veya terminal/BAT/SH başlangıç ekranındaki **Mevcut Kurulumu Güncelle**, doğrulanmış private yedek ardından frozen install/build/migration/status çalıştırır. İlk kurulum sihirbazını tekrar çalıştırmayın. Sonuç sonrası yukarıdaki resmi start komutuyla giriş ve Sunucu Durumu doğrulanmalıdır. [Bakım/yükseltme belgesi](production-maintenance.md#veri-koruyan-sürüm-yükseltme) kesilme, kilit ve sürüm+veri geri dönüş sınırlarını açıklar; henüz bitmemiş BAT/SH provaları başarılı sayılmaz.
+
 ## 9. systemd servisi
 
 `/etc/systemd/system/quizmaster.service` örneği:

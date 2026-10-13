@@ -24,10 +24,11 @@ test('bootstrap caches runtime and installed renderer rejects retained wizard ha
   const scripts = path.join(root, 'scripts');
   fs.mkdirSync(scripts);
   fs.writeFileSync(path.join(root, 'package.json'), '{"name":"quiz-master","type":"module"}\n');
-  for (const file of ['setup-bootstrap.mjs', 'setup-bootstrap-lib.mjs'])
+  for (const file of ['setup-bootstrap.mjs', 'setup-bootstrap-lib.mjs', 'pnpm-invocation.mjs', 'upgrade-process-supervisor.mjs'])
     fs.copyFileSync(path.join(scriptRoot, file), path.join(scripts, file));
   const calls = path.join(root, 'version-calls.txt');
   const mockPnpm = path.join(root, 'pnpm.cjs');
+  fs.writeFileSync(path.join(scripts,'upgrade.mjs'),"import fs from 'node:fs';fs.writeFileSync('upgrade-args.json',JSON.stringify(process.argv.slice(2)));\n");
   fs.writeFileSync(mockPnpm, `
 const fs = require('node:fs');
 const path = require('node:path');
@@ -45,6 +46,8 @@ if (args.length === 1 && args[0] === '--version') {
   console.log('http://127.0.0.1:' + process.env.SETUP_PORT + '/setup?token=controlled-unit-wizard');
   // Nonzero exit retains the handoff URL without closing the HTTP bootstrap.
   process.exitCode = 90;
+} else if (args[0] === 'run' && args[1] === 'upgrade') {
+  fs.writeFileSync(path.join(process.cwd(), 'upgrade-args.json'), JSON.stringify(args));
 } else process.exit(90);
 `);
   const bootstrapPort = await port();
@@ -180,10 +183,17 @@ if (args.length === 1 && args[0] === '--version') {
   vm.runInContext('render(testStatus)', sandbox, { timeout: 1000 });
   assert.equal(location.href, bootstrapUrl, 'Installed bootstrap redirected back into retained wizard');
   assert.equal(element('wizard').disabled, true, 'Installed wizard button was enabled');
+  assert.equal(element('upgrade').disabled, false, 'Installed application must offer a data-preserving upgrade');
   const reentry = await mutation('/api/wizard');
   assert.equal(reentry.status, 409);
   assert.equal((await reentry.json()).message,
     "Uygulama zaten kurulu (installation.lock var). Yeniden kurulum için önce 'Yedekle ve Temiz Kuruluma Geç' ile sıfırlayın.");
+  assert.equal((await fetch(`http://127.0.0.1:${bootstrapPort}/api/upgrade`,{method:'POST',body:'{}',signal:AbortSignal.timeout(5000)})).status,403);
+  assert.equal((await mutation('/api/upgrade')).status,202);
+  const upgraded=await waitForStatus(value=>value.job.type==='upgrade'&&value.job.status==='success');
+  assert.equal(upgraded.installation.state,'installed');
+  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(root,'upgrade-args.json'),'utf8')),['--project',root,'--parent-lease']);
+  assert.equal(fs.readFileSync(path.join(root,'server/data/installation.lock'),'utf8'),'{}\n');
   const actualCalls = fs.readFileSync(calls, 'utf8').trim().split(/\r?\n/);
   assert.equal(actualCalls.length, 1, 'Polling must not repeatedly spawn pnpm --version and block bootstrap HTTP');
   const harnessSource = fs.readFileSync(path.join(scriptRoot, 'admin-hybrid-setup-closure.mjs'), 'utf8');

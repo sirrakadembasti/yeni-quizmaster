@@ -13,6 +13,8 @@
     "install-all": "pnpm install && cd client && pnpm install && cd ../server && pnpm install",
     "test:setup": "node --test scripts/setup-bootstrap.test.mjs scripts/find-port-holder.test.mjs",
     "maintenance": "node scripts/maintenance.mjs",
+    "upgrade": "node scripts/upgrade.mjs",
+    "test:upgrade": "node --test scripts/upgrade.test.mjs scripts/upgrade-process.test.mjs scripts/pnpm-invocation.test.mjs scripts/setup-bootstrap-runtime.test.mjs",
     "test:maintenance": "node --test scripts/maintenance-backup.test.mjs scripts/maintenance-native.test.mjs scripts/maintenance-cli.test.mjs",
     "test:e2e": "playwright test"
   },

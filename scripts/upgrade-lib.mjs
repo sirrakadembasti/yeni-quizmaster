@@ -1,0 +1,46 @@
+import fs from 'node:fs';
+import fsp from 'node:fs/promises';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import {runSupervisedCommand} from './upgrade-process.mjs';
+import {createApplicationBackup} from './maintenance-lib.mjs';
+import {pnpmInvocation} from './pnpm-invocation.mjs';
+
+export function runUpgradeCommand(projectRoot,args,onProgress=()=>{},signal){
+  const {command,args:argv}=pnpmInvocation(args);
+  return runSupervisedCommand(command,argv,{cwd:projectRoot,env:{...process.env,DATABASE_URL:'file:'+path.join(projectRoot,'server/data/quiz.db').replaceAll('\\','/'),RUST_LOG:'info',FORCE_COLOR:'0'},onProgress,signal});
+}
+
+/** Code is supplied by the operator; no Git/network source selection or data reset. */
+export async function upgradeApplication(projectRoot,{run,onProgress=()=>{},signal}={}){
+  const root=fs.realpathSync(projectRoot),data=path.join(root,'server/data');
+  for(const relative of ['server/.env','server/data/quiz.db','server/data/installation.lock']){
+    const file=path.join(root,relative);
+    if(!fs.existsSync(file)||!fs.lstatSync(file).isFile()||fs.lstatSync(file).isSymbolicLink())throw new Error('Upgrade requires an installed local SQLite application');
+  }
+  // The backup implementation subsequently validates every storage ancestor.
+  // Reject these ancestors before acquiring our own exclusive control file too.
+  for(const directory of [root,path.join(root,'server'),data])if(fs.lstatSync(directory).isSymbolicLink())throw new Error('Unsafe upgrade storage');
+  const lock=path.join(data,'upgrade.lock'),owner=crypto.randomUUID();
+  let handle;
+  try{handle=await fsp.open(lock,'wx',0o600);}catch(error){if(error.code==='EEXIST')throw new Error('Another upgrade owns the upgrade lock');throw error;}
+  let backupRoot,step='backup',cleanupUncertain=false;
+  try{
+    await handle.writeFile(owner);await handle.close();handle=null;
+    const backup=await createApplicationBackup(root,{name:'upgrade-'+owner});backupRoot=backup.backupRoot;
+    onProgress('Verified private backup: '+backupRoot+'\n');
+    const runner=run??(args=>runUpgradeCommand(root,args,onProgress,signal));
+    for(const [name,args]of [['install',['install','--frozen-lockfile']],['build',['build']],['migrate',['--filter','quiz-master-server','db:deploy']],['status',['--filter','quiz-master-server','db:status']]]){
+      if(signal?.aborted)throw new Error('Upgrade cancelled');
+      step=name;onProgress('Upgrade step: '+step+'\n');await runner(args);
+    }
+    return {projectRoot:root,backupRoot,status:'completed',restartRequired:true};
+  }catch(error){
+    cleanupUncertain=error.cleanupUncertain===true;
+    const failure=new Error(`Upgrade failed at ${step}; ${backupRoot?'recovery backup: '+backupRoot:'no verified backup created'}. ${error.message}`);
+    failure.backupRoot=backupRoot;failure.step=step;failure.cleanupUncertain=cleanupUncertain;throw failure;
+  }finally{
+    if(handle)await handle.close();
+    if(!cleanupUncertain&&fs.existsSync(lock)&&await fsp.readFile(lock,'utf8')===owner)await fsp.unlink(lock);
+  }
+}

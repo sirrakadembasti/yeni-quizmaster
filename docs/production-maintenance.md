@@ -44,4 +44,20 @@ API komutu: `pnpm --filter quiz-master-server exec vitest run --config vitest.ar
 
 İlk denemelerden biri Windows sandbox erişim hatasıyla reddedildi; yetkili tekrar başarılı oldu. Entegrasyon testindeki root/import/API alanı ve mount eşlemeleri düzeltilerek son kabul 10/10 alındı. Önceki başarısız denemeler başarı sayılmadı. Özel kanıtlar `.superpowers/sdd/2026-10-05-academic-archive-review-plan/production-restore-*-20261012.log` ve `production-restored-admin-{desktop,mobile}.png` içinde tutulur; gizli veri içerebilen özel loglar Git'e eklenmez.
 
-Hibrit yükseltme, hatalı yükseltmeden sürüm/veri birlikte geri dönüşü ve yük/bundle ölçümleri henüz bu Görev 1 kabulüne dahil değildir.
+## Veri koruyan sürüm yükseltme
+
+Onayladığınız yeni sürüm kodunu `.env`, `server/data`, `server/uploads` ve arşiv paketlerini ezmeden yerleştirin. Uygulama ve bütün işçileri durdurun. Kurulum kimliği ve standart yerel SQLite DB mevcut olmalıdır.
+
+```powershell
+pnpm run upgrade --project F:\kurulumlar\quizmaster
+```
+
+Linux eşdeğeri `node scripts/upgrade.mjs --project /opt/quizmaster`. Komut kurulu projedeki `scripts/upgrade.mjs` dosyasıyla da doğrudan çalıştırılabilir. `kurulum.bat` veya `./kurulum.sh` ile açılan yerel başlangıç ekranında kurulu sistem için **Mevcut Kurulumu Güncelle** bulunur; aynı offline motor kullanılır. Web istemcisi proje yolu veya çalıştırılacak komut seçemez. Paket onarma ve temiz kurulum seçenekleri ayrı işlemlerdir.
+
+Sıra: doğrulanmış private SQLite/dosya yedeği → `pnpm install --frozen-lockfile` → backend/frontend build → `db:deploy` → `db:status`. Migration komutlarının DATABASE_URL'si doğrulanan yerel `server/data/quiz.db` dosyasına sabitlenir; terminalden yanlış DB veya Prisma log seviyesi miras alınmaz. Windows çağrıları pnpm JavaScript girişini Node ile çalıştırır; proje yolundaki boşluk ve shell karakterleri komut metni olarak yorumlanmaz. Motor Git kaynağı indirmez ve ilk admin oluşturmaz.
+
+Başarıdan sonra resmi `pnpm --filter quiz-master-server start` komutuyla veya servis yöneticisiyle başlatın; giriş, Sunucu Durumu ve kayıt/görselleri kontrol edin. Yalnız build/migration başarı mesajı web kabulü değildir. Hata mesajında son adım ve varsa kurtarma yedeği gösterilir. Yedek kod/node_modules içermediğinden eski sürüme dönüş için **eski kod ve onun migration öncesi verisi birlikte** gerekir; bunun prova kabulü ayrı Görev3'tür.
+
+Kontrollü iptal aktif komutun alt süreçlerini durdurur; temizliği doğrulandıysa operation lock kaldırılır. Hard termination veya doğrulanamayan süreç temizliğinde `server/data/upgrade.lock` kalabilir; otomatik silinmez. Bütün yükseltme/Prisma alt süreçlerinin durduğunu ve DB bütünlüğünü doğrulamadan kilidi kaldırıp yeniden çalıştırmayın. Lock uygulamanın kendisini başlatmasını engelleyen servis bakım kilidi değildir; bakım boyunca app/worker kapalı tutulmalıdır.
+
+13 Ekim terminal kabulü: gerçek önceki1298cf8 kaynak/dependency/schema üzerine yeni kaynak yerleştirildi,17→22 migration, frozen install/build/status ve7 business koleksiyonu/config/upload/installation identity bütünlüğü geçti. Resmi pnpm start ile gerçek Chromium auth, Sunucu Durumu, arşiv/yıl seçici, görsel/reload, süreç ve port temizliği doğrulandı. İlk DLL-lock denemesi ve desteklenmeyen doğrudan node-start denemesi başarı sayılmadı. BAT+web, native SH+web, oturum korunumu ve tekrar yükseltme kapsamı henüz kapanmadı. Yük/bundle ölçümleri de ayrı görevdir.
