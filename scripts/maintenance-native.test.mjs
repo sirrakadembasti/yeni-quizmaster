@@ -27,8 +27,11 @@ test('backs up WAL data and private files, restores independently, and rejects c
   const data=path.join(source,'server/data'),archives=path.join(owned,'custom-archives');
   fs.mkdirSync(data,{recursive:true});fs.mkdirSync(path.join(source,'server/uploads'),{recursive:true});
   fs.mkdirSync(path.join(archives,'2025-2026','snapshot'),{recursive:true});
-  const env=`DATABASE_URL=file:../data/quiz.db\nexport DATABASE_URL="file:${path.join(data,'quiz.db').replaceAll('\\','/')}"\nPORT=64231\nSESSION_SECRET=synthetic-maintenance-secret\nSMTP_PASSWORD=synthetic-test-only\nARCHIVE_BACKUP_ROOT=${archives.replaceAll('\\','/')}\nexport ARCHIVE_BACKUP_ROOT="${archives.replaceAll('\\','/')}"\n`;
+  const portProbe=net.createServer();await new Promise((resolve,reject)=>{portProbe.once('error',reject);portProbe.listen(0,'127.0.0.1',resolve)});const fixturePort=portProbe.address().port;await new Promise(resolve=>portProbe.close(resolve));
+  const env=`DATABASE_URL=file:../data/quiz.db\nexport DATABASE_URL="file:${path.join(data,'quiz.db').replaceAll('\\','/')}"\nPORT=${fixturePort}\nSESSION_SECRET=synthetic-maintenance-secret\nSMTP_PASSWORD=synthetic-test-only\nARCHIVE_BACKUP_ROOT=${archives.replaceAll('\\','/')}\nexport ARCHIVE_BACKUP_ROOT="${archives.replaceAll('\\','/')}"\n`;
   fs.writeFileSync(path.join(source,'server/.env'),env);
+  const rootEnv='ROOT_ONLY_SETTING=synthetic-fallback\nPORT=1\n';
+  fs.writeFileSync(path.join(source,'.env'),rootEnv);
   fs.writeFileSync(path.join(source,'server/uploads/question.png'),'synthetic image');
   fs.writeFileSync(path.join(data,'installation.lock'),'installed');
   fs.writeFileSync(path.join(data,'deployment-config.json'),'{}');
@@ -45,9 +48,10 @@ test('backs up WAL data and private files, restores independently, and rejects c
     const manifest=JSON.parse(fs.readFileSync(path.join(backup.backupRoot,'manifest.json'),'utf8'));
     assert.equal(manifest.formatVersion,1);
     assert.ok(manifest.files.some(file=>file.backup.endsWith('archive.zip')));
+    assert.ok(manifest.files.some(file=>file.backup==='.env'),'Root fallback configuration must be backed up');
     assert.ok(!manifest.files.some(file=>/-wal$|-shm$/.test(file.backup)),'Native SQLite snapshots must not depend on copied WAL sidecars');
     const blocker=net.createServer();
-    await new Promise((resolve,reject)=>{blocker.once('error',reject);blocker.listen(64231,'127.0.0.1',resolve);});
+    await new Promise((resolve,reject)=>{blocker.once('error',reject);blocker.listen(fixturePort,'127.0.0.1',resolve);});
     try{
       await assert.rejects(maintenance.restoreApplicationBackup(backup.backupRoot,path.join(owned,'running-target')),/Stop the application/);
     }finally{await new Promise(resolve=>blocker.close(resolve));}
@@ -58,6 +62,10 @@ test('backs up WAL data and private files, restores independently, and rejects c
       assert.equal(fs.existsSync(path.join(backup.backupRoot,'nested-restore')),false);
     }finally{fs.unlinkSync(alias);}
     await maintenance.restoreApplicationBackup(backup.backupRoot,target);
+    assert.equal(fs.readFileSync(path.join(target,'.env'),'utf8'),rootEnv);
+    const existingEnvTarget=path.join(owned,'existing-root-env');fs.mkdirSync(existingEnvTarget);fs.writeFileSync(path.join(existingEnvTarget,'.env'),'operator-owned');
+    await assert.rejects(maintenance.restoreApplicationBackup(backup.backupRoot,existingEnvTarget),/existing|empty/);
+    assert.equal(fs.readFileSync(path.join(existingEnvTarget,'.env'),'utf8'),'operator-owned');
     const restored=new sqlite3.Database(path.join(target,'server/data/quiz.db'));
     try{
       assert.deepEqual(await query(restored,'SELECT * FROM Result'),before);
@@ -96,7 +104,7 @@ test('backs up WAL data and private files, restores independently, and rejects c
   }finally{await close(db);await close(sessions);}
 });
 
-for(const variant of ['ipv6','exported-port'])test(`rejects backup while the effective ${variant} application address is listening`,async t=>{
+for(const variant of ['ipv6','exported-port','root-fallback'])test(`rejects backup while the effective ${variant} application address is listening`,async t=>{
   const owned=fs.mkdtempSync(path.join(os.tmpdir(),'quizmaster-maintenance-native-'));
   t.after(()=>{
     const canonical=fs.realpathSync(owned);
@@ -113,7 +121,10 @@ for(const variant of ['ipv6','exported-port'])test(`rejects backup while the eff
     await new Promise((resolve,reject)=>{spare.once('error',reject);spare.listen(0,'127.0.0.1',resolve);});
     const freePort=spare.address().port;await new Promise(resolve=>spare.close(resolve));
     const portLines=variant==='ipv6'?`PORT=${listener.address().port}`:`PORT=${freePort}\nexport PORT=${listener.address().port}`;
-    fs.writeFileSync(path.join(owned,'server/.env'),`DATABASE_URL=file:../data/quiz.db\nHOST=${host}\n${portLines}\n`);
+    if(variant==='root-fallback'){
+      fs.writeFileSync(path.join(owned,'server/.env'),'DATABASE_URL=file:../data/quiz.db\n');
+      fs.writeFileSync(path.join(owned,'.env'),`HOST=${host}\n${portLines}\n`);
+    }else fs.writeFileSync(path.join(owned,'server/.env'),`DATABASE_URL=file:../data/quiz.db\nHOST=${host}\n${portLines}\n`);
     await assert.rejects(maintenance.createApplicationBackup(owned,{name:'running-rejected'}),/Stop the application/);
     assert.deepEqual(await query(db,'SELECT * FROM Marker'),[{id:1}]);
     assert.equal(fs.existsSync(path.join(owned,'server/backups/running-rejected')),false);

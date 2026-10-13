@@ -59,6 +59,13 @@ test('migration subprocess cannot inherit a foreign database or Prisma log level
     assert.deepEqual(JSON.parse(await fs.readFile(path.join(root,'child-env-proof.json'),'utf8')),{database:'file:'+path.join(root,'server/data/quiz.db').replaceAll('\\','/'),rust:'info'});
   }finally{for(const key of keys){if(before[key]===undefined)delete process.env[key];else process.env[key]=before[key];}}
 });
+test('frozen install is noninteractive even when the caller disables CI',async t=>{
+ const root=await fixture(t),shim=path.join(root,'pnpm.cjs');
+ await fs.writeFile(shim,"if(process.env.CI!=='true'){console.error('Controlled modules replacement requires confirmation');process.exit(43)}require('node:fs').writeFileSync('noninteractive-install-proof.json',JSON.stringify(process.argv.slice(2)));");
+ const keys=['npm_execpath','CI'],before=Object.fromEntries(keys.map(key=>[key,process.env[key]]));
+ try{Object.assign(process.env,{npm_execpath:shim,CI:'false'});await runUpgradeCommand(root,['install','--frozen-lockfile']);assert.deepEqual(JSON.parse(await fs.readFile(path.join(root,'noninteractive-install-proof.json'),'utf8')),['install','--frozen-lockfile']);}
+ finally{for(const key of keys){if(before[key]===undefined)delete process.env[key];else process.env[key]=before[key];}}
+});
 for(const hardStop of [false,true])test(hardStop?'hard parent stop preserves recovery evidence and stops the upgrade descendant':'graceful bootstrap lease cancellation stops a TERM-resistant descendant and releases the CLI lock',{timeout:20000},async t=>{
   const root=await fixture(t),shim=path.join(root,'pnpm.cjs'),proof=path.join(root,'lease-port.txt');
   await fs.writeFile(shim,`const {spawn}=require('node:child_process');spawn(process.execPath,['-e',"process.on('SIGTERM',()=>{});const s=require('node:net').createServer();s.listen(0,'127.0.0.1',()=>require('node:fs').writeFileSync(process.argv[1],String(s.address().port)))",${JSON.stringify(proof)}],{stdio:'inherit'});setInterval(()=>{},1000);`);

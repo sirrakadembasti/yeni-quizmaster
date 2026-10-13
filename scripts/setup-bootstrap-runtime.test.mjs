@@ -92,11 +92,15 @@ if (args.length === 1 && args[0] === '--version') {
   assert.equal(exchange.status, 303);
   const cookie = exchange.headers.get('set-cookie')?.split(';')[0];
   assert.ok(cookie, 'Bootstrap cookie missing');
+  const unauthenticatedStatus=await fetch(`http://127.0.0.1:${bootstrapPort}/api/status`,{signal:AbortSignal.timeout(5000)});
+  assert.equal(unauthenticatedStatus.status,403);
+  assert.equal(unauthenticatedStatus.headers.get('set-cookie'),null,'Rejected status polling must not renew a bootstrap cookie');
   const status = async () => {
     const response = await fetch(`http://127.0.0.1:${bootstrapPort}/api/status`, {
       headers: { Cookie: cookie }, signal: AbortSignal.timeout(5000),
     });
     assert.equal(response.status, 200);
+    assert.match(response.headers.get('set-cookie')||'',/quizmaster\.bootstrap=.*; HttpOnly; SameSite=Strict; Path=\/; Max-Age=1800/,'Authenticated status polling must renew the short bootstrap cookie during long upgrades');
     return response.json();
   };
   const fresh = await status();
@@ -184,6 +188,13 @@ if (args.length === 1 && args[0] === '--version') {
   assert.equal(location.href, bootstrapUrl, 'Installed bootstrap redirected back into retained wizard');
   assert.equal(element('wizard').disabled, true, 'Installed wizard button was enabled');
   assert.equal(element('upgrade').disabled, false, 'Installed application must offer a data-preserving upgrade');
+  assert.ok(!element('summary').innerHTML.includes('Önce “Paketleri Kur / Onar”'),'Installed upgrade must not require the separate fresh-install package step');
+  sandbox.testStatus={...subsequent[0],job:{...subsequent[0].job,type:'upgrade',status:'success',message:'Verified upgrade completed'}};
+  vm.runInContext('render(testStatus)',sandbox,{timeout:1000});
+  assert.equal(element('message').className,'success','A recovered status request must not leave a successful upgrade styled as an error');
+  sandbox.testStatus={...subsequent[0],job:{...subsequent[0].job,type:'upgrade',status:'error',message:'Upgrade failed'}};
+  vm.runInContext('render(testStatus)',sandbox,{timeout:1000});
+  assert.equal(element('message').className,'error');
   const reentry = await mutation('/api/wizard');
   assert.equal(reentry.status, 409);
   assert.equal((await reentry.json()).message,

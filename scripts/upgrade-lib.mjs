@@ -8,7 +8,7 @@ import {pnpmInvocation} from './pnpm-invocation.mjs';
 
 export function runUpgradeCommand(projectRoot,args,onProgress=()=>{},signal){
   const {command,args:argv}=pnpmInvocation(args);
-  return runSupervisedCommand(command,argv,{cwd:projectRoot,env:{...process.env,DATABASE_URL:'file:'+path.join(projectRoot,'server/data/quiz.db').replaceAll('\\','/'),RUST_LOG:'info',FORCE_COLOR:'0'},onProgress,signal});
+  return runSupervisedCommand(command,argv,{cwd:projectRoot,env:{...process.env,DATABASE_URL:'file:'+path.join(projectRoot,'server/data/quiz.db').replaceAll('\\','/'),RUST_LOG:'info',FORCE_COLOR:'0',CI:'true'},onProgress,signal});
 }
 
 /** Code is supplied by the operator; no Git/network source selection or data reset. */

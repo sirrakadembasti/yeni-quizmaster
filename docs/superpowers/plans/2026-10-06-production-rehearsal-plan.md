@@ -31,6 +31,8 @@ Görev 1 Windows kabulü (12 Ekim): native bakım 6/6, kurulum regresyonu 14/14,
 
 ## Görev 3 — Hatalı yükseltmeden geri dönüş
 
+13 Ekim Görev 2 ara kaydı: motor `b5ad9a1` commit'iyle kaydedildi ve uzak `codex/academic-archive-hardening-20261012` dalında aynı SHA doğrulandı. Uzak `main` değiştirilmedi. Büyük eski commit aktarımı yalnız kendi geçici dalında küçük blob paketleriyle tamamlanıp özgün commit zinciri korundu; geçici dal kaldırıldı. Terminal 17→22 + gerçek browser kabulü ve native SH 17→22 + gerçek browser/veri/port kabulü geçti. BAT ilk işi başarılı olsa da tekrar turunda kısa çerez sona erdi ve install logunda etkileşimli modül değiştirme bulundu; bu kapsam kapanmadı. Kök `.env` fallback yedek/port açığı RED→GREEN ile düzeltildi, Windows son bakım/upgrade/UI regresyonu 20/20 ve native Linux bakım 7/7 geçti. Kurulu-sistem paket mesajı, stale error rengi, yetkili çerez renewal ve zorunlu CI install düzeltildi. Son kodla SH/BAT tekrar ve özgün old-version oturum/generated-client doğrulaması sürüyor. Görev 3/4 henüz başlamadı; son belgeler/Graphify/commit/push kullanıcı talimatı geçerlidir.
+
 Dosya, migration, bağımlılık veya açılış aşamalarında kontrollü hata üret. Son çalışan sürüme ve doğru veri yedeğine dön; veritabanı ile uygulama sürümünün birlikte tutarlı olduğunu doğrula. Canlı veriyi değiştirmeden başarısız geri dönüşün nasıl bildirildiğini ve tekrar kurtarmayı test et. Otomatik/manuel geri dönüş sözleşmesini belgelerle uyumlu hale getir.
 
 ## Görev 4 — Performans ve frontend paketi

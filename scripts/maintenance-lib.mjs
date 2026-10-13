@@ -77,9 +77,13 @@ async function sqliteBackup(source,target){
   }finally{await close(snapshot);}
   await checkDatabase(target);
 }
+function readConfiguration(root){
+  const parsed=relative=>{const file=safePath(root,relative);return fs.existsSync(file)?dotenv.parse(fs.readFileSync(file)):{};};
+  // Match server/index.ts: server/.env takes precedence over root fallback.
+  return {...parsed('.env'),...parsed('server/.env')};
+}
 async function requireStopped(root,configuration){
-  const envFile=safePath(root,'server/.env');
-  const config=configuration??(fs.existsSync(envFile)?dotenv.parse(fs.readFileSync(envFile)):{});
+  const config=configuration??readConfiguration(root);
   const port=Number(config.PORT??5000);
   if(!Number.isInteger(port)||port<1||port>65535)throw new Error('Invalid application port');
   const host=config.HOST||'0.0.0.0';
@@ -96,12 +100,12 @@ async function requireStopped(root,configuration){
 }
 function storageSources(root){
   const paths=getSetupPaths(root);
-  const env=fs.existsSync(paths.env)?dotenv.parse(fs.readFileSync(paths.env)):{};
+  const env=readConfiguration(root);
   if(env.DATABASE_URL&&env.DATABASE_URL!=='file:../data/quiz.db'&&env.DATABASE_URL!=='file:'+paths.quizDb.replaceAll('\\','/'))throw new Error('Only the standard local SQLite database is supported');
   const archives=path.resolve(root,env.ARCHIVE_BACKUP_ROOT||'server/data/backups');
   rejectAncestorLinks(archives);
   if(archives===path.parse(archives).root||archives===root||inside(archives,paths.backupsRoot)||inside(paths.backupsRoot,archives))throw new Error('Unsafe archive storage root');
-  const sources=[['server/.env',paths.env],['server/data/quiz.db',paths.quizDb],['server/data/sessions.db',paths.sessionsDb],['server/data/installation.lock',paths.lock],['server/data/installation.pending',paths.pending],['server/data/deployment-config.json',paths.deploymentConfig],['server/data/setup-artifacts',paths.setupArtifacts],['server/uploads',paths.uploadsRoot],['server/data/backups',archives]];
+  const sources=[['.env',safePath(root,'.env')],['server/.env',paths.env],['server/data/quiz.db',paths.quizDb],['server/data/sessions.db',paths.sessionsDb],['server/data/installation.lock',paths.lock],['server/data/installation.pending',paths.pending],['server/data/deployment-config.json',paths.deploymentConfig],['server/data/setup-artifacts',paths.setupArtifacts],['server/uploads',paths.uploadsRoot],['server/data/backups',archives]];
   for(const [relative,source]of sources){if(source!==archives)safePath(root,relative);}
   return {paths,sources};
 }
@@ -152,7 +156,7 @@ export async function restoreApplicationBackup(backupRoot,projectRoot){
   if(fs.existsSync(root)&&fs.lstatSync(root).isSymbolicLink())throw new Error('Symlink restore root is not supported');
   const manifest=JSON.parse(await fsp.readFile(safePath(backup,'manifest.json'),'utf8'));
   if(manifest.formatVersion!==1||!Array.isArray(manifest.files)||!manifest.files.length)throw new Error('Unsupported backup manifest');
-  const allowed=/^server\/(?:\.env|data\/(?:quiz\.db|sessions\.db|installation\.(?:lock|pending)|deployment-config\.json)|(?:uploads|data\/(?:backups|setup-artifacts))\/.+)$/;
+  const allowed=/^(?:\.env|server\/(?:\.env|data\/(?:quiz\.db|sessions\.db|installation\.(?:lock|pending)|deployment-config\.json)|(?:uploads|data\/(?:backups|setup-artifacts))\/.+))$/;
   const seen=new Set();
   for(const file of manifest.files){
     if(!allowed.test(file.backup)||seen.has(file.backup)||!Number.isSafeInteger(file.bytes)||file.bytes<0||!/^[a-f0-9]{64}$/.test(file.sha256))throw new Error('Unsafe backup manifest');
@@ -165,8 +169,8 @@ export async function restoreApplicationBackup(backupRoot,projectRoot){
   if(!seen.has('server/data/quiz.db'))throw new Error('Backup database is missing');
   await checkDatabase(safePath(backup,'server/data/quiz.db'));
   if(seen.has('server/data/sessions.db'))await checkDatabase(safePath(backup,'server/data/sessions.db'));
-  for(const relative of ['server/.env','server/data','server/uploads'])if(fs.existsSync(safePath(root,relative)))throw new Error('Restore requires empty data storage; existing files are preserved');
-  const configuration=seen.has('server/.env')?dotenv.parse(await fsp.readFile(safePath(backup,'server/.env'))):{};
+  for(const relative of ['.env','server/.env','server/data','server/uploads'])if(fs.existsSync(safePath(root,relative)))throw new Error('Restore requires empty data storage; existing files are preserved');
+  const configuration=readConfiguration(backup);
   await requireStopped(root,configuration);
   await fsp.mkdir(root,{recursive:true,mode:0o700});
   const stage=await fsp.mkdtemp(path.join(root,'.quizmaster-restore-'));
@@ -179,7 +183,7 @@ export async function restoreApplicationBackup(backupRoot,projectRoot){
       await fsp.chmod(output,0o600);
       if(await digest(output)!==file.sha256)throw new Error('Restore hash integrity mismatch');
     }
-    const envFile=path.join(stage,'server/.env');
+    const envFile=seen.has('server/.env')?path.join(stage,'server/.env'):path.join(stage,'.env');
     if(fs.existsSync(envFile)){
       const env=await fsp.readFile(envFile,'utf8');
       // Dotenv uses the last assignment, including export/duplicate keys.
@@ -187,7 +191,7 @@ export async function restoreApplicationBackup(backupRoot,projectRoot){
       await fsp.writeFile(envFile,env+'\n# Restored portable storage locations\nDATABASE_URL=file:../data/quiz.db\nARCHIVE_BACKUP_ROOT=server/data/backups\n',{mode:0o600});
     }
     await fsp.mkdir(path.join(root,'server'),{recursive:true,mode:0o700});
-    for(const relative of ['server/data','server/uploads','server/.env']){
+    for(const relative of ['server/data','server/uploads','server/.env','.env']){
       const source=safePath(stage,relative),target=safePath(root,relative);
       if(!fs.existsSync(source))continue;
       if(fs.existsSync(target))throw new Error('Restore target changed during validation');
