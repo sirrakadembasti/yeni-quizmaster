@@ -1,6 +1,6 @@
 # Üretime hazırlık provası
 
-Durum (14 Ekim 2026): Akademik arşiv kapanışı ve Görev 1 yedek/restore, Görev 2 terminal/BAT/SH hibrit yükseltme, Görev 3 geri dönüş kabulü tamamlandı. Görev 4 performans/paket küçültme uygulanıyor; son Graphify/belge/push kapanışı bekliyor. Kullanıcı uygulamayı ve bulunan hataların düzeltilmesini onayladı; çevrimiçi olması beklenmeyecek. Aşağıdaki tarihli ara kayıtlar geçmiş denemeleri açıklar; güncel kabul sonuçları bunların sonrasındaki kapanış kaydıdır.
+Durum (14 Ekim 2026): Akademik arşiv kapanışı ve Görev 1 yedek/restore, Görev 2 terminal/BAT/SH hibrit yükseltme, Görev 3 geri dönüş kabulü tamamlandı. Görev 4 uygulama ve ölçümleri `619bdf4` ile, belgelenen 20 aktör kapasite sınırıyla tamamlandı; bütün yük düzeyleri geçti iddiası yoktur. Son belge/Graphify kontrolleri ve genel bağımsız inceleme tamamlandı; yayın dalı `codex/academic-archive-hardening-20261012`, uzak `main` değiştirilmez. Kullanıcı uygulamayı ve bulunan hataların düzeltilmesini onayladı; çevrimiçi olması beklenmeyecek. Aşağıdaki tarihli ara kayıtlar geçmiş denemeleri açıklar; güncel kabul sonuçları bunların sonrasındaki kapanış kaydıdır.
 
 7 Ekim ek talimatı: Arşiv görevleri kapandıktan sonra ilgili Markdown/README ve Graphify güncellenip commit edilecek ve GitHub'a push yapılacak. Sonraki üretim provasında doğrulanan değişiklikler de aynı güvenli yayın akışıyla kaydedilir; tamamlanmamış kontroller başarı olarak sunulmaz. Yerel ve README'de belirtilen uzak `main` geçmişlerinin ortak commit'i bulunmadığından uzak geçmişi değiştirmeden yeni bir `codex/` dalı kullanılır; force push yapılmaz.
 
@@ -50,3 +50,7 @@ Gerçekçi, sentetik kullanıcı/sınıf/ders/sınav/anket/sonuç hacimleriyle �
 ## Kapanış
 
 İlgili README ve docs belgelerini, test kanıtlarını ve Graphify çıktısını güncelle. Son derleme, uygun regresyonlar, gerçek tarayıcı kontrolleri, süreç/dizin temizliği ve korunan dosya/veritabanı kontrollerinden sonra son commit'i at. Son raporda tamamlananlar, ölçümler ve doğrulanamamış sınırlar açıkça ayrılır.
+
+14 Ekim son kabul: frontend 295, düzenli backend 422 (eski 50k dosyası hariç), hedefli 23 ve yardımcı 11 test, iki typecheck geçti. Root/base/offline/dört rol/history gerçek Chromium kabulü ve 17.667 satırlık capture/finalization/ilk projeksiyon sırasında bağımsız yazıcı 50/50 doğrulandı. ZIP manifest/four gerçek PDF bütünlüğü ve iki örnek PDF sayfasının görsel kontrolü tamamlandı. Üç korunmuş hash aynı kaldı; özel test süreçleri/portları kapandı. Görev ve bütün üretim dalı bağımsız incelemeleri PASS, açık P1/P2 kod bulgusu yok. [Ayrıntılar ve kalan kapasite sınırı](../../production-performance-results.md).
+
+Graphify yerel AST yenilemesi 3.563 düğüm/9.212 kenar/188 topluluk; 865 kod/script özeti eşleşti. Resmi diagnose, gerçek canvas/arama/iki düğüm ayrıntısı ve görsel inceleme geçti; [SQL ve belge semantiği sınırları](../../graphify.md) korundu. Bütün yük düzeyleri veya canlı üretim SLA'sı onaylanmış sayılmaz; 20 aktördeki 10 timeout ve bir son DB onayı uyuşmazlığı, hedef sunucuda sonraki kapasite/pagination incelemesinin açık konusudur.

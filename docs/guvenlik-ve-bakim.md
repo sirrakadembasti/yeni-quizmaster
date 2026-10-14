@@ -66,3 +66,15 @@ Arşiv ZIP indirmesi admin yetkisi ve parola onayı gerektirir. Yerel raster gö
 - Büyük sonuç listelerinde pagination ve frontend paketinin bölünmesi ayrı performans çalışması olarak kalır. Derleme büyük paket uyarısını korur.
 - Sıfır bilinen bağımlılık uyarısı tüm olası açıkların kapalı olduğu anlamına gelmez. Origin listesi, HTTPS, gizli anahtarlar ve yedek geri yükleme işletimde doğrulanmalıdır.
 - Çıkış teslim edilmemiş yerel cevapları da siler. Çevrimdışı kullanıcılar bağlantı geldiğinde teslimi tamamlamadan çıkış yapmamalıdır.
+
+## Üretim provası ve çevrimdışı hazırlama — 14 Ekim 2026
+
+Yedek/geri yükleme, veri koruyan terminal/BAT/SH yükseltmesi ve başarısız yükseltmeden eski kod ile eski veriye dönüş için [bakım kılavuzu](production-maintenance.md), [yükseltme kabulü](production-upgrade-rehearsal-results.md) ve [kurtarma kabulü](production-rollback-rehearsal-results.md) birlikte kullanılmalıdır. Kurtarma bağımsız hedefe yapılır; otomatik rollback veya cache'siz kurulum iddiası yoktur.
+
+Frontend'de ağır sayfalar rol kontrolünden sonra yüklenir. Public giriş/kurtarma ve öğrenci sınavının kritik sayfaları başlangıç paketinde kalır. Parça yüklenemezse kullanıcıya hata, yeniden yükleme ve ana sayfaya dönüş gösterilir. Başlangıç statik JavaScript paketinin küçülmesi toplam dağıtım boyutunun veya sunucu gecikmesinin aynı oranda azaldığı anlamına gelmez; SW hazırlığı dahil ilk ziyaretin gerçek ağ aktarımı ayrıca ölçülmedi. Ayrı ölçümler [performans raporunda](production-performance-results.md) tutulur.
+
+Service worker yalnız aynı origin ve base altındaki doğrulanmış public uygulama dosyalarını saklar; API, kullanıcı verisi ve soru görselleri bu cache'e alınmaz. Genel CORS'un `Vary: Origin` başlığı modül isteğini credential-free precache isteğinden ayırdığı için yalnız bu public asset eşleşmesinde `ignoreVary` kullanılır; genel CORS ve özel veri politikası değiştirilmez. Soru görselinin izinli raster kopyası kullanıcıya ait mevcut offline sınav kaydında saklanır. Shell/görsel hazırlığı ve tam kaydın storage'dan geri okunması geçmeden hazır durumu yayımlanmaz. Kota, bozuk görsel veya iptal hata verir; çıkış/kullanıcı değişimi sonrası geciken hazırlama özel kaydı yeniden oluşturamaz. Yeni hazırlama bekleyen cevapları ve teslim kuyruğunu korur.
+
+Bildirim sessize alma tercihi tek atomik boolean atamasıyla yazılır; yalnız geçici Prisma hataları en fazla dört denemeyle tekrar edilir. Diğer hatalar ve tükenen denemeler istemciye hata olarak döner. Bu dar düzeltme genel transaction politikasını değiştirmez. Yük altında süre aşımı başarılı kayıt onayı sayılmaz; istemci bağlantısı kesildikten sonra sunucudaki yazmanın tamamlanması mümkün olduğundan HTTP ve DB kanıtı ayrı değerlendirilir.
+
+Performans ölçümleri sentetik veriler ve izole native Linux/WSL kurulumu içindir; internet trafiği, çok sunuculu kapasite veya canlı üretim garantisi değildir. Kullanıcının `client/src/lib/api.ts` ve `client/src/pages/server-setup.tsx` yerel değişiklikleri değiştirilmedi; izole kaynak kabulüne bu commit dışı düzenlemeler eklenmedi. Canlı DB yalnız dosya hash'iyle koruma kontrolüne dahildir.

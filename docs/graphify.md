@@ -227,3 +227,13 @@ Gerçek Graphify 0.9.72 CLI ile yerel AST çıkarımı yenilenir. AST import/ça
 Windows uv trampoline hatasında izole ortamın `Scripts/python.exe -m graphify update . --force` komutu kullanılabilir; ortam yolu makineye özeldir. Markdown semantiğinin LLM çıkarımı yerel AST bakımına dahil değildir.
 
 SQL parser eklentisi olmayan ortamda CLI .sql dosyalarının düğüm üretmediğini bildirir; migration güvenliği AST haritasından çıkarılamaz. İstenirse Graphify SQL extra ayrıca kurulabilir. Bakım haritası mevcut çalışma ağacını içerir; commit dışındaki yerel kurulum düzenlemeleri de çalışma ağacında bulunabilir.
+
+## Üretim provası sonrası doğrulama — 14 Ekim 2026
+
+Graphify 0.9.72 ile yerel `update . --force` çalıştı: **3.563 düğüm, 9.212 kenar, 188 topluluk**. `built_at_commit` kaynak commit'i `619bdf402d68e32414c7fcb147154555e7c4e88f` değeridir; sonraki belge/Graphify commit'i bu kaynak haritasını yayımlar. Desteklenen 865 kod/script dosyasının manifest içerik özetleri diskle eşleşti. Düğüm kimliği tekrarı, eksik/dangling uç ve dış referans sıfır; 23 self-loop ve post-build kenar kaybını tek başına ölçemeyen resmi multigraph diagnose sınırı kaydedildi.
+
+Gerçek Chromium'da HTML/JSON sayıları eşleşti; canvas çizildi, arama ve düğüm ayrıntıları çalıştı. `upgradeApplication()` doğru `scripts/upgrade-lib.mjs` kaynağı ve beş komşu; yeni `RouteLoadBoundary()` doğru component kaynağı ve altı komşuyla görüldü. Harita ve iki ayrıntı ekranı görsel olarak incelendi; page/console/request hatası sıfır, tarayıcı ve özel HTTP sunucusu kapandı.
+
+SQL parser eksikliği nedeniyle 22 migration düğüm üretmedi. Markdown/PDF/görsel semantik çıkarımı ve ücretli LLM etiket yenilemesi yapılmadı; önceki 183 topluluk etiketi yeni topluluk kümesine göre kısmen hub adlarıyla eşlendi. Dolayısıyla kod haritasının yenilenmesi belge semantiğinin de yeniden çıkarıldığı anlamına gelmez. Harita çalışma ağacındaki korunmuş iki yerel client değişikliğini içerir; bunlar kaynak commit'ine veya izole kabul kopyasına eklenmedi. Özel DB/env/test alanları haritaya alınmaz; veri dizinindeki iki belge düğümü yalnız değişmemiş, Git'te takip edilen public `server/data/README.md` içindir.
+
+Arşiv, yükseltme, geri dönüş, offline ve yük davranışları grafikten değil [gerçek kabul raporlarından](production-maintenance.md) doğrulanmalıdır. [Performans raporu](production-performance-results.md) başarısız 20 aktör kapasite ölçümünü ve ölçülmeyen ilk ziyaret ağ byte'larını açıkça tutar.

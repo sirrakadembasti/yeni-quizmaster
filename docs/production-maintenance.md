@@ -1,4 +1,4 @@
-# Yerel yedekleme ve geri yükleme
+# Yerel bakım ve üretim provası
 
 12 Ekim 2026: üretim provası Görev 1 kapsamında uygulanmıştır. Komutlar yerel SQLite uygulama verisi içindir. Akademik CSV/PDF/ZIP export'u tam uygulama geri yükleme yedeği değildir.
 
@@ -82,3 +82,15 @@ Yükseltme motoru başarısız adımı ve doğrulanmış yedek yolunu bildirir; 
 Kurtarma provası [ayrı sonuç belgesinde](production-rollback-rehearsal-results.md) platform ve hata aşaması bazında tutulur. Bu işlem disk/OS veya harici veritabanı geri yüklemesi değildir; eski kod, paketler ve doğrulanmış uygulama yedeği birlikte gereklidir.
 
 14 Ekim kabulü: Windows install/build/migration/start hatalarından eski kod ve yükseltme öncesi yedeğe dönüş 4/4; native Ubuntu/WSL gerçek kısmi migration hatasından dönüş 1/1 geçti. Her kurtarmada yedi iş koleksiyonu, özgün oturum, generated eski şema/17 migration, integrity/FK, config/görsel, arşiv/yenileme ve süreç/port kapanışı doğrulandı. Linux'ta diğer üç hata aşaması tekrarlanmadı. Windows migration/start bağımlılıkları bağımsız fiziksel cache kopyalarıydı; gerçek frozen install/build yine çalıştırıldı, cache'siz kurulum iddiası değildir.
+
+## Performans ve çevrimdışı kabul
+
+14 Ekim izole native Ubuntu/WSL ölçümünde 1.311 kullanıcı ve 17.661 iş satırı gerçek 22 migration şemasına yazıldı. Aynı production config ve kaynak başlangıcıyla frontend başlangıç JavaScript gzip toplamı 412.368 bayttan 233.509 bayta indi (%43,37). Public giriş/kurtarma ve kritik öğrenci sınavı başlangıç paketinde kalır; ağır sayfalar yetki kontrolünden sonra yüklenir. Toplam dağıtılan JavaScript 1.520.844 bayttır ve public `sw.js` dahildir; başlangıç indirmesiyle toplam dağıtım farklı ölçümlerdir.
+
+Gerçek Chromium'da `/` ve `/school/` altında rol erişimi, doğrudan URL/yenileme/gezinme ve lazy parça hatasından kurtarma; taze profilde daha önce açılmamış çevrimdışı sınav, soru görseli, cevap/teslim kuyruğu ve yeniden bağlanınca tek sonuç kaydı doğrulandı. Kota veya saklama başarısızlığında hazır durumu verilmez. Çıkış bekleyen yerel cevapları da temizler; teslim tamamlanmadan çıkış yapmayın.
+
+Genel yükte 2 ve 8 aktör düzeltme sonrası HTTP ve DB doğrulamasını geçti. 20 aktör/600 istekte 10 istemci süre aşımı ve bir son DB onayı uyuşmazlığı kaldı; bu seviye başarılı kapasite kabulü değildir. Bazı gecikmeler başlangıç ölçümünden yüksektir. Bu makinenin ölçümünden canlı üretim SLA'sı veya azami kullanıcı sayısı çıkarılamaz; büyük sonuç listelerinde sayfalama ve hedef sunucuda kapasite ölçümü ayrıca planlanmalıdır. Süre aşımı sonrasında sunucuda yazma tamamlanabileceğinden yalnız son DB değerini görmek başarılı HTTP onayı sayılmaz.
+
+UI kontrollerindeki altı sınav girişimi sonrası gerçek arşiv 17.667 satır yakaladı. Capture 4,226 s, PDF/ZIP üretimi 20,170 s, yıl kapanışı 1,031 s ve geçmişin yeni projeksiyon sürümüne ilk hazırlığı 4,191 s ölçüldü. Bağımsız bildirim yazıcısı bu aşamalarla zaman damgaları üzerinden örtüştü: 50 isteğin tamamı geçti ve son değer DB'de doğrulandı. Geçmiş hazırlama 256 satırlık sayfalar ve en çok 4.096 satırlık transaction'larla ilerledi; immutable kaynak özetleri değişmedi. Bu ilk projeksiyon ölçümünde OS dosya cache'inin soğuk olduğu iddia edilmez; önceki 50k satır turunun yerine geçmez.
+
+Komutlar, kaynak projeksiyonu, ölçüm kapsamı, başarısız ilk denemeler ve sonraki kapasite önerileri [performans raporunda](production-performance-results.md) tutulur. `production-performance-*` yardımcıları bu sabit kaynak/hash sözleşmesine sahip izole kabul araçlarıdır; çalışan üretim kurulumunda benchmark başlatma komutu olarak kullanılmamalıdır. Grafik veya yalnız derleme başarısı bu gerçek HTTP/DB/tarayıcı kabulünün yerine geçmez.
