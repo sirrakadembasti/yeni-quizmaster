@@ -137,6 +137,10 @@ export default function StudentQuiz() {
       } catch (err) {
         const cached = user ? getOfflineSession(user.id, quizId) : null;
         if (!isPreviewMode && cached && isRetryableError(err)) {
+          if(cached.questions.some(question=>question.imageUrl&&!question.imageUrl.startsWith('data:image/'))) {
+            setError('Soru görselleri bu cihazda çevrimdışı kullanım için hazır değil. İnternet bağlantısıyla Sınavlarım sayfasından yeniden hazırlayın.');
+            return;
+          }
           saveOfflineSession({ ...cached, started: true });
           setQuiz(cached.quiz);
           setQuestions(cached.questions);

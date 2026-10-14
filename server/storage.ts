@@ -1514,12 +1514,21 @@ export class PrismaStorage implements IStorage {
   }
 
   async updateNotificationPreferences(userId: string, muted: boolean): Promise<{ muted: boolean }> {
-    const user = await prisma.user.update({
-      where: { id: userId },
-      data: { notificationMuted: muted },
-      select: { notificationMuted: true }
-    });
-    return { muted: user.notificationMuted };
+    // A single idempotent assignment needs no interactive SQLite transaction.
+    // Retrying its atomic statement avoids holding a BEGIN while another writer
+    // owns the lock, and never acknowledges an unsuccessful update.
+    for (let attempt = 0; ; attempt++) {
+      try {
+        const user = await prisma.user.update({
+          where: { id: userId }, data: { notificationMuted: muted },
+          select: { notificationMuted: true }
+        });
+        return { muted: user.notificationMuted };
+      } catch (error) {
+        if (attempt >= 3 || !["P1008", "P2028", "P2034"].includes((error as any).code)) throw error;
+        await new Promise(resolve => setTimeout(resolve, 50 * (attempt + 1)));
+      }
+    }
   }
 
   // Log methods

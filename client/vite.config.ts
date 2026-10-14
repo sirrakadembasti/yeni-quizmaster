@@ -5,6 +5,7 @@ import { createRequire } from 'node:module'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
+import { appShellPlugin } from './app-shell-manifest.mjs'
 
 export default defineConfig((_env) => {
   // Read only the backend port into the proxy configuration. Server secrets stay
@@ -24,6 +25,7 @@ export default defineConfig((_env) => {
   plugins: [
     react(),
     tailwindcss(),
+    appShellPlugin(),
   ],
   resolve: {
     alias: {

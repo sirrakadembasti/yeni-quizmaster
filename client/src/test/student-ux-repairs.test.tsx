@@ -17,6 +17,9 @@ vi.mock('@/components/layout/DashboardLayout', () => ({ DashboardLayout: ({ chil
 vi.mock('@/context/auth-context', () => ({ useAuth: () => ({ role: fixture.role, user: identity }) }));
 vi.mock('wouter', () => ({ useParams: () => ({ id: 'survey', quizId: 'quiz' }), useLocation: () => ['', vi.fn()] }));
 vi.mock('@/hooks/use-toast', () => ({ useToast: () => ({ toast: vi.fn() }) }));
+// This unit covers queued-session reconciliation; the actual worker readiness,
+// failed shell and v2 migration are independently exercised in Chromium.
+vi.mock('@/lib/offline-shell', () => ({ ensureOfflineShell: async () => {} }));
 vi.mock('@/lib/api', () => ({
   refreshCsrfToken: async () => {},
   authApi: { getCurrentUser: async () => ({ user: { name: 'Öğrenci' } }) },
@@ -126,9 +129,13 @@ it('a started blank attempt is different from an unopened offline preparation', 
 });
 it('preparing again preserves queued submission and newer unsent answers for the same attempt', async () => {
   fixture.completed = false;
+  offline.saveOfflineUser({ id: 'student-1', role: 'student' } as any);
   offline.saveOfflineSession({ version: 1, userId: 'student-1', quizId: 'quiz', resultId: 'result', started: true, quiz: {}, questions: [{ id: 'q', text: 'Bir soru', type: 'multiple_choice', options: ['A', 'B'] }], answers: { q: 'B' }, pendingAnswers: { q: 'B' }, answerRevisions: { q: 2 }, remainingSeconds: null, timerCapturedAt: new Date().toISOString(), cachedAt: new Date().toISOString(), pendingSubmit: true });
   mount(<Quizzes />);
-  await userEvent.setup().click(await screen.findByRole('button', { name: 'Çevrimdışı Hazır' }));
+  // A legacy session without the current bundle readiness marker is honestly
+  // unprepared until this new shell/session preparation completes.
+  await userEvent.setup().click(await screen.findByRole('button', { name: 'Çevrimdışı Hazırla' }));
+  await screen.findByRole('button', { name: 'Çevrimdışı Hazır' });
   await screen.findByText('Teslim Bekliyor');
-  expect(offline.getOfflineSession('student-1', 'quiz')).toMatchObject({ answers: { q: 'B' }, pendingAnswers: { q: 'B' }, pendingSubmit: true, answerRevisions: { q: 2 }, started: true });
+  expect(offline.getOfflineSession('student-1', 'quiz')).toMatchObject({ answers: { q: 'B' }, pendingAnswers: { q: 'B' }, pendingSubmit: true, answerRevisions: { q: 2 }, started: true, offlinePrepared: true });
 });

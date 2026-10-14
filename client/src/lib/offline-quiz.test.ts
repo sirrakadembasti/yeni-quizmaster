@@ -55,6 +55,13 @@ describe('offline quiz storage', () => {
 describe('offline answer reconciliation', () => {
   beforeEach(() => localStorage.clear());
 
+  it('retains a private image only for the same user attempt question and original source',()=>{
+    const server={...session,questions:[{...session.questions[0],imageUrl:'/uploads/diagram.png'}]};
+    const cached={...server,questions:[{...server.questions[0],imageUrl:'data:image/png;base64,AAAA',offlineImageSource:'/uploads/diagram.png'}]};
+    expect(offline.reconcileOfflineSession(server,cached).questions[0].imageUrl).toBe('data:image/png;base64,AAAA');
+    for(const other of [{...server,userId:'other'},{...server,resultId:'other'},{...server,questions:[{...server.questions[0],imageUrl:'/uploads/new.png'}]}])expect(offline.reconcileOfflineSession(other,cached).questions[0].imageUrl).not.toMatch(/^data:/);
+  });
+
   it('preserves only unsent answers for the current attempt and current questions', () => {
     const cached = { ...session, answers: { 'question-1': 'B', gone: 'A' }, pendingAnswers: { 'question-1': 'B', gone: 'A' }, pendingSubmit: true };
     const resumed = offline.reconcileOfflineSession({ ...session, answers: { 'question-1': 'A' } }, cached);

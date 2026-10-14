@@ -1,5 +1,6 @@
 import { Switch, Route, Redirect, Router as WouterRouter, useLocation } from "wouter";
-import { useEffect } from "react";
+import { lazy, useEffect } from "react";
+import { RouteLoadBoundary } from "@/components/RouteLoadBoundary";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -15,37 +16,37 @@ import { Loader2 } from "lucide-react";
 // Pages
 import HomePage from "@/pages/home";
 import NotFound from "@/pages/not-found";
-import DashboardPage from "@/pages/dashboard";
-import QuizzesPage from "@/pages/quizzes";
-import CreateQuizPage from "@/pages/create-quiz";
-import StatisticsPage from "@/pages/results";
-import ClassStatisticsPage from "@/pages/class-statistics";
-import StudentsPage from "@/pages/students";
-import SettingsPage from "@/pages/settings";
+const DashboardPage = lazy(() => import("@/pages/dashboard"));
+const QuizzesPage = lazy(() => import("@/pages/quizzes"));
+const CreateQuizPage = lazy(() => import("@/pages/create-quiz"));
+const StatisticsPage = lazy(() => import("@/pages/results"));
+const ClassStatisticsPage = lazy(() => import("@/pages/class-statistics"));
+const StudentsPage = lazy(() => import("@/pages/students"));
+const SettingsPage = lazy(() => import("@/pages/settings"));
 import StudentDashboard from "@/pages/student-dashboard";
-import StudentStatsPage from "@/pages/student-stats";
+const StudentStatsPage = lazy(() => import("@/pages/student-stats"));
 import StudentQuizzesPage from "@/pages/student-quizzes";
 import StudentResultsPage from "@/pages/student-results";
 import StudentQuizPage from "@/pages/student-quiz";
 import QuizResultDetailPage from "@/pages/quiz-result-detail";
-import TeachersPage from "@/pages/teachers";
-import TeacherDetailPage from "@/pages/teacher-detail";
+const TeachersPage = lazy(() => import("@/pages/teachers"));
+const TeacherDetailPage = lazy(() => import("@/pages/teacher-detail"));
 import AuthPage from "@/pages/auth";
-import AdminManagementPage from "@/pages/admin-management";
-import ClassListPage from "@/pages/classlist";
-import ClassDetailPage from "@/pages/class-detail";
-import AdminClassDetailPage from "@/pages/admin-class-detail";
-import AdminQuizzesPage from "@/pages/admin-quizzes";
+const AdminManagementPage = lazy(() => import("@/pages/admin-management"));
+const ClassListPage = lazy(() => import("@/pages/classlist"));
+const ClassDetailPage = lazy(() => import("@/pages/class-detail"));
+const AdminClassDetailPage = lazy(() => import("@/pages/admin-class-detail"));
+const AdminQuizzesPage = lazy(() => import("@/pages/admin-quizzes"));
 import ResetPasswordPage from "@/pages/reset-password";
-import ArchivePage from "@/pages/admin/archive";
-import AnnouncementsPage from "@/pages/announcements";
-import StudentSurveysPage from "@/pages/student-surveys";
-import TakeSurveyPage from "@/pages/take-survey";
-import SurveyResultsPage from "@/pages/survey-results";
-import ParentDashboardPage from "@/pages/parent-dashboard";
-import ParentResultsPage from "@/pages/parent-results";
-import GuardianManagementPage from "@/pages/guardian-management";
-import ServerSetupPage from "@/pages/server-setup";
+const ArchivePage = lazy(() => import("@/pages/admin/archive"));
+const AnnouncementsPage = lazy(() => import("@/pages/announcements"));
+const StudentSurveysPage = lazy(() => import("@/pages/student-surveys"));
+const TakeSurveyPage = lazy(() => import("@/pages/take-survey"));
+const SurveyResultsPage = lazy(() => import("@/pages/survey-results"));
+const ParentDashboardPage = lazy(() => import("@/pages/parent-dashboard"));
+const ParentResultsPage = lazy(() => import("@/pages/parent-results"));
+const GuardianManagementPage = lazy(() => import("@/pages/guardian-management"));
+const ServerSetupPage = lazy(() => import("@/pages/server-setup"));
 
 // =============================================================================
 // TYPES
@@ -190,7 +191,7 @@ function UnauthorizedRedirect() {
  *   protected + wrong role                         → toast   → /
  *   protected + correct role                       → render
  */
-function RouteGuard({ component: Component, roles }: RouteConfig) {
+export function RouteGuard({ component: Component, roles }: RouteConfig) {
   const { isAuthenticated, role } = useAuth();
   const [location] = useLocation();
   const isPublic = roles.length === 0;
@@ -212,6 +213,7 @@ function RouteGuard({ component: Component, roles }: RouteConfig) {
 
 function AppRouter() {
   const { loading } = useAuth();
+  const [location] = useLocation();
 
   if (loading) {
     return (
@@ -225,7 +227,7 @@ function AppRouter() {
   }
 
   return (
-    <Switch>
+    <RouteLoadBoundary route={location}><Switch>
       {/* Legacy alias redirect — must be before parameterised /student/quiz/:id */}
       <Route path="/student-quizzes/:quizId">
         {(params: { quizId: string }) => (
@@ -242,7 +244,7 @@ function AppRouter() {
 
       {/* True 404 — nothing in ROUTES matched */}
       <Route component={NotFound} />
-    </Switch>
+    </Switch></RouteLoadBoundary>
   );
 }
 

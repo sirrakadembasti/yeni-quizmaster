@@ -6,6 +6,7 @@ export interface OfflineQuestion {
   type: string;
   options?: string[];
   imageUrl?: string | null;
+  offlineImageSource?: string;
 }
 
 export interface OfflineQuizSession {
@@ -23,11 +24,17 @@ export interface OfflineQuizSession {
   started?: boolean;
   pendingAnswers?: Record<string, string>;
   answerRevisions?: Record<string, number>;
+  offlinePrepared?: boolean;
+  offlineEntry?: string;
 }
 
 const SESSION_PREFIX = 'quiz-master:offline-session:';
 const LIST_PREFIX = 'quiz-master:offline-list:';
 const USER_KEY = 'quiz-master:offline-user';
+let identityGeneration = 0;
+export const offlineIdentityGeneration = () => identityGeneration;
+export const offlineEntry = import.meta.url;
+export const isOfflineSessionPrepared = (session:OfflineQuizSession|null) => Boolean(session?.offlinePrepared&&session.offlineEntry===offlineEntry);
 
 function readJson<T>(key: string): T | null {
   if (typeof window === 'undefined') return null;
@@ -62,6 +69,16 @@ export function normalizeOfflineQuestions(questions: any[]): OfflineQuestion[] {
 
 export function saveOfflineSession(session: OfflineQuizSession) {
   writeJson(sessionKey(session.userId, session.quizId), session);
+}
+
+// Preparation alone needs a checked write. An older same-attempt value is not
+// proof that the new images and newest queued revisions were persisted.
+export function savePreparedOfflineSession(session: OfflineQuizSession) {
+  const key=sessionKey(session.userId,session.quizId),serialized=JSON.stringify(session);
+  try {
+    window.localStorage.setItem(key,serialized);
+    if(window.localStorage.getItem(key)!==serialized)throw Error('Storage readback mismatch');
+  } catch { throw Error('Sınav cihazda saklanamadı. Depolama iznini veya boş alanı kontrol edip yeniden deneyin.'); }
 }
 
 export function getOfflineSession(userId: string, quizId: string) {
@@ -121,7 +138,13 @@ export function reconcileOfflineSession(server: OfflineQuizSession, cached: Offl
       }
     }
   }
-  return { ...server, answers: { ...server.answers, ...pendingAnswers }, pendingAnswers, answerRevisions, started: Boolean(server.started || (sameAttempt && cached.started)), pendingSubmit: Boolean(sameAttempt && cached.pendingSubmit) };
+  const questions=server.questions.map(question=>{
+    const previous=sameAttempt?cached.questions.find(q=>q.id===question.id):null;
+    return previous&&previous.offlineImageSource===question.imageUrl&&previous.imageUrl?.startsWith('data:image/')
+      ? {...question,imageUrl:previous.imageUrl,offlineImageSource:previous.offlineImageSource}
+      : question;
+  });
+  return { ...server, questions, offlineEntry:server.offlineEntry||(sameAttempt?cached.offlineEntry:undefined), offlinePrepared:Boolean(server.offlinePrepared||(sameAttempt&&cached.offlinePrepared&&questions.every(q=>!q.imageUrl||q.imageUrl.startsWith('data:image/')))), answers: { ...server.answers, ...pendingAnswers }, pendingAnswers, answerRevisions, started: Boolean(server.started || (sameAttempt && cached.started)), pendingSubmit: Boolean(sameAttempt && cached.pendingSubmit) };
 }
 
 export function markOfflineSubmit(userId: string, quizId: string, pendingSubmit: boolean) {
@@ -164,6 +187,7 @@ export function getOfflineUser() {
 }
 
 export function clearOfflineUser() {
+  identityGeneration++;
   if (typeof window === 'undefined') return;
   try {
     const keys = Object.keys(window.localStorage);

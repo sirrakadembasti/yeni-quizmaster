@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { prepareOfflineSession } from "@/lib/offline-preparation";
 import { useLocation } from "wouter";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,10 +28,9 @@ import {
   getOfflineQuizList,
   getOfflineQuizResults,
   getOfflineSession,
+  isOfflineSessionPrepared,
   normalizeOfflineQuestions,
-  reconcileOfflineSession,
   saveOfflineQuizList,
-  saveOfflineSession,
 } from "@/lib/offline-quiz";
 
 export default function StudentQuizzesPage() {
@@ -48,6 +48,8 @@ export default function StudentQuizzesPage() {
   const [offlineView, setOfflineView] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
+  const preparation = useRef<AbortController | null>(null);
+  useEffect(()=>()=>{preparation.current?.abort();},[user?.id]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,7 +67,7 @@ export default function StudentQuizzesPage() {
         if (user) {
           saveOfflineQuizList(user.id, nextQuizzes, resultsData.results || []);
           setPreparedIds(new Set(nextQuizzes
-            .filter(quiz => getOfflineSession(user.id, quiz.id))
+            .filter(quiz => isOfflineSessionPrepared(getOfflineSession(user.id, quiz.id)))
             .map(quiz => quiz.id)));
         }
       } catch (err) {
@@ -74,7 +76,7 @@ export default function StudentQuizzesPage() {
           setQuizzes(cachedQuizzes);
           setResults(getOfflineQuizResults(user!.id));
           setPreparedIds(new Set(cachedQuizzes
-            .filter(quiz => getOfflineSession(user!.id, quiz.id))
+            .filter(quiz => isOfflineSessionPrepared(getOfflineSession(user!.id, quiz.id)))
             .map(quiz => quiz.id)));
           setOfflineView(true);
         } else {
@@ -90,11 +92,13 @@ export default function StudentQuizzesPage() {
 
   const prepareOffline = async (quizId: string) => {
     if (!user) return;
+    preparation.current?.abort();
+    const controller=new AbortController();preparation.current=controller;
     try {
       setPreparingId(quizId);
       setActionError(null);
       const data = await quizApi.prepareQuizOffline(quizId);
-      saveOfflineSession(reconcileOfflineSession({
+      await prepareOfflineSession({
         version: 1,
         userId: user.id,
         quizId,
@@ -107,12 +111,14 @@ export default function StudentQuizzesPage() {
         cachedAt: data.preparedAt,
         pendingSubmit: false,
         started: false,
-      }, getOfflineSession(user.id, quizId)));
+      }, {signal:controller.signal});
+      if(controller.signal.aborted)return;
       setPreparedIds(previous => new Set(previous).add(quizId));
     } catch (err) {
+      if(controller.signal.aborted)return;
       setActionError(err instanceof Error ? err.message : "Sınav çevrimdışı kullanım için hazırlanamadı");
     } finally {
-      setPreparingId(null);
+      if(!controller.signal.aborted)setPreparingId(null);
     }
   };
 
@@ -156,7 +162,7 @@ export default function StudentQuizzesPage() {
         )}
 
         {actionError && (
-          <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
+          <div role="alert" className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
             {actionError}
           </div>
         )}
