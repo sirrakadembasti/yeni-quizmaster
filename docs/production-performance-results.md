@@ -1,5 +1,9 @@
 # Üretim performansı ve başlangıç paketi ölçümü
 
+> **15 Ekim güncel durum:** Uygulama/sürücü düzeltmelerinden sonra 80 öğrenci ×20 görselli soru provasında 4.334 ölçülen istek sıfır hatayla tamamlandı. [Son rapor](2026-10-14-capacity-school-exam-results.md) güncel kodu, süreleri ve saha testi sınırlarını açıklar. Aşağıdaki 14 Ekim ölçümleri önceki sürümün tarihsel sonuçlarıdır; farklı ortam/iş yükü nedeniyle doğrudan A/B karşılaştırması değildir.
+
+14 Ekim açık kapasite sorunları için ayrıca [Windows üzerinde izole devam incelemesi](production-capacity-investigation-results.md) yapıldı. Büyük sonuç yanıtı, dashboard seri sorguları ve timeout sonrası geç yazmalar ayrı ölçüldü; 100 kayıtlık deneysel liste kapasite sorununu kapatmadı. Bu çalışma aşağıdaki özgün Linux/WSL ölçümlerinin yerine geçirilmez.
+
 14 Ekim 2026 ölçümü, 8 GiB RAM'li ortak Windows/WSL makinesinde Node 22.23.2 ile yapıldı. Git `acfe47c0aa30b91843a4bc47cf94dd8e812f0c04` dışa aktarımı ve yalnız bu görevin değişiklikleri kullanıldı. Kullanıcının iki korunmuş frontend dosyasındaki çalışma alanı değişiklikleri ölçüme taşınmadı. Bağımsız kurulum mevcut pnpm paket deposunu kullandı; bağımsız Prisma istemcisi üretildi. Bütün ağır işler sırayla çalıştırıldı.
 
 Canlı veritabanı sorgulanmadı veya kopyalanmadı. Yeni, sahipliği doğrulanmış veritabanına gerçek 22 migration uygulandı. Sentetik veri 1.311 kullanıcı (1 yönetici, 60 öğretmen, 1.000 öğrenci, 250 veli), 40 sınıf, 6 ders, 240 öğretmen görevlendirmesi, 1.000 veli bağlantısı, 121 sınav/anket, 842 soru, 8.000 sınav sonucu, 1.000 anket katılımı, 5.000 cevap, 100 soru bankası kaydı ve 1 duyurudan oluştu: **17.661 iş kaydı**. İlişkiler ve 8.000 sonucun 75 puan/6 doğru/8 soru değerleri DB üzerinden doğrulandı.

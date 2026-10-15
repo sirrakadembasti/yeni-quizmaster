@@ -10,7 +10,7 @@ import { storage } from '../../storage';
 vi.mock('../../storage', () => ({ storage: {
   getAllQuizzes: vi.fn(), getQuizzesByCreator: vi.fn(), getQuiz: vi.fn(),
   getQuestionsByQuiz: vi.fn(), syncQuestions: vi.fn(), deleteQuiz: vi.fn(),
-  createLog: vi.fn(), getAllUsers: vi.fn(), getAdminStats: vi.fn(), deleteQuizWithAudit: vi.fn(), createQuiz: vi.fn(), updateQuiz: vi.fn(),
+  createLog: vi.fn(), getAllUsers: vi.fn(), getAdminStats: vi.fn(), getDashboardStats: vi.fn(), deleteQuizWithAudit: vi.fn(), createQuiz: vi.fn(), updateQuiz: vi.fn(),
 } }));
 vi.mock('../../middleware/auth', () => ({
   requireAuth: (_req: unknown, _res: unknown, next: () => void) => next(),
@@ -103,11 +103,13 @@ describe('Admin audit: quiz API current behavior', () => {
     expect((await request(app).post('/surveys/survey/questions').send([])).status).toBe(201);
   });
 
-  it('dashboard exam count includes survey records', async () => {
-    vi.mocked(storage.getAllQuizzes).mockResolvedValue([{ contentType: 'exam' }, { contentType: 'survey' }] as any);
-    vi.mocked(storage.getAdminStats).mockResolvedValue({ totalResults: 0, averageStudentScore: 0 });
+  it('returns bounded dashboard counts without loading every quiz or user', async () => {
+    vi.mocked(storage.getDashboardStats).mockResolvedValue({ totalQuizzes: 2, totalStudents: 0, totalTeachers: 0, totalResults: 0, averageStudentScore: 0 });
     const response = await request(app).get('/dashboard/stats');
     expect(response.status).toBe(200);
     expect(response.body.stats.totalQuizzes).toBe(2);
+    expect(storage.getDashboardStats).toHaveBeenCalledWith('admin', admin.id);
+    expect(storage.getAllQuizzes).not.toHaveBeenCalled();
+    expect(storage.getAllUsers).not.toHaveBeenCalled();
   });
 });

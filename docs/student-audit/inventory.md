@@ -1,5 +1,7 @@
 # Öğrenci paneli envanteri ve denetim kapsamı
 
+> **Tarihsel kapsam/inceleme kaydı.** Kaynak satırları ve ölçümler özgün denetim tarihine aittir. Sonraki onarım kabulü [sonuç raporundadır](defect-repairs.md); buradaki ölçüm güncel üretim kapasitesi garantisi değildir.
+
 Tarih: 2026-10-04. Bu belge kaynak kodu incelemesidir; aşağıdaki akışlar tarayıcıda veya gerçek API ile bu belge hazırlanırken çalıştırılmadı. `Kaynak bulgusu` çalışma zamanı testi yerine geçmez. Satır referansları inceleme anındaki kaynak içindir; düzeltmelerden sonra değişebilir.
 
 ## Sayfalar, sekmeler ve işlemler

@@ -1,47 +1,49 @@
-# AI integration audit
+# Yapay zekâ entegrasyonu denetimi
 
-Historical pre-repair audit. The answer fallback, input/output validation and stale readiness findings below were subsequently addressed; current acceptance and live-provider recheck are recorded in [defect-repairs.md](defect-repairs.md). Original failing results are retained under `before-repairs/` and original offline characterization results remain unchanged.
+> **Tarihsel kapsam/inceleme kaydı.** Kaynak satırları ve ölçümler özgün denetim tarihine aittir. Sonraki onarım kabulü [sonuç raporundadır](defect-repairs.md); buradaki ölçüm güncel üretim kapasitesi garantisi değildir.
 
-## Evidence and scope
+Bu belge onarım öncesi denetimin tarihsel kaydıdır. Aşağıdaki cevap için varsayılan seçeneğe dönme, girdi/çıktı doğrulama ve eski ayarlara bağlı hazır durumu bulguları daha sonra giderildi; kabul ve gerçek sağlayıcıyla yeniden kontrol sonuçları [onarım raporundadır](defect-repairs.md). İlk başarısız sonuçlar `before-repairs/` altında tutulur; ilk çevrimdışı davranış belirleme sonuçları değiştirilmemiştir.
 
-`ai-offline-results.json`: 22/22 cases passed with actual Express/auth/AI routes and provider responses mocked at `safeExternalFetch`. No application database or external provider calls. Three cases characterize current defects; passing does not mean these defects are repaired. These are route integration tests, not live Google/TLS tests.
+## Kanıt ve kapsam
 
-The separately guarded `ai-live.test.ts` makes at most two real official-Google requests: a five-token connection probe followed, only on success, by one synthetic arithmetic question. It loads key configuration in application precedence order, uses the backend default model, mocks only storage/logging, and validates generated count/type/options/correct answer index. It writes sanitized status-only evidence. It does not save generated questions or user data.
+`ai-offline-results.json`: gerçek Express/kimlik doğrulama/AI rotalarıyla, sağlayıcı yanıtları `safeExternalFetch` noktasında taklit edilerek 22/22 kontrol geçti. Uygulama veritabanına veya harici sağlayıcıya çağrı yapılmadı. Üç kontrol, denetim anındaki kusurları tanımlar; geçmeleri bu kusurların onarıldığı anlamına gelmez. Bunlar rota entegrasyonu testleridir; gerçek Google/TLS testi değildir.
 
-The authorized real Google test ran on 2026-10-04 after the user updated the key. `ai-live-evidence.json` records credentials configured = true, two provider requests, connection probe HTTP 200 and generation HTTP 200. `ai-live-results.json` records **1 failed test, 0 passed**: generated answer/index consistency failed. The selected option was the synthetic number `83` while `correctAnswer` was the letter `A`. This reproduces the answer-index fallback defect with the real provider; successful HTTP responses do not mean valid generated scoring data.
+Ayrı korumalı `ai-live.test.ts` en fazla iki gerçek resmî Google isteği gönderir: beş tokenlık bağlantı kontrolü ve yalnız bu başarılıysa bir sentetik aritmetik sorusu. Anahtar yapılandırmasını uygulamanın öncelik sırasıyla yükler, sunucunun varsayılan modelini kullanır, yalnız veri saklama ve günlük yazmayı taklit eder; üretilen soru sayısını, türünü, seçenekleri ve doğru cevap indeksini doğrular. Hassas alanları temizlenmiş, yalnız durum içeren kanıt yazar. Üretilen soruları veya kullanıcı verilerini kaydetmez.
 
-The earlier key's HTTP 402 connection rejection remains separately recorded in `ai-live-previous-key.json`. Missing-key observations from initial inspection are superseded by the actual successful connection and generation requests.
+İzin verilen gerçek Google testi, kullanıcı anahtarı güncelledikten sonra 4 Ekim 2026'da çalıştı. `ai-live-evidence.json`, kimlik bilgilerinin yapılandırıldığını, iki sağlayıcı isteğini ve bağlantı/üretim kontrollerinde HTTP 200 yanıtlarını kaydeder. `ai-live-results.json` sonucu **1 başarısız test, 0 geçen test** olarak kaydeder: üretilen cevap/indeks tutarlılığı başarısızdı. Seçilen seçenek sentetik `83` sayısıyken `correctAnswer` değeri `A` harfiydi. Bu, doğru cevap indeksi yerine varsayılan seçeneğin kullanılması kusurunu gerçek sağlayıcıyla yeniden üretir; başarılı HTTP yanıtı geçerli puanlama verisi üretildiği anlamına gelmez.
 
-## Cases
+Önceki anahtarın HTTP 402 bağlantı reddi `ai-live-previous-key.json` içinde ayrı tutulur. İlk incelemenin eksik anahtar gözlemleri, sonraki gerçek başarılı bağlantı ve üretim istekleriyle güncellenmiştir.
 
-| Area | Exercised |
+## Kontroller
+
+| Alan | Sınanan davranış |
 | --- | --- |
-| Access | Unauthenticated, student and parent blocked before provider call |
-| Credentials | Official endpoint fallback; custom endpoint never receives server key; explicit custom key |
-| Endpoint security | HTTP, localhost and loopback blocked |
-| Responses | Raw array, questions wrapper, markdown JSON and explanatory text fallback |
-| Exam semantics | Option shuffling retains correct answer reference |
-| Survey semantics | Rating config and null correct answer preserved |
-| Failures | Malformed schema, unparseable JSON, empty message, provider 429 and abort |
-| Defect observations | Empty array accepted, missing answer selects option zero, unchecked topic/count reaches provider |
+| Erişim | Oturumsuz kullanıcı, öğrenci ve veli sağlayıcı çağrısından önce engellenir |
+| Kimlik bilgileri | Resmî uç noktaya dönüş; özel uç noktaya sunucu anahtarı gönderilmemesi; açıkça verilen özel anahtar |
+| Uç nokta güvenliği | HTTP, localhost ve loopback adresleri engellenir |
+| Yanıtlar | Ham dizi, questions sarmalayıcısı, Markdown JSON ve açıklama metninden alternatif çözümleme |
+| Sınav anlamı | Seçenekleri karıştırma doğru cevap başvurusunu korur |
+| Anket anlamı | Derecelendirme yapılandırması ve boş doğru cevap değeri korunur |
+| Hatalar | Bozuk şema, çözümlenemeyen JSON, boş mesaj, sağlayıcı 429 yanıtı ve iptal |
+| Kusur gözlemleri | Boş dizinin kabulü, eksik cevapta sıfırıncı seçeneğin seçilmesi, doğrulanmamış konu/adet bilgisinin sağlayıcıya ulaşması |
 
-## Findings
+## Bulgular
 
-1. `server/api-routes/ai.ts:306`: a provider answer absent from options falls back to index zero. Invalid AI questions can therefore be saved with a wrong scoring answer. Reproduced both offline and with the authorized real Google generation: numeric options were paired with a letter answer and the validator failed.
-2. `server/api-routes/ai.ts:183`: no incoming request schema checks topic/count/difficulty/model. Missing topic and negative count reach the provider. Reproduced offline.
-3. `server/api-routes/ai.ts:55`: response arrays have no minimum/count constraint. Empty array returns HTTP 200. Reproduced offline; UI later displays an error.
-4. `client/src/components/quiz/AIQuestionGenerator.tsx:288`, `:299`, `:310`: changing custom base URL/key/model does not clear successful `testResult`; readiness remains attached to previous settings. Source observation, not browser reproduced here.
-5. `server/api-routes/ai.ts:121`, `:187`: default is `gemini-3.8-flash`. The real connection and generation requests both returned HTTP 200 using this exact default. Google also documents this model at [Gemini 3.8 Flash](https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash). Model availability is verified for the tested key and run.
+1. `server/api-routes/ai.ts:306`: sağlayıcının cevabı seçeneklerde yoksa sıfırıncı indeks kullanılır. Geçersiz AI soruları bu nedenle yanlış puanlama cevabıyla kaydedilebilir. Hem çevrimdışı hem izin verilen gerçek Google üretimiyle yeniden üretildi: sayısal seçeneklere harf cevabı eşlendi ve doğrulayıcı başarısız oldu.
+2. `server/api-routes/ai.ts:183`: gelen istek şeması konu/adet/zorluk/model alanlarını denetlemiyor. Eksik konu ve negatif adet sağlayıcıya ulaşıyor. Çevrimdışı yeniden üretildi.
+3. `server/api-routes/ai.ts:55`: yanıt dizilerinde asgari uzunluk/adet sınırı yok. Boş dizi HTTP 200 döndürüyor. Çevrimdışı yeniden üretildi; arayüz daha sonra hata gösteriyor.
+4. `client/src/components/quiz/AIQuestionGenerator.tsx:288`, `:299`, `:310`: özel temel URL/anahtar/model değişince başarılı `testResult` temizlenmiyor; hazır durumu önceki ayarlara bağlı kalıyor. Bu kaynak gözlemidir; burada tarayıcıyla yeniden üretilmedi.
+5. `server/api-routes/ai.ts:121`, `:187`: varsayılan `gemini-3.8-flash`. Gerçek bağlantı ve üretim istekleri tam bu varsayılanla HTTP 200 döndürdü. Google model açıklaması [Gemini 3.8 Flash](https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash) sayfasındadır. Model erişimi yalnız denenen anahtar ve o tarihli koşu için doğrulanmıştır.
 
-## Re-run
+## Yeniden çalıştırma
 
-From repository root (PowerShell):
+Depo kökünden (PowerShell):
 
 ```powershell
 pnpm --filter quiz-master-server exec vitest run --config F:/projeler/yeni-quizmaster-main/docs/integration-audit/ai-offline.config.mts --root F:/projeler/yeni-quizmaster-main --reporter=json --outputFile=F:/projeler/yeni-quizmaster-main/docs/integration-audit/ai-offline-results.json
 ```
 
-For the authorized live test, configure `GEMINI_API_KEY` locally in `server/.env`, root `.env`, or process environment without putting the key in command arguments or logs. Then:
+İzin verilen gerçek sağlayıcı testi için `GEMINI_API_KEY` değerini yerel `server/.env`, kök `.env` veya süreç ortamında yapılandırın; anahtarı komut argümanlarına veya günlük kayıtlarına yazmayın. Ardından:
 
 ```powershell
 $env:LIVE_AI='1'
@@ -49,4 +51,4 @@ pnpm --filter quiz-master-server exec vitest run --config F:/projeler/yeni-quizm
 Remove-Item Env:LIVE_AI
 ```
 
-Skipped live test means blocked, never a successful real provider integration. The live route harness bypasses application session persistence and CSRF by building a synthetic authenticated Express app; full browser session/CSRF integration is a separate audit.
+Gerçek sağlayıcı testinin atlanması, kontrolün engellendiği anlamına gelir; başarılı entegrasyon sayılmaz. Gerçek sağlayıcı rota test aracı, sentetik kimliği doğrulanmış Express uygulaması kurarak uygulamanın kalıcı oturum ve CSRF katmanlarını devre dışı bırakır; tam tarayıcı oturumu/CSRF entegrasyonu ayrı denetimdir.

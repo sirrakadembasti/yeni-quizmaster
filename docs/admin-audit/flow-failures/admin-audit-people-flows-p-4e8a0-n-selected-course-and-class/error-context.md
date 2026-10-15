@@ -1,15 +1,15 @@
-# Instructions
+# Talimatlar
 
-- Following Playwright test failed.
-- Explain why, be concise, respect Playwright best practices.
-- Provide a snippet of code with the fix, if possible.
+- Aşağıdaki Playwright testi başarısız oldu.
+- Nedenini kısa ve öz açıklayın; Playwright en iyi uygulamalarına uyun.
+- Mümkünse düzeltmeyi içeren bir kod örneği verin.
 
-# Test info
+# Test bilgileri
 
-- Name: admin-audit-people-flows.spec.ts >> people: teacher creation must retain selected course and class
-- Location: tests-e2e\admin-audit-people-flows.spec.ts:80:5
+- Ad: admin-audit-people-flows.spec.ts >> people: teacher creation must retain selected course and class
+- Konum: tests-e2e\admin-audit-people-flows.spec.ts:80:5
 
-# Error details
+# Hata ayrıntıları
 
 ```
 Error: expect(received).toContain(expected) // indexOf
@@ -25,7 +25,7 @@ Expected value: "763f8d6f-4eab-40fe-8df6-97db38ca3aa7"
 Received array: []
 ```
 
-# Page snapshot
+# Sayfa anlık görüntüsü
 
 ```yaml
 - generic [ref=f2e2]:
@@ -116,7 +116,7 @@ Received array: []
                   - button [ref=f2e157]
 ```
 
-# Test source
+# Test kaynağı
 
 ```ts
   6   | let cookies: Awaited<ReturnType<BrowserContext['cookies']>> = [];

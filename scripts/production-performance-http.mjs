@@ -3,6 +3,7 @@ import path from 'node:path';
 import {performance} from 'node:perf_hooks';
 import assert from 'node:assert/strict';
 import {pathToFileURL} from 'node:url';
+import {Agent, request as httpRequest} from 'node:http';
 import {ownedFile, exclusiveJson, noLinks, readPerformanceRuntime} from './production-performance-guard.mjs';
 export function summarize(samples) {
   const sorted=samples.map(s=>s.ms).sort((a,b)=>a-b),percentile=n=>sorted[Math.max(0,Math.ceil(sorted.length*n)-1)]??0;
@@ -12,17 +13,43 @@ export function summarize(samples) {
 export async function actorClient(origin,actor,password) {
   if(!/^http:\/\/127\.0\.0\.1:\d+$/.test(origin))throw Error('Local HTTP origin required');
   let cookie='',csrf='';
+  let closed=false;
+  const agent=new Agent({keepAlive:true,maxSockets:6,maxFreeSockets:6});
+  const transport=(url,method,headers,body)=>new Promise((resolve,reject)=>{
+    if(closed){reject(Error('Actor HTTP client is closed'));return;}
+    const pending=httpRequest(origin+url,{agent,method,headers,signal:AbortSignal.timeout(30000)},response=>{
+      if(response.statusCode>=300&&response.statusCode<400){response.resume();reject(Error('HTTP redirects are not allowed'));return;}
+      const chunks=[];
+      response.on('data',chunk=>chunks.push(chunk));
+      response.on('error',reject);
+      response.on('end',()=>resolve({status:response.statusCode,headers:response.headers,data:Buffer.concat(chunks)}));
+    });
+    pending.on('error',reject);
+    pending.end(body);
+  });
   const request=async(url,method='GET',body)=>{
     if(!url.startsWith('/api/')||url.includes('://'))throw Error('Local API path required');
-    const response=await fetch(origin+url,{method,redirect:'error',headers:{cookie,'x-csrf-token':csrf,'content-type':'application/json',Origin:origin},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(30000)});
-    const cookies=response.headers.getSetCookie();if(cookies.length)cookie=cookies.map(v=>v.split(';')[0]).join('; ');
-    return {status:response.status,body:await response.json().catch(()=>null)};
+    const payload=body===undefined?undefined:JSON.stringify(body);
+    const headers={cookie,'x-csrf-token':csrf,'content-type':'application/json',Origin:origin};
+    if(payload!==undefined)headers['content-length']=Buffer.byteLength(payload);
+    const response=await transport(url,method,headers,payload);
+    const cookies=response.headers['set-cookie']||[];if(cookies.length)cookie=cookies.map(v=>v.split(';')[0]).join('; ');
+    let parsed=null;try{parsed=JSON.parse(response.data.toString('utf8'));}catch{}
+    return {status:response.status,body:parsed};
   };
-  csrf=(await request('/api/csrf-token')).body.csrfToken;
-  const login=await request('/api/auth/login','POST',{email:actor.email,password});assert.equal(login.status,200);
-  csrf=(await request('/api/csrf-token')).body.csrfToken;
-  assert.equal((await request('/api/auth/me')).body.user.id,actor.id);
-  return request;
+  request.close=()=>{if(closed)return;closed=true;agent.destroy();};
+  request.image = async url => {
+    if(!url.startsWith('/uploads/') || url.includes('://') || url.includes('..')) throw Error('Local image path required');
+    const response = await transport(url,'GET',{cookie});
+    return { status: response.status, bytes: response.data.byteLength };
+  };
+  try {
+    csrf=(await request('/api/csrf-token')).body.csrfToken;
+    const login=await request('/api/auth/login','POST',{email:actor.email,password});assert.equal(login.status,200);
+    csrf=(await request('/api/csrf-token')).body.csrfToken;
+    assert.equal((await request('/api/auth/me')).body.user.id,actor.id);
+    return request;
+  } catch(error) {request.close();throw error;}
 }
 if(process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url) {
   const [runtimeFile,outputName,mode,concurrencyText,runId]=process.argv.slice(2);
@@ -31,8 +58,9 @@ if(process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === impo
   const runtime=readPerformanceRuntime(repo,runtimeFile,{runId}),root=runtime.root;
   const count=Number(concurrencyText),samples=[],expected=[],cpu=process.cpuUsage();
   const actors=mode==='mixed'?Array.from({length:count},(_,n)=>({...runtime.fixture.writerActors[n],reader:runtime.fixture.actors[n%4]})):runtime.fixture.writerActors.slice(0,count);
-  const clients=[];
-  for(const actor of actors){const writer=await actorClient(runtime.origin,actor,runtime.fixture.password),reader=mode==='mixed'?await actorClient(runtime.origin,actor.reader,runtime.fixture.password):writer;clients.push({actor,writer,reader});}
+  const clients=[],sessions=new Set();
+  try {
+  for(const actor of actors){const writer=await actorClient(runtime.origin,actor,runtime.fixture.password);sessions.add(writer);const reader=mode==='mixed'?await actorClient(runtime.origin,actor.reader,runtime.fixture.password):writer;sessions.add(reader);clients.push({actor,writer,reader});}
   const started=Date.now();exclusiveJson(root,outputName+'.ready.json',{readyAt:started,actors:count});
   await Promise.all(clients.map(async({actor,writer,reader},n)=>{
     let muted=false,index=0;
@@ -54,4 +82,5 @@ if(process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === impo
   exclusiveJson(root,outputName+'.json',{...summarize(samples),elapsedMs,qps:samples.length/(elapsedMs/1000),endpoints,expected,samples,cpuMs:(endCpu.user+endCpu.system)/1000,rss:process.memoryUsage().rss,resourceScope:'HTTP generator Node only; excludes backend Node/Prisma/Chromium'});
   console.log(JSON.stringify({mode,concurrency:count,...summarize(samples),elapsedMs}));
   process.exitCode=samples.some(s=>!s.ok)?1:0;
+  } finally {for(const client of sessions)client.close();}
 }

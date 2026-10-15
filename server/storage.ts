@@ -1,8 +1,29 @@
 import { isDeepStrictEqual } from "node:util";
-import { PrismaClient, Prisma, User, Quiz, Question, QuestionBank, StudentResult, Category, Class, ActionLog, EmailQueue } from '@prisma/client';
+import { Prisma, User, Quiz, Question, QuestionBank, StudentResult, Category, Class, ActionLog, EmailQueue } from '@prisma/client';
+import { createRuntimePrismaClient } from './utils/sqlite-runtime';
+import { getDashboardStats as readDashboardStats, type DashboardStats } from './services/dashboard-stats';
+import { readNotificationPreferences, writeNotificationPreferences, type NotificationPreferences } from './services/notification-preferences';
+import { getResultsSummary as readResultsSummary, type ResultsSummaryPage, type ResultsSummaryPaging, type ResultsSummaryFilters } from './services/results-summary';
 
-const prisma = new PrismaClient();
-export const closeStorage = () => prisma.$disconnect();
+const prisma = createRuntimePrismaClient();
+const readPrisma = createRuntimePrismaClient({ readonly: true });
+const disconnectWriter = prisma.$disconnect.bind(prisma);
+export const closeStorage = async () => {
+  const outcomes = await Promise.allSettled([disconnectWriter(), readPrisma.$disconnect()]);
+  for (const outcome of outcomes) if (outcome.status === 'rejected') throw outcome.reason;
+};
+// The existing writer remains available to fixture setup; its teardown owns both connections.
+prisma.$disconnect = closeStorage;
+export const getStorageDbForTests = () => prisma;
+export const initializeStorage = async () => {
+  try {
+    await prisma.$connect();
+    await readPrisma.$connect();
+  } catch (error) {
+    await closeStorage().catch(() => undefined);
+    throw error;
+  }
+};
 
 export type ContentQuestionInput = Omit<Prisma.QuestionUncheckedCreateInput, 'options' | 'config' | 'correctAnswer'> & { options?: any; config?: any; correctAnswer?: string | null };
 export type ContentSettingsInput = Prisma.QuizUncheckedCreateInput & { assignedClassIds: string[] };
@@ -111,14 +132,15 @@ export interface IStorage {
   // Student Result methods
   getResultsByStudent(studentId: string, teacherId?: string): Promise<StudentResult[]>;
   getFilteredResults(filters: { quizId?: string; categoryId?: string; classId?: string; studentId?: string; createdBy?: string }): Promise<StudentResult[]>;
+  getResultsSummary(filters: ResultsSummaryFilters, paging?: ResultsSummaryPaging): Promise<ResultsSummaryPage>;
   getResultsByQuiz(quizId: string, options?: { activeOnly?: boolean }): Promise<StudentResult[]>;
   getLiveResults(quizId: string): Promise<StudentResult[]>;
   getStudentQuizResult(studentId: string, quizId: string): Promise<StudentResult | undefined>;
   createResult(result: Prisma.StudentResultUncheckedCreateInput & { answers?: any }): Promise<StudentResult>;
   updateResult(id: string, result: Partial<Prisma.StudentResultUncheckedCreateInput> & { answers?: any }): Promise<void>;
   getResult(id: string): Promise<StudentResult | undefined>;
-  saveResultAnswer(id: string, studentId: string, questionId: string, answer: string): Promise<void>;
-  completeResult(id: string, studentId: string, answers: Record<string, string>): Promise<{ score: number; correctAnswers: number; totalQuestions: number; acceptedQueuedAnswers: boolean; newlyCompleted: boolean }>;
+  saveResultAnswer(id: string, studentId: string, questionId: string, answer: string, receivedAt?: number): Promise<void>;
+  completeResult(id: string, studentId: string, answers: Record<string, string>, receivedAt?: number): Promise<{ score: number; correctAnswers: number; totalQuestions: number; acceptedQueuedAnswers: boolean; newlyCompleted: boolean }>;
   getQuizStats(quizId: string): Promise<{
     totalParticipants: number;
     averageScore: number;
@@ -144,6 +166,9 @@ export interface IStorage {
   deleteNotification(userId: string, notificationId: string): Promise<boolean>;
   getNotificationPreferences(userId: string): Promise<{ muted: boolean }>;
   updateNotificationPreferences(userId: string, muted: boolean): Promise<{ muted: boolean }>;
+  getVersionedNotificationPreferences(userId: string): Promise<NotificationPreferences>;
+  updateVersionedNotificationPreferences(userId: string, muted: boolean, expectedRevision?: number): Promise<NotificationPreferences>;
+  getDashboardStats(role: string, userId: string): Promise<DashboardStats>;
 
   // Arşiv yönetimi
   // purgeArchivedData: Belirtilen akademik yıla ait archived sınavları ve öğrenci sonuçlarını
@@ -184,6 +209,20 @@ export interface IStorage {
 }
 
 export class PrismaStorage implements IStorage {
+  async getResultsSummary(filters: ResultsSummaryFilters, paging?: ResultsSummaryPaging): Promise<ResultsSummaryPage> {
+    return readResultsSummary(readPrisma, filters, paging);
+  }
+  async getDashboardStats(role: string, userId: string): Promise<DashboardStats> {
+    return readDashboardStats(readPrisma, role, userId);
+  }
+
+  async getVersionedNotificationPreferences(userId: string): Promise<NotificationPreferences> {
+    return readNotificationPreferences(prisma, userId);
+  }
+
+  async updateVersionedNotificationPreferences(userId: string, muted: boolean, expectedRevision?: number): Promise<NotificationPreferences> {
+    return writeNotificationPreferences(prisma, userId, muted, expectedRevision);
+  }
   // Category methods
   async getAllCategories(): Promise<Category[]> {
     return await prisma.category.findMany({
@@ -232,7 +271,7 @@ export class PrismaStorage implements IStorage {
 
   // User methods
   async getUser(id: string): Promise<User | undefined> {
-    const user = await prisma.user.findUnique({ 
+    const user = await readPrisma.user.findUnique({
       where: { id },
       include: { 
         class: true, 
@@ -262,7 +301,7 @@ export class PrismaStorage implements IStorage {
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const user = await prisma.user.findUnique({ 
+    const user = await readPrisma.user.findUnique({
       where: { email },
       include: { 
         class: true, 
@@ -292,7 +331,7 @@ export class PrismaStorage implements IStorage {
   }
 
   async getUserByResetToken(token: string): Promise<User | undefined> {
-    const user = await prisma.user.findFirst({ 
+    const user = await readPrisma.user.findFirst({
       where: { resetToken: token }
     });
     return user || undefined;
@@ -466,7 +505,7 @@ export class PrismaStorage implements IStorage {
   }
 
   async getAllUsers(): Promise<User[]> {
-    const users = await prisma.user.findMany({
+    const users = await readPrisma.user.findMany({
       where: { OR: [{ role: { not: 'student' } }, { isActive: true }] },
       include: {
         class: true,
@@ -512,7 +551,7 @@ export class PrismaStorage implements IStorage {
   }
 
   async getGuardianStudents(guardianId: string): Promise<any[]> {
-    return prisma.guardianStudent.findMany({
+    return readPrisma.guardianStudent.findMany({
       where: { guardianId, student: { isActive: true } },
       include: { student: { include: { class: true } } },
       orderBy: { student: { name: 'asc' } },
@@ -520,7 +559,7 @@ export class PrismaStorage implements IStorage {
   }
 
   async getStudentGuardians(studentId: string): Promise<any[]> {
-    return prisma.guardianStudent.findMany({
+    return readPrisma.guardianStudent.findMany({
       where: { studentId },
       include: { guardian: { select: { id: true, name: true, email: true, phoneNumber: true, address: true, role: true } } },
       orderBy: { guardian: { name: 'asc' } },
@@ -554,7 +593,7 @@ export class PrismaStorage implements IStorage {
 
   // Class methods
   async getAllClasses(): Promise<Class[]> {
-    const classes = await prisma.class.findMany({
+    const classes = await readPrisma.class.findMany({
       include: {
         teachers: true,
         classTeacher: true,
@@ -579,7 +618,7 @@ export class PrismaStorage implements IStorage {
   }
 
   async getClass(id: string): Promise<Class | undefined> {
-    const cls = await prisma.class.findUnique({
+    const cls = await readPrisma.class.findUnique({
       where: { id },
       include: { 
         teachers: true, 
@@ -709,7 +748,7 @@ export class PrismaStorage implements IStorage {
     await prisma.class.delete({ where: { id } });
   }
   async getClassesByTeacher(teacherId: string): Promise<Class[]> {
-    const classes = await prisma.class.findMany({
+    const classes = await readPrisma.class.findMany({
       where: { 
         OR: [
           { teachers: { some: { id: teacherId } } },
@@ -757,7 +796,7 @@ export class PrismaStorage implements IStorage {
   }
 
   async getStudentsByClass(classId: string): Promise<User[]> {
-    return await prisma.user.findMany({ 
+    return await readPrisma.user.findMany({
       where: { 
         classId,
         role: 'student',
@@ -767,7 +806,7 @@ export class PrismaStorage implements IStorage {
   }
 
   async getStudentsByTeacher(teacherId: string): Promise<User[]> {
-    return await prisma.user.findMany({
+    return await readPrisma.user.findMany({
       where: {
         role: 'student',
         isActive: true,
@@ -820,7 +859,7 @@ export class PrismaStorage implements IStorage {
 
   // Quiz methods
   async getAllQuizzes(filters?: { studentClassId?: string | null }): Promise<Quiz[]> {
-    const quizzes = await prisma.quiz.findMany({
+    const quizzes = await readPrisma.quiz.findMany({
       where: filters && "studentClassId" in filters ? {
         ...activeQuizWhere,
         status: "published", contentType: "exam",
@@ -853,7 +892,7 @@ export class PrismaStorage implements IStorage {
   }
 
   async getQuiz(id: string): Promise<Quiz | undefined> {
-    const quiz = await prisma.quiz.findUnique({ 
+    const quiz = await readPrisma.quiz.findUnique({
       where: { id },
       include: { category: true, creator: { select: { id: true, name: true, role: true } }, assignedClasses: true }
     });
@@ -864,7 +903,7 @@ export class PrismaStorage implements IStorage {
   }
 
   async getQuizzesByCreator(teacherId: string): Promise<Quiz[]> {
-    const quizzes = await prisma.quiz.findMany({
+    const quizzes = await readPrisma.quiz.findMany({
       where: { ...activeQuizWhere, createdBy: teacherId },
       include: {
         _count: {
@@ -950,7 +989,7 @@ export class PrismaStorage implements IStorage {
   }
 
   async getSurveySubmissions(surveyId: string, startDate?: Date, endDate?: Date): Promise<any[]> {
-    return prisma.surveySubmission.findMany({
+    return readPrisma.surveySubmission.findMany({
       where: {
         surveyId,
         ...(startDate || endDate ? {
@@ -972,7 +1011,7 @@ export class PrismaStorage implements IStorage {
   }
 
   async getStudentSurveySubmission(surveyId: string, studentId: string): Promise<any | undefined> {
-    const submission = await prisma.surveySubmission.findUnique({
+    const submission = await readPrisma.surveySubmission.findUnique({
       where: { surveyId_studentId: { surveyId, studentId } },
       include: { answers: true },
     });
@@ -1000,7 +1039,7 @@ export class PrismaStorage implements IStorage {
   }
   // Question methods
   async getQuestionsByQuiz(quizId: string): Promise<Question[]> {
-    const questions = await prisma.question.findMany({ where: { quizId }, orderBy: { order: 'asc' } });
+    const questions = await readPrisma.question.findMany({ where: { quizId }, orderBy: { order: 'asc' } });
     return questions.map((question) => ({
       ...question,
       options: question.options ? JSON.parse(question.options) : [],
@@ -1009,7 +1048,7 @@ export class PrismaStorage implements IStorage {
   }
 
   async getQuestion(id: string): Promise<Question | undefined> {
-    const question = await prisma.question.findUnique({ where: { id } });
+    const question = await readPrisma.question.findUnique({ where: { id } });
     if (!question) return undefined;
     return {
       ...question,
@@ -1202,7 +1241,7 @@ export class PrismaStorage implements IStorage {
       ...(filters.categoryId ? { categoryId: filters.categoryId } : {}),
       ...(filters.createdBy ? { createdBy: filters.createdBy } : {}),
     };
-    const results = await prisma.studentResult.findMany({
+    const results = await readPrisma.studentResult.findMany({
       where,
       include: {
         student: { select: resultStudentSelect },
@@ -1218,7 +1257,7 @@ export class PrismaStorage implements IStorage {
   async getResultsByStudent(studentId: string, teacherId?: string): Promise<StudentResult[]> {
     const where: Prisma.StudentResultWhereInput = { studentId, academicYear: null, quiz: { ...activeQuizWhere, ...(teacherId ? { createdBy: teacherId } : {}) } };
 
-    const results = await prisma.studentResult.findMany({
+    const results = await readPrisma.studentResult.findMany({
       where,
       include: { 
         quiz: {
@@ -1239,7 +1278,7 @@ export class PrismaStorage implements IStorage {
   }
 
   async getResultsByQuiz(quizId: string, options?: { activeOnly?: boolean }): Promise<StudentResult[]> {
-    const results = await prisma.studentResult.findMany({
+    const results = await readPrisma.studentResult.findMany({
       where: { quizId, ...(options?.activeOnly ? { academicYear: null, quiz: activeQuizWhere } : {}) },
       include: { student: { select: resultStudentSelect } },
       orderBy: { score: 'desc' }
@@ -1251,7 +1290,7 @@ export class PrismaStorage implements IStorage {
   }
 
   async getLiveResults(quizId: string): Promise<StudentResult[]> {
-    const results = await prisma.studentResult.findMany({
+    const results = await readPrisma.studentResult.findMany({
       where: { quizId, status: 'in_progress' },
       include: { student: { select: resultStudentSelect } },
       orderBy: { startedAt: 'desc' }
@@ -1263,7 +1302,7 @@ export class PrismaStorage implements IStorage {
   }
 
   async getStudentQuizResult(studentId: string, quizId: string): Promise<StudentResult | undefined> {
-    const r = await prisma.studentResult.findFirst({
+    const r = await readPrisma.studentResult.findFirst({
       where: { studentId, quizId },
       orderBy: { startedAt: 'desc' }
     });
@@ -1306,28 +1345,32 @@ export class PrismaStorage implements IStorage {
   }
 
   async getResult(id: string): Promise<StudentResult | undefined> {
-    const r = await prisma.studentResult.findUnique({ where: { id } });
+    const r = await readPrisma.studentResult.findUnique({ where: { id } });
     return r ? {
       ...r,
       answers: r.answers ? JSON.parse(r.answers) : {}
     } as unknown as StudentResult : undefined;
   }
 
-  async saveResultAnswer(id: string, studentId: string, questionId: string, answer: string): Promise<void> {
+  async saveResultAnswer(id: string, studentId: string, questionId: string, answer: string, receivedAt = Date.now()): Promise<void> {
+    type AnswerErrorCode = "RESULT_NOT_FOUND" | "RESULT_FORBIDDEN" | "RESULT_COMPLETED" | "QUIZ_NOT_FOUND" | "RESULT_EXPIRED" | "INVALID_QUESTION_ID";
+    const fail = (code: AnswerErrorCode): never => { throw Object.assign(new Error(code), { code }); };
     await writeTransaction(async tx => {
-      const result = await tx.studentResult.findUnique({ where: { id }, include: { quiz: true } });
-      if (!result || result.studentId !== studentId) throw new Error("RESULT_FORBIDDEN");
-      if (result.status !== "in_progress") throw new Error("RESULT_COMPLETED");
-      if (result.quiz.timeLimit && Date.now() >= result.startedAt.getTime() + result.quiz.timeLimit * 60000) throw new Error("RESULT_EXPIRED");
-      const questions = await tx.question.findMany({ where: { quizId: result.quizId } });
-      if (!questions.some(q => q.id === questionId)) throw new Error("INVALID_QUESTION_ID");
+      const result = await tx.studentResult.findUnique({ where: { id }, include: { quiz: { select: { timeLimit: true } } } });
+      if (!result) return fail("RESULT_NOT_FOUND");
+      if (result.studentId !== studentId) fail("RESULT_FORBIDDEN");
+      if (result.status !== "in_progress") fail("RESULT_COMPLETED");
+      if (!result.quiz) fail("QUIZ_NOT_FOUND");
+      if (result.quiz.timeLimit && receivedAt >= result.startedAt.getTime() + result.quiz.timeLimit * 60000) fail("RESULT_EXPIRED");
+      const questions = await tx.question.findMany({ where: { quizId: result.quizId }, select: { id: true, correctAnswer: true } });
+      if (!questions.some(q => q.id === questionId)) fail("INVALID_QUESTION_ID");
       const answers = { ...JSON.parse(result.answers || "{}"), [questionId]: answer };
       const correct = questions.filter(q => answers[q.id] === q.correctAnswer).length;
       await tx.studentResult.update({ where: { id }, data: { answers: JSON.stringify(answers), correctAnswersCount: correct } });
     });
   }
 
-  async completeResult(id: string, studentId: string, incomingAnswers: Record<string, string>) {
+  async completeResult(id: string, studentId: string, incomingAnswers: Record<string, string>, receivedAt = Date.now()) {
     return writeTransaction(async tx => {
       const result = await tx.studentResult.findUnique({ where: { id }, include: { quiz: true } });
       if (!result || result.studentId !== studentId) throw new Error("RESULT_FORBIDDEN");
@@ -1339,7 +1382,7 @@ export class PrismaStorage implements IStorage {
       const questions = await tx.question.findMany({ where: { quizId: result.quizId } });
       const validIds = new Set(questions.map(q => q.id));
       if (Object.keys(incomingAnswers).some(key => !validIds.has(key))) throw new Error("INVALID_QUESTION_ID");
-      const acceptedQueuedAnswers = !result.quiz.timeLimit || Date.now() < result.startedAt.getTime() + result.quiz.timeLimit * 60000;
+      const acceptedQueuedAnswers = !result.quiz.timeLimit || receivedAt < result.startedAt.getTime() + result.quiz.timeLimit * 60000;
       const answers = { ...JSON.parse(result.answers || "{}"), ...(acceptedQueuedAnswers ? incomingAnswers : {}) };
       const correct = questions.filter(q => answers[q.id] === q.correctAnswer).length;
       const score = questions.length ? Math.round(correct / questions.length * 100) : 0;
@@ -1481,14 +1524,14 @@ export class PrismaStorage implements IStorage {
   }
 
   async createNotification(data: { userId: string, title: string, message: string, type?: string }): Promise<any> {
-    return await prisma.notification.create({
+    return writeTransaction(tx => tx.notification.create({
       data: {
         userId: data.userId,
         title: data.title,
         message: data.message,
         type: data.type || "info"
       }
-    });
+    }));
   }
 
   async markNotificationsAsRead(userId: string): Promise<void> {
@@ -1506,29 +1549,13 @@ export class PrismaStorage implements IStorage {
   }
 
   async getNotificationPreferences(userId: string): Promise<{ muted: boolean }> {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { notificationMuted: true }
-    });
-    return { muted: user?.notificationMuted ?? false };
+    const { muted } = await this.getVersionedNotificationPreferences(userId);
+    return { muted };
   }
 
   async updateNotificationPreferences(userId: string, muted: boolean): Promise<{ muted: boolean }> {
-    // A single idempotent assignment needs no interactive SQLite transaction.
-    // Retrying its atomic statement avoids holding a BEGIN while another writer
-    // owns the lock, and never acknowledges an unsuccessful update.
-    for (let attempt = 0; ; attempt++) {
-      try {
-        const user = await prisma.user.update({
-          where: { id: userId }, data: { notificationMuted: muted },
-          select: { notificationMuted: true }
-        });
-        return { muted: user.notificationMuted };
-      } catch (error) {
-        if (attempt >= 3 || !["P1008", "P2028", "P2034"].includes((error as any).code)) throw error;
-        await new Promise(resolve => setTimeout(resolve, 50 * (attempt + 1)));
-      }
-    }
+    const preference = await this.updateVersionedNotificationPreferences(userId, muted);
+    return { muted: preference.muted };
   }
 
   // Log methods

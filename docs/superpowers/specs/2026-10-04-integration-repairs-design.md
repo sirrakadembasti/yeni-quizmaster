@@ -1,5 +1,7 @@
 # Entegrasyon ve UX düzeltmeleri
 
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../integration-audit/defect-repairs.md) esas alınır.
+
 Kullanıcının 4 Ekim 2026 tarihli “hataları düzelt” talebi, `docs/integration-audit/verification.md` içindeki çözüm ve kabul kriterlerinin uygulanmasını yetkilendirir.
 
 ## Sınırlar

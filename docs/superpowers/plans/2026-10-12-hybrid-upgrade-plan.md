@@ -1,12 +1,14 @@
 # Hibrit yükseltme uygulama planı
 
-> **For agentic workers:** Use executing-plans to implement task-by-task; review and verification gates apply.
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../production-upgrade-rehearsal-results.md) esas alınır.
 
-**Goal:** Kurulu sistemi temizlemeden terminal/BAT/SH+web üzerinden yükseltmek ve gerçek prova ile doğrulamak.
+> **Ajan olarak çalışanlar için:** Görev görev uygulamak için executing-plans kullan; inceleme ve doğrulama kapıları geçerlidir.
 
-**Architecture:** Ortak offline yükseltme motoru native bakım yedeğini alır, sabit pnpm komutlarını çalıştırır ve adım/hata/yedek sonucunu bildirir. CLI açık proje dizini ister; mevcut loopback token/cookie/CSRF/origin başlatıcısı motor CLI'sini sabit dizinle başlatır. İlk kurulum sihirbazı ayrı kalır.
+**Amaç:** Kurulu sistemi temizlemeden terminal/BAT/SH+web üzerinden yükseltmek ve gerçek prova ile doğrulamak.
 
-**Tech Stack:** Node 22/24, pnpm9.15.1, mevcut native SQLite, HTTP bootstrap, Prisma migration deploy, Playwright Chromium, Windows BAT ve Ubuntu/WSL SH.
+**Mimari:** Ortak offline yükseltme motoru native bakım yedeğini alır, sabit pnpm komutlarını çalıştırır ve adım/hata/yedek sonucunu bildirir. CLI açık proje dizini ister; mevcut loopback token/cookie/CSRF/origin başlatıcısı motor CLI'sini sabit dizinle başlatır. İlk kurulum sihirbazı ayrı kalır.
+
+**Teknolojiler:** Node 22/24, pnpm9.15.1, mevcut native SQLite, HTTP bootstrap, Prisma migration deploy, Playwright Chromium, Windows BAT ve Ubuntu/WSL SH.
 
 ## Sınırlar
 

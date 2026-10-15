@@ -48,6 +48,7 @@ model User {
   emailVerified          Boolean @default(false)
   emailVerificationToken String?
   notificationMuted      Boolean @default(false)
+  notificationRevision   Int     @default(0)
 
   // Student relation: A student belongs to exactly one class
   classId String?

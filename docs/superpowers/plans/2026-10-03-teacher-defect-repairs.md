@@ -1,14 +1,16 @@
-# Teacher defect repair plan
+# Öğretmen hatalarını onarma planı
 
-**Goal:** Close the two approved functional findings and finish five-type survey edit/reopen acceptance with isolated data.
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../teacher-audit/defect-repairs.md) esas alınır.
 
-**Design:** Preserve the existing API and hybrid setup. Bind the report to the API's `correctAnswersCount`, retaining zero. Set reset loading before the request and use a synchronous pending guard so repeated form submissions cannot race; release the guard in `finally` and preserve retry. Reuse the teacher fixture and real Chromium/API flows. WSL is probed with a 15-second bound; if unavailable, use native Windows tooling without restarting WSL or altering OS configuration.
+**Amaç:** Onaylanan iki işlevsel bulguyu kapatmak ve izole verilerle beş tür anketin düzenleme/yeniden açma kabulünü tamamlamak.
 
-**Constraints:** Do not change production data, existing api.ts/server-setup.tsx edits, unrelated UX findings, reset API/password rules or survey type contracts. Earlier report acceptance criteria and the user's instruction to solve these findings authorize this implementation.
+**Tasarım:** Mevcut API ve hibrit kurulumu koru. Raporu API'nin `correctAnswersCount` alanına bağla; sıfır değerini koru. İstekten önce sıfırlama yükleniyor durumunu ayarla ve yinelenen form gönderimlerinin yarışmaması için eşzamanlı bir bekleyen işlem koruması kullan; korumayı `finally` içinde kaldır ve tekrar denemeyi koru. Öğretmen test ortamını ve gerçek Chromium/API akışlarını yeniden kullan. WSL, 15 saniyelik sınırla yoklanır; kullanılamıyorsa WSL'yi yeniden başlatmadan veya işletim sistemi yapılandırmasını değiştirmeden yerel Windows araçlarını kullan.
 
-- [x] Extend component regressions for correct-answer zero/positive values and pending reset/retry; observe RED.
-- [x] Apply the smallest report/reset changes and observe GREEN.
-- [x] Run actual browser report/API/export/print and pending reset/retry flows on disposable servers.
-- [x] Run the named five-type survey GUI create/publish/reopen/edit/reload test; diagnose and fix a product defect only if reproduced.
-- [x] Verify owned process shutdown, fixture ports and protected database hash.
-- [x] Update findings/checklist/README and Graphify; inspect only this work's files for staging and commit.
+**Kısıtlar:** Üretim verilerini, mevcut api.ts/server-setup.tsx düzenlemelerini, ilgisiz kullanıcı deneyimi bulgularını, sıfırlama API'sini/parola kurallarını veya anket türü sözleşmelerini değiştirme. Önceki rapor kabul ölçütleri ve kullanıcının bu bulguları çözme talimatı bu uygulamayı yetkilendirir.
+
+- [x] Doğru cevap sıfır/pozitif değerleri ve bekleyen sıfırlama/tekrar deneme için bileşen regresyonlarını genişlet; RED sonucunu gözlemle.
+- [x] En küçük rapor/sıfırlama değişikliklerini uygula ve GREEN sonucunu gözlemle.
+- [x] Geçici sunucularda gerçek tarayıcı rapor/API/dışa aktarım/yazdırma ve bekleyen sıfırlama/tekrar deneme akışlarını çalıştır.
+- [x] Adlandırılmış beş tür anketin arayüzde oluşturma/yayımlama/yeniden açma/düzenleme/yenileme testini çalıştır; ürün hatasını yalnız yeniden üretildiyse teşhis edip düzelt.
+- [x] Sahip olunan süreçlerin kapanmasını, test ortamı portlarını ve korunan veritabanı özetini doğrula.
+- [x] Bulguları/kontrol listesini/README'yi ve Graphify'ı güncelle; hazırlama alanı ve commit için yalnız bu çalışmanın dosyalarını incele.

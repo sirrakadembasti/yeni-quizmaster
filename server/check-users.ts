@@ -1,5 +1,5 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import { createRuntimePrismaClient } from './utils/sqlite-runtime';
+const prisma = createRuntimePrismaClient();
 
 async function main() {
   const users = await prisma.user.findMany();

@@ -1,5 +1,7 @@
 # Öğrenci paneli inceleme planı
 
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../student-audit/defect-repairs.md) esas alınır.
+
 1. Rota, sayfa, sekme ve işlem envanterini çıkar; her kontrolü kanıtla ilişkilendir.
 2. 5540/5541 portlarında ayrı SQLite veritabanı ve sentetik öğrenci/sınıf/sınav/anket oluştur. Gerçek verileri ve kullanıcı değişikliklerini koru.
 3. Gerçek Chromium ile navigasyon, sınav devam/teslim, anketin beş türü, sonuç/istatistik, hesap ve duyuru akışlarını çalıştır; API ve veritabanını kontrol et.

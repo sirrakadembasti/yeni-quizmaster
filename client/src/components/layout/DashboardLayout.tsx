@@ -46,6 +46,7 @@ import {
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { notificationApi } from "@/lib/api";
+import { getVersionedNotificationPreferences, saveVersionedNotificationPreferences, newerNotificationPreferences, type VersionedNotificationPreferences } from "@/lib/versioned-notification-preferences";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -71,6 +72,10 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
   const historical = role === 'admin' && academic?.year?.status === 'closed';
   const sessionContext = role !== 'admin' || !academic || (!!academic.year && !academic.pending && !academic.error);
   const queryClient = useQueryClient();
+  const preferenceOwner = useRef({ userId: user?.id, epoch: 0, busy: false });
+  if (preferenceOwner.current.userId !== user?.id) preferenceOwner.current = { userId: user?.id, epoch: preferenceOwner.current.epoch + 1, busy: false };
+  const preferenceKey = ["notifications", "preferences", "versioned", user?.id];
+  useEffect(() => () => { preferenceOwner.current.epoch++; }, []);
 
   useEffect(() => {
     if (typeof window.matchMedia !== "function") return;
@@ -121,13 +126,14 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
     queryFn: () => notificationApi.getUserNotifications(1, 5),
     refetchInterval: 10000,
     refetchOnWindowFocus: true,
-    enabled: !!user && sessionContext
+    enabled: !!user && sessionContext && !hideNavigation
   });
 
   const { data: notificationPreferences } = useQuery({
-    queryKey: ["notifications", "preferences"],
-    queryFn: () => notificationApi.getPreferences(),
-    enabled: !!user && sessionContext
+    queryKey: preferenceKey,
+    queryFn: getVersionedNotificationPreferences,
+    structuralSharing: (previous, incoming) => newerNotificationPreferences(previous as VersionedNotificationPreferences | undefined, incoming as VersionedNotificationPreferences),
+    enabled: !!user && sessionContext && !hideNavigation
   });
 
   const markAllReadMutation = useMutation({
@@ -160,11 +166,31 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
   });
 
   const muteNotificationsMutation = useMutation({
-    mutationFn: (muted: boolean) => notificationApi.updatePreferences(muted),
-    onSuccess: (preferences) => {
-      queryClient.setQueryData(["notifications", "preferences"], preferences);
+    mutationFn: (command: { muted: boolean; revision: number; userId: string; epoch: number }) => {
+      if (preferenceOwner.current.userId !== command.userId || preferenceOwner.current.epoch !== command.epoch) throw new Error('Tercih sahibi değişti.');
+      return saveVersionedNotificationPreferences(command.muted, command.revision);
     },
-    onError: () => toast.error("Bildirim tercihleri güncellenemedi. Lütfen tekrar deneyin.")
+    onMutate: async command => { await queryClient.cancelQueries({ queryKey: ["notifications", "preferences", "versioned", command.userId], exact: true }); },
+    onSuccess: ({ preferences, saved }, command) => {
+      const key = ["notifications", "preferences", "versioned", command.userId];
+      if (preferenceOwner.current.userId !== command.userId || preferenceOwner.current.epoch !== command.epoch) {
+        queryClient.invalidateQueries({ queryKey: key, exact: true });
+        return;
+      }
+      const current = queryClient.getQueryData<VersionedNotificationPreferences>(key);
+      if (current && current.revision > preferences.revision) return;
+      queryClient.setQueryData<VersionedNotificationPreferences>(key, previous => newerNotificationPreferences(previous, preferences));
+      if (!saved) toast.error("Bildirim tercihi doğrulanamadı. Güncel tercihiniz gösteriliyor; lütfen tekrar deneyin.");
+    },
+    onError: (_error, command) => {
+      queryClient.invalidateQueries({ queryKey: ["notifications", "preferences", "versioned", command.userId], exact: true });
+      if (preferenceOwner.current.userId !== command.userId || preferenceOwner.current.epoch !== command.epoch) return;
+      queryClient.invalidateQueries({ queryKey: ["notifications", "preferences", "versioned", command.userId], exact: true });
+      toast.error("Bildirim tercihleri güncellenemedi. Lütfen tekrar deneyin.");
+    },
+    onSettled: (_result, _error, command) => {
+      if (preferenceOwner.current.userId === command.userId && preferenceOwner.current.epoch === command.epoch) preferenceOwner.current.busy = false;
+    },
   });
 
   const notifications = notificationsData?.notifications || [];
@@ -305,8 +331,12 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
                     className="h-7 w-7 rounded-lg"
                     aria-label={notificationsMuted ? "Bildirimlerin sesini aç" : "Bildirimleri sessize al"}
                     title={notificationsMuted ? "Bildirimlerin sesini aç" : "Bildirimleri sessize al"}
-                    disabled={muteNotificationsMutation.isPending}
-                    onClick={() => muteNotificationsMutation.mutate(!notificationsMuted)}
+                    disabled={muteNotificationsMutation.isPending || !notificationPreferences}
+                    onClick={() => {
+                      if (!user || !notificationPreferences || preferenceOwner.current.busy) return;
+                      preferenceOwner.current.busy = true;
+                      muteNotificationsMutation.mutate({ muted: !notificationsMuted, revision: notificationPreferences.revision, userId: user.id, epoch: preferenceOwner.current.epoch });
+                    }}
                   >
                     {notificationsMuted ? <VolumeX className="h-4 w-4 text-muted-foreground" /> : <Volume2 className="h-4 w-4" />}
                   </Button>

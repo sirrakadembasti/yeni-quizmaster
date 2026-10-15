@@ -1,47 +1,63 @@
-# Admin Data Integrity Implementation Plan
+# Yönetici veri bütünlüğü uygulama planı
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox syntax for tracking.
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../admin-audit/remaining-repairs-verification.md) esas alınır.
 
-**Goal:** Preserve teacher creation assignments and question editor type/answer data.
+> **Ajan olarak çalışanlar için:** ZORUNLU ALT BECERİ: Bu planı görev görev uygulamak için superpowers:subagent-driven-development veya superpowers:executing-plans kullanın. Adımların takibinde onay kutusu sözdizimi kullanılır.
 
-**Architecture:** Keep existing API routes and payloads. Validate selected relation IDs at the user route and connect them inside the current Prisma user transaction. Make question state updates functional and adjust the answer index during option removal.
+**Amaç:** Öğretmen oluştururken seçilen atamaları ve soru düzenleyicisindeki tür/cevap verilerini korumak.
 
-**Tech Stack:** React, TypeScript, Express, Prisma SQLite, Vitest, Playwright.
+**Mimari:** Mevcut API rotaları ve istek verileri korunur. Seçilen ilişki kimlikleri kullanıcı rotasında doğrulanır ve mevcut Prisma kullanıcı işlemi içinde bağlanır. Soru durumu güncellemeleri işlevsel hale getirilir; seçenek kaldırılırken cevap indeksi ayarlanır.
 
-## Global Constraints
+**Teknolojiler:** React, TypeScript, Express, Prisma SQLite, Vitest, Playwright.
 
-- Keep the hybrid terminal, `.bat`/`.sh`, and web setup flows intact.
-- Run all database writes against disposable `quizmaster-test-*` SQLite databases.
-- Preserve the pre-existing edits in `client/src/lib/api.ts` and `client/src/pages/server-setup.tsx`.
+## Genel kısıtlar
+
+- Hibrit terminal, `.bat`/`.sh` ve web kurulum akışlarını koru.
+- Bütün veritabanı yazmalarını geçici `quizmaster-test-*` SQLite veritabanlarında çalıştır.
+- `client/src/lib/api.ts` ve `client/src/pages/server-setup.tsx` dosyalarındaki önceden var olan düzenlemeleri koru.
 
 ---
 
-### Task 1: Teacher creation assignments
+### Görev 1: Öğretmen oluşturma atamaları
 
-**Files:** `server/tests/api/admin-audit-people.test.ts`, `server/api-routes/user.ts`, `server/storage.ts`.
+**Dosyalar:** `server/tests/api/admin-audit-people.test.ts`, `server/api-routes/user.ts`, `server/storage.ts`.
 
-**Interfaces:** POST `/api/users` accepts `assignedCategoryIds: string[]` and `classIds: string[]` for an admin-created teacher; `storage.createUser` performs a transaction and returns the created user.
+**Arayüzler:** POST `/api/users`, yönetici tarafından oluşturulan öğretmen için `assignedCategoryIds: string[]` ve `classIds: string[]` kabul eder; `storage.createUser` bir işlem yürütür ve oluşturulan kullanıcıyı döndürür.
 
-- [x] Replace the current defect characterization assertion with a desired read-after-create relation assertion; add a rejected invalid-ID case with no account created.
-- [x] Run the scoped real-Prisma API test and confirm assertion failure on current behavior.
-- [x] Validate arrays/IDs and teacher role in the route; connect relations in `createUser` transaction.
-- [x] Run scoped real-Prisma tests (9/9) and the teacher browser flow (1/1); empty selection remains valid by the existing form/API contract.
+- [x] Mevcut hatayı tanımlayan doğrulamayı, oluşturma sonrası okumada beklenen ilişkiyi doğrulayan kontrolle değiştir; hesap oluşturulmadan reddedilen geçersiz kimlik senaryosu ekle.
+- [x] Kapsama özel gerçek Prisma API testini çalıştır ve mevcut davranışın doğrulamada başarısız olduğunu teyit et.
+- [x] Rotada dizileri/kimlikleri ve öğretmen rolünü doğrula; ilişkileri `createUser` işlemi içinde bağla.
+- [x] Kapsama özel gerçek Prisma testlerini (9/9) ve öğretmen tarayıcı akışını (1/1) çalıştır; mevcut form/API sözleşmesine göre boş seçim geçerli kalır.
 
-### Task 2: Question editor data preservation
+### Görev 2: Soru düzenleyicisinde veri korunumu
 
-**Files:** `client/src/test/admin-audit-question-editor.test.tsx`, `client/src/pages/create-quiz.tsx`, `client/src/components/quiz/QuestionItem.tsx`.
+**Dosyalar:** `client/src/test/admin-audit-question-editor.test.tsx`, `client/src/pages/create-quiz.tsx`, `client/src/components/quiz/QuestionItem.tsx`.
 
-**Interfaces:** `QuestionItem` sends updates through existing callbacks; `QuestionForm.correctAnswer` remains an index in the form, serialized to answer text on save.
+**Arayüzler:** `QuestionItem`, güncellemeleri mevcut geri çağırımlar aracılığıyla gönderir; `QuestionForm.correctAnswer` formda indeks olarak kalır, kayıtta cevap metnine dönüştürülerek serileştirilir.
 
-- [x] Change characterization tests to expect selected survey type and unchanged answer text after deleting an earlier option; add removal-of-selected-answer validation.
-- [x] Run the scoped component test and confirm the expected failures.
-- [x] Use functional question state updates and adjust/clear answer selection on option deletion.
-- [x] Run scoped real-component test (5/5) and client type-check. Editor page was opened in the isolated browser; the exact three corrected interactions were verified in real React component tests.
+- [x] Davranış tanımlama testlerini, seçilen anket türünün ve önceki bir seçenek silindikten sonra cevap metninin korunmasını bekleyecek şekilde değiştir; seçili cevabın kaldırılması için doğrulama ekle.
+- [x] Kapsama özel bileşen testini çalıştır ve beklenen başarısızlıkları doğrula.
+- [x] İşlevsel soru durumu güncellemelerini kullan; seçenek silindiğinde cevap seçimini ayarla/temizle.
+- [x] Kapsama özel gerçek bileşen testini (5/5) ve istemci tip kontrolünü çalıştır. Düzenleyici sayfası izole tarayıcıda açıldı; düzeltilen üç etkileşimin her biri gerçek React bileşen testleriyle doğrulandı.
 
-### Task 3: Verification and reporting
+### Görev 3: Doğrulama ve raporlama
 
-**Files:** `docs/admin-audit/README.md`, `docs/admin-audit/people.md`, `docs/admin-audit/quizzes.md`.
+**Dosyalar:** `docs/admin-audit/denetim-ozeti.md`, `docs/admin-audit/people.md`, `docs/admin-audit/quizzes.md`.
 
-- [x] Re-run affected real API/component/browser tests and both TypeScript type-checks.
-- [x] Update issue status and evidence, leaving later repair slices explicitly open.
-- [x] Check diff and real database fingerprint before claiming completion; real `quiz.db` hash, size and mtime match the audit baseline.
+- [x] Etkilenen gerçek API/bileşen/tarayıcı testlerini ve iki TypeScript tip kontrolünü yeniden çalıştır.
+- [x] Sorun durumunu ve kanıtları güncelle; sonraki onarım bölümlerini açıkça açık bırak.
+- [x] Tamamlandığını bildirmeden önce farkı ve gerçek veritabanı parmak izini kontrol et; gerçek `quiz.db` özeti, boyutu ve değişiklik zamanı denetim başlangıcıyla eşleşir.
+
+## Birleştirilen ilk onarım tasarımı
+
+> 14 Ekim 2026: ayrı belge bu bölüme içeriği korunarak birleştirildi. Aşağıdaki metin özgün tarihli tasarım/kapsam kaydıdır; güncel açık görev listesi değildir.
+
+## Yönetici veri bütünlüğü: ilk onarım bölümü
+
+Onaylanan yönetici denetimi, önce onarılacak iki bağımsız veri kaybı yolu belirledi: öğretmen oluşturma seçilen atamaları düşürüyor; soru düzenleyicisi ise seçenekler değiştiğinde anket türünü kaybediyor veya doğru cevabı kaydırıyor. Bu bölüm, mevcut yönetici rotalarını, API yanıt biçimlerini, hibrit terminal/web kurulumunu ve ilgisiz kullanıcı düzenlemelerini koruyarak bu yolları değiştirir.
+
+Öğretmen oluşturma, yazmadan önce yöneticinin sağladığı kategori ve sınıf kimliği dizilerini doğrulayacak. Mevcut `createUser` işlemi öğretmeni oluşturup seçilen ilişkileri birlikte bağlayacak. Boş seçimler geçerli kalır. Geçersiz kimlikler, bozuk diziler veya öğretmen olmayan bir kişi için sağlanan atamalar hesap oluşturulmadan reddedilir. Oluşturma sonrası okuma, formun gönderdiği ilişkilerin aynısını göstermelidir.
+
+Soru düzenleyicisi ardışık güncellemeleri mevcut React durumuna uygulayacak; böylece tek olaydan gelen tür/seçenek/yapılandırma değişiklikleri birikir. Önceki bir seçenek kaldırıldığında seçili cevap indeksi ayarlanacak; seçili cevabın kaldırılması ise kaydetmeden önce yeni seçim gerektirecek. Formun mevcut API sözleşmesi değişmez.
+
+Gerçek Prisma/API testleri ve gerçek React bileşen testleri önce istenen davranış için başarısız olacak, ardından asgari onarımlar sonrası geçecek. İzole denetim tarayıcı ortamı, son yönetici iş akışı kontrolü için kullanılabilir kalır. Sonraki onarım bölümleri eski öğretmen erişimini, atomik sınav/arşiv yazmalarını, sonuç hesaplamalarını ve denetim raporundaki daha geniş kullanıcı deneyimi sorunlarını kapsar.

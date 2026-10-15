@@ -1,5 +1,23 @@
 # QuizMaster Graphify Mimari Haritası
 
+## 15 Ekim 2026 kapasite sürümü
+
+Gerçek `graphify update .` ve `graphify diagnose multigraph --graph graphify-out/graph.json` çıkış 0 ile tamamlandı: **3.881 düğüm, 10.032 kenar, 201 topluluk**. İşlem kapısı, bağımsız okumalar, revizyonlu bildirim tercihleri, sonuç özetleri ve sınav prova kaynakları çalışma ağacından çıkarıldı. Eksik/sarkan/dış uç, unverified düğüm ve tam yinelenen kenar 0; self-loop 30. Post-build tanı ham üretici kaybını kanıtlamaz.
+
+23 SQL dosyası `tree_sitter_sql` eksikliği nedeniyle katkı vermedi. Markdown/görsel semantiği ve LLM topluluk etiketleri yenilenmedi; 99 topluluk merkez düğüm adıyla yeniden adlandırıldı. `built_at_commit` güncelleme başlangıcındaki `0a3bc1f` HEAD'idir; harita commit öncesi çalışma ağacını içerir. Yeni canvas testi yapılmadı. Harita güncellemesi çalışma zamanı kabulü değildir; [80 öğrencilik gerçek API provası ve sınırlar](2026-10-14-capacity-school-exam-results.md) ayrı rapordur. Aşağıdaki sayılar önceki üretimlerin tarihsel kayıtlarıdır.
+
+
+## Refactor ön incelemesinin son haritası — 14 Ekim 2026
+
+Gerçek Graphify tam ve artımlı kod güncellemesi çıkış 0: **3.806 düğüm, 9.855 kenar, 207 topluluk**. Son 503 seçili kaynak/manifest içerik özeti eşleşti. Resmî multigraph diagnose eksik/dangling/dış uç ve exact duplicate 0, 28 self-loop raporladı. God-nodes sorgusunda cn, PrismaStorage, Button, IStorage ve DashboardLayout yüksek bağlantılı sınırlardır; degree runtime maliyeti değildir.
+
+23 SQL migration için tree_sitter_sql ve PDF için pypdf eklentisi bulunmadığından bu içerikler grafiğe katkı vermedi. Markdown/görsel semantiği ve LLM topluluk adlandırması yenilenmedi. Ana grafik yönsüzdür; public URL, CLI, config, test fixture ve SQL trigger bağları kaynak incelemesiyle ayrıca doğrulanır. Çalışma ağacı eşzamanlı değişebildiğinden bu harita son kontrol anının fotoğrafıdır.
+
+[Yol haritası](refactor-ve-temizlik-yol-haritasi.md) ve [dosya bazında envanter](refactor-dosya-envanteri.json) onay öncesi incelemedir; kaynak refactoru/silme veya canlı DB işlemi yapılmadı. Aşağıdaki harita sayıları önceki tarihli koşuları korur.
+
+
+> 14 Ekim önceki dokümantasyon düzenlemesi: aşağıdaki eski grafik sayıları kendi kod AST üretimlerinin tarihli kanıtıdır. Bu belge birleştirmelerinde grafik yeniden üretilmedi; Markdown semantiği önceki üretimlerde de kapsam dışındaydı. Güncel belge yolları [docs dizinindedir](../README.md#dokümantasyon-ve-kanıt-dizinleri).
+
 **12 Ekim 2026 akademik arşiv kapanışı:** Son kaynaklardan yerel AST güncellemesi ve `diagnose multigraph` çıkış 0: **3.238 düğüm, 8.407 kenar, 183 topluluk**. Eksik/sarkan/yinelenen/unverified/external uç 0; self-loop 14. Gerçek Chromium'da `warmHistoryProjection()` araması ve kaynak ayrıntısı geçti; 12 komşu ve doğru `server/services/archive-history-projection.ts` yolu görsel olarak incelendi, sayfa hatası yoktu. Üretim başlangıç HEAD'i `df104eb` test commit'idir; son kaynaklar ve belge bağlantıları çalışma ağacından haritaya dahil edildi. Korunan iki yerel kullanıcı dosyası da haritada bulunur, arşiv commit'lerine dahil değildir. 22 SQL dosyasında parser eksikliği sürer; Markdown/PDF/görsel semantiği ve LLM etiketleri yenilenmedi (180 kayıtlı etiket, 29 topluluk merkez adıyla yeniden adlandırıldı). Post-build tanı ham üretici kaybını ölçmez. [Gerçek kabul kanıtı ve sınırlar](academic-archive-review/verification.md) harita doğrulamasından ayrıdır. Aşağıdaki tarihler önceki üretim kayıtlarıdır.
 
 **4 Ekim 2026 entegrasyon onarımları sonrası güncel AST haritası:** `graphify update .` ve `diagnose multigraph` çıkış0: **2770 düğüm,7126 kenar,159 topluluk**. Eksik/sarkan/yinelenen/unverified/external uç0; self-loop12, producer suppression12. `built_at_commit=5d8a4d8e8e7c79a312cc462c3f3351f0485e68fd` güncelleme başlangıç HEAD'idir; onarımlar ve korunan iki kullanıcı dosyası çalışma ağacından çıkarıldı. Yeni `createSessionStore()`/`session-store.ts` düğümleri grafiktedir.166 kayıtlı etiket ve53 merkez adıyla yeniden adlandırma; LLM semantik etiketleri yenilenmedi, token maliyeti0. SQL parser eksikliği14 dosyada sürer; PDF/görsel/Markdown semantiği bu yerel AST koşusunda güncellenmedi. Yeni canvas testi yapılmadı. [Tanı](integration-audit/graphify-diagnostic.txt) ve [geçen gerçek kabul kontrolleri](integration-audit/defect-repairs.md) ayrı kanıtlardır. Aşağıdaki üretimler tarihsel kayıttır.

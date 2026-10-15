@@ -2,6 +2,7 @@ import { Router, type Response } from "express";
 import { storage } from "../storage";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { archiveResultGuard } from '../middleware/archive-readonly';
+import { RESULTS_SUMMARY_PAGE_SIZE } from '../services/results-summary';
 
 const router: Router = Router();
 router.use('/:id', (req, res, next) => ['GET', 'HEAD', 'OPTIONS'].includes(req.method) ? next() : requireAuth(req, res, () => archiveResultGuard(req, res, next)));
@@ -18,13 +19,26 @@ const csvCell = (value: unknown) => {
 router.get("/", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
     const queryValue = (value: unknown) => typeof value === "string" && value !== "all" ? value : undefined;
-    const results = await storage.getFilteredResults({
+    const filters = {
       quizId: queryValue(req.query.quizId),
       categoryId: queryValue(req.query.categoryId),
       classId: queryValue(req.query.classId),
       studentId: queryValue(req.query.studentId),
       createdBy: req.user!.role === "teacher" ? req.user!.id : queryValue(req.query.teacherId),
-    });
+    };
+    if (req.query.projection === 'summary') {
+      const rawLimit = req.query.limit;
+      const cursor = req.query.cursor;
+      const limit = rawLimit === undefined ? RESULTS_SUMMARY_PAGE_SIZE
+        : typeof rawLimit === 'string' && /^\d+$/.test(rawLimit) ? Number(rawLimit) : NaN;
+      if (!Number.isInteger(limit) || limit < 1 || limit > RESULTS_SUMMARY_PAGE_SIZE ||
+          (cursor !== undefined && (typeof cursor !== 'string' || !cursor.length || cursor.length > 128))) {
+        return res.status(400).json({ message: 'Geçersiz sonuç sayfalama parametreleri.' });
+      }
+      const page = await storage.getResultsSummary(filters, { limit, cursor: cursor as string | undefined });
+      return res.json(page);
+    }
+    const results = await storage.getFilteredResults(filters);
     res.json({ results });
   } catch (error) {
     res.status(500).json({ message: "Sınav sonuçları alınamadı." });

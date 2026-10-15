@@ -1,5 +1,7 @@
 # Öğrenci paneli altı hata onarımı
 
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../student-audit/defect-repairs.md) esas alınır.
+
 Onay: Kullanıcı öğrenci audit raporundaki hataları düzeltmeyi istedi. Kapsam S-B01..S-B06; yeni özellikler ve UX adayları dahil değil. api.ts ve server-setup.tsx kullanıcı düzenlemeleri korunur.
 
 1. Mevcut altı kırmızı E2E'yi izole Windows fixture'da yeniden çalıştır. Test başarı kriterleri audit findings.md'de yazılıdır.

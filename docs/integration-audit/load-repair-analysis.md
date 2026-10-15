@@ -1,5 +1,7 @@
 # Oturum yükü kök neden analizi
 
+> **Tarihsel kapsam/inceleme kaydı.** Kaynak satırları ve ölçümler özgün denetim tarihine aittir. Sonraki onarım kabulü [sonuç raporundadır](defect-repairs.md); buradaki ölçüm güncel üretim kapasitesi garantisi değildir.
+
 4 Ekim 2026, HEAD `5d8a4d8` sonrası izole fixture. Altı mevcut GET rotası, dört ayrı rol oturumu, gerçek Express/Prisma/SQLite ve 15s istemci sınırı kullanıldı. Bu sonuçlar üretim kapasitesi veya eşzamanlı gerçek kullanıcı garantisi değildir.
 
 ## Karşılaştırma

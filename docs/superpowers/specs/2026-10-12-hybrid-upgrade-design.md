@@ -1,5 +1,7 @@
 # Veri koruyan hibrit güncelleme tasarımı
 
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../production-upgrade-rehearsal-results.md) esas alınır.
+
 Kullanıcının 6 Ekim üretim provası talimatı yükseltme/rollback/yük testlerini ve bulunan hataların giderilmesini önceden onaylar; kullanıcı çevrimiçi olmadan sürdürmemizi ister. Bu tasarım o kapsamın Görev 2 ayrıntısıdır; ayrıca onay beklenmez.
 
 ## Sorun ve seçenekler

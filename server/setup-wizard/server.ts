@@ -10,7 +10,7 @@ import express, { type Request } from "express";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import bcrypt from "bcryptjs";
-import { PrismaClient } from "@prisma/client";
+import { createRuntimePrismaClient } from "../utils/sqlite-runtime";
 import { ZodError } from "zod";
 import { getProjectRoot } from "../utils/project-paths";
 import { buildDeploymentArtifacts, saveDeploymentConfig } from "../utils/deployment-config";
@@ -81,7 +81,7 @@ async function fixedPnpm(args: string[], extraEnv: NodeJS.ProcessEnv) {
 
 async function createFirstAdmin(payload: SetupPayload, databaseUrl: string) {
   process.env.DATABASE_URL = databaseUrl;
-  const prisma = new PrismaClient();
+  const prisma = createRuntimePrismaClient({ databaseUrl });
   try {
     const existingAdmin = await prisma.user.findFirst({ where: { role: "admin" }, select: { id: true } });
     if (existingAdmin) throw new Error("Veritabanında zaten bir yönetici var. Mevcut kurulum sihirbazla devralınamaz.");

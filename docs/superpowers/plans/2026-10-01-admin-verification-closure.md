@@ -1,91 +1,64 @@
-# Admin verification closure implementation plan
+# Yönetici doğrulama kapanışı uygulama planı
 
-> **For agentic workers:** Execute this plan task by task with independent delegated inspections and serialized verification runners.
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../admin-audit/verification-closure.md) esas alınır.
 
-**Goal:** Verify the remaining admin exports, printing, accessibility and fresh hybrid setup before starting the teacher panel audit.
+> **Ajan olarak çalışanlar için:** Bu planı bağımsız görevlendirilmiş incelemeler ve seri çalışan doğrulama araçlarıyla görev görev uygula.
 
-**Architecture:** Browser tests exercise the isolated audit runtime. Fresh setup must run from a separate project directory so generated credentials, deployment configuration and SQLite files cannot target the working installation. Accessibility tree and print rendering evidence are reported separately from physical screen reader and printer access.
+**Amaç:** Öğretmen paneli denetimine başlamadan önce kalan yönetici dışa aktarımlarını, yazdırmayı, erişilebilirliği ve taze hibrit kurulumu doğrulamak.
 
-**Tech Stack:** Playwright Chromium, Node test runner, OOXML, pnpm, Windows BAT and Bash SH launchers.
+**Mimari:** Tarayıcı testleri izole denetim çalışma ortamını kullanır. Üretilen kimlik bilgileri, dağıtım yapılandırması ve SQLite dosyalarının çalışan kurulumu hedefleyememesi için taze kurulum ayrı proje dizininde çalışmalıdır. Erişilebilirlik ağacı ve baskı görüntüleme kanıtları fiziksel ekran okuyucu ve yazıcı erişiminden ayrı raporlanır.
 
-## Global constraints
+**Teknolojiler:** Playwright Chromium, Node test çalıştırıcısı, OOXML, pnpm, Windows BAT ve Bash SH başlatıcıları.
 
-- Preserve existing user changes in client/src/lib/api.ts and client/src/pages/server-setup.tsx.
-- Never mutate server/data/quiz.db or actual installation secrets/configuration.
-- Serialize browser, installer, build and Graphify runners.
-- Do not count unavailable or unrun checks as passed; remain in admin scope.
+## Genel kısıtlar
 
-## Export and print verification
+- client/src/lib/api.ts ve client/src/pages/server-setup.tsx içindeki mevcut kullanıcı değişikliklerini koru.
+- server/data/quiz.db veya gerçek kurulum sırlarını/yapılandırmasını asla değiştirme.
+- Tarayıcı, kurulum, derleme ve Graphify çalıştırıcılarını seri çalıştır.
+- Kullanılamayan veya çalıştırılmayan kontrolleri geçti sayma; yönetici kapsamında kal.
 
-- [x] Inventory each admin export and print entry point.
-- [x] Add tests-e2e/admin-export-print.spec.ts with real download content assertions and print media/layout evidence.
-- [x] Run the new spec against isolated data and retain named results and artifacts.
-- [x] Investigate failures and apply regression-tested fixes; final production export/print run passed 16/16, including exact text in a 21-quiz PDF.
+## Dışa aktarım ve yazdırma doğrulaması
 
-## Accessibility verification
+- [x] Her yönetici dışa aktarım ve yazdırma giriş noktasını belirle.
+- [x] Gerçek indirilen içerik doğrulamaları ve baskı ortamı/yerleşim kanıtlarıyla tests-e2e/admin-export-print.spec.ts ekle.
+- [x] Yeni senaryoyu izole verilerle çalıştır; adlandırılmış sonuçları ve çıktıları sakla.
+- [x] Başarısızlıkları araştır ve regresyon testli düzeltmeler uygula; son üretim dışa aktarım/yazdırma turu, 21 sınavlık PDF'deki tam metin dahil 16/16 geçti.
 
-**Scope decision, 3 October 2026:** The user removed actual spoken screen-reader
-use from current admin acceptance. Existing ARIA labels and computed-name,
-keyboard and focus checks remain required. The historical Narrator attempt
-stays unverified and is not counted as a pass. No manual reader acceptance or
-reader-related hold remains. Latest fresh hybrid acceptance passed 3/3;
-teacher-panel work has not started.
+## Erişilebilirlik doğrulaması
 
-- [x] Inventory available screen reader access and browser accessibility checks.
-- [x] Add tests-e2e/admin-accessibility-closure.spec.ts for named controls, keyboard focus and tab flows.
-- [x] Run the initial full spec (47/53), review page-specific findings and distinguish actual reader coverage from automated evidence.
-- [x] Repair verified defects with focused regressions and recheck all 53 production browser scenarios; real reader coverage remains explicitly unavailable.
+**Kapsam kararı, 3 Ekim 2026:** Kullanıcı gerçek sesli ekran okuyucu kullanımını güncel yönetici kabulünden çıkardı. Mevcut ARIA etiketleri, hesaplanan ad, klavye ve odak kontrolleri zorunlu kalır. Tarihsel Narrator denemesi doğrulanmamış kalır ve başarılı sayılmaz. Elle ekran okuyucu kabulü veya ekran okuyucuyla ilgili bekletme kalmamıştır. Son taze hibrit kabul 3/3 geçti; öğretmen paneli çalışması başlamadı.
 
-## Fresh hybrid setup
+- [x] Kullanılabilir ekran okuyucu erişimini ve tarayıcı erişilebilirlik kontrollerini belirle.
+- [x] Adlandırılmış kontroller, klavye odağı ve sekme akışları için tests-e2e/admin-accessibility-closure.spec.ts ekle.
+- [x] İlk tam senaryoyu (47/53) çalıştır; sayfaya özel bulguları incele ve gerçek ekran okuyucu kapsamını otomatik kanıtlardan ayır.
+- [x] Doğrulanan hataları odaklı regresyonlarla onar ve 53 üretim tarayıcı senaryosunun tamamını yeniden kontrol et; gerçek ekran okuyucu kapsamı açıkça kullanılamaz durumda kalır.
 
-**Latest, 3 October 2026:** Second BAT full run passed exit 0,
-13:07:32.905–13:14:43.008 UTC, including real install/builds/14 migrations,
-admin/persistence/reentry, production API/Vite UI login and verified cleanup
-with unchanged protected source hashes. Historical acceptance totals: BAT 1/2,
-terminal 1/10, Git SH 1/2. Terminal attempt nine passed every product phase but
-failed cleanup using the previous PID-zero snapshot; it remains failed full
-acceptance. Second Git SH full run passed exit 0, 13:59:05.376–14:09:50.009 UTC, with install/wizard/API/Vite UI login, cleanup and protected hashes verified. [SH full pass](../../admin-audit/evidence/closure/hybrid/sh-second-passed/result.json). Tenth terminal full run passed exit 0, 14:10:59.825–14:16:26.729 UTC: wizard/API/Vite admin login, cleanup and protected hashes verified. [Terminal full pass](../../admin-audit/evidence/closure/hybrid/terminal-tenth-passed/result.json). Latest same-code terminal/BAT/Git SH acceptance is 3/3; historical failures remain. Git SH is not Linux/WSL evidence.
-Real CIM isolated System Idle PID 0 as the only invalid snapshot row; the fix
-excludes only numeric zero and retains fail-closed positive identity checks.
-Unconditional handle release is separate from process-stop proof. Focused VM
-and handle tests RED 7 pass/3 fail → GREEN 10/10 (543.600 → 463.488 ms), not
-fresh-install proof. [Retry evidence](../../admin-audit/evidence/closure/hybrid/retry-2026-10-03-process-cleanup.json)
-and [BAT full pass](../../admin-audit/evidence/closure/hybrid/bat-second-passed/result.json).
+## Taze hibrit kurulum
 
-- [x] Inspect terminal, BAT/SH and web wizard prerequisites and isolation boundaries.
-- [x] Prepare a fresh disposable project with no production DB or credentials.
-- [x] Exercise terminal, BAT and Git SH launchers through the real wizard and API/UI login; latest same-code matrix passed 3/3; Linux/WSL remains outside verified coverage.
-- [x] Check generated settings, persistence, reentry guards and owned cleanup; all three latest runs passed with unchanged protected source hashes.
+**Son durum, 3 Ekim 2026:** İkinci tam BAT turu çıkış 0 ile geçti; 13:07:32.905–13:14:43.008 UTC. Gerçek kurulum/derlemeler/14 migration, yönetici/kalıcılık/yeniden giriş, üretim API/Vite arayüz girişi ve korunan kaynak özetleri değişmeden doğrulanan temizlik dahildir. Tarihsel kabul toplamları: BAT 1/2, terminal 1/10, Git SH 1/2. Dokuzuncu terminal denemesi bütün ürün aşamalarını geçti ancak önceki PID-sıfır anlık görüntüsünü kullanırken temizlikte başarısız oldu; tam kabulü başarısız kalır. İkinci tam Git SH turu çıkış 0 ile, 13:59:05.376–14:09:50.009 UTC aralığında geçti; kurulum/sihirbaz/API/Vite arayüz girişi, temizlik ve korunan özetler doğrulandı. [SH tam başarı](../../admin-audit/evidence/closure/hybrid/sh-second-passed/result.json). Onuncu tam terminal turu çıkış 0 ile, 14:10:59.825–14:16:26.729 UTC aralığında geçti: sihirbaz/API/Vite yönetici girişi, temizlik ve korunan özetler doğrulandı. [Terminal tam başarı](../../admin-audit/evidence/closure/hybrid/terminal-tenth-passed/result.json). Son aynı kodla terminal/BAT/Git SH kabulü 3/3; tarihsel başarısızlıklar korunur. Git SH, Linux/WSL kanıtı değildir.
+Gerçek CIM, tek geçersiz anlık görüntü satırı olarak System Idle PID 0'ı ayırdı; düzeltme yalnız sayısal sıfırı dışlar ve belirsizlikte reddeden pozitif kimlik kontrollerini korur.
+Koşulsuz tanıtıcı serbest bırakma, süreç durdurma kanıtından ayrıdır. Odaklı VM ve tanıtıcı testleri RED 7 başarılı/3 başarısız → GREEN 10/10 (543.600 → 463.488 ms); taze kurulum kanıtı değildir. [Tekrar deneme kanıtı](../../admin-audit/evidence/closure/hybrid/retry-2026-10-03-process-cleanup.json) ve [BAT tam başarı](../../admin-audit/evidence/closure/hybrid/bat-second-passed/result.json).
 
-**Actual matrix, 2 October 2026:** Terminal completed eight isolated full attempts, BAT one, Git SH one; full acceptance is **0/8, 0/1, 0/1**. Terminal attempt seven, BAT and SH completed real installation, both builds, migration/first admin, generated config/env/lock and persisted settings/reentry guards. BAT additionally passed production API admin login, then failed real UI `/auth` DOM navigation at 30 seconds. SH failed the API startup single-check bound before API/UI login. BAT/SH cleanup remained unverified and source protected-file hashes were unchanged. [Preserved results and stage evidence](../../admin-audit/hybrid-setup-closure.md) distinguish these passed stages from failed full acceptance.
+- [x] Terminal, BAT/SH ve web sihirbazı önkoşullarını ve izolasyon sınırlarını incele.
+- [x] Üretim DB'si veya kimlik bilgileri olmadan taze geçici proje hazırla.
+- [x] Terminal, BAT ve Git SH başlatıcılarını gerçek sihirbaz ve API/arayüz girişiyle çalıştır; son aynı kodlu matris 3/3 geçti; Linux/WSL doğrulanan kapsamın dışında kalır.
+- [x] Üretilen ayarları, kalıcılığı, yeniden giriş korumalarını ve sahip olunan süreçlerin temizliğini kontrol et; son üç turun tamamı korunan kaynak özetleri değişmeden geçti.
 
-The 2 October decision not to retry is historical. On 3 October, the coordinator investigated Windows harness metadata and completed real terminal/BAT/Git SH setup retries. The prospective 120-second fresh-login navigation budget was not reached in the recorded SH run and proves no success or performance repair. The latest same-code hybrid matrix has now passed 3/3, so this acceptance hold is resolved; teacher-panel work has not started. Actual reader speech/interaction remains historically unverified and is excluded from current acceptance by the user decision above. Git SH is not Linux/WSL evidence. The fresh-setup checkboxes are complete based on the three latest API/UI and cleanup passes, not on historical partial runs.
+**Gerçek matris, 2 Ekim 2026:** Terminal sekiz, BAT bir, Git SH bir izole tam deneme tamamladı; tam kabul **0/8, 0/1, 0/1**. Yedinci terminal denemesi, BAT ve SH gerçek kurulumu, iki derlemeyi, migration/ilk yöneticiyi, üretilen config/env/lock dosyalarını ve kalıcı ayarlar/yeniden giriş korumalarını tamamladı. BAT ayrıca üretim API yönetici girişini geçti; ardından gerçek arayüz `/auth` DOM gezinmesi 30 saniyede başarısız oldu. SH, API/arayüz girişinden önce API açılışının tek kontrol sınırında başarısız oldu. BAT/SH temizliği doğrulanmamış kaldı ve kaynak korunan dosya özetleri değişmedi. [Korunan sonuçlar ve aşama kanıtları](../../admin-audit/hybrid-setup-closure.md), geçen bu aşamaları başarısız tam kabulden ayırır.
 
-## Integration and report
+2 Ekim'deki tekrar denememe kararı tarihseldir. 3 Ekim'de koordinatör Windows test düzeneği üstverilerini araştırdı ve gerçek terminal/BAT/Git SH kurulum tekrarlarını tamamladı. Öngörülen 120 saniyelik taze giriş gezinme bütçesine kayıtlı SH turunda ulaşılmadı; bu süre herhangi bir başarı veya performans onarımı kanıtlamaz. Son aynı kodlu hibrit matris artık 3/3 geçti; bu kabul bekletmesi çözüldü, öğretmen paneli çalışması başlamadı. Gerçek ekran okuyucu sesi/etkileşimi tarihsel olarak doğrulanmamış kalır ve yukarıdaki kullanıcı kararıyla güncel kabulden çıkarılmıştır. Git SH, Linux/WSL kanıtı değildir. Taze kurulum kutuları tarihsel kısmi turlar üzerinden değil, son üç API/arayüz ve temizlik başarısı üzerinden tamamlandı.
 
-Verified matrix limits: Windows terminal/BAT/Git SH with controlled `--no-open`;
-native Linux/WSL, default OS browser opener, wizard dev-start button, physical
-printer, actual desktop Excel and SMTP delivery remain outside this proof.
-The reader requirement was excluded by the user, not passed. Teacher-panel
-auditing has not started.
+## Entegrasyon ve rapor
 
-- [x] Update README and relevant admin/setup documentation with evidence and explicit limits.
-- [x] Run appropriate checks for changed code and independently review changes; retain the failed combined run separately from the passing focused retry.
-- [x] Update Graphify, diagnose generated outputs and verify the actual browser graph/search/info panel.
-- [x] Confirm the final production DB fingerprint before commit: SHA256 8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158, unchanged.
-- [x] Prepare an explicit owned-file commit list and preserve the user's unstaged API/localhost setup edits; report the resulting commit separately.
+Doğrulanan matrisin sınırları: kontrollü `--no-open` ile Windows terminal/BAT/Git SH; yerel Linux/WSL, varsayılan işletim sistemi tarayıcı açıcısı, sihirbaz geliştirme başlatma düğmesi, fiziksel yazıcı, gerçek masaüstü Excel ve SMTP teslimi bu kanıtın dışında kalır. Ekran okuyucu gereksinimi kullanıcı tarafından kapsamdan çıkarıldı; geçti sayılmadı. Öğretmen paneli denetimi başlamadı.
 
-Current integration state: the completed combined Node run had 31 tests, 30 passed/1 failed, exit 1, total 108.821 seconds. Startup case took 50.352 seconds: native PNG passed but no CSRF arrived within the 30-second API deadline; lifecycle spawned=true/exited=false/closed=false and only pnpm invocation output do not prove an app cause. The earlier combined interrupted run remains INCOMPLETE (2 pass/1 fail, rest unrun, Ctrl+C exit1; startup110.48s). Earlier startup1/1green17.84s and real BAT API/login green remain separate evidence. Test-only finally/pipe-unref/stop-proof fixture cleanup RED0/3→GREEN3/3 and error-output sentinel RED3pass1fail767.411ms→GREEN4/4 462.748ms preserve ownership and suppress sensitive error output. The separate final native-only run passed1/1 exit0, test71.9360927s/total72.6083536s, with API deadline120s instead of30s and unchanged native PNG/CSRF/file assertions. Command: pnpm exec node --test --test-concurrency=1 scripts/server-build-startup.test.mjs with CHECKPOINT_DISABLE=1. This does not turn the combined30/31 run into31/31, and is no performance/fresh claim. Graphify update/diagnose and actual visual checks are complete as recorded below; final DB fingerprint is unchanged; the commit is reported separately. The former no-retry decision is historical; real terminal/BAT/Git SH retries completed with latest same-code acceptance 3/3 on 3 October 2026.
+- [x] README ve ilgili yönetici/kurulum belgelerini kanıtlarla ve açık sınırlarla güncelle.
+- [x] Değişen kod için uygun kontrolleri çalıştır ve değişiklikleri bağımsız incele; başarısız birleşik turu geçen odaklı tekrar denemeden ayrı sakla.
+- [x] Graphify'ı güncelle, üretilen çıktıları tanıla ve gerçek tarayıcı grafik/arama/bilgi panelini doğrula.
+- [x] Commit öncesinde son üretim DB parmak izini doğrula: SHA256 8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158, değişmedi.
+- [x] Bu çalışmaya ait dosyaların açık commit listesini hazırla ve kullanıcının hazırlama alanına alınmamış API/localhost kurulum düzenlemelerini koru; oluşan commit'i ayrı raporla.
 
-**Graphify, 3 October 2026:** update/diagnose exited 0; 2206 nodes, 6030 edges,
-114 communities, 0 missing/dangling/exact-duplicate/unverified records and 3
-self-loops in the generated graph. Real CDN/Chromium visual run exited 0:
-visible canvas, matching graph counts, UI search-selected `deploySetupDatabase()`
-source and degree 6, no page/console/request failures, owned browser/server closed.
-[Durable update/diagnostic limits](../../admin-audit/evidence/closure/graphify/graph-update-diagnostic.json)
-and [actual visual result](../../admin-audit/evidence/closure/graphify/result.json)
-remain separate from application/fresh-install acceptance. Local AST omitted 14
-SQL files and PDF text; no LLM semantic refresh/relabel ran. Worktree user
-localhost edits were included in the map but stay outside the owned commit.
-The precommit `built_at_commit` 5b83a1163e6a49d7d2c392350813823d2e91172f is not
-standalone freshness proof. The resulting commit is identified by Git and the final response rather than embedded in generation-time evidence.
+Güncel entegrasyon durumu: tamamlanan birleşik Node turunda 31 test vardı; 30 başarılı/1 başarısız, çıkış 1, toplam 108.821 saniye. Açılış senaryosu 50.352 saniye sürdü: yerel PNG geçti ancak 30 saniyelik API süresinde CSRF gelmedi; yaşam döngüsü spawned=true/exited=false/closed=false ve yalnız pnpm çağrısı çıktısı uygulama kaynaklı neden kanıtlamaz. Önceki kesilen birleşik tur EKSİK kalır (2 başarılı/1 başarısız, kalanı çalıştırılmadı, Ctrl+C çıkış1; açılış110.48s). Önceki açılış1/1başarılı17.84s ve gerçek BAT API/giriş başarısı ayrı kanıtlar olarak kalır. Yalnız testlere ait finally/pipe-unref/stop-proof test ortamı temizliği RED0/3→GREEN3/3 ve hata çıktısı koruması RED3başarılı1başarısız767.411ms→GREEN4/4 462.748ms sahipliği korur ve hassas hata çıktısını bastırır. Ayrı son yalnız yerel tur 1/1 geçti, çıkış0, test71.9360927s/toplam72.6083536s; API süresi30s yerine120s, yerel PNG/CSRF/dosya doğrulamaları değişmedi. Komut: pnpm exec node --test --test-concurrency=1 scripts/server-build-startup.test.mjs; CHECKPOINT_DISABLE=1 ile. Bu, birleşik30/31 turunu31/31 yapmaz; performans/taze kurulum iddiası değildir. Graphify update/diagnose ve gerçek görsel kontroller aşağıdaki kayda göre tamamlandı; son DB parmak izi değişmedi; commit ayrı raporlanır. Önceki tekrar denememe kararı tarihseldir; gerçek terminal/BAT/Git SH tekrarları 3 Ekim 2026'da son aynı kodlu kabul 3/3 ile tamamlandı.
+
+**Graphify, 3 Ekim 2026:** update/diagnose çıkış 0; 2206 düğüm, 6030 kenar, 114 topluluk, üretilen grafikte 0 eksik/boşta/tam yinelenen/doğrulanmamış kayıt ve 3 kendine döngü. Gerçek CDN/Chromium görsel turu çıkış 0: görünür tuval, eşleşen grafik sayıları, arayüz aramasıyla seçilen `deploySetupDatabase()` kaynağı ve derece 6, sayfa/konsol/istek hatası yok, sahip olunan tarayıcı/sunucu kapandı.
+[Kalıcı güncelleme/tanılama sınırları](../../admin-audit/evidence/closure/graphify/graph-update-diagnostic.json) ve [gerçek görsel sonuç](../../admin-audit/evidence/closure/graphify/result.json) uygulama/taze kurulum kabulünden ayrı kalır. Yerel AST, 14 SQL dosyasını ve PDF metnini atladı; LLM anlamsal yenileme/yeniden etiketleme çalışmadı. Çalışma ağacındaki kullanıcı localhost düzenlemeleri haritaya dahil edildi ancak bu çalışmanın commit'i dışında kalır. Commit öncesi `built_at_commit` 5b83a1163e6a49d7d2c392350813823d2e91172f tek başına güncellik kanıtı değildir. Oluşan commit, üretim zamanı kanıtlarına gömülmek yerine Git ve son yanıtla belirtilir.

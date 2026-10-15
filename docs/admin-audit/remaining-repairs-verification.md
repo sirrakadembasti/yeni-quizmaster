@@ -1,6 +1,6 @@
 # Kalan yönetici onarımları — doğrulama
 
-1 Ekim 2026. Bu kayıt uygulanan onarımları ve tamamlanan doğrulama kapsamını açıklar; denenmeyen davranışları başarılı saymaz. [İlk denetim envanteri](./README.md), [sistem/ayarlar](./inventory-settings.md), [kişi/sınıf](./people.md), [sınav/rapor](./quizzes.md) ve [ikinci paket doğrulaması](./repair-verification.md) tarihsel kayıtlardır. Kabul edilen güncel davranışlar [onarım sözleşmelerindedir](./repair-contracts.md).
+1 Ekim 2026. Bu kayıt uygulanan onarımları ve tamamlanan doğrulama kapsamını açıklar; denenmeyen davranışları başarılı saymaz. [İlk denetim envanteri](denetim-ozeti.md), [sistem/ayarlar](./inventory-settings.md), [kişi/sınıf](./people.md), [sınav/rapor](./quizzes.md) ve [ikinci paket doğrulaması](./repair-verification.md) tarihsel kayıtlardır. Kabul edilen güncel davranışlar [onarım sözleşmelerindedir](./repair-contracts.md).
 
 ## Kapsam
 

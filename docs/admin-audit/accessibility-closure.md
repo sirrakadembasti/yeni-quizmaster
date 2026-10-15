@@ -1,225 +1,226 @@
-# Admin accessibility closure coverage
+# Yönetici erişilebilirlik kabulünün kapsamı
 
-Prepared 2026-10-01. The suite is `tests-e2e/admin-accessibility-closure.spec.ts`.
-**Final production browser verification: 53/53 passed**, exit 0, with no skipped
-or flaky cases. The run started **2026-10-01 at 17:18:02 UTC** and completed in
-650.37 seconds (10.84 minutes). Raw proof: `results-accessibility-final.json`;
-preserved artifacts: `test-results-accessibility-final/`.
+2026-10-01 tarihinde hazırlandı. Test paketi: `tests-e2e/admin-accessibility-closure.spec.ts`.
+**Son üretim tarayıcısı doğrulaması: 53/53 geçti**, çıkış 0; atlanan veya kararsız test yok.
+Koşu **2026-10-01, 17:18:02 UTC**'de başladı ve
+650.37 saniyede (10.84 dakika) tamamlandı. Ham kanıt: `results-accessibility-final.json`;
+korunan çıktılar: `test-results-accessibility-final/`.
 
-The initial complete 53-test browser run recorded 47 passed and 6 failed.
-Its raw result and artifacts are preserved as `results-accessibility-full-initial.json`
-and `test-results-accessibility-full-initial`. The six failures reproduced three
-defects on desktop and mobile. The final production browser recheck after the
-repairs below passed all 53 cases. Unit results remain separate supporting evidence.
+İlk tam 53 testlik tarayıcı koşusunda 47 test geçti, 6 test başarısız oldu.
+Ham sonuç ve çıktılar `results-accessibility-full-initial.json`
+ve `test-results-accessibility-full-initial` olarak korunur. Altı başarısızlık,
+masaüstü ve mobilde üç kusuru yeniden üretti. Aşağıdaki onarımlardan sonraki
+son üretim tarayıcısı tekrarında 53 testin tamamı geçti. Birim test sonuçları ayrı destekleyici kanıtlardır.
 
-## Run scope
+## Koşu kapsamı
 
-Run the browser suite through the audit configuration:
+Tarayıcı test paketini denetim yapılandırmasıyla çalıştırın:
 
 ```powershell
 pnpm exec playwright test --config playwright.admin-audit.config.ts admin-accessibility-closure.spec.ts
 ```
 
-The suite requires the recorded disposable runtime, backend 5510 and production
-preview 5511, and rejects other base URLs or database paths. It logs in using the
-audit admin fixture. It opens and cancels dialogs, navigates tabs and menus, and
-opens/closes a results selector; it never submits forms, deletes data, changes
-notification preferences, or changes deployment configuration. Login can create
-session/audit records in the disposable database.
+Test paketi, kaydedilen geçici çalışma ortamını, 5510 arka uç portunu ve 5511 üretim
+önizleme portunu gerektirir; diğer temel URL'leri veya veritabanı yollarını reddeder.
+Denetim için hazırlanan yönetici hesabıyla giriş yapar. İletişim kutularını açıp iptal eder,
+sekme ve menülerde gezinir, sonuç seçicisini açıp kapatır; form göndermez, veri silmez,
+bildirim tercihlerini veya dağıtım yapılandırmasını değiştirmez. Giriş işlemi geçici
+veritabanında oturum/denetim kayıtları oluşturabilir.
 
-Coverage: 23 routes at 1440x900 and 390x844; initial and reachable tab states;
-computed ARIA snapshots attached to the Playwright report; computed accessible
-names for exposed controls, including password fields; meaningful profile labels;
-actual Tab reachability; settings arrow/Home/End tab contract; category dialog
-forward/reverse focus trap and Escape restoration; results select keyboard opening,
-option focus and Escape restoration; all four management log views (Kullanıcı
-Logları, E-Posta Logları, Şifre Talepleri, Sistem Hata & İşlemleri) with API/loading
-readiness checks before their computed-name inventories; mobile menu trap, background exclusion,
-Escape restoration and keyboard link navigation. Programmatic focus sets the
-starting point only in the exhaustive tab inventory; dedicated keyboard flows
-reach their starting controls by Tab. Screenshots capture keyboard focus for
-human review; they do not constitute an automated focus contrast test.
+Kapsam: 1440x900 ve 390x844 boyutlarında 23 rota; ilk ve erişilebilir sekme durumları;
+Playwright raporuna eklenen hesaplanmış ARIA anlık görüntüleri; parola alanları dahil
+sunulan kontrollerin hesaplanmış erişilebilir adları; anlamlı profil etiketleri;
+Tab ile gerçek erişim; ayarlarda ok/Home/End tuşlarıyla sekme davranışı; kategori
+iletişim kutusunda ileri/geri odak tuzağı ve Escape sonrası odak dönüşü; sonuç
+seçicisinin klavyeyle açılması, seçenek odağı ve Escape sonrası odak dönüşü;
+hesaplanmış ad envanterlerinden önce API/yükleme hazır olma kontrolü yapılan dört
+yönetim günlüğü görünümü (Kullanıcı Logları, E-Posta Logları, Şifre Talepleri,
+Sistem Hata & İşlemleri); mobil menü odak tuzağı, arka planın dışlanması,
+Escape sonrası odak dönüşü ve klavyeyle bağlantı gezintisi. Programatik odak yalnız
+kapsamlı sekme envanterinin başlangıç noktasını belirler; özel klavye akışları
+başlangıç kontrollerine Tab ile ulaşır. Ekran görüntüleri insan incelemesi için
+klavye odağını kaydeder; otomatik odak kontrastı testi sayılmaz.
 
-The control count is read once per role (and once for password fields) for each
-snapshot state; each control still receives the same visibility/name check.
-Full tab inventories repeat approximately 14 states on `/management` (initial,
-four main tabs, five user-role tabs and four log-button views) and five states on `/settings` (initial
-and four tabs). Basic-route audit tests have taken 22–33 seconds on this host,
-so those two exhaustive tests explicitly allow 600 and 240 seconds respectively.
-Individual assertion timeouts and network-settling checks are unchanged. These
-are test-operation budgets; they do not excuse or prove application responsiveness.
+Her anlık görüntü durumunda kontrol sayısı rol başına bir kez (parola alanları için de
+bir kez) okunur; her kontrol aynı görünürlük/ad denetiminden geçmeye devam eder.
+Tam sekme envanterleri `/management` üzerinde yaklaşık 14 durumu (ilk durum,
+dört ana sekme, beş kullanıcı rolü sekmesi ve dört günlük düğmesi görünümü),
+`/settings` üzerinde beş durumu (ilk durum ve dört sekme) tekrarlar. Bu makinede
+temel rota denetimleri 22–33 saniye sürdüğü için bu iki kapsamlı test sırasıyla
+600 ve 240 saniyeye açıkça izin verir. Tekil doğrulama zaman aşımı ve ağın durulma
+kontrolleri değişmedi. Bunlar test işlemi süre bütçeleridir; uygulamanın yanıt verme
+hızını mazur göstermez veya kanıtlamaz.
 
-The recorded desktop survey RED run in this Chromium exposed its two native
-`input[type=date]` controls as unnamed `textbox` roles. The role/name inventory
-therefore caught both date-label failures. This is evidence about the browser
-used for the audit; it does not guarantee that every browser or accessibility API
-exposes native date controls with the same role. Explicit label associations and
-`getByLabelText` unit checks remain appropriate for those fields.
+Bu Chromium'da kaydedilen masaüstü anket RED koşusu, iki yerel
+`input[type=date]` kontrolünü adsız `textbox` rolleri olarak sundu. Rol/ad
+envanteri bu nedenle iki tarih etiketi hatasını da yakaladı. Bu, denetimde
+kullanılan tarayıcıya ilişkin kanıttır; her tarayıcı veya erişilebilirlik API'sinin
+yerel tarih kontrollerini aynı rolle sunduğunu garanti etmez. Açık etiket
+ilişkileri ve `getByLabelText` birim kontrolleri bu alanlar için hâlâ uygundur.
 
-## Reader availability and limits
+## Ekran okuyucu erişimi ve sınırları
 
-**Current scope decision, 3 October 2026:** The user removed the requirement
-for actual spoken screen-reader use from this admin acceptance scope. The
-existing ARIA labels, computed accessible-name checks and keyboard/focus
-requirements remain in place. The historical reader attempt below is retained
-as unverified evidence, not a passed check or a requirement before teacher-panel
-work. Latest same-code terminal/BAT/Git SH setup acceptance passed 3/3 on
-3 October; the hybrid hold is resolved. Teacher-panel auditing has not started.
+**Güncel kapsam kararı, 3 Ekim 2026:** Kullanıcı, gerçek sesli ekran okuyucu
+kullanımı gereksinimini bu yönetici kabul kapsamından çıkardı. Mevcut ARIA
+etiketleri, hesaplanmış erişilebilir ad kontrolleri ve klavye/odak gereksinimleri
+korunur. Aşağıdaki tarihsel okuyucu denemesi, başarılı kontrol veya öğretmen paneli
+çalışmasının ön koşulu olarak değil, doğrulanmamış kanıt olarak saklanır.
+Son aynı kodlu terminal/BAT/Git SH kurulum kabulü 3 Ekim'de 3/3 geçti;
+hibrit kurulum beklemesi çözüldü. Öğretmen paneli denetimi başlamadı.
 
-Initial read-only PowerShell inventory found `C:\Windows\System32\Narrator.exe` present.
-Neither `C:\Program Files\NVDA\nvda.exe` nor
-`C:\Program Files (x86)\NVDA\nvda.exe` was present. Before the reader launch, no matching Narrator,
-nvda, jfw, or ZoomText process appeared in `Get-Process`. No top-level matching
-NVDA/Freedom/JAWS/ZoomText directory appeared in the two Program Files roots.
-This is a limited installation inventory, not proof that no other reader exists.
+İlk salt okunur PowerShell envanterinde `C:\Windows\System32\Narrator.exe` bulundu.
+`C:\Program Files\NVDA\nvda.exe` ve
+`C:\Program Files (x86)\NVDA\nvda.exe` bulunmadı. Okuyucu başlatılmadan önce
+`Get-Process` çıktısında Narrator, nvda, jfw veya ZoomText ile eşleşen süreç yoktu.
+İki Program Files kökünde NVDA/Freedom/JAWS/ZoomText ile eşleşen üst düzey dizin
+bulunmadı. Bu sınırlı bir kurulum envanteridir; başka okuyucu bulunmadığının kanıtı değildir.
 
-The coordinating agent subsequently reset the Windows UI helper, successfully
-listed applications, and launched `Narrator.exe`. The helper returned a Narrator
-window, but `get_window_state` reported that it runs at a higher Windows integrity
-level than the helper. The available screenshot was tiny and no accessibility
-tree could be obtained for that window. No audio-capture capability was exposed.
-**Narrator was launched, but actual speech, reading order and reader interaction
-remain unverified.** This is a specific integrity-level/audio limitation, not a
-claim that all native application access is disabled.
+Koordinasyon ajanı daha sonra Windows arayüz yardımcısını sıfırladı,
+uygulamaları başarıyla listeledi ve `Narrator.exe`'yi başlattı. Yardımcı bir
+Narrator penceresi döndürdü; ancak `get_window_state`, pencerenin yardımcıdan daha
+yüksek Windows bütünlük düzeyinde çalıştığını bildirdi. Mevcut ekran görüntüsü
+çok küçüktü ve pencerenin erişilebilirlik ağacı alınamadı. Ses yakalama yeteneği
+sunulmadı. **Narrator başlatıldı; ancak gerçek konuşma, okuma sırası ve okuyucu
+etkileşimi doğrulanmadı.** Bu belirli bir bütünlük düzeyi/ses sınırlamasıdır;
+tüm yerel uygulama erişiminin kapalı olduğu iddiası değildir.
 
-Playwright ARIA snapshots and accessible-name matchers inspect a computed
-accessibility representation in the browser. They do not establish Narrator/NVDA pronunciation, announcements,
-browse mode, reading order, reader-specific shortcuts, or actual screen-reader
-usability. Those would require an interactive reader session, which is excluded
-from the current acceptance scope by the 3 October user decision. Full WCAG conformance,
-color contrast, every validation/live announcement, and every destructive workflow
-are outside the assertions in this suite.
+Playwright ARIA anlık görüntüleri ve erişilebilir ad eşleştiricileri, tarayıcıda
+hesaplanan erişilebilirlik temsilini inceler. Narrator/NVDA telaffuzunu, duyuruları,
+gezinme modunu, okuma sırasını, okuyucuya özgü kısayolları veya gerçek ekran okuyucu
+kullanılabilirliğini kanıtlamaz. Bunlar etkileşimli okuyucu oturumu gerektirir;
+3 Ekim kullanıcı kararıyla bu oturum güncel kabul kapsamından çıkarılmıştır.
+Tam WCAG uyumu, renk kontrastı, tüm doğrulama/canlı duyurular ve tüm yıkıcı
+akışlar bu test paketinin doğrulamaları dışındadır.
 
-## Label repair and unit regression evidence
+## Etiket onarımı ve birim regresyon kanıtı
 
-Source inspection found unassociated profile/password labels in
-`client/src/pages/settings.tsx`; telephone, address and e-mail placeholders were
-different from their visible labels. The current patch links all four profile
-fields and three password fields using `htmlFor`/`id` pairs. Two regressions in
-`client/src/test/admin-inventory.test.tsx` require meaningful accessible names and
-clicking each visible label to focus its matching control. Label-click assertions
-also catch the name field's matching-placeholder fallback. These are DOM/unit
-checks, not real-reader speech validation. No complete browser-suite pass is
-claimed here.
+Kaynak incelemesi `client/src/pages/settings.tsx` içinde ilişkilendirilmemiş
+profil/parola etiketleri buldu; telefon, adres ve e-posta yer tutucuları görünür
+etiketlerden farklıydı. Güncel yama dört profil alanını ve üç parola alanını
+`htmlFor`/`id` çiftleriyle bağlar. `client/src/test/admin-inventory.test.tsx`
+içindeki iki regresyon, anlamlı erişilebilir adları ve her görünür etikete
+tıklandığında ilgili kontrolün odaklanmasını gerektirir. Etiket tıklama
+kontrolleri, ad alanının eşleşen yer tutucudan ad alma durumunu da yakalar.
+Bunlar DOM/birim kontrolleridir; gerçek okuyucunun sesli okuma doğrulaması değildir.
+Burada tam tarayıcı test paketinin geçtiği iddia edilmez.
 
-A separate report-readiness/race check uses the real API shape: the student
-results endpoint returns `quiz.category` as a string, flattened in
-`server/storage.ts`, not a `{ name }` object. The test fixtures were corrected to
-that shape before checking the race.
+Ayrı bir rapor hazır olma/istek yarışı kontrolü gerçek API veri biçimini kullanır:
+öğrenci sonuçları uç noktası `quiz.category` değerini `{ name }` nesnesi olarak
+değil, `server/storage.ts` içinde düzleştirilmiş metin olarak döndürür.
+İstek yarışı sınanmadan önce test verileri bu biçime düzeltildi.
 
-From `client`, the following race command failed with exit 1 before the effect
-cleanup patch; B's report metadata accompanied A's exported rows (`result-student-a`
-and `Sınav A`, instead of B's row):
+`client` dizininden çalıştırılan aşağıdaki yarış komutu, etki temizliği yamasından
+önce çıkış 1 ile başarısız oldu; B'nin rapor üst verilerine A'nın dışa aktarılan
+satırları eşlik etti (B satırı yerine `result-student-a` ve `Sınav A`):
 
 ```powershell
 pnpm exec vitest run src/test/admin-student-report-request-race.test.tsx
 ```
 
-The patch clears stale rows/categories/identity at request start, ignores inactive
-requests, commits results/categories/identity together, and guards stale errors
-and loading completion. The subsequent serialized targeted run exited 0 with
-**2 test files passed and 4 tests passed** (91.94 seconds):
+Yama, istek başında eski satırları/kategorileri/kimliği temizler, etkin olmayan
+istekleri yok sayar, sonuçları/kategorileri/kimliği birlikte uygular ve eski hata
+ve yükleme tamamlanması bildirimlerine karşı koruma sağlar. Ardından sırayla
+çalıştırılan hedefli koşu çıkış 0 ile **2 test dosyası ve 4 test geçti**
+sonucunu verdi (91.94 saniye):
 
 ```powershell
 pnpm exec vitest run src/test/admin-student-report-readiness.test.tsx src/test/admin-student-report-request-race.test.tsx --maxWorkers=1
 ```
 
-Those four tests cover pending report controls, loaded selected-student identity
-with completed numeric zero, missing identity, and the deferred A-to-B race. They
-do not verify Narrator speech; the separate final browser recheck passed 53/53.
+Bu dört test, bekleyen rapor kontrollerini, tamamlanmış gerçek sayısal sıfırla
+birlikte yüklenen seçili öğrenci kimliğini, eksik kimliği ve geciktirilmiş
+A'dan B'ye istek yarışını kapsar. Narrator konuşmasını doğrulamaz;
+ayrı son tarayıcı tekrarında 53/53 geçti.
 
-## Final initial-run defects and focused repair evidence
+## İlk koşunun son kusurları ve odaklı onarım kanıtı
 
-AX06: desktop and mobile `/admin/archive` computed inventories exposed two
-unnamed promotion comboboxes. Source labels for the source and target class were
-unassociated. The repair links their visible labels to unique trigger IDs and
-also links the education-year input to its visible label.
+AX06: masaüstü ve mobil `/admin/archive` hesaplanmış envanterleri iki adsız
+sınıf atlatma seçim kutusu gösterdi. Kaynak ve hedef sınıf etiketleri
+ilişkilendirilmemişti. Onarım görünür etiketleri benzersiz tetikleyici kimliklerine
+bağlar; eğitim yılı alanını da görünür etiketiyle ilişkilendirir.
 
-AX07: desktop and mobile `/student/results` exposed three unnamed filter
-comboboxes. The repair links the category, score and sort triggers to their
-visible labels, and links the exam-name search input too. Names now describe
-each control's purpose independently of its selected value or placeholder.
-Filter values, handlers and report request behavior are unchanged.
+AX07: masaüstü ve mobil `/student/results` üç adsız filtre seçim kutusu gösterdi.
+Onarım kategori, puan ve sıralama tetikleyicilerini görünür etiketleriyle
+ilişkilendirir; sınav adı arama alanını da bağlar. Adlar artık kontrolün amacını
+seçili değerinden veya yer tutucusundan bağımsız açıklar. Filtre değerleri,
+işleyicileri ve rapor isteği davranışı değişmedi.
 
-AX08: category-dialog Escape restoration failed on both viewports. The dialog
-was opened programmatically without a Radix `DialogTrigger`; closing returned
-focus to the page body. The repair captures the actual button for both new-course
-and per-course edit paths and restores focus to that connected opener on close.
-Existing submit and mutation behavior is unchanged.
+AX08: kategori iletişim kutusunda Escape sonrası odak dönüşü iki görünüm
+boyutunda da başarısız oldu. Kutu Radix `DialogTrigger` olmadan programatik
+açılmıştı; kapanışta odak sayfa gövdesine dönüyordu. Onarım, hem yeni ders hem
+ders düzenleme yollarında gerçek düğmeyi saklar ve kapanışta odağı hâlâ bağlı
+olan açıcıya döndürür. Mevcut gönderim ve veri değişikliği davranışı değişmedi.
 
-The focused regression requires all seven meaningful label names and keyboard
-Enter/Escape focus restoration for both add and edit. Before production repairs,
-the following command exited 1 with **4 failed tests** (68.10 seconds): names
-were empty and both close paths focused the body. After repairs it exited 0 with
-**1 file passed and 4 tests passed** (39.17 seconds). From `client`:
+Odaklı regresyon, yedi anlamlı etiket adının tamamını ve ekleme/düzenleme için
+klavyeyle Enter/Escape odak dönüşünü gerektirir. Üretim onarımlarından önce
+aşağıdaki komut çıkış 1 ile **4 başarısız test** verdi (68.10 saniye): adlar
+boştu ve iki kapanış yolu da gövdeyi odakladı. Onarımlardan sonra çıkış 0 ile
+**1 dosya ve 4 test geçti** (39.17 saniye). `client` dizininden:
 
 ```powershell
 pnpm exec vitest run src/test/admin-accessibility-final-repairs.test.tsx --maxWorkers=1
 ```
 
-`git diff --check` passed for these three source files and the new test, with
-line-ending notices only. These DOM/unit results support the repairs; the final
-browser matrix passed 53/53 and actual reader speech remains unverified.
+`git diff --check`, bu üç kaynak dosyası ve yeni test için yalnız satır sonu
+bildirimleriyle geçti. Bu DOM/birim sonuçları onarımları destekler;
+son tarayıcı matrisi 53/53 geçti ve gerçek okuyucu konuşması doğrulanmadı.
 
-The existing audit's unnamed-control check uses textContent/ARIA/title attribute
-presence. That heuristic can miss broken references and placeholder-only names;
-the new suite records computed snapshots and checks computed names instead.
+Mevcut denetimin adsız kontrol kontrolü textContent/ARIA/title özniteliklerinin
+varlığına bakar. Bu sezgisel yöntem bozuk referansları ve yalnız yer tutucuya
+dayanan adları kaçırabilir; yeni test paketi hesaplanmış anlık görüntüleri
+kaydeder ve hesaplanmış adları denetler.
 
-## Initial full-run runtime evidence
+## İlk tam koşunun çalışma zamanı kanıtı
 
-The preserved initial 53-case run finished with **47 passed and 6 failed** in
-822.84 seconds. This is initial evidence, not the outcome of the subsequent
-rerun. The raw report is `results-accessibility-full-initial.json`; the decoded
-per-route and viewport records are in
-`evidence/closure/accessibility/runtime-summary-initial.json`.
+Korunan ilk 53 testlik koşu **47 geçti ve 6 başarısız** sonucuyla
+822.84 saniyede tamamlandı. Bu ilk kanıttır; sonraki tekrarın sonucu değildir.
+Ham rapor `results-accessibility-full-initial.json`; çözümlenen rota ve görünüm
+boyutu kayıtları `evidence/closure/accessibility/runtime-summary-initial.json` içindedir.
 
-All 53 runtime attachments were inspected. They recorded **0 uncaught page
-errors, 1 console error, 0 API HTTP error responses, 1 failed request, and 0
-aborted requests**. The console error and failed request belong to the same
-incident in the passing mobile `/management` case (390 × 844): GET
-`/api/admin/logs/system` failed with `net::ERR_NETWORK_CHANGED`. This is recorded
-as a browser transport failure; there was no HTTP error status or uncaught
-JavaScript error. Its underlying cause and subsequent recovery were not proven
-by this run. The accessibility case passing does not establish that this request
-succeeded.
+53 çalışma zamanı eki incelendi. **0 yakalanmamış sayfa hatası, 1 konsol hatası,
+0 API HTTP hata yanıtı, 1 başarısız istek ve 0 iptal edilmiş istek** kaydedildi.
+Konsol hatası ve başarısız istek, geçen mobil `/management` testindeki
+(390 × 844) aynı olaya aittir: GET `/api/admin/logs/system` isteği
+`net::ERR_NETWORK_CHANGED` ile başarısız oldu. Bu, tarayıcı aktarım hatası
+olarak kaydedilir; HTTP hata durumu veya yakalanmamış JavaScript hatası yoktu.
+Temel neden ve sonraki toparlanma bu koşuda kanıtlanmadı. Erişilebilirlik
+testinin geçmesi bu isteğin başarılı olduğunu göstermez.
 
-The 53 captured document navigation samples had a median load completion of
-1,342.1 ms, a 95th percentile of 3,096.2 ms, and a maximum of 3,980.2 ms. Median
-DOMContentLoaded was 582.2 ms (95th percentile 1,458.8 ms; maximum 3,320.6 ms).
-Median response start was 21.3 ms and median DOM interactive was 47.4 ms. These
-are the last captured document navigation timings per case on this local audit
-machine, not every SPA transition or a controlled performance benchmark. The
-recorded 1,429-byte transfer size is the document response only, not total page
-assets. The diagnostic collector records console errors rather than warnings,
-API responses at HTTP 400 or above, and request failures/cancellations
-separately. The durable summary preserves these measurement limits and the
-individual records without credentials or token values.
+Kaydedilen 53 belge gezinme örneğinde yükleme tamamlanma medyanı
+1,342.1 ms, yüzde 95 değeri 3,096.2 ms ve maksimum 3,980.2 ms idi.
+DOMContentLoaded medyanı 582.2 ms (yüzde 95 değeri 1,458.8 ms;
+maksimum 3,320.6 ms) idi. Yanıt başlangıcı medyanı 21.3 ms,
+DOM etkileşime hazır olma medyanı 47.4 ms idi. Bunlar yerel denetim
+makinesinde test başına son kaydedilen belge gezinme süreleridir; tüm SPA
+geçişleri veya kontrollü performans karşılaştırması değildir. Kaydedilen
+1,429 bayt aktarım boyutu yalnız belge yanıtıdır; tüm sayfa varlıkları değildir.
+Tanı toplayıcısı uyarıları değil konsol hatalarını, HTTP 400 ve üzeri API
+yanıtlarını ve istek başarısızlıklarını/iptallerini ayrı kaydeder. Kalıcı özet,
+ölçüm sınırlarını ve tekil kayıtları kimlik bilgileri veya token değerleri olmadan korur.
 
-## Final full-run runtime evidence
+## Son tam koşunun çalışma zamanı kanıtı
 
-All **53 final runtime attachments** were decoded and inspected. Per-route and
-viewport records are preserved in
-`evidence/closure/accessibility/runtime-summary-final.json`. Actual final
-counters are **0 uncaught page errors, 1 console error, 0 API HTTP error
-responses, 1 failed request, and 0 aborted requests**. The two nonzero events
-describe one incident in the passing mobile `/student/result/audit-result` case
-(390 × 844): GET `/css2` failed with `net::ERR_NAME_NOT_RESOLVED`. The path matches
-the Google Fonts stylesheet declared in `client/index.html`; attribution to that
-external font request is an inference because diagnostic attachments retain
-pathname rather than hostname. There was no HTTP error status or uncaught
-JavaScript exception. The test passing does not prove the failed request
-recovered. This final DNS incident is separate from the initial run's
-`/api/admin/logs/system` transport incident described above.
+**53 son çalışma zamanı ekinin** tamamı çözümlenip incelendi. Rota ve görünüm
+boyutu kayıtları `evidence/closure/accessibility/runtime-summary-final.json`
+içinde korunur. Gerçek son sayaçlar: **0 yakalanmamış sayfa hatası, 1 konsol
+hatası, 0 API HTTP hata yanıtı, 1 başarısız istek ve 0 iptal edilmiş istek**.
+Sıfır olmayan iki olay, geçen mobil `/student/result/audit-result` testindeki
+(390 × 844) tek olayı anlatır: GET `/css2`, `net::ERR_NAME_NOT_RESOLVED`
+ile başarısız oldu. Yol, `client/index.html` içinde tanımlanan Google Fonts
+stil dosyasıyla eşleşir; tanı ekleri sunucu adını değil yalnız yol adını
+sakladığından bu dış yazı tipi isteğine atıf bir çıkarımdır. HTTP hata durumu
+veya yakalanmamış JavaScript istisnası yoktu. Testin geçmesi başarısız isteğin
+toparlandığını kanıtlamaz. Bu son DNS olayı, ilk koşunun yukarıda açıklanan
+`/api/admin/logs/system` aktarım olayından ayrıdır.
 
-Final navigation measurements include 53 positive response-start, DOM
-interactive and DOMContentLoaded samples, but only **40 positive load-completion
-samples**: 13 captured `loadEventEnd` values were zero, so load completion was not
-measured for those cases. Median DOMContentLoaded was 431.2 ms (95th percentile
-1,411.0 ms; maximum 4,695.0 ms). Among the 40 positive load-completion samples,
-the median was 1,443.65 ms, the 95th percentile was 5,063.2 ms and the maximum
-was 7,930.2 ms; these cannot be treated as measurements for all 53 cases.
-Document transfer size was 1,428
-bytes, which excludes other page assets. These are local document timings, not
-a controlled performance benchmark or complete SPA-transition measurements.
-Console warnings and actual assistive-reader speech remain outside this
-verification; the final browser pass does not establish zero network errors.
+Son gezinme ölçümleri 53 pozitif yanıt başlangıcı, DOM etkileşime hazır olma ve
+DOMContentLoaded örneği içerir; ancak yalnız **40 pozitif yükleme tamamlanma
+örneği** vardır: kaydedilen 13 `loadEventEnd` değeri sıfırdı, dolayısıyla bu
+testlerde yükleme tamamlanması ölçülmedi. DOMContentLoaded medyanı 431.2 ms
+(yüzde 95 değeri 1,411.0 ms; maksimum 4,695.0 ms) idi. 40 pozitif yükleme
+tamamlanma örneğinde medyan 1,443.65 ms, yüzde 95 değeri 5,063.2 ms ve
+maksimum 7,930.2 ms idi; bunlar 53 testin tamamının ölçümü sayılamaz.
+Belge aktarım boyutu 1,428 bayttı; diğer sayfa varlıklarını kapsamaz.
+Bunlar yerel belge süreleridir; kontrollü performans karşılaştırması veya tam
+SPA geçiş ölçümü değildir. Konsol uyarıları ve gerçek yardımcı okuyucu konuşması
+bu doğrulamanın dışındadır; son tarayıcı geçişi sıfır ağ hatasını kanıtlamaz.

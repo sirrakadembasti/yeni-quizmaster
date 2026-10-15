@@ -3,11 +3,12 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./api-routes/routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import { configureHTTPTransport } from "./utils/http-transport";
 import session from "express-session";
 import { createSessionStore } from "./utils/session-store";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
-import helmet from "helmet";
+import { httpSecurity } from "./utils/http-security";
 import path from "path";
 import fs from "fs";
 import { getProjectRoot } from "./utils/project-paths";
@@ -24,9 +25,11 @@ import { getEffectiveDeploymentConfig } from "./utils/deployment-config";
 import { startDataRetentionWorker } from "./services/data-retention";
 import { createArchiveWorker } from './services/archive-worker';
 import { archiveDb } from './services/archive-db';
+import { initializeStorage } from './storage';
 import { getArchiveBackupRoot } from './api-routes/archive';
 import { createAnnualCaptureGuard } from './middleware/annual-capture-guard';
 import { createAcademicContextGuard } from './middleware/academic-context';
+import { captureTrustedRequestReceipt } from './utils/request-receipt';
 
 // DNS Fallback: Windows/MEB ağında getaddrinfo ENOTFOUND hatalarını önler
 setupDnsFallback();
@@ -39,6 +42,10 @@ dotenv.config({ path: path.resolve(serverDirectory, ".env") });
 dotenv.config({ path: path.resolve(projectRoot, ".env") });
 
 const deploymentConfig = getEffectiveDeploymentConfig();
+const frontendUrl = process.env.FRONTEND_URL || deploymentConfig.publicUrl || "";
+const isHttpsDeploy =
+  process.env.NODE_ENV === "production" &&
+  (String(frontendUrl).startsWith("https://") || process.env.FORCE_SECURE_COOKIES === "1");
 const archiveWorker = createArchiveWorker({ db: archiveDb, backupRoot: getArchiveBackupRoot(), onError: error => logger.error({ err: error }, '[Archive] Persistent job failed') });
 process.once('exit', () => archiveWorker.stop());
 
@@ -80,15 +87,14 @@ if (!sessionSecret) {
 
 const app = express();
 const httpServer = createServer(app);
+configureHTTPTransport(httpServer);
 
 // Prevent nested Prisma relations from serializing credentials or recovery
 // secrets if a route accidentally includes a complete User record.
 app.set("json replacer", secureJsonReplacer);
 
 // Security Headers
-app.use(helmet({
-  crossOriginResourcePolicy: false, // Allows cross-origin requests for resources (like images)
-}));
+app.use(httpSecurity(isHttpsDeploy));
 
 // Rate limiting
 const limiter = rateLimit({
@@ -114,6 +120,7 @@ const authLimiter = rateLimit({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(captureTrustedRequestReceipt);
 app.use(["/api/auth/login", "/api/auth/register", "/api/auth/forgot-password", "/api/auth/reset-password"], authLimiter);
 
 // CORS configuration
@@ -135,17 +142,14 @@ app.set("trust proxy", deploymentConfig.trustProxyHops);
 
 // HTTP (pnpm dev / localhost) üzerinde Secure çerez yazılmaz → CSRF/login kırılır.
 // Yalnızca gerçek HTTPS üretiminde secure + sameSite=none kullan.
-const frontendUrl = process.env.FRONTEND_URL || deploymentConfig.publicUrl || "";
-const isHttpsDeploy =
-  process.env.NODE_ENV === "production" &&
-  (String(frontendUrl).startsWith("https://") || process.env.FORCE_SECURE_COOKIES === "1");
 
 const sessionDirectory = path.join(serverDirectory, "data");
 fs.mkdirSync(sessionDirectory, { recursive: true });
 const sessionMiddleware = session({
-  store: createSessionStore(sessionDirectory),
+  store: createSessionStore(sessionDirectory, { touchIntervalMs: 60000 }),
   secret: sessionSecret,
   resave: false,
+  rolling: false,
   saveUninitialized: false,
   name: "quizmaster.sid", // Custom cookie name for better security
   cookie: {
@@ -171,6 +175,9 @@ app.use(httpLogger);
 (async () => {
   try {
     logger.info("Starting server...");
+    // Verify both patched database connections before accepting any request.
+    await initializeStorage();
+    await archiveDb.$connect();
 
     // Initialize Socket.io — sessionMiddleware paylaşılıyor, oda auth için gerekli
     setupSocket(httpServer, sessionMiddleware);

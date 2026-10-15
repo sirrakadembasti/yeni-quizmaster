@@ -1,21 +1,23 @@
-# Linux setup and teacher audit plan
+# Linux kurulumu ve öğretmen denetimi planı
 
-> For agentic workers: Execute with supervised subagents and evidence checkpoints.
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../teacher-audit/defect-repairs.md) esas alınır.
 
-**Goal:** Verify a real Linux/WSL SH hybrid installation, then audit every teacher page and tab using isolated data.
+> Ajan olarak çalışanlar için: Gözetim altındaki alt ajanlar ve kanıt kontrol noktalarıyla uygula.
 
-**Architecture:** Ubuntu 22.04 WSL2 runs native Node 22 and pnpm 9.15.1. A source-only Linux staging copy supplies the existing real wizard/browser harness; fresh fixtures have independent dependencies, SQLite data and ports. Linux cleanup requires observed process identities and descendants, not only the parent PID. Teacher audit begins after the Linux acceptance result is recorded.
+**Amaç:** Gerçek Linux/WSL SH hibrit kurulumunu doğrulamak, ardından izole verilerle bütün öğretmen sayfalarını ve sekmelerini denetlemek.
 
-**Constraints:** Preserve production data and original api.ts/server-setup.tsx edits. Do not reuse Windows native dependencies. Do not count unrun checks as passed. No broad process termination or system WSL configuration changes.
+**Mimari:** Ubuntu 22.04 WSL2, yerel Node 22 ve pnpm 9.15.1 çalıştırır. Yalnız kaynak içeren bir Linux hazırlık kopyası mevcut gerçek sihirbaz/tarayıcı test düzeneğini sağlar; taze test ortamları bağımsız bağımlılıklara, SQLite verilerine ve portlara sahiptir. Linux temizliği yalnız üst PID'yi değil, gözlemlenen süreç kimliklerini ve alt süreçleri gerektirir. Öğretmen denetimi Linux kabul sonucu kaydedildikten sonra başlar.
 
-- [x] Inventory WSL and source/test prerequisites: Ubuntu 22.04 exists; Linux Node is missing and inherited pnpm is Windows-only.
-- [x] Prepare isolated Linux Node/pnpm and Chromium tooling; verified Node 22.23.2 checksum, native linux/x64, pnpm 9.15.1 and Linux Chromium download.
-- [x] Add and run real Linux descendant cleanup regression: native RED 0/9 → GREEN 9/9; expanded process/port suite 13/13 with zero skips. Windows metadata/handle regressions 10/10.
-- [x] Run actual kurulum.sh install → web wizard → migrations/admin/persistence/reentry → production API and browser login: native full acceptance 1/1.
-- [x] Verify fresh-setup owned processes and fixture ports closed, and protected source hashes unchanged; retain sanitized results/screenshots.
-- [x] Update installation/audit docs and Graphify: 2317 nodes/6260 edges/122 communities; diagnose and actual Chromium visual passed.
-- [x] Inventory teacher routes, tabs and operations; create 29-row page-based tracking checklist.
-- [x] Run isolated teacher functional/API/E2E and desktop/mobile/keyboard checks; record console/network and empty/error/loading states. Per-case evidence and failed cohorts retained; this does not mean every variant passed.
-- [x] Report verified defects separately from UX/new-feature suggestions, with reproduction, evidence, priority and acceptance criteria.
-- [x] Five-type survey edit/reopen acceptance closed on 4 October with native Windows Chromium: all five contents edited, API IDs/types preserved and second reload/reopen verified. Earlier WSL unavailability retained as historical evidence; see teacher-audit/defect-repairs.md.
-- [x] Verify privacy/diff/source preservation and stage only owned files for the audit commit; no user client changes staged.
+**Kısıtlar:** Üretim verilerini ve özgün api.ts/server-setup.tsx düzenlemelerini koru. Windows yerel bağımlılıklarını yeniden kullanma. Çalıştırılmayan kontrolleri geçti sayma. Toplu süreç sonlandırması veya sistem WSL yapılandırması değişikliği yapma.
+
+- [x] WSL ve kaynak/test önkoşullarını belirle: Ubuntu 22.04 mevcut; Linux Node eksik ve devralınan pnpm yalnız Windows'a ait.
+- [x] İzole Linux Node/pnpm ve Chromium araçlarını hazırla; Node 22.23.2 sağlama toplamı, yerel linux/x64, pnpm 9.15.1 ve Linux Chromium indirmesi doğrulandı.
+- [x] Gerçek Linux alt süreç temizliği regresyonunu ekle ve çalıştır: yerel RED 0/9 → GREEN 9/9; genişletilmiş süreç/port paketi, atlanan test olmadan 13/13. Windows üstveri/tanıtıcı regresyonları 10/10.
+- [x] Gerçek kurulum.sh kurulumu → web sihirbazı → migration/yönetici/kalıcılık/yeniden giriş → üretim API'si ve tarayıcı girişi akışını çalıştır: yerel tam kabul 1/1.
+- [x] Taze kuruluma ait süreçlerin ve test ortamı portlarının kapandığını, korunan kaynak özetlerinin değişmediğini doğrula; hassas verilerden arındırılmış sonuçları/ekran görüntülerini sakla.
+- [x] Kurulum/denetim belgelerini ve Graphify'ı güncelle: 2317 düğüm/6260 kenar/122 topluluk; tanılama ve gerçek Chromium görsel kontrolü geçti.
+- [x] Öğretmen rotalarını, sekmelerini ve işlemlerini belirle; sayfa bazlı 29 satırlık takip listesi oluştur.
+- [x] İzole öğretmen işlev/API/E2E ve masaüstü/mobil/klavye kontrollerini çalıştır; konsol/ağ ve boş/hata/yükleniyor durumlarını kaydet. Senaryo bazlı kanıtlar ve başarısız gruplar korundu; bu, her çeşidin geçtiği anlamına gelmez.
+- [x] Doğrulanan hataları kullanıcı deneyimi/yeni özellik önerilerinden ayrı; yeniden üretim, kanıt, öncelik ve kabul ölçütleriyle raporla.
+- [x] Beş tür anketin düzenleme/yeniden açma kabulü, 4 Ekim'de yerel Windows Chromium ile kapandı: beş içeriğin tamamı düzenlendi, API kimlikleri/türleri korundu ve ikinci yenileme/yeniden açma doğrulandı. Önceki WSL kullanılamazlığı tarihsel kanıt olarak korundu; bkz. teacher-audit/defect-repairs.md.
+- [x] Gizlilik/fark/kaynak korunmasını doğrula ve denetim commit'i için yalnız bu çalışmaya ait dosyaları hazırla; kullanıcının istemci değişiklikleri hazırlama alanına alınmadı.

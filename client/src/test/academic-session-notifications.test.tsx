@@ -10,6 +10,11 @@ vi.mock('@/context/academic-year-context', () => ({ useAcademicYear: () => mocks
 vi.mock('@/components/academic-history/HistoricalWorkspace', () => ({ HistoricalWorkspace: () => <p>Frozen business workspace</p> }));
 vi.mock('@/components/layout/ThemeToggle', () => ({ ThemeToggle: () => null }));
 vi.mock('@/lib/api', () => ({ notificationApi: { getUserNotifications: mocks.list, getPreferences: mocks.preferences, markAllAsRead: mocks.mark, deleteNotification: mocks.remove, updatePreferences: mocks.mute } }));
+vi.mock('@/lib/versioned-notification-preferences', async importOriginal => ({
+  ...await importOriginal<typeof import('@/lib/versioned-notification-preferences')>(),
+  getVersionedNotificationPreferences: async () => ({ ...await mocks.preferences(), revision: 0 }),
+  saveVersionedNotificationPreferences: async (muted: boolean) => ({ preferences: { ...await mocks.mute(muted), revision: 1 }, saved: true }),
+}));
 vi.mock('socket.io-client', () => ({ io: mocks.io }));
 vi.mock('sonner', () => ({ toast: { info: mocks.toast, success: mocks.toast, error: mocks.toast } }));
 let client: QueryClient;
@@ -37,14 +42,14 @@ it('shows explicitly labeled current-session notifications and operational contr
 it('keeps notification socket/cache updates in historical mode while suppressing generic business toasts', async () => {
   client.setQueryData(['notifications', 'nav'], { notifications: [], pagination: { page: 1, limit: 5, total: 0, unread: 0, totalPages: 1 } });
   mount(<NotificationListener />); await waitFor(() => expect(mocks.handlers.has('notification')).toBe(true));
-  await waitFor(() => expect(client.getQueryData(['notifications', 'preferences'])).toEqual({ muted: false }));
+  await waitFor(() => expect(client.getQueryData(['notifications', 'preferences', 'versioned', 'admin-notifications'])).toEqual({ muted: false, revision: 0 }));
   await act(async () => { mocks.handlers.get('connect')!(); mocks.handlers.get('notification')!(notice); });
   expect(mocks.emit).toHaveBeenCalledWith('joinUserRoom', 'admin-notifications'); expect(client.getQueryData<any>(['notifications', 'nav']).notifications[0].id).toBe('current-notice');
   expect(mocks.toast).not.toHaveBeenCalled(); expect([...mocks.handlers.keys()]).toEqual(['connect', 'notification']);
 });
 it('retains generic notification toast behavior in active context', async () => {
   mocks.context.year.status = 'active'; mount(<NotificationListener />);
-  await waitFor(() => expect(client.getQueryData(['notifications', 'preferences'])).toEqual({ muted: false }));
+  await waitFor(() => expect(client.getQueryData(['notifications', 'preferences', 'versioned', 'admin-notifications'])).toEqual({ muted: false, revision: 0 }));
   await act(async () => mocks.handlers.get('notification')!({ ...notice, type: 'success' }));
   expect(mocks.toast).toHaveBeenCalledWith(notice.title, { description: notice.message });
 });

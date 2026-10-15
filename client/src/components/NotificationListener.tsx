@@ -3,7 +3,7 @@ import { useAuth } from "@/context/auth-context";
 import { io } from "socket.io-client";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { notificationApi } from "@/lib/api";
+import { getVersionedNotificationPreferences, newerNotificationPreferences, type VersionedNotificationPreferences } from "@/lib/versioned-notification-preferences";
 import { prependNotification, type NotificationPage } from "@/lib/notification-cache";
 import { useAcademicYear } from '@/context/academic-year-context';
 
@@ -14,8 +14,9 @@ export function NotificationListener() {
   historicalRef.current = role === 'admin' && (!!academic?.pending || !!academic?.error || academic?.year?.status === 'closed');
   const queryClient = useQueryClient();
   const { data: preferences } = useQuery({
-    queryKey: ["notifications", "preferences"],
-    queryFn: () => notificationApi.getPreferences(),
+    queryKey: ["notifications", "preferences", "versioned", user?.id],
+    queryFn: getVersionedNotificationPreferences,
+    structuralSharing: (previous, incoming) => newerNotificationPreferences(previous as VersionedNotificationPreferences | undefined, incoming as VersionedNotificationPreferences),
     enabled: isAuthenticated && !!user,
   });
   const mutedRef = useRef(true);

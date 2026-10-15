@@ -1,5 +1,7 @@
 # Üretime hazırlık provası
 
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../production-maintenance.md) esas alınır.
+
 Durum (14 Ekim 2026): Akademik arşiv kapanışı ve Görev 1 yedek/restore, Görev 2 terminal/BAT/SH hibrit yükseltme, Görev 3 geri dönüş kabulü tamamlandı. Görev 4 uygulama ve ölçümleri `619bdf4` ile, belgelenen 20 aktör kapasite sınırıyla tamamlandı; bütün yük düzeyleri geçti iddiası yoktur. Son belge/Graphify kontrolleri ve genel bağımsız inceleme tamamlandı; yayın dalı `codex/academic-archive-hardening-20261012`, uzak `main` değiştirilmez. Kullanıcı uygulamayı ve bulunan hataların düzeltilmesini onayladı; çevrimiçi olması beklenmeyecek. Aşağıdaki tarihli ara kayıtlar geçmiş denemeleri açıklar; güncel kabul sonuçları bunların sonrasındaki kapanış kaydıdır.
 
 7 Ekim ek talimatı: Arşiv görevleri kapandıktan sonra ilgili Markdown/README ve Graphify güncellenip commit edilecek ve GitHub'a push yapılacak. Sonraki üretim provasında doğrulanan değişiklikler de aynı güvenli yayın akışıyla kaydedilir; tamamlanmamış kontroller başarı olarak sunulmaz. Yerel ve README'de belirtilen uzak `main` geçmişlerinin ortak commit'i bulunmadığından uzak geçmişi değiştirmeden yeni bir `codex/` dalı kullanılır; force push yapılmaz.

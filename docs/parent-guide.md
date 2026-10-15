@@ -43,6 +43,10 @@ Sonuç detayında soru görseli, öğrencinin cevabı, doğru cevap ve **Doğru 
 - Başka bir öğrenci kimliğine doğrudan bağlantı veya API isteğiyle erişim sunucu tarafından engellenir.
 - Anket cevapları veli panelinde gösterilmez. Tamamlanan sınavlarda soru, öğrencinin cevabı ve doğru cevap yalnız salt okunur sonuç detayı olarak gösterilir.
 
+Veli bağlı öğrencilerin yalnız tamamlanmış sınavlarını veli panelinin özel rotalarından okur. Genel öğrenci/sınıf rotaları veliye açık değildir; başka öğrencilerin listeleri veya devam eden sınavın cevap anahtarı görüntülenemez. Duyurular veli/tüm roller ve uygun sınıf hedefiyle süzülür.
+
+Profil/parola sıfırlama talebi öğrenci bağlantısını kaldırmaz. Parola sıfırlanınca eski oturumlarla yeniden giriş gerekir.
+
 Bağlantı eksik veya yanlışsa okul yönetimiyle iletişime geçin.
 
 ## 5. Ayarlar ve bildirimler
@@ -60,9 +64,3 @@ Profil yazdırılırken kaydedilmiş bilgiler kullanılır. Bildirimlerde mevcut
 - **Sonuç eksik:** Öğrencinin sınavı sunucuya teslim ettiğini doğrulayın.
 - **Şifre bağlantısı gelmedi:** Spam klasörünü kontrol edin; yöneticiden Şifre Talepleri ve E-posta Loglarını incelemesini isteyin.
 - **Yetkisiz erişim:** Doğru veli hesabıyla giriş yaptığınızdan ve öğrenci bağlantısının kaldırılmadığından emin olun.
-
-## Erişim sınırları
-
-Veli bağlı öğrencilerin yalnız tamamlanmış sınavlarını veli panelinin özel rotalarından okur. Genel öğrenci/sınıf rotaları veliye açık değildir; başka öğrencilerin listeleri veya devam eden sınavın cevap anahtarı görüntülenemez. Duyurular veli/tüm roller ve uygun sınıf hedefiyle süzülür.
-
-Profil/parola sıfırlama talebi öğrenci bağlantısını kaldırmaz. Parola sıfırlanınca eski oturumlarla yeniden giriş gerekir.

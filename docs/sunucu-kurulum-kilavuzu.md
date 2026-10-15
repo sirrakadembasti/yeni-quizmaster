@@ -1,5 +1,7 @@
 # QuizMaster Sunucu Kurulum Kılavuzu
 
+15 Ekim kapasite sürümü Prisma 6.19.3 ve native better-sqlite3 12.8.0 / SQLite 3.51.3 gerektirir. Mevcut kurulumda önce uygulama/worker süreçlerini durdurup doğrulanmış yedek alın; frozen install, Prisma generate ve `20261014090000_notification_revision` dahil production migration'larını ayrı kurulumda prova edin. [Bakım adımları](production-maintenance.md) ve [80 öğrencilik ölçüm/saha sınırları](2026-10-14-capacity-school-exam-results.md). Bu geliştirme sırasında canlı kurulum yükseltilmedi.
+
 Bu kılavuz QuizMaster'ın başka bir kurumun domain altyapısında subdomain veya alt yol altında üretime alınmasını kapsar. Önerilen model ayrı bir subdomain ve HTTPS reverse proxy'dir.
 
 Yerel geliştirmede sihirbazın kaydettiği API portu `server/.env` içindeki `PORT` değeridir. Vite'ın API, `/uploads` ve Socket.IO proxy'leri aynı portu kullanır: süreç ortamı, `server/.env`, ardından kök `.env`; değer yoksa 5000. Backend'in okumadığı `.env.local` ve Vite mode dosyaları bu seçime dahil edilmez. Sunucu gizli değerleri istemciye enjekte edilmez. API portunu değiştirince backend ve Vite'ı yeniden başlatın; arayüzün 5173 portu ayrı bir ayardır.
@@ -23,7 +25,7 @@ Kurum DNS + Nginx/IIS reverse proxy
         ▼
 QuizMaster Node.js (Express + Socket.IO)
         ├── client/dist
-        ├── SQLite/PostgreSQL
+        ├── SQLite (PostgreSQL geçişi ayrı geliştirme)
         ├── sessions.db veya merkezi session store
         └── uploads
 ```
@@ -182,7 +184,7 @@ pnpm build
 
 Derleme sonunda `client/dist` ve kökte `dist/index.cjs` bulunmalıdır. Derleme yapılan Node ana sürümü ile üretimdeki Node ana sürümü aynı tutulmalıdır. Sunucuyu workspace kökünden `pnpm --filter quiz-master-server start` ile çalıştırın; paket komutu pnpm'in native bağımlılık çözümlemesini de sağlar. SQLite3 ve Sharp build dışında bırakılır, kurulu `node_modules` gerektirir; yalnız `dist/index.cjs` dosyasını başka bir yere taşımak bağımsız dağıtım oluşturmaz.
 
-Kurulu sürüm yükseltmesinde app/worker süreçlerini durdurup onaylı kaynakları veri/ayar dizinlerini ezmeden yerleştirin. `pnpm run upgrade --project <kurulum>` veya terminal/BAT/SH başlangıç ekranındaki **Mevcut Kurulumu Güncelle**, doğrulanmış private yedek ardından frozen install/build/migration/status çalıştırır. İlk kurulum sihirbazını tekrar çalıştırmayın. Sonuç sonrası yukarıdaki resmi start komutuyla giriş ve Sunucu Durumu doğrulanmalıdır. [Bakım/yükseltme belgesi](production-maintenance.md#veri-koruyan-sürüm-yükseltme) kesilme, kilit ve sürüm+veri geri dönüş sınırlarını açıklar; henüz bitmemiş BAT/SH provaları başarılı sayılmaz.
+Kurulu sürüm yükseltmesinde app/worker süreçlerini durdurup onaylı kaynakları veri/ayar dizinlerini ezmeden yerleştirin. `pnpm run upgrade --project <kurulum>` veya terminal/BAT/SH başlangıç ekranındaki **Mevcut Kurulumu Güncelle**, doğrulanmış private yedek ardından frozen install/build/migration/status çalıştırır. İlk kurulum sihirbazını tekrar çalıştırmayın. Sonuç sonrası yukarıdaki resmi start komutuyla giriş ve Sunucu Durumu doğrulanmalıdır. [Bakım/yükseltme belgesi](production-maintenance.md#veri-koruyan-sürüm-yükseltme) kesilme, kilit ve sürüm+veri geri dönüş sınırlarını açıklar; 13 Ekim terminal/BAT/web ve native SH/web kabulü [yükseltme raporunda](production-upgrade-rehearsal-results.md) tamamlandı; ortam ve cache sınırları korundu.
 
 ## 9. systemd servisi
 

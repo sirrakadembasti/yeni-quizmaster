@@ -1,5 +1,7 @@
 # Eğitim yılı arşivi ve geçiş sözleşmesi
 
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../academic-archive-review/verification.md) esas alınır.
+
 Kullanıcı 4 Ekim 2026'da uygulamayı ve her görev sonunda ayrı commit'i onayladı. SQLite/Prisma, Express ve React korunur; Redis/Mongo zorunluluğu eklenmez. Gerçek veritabanına test veya migration uygulanmaz. Önceden değişmiş api.ts ve server-setup.tsx korunur.
 
 ## Kapsam

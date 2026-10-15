@@ -1,5 +1,7 @@
 # Uygulama planı
 
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../integration-audit/defect-repairs.md) esas alınır.
+
 1. Tarihsel ölçümleri koru; SMTP kullanıcı teslim doğrulamasını kaydet.
 2. AI, öğrenci UX ve bildirim/baskı alanlarında ayrı sahiplerle önce başarısız regresyon, sonra en küçük düzeltme ve odaklı yeşil test çalıştır.
 3. İzole fixture üzerinde diğer testlerden ayrı yük profili al; bir hipotezi değiştirip aynı ölçümü karşılaştır. Kanıtlanan kök nedeni regresyonla düzelt.

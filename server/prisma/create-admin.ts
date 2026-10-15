@@ -1,8 +1,8 @@
 import "dotenv/config";
 import bcrypt from "bcryptjs";
-import { PrismaClient } from "@prisma/client";
+import { createRuntimePrismaClient } from "../utils/sqlite-runtime";
 
-const prisma = new PrismaClient();
+const prisma = createRuntimePrismaClient();
 
 async function main() {
   const name = process.env.BOOTSTRAP_ADMIN_NAME?.trim() || "Sistem Yöneticisi";

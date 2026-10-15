@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { act, cleanup, render, screen, within } from '@testing-library/react';
 import ResultsPage from '@/pages/results';
 import userEvent from '@testing-library/user-event';
 
@@ -150,4 +150,76 @@ it('resolves email through nested student identity and keeps email already suppl
   const workbookXml = new TextDecoder().decode(downloaded.bytes!);
   expect(workbookXml).toContain('authorized@example.test');
   expect(workbookXml).toContain('provided@example.test');
+});
+
+it('bounds report rows on screen while exporting and printing the complete filtered population', async () => {
+  data.role = 'teacher';
+  data.users = [
+    { id: 's100', role: 'student', name: 'Report Student 100' },
+    { id: 'empty', role: 'student', name: 'No Results Student' },
+  ];
+  data.results = Array.from({ length: 101 }, (_, index) => ({
+    ...result('completed', 0), id: `r${index}`, createdBy: 'admin',
+    student: { id: `s${index}`, name: `Report Student ${index}`, email: `s${index}@example.test` },
+    correctAnswersCount: 0, totalQuestions: 20,
+  }));
+  render(<ResultsPage />);
+  await screen.findByText('Mixed results exam');
+  const user = userEvent.setup();
+  await user.click(screen.getByRole('tab', { name: 'Öğrenci Raporları' }));
+  expect(screen.getByText('Report Student 99')).toBeVisible();
+  expect(screen.queryByText('Report Student 100')).not.toBeInTheDocument();
+  await user.click(screen.getByRole('button', { name: 'Sonraki rapor sayfası' }));
+  expect(screen.getByText('Report Student 100')).toBeVisible();
+  expect(screen.queryByText('Report Student 0')).not.toBeInTheDocument();
+  act(() => window.dispatchEvent(new Event('beforeprint')));
+  expect(screen.getByText('Report Student 0')).toBeInTheDocument();
+  expect(screen.getByText('Report Student 100')).toBeInTheDocument();
+  act(() => window.dispatchEvent(new Event('afterprint')));
+  expect(screen.queryByText('Report Student 0')).not.toBeInTheDocument();
+  const print = vi.spyOn(window, 'print').mockImplementation(() => window.dispatchEvent(new Event('beforeprint')));
+  await user.click(screen.getByRole('button', { name: 'Yazdır' }));
+  expect(screen.getByText('Report Student 0')).toBeInTheDocument();
+  expect(screen.getByText('Report Student 100')).toBeInTheDocument();
+  act(() => window.dispatchEvent(new Event('afterprint')));
+  print.mockRestore();
+  await user.click(screen.getByRole('tab', { name: 'Genel Bakış' }));
+  await user.click(screen.getByRole('button', { name: 'Excel' }));
+  expect(downloaded.options.rows).toHaveLength(101);
+  HTMLElement.prototype.scrollIntoView = vi.fn();
+  HTMLElement.prototype.hasPointerCapture = vi.fn().mockReturnValue(false);
+  HTMLElement.prototype.setPointerCapture = vi.fn();
+  HTMLElement.prototype.releasePointerCapture = vi.fn();
+  await user.click(screen.getByRole('combobox', { name: 'Öğrenci' }));
+  await user.click(screen.getByRole('option', { name: 'Report Student 100' }));
+  await user.click(screen.getByRole('tab', { name: 'Öğrenci Raporları' }));
+  expect(within(screen.getByRole('table')).getByText('Report Student 100')).toBeVisible();
+  expect(screen.queryByRole('button', { name: 'Sonraki rapor sayfası' })).not.toBeInTheDocument();
+  await user.click(screen.getByRole('tab', { name: 'Genel Bakış' }));
+  await user.click(screen.getByRole('combobox', { name: 'Öğrenci' }));
+  await user.click(screen.getByRole('option', { name: 'No Results Student' }));
+  await user.click(screen.getByRole('tab', { name: 'Öğrenci Raporları' }));
+  expect(screen.getByText('Filtrelere uygun karne bulunamadı.')).toBeVisible();
+  act(() => window.dispatchEvent(new Event('beforeprint')));
+  expect(screen.getByText('Filtrelere uygun karne bulunamadı.')).toBeInTheDocument();
+  act(() => window.dispatchEvent(new Event('afterprint')));
+});
+
+it('bounds the exam summary table while retaining full averages and print rows', async () => {
+  data.results = Array.from({ length: 101 }, (_, index) => ({
+    ...result('completed', index % 2 ? 100 : 0), id: `r${index}`, quizId: `q${index}`, quizTitle: `Summary Exam ${index}`,
+  }));
+  render(<ResultsPage />);
+  await screen.findByText('Summary Exam 99');
+  expect(screen.queryByText('Summary Exam 100')).not.toBeInTheDocument();
+  const grades = JSON.parse(screen.getAllByLabelText('chart data')[0].textContent!);
+  expect(grades.find((g: any) => g.name.startsWith('Geçmez')).value).toBe(51);
+  await userEvent.setup().click(screen.getByRole('button', { name: 'Sonraki sınav sayfası' }));
+  expect(screen.getByText('Summary Exam 100')).toBeVisible();
+  expect(screen.queryByText('Summary Exam 0')).not.toBeInTheDocument();
+  act(() => window.dispatchEvent(new Event('beforeprint')));
+  expect(screen.getByText('Summary Exam 0')).toBeInTheDocument();
+  expect(screen.getByText('Summary Exam 100')).toBeInTheDocument();
+  act(() => window.dispatchEvent(new Event('afterprint')));
+  expect(screen.queryByText('Summary Exam 0')).not.toBeInTheDocument();
 });

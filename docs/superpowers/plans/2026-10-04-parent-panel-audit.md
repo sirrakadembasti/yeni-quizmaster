@@ -1,5 +1,7 @@
 # Veli paneli denetim planı
 
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../parent-audit/defect-repairs.md) esas alınır.
+
 **Amaç:** Ürün kodunu değiştirmeden veli sayfalarını ve ortak hesap sekmelerini gerçek Chromium/API/izole SQLite ile denetlemek.
 
 **Mimari:** Önceki öğrenci denetiminin sahipli süreç temizliği ve runtime doğrulama korumaları ayrı veli fixture'ına uyarlanır. Başarılı API istekleri gerçek sunucuya gider; kontrollü hata testleri açıkça belirtilir.

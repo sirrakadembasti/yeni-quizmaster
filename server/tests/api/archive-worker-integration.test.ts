@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { PrismaClient } from '@prisma/client';
+import { createRuntimePrismaClient } from '../../utils/sqlite-runtime';
 import { randomUUID } from 'node:crypto';
 import { copyFile, readFile, writeFile, readdir } from 'node:fs/promises';
 import express from 'express';
@@ -26,7 +27,7 @@ beforeEach(async () => {
   const file = path.join(path.dirname(template), randomUUID() + '.db');
   await copyFile(template, file);
   databaseUrl = 'file:' + file.split('\\').join('/');
-  db = new PrismaClient({ datasources: { db: { url: databaseUrl } } });
+  db = createRuntimePrismaClient({ databaseUrl });
   root = path.join(path.dirname(template), 'artifacts-' + randomUUID());
   // Production triggers check a real SQLite lease clock. Calendar boundaries
   // are still tested by advancing this clock to the next persisted July close.
@@ -356,7 +357,7 @@ it('preserves inactive, former graduate and classless accounts while persisting 
   const completion = await db.actionLog.findFirstOrThrow({ where: { action: 'ARCHIVE_COMPLETED', details: { contains: annual.id } } });
   expect(JSON.parse(completion.details!).transitionSummary).toMatchObject(summary);
   expect((await request(recoveryApp(f.admin.id)).get(`/archive/jobs/${annual.id}`)).body.job.transitionSummary).toMatchObject(summary);
-  const restartedDb = new PrismaClient({ datasources: { db: { url: databaseUrl } } });
+  const restartedDb = createRuntimePrismaClient({ databaseUrl });
   try {
     expect((await request(createAppFor(restartedDb, f.admin.id)).get(`/archive/jobs/${annual.id}`)).body.job.transitionSummary).toMatchObject(summary);
   } finally { await restartedDb.$disconnect(); }
@@ -453,7 +454,7 @@ it('restart catches up three missed July boundaries without phantom years or rep
 it('annual workers with separate clients complete one promotion and one durable summary at the July boundary', async () => {
   const f = await fixture();
   clock = getYearSchedule(f.year.label);
-  const secondDb = new PrismaClient({ datasources: { db: { url: databaseUrl } } });
+  const secondDb = createRuntimePrismaClient({ databaseUrl });
   let release!: () => void, entered!: () => void;
   const gate = new Promise<void>(resolve => { release = resolve; }), started = new Promise<void>(resolve => { entered = resolve; });
   const first = worker({ owner: 'annual-one', export: async (input, directory) => { const artifact = await realExport(input, directory); entered(); await gate; return artifact; } });
@@ -569,7 +570,7 @@ it('two workers respect the live lease and an expired owner cannot finalize afte
     await gate;
     return artifact;
   } });
-  const independentDb = new PrismaClient({ datasources: { db: { url: databaseUrl } } });
+  const independentDb = createRuntimePrismaClient({ databaseUrl });
   const second = worker({ owner: 'second-owner', db: independentDb });
   const pending = first.tick();
   await started;

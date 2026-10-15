@@ -1,5 +1,7 @@
 # Üretim performansı ve frontend yükleme tasarımı
 
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../production-performance-results.md) esas alınır.
+
 Üst kapsam: Kullanıcının onayladığı üretim provası Görev 4. Mevcut akışları bozmadan gerçekçi sentetik hacim ölçülür ve büyük ilk frontend paketi küçültülür. Yeni ürün özelliği, ücretli servis veya veritabanı değişimi eklenmez.
 
 ## Yaklaşım ve seçim

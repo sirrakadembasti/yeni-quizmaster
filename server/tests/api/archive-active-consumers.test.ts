@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, expect, it, vi } from 'vitest';
 import { PrismaClient } from '@prisma/client';
+import { createRuntimePrismaClient } from '../../utils/sqlite-runtime';
 import { randomUUID } from 'node:crypto';
 import { copyFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -19,7 +20,7 @@ beforeAll(async () => {
   const file = path.join(path.dirname(templateUrl.slice(5)), 'active-consumers-' + randomUUID() + '.db');
   await copyFile(templateUrl.slice(5), file);
   const url = 'file:' + file.split('\\').join('/');
-  db = new PrismaClient({ datasources: { db: { url } } });
+  db = createRuntimePrismaClient({ databaseUrl: url });
   vi.resetModules(); vi.stubEnv('DATABASE_URL', url);
   ({ storage, closeStorage } = await import('../../storage'));
   ({ closeArchiveDb } = await import('../../services/archive-db'));

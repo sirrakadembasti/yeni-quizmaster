@@ -1,5 +1,7 @@
 # Kalan admin onarımları
 
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../admin-audit/remaining-repairs-verification.md) esas alınır.
+
 Kullanıcının onayladığı sıra: önce arşiv atomikliği ve sorumlu öğretmen erişimi, sonra kalan admin bulguları; öğretmen paneli bu kapsam tamamlanmadan başlamaz.
 
 - [x] INV04: quiz/result/audit log aynı transaction; sonuç ve log yazımında gerçek SQLite hata enjeksiyonu ile rollback.

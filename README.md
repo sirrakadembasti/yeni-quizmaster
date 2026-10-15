@@ -13,7 +13,9 @@ Veli panelinin sayfa/sekme kapsamı [kontrol listesindedir](docs/parent-audit/in
 Veli erişimi, sınıf bildirimleri, öğrenci seçimi, hata toparlama ve yazdırma düzeltmelerinin güncel kabul sonuçları [veli onarım raporundadır](docs/parent-audit/defect-repairs.md).
 
 - [Yönetici kullanıcı kılavuzu](docs/admin-guide.md)
-- [Yönetici paneli test kapsamı, bulgular ve düzeltme durumu](docs/admin-audit/README.md)
+- [Eğitim yılı geçişi ve arşivleme](docs/yil-gecisi-ve-arsivleme.md)
+- [Belge güncellik ve temizlik kaydı](docs/dokumantasyon-inceleme.md)
+- [Yönetici paneli test kapsamı, bulgular ve düzeltme durumu](docs/admin-audit/denetim-ozeti.md)
 - [Öğretmen kullanıcı kılavuzu](docs/teacher-guide.md)
 - [Öğrenci kullanıcı kılavuzu](docs/student-guide.md)
 - [Veli kullanıcı kılavuzu](docs/parent-guide.md)
@@ -23,6 +25,68 @@ Veli erişimi, sınıf bildirimleri, öğrenci seçimi, hata toparlama ve yazdı
 - [Sunucu, domain ve reverse proxy kurulum kılavuzu](docs/sunucu-kurulum-kilavuzu.md)
 - [Akademik arşiv paketi ve bütünlük sözleşmesi](docs/academic-archive-review/artifacts.md)
 - [Akademik arşiv kabul testleri ve doğrulama sınırları](docs/academic-archive-review/verification.md)
+
+## Dokümantasyon ve kanıt dizinleri
+
+14 Ekim 2026 düzenlemesi: proje ve dokümantasyon için tek giriş belgesi bu ana README’dir. Kullanım kılavuzları docs kökünde bulunur; alt dizinler farklı denetimlerin raporlarını, kanıtlarını ve karar geçmişini ayırır. Tarihli test sayıları yalnız ilgili koşunun kapsamını gösterir.
+
+| Alt dizin | Neden burada? | İçerik ve kullanım |
+|---|---|---|
+| docs/academic-archive-review | Eğitim yılı kapanışı, değişmez arşiv ve sınıf geçişinin ayrı kabul kapsamını korur. | Paket sözleşmesi ve nihai doğrulama raporu; günlük kullanım için yıl geçişi kılavuzuna bakın. |
+| docs/admin-audit | Yönetici panelinin yetki, veri bütünlüğü, dışa aktarma, erişilebilirlik ve kurulum denetimlerini toplar. | Bulgular, onarım sözleşmeleri, kapanış raporları ve bunların JSON/görsel/PDF kanıtları. |
+| docs/teacher-audit | Öğretmenin sınıf/ders yetkisi, sınav/anket ve rapor davranışlarının kanıtlarını ayırır. | Envanter, bulgular, onarım kabulü ve ekran/çıktı kanıtları. |
+| docs/student-audit | Öğrenci sınavı, çevrimdışı cevap/teslim ve sonuç akışının kabulünü toplar. | Başlangıç bulguları, onarım raporu, tarayıcı ve çıktı kanıtları. |
+| docs/parent-audit | Velinin bağlı öğrenci ve salt okunur erişim sınırlarını bağımsız olarak belgeler. | Envanter, bulgular, onarım kabulü, baskı ve tarihsel kanıtlar. |
+| docs/integration-audit | E-posta, AI, Socket, oturum yükü ve ortak kullanıcı deneyimi gibi roller arası süreçleri belgeler. | İlk ölçümler, kök neden incelemesi ve sonraki onarım kabulü. |
+| docs/live-audit | İzole gerçek servis bağlantısı denemesinin sonucunu saklar; adı canlı üretim verisinin kullanıldığı anlamına gelmez. | Mevcut socket-results.json bağlantı denemesi kaydı; genel kapasite garantisi değildir. |
+| docs/superpowers | Çalışmaların neden ve hangi sırayla yapıldığını korur. | specs: tarihli tasarım/kabul sözleşmeleri; plans: uygulama sırası, ara ve son durumlar. Eski açık kutular güncel görev listesi olarak okunmaz. |
+
+Alt dizinlerdeki ortak isimlerin anlamı:
+
+| Dizin türü | Amaç ve saklama gerekçesi |
+|---|---|
+| evidence, screenshots, print, print-render | Raporlarda atıf verilen ekran görüntüsü, Excel/PDF ve görsel sayfa doğrulamalarını saklar. Raporun iddiasını incelemeyi sağlar. |
+| graphify | Denetim sırasındaki kaynak haritası, tanı ve görsel kontrol kanıtlarıdır; uygulama testi yerine geçmez. |
+| before-repairs, historical-* | Onarım öncesi başarısız ölçümleri ve eski görselleri sonraki başarılı koşularla karıştırmadan korur. |
+| flow-failures, route-failures | İlk başarısız akışların hata ve sayfa kayıtlarıdır; hata artık açık demek değildir. |
+| test-results*, playwright-report* | Otomatik tarayıcı koşularının çıktı ve raporlarıdır. Bazıları Git dışında üretilir; yeniden çalıştırılabilir çıktı ile kalıcı kabul raporu ayrılır. |
+| runtime-logs | Denetim süreçlerinin yerel tanı kayıtlarıdır; kişisel veri veya gizli ayarları yayımlamadan kullanılmalıdır. |
+| teacher-audit/test-results-pdf-runtime | PDF metni ve sayfa görüntüsünü incelemek için kurulmuş üçüncü taraf test araçlarıdır; uygulamanın dağıtım kodu değildir. Paket/lisans açıklaması teknik kökeni korur. |
+
+Raporun bağlantı verdiği kanıtları yalnız eski oldukları için silmeyin. Yeniden üretilebilen, atıfsız test çıktısının temizliği rapor/dosya ilişkileri ve süreç sahipliği kontrolünden sonra yapılabilir. Bu dizinler uygulamanın canlı veri deposu değildir; gerçek çalışma verisi server/data ve yapılandırılmış yükleme/yedek alanlarındadır.
+
+### Kurulum ve işletim
+
+- [Sunucu kurulumu](docs/sunucu-kurulum-kilavuzu.md): localhost, domain, TLS/proxy ve servis.
+- [Bakım, tam yedek/restore, yükseltme ve geri dönüş](docs/production-maintenance.md).
+- [Gmail ve parola sıfırlama](docs/e-posta-yapilandirma.md).
+- [Güvenlik ve bakım sözleşmeleri](docs/guvenlik-ve-bakim.md).
+- [Akademik paket içeriği ve sınırları](docs/academic-archive-review/artifacts.md): dönem dışa aktarımı; tam sunucu yedeği değildir.
+- [PostgreSQL geçiş hazırlığı](docs/postgresql-gecis-rehberi.md): ayrı geliştirme/prova gerektirir; mevcut sürüm SQLite kullanır.
+- [Graphify kaynak haritası ve sınırları](docs/graphify.md).
+
+### Kabul sonuçları ve açık kapasite
+
+| Konu | Sonuç kaynağı |
+|---|---|
+| Akademik arşiv, geçmiş ve sınıf geçişi | [Nihai kabul](docs/academic-archive-review/verification.md), [görev/commit tablosu](docs/superpowers/plans/2026-10-05-academic-archive-review-plan.md) |
+| Terminal/BAT/SH yükseltmesi | [Yükseltme kabulü](docs/production-upgrade-rehearsal-results.md) |
+| Hatalı yükseltmeden kurtarma | [Geri dönüş kabulü](docs/production-rollback-rehearsal-results.md) |
+| Frontend paket ve offline kabulü | [Performans raporu](docs/production-performance-results.md) |
+| Genel API yükü ve geç yazma | [İlk kapasite incelemesi](docs/production-capacity-investigation-results.md) özgün ayarlarda başarısızdır; [SQLite yapılandırma deneyi](docs/sqlite-configuration-investigation-results.md) izole değişen ayarlarda 20 aktörün iki 600 isteklik koşusunu doğrular. Ürün/canlı ayarlar değiştirilmedi; üretim kapasitesi kabulü değildir. |
+| Yönetici | [Denetim dizini](docs/admin-audit/denetim-ozeti.md), [onarım sözleşmesi](docs/admin-audit/repair-contracts.md), [kalan onarım kabulü](docs/admin-audit/remaining-repairs-verification.md), [son kapanış](docs/admin-audit/verification-closure.md) |
+| Öğretmen | [Onarım kabulü](docs/teacher-audit/defect-repairs.md) |
+| Öğrenci | [Onarım kabulü](docs/student-audit/defect-repairs.md) |
+| Veli | [Onarım kabulü](docs/parent-audit/defect-repairs.md) |
+| AI, Socket, bildirim, UX ve eski oturum yükü | [Entegrasyon onarım kabulü](docs/integration-audit/defect-repairs.md) |
+
+Test sayıları ve süreleri raporun tarihine, veri hacmine ve ortamına aittir. Daha eski GET yük kabulü, sonraki karma okuma/yazma kapasitesinin geçtiği anlamına gelmez. Denetim klasörlerindeki JSON, görsel, PDF ve ilk başarısız koşu kayıtları kendi raporlarının kanıtlarıdır; güncel kullanım talimatı olarak okunmaz.
+
+### Belge düzeni ve bakım
+
+`docs/superpowers/plans` ve `docs/superpowers/specs` tarihli karar/uygulama kayıtlarıdır. Tamamlanan planı yeniden açık iş gibi yürütmeden önce sonuç bağlantısını kontrol edin. Aynı bilgiyi birden fazla kılavuza kopyalamak yerine ana belgeye bağlantı verin. İşlem değiştiğinde kılavuzu, kabul durumu değiştiğinde ilgili tarihli sonuç raporunu güncelleyin; eski başarısız sonucu silip başarılıya dönüştürmeyin.
+
+[Dosya bazında güncellik ve temizlik kaydı](docs/dokumantasyon-inceleme.md), birleştirilen dosyaları, korunan tarihsel kanıtları ve kontrol kapsamını listeler.
 
 ## Güncel özellikler
 
@@ -46,8 +110,8 @@ Veli erişimi, sınıf bildirimleri, öğrenci seçimi, hata toparlama ve yazdı
 |---|---|
 | Frontend | React, TypeScript, Vite, TanStack Query, Wouter, Tailwind CSS, shadcn/ui |
 | Backend | Node.js, Express, TypeScript, Socket.IO, Pino |
-| Veri | Prisma ORM, SQLite (mevcut sağlayıcı) |
-| Kimlik ve güvenlik | `express-session`, `connect-sqlite3`, bcrypt, CSRF, Zod |
+| Veri | Prisma 6.19.3, better-sqlite3 12.8.0 / SQLite 3.51.3, WAL |
+| Kimlik ve güvenlik | `express-session`, SQLite oturum deposu, bcrypt, CSRF, Zod |
 | E-posta | Nodemailer, Gmail SMTP, veritabanı Outbox kuyruğu |
 | Test | Vitest, Supertest, Playwright |
 | Paket yönetimi | pnpm workspaces |
@@ -385,7 +449,7 @@ pnpm test:e2e
 
 ## Veri ve güvenlik notları
 
-- SQLite geliştirme ve düşük eşzamanlı kullanım için uygundur; yüksek trafikli üretimde PostgreSQL değerlendirilmelidir.
+- SQLite kapasitesi iş yüküne ve yapılandırmaya bağlıdır. 15 Ekim izole 80 öğrencilik provada 4.334 istek hatasız tamamlandı; eşzamanlı yazmalar hâlâ sıraya girer. Gerçek okul Wi-Fi kapasitesi ayrıca ölçülmelidir; [sonuçlar ve sınırlar](docs/2026-10-14-capacity-school-exam-results.md).
 - Öğrenci açık kayıt sırasında sınıf seçemez; sınıf üyeliğini yetkili kullanıcı atar.
 - Öğretmen öğrenci veli/özel iletişim alanlarına erişemez ve yalnız dersine girdiği sınıflardaki öğrencileri görür.
 - Öğrenci kişisel ve veli bilgilerini salt okunur görür; değişiklik için okul yönetimine başvurur.
@@ -398,8 +462,10 @@ pnpm test:e2e
 
 ## SQLite'tan PostgreSQL'e geçiş
 
+Mevcut sürüm SQLite kullanır. PostgreSQL için ham arşiv SQL’i, trigger korumaları, oturum ve bakım araçları ayrıca uyarlanmalıdır; aşağıdaki sıra tamamlanmış sağlayıcı desteği anlamına gelmez.
+
 Uygulama şu anda **SQLite** ile çalışır. Prisma veri modeli PostgreSQL'e büyük ölçüde uyumludur: 
-kimlikler uygulama tarafından UUID olarak üretilir, ilişkiler Prisma üzerinden tanımlıdır ve çalışan uygulama kodunda SQLite'a özel ham SQL sorgusu yoktur.
+kimlikler uygulama tarafından UUID olarak üretilir ve ilişkiler Prisma üzerinden tanımlıdır. Arşiv, oturum ve bakım yollarında SQLite'a özel ham SQL ve sürücü davranışları bulunur; bunlar PostgreSQL için ayrıca uyarlanmalıdır.
  Anket cevapları ve soru ayarları ilk geçişte `String` içinde JSON metni olarak kalabilir; böylece veri modeli değiştirilmeden taşınabilir.
  Bunların daha sonra PostgreSQL `Json`/`jsonb` alanlarına dönüştürülmesi ayrı ve kontrollü bir iyileştirmedir.
 
@@ -410,7 +476,7 @@ Ancak geçiş **yalnızca** `provider = "postgresql"` ve `DATABASE_URL` değişi
 | Prisma modelleri ve ilişkiler | Uyumlu | PostgreSQL sağlayıcısıyla yeni başlangıç migration'ı üret |
 | Mevcut `prisma/migrations` geçmişi | SQLite'a özel | PostgreSQL için ayrı ve temiz migration geçmişi oluştur |
 | Mevcut uygulama verileri | Otomatik taşınmaz | Denenmiş bir ETL/aktarım aracıyla kimlik ve ilişkileri koruyarak taşı |
-| Oturum deposu | `connect-sqlite3` kullanıyor | Çok sunuculu üretimden önce PostgreSQL veya merkezi bir oturum deposuna geçir |
+| Oturum deposu | Ayrı `sessions.db`, better-sqlite3 tabanlı depo | Çok sunuculu üretimden önce PostgreSQL veya merkezi bir oturum deposuna geçir |
 | JSON benzeri alanlar | PostgreSQL'de metin olarak çalışır | İlk geçişte koru; gerekirse daha sonra `jsonb` için ayrı migration yap |
 | Yüklenen görseller | Veritabanı dışında | `uploads` içeriğini ayrıca yedekle ve hedef ortama taşı |
 
@@ -440,7 +506,7 @@ Komutlar, veri doğrulama sorguları, oturum deposu kararı, geri dönüş plan�
 
 ## Güvenlik ve veri bütünlüğü bakımı
 
-12 Ekim 2026 akademik arşiv kabulü: backend genel regresyonu 412/412, frontend 272/272, ayrı gerçek DB/hacim kabulü 74/74; beş ayrı gerçek Chromium arşiv senaryosu, PDF/ZIP/görsel bütünlüğü, tip kontrolleri ve üretim derlemesi geçti. [Arşiv doğrulaması](docs/academic-archive-review/verification.md) kullanılan izole ortamı ve sınırları açıklar. Bu sonuçlar yeni sürümün terminal/BAT/SH kurulum-yükseltme provasının yerine geçmez; [onaylı üretim provası](docs/superpowers/plans/2026-10-06-production-rehearsal-plan.md) sonraki aşamadır.
+12 Ekim 2026 akademik arşiv kabulü: backend genel regresyonu 412/412, frontend 272/272, ayrı gerçek DB/hacim kabulü 74/74; beş ayrı gerçek Chromium arşiv senaryosu, PDF/ZIP/görsel bütünlüğü, tip kontrolleri ve üretim derlemesi geçti. [Arşiv doğrulaması](docs/academic-archive-review/verification.md) kullanılan izole ortamı ve sınırları açıklar. Bu sonuçlar yeni sürümün terminal/BAT/SH kurulum-yükseltme provasının yerine geçmez; [üretim provası](docs/superpowers/plans/2026-10-06-production-rehearsal-plan.md) 14 Ekim’de aşağıdaki kapsam ve açık kapasite sınırıyla tamamlandı.
 
 Yerel SQLite uygulama verisi için `pnpm maintenance backup --project <kurulum> --name <ad>` ve `pnpm maintenance restore --backup <yedek> --project <bağımsız-boş-veri-hedefi>` komutları eklendi. Önce tüm uygulama süreçlerini durdurun. Native WAL/session turu, gerçek şema/taşınan arşiv API'si ve geri yüklenen admin hesabıyla Chromium girişi doğrulandı; kullanım, özel ayar kapsamı ve sınırlar [bakım belgesinde](docs/production-maintenance.md) açıklanır. Yükseltme/rollback/yük provası ayrı görevlerdir.
 
@@ -452,7 +518,9 @@ Kurulu sistemi verileri koruyarak güncellemek için onaylı sürüm kodunu yerl
 
 14 Ekim performans provasında 1.311 kullanıcı ve 17.661 sentetik iş kaydı kullanıldı. Başlangıç JavaScript gzip boyutu **%43,37 küçüldü**; toplam dağıtım boyutu ve büyük entry uyarısı ayrıca raporlanır. Gerçek Chromium'da dört rolün erişimi, `/school/` base, lazy hata kurtarması ve görsel/cevap/teslim kuyruğuyla ilk çevrimdışı sınav doğrulandı. 17.667 satırlık yıllık capture ve ilk geçmiş projeksiyonu sırasında bağımsız yazıcı 50/50 geçti; ZIP/PDF içerik özetleri korundu. Genel yükte 2/8 aktör geçti, **20 aktörde 10 süre aşımı ve bir DB onayı uyuşmazlığı kaldı**; bu düzey başarılı kapasite kabulü değildir. [Ölçümler ve sınırlar](docs/production-performance-results.md), [işletim kılavuzu](docs/production-maintenance.md#performans-ve-çevrimdışı-kabul).
 
-Mevcut kurulumlarda tutarlı SQLite yedeği alın; `pnpm install`, `pnpm --filter quiz-master-server db:deploy`, `pnpm build` ve sunucu yeniden başlatma adımlarını uygulayın. Migration mevcut kayıtları koruyarak oturum sürümü, e-posta sahiplenme alanı ve sonuç indeksleri ekler; anket sorularının boş doğru cevap alanını migration geçmişiyle uyumlu hale getirir.
+15 Ekim kapasite düzeltmelerinden sonra dört sınıf ×20 öğrenci, 20 görselli soru ve 30 dakika sınav ayarıyla izole prova tamamlandı: **4.334 ölçülen istek, 0 hata; 1.600 cevap ve 80 sonuç DB ile eşleşti**. Cevap kaydı p95 **7,24 sn**, teslim **9,66 sn**, teslimden sonraki kişisel sonuç **0,31 sn** ölçüldü. Dashboard toplulaştırması, sınırlı sonuç sayfaları, bağımsız okumalar, işlem yalıtımı, oturum yazma azaltımı ve güvenilir sunucu teslim zamanı uygulandı. Bu hızlandırılmış loopback koşusu gerçek okul Wi-Fi testi, 80 tam tarayıcı veya 30 dakikalık kesintisiz saha provası değildir. Önceki başarısız ölçümler tarihsel kanıttır; [güncel rapor ve dağıtım sınırları](docs/2026-10-14-capacity-school-exam-results.md).
+
+Mevcut kurulumlarda uygulama/worker süreçlerini durdurup tutarlı SQLite yedeğini doğrulayın; `pnpm install --frozen-lockfile --prod=false`, `pnpm --filter quiz-master-server exec prisma generate`, `pnpm --filter quiz-master-server db:deploy`, `pnpm build` ve sunucu yeniden başlatma adımlarını uygulayın. Yeni `20261014090000_notification_revision` migration'ı mevcut kullanıcıları koruyarak bildirim revizyonu ekler. Native SQLite sürücüsünün kurulumu ve sürüm kontrolü gereklidir. Bu geliştirme çalışmasında canlı DB'ye migration uygulanmadı; önce ayrı kurulumda yükseltme provası yapın. [Bakım ve geri dönüş adımları](docs/production-maintenance.md).
 
 Backend testleri geçici SQLite ve taklit SMTP kullanır. Kontroller: `pnpm --filter quiz-master-server test`, `pnpm --filter quiz-master-client exec vitest run`, `pnpm -r type-check` ve `pnpm build`.
 

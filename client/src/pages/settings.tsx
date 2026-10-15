@@ -23,7 +23,7 @@ import {
   VolumeX,
   AlertTriangle
 } from "lucide-react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "@/context/auth-context";
 import { authApi, notificationApi, adminApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
@@ -37,6 +37,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Switch } from "@/components/ui/switch";
 import { useLocation, useSearch } from "wouter";
 import { removeNotification, type NotificationPage } from "@/lib/notification-cache";
+import { getVersionedNotificationPreferences, saveVersionedNotificationPreferences, newerNotificationPreferences, type VersionedNotificationPreferences } from "@/lib/versioned-notification-preferences";
 
 export default function SettingsPage() {
   const { user, updateUser } = useAuth();
@@ -71,10 +72,17 @@ export default function SettingsPage() {
     enabled: !!user
   });
 
-  const { data: notificationPreferences } = useQuery({
-    queryKey: ["notifications", "preferences"],
-    queryFn: () => notificationApi.getPreferences(),
-    enabled: !!user
+  const preferenceOwner = useRef({ userId: user?.id, epoch: 0, busy: false });
+  if (preferenceOwner.current.userId !== user?.id) {
+    preferenceOwner.current = { userId: user?.id, epoch: preferenceOwner.current.epoch + 1, busy: false };
+  }
+  useEffect(() => () => { preferenceOwner.current.epoch++; }, []);
+  const preferenceQueryKey = ["notifications", "preferences", "versioned", user?.id];
+  const { data: notificationPreferences, isFetching: preferencesFetching } = useQuery({
+    queryKey: preferenceQueryKey,
+    queryFn: () => getVersionedNotificationPreferences(),
+    enabled: !!user,
+    structuralSharing: (previous, incoming) => newerNotificationPreferences(previous as VersionedNotificationPreferences | undefined, incoming as VersionedNotificationPreferences),
   });
 
   // Logs Query (6 months)
@@ -124,14 +132,38 @@ export default function SettingsPage() {
   });
 
   const muteNotificationsMutation = useMutation({
-    mutationFn: (muted: boolean) => notificationApi.updatePreferences(muted),
-    onSuccess: (preferences) => {
-      queryClient.setQueryData(["notifications", "preferences"], preferences);
+    mutationFn: async (command: { muted: boolean; revision: number; userId: string; epoch: number }) => {
+      await queryClient.cancelQueries({ queryKey: ["notifications", "preferences", "versioned", command.userId], exact: true });
+      if (preferenceOwner.current.userId !== command.userId || preferenceOwner.current.epoch !== command.epoch) throw new Error('Tercih sahibi değişti.');
+      return saveVersionedNotificationPreferences(command.muted, command.revision);
+    },
+    retry: false,
+    onSuccess: ({ preferences, saved }, command) => {
+      const capturedKey = ["notifications", "preferences", "versioned", command.userId];
+      if (preferenceOwner.current.userId !== command.userId || preferenceOwner.current.epoch !== command.epoch) {
+        // A mounted listener for the same user re-reads with its current session.
+        // Never cache an ambiguous reconciliation obtained after account change.
+        queryClient.invalidateQueries({ queryKey: capturedKey, exact: true });
+        return;
+      }
+      const current = queryClient.getQueryData<VersionedNotificationPreferences>(capturedKey);
+      if (current && current.revision > preferences.revision) return;
+      queryClient.setQueryData<VersionedNotificationPreferences>(capturedKey, previous => newerNotificationPreferences(previous, preferences));
+      queryClient.invalidateQueries({ queryKey: ["notifications", "preferences"], exact: true });
       toast({
-        title: preferences.muted ? "Bildirimler sessize alındı" : "Bildirimlerin sesi açıldı"
+        title: saved ? (preferences.muted ? "Bildirimler sessize alındı" : "Bildirimlerin sesi açıldı") : "Hata",
+        ...(saved ? {} : { description: "Bildirim tercihi doğrulanamadı. Güncel tercihiniz gösteriliyor; lütfen tekrar deneyin.", variant: "destructive" as const })
       });
     },
-    onError: () => toast({ title: "Hata", description: "Bildirim tercihleri güncellenemedi. Lütfen tekrar deneyin.", variant: "destructive" })
+    onError: (_error, command) => {
+      queryClient.invalidateQueries({ queryKey: ["notifications", "preferences", "versioned", command.userId], exact: true });
+      if (preferenceOwner.current.userId !== command.userId || preferenceOwner.current.epoch !== command.epoch) return;
+      queryClient.invalidateQueries({ queryKey: preferenceQueryKey, exact: true });
+      toast({ title: "Hata", description: "Bildirim tercihleri güncellenemedi. Lütfen tekrar deneyin.", variant: "destructive" });
+    },
+    onSettled: (_result, _error, command) => {
+      if (preferenceOwner.current.userId === command.userId && preferenceOwner.current.epoch === command.epoch) preferenceOwner.current.busy = false;
+    },
   });
 
   const notificationsMuted = notificationPreferences?.muted ?? false;
@@ -451,8 +483,13 @@ export default function SettingsPage() {
                   <Switch
                     id="notification-sound"
                     checked={!notificationsMuted}
-                    disabled={muteNotificationsMutation.isPending}
-                    onCheckedChange={(enabled) => muteNotificationsMutation.mutate(!enabled)}
+                    disabled={muteNotificationsMutation.isPending || preferencesFetching || !notificationPreferences}
+                    onCheckedChange={(enabled) => {
+                      if (!user || !notificationPreferences || preferenceOwner.current.busy) return;
+                      preferenceOwner.current.busy = true;
+                      const epoch = ++preferenceOwner.current.epoch;
+                      muteNotificationsMutation.mutate({ muted: !enabled, revision: notificationPreferences.revision, userId: user.id, epoch });
+                    }}
                     aria-label="Bildirim sesini aç veya kapat"
                   />
                 </div>

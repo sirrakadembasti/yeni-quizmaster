@@ -1,5 +1,7 @@
 # Hatalı yükseltmeden geri dönüş provası
 
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../production-rollback-rehearsal-results.md) esas alınır.
+
 Üst plan: [Üretime hazırlık](2026-10-06-production-rehearsal-plan.md), Görev 3. Kullanıcı uygulamayı ve bulunan hataların düzeltilmesini onayladı. Görev 2 kabulü kapatıldıktan sonra aşağıdaki sıra uygulanır. Otomatik rollback özelliği eklenmez; mevcut çevrimdışı bakım ve manuel sürüm geri dönüşü sınanır.
 
 14 Ekim 2026 kabulü tamamlandı: Windows dört gerçek hata aşaması ve native Linux kısmi migration kurtarması geçti. Özgün oturum/veri/şema, arşiv/görsel ve süreç/port kanıtları [sonuç raporunda](../../production-rollback-rehearsal-results.md). Diğer üç Linux hata aşaması tekrarlanmadı; tüm platformlarda 4/4 iddiası yoktur.

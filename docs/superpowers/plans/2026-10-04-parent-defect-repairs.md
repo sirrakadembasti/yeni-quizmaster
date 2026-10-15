@@ -1,5 +1,7 @@
 # Veli paneli hata onarım planı
 
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../parent-audit/defect-repairs.md) esas alınır.
+
 Başlangıç `411b56c`. Kullanıcı, denetim raporu ve önerilen düzeltme sırasını onaylayarak hataların düzeltilmesini istedi. Tasarım/kabul kriterleri `docs/parent-audit/findings.md` P-B01..10 ve ilgili P-U01..05'tir; ayrı yeni özellikler kapsam dışındadır.
 
 **Hedef:** Veli salt okunur sınırını, öğrenci/duyuru görünürlüğünü, hata toparlama ve çocuk bağlamını düzeltmek; mevcut kurulum/diğer rol akışlarını korumak.

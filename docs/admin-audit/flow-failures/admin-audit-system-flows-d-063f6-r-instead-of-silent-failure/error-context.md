@@ -1,15 +1,15 @@
-# Instructions
+# Talimatlar
 
-- Following Playwright test failed.
-- Explain why, be concise, respect Playwright best practices.
-- Provide a snippet of code with the fix, if possible.
+- Aşağıdaki Playwright testi başarısız oldu.
+- Nedenini kısa ve öz açıklayın; Playwright en iyi uygulamalarına uyun.
+- Mümkünse düzeltmeyi içeren bir kod örneği verin.
 
-# Test info
+# Test bilgileri
 
-- Name: admin-audit-system-flows.spec.ts >> deployment invalid origin receives API 400 and visible error instead of silent failure
-- Location: tests-e2e\admin-audit-system-flows.spec.ts:183:5
+- Ad: admin-audit-system-flows.spec.ts >> deployment invalid origin receives API 400 and visible error instead of silent failure
+- Konum: tests-e2e\admin-audit-system-flows.spec.ts:183:5
 
-# Error details
+# Hata ayrıntıları
 
 ```
 Error: expect(received).toBe(expected) // Object.is equality
@@ -18,7 +18,7 @@ Expected: 400
 Received: 500
 ```
 
-# Page snapshot
+# Sayfa anlık görüntüsü
 
 ```yaml
 - generic [ref=f1e2]:
@@ -217,7 +217,7 @@ Received: 500
               - generic [ref=f1e267]: pnpm build
 ```
 
-# Test source
+# Test kaynağı
 
 ```ts
   91  | test('management user invalid input visible validation, create, edit, cancel and delete persist', async ({ page }) => {

@@ -19,7 +19,7 @@ const data = (expires = new Date(Date.now() + 60000)) => ({ userId: 'isolated-us
 
 afterEach(async () => {
   for (const { store, directory } of stores.splice(0)) {
-    await new Promise<void>((resolve, reject) => (store as any).db.close((error: any) => error ? reject(error) : resolve()));
+    (store as any).close();
     rmSync(directory, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   }
 });
@@ -27,8 +27,7 @@ afterEach(async () => {
 describe('SQLite session store', () => {
   it('uses WAL to avoid rollback journal writes on every parallel session touch', async () => {
     const store = fixture();
-    const row = await new Promise<any>((resolve, reject) => (store as any).db.get('PRAGMA journal_mode', (error: any, row: any) => error ? reject(error) : resolve(row)));
-    expect(row.journal_mode).toBe('wal');
+    expect((store as any).db.pragma('journal_mode', { simple: true })).toBe('wal');
   });
   it('preserves session identity/version across concurrent reads and touches then revokes it', async () => {
     const store = fixture(), payload = data();

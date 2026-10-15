@@ -1,14 +1,16 @@
-# Guvenlik ve veri butunlugu duzeltme plani
+# Güvenlik ve veri bütünlüğü düzeltme planı
 
-Amac: React/Express/Prisma/SQLite mimarisini koruyarak dogrulanan bulgulari duzeltmek.
+> **Tarihsel plan/tasarım kaydı.** 14 Ekim 2026 belge kontrolü: gelecek zaman, açık kutular ve ara sonuçlar özgün çalışma sırasını korur; güncel yapılacaklar olarak okunmamalıdır. [Sonuç ve kapsam kaydı](../../guvenlik-ve-bakim.md) esas alınır.
 
-- [x] Izole test veritabani ve regresyon testleri
-- [x] Rol iliskileri, veli/ogretmen yetkileri, sonuc gizliligi, profil/parola kurallari
-- [x] Soru gecmisi, atomik sinav islemleri ve sinif yukseltme
-- [x] Oturum/Socket.IO, SSRF ve okul NAT hiz sinirlari
-- [x] Cevrimdisi akis, gorseller ve soru karistirma
-- [x] Bagimlilik yamalari, tam test/tip/build kontrolleri
-- [x] README/docs; Graphify CLI uretimi (son tutarlilik kontrolu commit oncesi)
-- [x] Bagimsiz diff inceleme; yalniz bu calismayi commit icin hazirlama
+Amaç: React/Express/Prisma/SQLite mimarisini koruyarak doğrulanan bulguları düzeltmek.
 
-Testler canli veritabanina erismez. Yerel migration testlerden sonra SQLite yedegi alinarak uygulanir. Onceden mevcut iki yerel kurulum degisikligi korunur ve commit disinda tutulur. MFA/e-posta dogrulamasi ve PostgreSQL gecisi yeni urun akislaridir; bu bakim kapsaminda eklenmez.
+- [x] İzole test veritabanı ve regresyon testleri
+- [x] Rol ilişkileri, veli/öğretmen yetkileri, sonuç gizliliği, profil/parola kuralları
+- [x] Soru geçmişi, atomik sınav işlemleri ve sınıf yükseltme
+- [x] Oturum/Socket.IO, SSRF ve okul NAT hız sınırları
+- [x] Çevrimdışı akış, görseller ve soru karıştırma
+- [x] Bağımlılık yamaları, tam test/tip/derleme kontrolleri
+- [x] README/docs; Graphify CLI üretimi (son tutarlılık kontrolü commit öncesi)
+- [x] Bağımsız fark incelemesi; yalnız bu çalışmayı commit için hazırlama
+
+Testler canlı veritabanına erişmez. Yerel migration testlerden sonra SQLite yedeği alınarak uygulanır. Önceden mevcut iki yerel kurulum değişikliği korunur ve commit dışında tutulur. MFA/e-posta doğrulaması ve PostgreSQL geçişi yeni ürün akışlarıdır; bu bakım kapsamında eklenmez.

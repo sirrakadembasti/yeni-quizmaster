@@ -1,5 +1,11 @@
 # Yerel bakım ve üretim provası
 
+## 15 Ekim 2026 sürüm notu
+
+Kapasite sürümü Prisma 6.19.3 ve better-sqlite3 12.8.0 (SQLite 3.51.3) kullanır; uygulama, oturum, arşiv ve yedek bağlantıları aynı yamalı sürücüdedir. WAL ve FULL dayanıklılığı korunur. Güncellemeden önce bütün app/worker süreçlerini durdurun, doğrulanmış yedek alın ve ayrı kurulumda yükseltmeyi prova edin. Frozen install ve Prisma generate sonrasında `20261014090000_notification_revision` dahil migration'ları `db:deploy` ile uygulayıp build/restart yapın. Canlı kurulum bu geliştirme sırasında yükseltilmedi.
+
+80 öğrencilik izole sınav provası 4.334 istekte sıfır hatayla tamamlandı; gerçek okul Wi-Fi kapasitesi ve 30 dakikalık saha koşusu ölçülmedi. Önceki performans başarısızlıkları tarihsel kanıt olarak korunur. [Güncel sonuçlar, gecikmeler ve sınırlar](2026-10-14-capacity-school-exam-results.md).
+
 12 Ekim 2026: üretim provası Görev 1 kapsamında uygulanmıştır. Komutlar yerel SQLite uygulama verisi içindir. Akademik CSV/PDF/ZIP export'u tam uygulama geri yükleme yedeği değildir.
 
 ## Kullanım

@@ -41,13 +41,28 @@ import {
   Users
 } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
-import { quizApi, resultApi, classApi, categoryApi, userApi, type StudentResult } from "@/lib/api";
+import { flushSync } from "react-dom";
+import { quizApi, classApi, categoryApi, userApi, type StudentResult } from "@/lib/api";
+import { getStatisticsResults } from "@/lib/results-summary";
 import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import { PrintButton, PrintMeta } from "@/components/print/PrintTools";
 import { downloadCsv } from "@/lib/export";
+
+const RESULT_TABLE_PAGE_SIZE = 100;
+
+function ResultTablePagination({ kind, page, pages, onChange }: { kind: string; page: number; pages: number; onChange: (page: number) => void }) {
+  if (pages <= 1) return null;
+  return (
+    <nav aria-label={`${kind} sayfaları`} className="flex items-center justify-end gap-3 p-4 print:hidden">
+      <Button variant="outline" aria-label={`Önceki ${kind} sayfası`} disabled={page <= 1} onClick={() => onChange(page - 1)}>Önceki</Button>
+      <span className="text-sm">Sayfa {page} / {pages}</span>
+      <Button variant="outline" aria-label={`Sonraki ${kind} sayfası`} disabled={page >= pages} onClick={() => onChange(page + 1)}>Sonraki</Button>
+    </nav>
+  );
+}
 
 export default function StatisticsPage() {
   const { role, user: currentUser } = useAuth();
@@ -65,6 +80,27 @@ export default function StatisticsPage() {
   const [loading, setLoading] = useState(true);
   const [tableSearch, setTableSearch] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
+  const [reportPage, setReportPage] = useState(1);
+  const [examPage, setExamPage] = useState(1);
+  const [printing, setPrinting] = useState(false);
+
+  useEffect(() => {
+    const beforePrint = () => flushSync(() => setPrinting(true));
+    const afterPrint = () => setPrinting(false);
+    window.addEventListener('beforeprint', beforePrint);
+    window.addEventListener('afterprint', afterPrint);
+    return () => {
+      window.removeEventListener('beforeprint', beforePrint);
+      window.removeEventListener('afterprint', afterPrint);
+    };
+  }, []);
+
+  useEffect(() => {
+    setReportPage(1);
+    setExamPage(1);
+  }, [allResults, selectedClassId, selectedCategoryId, selectedQuizId, selectedTeacherId, selectedStudentId, role, currentUser?.id]);
+
+  useEffect(() => setExamPage(1), [tableSearch]);
 
   useEffect(() => {
     document.title = "Sınav Sonuçları | Quiz Master";
@@ -84,7 +120,7 @@ export default function StatisticsPage() {
         role === 'teacher' ? classApi.getTeacherClasses() : classApi.getAllClasses(),
         categoryApi.getAllCategories(),
         userApi.getAllUsers(),
-        resultApi.getFilteredResults()
+        getStatisticsResults()
       ];
       
       const [quizzesResp, classesResp, categoriesResp, usersResp, resultsResp] = await Promise.all(promises);
@@ -204,6 +240,13 @@ export default function StatisticsPage() {
       )
       .sort((a, b) => b.participants - a.participants);
   }, [filteredResults, quizzes, categories, tableSearch]);
+
+  const reportPages = Math.max(1, Math.ceil(filteredResults.length / RESULT_TABLE_PAGE_SIZE));
+  const examPages = Math.max(1, Math.ceil(quizTableData.length / RESULT_TABLE_PAGE_SIZE));
+  const currentReportPage = Math.min(reportPage, reportPages);
+  const currentExamPage = Math.min(examPage, examPages);
+  const visibleReports = printing ? filteredResults : filteredResults.slice((currentReportPage - 1) * RESULT_TABLE_PAGE_SIZE, currentReportPage * RESULT_TABLE_PAGE_SIZE);
+  const visibleExams = printing ? quizTableData : quizTableData.slice((currentExamPage - 1) * RESULT_TABLE_PAGE_SIZE, currentExamPage * RESULT_TABLE_PAGE_SIZE);
 
   const handleExport = () => {
     const categoryName = categories.find((category: any) => category.id === selectedCategoryId)?.name || "Tüm Dersler";
@@ -510,7 +553,7 @@ export default function StatisticsPage() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {quizTableData.map((q) => (
+                        {visibleExams.map((q) => (
                           <TableRow key={q.id} className="hover:bg-primary/5 transition-colors border-border/30">
                             <TableCell className="font-bold py-4 px-6 text-foreground">{q.title}</TableCell>
                             <TableCell><Badge variant="secondary" className="bg-indigo-50 text-indigo-700 border-indigo-100">{q.category}</Badge></TableCell>
@@ -527,6 +570,7 @@ export default function StatisticsPage() {
                         ))}
                       </TableBody>
                     </Table>
+                    <ResultTablePagination kind="sınav" page={currentExamPage} pages={examPages} onChange={setExamPage} />
                   </CardContent>
                 </Card>
               </>
@@ -560,7 +604,7 @@ export default function StatisticsPage() {
                     </TableHeader>
                     <TableBody>
                       {filteredResults.length > 0 ? (
-                        filteredResults.map((res: StudentResult, i) => (
+                        visibleReports.map((res: StudentResult, i) => (
                           <TableRow key={i} className="hover:bg-muted/30 border-border/30">
                             <TableCell className="py-4 px-6">
                               <div className="flex flex-col">
@@ -592,6 +636,7 @@ export default function StatisticsPage() {
                       )}
                     </TableBody>
                   </Table>
+                  <ResultTablePagination kind="rapor" page={currentReportPage} pages={reportPages} onChange={setReportPage} />
                 </CardContent>
               </Card>
             </TabsContent>

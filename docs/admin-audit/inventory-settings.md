@@ -1,168 +1,167 @@
-# Admin audit: route inventory, management, settings, server, archive, announcements
+# Yönetici denetimi: rota envanteri, yönetim, ayarlar, sunucu, arşiv, duyurular
 
-> **Historical audit snapshot (30 September 2026).** Findings, source line references and open-status statements below describe the original audit and earlier repair notes, not the current tree. See [repair contracts](./repair-contracts.md) for the accepted behavior and [remaining repairs verification](./remaining-repairs-verification.md) for the current evidence and limitations. Current confirmed client result: 19 files, 117/117 tests. The server thread run hit a Prisma native Tokio panic; its fork rerun is in progress. New E2E checks have not run. The teacher-panel audit has not started.
+> **Tarihsel denetim anlık görüntüsü (30 Eylül 2026).** Aşağıdaki bulgular, kaynak satırı referansları ve açık durum ifadeleri güncel ağacı değil, ilk denetimi ve önceki onarım notlarını anlatır. Kabul edilen davranış için [onarım sözleşmelerine](./repair-contracts.md), güncel kanıt ve sınırlar için [kalan onarımların doğrulamasına](./remaining-repairs-verification.md) bakın. Güncel doğrulanmış istemci sonucu: 19 dosya, 117/117 test. Sunucunun thread koşusu Prisma native Tokio paniğiyle karşılaştı; fork tekrarı sürüyor. Yeni E2E kontrolleri çalıştırılmadı. Öğretmen paneli denetimi başlamadı.
 
-Date: 2026-09-30. Method: read-only source review of the current working tree. This document does not claim browser execution or database mutation. Existing changes to `client/src/lib/api.ts` and `client/src/pages/server-setup.tsx` were inspected but preserved. No AGENTS.md was found at the repository/client/src/pages/docs ancestor locations checked.
+Tarih: 2026-09-30. Yöntem: güncel çalışma ağacının salt okunur kaynak incelemesi. Bu belge tarayıcı çalıştırılması veya veritabanı değişikliği iddia etmez. `client/src/lib/api.ts` ve `client/src/pages/server-setup.tsx` dosyalarındaki mevcut değişiklikler incelendi, ancak korundu. Kontrol edilen depo/client/src/pages/docs üst dizinlerinde AGENTS.md bulunmadı.
 
-## Complete admin route inventory
+## Tam yönetici rota envanteri
 
-Registry: `client/src/App.tsx:82-127`. Sidebar: `client/src/components/layout/DashboardLayout.tsx:120-153`.
+Rota kaydı: `client/src/App.tsx:82-127`. Yan menü: `client/src/components/layout/DashboardLayout.tsx:120-153`.
 
-| Admin sidebar label | Route | Admin access |
+| Yönetici yan menü etiketi | Rota | Yönetici erişimi |
 |---|---|---|
-| Dashboard | `/` | Authenticated home renders DashboardPage |
-| Sınav Yönetimi | `/admin-quizzes` | Admin only |
-| Sınavlar | `/quizzes` | Teacher + admin |
-| Sınıf İstatistikleri | `/statistics` | Teacher + admin |
-| Sınav Sonuçları | `/results` | Teacher + admin |
-| Anket Yönetimi | `/survey-results` | Teacher + admin |
-| Öğrenciler | `/students` | Teacher + admin |
-| Öğretmenler | `/teachers` | Admin only |
-| Veli Eşleştirme | `/guardian-management` | Admin only |
-| Sınıflar | `/classlist` | Teacher + admin |
-| Yönetim | `/management` | Admin only |
-| Arşiv | `/archive` | Admin only |
-| Sunucu Durumu | `/server-setup` | Admin only |
-| Duyurular | `/announcements` | All authenticated roles |
-| Ayarlar | `/settings` | All authenticated roles |
+| Dashboard | `/` | Oturum açılmış ana sayfa DashboardPage gösterir |
+| Sınav Yönetimi | `/admin-quizzes` | Yalnız yönetici |
+| Sınavlar | `/quizzes` | Öğretmen + yönetici |
+| Sınıf İstatistikleri | `/statistics` | Öğretmen + yönetici |
+| Sınav Sonuçları | `/results` | Öğretmen + yönetici |
+| Anket Yönetimi | `/survey-results` | Öğretmen + yönetici |
+| Öğrenciler | `/students` | Öğretmen + yönetici |
+| Öğretmenler | `/teachers` | Yalnız yönetici |
+| Veli Eşleştirme | `/guardian-management` | Yalnız yönetici |
+| Sınıflar | `/classlist` | Öğretmen + yönetici |
+| Yönetim | `/management` | Yalnız yönetici |
+| Arşiv | `/archive` | Yalnız yönetici |
+| Sunucu Durumu | `/server-setup` | Yalnız yönetici |
+| Duyurular | `/announcements` | Oturum açmış tüm roller |
+| Ayarlar | `/settings` | Oturum açmış tüm roller |
 
-Additional admin-accessible routes needing coverage: `/create-quiz`, `/quizzes/:id`, `/classes/:id`, `/admin/classes/:id`, `/teachers/:id`, `/student/quiz/:quizId`, `/student/result/:resultId`, `/student/results`. Public `/auth` redirects an authenticated admin to `/`; `/reset-password` remains public. Legacy `/student-quizzes/:quizId` redirects to `/student/quiz/:quizId`. Student/parent-only routes are deliberately outside admin scope.
+Kapsanması gereken, yöneticinin erişebildiği ek rotalar: `/create-quiz`, `/quizzes/:id`, `/classes/:id`, `/admin/classes/:id`, `/teachers/:id`, `/student/quiz/:quizId`, `/student/result/:resultId`, `/student/results`. Herkese açık `/auth`, oturum açmış yöneticiyi `/` yoluna yönlendirir; `/reset-password` herkese açık kalır. Eski `/student-quizzes/:quizId`, `/student/quiz/:quizId` yoluna yönlenir. Yalnız öğrenci/veliye açık rotalar bilinçli olarak yönetici kapsamı dışındadır.
 
-## Tab inventory
+## Sekme envanteri
 
-| Page | Tabs / nested tabs | Source |
+| Sayfa | Sekmeler / alt sekmeler | Kaynak |
 |---|---|---|
 | Yönetim | Dersler (`categories`), Sınıflar (`classes`), Kullanıcılar (`users`), Loglar (`logs`) | admin-management.tsx:395-398 |
 | Yönetim / Kullanıcılar | Tümü, Yöneticiler, Öğretmenler, Öğrenciler, Veliler | admin-management.tsx:548-552 |
-| Yönetim / Loglar | Kullanıcı Logları, E-Posta Logları, Şifre Talepleri, Sistem Hata & İşlemleri (button-controlled subviews) | admin-management.tsx:624-657 |
+| Yönetim / Loglar | Kullanıcı Logları, E-Posta Logları, Şifre Talepleri, Sistem Hata & İşlemleri (düğmelerle denetlenen alt görünümler) | admin-management.tsx:624-657 |
 | Ayarlar | Profil, Bildirimler, İşlem Geçmişi, Güvenlik | settings.tsx:223-234 |
 | Arşiv | Sınav Arşivi, Sınıf Atlatma | admin/archive.tsx:108-109 |
-| Sınav Sonuçları | Genel Bakış (`overview`), Raporlar (`reports`, conditional) | results.tsx:265-271 |
+| Sınav Sonuçları | Genel Bakış (`overview`), Raporlar (`reports`, koşullu) | results.tsx:265-271 |
 | Sınav oluştur/düzenle | Sınav Ayarları (`settings`), Sorular (`questions`) | create-quiz.tsx:347-354 |
 | Anket Yönetimi | Sonuçlar, Anket Oluştur | survey-results.tsx:283-284 |
-| Öğrenci sonuçları (admin-accessible) | Sınavlar (`exams`), Öğrenci (`student`), Veli (`parent`) | student-results.tsx:411-419 |
+| Öğrenci sonuçları (yönetici erişebilir) | Sınavlar (`exams`), Öğrenci (`student`), Veli (`parent`) | student-results.tsx:411-419 |
 
-Announcements and server status have cards/forms rather than tabs. Dashboard, teacher, class, people and quiz findings belong to companion audit reports.
+Duyurular ve sunucu durumunda sekmeler yerine kartlar/formlar bulunur. Dashboard, öğretmen, sınıf, kişi ve sınav bulguları tamamlayıcı denetim raporlarındadır.
 
-## Confirmed code defects and acceptance criteria
+## Doğrulanmış kod kusurları ve kabul kriterleri
 
-### INV-01 — P2: successful profile save leaves admin identity stale
+### INV-01 — P2: başarılı profil kaydı yönetici kimliğini eski bırakıyor
 
-Evidence: `settings.tsx:171-174` calls `authApi.updateProfile(formData)` then invalidates `['/api/auth/me']`. `auth-context.tsx:22-24` stores user in React state; its initial fetch at `auth-context.tsx:43-45` runs only on mount. The context exposes login/register/logout, no refresh/updateUser and no React Query subscription (`auth-context.tsx:9-18`, `:108-118`). `settings.tsx:139-159` refills form and computes dirty state from that unchanged user.
+Kanıt: `settings.tsx:171-174`, `authApi.updateProfile(formData)` çağırır ve ardından `['/api/auth/me']` sorgusunu geçersiz kılar. `auth-context.tsx:22-24` kullanıcıyı React durumunda saklar; `auth-context.tsx:43-45` ilk sorgusu yalnız bileşen bağlanırken çalışır. Bağlam login/register/logout sunar; refresh/updateUser veya React Query aboneliği yoktur (`auth-context.tsx:9-18`, `:108-118`). `settings.tsx:139-159`, formu bu değişmeyen kullanıcıdan yeniden doldurur ve kaydedilmemiş değişiklik durumunu hesaplar.
 
-Reproduction in disposable data: change an admin profile name, save successfully, inspect header and save-button dirty state, navigate away and back. The header/context retains the old name, save remains dirty, and revisiting can restore old values despite persisted server data. Full reload masks the issue.
+Geçici veride yeniden üretim: yönetici profil adını değiştirip başarıyla kaydedin; üst başlığı ve kayıt düğmesinin değişiklik durumunu inceleyin; başka sayfaya gidip geri dönün. Üst başlık/bağlam eski adı tutar, kayıt durumu değişmiş kalır; yeniden ziyaret, sunucuda kalıcı veri olmasına rağmen eski değerleri geri getirebilir. Tam yeniden yükleme sorunu gizler.
 
-Acceptance: returned/refetched user updates auth context immediately; header and profile fields show the persisted name, dirty state clears, navigation retains it, and offline user cache is synchronized.
+Kabul: dönen/yeniden sorgulanan kullanıcı kimlik doğrulama bağlamını hemen günceller; üst başlık ve profil alanları kalıcı adı gösterir, değişiklik durumu temizlenir, gezinmede korunur ve çevrimdışı kullanıcı önbelleği eşitlenir.
 
-### INV-02 — P2: management log history silently stops at the first page
+### INV-02 — P2: yönetim günlük geçmişi sessizce ilk sayfada duruyor
 
-Evidence: `admin-management.tsx:158-198` supplies filters without page/limit to user, email, reset and system log queries; renderers map the returned arrays with no next/previous controls (`:731`, `:794`, `:902`, `:1022`). APIs support pagination but default to 100 user/email/system entries (`server/api-routes/admin.ts:133`, `:158`, `:237`) and 50 reset requests (`:73-75`). The response includes totalPages, which the page ignores. Counts are displayed as the current array length.
+Kanıt: `admin-management.tsx:158-198`, kullanıcı, e-posta, sıfırlama ve sistem günlüğü sorgularına page/limit olmadan filtre verir; görüntüleyiciler dönen dizileri sonraki/önceki kontrolleri olmadan işler (`:731`, `:794`, `:902`, `:1022`). API'ler sayfalama destekler; varsayılanları 100 kullanıcı/e-posta/sistem kaydı (`server/api-routes/admin.ts:133`, `:158`, `:237`) ve 50 sıfırlama isteğidir (`:73-75`). Yanıttaki totalPages sayfa tarafından yok sayılır. Sayılar geçerli dizi uzunluğu olarak gösterilir.
 
-Reproduction: use a fixture with 101 matching log rows or 51 reset requests; select All Time and a filter matching all. The older row cannot be reached without narrowing the filter/API access. Shared date filter also does not affect password reset requests (`admin-management.tsx:183-186`), despite being displayed above all log subviews (`:666-684`).
+Yeniden üretim: eşleşen 101 günlük satırı veya 51 sıfırlama isteği olan test verisi kullanın; tüm zamanları ve hepsini eşleştiren filtreyi seçin. Filtre daraltılmadan/API erişimi olmadan eski satıra ulaşılamaz. Ortak tarih filtresi tüm günlük alt görünümlerinin üzerinde gösterilmesine (`:666-684`) rağmen parola sıfırlama isteklerini de etkilemez (`admin-management.tsx:183-186`).
 
-Acceptance: pagination or load-more exposes all matching rows, shows total/page information and resets page on filter changes; date filtering is supported consistently or hidden for reset requests.
+Kabul: sayfalama veya daha fazla yükleme tüm eşleşen satırlara eriştirir, toplam/sayfa bilgisini gösterir ve filtre değişince sayfayı sıfırlar; tarih filtresi tutarlı desteklenir veya sıfırlama istekleri için gizlenir.
 
-### INV-03 — P2: archive history hard-capped at 20
+### INV-03 — P2: arşiv geçmişi 20 kayıtla kesin sınırlandırılmış
 
-Evidence: `client/src/pages/admin/archive.tsx:189` applies `.slice(0, 20)` to archived quizzes. No search, academic-year filter, pagination or detail link exists. The summary can report more archived quizzes than the table makes reachable.
+Kanıt: `client/src/pages/admin/archive.tsx:189`, arşivlenmiş sınavlara `.slice(0, 20)` uygular. Arama, eğitim yılı filtresi, sayfalama veya ayrıntı bağlantısı yoktur. Özet, tablodan erişilebilenden fazla arşivlenmiş sınav bildirebilir.
 
-Reproduction: fixture with 21 archived quizzes; row 21 is absent and cannot be reached.
+Yeniden üretim: 21 arşivlenmiş sınav içeren test verisi; 21. satır yoktur ve erişilemez.
 
-Acceptance: every archived quiz is discoverable through paging/year/search; visible count and total are distinguished; link to read-only details is available where intended.
+Kabul: her arşivlenmiş sınav sayfalama/yıl/arama yoluyla bulunabilir; görünür sayı ve toplam ayrılır; amaçlanan yerlerde salt okunur ayrıntı bağlantısı bulunur.
 
-### INV-04 — P1: archive batch can partially commit
+### INV-04 — P1: toplu arşiv işlemi kısmen kalıcılaşabiliyor
 
-Evidence: `server/storage.ts:1456-1465` performs quiz updateMany then results updateMany outside a transaction. If the second write fails, quizzes are archived while results retain null academicYear; API reports failure (`server/api-routes/admin.ts:278-291`). This is a confirmed non-atomic code path; no real database failure was injected.
+Kanıt: `server/storage.ts:1456-1465`, transaction dışında önce sınav updateMany, sonra sonuç updateMany işlemi yapar. İkinci yazma başarısız olursa sınavlar arşivlenirken sonuçların academicYear değeri null kalır; API başarısızlık bildirir (`server/api-routes/admin.ts:278-291`). Bu doğrulanmış atomik olmayan kod yoludur; gerçek veritabanı hatası enjekte edilmedi.
 
-Acceptance: both updates and essential audit record execute atomically, or recovery/idempotency is explicit; a test injecting the result-update failure verifies no partial archive remains.
+Kabul: iki güncelleme ve temel denetim kaydı atomik yapılır veya kurtarma/tekrar güvenliği açıkça tanımlanır; sonuç güncelleme hatası enjekte eden test kısmi arşiv kalmadığını doğrular.
 
-### INV-05 — P2: archive preview and mutation select different data
+### INV-05 — P2: arşiv önizlemesi ve veri değişikliği farklı kayıtları seçiyor
 
-Evidence: UI active count uses `status !== 'archived'` (`admin/archive.tsx:42`) and says all active exams will be locked (`:129`, `:279`). Storage selects `academicYear: null` (`server/storage.ts:1458`) without status filter. A nonarchived quiz with an academicYear is counted but unchanged; an archived quiz with null academicYear is included in the mutation despite being excluded from the count. This is conditional on such records existing; not a claim about current data.
+Kanıt: arayüz aktif sayı için `status !== 'archived'` kullanır (`admin/archive.tsx:42`) ve tüm aktif sınavların kilitleneceğini söyler (`:129`, `:279`). Depolama, durum filtresi olmadan `academicYear: null` seçer (`server/storage.ts:1458`). academicYear değeri olan arşivlenmemiş sınav sayılır ama değişmez; academicYear değeri null olan arşivlenmiş sınav sayımdan dışlansa da değişikliğe dahil edilir. Bu, böyle kayıtların varlığına bağlıdır; güncel veri hakkında iddia değildir.
 
-Acceptance: server provides exact candidate counts using the same selection as the mutation and the confirmation uses them; status/year invariant is enforced or migration repairs inconsistent historical rows.
+Kabul: sunucu değişiklikle aynı seçimi kullanarak kesin aday sayılarını sağlar, onay bunları kullanır; durum/yıl tutarlılığı zorunlu kılınır veya migration tutarsız tarihsel satırları düzeltir.
 
-### INV-06 — P2: announcement deletion is immediate and errors are silent
+### INV-06 — P2: duyuru hemen siliniyor ve hatalar sessiz kalıyor
 
-Evidence: `announcements.tsx:154` calls deleteMutation directly from the trash icon; deletion mutation (`:91-97`) handles success only, with no confirmation, pending guard, rollback/undo or onError. API deletion is permanent (`server/api-routes/announcement.ts:103-110`).
+Kanıt: `announcements.tsx:154`, çöp kutusu simgesinden doğrudan deleteMutation çağırır; silme işlemi (`:91-97`) yalnız başarıyı işler; onay, bekleyen işlem koruması, geri alma veya onError yoktur. API silmesi kalıcıdır (`server/api-routes/announcement.ts:103-110`).
 
-Reproduction without mutation: inspect trash handler and missing confirmation; in a disposable fixture, cancel a hypothetical delete is impossible. For failure UX, block the DELETE request: row remains but no error/retry message is provided.
+Veri değiştirmeden yeniden üretim: çöp kutusu işleyicisini ve eksik onayı inceleyin; geçici test verisinde varsayımsal silmeyi iptal etmek mümkün değildir. Hata deneyimi için DELETE isteğini engelleyin: satır kalır ama hata/tekrar mesajı verilmez.
 
-Acceptance: confirmation names the announcement and supports cancel; mutation disables repeat submission; failure shows actionable error; successful deletion updates the list. An undo mechanism may replace confirmation if backend supports it.
+Kabul: onay duyurunun adını belirtir ve iptal destekler; işlem tekrarlı gönderimi kapatır; başarısızlık yapılabilir bir eylem sunan hata gösterir; başarılı silme listeyi günceller. Arka uç destekliyorsa geri alma mekanizması onayın yerine geçebilir.
 
-### INV-07 — P2: request failures are presented as empty/default content
+### INV-07 — P2: istek hataları boş/varsayılan içerik olarak sunuluyor
 
-Evidence: announcements destructures only data/isLoading (`announcements.tsx:64-67`) then defaults to an empty list (`:99`) and renders 'Henüz bir duyuru...' (`:137-144`). Archive queries (`admin/archive.tsx:29-40`) default to empty arrays and show zero counts without error state; archiving is still offered. Management log renderers similarly have only loading/empty branches. Server status uses an example emptyConfig (`server-setup.tsx:15-28`, `:63-64`), `changesAllowed=false` and empty detected cards on a failed initial status GET, without isError UI.
+Kanıt: duyurular yalnız data/isLoading alır (`announcements.tsx:64-67`), boş listeyi varsayılan yapar (`:99`) ve 'Henüz bir duyuru...' gösterir (`:137-144`). Arşiv sorguları (`admin/archive.tsx:29-40`) boş dizilere döner, hata durumu olmadan sıfır sayıları gösterir; arşivleme hâlâ sunulur. Yönetim günlük görüntüleyicileri de yalnız yükleme/boş dallarına sahiptir. Sunucu durumu ilk status GET başarısızlığında isError arayüzü olmadan örnek emptyConfig (`server-setup.tsx:15-28`, `:63-64`), `changesAllowed=false` ve boş algılanan kartlar kullanır.
 
-Reproduction: block the corresponding GET and wait for retries. An outage appears to be zero records/default configuration rather than a load failure. Current source does not distinguish an actual read-only server policy from a failed status fetch.
+Yeniden üretim: ilgili GET isteğini engelleyip tekrarları bekleyin. Kesinti, yükleme hatası yerine sıfır kayıt/varsayılan yapılandırma gibi görünür. Güncel kaynak gerçek salt okunur sunucu politikasını başarısız durum sorgusundan ayırmaz.
 
-Acceptance: explicit loading/error/empty/success states; retry control and useful error text; destructive archive remains disabled until authoritative candidates are loaded; sample values are not presented as detected configuration.
+Kabul: açık yükleme/hata/boş/başarı durumları; tekrar kontrolü ve yararlı hata metni; kesin adaylar yüklenene kadar yıkıcı arşivleme kapalı; örnek değerler algılanmış yapılandırma gibi sunulmaz.
 
-### INV-08 — P2: server refresh can discard unsaved edits; retention runs saved policy rather than displayed draft
+### INV-08 — P2: sunucu yenilemesi kaydedilmemiş değişiklikleri kaybedebiliyor; saklama işlemi görünen taslağı değil kayıtlı politikayı kullanıyor
 
-Evidence: status-data effect overwrites form and origins on each updated query result (`server-setup.tsx:72-76`); manual refetch at `:135` has no dirty guard. The retention button is enabled from local `form.retention.enabled` (`:203`) but `runRetention` sends no draft (`:117-123`); `server/api-routes/deployment.ts` calls runDataRetention using saved configuration. Displayed unsaved days can differ from the actual deletion policy; toggling enabled locally on a disabled saved policy produces 409.
+Kanıt: durum verisi etkisi her yeni sorgu sonucunda form ve kaynakları ezer (`server-setup.tsx:72-76`); `:135` manuel sorgusunda değişiklik koruması yoktur. Saklama düğmesi yerel `form.retention.enabled` ile etkinleşir (`:203`), ancak `runRetention` taslak göndermez (`:117-123`); `server/api-routes/deployment.ts`, kayıtlı yapılandırmayla runDataRetention çağırır. Görünen kaydedilmemiş günler gerçek silme politikasından farklı olabilir; kayıtlı politika kapalıyken yerelde etkinleştirmek 409 üretir.
 
-Reproduction in read-only review: edit a field, click Sunucuyu Yeniden Algıla; values are replaced on fetch success. In a disposable environment with runtime changes enabled, edit retention days without saving then inspect the run POST: displayed values are not sent.
+Salt okunur incelemede yeniden üretim: alanı düzenleyip Sunucuyu Yeniden Algıla düğmesine basın; başarılı sorguda değerler değiştirilir. Çalışma zamanı değişiklikleri açık geçici ortamda saklama günlerini kaydetmeden düzenleyin, çalıştırma POST isteğini inceleyin: görünen değerler gönderilmez.
 
-Acceptance: keep dirty edits or warn before refresh; 'Şimdi Temizle' requires saved, unchanged policy and confirmation displays persisted thresholds; successful execution displays per-record deletion counts.
+Kabul: kaydedilmemiş değişiklikler korunur veya yenilemeden önce uyarılır; 'Şimdi Temizle' kayıtlı ve değişmemiş politika gerektirir, onay kalıcı eşikleri gösterir; başarılı işlem kayıt türüne göre silme sayılarını gösterir.
 
-### INV-09 — P2: server/header notification toast calls have no mounted renderer
+### INV-09 — P2: sunucu/üst başlık bildirim çağrılarının bağlı görüntüleyicisi yok
 
-Evidence: `server-setup.tsx:13` and `DashboardLayout.tsx:53` import toast from `sonner`; server copy/save/run handlers call toast.success/error (`server-setup.tsx:49`, `:81-90`, `:99-119`). `NotificationListener.tsx:4` also uses Sonner. `App.tsx:5` imports the different Radix renderer from `components/ui/toaster` and mounts it at `:255`. `main.tsx:7-11` renders only App. A full client-source scan found `components/ui/sonner.tsx` defining Sonner's renderer but no import/mount of that component. Consequently Sonner events do not have a visible toast host. This can obscure server validation and request failures as well as realtime notification feedback.
+Kanıt: `server-setup.tsx:13` ve `DashboardLayout.tsx:53`, toast öğesini `sonner` içinden alır; sunucunun kopyalama/kaydetme/çalıştırma işleyicileri toast.success/error çağırır (`server-setup.tsx:49`, `:81-90`, `:99-119`). `NotificationListener.tsx:4` da Sonner kullanır. `App.tsx:5`, farklı Radix görüntüleyicisini `components/ui/toaster` içinden alıp `:255` satırında bağlar. `main.tsx:7-11` yalnız App gösterir. Tam istemci kaynak taraması, `components/ui/sonner.tsx` içinde Sonner görüntüleyicisini buldu, ancak bileşenin içe aktarımı/bağlanması yoktu. Bu nedenle Sonner olaylarının görünür bildirim alanı yoktur. Sunucu doğrulama ve istek hataları ile gerçek zamanlı bildirim geri bildirimi gizlenebilir.
 
-Acceptance: mount the Sonner renderer or consolidate all callers on the active toast mechanism; verify visible success and failure messages for copy, validation, failed status mutation, notification mute/delete failure and realtime announcement receipt.
+Kabul: Sonner görüntüleyicisi bağlanır veya tüm çağıranlar etkin bildirim mekanizmasında birleştirilir; kopyalama, doğrulama, başarısız durum değişikliği, bildirim susturma/silme hatası ve gerçek zamanlı duyuru alımı için görünür başarı/hata mesajları doğrulanır.
 
-### INV-10 — P2: personal settings history contradicts its six-month completeness claim
+### INV-10 — P2: kişisel ayarlar geçmişi altı aylık eksiksizlik iddiasıyla çelişiyor
 
-Evidence: `settings.tsx:78-88` fetches getLogsMe without pagination and locally filters the returned rows to six months. `server/api-routes/admin.ts:14-25` defaults to the newest 50 entries and returns pagination; `api.ts:1033-1037` discards the pagination contract. `settings.tsx:523` promises all system actions in the last six months, but has no next-page controls. This differs from INV-02 because the personal page fetches and filters only 50 records, regardless of the six-month interval.
+Kanıt: `settings.tsx:78-88`, getLogsMe sorgusunu sayfalamasız yapar ve dönen satırları yerelde altı ayla filtreler. `server/api-routes/admin.ts:14-25`, en yeni 50 kaydı varsayılan alır ve sayfalama döndürür; `api.ts:1033-1037` sayfalama sözleşmesini atar. `settings.tsx:523` son altı aydaki tüm sistem işlemlerini vaat eder, ancak sonraki sayfa kontrolü yoktur. Kişisel sayfa altı aylık aralıktan bağımsız yalnız 50 kayıt alıp filtrelediğinden INV-02'den ayrılır.
 
-Acceptance: fetch the actual six-month range server-side with pagination; allow every matching row to be reached and display total/page information. A fixture with 51 actions in six months must expose the oldest action.
+Kabul: gerçek altı aylık aralık sunucu tarafında sayfalamayla sorgulanır; eşleşen her satıra erişilir ve toplam/sayfa bilgisi gösterilir. Altı ayda 51 işlem içeren test verisi en eski işlemi de göstermelidir.
 
-## Additional risks requiring targeted verification
+## Hedefli doğrulama gerektiren ek riskler
 
-- Promotion sends no academicYear (`api.ts:1048-1053`) while backend supports stamping completed results before class changes (`storage.ts:1478-1479`). Verify whether archive-before-promotion is an enforced business requirement; otherwise historical results may appear under the new class. Do not promote real students during audit.
-- Promotion and archive confirmation buttons are not disabled when their mutations are pending (`admin/archive.tsx:284`, `:317-320`); repeated archive requests can create duplicate audit logs, repeated promotion commonly reports zero the second time. Verify click/failure behavior in disposable fixtures.
-- Labels frequently omit htmlFor and inputs lack ids in archive/server/announcement forms; icon-only category edit/delete and user edit/delete buttons lack accessible names (`admin-management.tsx:444-447`, `:600-603`). Verify accessible names with browser DOM and keyboard/screen-reader checks. Confirm-before-delete exists for management categories/classes/users.
-- `settings.tsx:135-138` accepts any query-string `tab` value without allowlist. `/settings?tab=unknown` activates no panel. Acceptance: unsupported tab falls back to profile; valid deep links open the requested tab and back/forward behavior is consistent.
-- Subtabs in management logs are regular buttons; verify mobile horizontal overflow and focus order, particularly four buttons plus date filter.
-- Announcement targets allow all/teacher/student but no dedicated parent option (`announcements.tsx:237-239`) although parent is supported by backend read policy. This is a product-scope question, not a proven defect; decide whether administrators need parent-only announcements.
+- Sınıf atlatma academicYear göndermez (`api.ts:1048-1053`); arka uç sınıf değişmeden önce tamamlanmış sonuçlara yıl etiketi eklemeyi destekler (`storage.ts:1478-1479`). Atlatmadan önce arşivlemenin zorunlu iş kuralı olup olmadığını doğrulayın; aksi halde tarihsel sonuçlar yeni sınıf altında görünebilir. Denetimde gerçek öğrencileri atlatmayın.
+- Sınıf atlatma ve arşiv onay düğmeleri işlemleri beklerken kapatılmaz (`admin/archive.tsx:284`, `:317-320`); tekrarlı arşiv istekleri mükerrer denetim günlüğü oluşturabilir, tekrarlı atlatma çoğunlukla ikinci sefer sıfır bildirir. Tıklama/hata davranışını geçici test verileriyle doğrulayın.
+- Arşiv/sunucu/duyuru formlarında etiketler sıkça htmlFor, alanlar ids içermez; yalnız simgeli kategori düzenle/sil ve kullanıcı düzenle/sil düğmelerinde erişilebilir ad yoktur (`admin-management.tsx:444-447`, `:600-603`). Erişilebilir adları tarayıcı DOM'u ve klavye/ekran okuyucu kontrolleriyle doğrulayın. Yönetim kategori/sınıf/kullanıcı silmelerinde ön onay vardır.
+- `settings.tsx:135-138`, izin listesi olmadan her sorgu dizesi `tab` değerini kabul eder. `/settings?tab=unknown` hiçbir paneli etkinleştirmez. Kabul: desteklenmeyen sekme profile döner; geçerli doğrudan bağlantılar istenen sekmeyi açar ve geri/ileri davranışı tutarlıdır.
+- Yönetim günlüğü alt sekmeleri normal düğmelerdir; özellikle dört düğme ve tarih filtresi için mobil yatay taşmayı ve odak sırasını doğrulayın.
+- Duyuru hedefleri tümü/öğretmen/öğrenciye izin verir, ancak arka uç okuma politikası veli desteklese de özel veli seçeneği yoktur (`announcements.tsx:237-239`). Bu ürün kapsamı sorusudur, kanıtlanmış kusur değildir; yöneticilerin yalnız veliye yönelik duyuruya ihtiyacı olup olmadığını belirleyin.
 
-## Read-only browser checklist
+## Salt okunur tarayıcı kontrol listesi
 
-Status values: SOURCE = inspected in source, LIVE = browser executed by main audit, MUTATION = requires isolated fixture/explicit operational authorization. This subreport sets SOURCE only; no mutation was performed.
+Durum değerleri: SOURCE = kaynakta incelendi, LIVE = ana denetimde tarayıcı çalıştırıldı, MUTATION = izole test verisi/açık işlem yetkisi gerektirir. Bu alt rapor yalnız SOURCE atar; veri değişikliği yapılmadı.
 
-| Route/view | Read-only checks and action inventory | Status |
+| Rota/görünüm | Salt okunur kontroller ve eylem envanteri | Durum |
 |---|---|---|
-| Global sidebar/header | 15 admin links, active item, browser back, mobile drawer, theme, notifications popover/read/mute/delete, account menu/settings/logout | SOURCE |
-| /management / Dersler | Load/empty/error, list counts; open/cancel create and edit; required name, description; open/cancel delete; print/refresh | SOURCE; commit/delete MUTATION |
-| /management / Sınıflar | Cards and count; click detail; menu edit/detail/delete; open/cancel form; level/section/teacher/description; no-teacher choice | SOURCE; save/delete MUTATION |
-| /management / Kullanıcılar | Each of five role tabs, counts and empty state; create/edit/delete dialogs; required fields/parent phone-address; guardian-link navigation | SOURCE; save/delete MUTATION |
-| /management / Kullanıcı Logları | Date all/year/30 days/year; role all/admin/teacher/student/parent; action search; row content/date; 101-record completeness | SOURCE |
-| /management / E-Posta Logları | Date/status/search/count badges; refresh/5s polling; open body/details; pending/sent/failed; resend/delete affordances, email-view close | SOURCE; resend/delete MUTATION |
-| /management / Şifre Talepleri | Status/search/counts; 5s polling; email input; pending/completed/cancelled/expired; renew/cancel availability; date consistency and 51-row completeness | SOURCE; send/renew/cancel MUTATION |
-| /management / Sistem Hata & İşlemleri | Date/search, JSON/detail readability, severity, loading/empty/error, 101-row completeness | SOURCE |
-| /settings / Profil | Existing name/email/phone/address, dirty-state button, form validation, profile summary, print | SOURCE; save MUTATION |
-| /settings / Bildirimler | Read/unread styles, all-read, mute switch, delete icon, 20/page previous-next/count; empty/error; nav-popover coherence | SOURCE; mark/mute/delete MUTATION |
-| /settings / İşlem Geçmişi | Six-month wording, 50-row API cap vs displayed completeness, action/details/dates, error vs empty | SOURCE |
-| /settings / Güvenlik | Current/new/confirm password, show/hide if present, mismatch, minimum length, pending, cleared fields on success | SOURCE; password change MUTATION |
-| /archive / Sınav Arşivi | Counts, year label, whitespace/short year validation, confirmation content/cancel, 21-row completeness | SOURCE; archive MUTATION |
-| /archive / Sınıf Atlatma | Source counts/loading, destination excludes source, graduate option, level warning, confirmation/cancel, source change after destination selection | SOURCE; promotion MUTATION |
-| /server-setup | Status GET and refresh; policy-source read-only message; four health badges; detected summary; mode/url/origin/proxy validation; pending-restart text; retention fields; template copy; failed fetch | SOURCE; profile save/retention MUTATION |
-| /announcements | Listing/author/date/role/class badges, print, create dialog/cancel, uppercase Turkish title, content, audience/class choices, validation/pending/error, trash accessible label | SOURCE; publish/delete MUTATION |
+| Genel yan menü/üst başlık | 15 yönetici bağlantısı, etkin öğe, tarayıcı geri, mobil çekmece, tema, bildirim penceresi/okuma/susturma/silme, hesap menüsü/ayarlar/çıkış | SOURCE |
+| /management / Dersler | Yükleme/boş/hata, liste sayıları; oluşturma/düzenleme aç/iptal; zorunlu ad, açıklama; silme aç/iptal; yazdır/yenile | SOURCE; kaydet/sil MUTATION |
+| /management / Sınıflar | Kartlar ve sayı; ayrıntıya tıklama; menü düzenle/ayrıntı/sil; form aç/iptal; seviye/şube/öğretmen/açıklama; öğretmensiz seçim | SOURCE; kaydet/sil MUTATION |
+| /management / Kullanıcılar | Beş rol sekmesinin her biri, sayılar ve boş durum; oluştur/düzenle/sil kutuları; zorunlu alanlar/veli telefon-adres; veli bağlama gezintisi | SOURCE; kaydet/sil MUTATION |
+| /management / Kullanıcı Logları | Tarih tümü/yıl/30 gün/yıl; rol tümü/yönetici/öğretmen/öğrenci/veli; eylem arama; satır içerik/tarih; 101 kayıt eksiksizliği | SOURCE |
+| /management / E-Posta Logları | Tarih/durum/arama/sayı rozetleri; yenile/5 saniyelik sorgu; gövde/ayrıntı aç; bekliyor/gönderildi/başarısız; tekrar gönder/sil seçenekleri, e-posta görünümü kapatma | SOURCE; tekrar gönder/sil MUTATION |
+| /management / Şifre Talepleri | Durum/arama/sayılar; 5 saniyelik sorgu; e-posta alanı; bekliyor/tamamlandı/iptal/süresi doldu; yenile/iptal erişimi; tarih tutarlılığı ve 51 satır eksiksizliği | SOURCE; gönder/yenile/iptal MUTATION |
+| /management / Sistem Hata & İşlemleri | Tarih/arama, JSON/ayrıntı okunabilirliği, önem derecesi, yükleme/boş/hata, 101 satır eksiksizliği | SOURCE |
+| /settings / Profil | Mevcut ad/e-posta/telefon/adres, değişiklik durumu düğmesi, form doğrulama, profil özeti, yazdırma | SOURCE; kaydet MUTATION |
+| /settings / Bildirimler | Okundu/okunmadı stilleri, tümünü oku, susturma anahtarı, silme simgesi, 20/sayfa önceki-sonraki/sayı; boş/hata; gezinme bildirim penceresi tutarlılığı | SOURCE; işaretle/sustur/sil MUTATION |
+| /settings / İşlem Geçmişi | Altı aylık ifade, 50 satır API sınırı ile gösterilen eksiksizlik karşılaştırması, eylem/ayrıntı/tarih, hata ile boş durum ayrımı | SOURCE |
+| /settings / Güvenlik | Mevcut/yeni/tekrar parola, varsa göster/gizle, uyuşmazlık, minimum uzunluk, bekleyen işlem, başarıda temizlenen alanlar | SOURCE; parola değişikliği MUTATION |
+| /archive / Sınav Arşivi | Sayılar, yıl etiketi, boşluk/kısa yıl doğrulaması, onay içeriği/iptal, 21 satır eksiksizliği | SOURCE; arşivle MUTATION |
+| /archive / Sınıf Atlatma | Kaynak sayıları/yükleme, hedef kaynak sınıfı dışlar, mezuniyet seçeneği, seviye uyarısı, onay/iptal, hedef seçildikten sonra kaynak değişikliği | SOURCE; sınıf atlatma MUTATION |
+| /server-setup | Durum GET ve yenileme; politika kaynağı salt okunur mesajı; dört sağlık rozeti; algılanan özet; mod/url/origin/proxy doğrulama; yeniden başlatma bekliyor metni; saklama alanları; şablon kopyalama; başarısız sorgu | SOURCE; profil kaydet/saklama MUTATION |
+| /announcements | Liste/yazar/tarih/rol/sınıf rozetleri, yazdır, oluşturma kutusu/iptal, büyük harf Türkçe başlık, içerik, hedef kitle/sınıf seçenekleri, doğrulama/bekleyen işlem/hata, çöp kutusu erişilebilir etiketi | SOURCE; yayımla/sil MUTATION |
 
-Cross-cutting acceptance for every listed view: usable at desktop and 390px mobile without clipped primary actions; keyboard focus visible and dialogs trap/restore focus; loading/error/empty distinguishable; search and filters retain consistent counts; print output omits navigation and includes the currently intended content. Browser evidence must supplement these source findings before marking LIVE/pass.
+Listelenen her görünüm için ortak kabul: masaüstü ve 390px mobilde temel eylemler kesilmeden kullanılabilirlik; görünür klavye odağı ve iletişim kutularında odak tuzağı/geri dönüş; ayırt edilebilir yükleme/hata/boş durumları; arama/filtrelerde tutarlı sayılar; gezinmeyi dışlayan ve amaçlanan güncel içeriği kapsayan baskı çıktısı. LIVE/başarılı işaretlemeden önce tarayıcı kanıtı bu kaynak bulgularını tamamlamalıdır.
 
+## Tarayıcı doğrulama eki — 2026-09-30
 
-## Browser verification addendum — 2026-09-30
+### INV-11 — P2: bilinmeyen ayarlar sekmesi etkin panel bırakmıyor
 
-### INV-11 — P2: unknown settings tab leaves no active panel
+Durum: gerçek Chromium E2E ile yeniden üretildi. Yönetici girişi sonrası `GET /settings?tab=unknown`; beklenen profil sekmesine dönüş, gerçek sayfada `tabpanel` yok. Kanıt: `docs/admin-audit/results-route-initial.json` ve `docs/admin-audit/evidence/settings-unknown-tab.png`. Etki: yanlış yazılmış/paylaşılmış doğrudan bağlantı boş ayarlar gövdesi açıyor. Düzeltme: sorgu `tab` değerini profile/notifications/logs/security ile doğrulayıp geçersiz değerleri profile normalleştirin. Kabul: geçersiz sekme profili etkinleştirir; geçmiş gezintisi geçerli sekmeleri korur.
 
-Status: real Chromium E2E reproduced. `GET /settings?tab=unknown` after admin login; expected profile tab fallback, actual page has no `tabpanel`. Evidence: `docs/admin-audit/results-route-initial.json` and `docs/admin-audit/evidence/settings-unknown-tab.png`. Impact: a mistyped/shared deep link opens a blank settings body. Fix: validate query `tab` against profile/notifications/logs/security, normalize invalid values to profile. Acceptance: invalid tab activates profile and history navigation retains valid tabs.
+### INV-12 — P2: mobil gezinme Escape ile kapanmıyor
 
-### INV-12 — P2: mobile navigation does not close on Escape
+Durum: gerçek Chromium E2E ve 390px arayüz gözlemi. Menüyü aç ile mobil menüyü açıp Escape'e basın. Beklenen örtünün kapanması ve odağın tetikleyiciye dönmesi; gerçekte Menüyü kapat arka planı 20 saniye sonra da görünür. Kanıt: `docs/admin-audit/results-route-initial.json` ve `docs/admin-audit/evidence/live-mobile-after-escape.png`. Düzeltme: modal çekmece davranışı, Escape işleyicisi ve odak dönüşü/tuzağı. Kabul: Escape çekmeceyi kapatır, odak menü düğmesine döner; açıkken Tab yalnız ilgili kontroller arasında dolaşır.
 
-Status: real Chromium E2E and 390px UI observation. Open mobile menu with Menüyü aç, press Escape. Expected overlay closes and focus returns to trigger; actual Menüyü kapat backdrop remains visible after 20 seconds. Evidence: `docs/admin-audit/results-route-initial.json` and `docs/admin-audit/evidence/live-mobile-after-escape.png`. Fix: modal drawer semantics, Escape handler and focus return/trap. Acceptance: Escape closes drawer, focus returns to menu button, Tab cycles only relevant controls while open.
+### INV-13 — P2: hatalı dağıtım URL'si HTTP 500 döndürüyor
 
-### INV-13 — P2: malformed deployment URL returns HTTP 500
-
-Status: real isolated browser/API E2E. On /server-setup, type `not-an-origin` in public URL and click Profili Kaydet. Expected HTTP 400 with field issue and visible validation message; actual HTTP 500. `server/utils/deployment-config.ts` superRefine calls `new URL(value.publicUrl)` for localhost without guarding a value already rejected by originSchema; route catches it as server failure. Evidence: `docs/admin-audit/flow-failures/admin-audit-system-flows-d-063f6-r-instead-of-silent-failure/error-context.md` and later targeted result. Fix: guard URL construction inside superRefine, return Zod field issue; mount the toast renderer for visible error. Acceptance: malformed input gives 400, no config written, field-specific visible message, form remains editable.
+Durum: gerçek izole tarayıcı/API E2E. /server-setup üzerinde genel URL'ye `not-an-origin` yazıp Profili Kaydet'e basın. Beklenen alan hatası ve görünür doğrulama mesajıyla HTTP 400; gerçek HTTP 500. `server/utils/deployment-config.ts` superRefine, originSchema tarafından zaten reddedilen değeri korumadan localhost için `new URL(value.publicUrl)` çağırır; rota bunu sunucu hatası olarak yakalar. Kanıt: `docs/admin-audit/flow-failures/admin-audit-system-flows-d-063f6-r-instead-of-silent-failure/error-context.md` ve sonraki hedefli sonuç. Düzeltme: superRefine içinde URL oluşturmayı koruyup Zod alan hatası döndürün; görünür hata için bildirim görüntüleyicisini bağlayın. Kabul: hatalı girdi 400 verir, yapılandırma yazılmaz, alana özgü görünür mesaj gösterilir, form düzenlenebilir kalır.

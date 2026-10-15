@@ -6,7 +6,7 @@ import net from 'node:net';
 import {createRequire} from 'node:module';
 import {getSetupPaths} from './setup-bootstrap-lib.mjs';
 const require=createRequire(new URL('../server/package.json',import.meta.url));
-const sqlite3=require(createRequire(require.resolve('connect-sqlite3')).resolve('sqlite3'));
+const SQLite=require('better-sqlite3');
 const dotenv=require('dotenv');
 const inside=(root,target)=>{const rel=path.relative(root,target);return rel===''||(!rel.startsWith('..')&&!path.isAbsolute(rel));};
 
@@ -44,9 +44,22 @@ async function digest(file){
   for await(const chunk of fs.createReadStream(file))hash.update(chunk);
   return hash.digest('hex');
 }
-const open=(file,mode=sqlite3.OPEN_READONLY)=>new Promise((resolve,reject)=>{const db=new sqlite3.Database(file,mode,error=>error?reject(error):resolve(db));});
-const close=db=>new Promise((resolve,reject)=>db.close(error=>error?reject(error):resolve()));
-const query=(db,sql)=>new Promise((resolve,reject)=>db.all(sql,(error,rows)=>error?reject(error):resolve(rows)));
+const open=async(file,readonly=true)=>{
+  const db=new SQLite(file,{readonly,fileMustExist:true,timeout:5000});
+  try {
+    const version=db.prepare('SELECT sqlite_version() AS version').get().version;
+    // This pinned build includes the WAL reset correctness fix.
+    if(version!=='3.51.3')throw new Error('Unsupported maintenance SQLite runtime: '+version);
+    return db;
+  }catch(error){db.close();throw error;}
+};
+const close=async db=>db.close();
+const query=async(db,sql)=>db.prepare(sql).all();
+export async function getMaintenanceSQLiteVersion(file){
+  const db=await open(file);
+  try{return (await query(db,'SELECT sqlite_version() AS version'))[0].version;}
+  finally{await close(db);}
+}
 async function checkDatabase(file){
   const db=await open(file);
   try{
@@ -56,21 +69,16 @@ async function checkDatabase(file){
 }
 async function sqliteBackup(source,target){
   const db=await open(source);
-  let backup;
   try{
-    backup=await new Promise((resolve,reject)=>{const job=db.backup(target,error=>error?reject(error):resolve(job));});
-    const started=Date.now();let done=false;
-    while(!done){
+    const started=Date.now();
+    await db.backup(target,{progress:()=>{
       if(Date.now()-started>120000)throw new Error('SQLite backup deadline exceeded');
-      done=await new Promise((resolve,reject)=>backup.step(256,(error,completed)=>error?reject(error):resolve(completed)));
-    }
-  }finally{
-    try{if(backup)await new Promise((resolve,reject)=>backup.finish(error=>error?reject(error):resolve()));}
-    finally{await close(db);}
-  }
+      return 256;
+    }});
+  }finally{await close(db);}
   // A portable snapshot is a standalone DB, not a new WAL-mode database
   // whose validation opens unmanifested sidecars in the backup directory.
-  const snapshot=await open(target,sqlite3.OPEN_READWRITE);
+  const snapshot=await open(target,false);
   try{
     const mode=await query(snapshot,'PRAGMA journal_mode=DELETE');
     if(mode[0]?.journal_mode!=='delete')throw new Error('SQLite snapshot is not standalone');

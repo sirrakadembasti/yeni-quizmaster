@@ -69,8 +69,11 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
     const after = columns.map(column => {
       if (!Object.prototype.hasOwnProperty.call(changes, column)) return `'${column}',"${column}"`;
       const value = changes[column];
+      // Prisma's library adapter serializes raw integral values as SQLite REAL.
+      // Apply the same affinity as the destination column inside permit JSON.
       values.push(value instanceof Date ? value.getTime() : typeof value === 'boolean' ? Number(value) : value);
-      return `'${column}',?`;
+      const integral = value instanceof Date || typeof value === 'boolean' || typeof value === 'number' && Number.isSafeInteger(value);
+      return `'${column}',${integral ? 'CAST(? AS INTEGER)' : '?'}`;
     }).join(',');
     values.push(...ids);
     const count = await tx.$executeRawUnsafe(`INSERT INTO ArchiveFinalizationPermit(snapshotId,owner,entityType,entityId,oldValues,newValues) SELECT ?,?,?,id,json_object(${before}),json_object(${after}) FROM "${table}" WHERE id IN (${ids.map(()=>'?').join(',')})`, ...values);
@@ -83,9 +86,9 @@ export function createArchiveWorker(options: ArchiveWorkerOptions) {
     const at=now().getTime();
     for(let start=0;start<students.length;start+=100){
       const batch=students.slice(start,start+100),values=batch.flatMap(student=>[student.id,student.classId,student.studentNo,Number(student.graduate)]);
-      const cte=`WITH changes(id,classId,studentNo,graduate) AS (VALUES ${batch.map(()=>'(?,?,?,?)').join(',')})`;
+      const cte=`WITH changes(id,classId,studentNo,graduate) AS (VALUES ${batch.map(()=>'(?,?,CAST(? AS INTEGER),CAST(? AS INTEGER))').join(',')})`;
       const before=definitions.user.columns.map(column=>`'${column}',u."${column}"`).join(',');
-      const after="'classId',c.classId,'classNo',NULL,'studentNo',c.studentNo,'isActive',CASE WHEN c.graduate=1 THEN 0 ELSE u.isActive END,'deactivatedAt',CASE WHEN c.graduate=1 THEN ? ELSE u.deactivatedAt END,'graduationYear',CASE WHEN c.graduate=1 THEN ? ELSE u.graduationYear END,'graduationDate',CASE WHEN c.graduate=1 THEN ? ELSE u.graduationDate END";
+      const after="'classId',c.classId,'classNo',NULL,'studentNo',c.studentNo,'isActive',CASE WHEN c.graduate=1 THEN 0 ELSE u.isActive END,'deactivatedAt',CASE WHEN c.graduate=1 THEN CAST(? AS INTEGER) ELSE u.deactivatedAt END,'graduationYear',CASE WHEN c.graduate=1 THEN ? ELSE u.graduationYear END,'graduationDate',CASE WHEN c.graduate=1 THEN CAST(? AS INTEGER) ELSE u.graduationDate END";
       const admitted=await tx.$executeRawUnsafe(`${cte} INSERT INTO ArchiveFinalizationPermit(snapshotId,owner,entityType,entityId,oldValues,newValues) SELECT ?,?,'user',u.id,json_object(${before}),json_object(${after}) FROM "User" u JOIN changes c ON c.id=u.id`,...values,job.id,owner,at,job.label,at);
       if(admitted!==batch.length)throw new Error('Finalization capability target missing');
       const changed=await tx.$executeRawUnsafe(`${cte} UPDATE "User" AS u SET classId=(SELECT classId FROM changes WHERE id=u.id),classNo=NULL,studentNo=(SELECT studentNo FROM changes WHERE id=u.id),isActive=(SELECT CASE WHEN graduate=1 THEN 0 ELSE u.isActive END FROM changes WHERE id=u.id),deactivatedAt=(SELECT CASE WHEN graduate=1 THEN ? ELSE u.deactivatedAt END FROM changes WHERE id=u.id),graduationYear=(SELECT CASE WHEN graduate=1 THEN ? ELSE u.graduationYear END FROM changes WHERE id=u.id),graduationDate=(SELECT CASE WHEN graduate=1 THEN ? ELSE u.graduationDate END FROM changes WHERE id=u.id) WHERE id IN (SELECT id FROM changes)`,...values,at,job.label,at);

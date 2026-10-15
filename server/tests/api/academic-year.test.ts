@@ -72,7 +72,7 @@ it('keeps exactly one captured entity and transition rule per source class', asy
 });
 
 it('applies the new migration to legacy fixture data without modifying existing records', async () => {
-  const sqlite3 = require('sqlite3');
+  const sqlite3 = createRequire(require.resolve('connect-sqlite3'))('sqlite3');
   const directory = mkdtempSync(join(dirname(process.env.DATABASE_URL!.slice(5)), 'migration-fixture-'));
   const connection = new sqlite3.Database(join(directory, 'legacy.db'));
   const execute = (sql: string) => new Promise<void>((resolve, reject) => connection.exec(sql, (error: Error | null) => error ? reject(error) : resolve()));

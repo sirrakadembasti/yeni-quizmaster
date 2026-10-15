@@ -4,12 +4,17 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import ClassStatistics from '@/pages/class-statistics';
 
-const api = vi.hoisted(() => ({ notifications: vi.fn(), markRead: vi.fn(), analytics: vi.fn(), error: vi.fn() }));
-vi.mock('@/context/auth-context', () => ({ useAuth: () => ({ user: { id: 'teacher', name: 'Teacher' }, role: 'teacher', logout: vi.fn() }) }));
+const api = vi.hoisted(() => ({ notifications: vi.fn(), markRead: vi.fn(), analytics: vi.fn(), error: vi.fn(), readPreferences: vi.fn(), savePreferences: vi.fn(), legacyPreferences: vi.fn(), userId: 'teacher' }));
+vi.mock('@/lib/versioned-notification-preferences', async importOriginal => ({
+  ...await importOriginal<typeof import('@/lib/versioned-notification-preferences')>(),
+  getVersionedNotificationPreferences: api.readPreferences,
+  saveVersionedNotificationPreferences: api.savePreferences,
+}));
+vi.mock('@/context/auth-context', () => ({ useAuth: () => ({ user: { id: api.userId, name: 'Teacher' }, role: 'teacher', logout: vi.fn() }) }));
 vi.mock('@/components/layout/ThemeToggle', () => ({ ThemeToggle: () => null }));
 vi.mock('sonner', () => ({ toast: { error: api.error } }));
 vi.mock('@/lib/api', () => ({
-  notificationApi: { getUserNotifications: api.notifications, markAllAsRead: api.markRead, getPreferences: async () => ({ muted: false }) },
+  notificationApi: { getUserNotifications: api.notifications, markAllAsRead: api.markRead, getPreferences: async () => ({ muted: false }), updatePreferences: api.legacyPreferences },
   analyticsApi: { getClassAnalytics: api.analytics }, classApi: { getAllClasses: async () => ({ classes: [] }) },
 }));
 // JSDOM has no chart layout. The actual print chart must not need this observer.
@@ -21,8 +26,12 @@ vi.mock('recharts', () => ({
 let client: QueryClient;
 beforeEach(() => {
   vi.clearAllMocks();
+  api.userId = 'teacher';
   api.notifications.mockResolvedValue({ notifications: [], pagination: { unread: 0 } });
   api.markRead.mockResolvedValue({});
+  api.readPreferences.mockResolvedValue({ muted: false, revision: 0 });
+  api.savePreferences.mockResolvedValue({ preferences: { muted: true, revision: 1 }, saved: true });
+  api.legacyPreferences.mockResolvedValue({ muted: true });
   api.analytics.mockResolvedValue({ classes: [
     { classId: 'a', className: '1-A', studentCount: 1, participantCount: 1, completedCount: 1, participationRate: 100, averageScore: 50 },
     { classId: 'b', className: '1-B', studentCount: 1, participantCount: 1, completedCount: 1, participationRate: 100, averageScore: 70 },
@@ -31,9 +40,50 @@ beforeEach(() => {
 });
 afterEach(() => { cleanup(); client.clear(); });
 function mount(children = <DashboardLayout>Page</DashboardLayout>) {
-  render(<QueryClientProvider client={client}>{children}</QueryClientProvider>);
+  return render(<QueryClientProvider client={client}>{children}</QueryClientProvider>);
 }
 function open() { fireEvent.click(screen.getByRole('button', { name: 'Bildirimleri aç' })); }
+
+it('does not poll an invisible navigation menu during the exam', async () => {
+  mount(<DashboardLayout hideNavigation>Exam</DashboardLayout>);
+  await act(async () => {});
+  expect(api.notifications).not.toHaveBeenCalled();
+  expect(api.readPreferences).not.toHaveBeenCalled();
+});
+
+it('does not send a queued preference command after the authenticated user changes', async () => {
+  const view = mount(); open();
+  await waitFor(() => expect(client.getQueryData(['notifications', 'preferences', 'versioned', 'teacher'])).toEqual({ muted: false, revision: 0 }));
+  let release!: () => void;
+  const cancel = vi.spyOn(client, 'cancelQueries').mockImplementationOnce(() => new Promise<void>(resolve => { release = resolve; }));
+  fireEvent.click(screen.getByRole('button', { name: 'Bildirimleri sessize al' }));
+  await waitFor(() => expect(cancel).toHaveBeenCalled());
+  api.userId = 'other-teacher';
+  view.rerender(<QueryClientProvider client={client}><DashboardLayout>Page</DashboardLayout></QueryClientProvider>);
+  await act(async () => release());
+  expect(api.savePreferences).not.toHaveBeenCalled();
+  cancel.mockRestore();
+});
+
+it('shares a user-scoped preference revision with Settings and sends it from the navigation control', async () => {
+  mount(); open();
+  await waitFor(() => expect(client.getQueryData(['notifications', 'preferences', 'versioned', 'teacher'])).toEqual({ muted: false, revision: 0 }));
+  fireEvent.click(screen.getByRole('button', { name: 'Bildirimleri sessize al' }));
+  await waitFor(() => expect(api.savePreferences).toHaveBeenCalledWith(true, 0));
+  expect(await screen.findByRole('button', { name: 'Bildirimlerin sesini aç' })).toBeEnabled();
+  expect(api.legacyPreferences).not.toHaveBeenCalled();
+});
+
+it('shows reconciled durable state after an uncertain navigation write', async () => {
+  api.savePreferences.mockResolvedValue({ preferences: { muted: true, revision: 1 }, saved: false });
+  api.legacyPreferences.mockRejectedValue(new Error('NetworkError'));
+  mount(); open();
+  const button = await screen.findByRole('button', { name: 'Bildirimleri sessize al' });
+  await waitFor(() => expect(button).toBeEnabled());
+  fireEvent.click(button);
+  expect(await screen.findByRole('button', { name: 'Bildirimlerin sesini aç' })).toBeEnabled();
+  expect(api.error).toHaveBeenCalled();
+});
 
 it('distinguishes initial loading, failed fetch and a successful empty retry', async () => {
   let reject!: (error: Error) => void;

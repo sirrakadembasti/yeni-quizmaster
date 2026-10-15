@@ -15,6 +15,11 @@ const fixture = vi.hoisted(() => ({
   user: { id: 'admin', role: 'admin', name: 'Original Admin', email: 'admin@test.com' },
   announcements: vi.fn(), deleteAnnouncement: vi.fn(), updateProfile: vi.fn(), notifications: vi.fn(), logs: vi.fn(), updatePreferences: vi.fn(),
 }));
+vi.mock('@/lib/versioned-notification-preferences', async importOriginal => ({
+  ...await importOriginal<any>(),
+  getVersionedNotificationPreferences: async () => ({ muted: false, revision: 0 }),
+  saveVersionedNotificationPreferences: async (muted: boolean, revision: number) => ({ preferences: { ...await fixture.updatePreferences(muted), revision: revision + 1 }, saved: true }),
+}));
 vi.mock('@/lib/api', () => ({
   refreshCsrfToken: async () => 'token',
   authApi: { getCurrentUser: async () => ({ user: fixture.user }), updateProfile: fixture.updateProfile },

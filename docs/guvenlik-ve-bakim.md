@@ -2,6 +2,8 @@
 
 React/Vite, Express, Prisma/SQLite, Socket.IO ve e-posta outbox mimarisi korunmuştur.
 
+15 Ekim kapasite sürümünde işlem yalıtımı, bildirim revizyonu, güvenilir sunucu teslim zamanı, ayrı salt okuma bağlantısı ve WAL/FULL sürücü doğrulaması eklendi. Canlı DB değiştirilmedi; yeni sürümün migration ve yedek/geri dönüş adımları [bakım belgesinde](production-maintenance.md), 80 öğrencilik prova ve sınırları [sonuç raporunda](2026-10-14-capacity-school-exam-results.md) açıklanır.
+
 ## Uygulanan düzeltmeler
 
 | Alan | Düzeltilen davranış | Doğrulama |
@@ -48,7 +50,7 @@ Graphify gerçek CLI ile yerel AST üzerinden üretilir. Paylaşılan çıktıla
 
 ## İşletim sınırları ve sonraki çalışmalar
 
-12 Ekim arşiv kapanışında gerçek veritabanı/trigger, dosya bütünlüğü, salt okunur geçmiş ve kurtarma testleri tamamlandı; backend 412/412, frontend 272/272 ve ayrı hacim turu 74/74 geçti. Test dosyaları artık pristine migration şablonundan bağımsız veritabanı kopyaları kullanır; canlı DB bu kontrollere dahil değildir. İlk geçmiş hazırlığının izole 50k ölçümü 154,366 saniyedir; eşzamanlı canlı yazma gecikmesi henüz ölçülmedi. Tam uygulama yedeği/geri yükleme, yükseltme/geri dönüş ve paket küçültme [sonraki onaylı provadadır](superpowers/plans/2026-10-06-production-rehearsal-plan.md). [Kanıt ve başarısız eski denemeler](academic-archive-review/verification.md).
+12 Ekim arşiv kapanışında gerçek veritabanı/trigger, dosya bütünlüğü, salt okunur geçmiş ve kurtarma testleri tamamlandı; backend 412/412, frontend 272/272 ve ayrı hacim turu 74/74 geçti. Test dosyaları artık pristine migration şablonundan bağımsız veritabanı kopyaları kullanır; canlı DB bu kontrollere dahil değildir. İlk geçmiş hazırlığının izole 50k ölçümü 154,366 saniyedir; bu 12 Ekim turunda eşzamanlı yazıcı ölçülmedi. 14 Ekim izole provasında arşiv aşamaları sırasında bağımsız yazıcı 50/50 geçti; genel 20 aktör kapasitesi başarısız kaldı. Tam yedek/restore, yükseltme/geri dönüş ve başlangıç paketi küçültme [üretim provasında tamamlandı](superpowers/plans/2026-10-06-production-rehearsal-plan.md). [Kanıt ve başarısız eski denemeler](academic-archive-review/verification.md).
 
 ### Akademik arşiv sınırı — 7 Ekim 2026
 
@@ -63,7 +65,7 @@ Arşiv ZIP indirmesi admin yetkisi ve parola onayı gerektirir. Yerel raster gö
 - SMTP teslimi en az bir kez yaklaşımıdır. SMTP kabulü ile DB durum kaydı arasında süreç kapanırsa veya gönderim lease süresini aşarsa yinelenen e-posta mümkündür.
 - SQLite, dosya tabanlı oturum ve bellekte rate-limit tek sunucu düzenini korur. Birden fazla instance için merkezi oturum/limit deposu ve PostgreSQL geçişi ayrı işletim çalışmasıdır.
 - MFA, e-posta doğrulama ve kayıt onay politikası yeni ürün akışlarıdır; eklenmemiştir.
-- Büyük sonuç listelerinde pagination ve frontend paketinin bölünmesi ayrı performans çalışması olarak kalır. Derleme büyük paket uyarısını korur.
+- Büyük sonuç listelerinde sayfalama ve timeout sonrası tercih uzlaştırması açık kapasite işleridir. Ağır frontend sayfaları bölündü; başlangıç statik gzip %43,37 azaldı, büyük entry uyarısı korundu. [Son kapasite incelemesi](production-capacity-investigation-results.md) açık işleri ayırır.
 - Sıfır bilinen bağımlılık uyarısı tüm olası açıkların kapalı olduğu anlamına gelmez. Origin listesi, HTTPS, gizli anahtarlar ve yedek geri yükleme işletimde doğrulanmalıdır.
 - Çıkış teslim edilmemiş yerel cevapları da siler. Çevrimdışı kullanıcılar bağlantı geldiğinde teslimi tamamlamadan çıkış yapmamalıdır.
 

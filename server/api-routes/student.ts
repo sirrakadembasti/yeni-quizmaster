@@ -8,8 +8,11 @@ import { getIO } from "../socket";
 import { shouldNotifyQuizOwnerOfSubmission } from "../utils/notification-policy";
 import { isQuizVisibleToStudent } from "../utils/quiz-scope-policy";
 import { archiveContentGuard, archiveResultGuard } from '../middleware/archive-readonly';
+import { captureTrustedRequestReceipt, getTrustedRequestReceipt } from '../utils/request-receipt';
 
 const router: Router = Router();
+// Preserve the index body-receipt timestamp; fallback for standalone router mounts.
+router.use(captureTrustedRequestReceipt);
 router.use('/quiz/:id/:operation', (req, res, next) => {
   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
   return requireAuth(req, res, () => ['answer', 'submit'].includes(req.params.operation)
@@ -253,38 +256,17 @@ router.post("/quiz/:resultId/answer", requireAuth, requireRole(["student"]), asy
     }
 
     const { questionId, selectedOption } = validation.data;
-    const result = await storage.getResult(req.params.resultId);
-    if (!result) return res.status(404).json({ message: "Sınav oturumu bulunamadı." });
-    
-    // IDOR Check
-    if (result.studentId !== req.user!.id) {
-      return res.status(403).json({ message: "Bu sınav oturumu size ait değil." });
-    }
-
-    if (result.status !== "in_progress") {
-      return res.status(400).json({ message: "Bu sınav zaten tamamlanmış." });
-    }
-
-    const quiz = await storage.getQuiz(result.quizId);
-    if (!quiz) return res.status(404).json({ message: "Quiz bulunamadı." });
-
-    if (quiz.timeLimit && result.startedAt) {
-      const deadline = new Date(result.startedAt).getTime() + quiz.timeLimit * 60 * 1000;
-      if (Date.now() >= deadline) {
-        return res.status(409).json({ message: "Sınav süresi dolduğu için cevap kaydedilemedi." });
-      }
-    }
-
-    const question = await storage.getQuestion(questionId);
-    if (!question || question.quizId !== result.quizId) {
-      return res.status(404).json({ message: "Soru bulunamadı." });
-    }
-    
-    await storage.saveResultAnswer(result.id, req.user!.id, questionId, selectedOption);
+    // Ownership, deadline and question membership must be checked in the write transaction.
+    await storage.saveResultAnswer(req.params.resultId, req.user!.id, questionId, selectedOption, getTrustedRequestReceipt(req));
     res.json({ message: "Cevap kaydedildi." });
   } catch (e) {
-    if ((e as Error).message === "RESULT_EXPIRED") return res.status(409).json({ message: "Sınav süresi dolmuş." });
-    if ((e as Error).message === "RESULT_COMPLETED") return res.status(400).json({ message: "Sınav zaten tamamlanmış." });
+    const code = (e as Error & { code?: string }).code;
+    if (code === "RESULT_NOT_FOUND") return res.status(404).json({ message: "Sınav oturumu bulunamadı." });
+    if (code === "RESULT_FORBIDDEN") return res.status(403).json({ message: "Bu sınav oturumu size ait değil." });
+    if (code === "QUIZ_NOT_FOUND") return res.status(404).json({ message: "Quiz bulunamadı." });
+    if (code === "RESULT_EXPIRED") return res.status(409).json({ message: "Sınav süresi dolduğu için cevap kaydedilemedi." });
+    if (code === "RESULT_COMPLETED") return res.status(400).json({ message: "Bu sınav zaten tamamlanmış." });
+    if (code === "INVALID_QUESTION_ID") return res.status(404).json({ message: "Soru bulunamadı." });
     console.error("Answer quiz error:", e);
     res.status(500).json({ message: "Cevap kaydedilemedi." });
   }
@@ -312,8 +294,11 @@ router.post("/quiz/:resultId/submit", requireAuth, requireRole(["student", "teac
     const quiz = await storage.getQuiz(result.quizId);
     if (!quiz) return res.status(404).json({ message: "Quiz bulunamadı." });
 
-    const outcome = await storage.completeResult(result.id, req.user!.id, validation.data.answers || {});
+    const outcome = await storage.completeResult(result.id, req.user!.id, validation.data.answers || {}, getTrustedRequestReceipt(req));
     const { score } = outcome;
+    const { newlyCompleted, ...response } = outcome;
+    // Durable grading is complete; best-effort teacher notification must not delay it.
+    res.json(response);
 
     try {
       const quizCreator = await storage.getUser(quiz.createdBy);
@@ -331,8 +316,6 @@ router.post("/quiz/:resultId/submit", requireAuth, requireRole(["student", "teac
       console.error("Quiz submission notification error:", notificationError);
     }
 
-    const { newlyCompleted, ...response } = outcome;
-    res.json(response);
   } catch (e) {
     if ((e as Error).message === "INVALID_QUESTION_ID") return res.status(400).json({ message: "Geçersiz soru kimliği." });
     if ((e as Error).message === "RESULT_COMPLETED") return res.status(409).json({ message: "Sınav oturumu kapalı." });

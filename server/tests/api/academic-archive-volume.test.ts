@@ -3,6 +3,7 @@ import session from 'express-session';
 import request from 'supertest';
 import {afterAll,beforeAll,expect,it,vi} from 'vitest';
 import {PrismaClient} from '@prisma/client';
+import {createRuntimePrismaClient} from '../../utils/sqlite-runtime';
 import {randomUUID} from 'node:crypto';
 import {copyFile,mkdir,readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
@@ -44,10 +45,10 @@ async function batches<T>(values:T[],fn:(batch:T[])=>Promise<unknown>){for(let s
 for(const target of [1000,10000,50000]){
 it(`measures real capture finalization and bounded history at ${target} synthetic rows`,async()=>{
   const copy=path.join(path.dirname(template),'volume-'+target+'-'+randomUUID()+'.db');await copyFile(template,copy);
-  const db=new PrismaClient({datasources:{db:{url:'file:'+copy.split('\\').join('/')}},log:[{emit:'event',level:'query'}]});
+  const baseDb=createRuntimePrismaClient({databaseUrl:'file:'+copy.split('\\').join('/'),log:[{emit:'event',level:'query'}]});
   const report:any={target,seedMethod:'one 120s transaction with createMany batches of 1000; Prisma manages SQL parameter chunks',phases:{seed:{status:'unavailable'},capture:{status:'unavailable'},artifacts:{status:'unavailable'},finalization:{status:'unavailable'},pagination:{status:'unavailable'},search:{status:'unavailable'}}};results.push(report);
   let queries=0,returnedJsonRows=0,returnedJsonBytes=0;
-  (db as any).$on('query',(event:any)=>{
+  (baseDb as any).$on('query',(event:any)=>{
     queries++;
     const progress=report.legacyWarmProgress;
     if(progress&&report.phases.legacyProjectionWarm?.status==='running'){
@@ -57,7 +58,7 @@ it(`measures real capture finalization and bounded history at ${target} syntheti
       if(event.duration>progress.slowestSql.durationMs)progress.slowestSql={kind,durationMs:event.duration};
     }
   });
-  db.$use(async(params,next)=>{const value=await next(params);if(Array.isArray(value)&&(params.model==='ArchiveSnapshotRow'||params.action==='queryRaw'))for(const row of value){const candidate=[row?.dataJson,row?.json,row?.rowJson].find(value=>typeof value==='string');if(candidate!==undefined||params.action==='queryRaw'){returnedJsonRows++;returnedJsonBytes+=Buffer.byteLength(candidate??JSON.stringify(row,(_key,value)=>typeof value==='bigint'?String(value):value));}}return value;});
+  const db=baseDb.$extends({query:{$allOperations:async({model,operation,args,query})=>{const value=await query(args);if(Array.isArray(value)&&(model==='ArchiveSnapshotRow'||operation.startsWith('$queryRaw')))for(const row of value){const candidate=[row?.dataJson,row?.json,row?.rowJson].find(value=>typeof value==='string');if(candidate!==undefined||operation.startsWith('$queryRaw')){returnedJsonRows++;returnedJsonBytes+=Buffer.byteLength(candidate??JSON.stringify(row,(_key,value)=>typeof value==='bigint'?String(value):value));}}return value;}}}) as unknown as PrismaClient;
   const measure=async<T>(name:string,fn:()=>Promise<T>,rethrow=false)=>{
     const start=performance.now(),cpu=process.cpuUsage(),rss=process.memoryUsage().rss,queryStart=queries,rowStart=returnedJsonRows,byteStart=returnedJsonBytes;
     let peak=rss;const sampling=setInterval(()=>{peak=Math.max(peak,process.memoryUsage().rss);},20);
