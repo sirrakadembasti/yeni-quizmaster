@@ -8,6 +8,7 @@ import { getIO } from '../socket';
 import { logger } from '../utils/logger';
 import { shouldNotifyAdminAboutQuiz } from '../utils/notification-policy';
 import { hasInvalidQuestions } from '../utils/question-validation';
+import { getAIUsageService } from '../services/ai-usage';
 
 const schema = z.object({
   title: z.string().trim().min(3).max(100), description: z.string().max(500).nullable().default(null),
@@ -20,6 +21,7 @@ const schema = z.object({
     correctAnswer: z.string().nullable().optional(), config: z.record(z.any()).nullable().optional(),
     imageUrl: questionImageUrlSchema.nullable().optional(), order: z.number().int().default(0),
   })),
+  aiDraftId: z.string().uuid().optional(),
 });
 
 async function notify(actor: NonNullable<AuthRequest['user']>, quiz: any, created: boolean, published: boolean) {
@@ -53,7 +55,7 @@ export function saveContentHandler(contentType: 'exam' | 'survey') {
       if (!z.string().uuid().safeParse(req.params.id).success && !await storage.getQuiz(req.params.id)) return res.status(400).json({ message: 'Geçersiz içerik kimliği.' });
       const parsed = schema.safeParse(req.body);
       if (!parsed.success) return res.status(400).json({ message: 'İçerik bilgileri veya sorular geçersiz.' });
-      const { questions, category, ...settings } = parsed.data;
+      const { questions, category, aiDraftId, ...settings } = parsed.data;
       const invalid = hasInvalidQuestions(contentType, questions);
       if (invalid || (settings.status === 'published' && !questions.length)) return res.status(400).json({ message: 'Yayınlamak için geçerli sorular gereklidir.' });
       if (!await canAssignClasses(req.user!.role, req.user!.id, settings.assignedClassIds)) return res.status(403).json({ message: 'Yalnızca yetkili olduğunuz sınıflara atama yapabilirsiniz.' });
@@ -62,6 +64,12 @@ export function saveContentHandler(contentType: 'exam' | 'survey') {
       const saved = await storage.saveContent(req.params.id, { ...settings, categoryId: categoryId || null, contentType,
         timeLimit: contentType === 'survey' ? null : settings.timeLimit, shuffleQuestions: contentType === 'survey' ? false : settings.shuffleQuestions, createdBy: req.user!.id },
         questions.map(q => ({ ...q, quizId: req.params.id, correctAnswer: contentType === 'survey' ? null : q.correctAnswer })), req.user!);
+      // Content is already committed. Optional usage linkage must never cause
+      // the editor to retry a successful save or create duplicate questions.
+      if (aiDraftId && req.user!.role === 'teacher') {
+        try { await (await getAIUsageService()).bindDraft(req.user!.id, aiDraftId, saved.quiz.id); }
+        catch { logger.warn('Content saved; AI draft usage linkage could not be completed'); }
+      }
       await notify(req.user!, saved.quiz, saved.created, saved.published);
       return res.json({ [contentType === 'survey' ? 'survey' : 'quiz']: saved.quiz, questions: saved.questions });
     } catch (error) {

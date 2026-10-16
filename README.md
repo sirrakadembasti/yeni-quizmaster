@@ -2,6 +2,18 @@
 
 QuizMaster; yöneticiler, öğretmenler, öğrenciler ve veliler için rol tabanlı çalışan bir sınav, anket ve okul takip uygulamasıdır. Sınav oluşturma, sınıfa atama, çevrimiçi/çevrimdışı çözme, sonuç analizi, anket yönetimi, duyuru-bildirim, Excel dışa aktarma ve Gmail üzerinden parola sıfırlama süreçlerini tek uygulamada toplar.
 
+## AI yönetimi ve kullanım takibi
+
+16 Ekim 2026 sürümünde adminin **AI Yönetimi** sayfası iki sekmelidir: **ai profil yönetimi** ve **öğretmen ai kullanımı**. Sağlayıcı, model, şifreli API anahtarı ve varsayılan profili yalnız admin yönetir; öğretmen sınav/anket üretiminde kullanıma açık modellerden seçim yapar. Birden fazla profil, MiMo hizmet/bölge seçimi, kayıtlı anahtarı koruma, listeden model seçme ve elle kimlik girişi desteklenir.
+
+Öğretmen üretimleri ders ve sınav/taslak bağlamıyla, sağlayıcının bildirdiği gerçek girdi/çıktı tokenları üzerinden izlenir. Geçmiş tüketim geriye dönük uydurulmaz; bilinmeyen sayı sıfır sayılmaz. Yanıt üst sınırı ile gerçek tüketim farklıdır; token alanında 10 soru ve iki 10 üretimiyle 20 soru örneği açıklanır. Tek istekte en fazla 10 soru sınırı korunur.
+
+- [AI kullanımı, profil/anahtar yönetimi ve yükseltme](docs/ai-management.md)
+- [İki sekme, 154 hedef test, gerçek tüketim ölçümü ve yedekli devreye alma](docs/2026-10-15-ai-usage-results.md)
+- [MiMo bağlantı, hata ayrımı ve model yönetimi düzeltmeleri](docs/2026-10-15-ai-management-hardening-results.md)
+
+Mevcut yerel kurulumda 25 migration uygulanmıştır; diğer kurulumlarda iki AI migration'ı dahil yükseltmeyi önce ayrı kopyada prova edin ve profil DB'siyle `server/data/ai-encryption.key` dosyasını birlikte yedekleyin. Bu dosya ve canlı veriler Git'e dahil değildir.
+
 ## Kullanıcı kılavuzları
 
 Gmail gönderimi ve kullanıcı tarafından gelen kutusu teslim doğrulaması, gerçek Gemini/Socket ve yerel yük denetimleri [4 Ekim başlangıç raporunda](docs/integration-audit/verification.md) belgelenmiştir. AI cevap eşleme/doğrulama, oturum yükü, çevrimdışı durum, bildirim, erişilebilir kontrol ve baskı düzeltmelerinin güncel kabul kanıtları [entegrasyon onarım raporundadır](docs/integration-audit/defect-repairs.md). Bu sonuçlar uygulamanın bütünüyle hatasız olduğu anlamına gelmez.
@@ -245,6 +257,29 @@ pnpm dev
 ```
 
 Seed komutunu gerçek veya üretim veritabanında kullanmayın. Manuel `.env` ve Gmail ayrıntıları için [e-posta yapılandırma belgesine](docs/e-posta-yapilandirma.md) bakın.
+
+### İlk admin hesabı ve giriş
+
+Girişte kullanıcı adı yerine **e-posta adresi** kullanılır. Üretim için ortak bir varsayılan admin e-postası/şifresi yoktur. Kurulum sihirbazında ilk yöneticinin e-postasını ve şifresini kuran kişi belirler. Güncelleme mevcut hesabı veya şifreyi değiştirmez; gerçek şifreler README'ye yazılmaz.
+
+Sihirbaz kullanmadan manuel kurulum yapan kişi, bağımlılıklar ve migration'lar tamamlandıktan sonra ilk admin'i şu komutla oluşturur:
+
+```powershell
+$env:BOOTSTRAP_ADMIN_NAME = Read-Host 'Yönetici adı'
+$env:BOOTSTRAP_ADMIN_EMAIL = Read-Host 'Yönetici e-postası'
+$adminSecurePassword = Read-Host 'En az 12 karakterlik benzersiz yönetici şifresi' -AsSecureString
+try {
+  $env:BOOTSTRAP_ADMIN_PASSWORD = [System.Net.NetworkCredential]::new('', $adminSecurePassword).Password
+  pnpm --filter quiz-master-server db:create-admin
+} finally {
+  Remove-Item Env:BOOTSTRAP_ADMIN_PASSWORD, Env:BOOTSTRAP_ADMIN_EMAIL, Env:BOOTSTRAP_ADMIN_NAME -ErrorAction SilentlyContinue
+  $adminSecurePassword.Dispose()
+}
+```
+
+Linux/macOS'ta aynı `BOOTSTRAP_ADMIN_NAME`, `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD` ortam değişkenlerini güvenli terminal girdisiyle tanımlayıp `pnpm --filter quiz-master-server db:create-admin` çalıştırın; işlem sonunda değişkenleri temizleyin. Şifre en az 12 karakter olmalı; `quizmaster`, `password` veya `123456` gibi tahmin edilebilir ifadeler içermemelidir. Zaten admin varsa komut hesabı ezmez, ikinci admin oluşturmaz ve şifreyi sıfırlamaz.
+
+Ardından uygulamanın giriş ekranında belirlediğiniz e-posta ve şifreyi kullanın. Mevcut bir kurulumda şifre unutulduysa **Şifremi unuttum** akışı veya yetkili yerel kurtarma uygulanmalıdır; `db:seed` çalıştırmayın. Seed yalnız ayrı demo ortamları içindir ve mevcut verileri siler.
 
 ### Kurum sunucusuna veya VPS'e kurulum
 

@@ -1,5 +1,7 @@
 # QuizMaster Öğretmen Kullanıcı Kılavuzu
 
+**AI soru üretimi:** Sınav/anket oluştururken AI alanında yöneticinin açtığı modellerden birini seçin. Sağlayıcı, URL ve API anahtarı yönetici tarafından yapılandırılır. Açık model yoksa yöneticinize başvurun. Üretilen soruları ve doğru cevaplarını kullanmadan önce inceleyin. Üretim kullanımı, ders ve sınav/taslak bağlamıyla yönetici tarafından izlenir. Tek üretimde en fazla 10 soru; 20 soruluk sınav için iki üretim yapabilirsiniz. [AI kullanım notları](ai-management.md).
+
 Bu kılavuz `teacher` rolündeki kullanıcıların yetkili oldukları ders ve sınıflarda sınav, anket, öğrenci sonucu ve duyuru süreçlerini yönetmesi içindir.
 
 Güncel onarımların kabul kapsamı ve kanıtları: [Entegrasyon onarımları](integration-audit/defect-repairs.md).

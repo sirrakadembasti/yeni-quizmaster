@@ -30,6 +30,12 @@ it('does not interfere with current-year operations without a captured annual jo
   expect((await request(app).post('/api/quizzes')).status).toBe(200);
   expect(db.actionLog.create).not.toHaveBeenCalled();
 });
+it('keeps only installation AI settings editable during annual capture', async () => {
+  const { app, db } = fixture(true);
+  expect((await request(app).post('/api/admin/ai/profiles')).status).toBe(200);
+  expect((await request(app).post('/api/admin/ai-other/profiles')).status).toBe(423);
+  expect(db.actionLog.create).toHaveBeenCalledTimes(1);
+});
 it.each([['patch', '/api/auth/me'], ['post', '/api/auth/register']])('freezes profile and registration business writes: %s %s', async (method, path) => {
   const { app, db } = fixture(true);
   expect((await (request(app) as any)[method](path)).status).toBe(423);

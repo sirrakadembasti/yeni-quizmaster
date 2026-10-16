@@ -1,5 +1,11 @@
 # QuizMaster Graphify Mimari Haritası
 
+## 16 Ekim 2026 AI yönetimi ve öğretmen kullanım takibi
+
+`graphify update .` ve `graphify diagnose multigraph --graph graphify-out/graph.json --json` çıkış 0 ile tamamlandı: **4.161 düğüm, 10.699 kenar, 208 topluluk**. AI profil yönetimi, sağlayıcı doğrulaması, token kullanım kaydı ve iki sekmeli admin arayüzü kaynakları haritada yer alır. Eksik/sarkan/dış uç, unverified düğüm ve tam yinelenen kenar 0; self-loop 30. Tanı üretilmiş grafiği inceler; ham üretici ilişki kaybını kanıtlamaz.
+
+25 SQL dosyası `tree_sitter_sql` eksikliği nedeniyle katkı vermedi. Markdown/görsel semantiği ve LLM topluluk etiketleri yenilenmedi; 201 kayıtlı etiket ile 208 güncel topluluk arasında 96 topluluk merkez düğüm adıyla yeniden adlandırıldı. `built_at_commit=2f98a7722b3f75348df54f13e48123555e07bc14` üretim başlangıcındaki HEAD'dir; harita commit öncesi çalışma ağacını içerir. Kullanıcının bağımsız localhost/Bun düzenlemeleri çalışma ağacında korunur ve AI commit kapsamı dışındadır. Yeni canvas testi yapılmadı. Çalışma zamanı doğrulaması ve 154 hedefli testin kapsamı [AI kullanım sonuç raporundadır](2026-10-15-ai-usage-results.md). Aşağıdaki üretimler tarihsel kayıttır.
+
 ## 15 Ekim 2026 kapasite sürümü
 
 Gerçek `graphify update .` ve `graphify diagnose multigraph --graph graphify-out/graph.json` çıkış 0 ile tamamlandı: **3.881 düğüm, 10.032 kenar, 201 topluluk**. İşlem kapısı, bağımsız okumalar, revizyonlu bildirim tercihleri, sonuç özetleri ve sınav prova kaynakları çalışma ağacından çıkarıldı. Eksik/sarkan/dış uç, unverified düğüm ve tam yinelenen kenar 0; self-loop 30. Post-build tanı ham üretici kaybını kanıtlamaz.

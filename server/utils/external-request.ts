@@ -29,17 +29,28 @@ export function isSafeUrl(value: string) {
 
 // Resolve once, validate every answer, and pin the connection to that address.
 // HTTPS still verifies the original hostname. Redirects never forward credentials.
-export async function safeExternalFetch(value: string, options: RequestInit = {}): Promise<Response> {
+export async function safeExternalFetch(value: string, options: RequestInit & { timeoutMs?: number } = {}): Promise<Response> {
   if (!isSafeUrl(value)) throw new Error('UNSAFE_EXTERNAL_URL');
   const url = new URL(value);
   const host = url.hostname.replace(/^\[|\]$/g,'');
-  const addresses = isIP(host) ? [{address:host,family:isIP(host)}] : await lookup(host,{all:true});
+  const timeoutMs = Math.min(300000, Math.max(5000, options.timeoutMs ?? 30000));
+  const deadline = AbortSignal.timeout(timeoutMs);
+  const signal = options.signal ? AbortSignal.any([options.signal, deadline]) : deadline;
+  signal.throwIfAborted();
+  // DNS itself cannot be cancelled, but its result must never start a request
+  // after the caller/deadline has aborted. Remove listeners on every exit.
+  const addresses = isIP(host) ? [{address:host,family:isIP(host)}] : await new Promise<{address:string;family:number}[]>((resolve,reject)=>{
+    const aborted = () => { signal.removeEventListener('abort', aborted); reject(signal.reason); };
+    signal.addEventListener('abort', aborted, {once:true});
+    lookup(host,{all:true}).then(resolve,reject).finally(()=>signal.removeEventListener('abort',aborted));
+  });
+  signal.throwIfAborted();
   if (!addresses.length || addresses.some(a=>!isPublicAddress(a.address))) throw new Error('UNSAFE_EXTERNAL_URL');
   const target = addresses[0];
   return new Promise((resolve,reject)=>{
     const req = request(url,{
       method: options.method || 'GET', headers: Object.fromEntries(new Headers(options.headers).entries()),
-      agent: false, signal: options.signal || undefined,
+      agent: false, signal,
       lookup: ((_host: string, settings: any, callback: any) => settings?.all
         ? callback(null,[target]) : callback(null,target.address,target.family)) as any,
     },res=>{
@@ -63,7 +74,7 @@ export async function safeExternalFetch(value: string, options: RequestInit = {}
         } catch (error) { reject(error); }
       });
     });
-    req.setTimeout(30000,()=>req.destroy(new Error('EXTERNAL_TIMEOUT')));
+    req.setTimeout(timeoutMs,()=>req.destroy(new Error('EXTERNAL_TIMEOUT')));
     req.on('error',reject);
     req.end(typeof options.body === 'string' ? options.body : undefined);
   });

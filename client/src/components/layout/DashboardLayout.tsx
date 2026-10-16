@@ -226,6 +226,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
       { label: "Öğretmenler", href: "/teachers", icon: Briefcase },
       { label: "Veli Eşleştirme", href: "/guardian-management", icon: UserCircle },
       { label: "Sınıflar", href: "/classlist", icon: GraduationCap },
+      { label: "AI Yönetimi", href: "/ai-management", icon: Settings },
       { label: "Yönetim", href: "/management", icon: Settings },
       { label: "Arşiv", href: "/archive", icon: Archive },
       { label: "Sunucu Durumu", href: "/server-setup", icon: ServerCog },
@@ -479,7 +480,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
             <div>{user?.name} · {role === 'admin' ? 'Yönetici' : role === 'teacher' ? 'Öğretmen' : role === 'parent' ? 'Veli' : 'Öğrenci'}</div>
           </div>
           <div className="dashboard-page mx-auto w-full max-w-[1600px]">
-            {role === 'admin' && academic?.pending ? <p role="status">Eğitim yılı doğrulanıyor…</p> : role === 'admin' && academic?.error ? <div role="alert"><p>{academic.error}</p><Button onClick={academic.reload}>Yeniden dene</Button>{academic.years.find(year => year.status === 'active') && <Button variant="outline" onClick={() => void academic.selectYear(academic.years.find(year => year.status === 'active')!.id)}>Aktif yıla dön</Button>}</div> : historical ? <HistoricalWorkspace /> : children}
+            {role === 'admin' && location === '/ai-management' ? children : role === 'admin' && academic?.pending ? <p role="status">Eğitim yılı doğrulanıyor…</p> : role === 'admin' && academic?.error ? <div role="alert"><p>{academic.error}</p><Button onClick={academic.reload}>Yeniden dene</Button>{academic.years.find(year => year.status === 'active') && <Button variant="outline" onClick={() => void academic.selectYear(academic.years.find(year => year.status === 'active')!.id)}>Aktif yıla dön</Button>}</div> : historical ? <HistoricalWorkspace /> : children}
           </div>
         </div>
       </main>

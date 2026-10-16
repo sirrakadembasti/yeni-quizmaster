@@ -10,11 +10,20 @@ vi.mock('node:https',()=>({request:vi.fn((_url:any,options:any,callback:any)=>{
  return req;
 })}));
 import { safeExternalFetch, isPublicAddress } from '../../utils/external-request';
+import { lookup } from 'node:dns/promises';
 describe('external request transport protection',()=>{
  beforeEach(()=>{fake.addresses=[{address:'93.184.216.34',family:4}];fake.status=200;fake.options=null;});
  it('rejects a public hostname resolving to a private address',async()=>{
   fake.addresses=[{address:'169.254.169.254',family:4}];
   await expect(safeExternalFetch('https://provider.example/')).rejects.toThrow('UNSAFE_EXTERNAL_URL');
+  expect(fake.options).toBeNull();
+ });
+ it('aborts an unresolved DNS lookup without starting HTTPS',async()=>{
+  vi.mocked(lookup).mockImplementationOnce(()=>new Promise(()=>{}) as any);
+  const controller=new AbortController();
+  const pending=safeExternalFetch('https://provider.example/',{signal:controller.signal});
+  controller.abort();
+  await expect(pending).rejects.toMatchObject({name:'AbortError'});
   expect(fake.options).toBeNull();
  });
  it('rejects mixed public/private DNS answers',async()=>{

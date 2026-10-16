@@ -1,5 +1,7 @@
 # QuizMaster Yönetici Kullanıcı Kılavuzu
 
+**AI Yönetimi:** **ai profil yönetimi** sekmesinde sağlayıcı/model profilleri ve şifreli API anahtarları yönetilir. Profili test edip öğretmenlere açın; birden fazla model kullanılabilir. **öğretmen ai kullanımı** sekmesinde öğretmen, ders, sınav/model ve gerçek token tüketimini filtreleyin. Bilinmeyen tüketim sıfır sayılmaz. [Ayrıntılı kullanım ve anahtar yedeği](ai-management.md).
+
 Bu kılavuz `admin` rolündeki kullanıcıların okul yapısını, hesapları, sınavları, anketleri, raporları ve sistem kayıtlarını yönetmesi içindir.
 
 Güncel onarımların kabul kapsamı ve kanıtları: [Entegrasyon onarımları](integration-audit/defect-repairs.md).

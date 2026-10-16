@@ -15,6 +15,9 @@ export const closeStorage = async () => {
 // The existing writer remains available to fixture setup; its teardown owns both connections.
 prisma.$disconnect = closeStorage;
 export const getStorageDbForTests = () => prisma;
+// AI calls share the existing write gate; network work stays outside transactions.
+export const getAIManagementDb = () => prisma;
+export const getAIUsageReadDb = () => readPrisma;
 export const initializeStorage = async () => {
   try {
     await prisma.$connect();

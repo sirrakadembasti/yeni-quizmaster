@@ -1,5 +1,11 @@
 # Dokümantasyon güncellik ve temizlik kaydı
 
+## 16 Ekim 2026 güncellemesi
+
+README ve admin/öğretmen/AI/bakım kılavuzları, iki AI sekmesi ve gerçek token takibiyle eşleştirildi. [154 hedef test ve yedekli yerel geçiş](2026-10-15-ai-usage-results.md) güncel kabul kaydıdır; eski raporlar tarihsel kapsamını korur. Yerel kurulum 25 migration kullanır. Aşağıdaki 14 Ekim incelemesinin “canlı değişmedi” ve açık kapasite ifadeleri kendi tarihine aittir; [kapasite onarım sonuçları](2026-10-14-capacity-school-exam-results.md) ile karıştırılmamalıdır.
+
+## 14 Ekim 2026 incelemesi
+
 14 Ekim 2026. Tarama, gizlenen/ignore edilenler dahil tüm Markdown dosyalarının metni, başlıkları, tarih/durum ifadeleri, yerel bağlantıları ve içerik özetlerini kapsar. Güncel kılavuzlardaki arşiv, geçiş, kurulum, bakım ve sağlayıcı iddiaları ilgili yerel kaynak ve nihai kabul kayıtlarıyla karşılaştırıldı. Bu inceleme yeni canlı sistem veya ağır test kabulü değildir; tarihsel raporlardaki her bulgu yeniden üretilmedi.
 
 ## Uygulanan düzenleme

@@ -435,3 +435,64 @@ model AcademicTransitionRule {
 
   @@unique([yearId, fromClassId])
 }
+
+model AIProfile {
+  id String @id @default(uuid())
+  name String
+  provider String
+  model String
+  baseURL String
+  encryptedApiKey String
+  enabled Boolean @default(false)
+  revision Int @default(1)
+  timeoutMs Int @default(120000)
+  maxOutputTokens Int @default(8192)
+  thinking String @default("auto")
+  lastTestsJson String @default("{}")
+}
+model AIConfiguration {
+  id String @id @default("singleton")
+  defaultProfileId String?
+  revision Int @default(0)
+}
+
+// Usage keeps immutable display snapshots; removing a profile does not erase
+// consumed tokens. Optional source IDs deliberately do not cascade to history.
+model AIUsage {
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  teacherId String
+  teacherName String
+  teacherEmail String
+  categoryId String?
+  courseName String
+  draftId String?
+  quizId String?
+  quizTitle String
+  contentType String
+  profileId String
+  profileName String
+  provider String
+  model String
+  profileRevision Int
+  thinking String
+  maxOutputTokens Int
+  timeoutMs Int
+  questionCount Int
+  validQuestionCount Int?
+  status String @default("pending")
+  errorCode String?
+  inputTokens Int?
+  outputTokens Int?
+  reasoningTokens Int?
+  cacheReadTokens Int?
+  cacheWriteTokens Int?
+  totalTokens Int?
+  durationMs Int?
+
+  @@index([createdAt, id])
+  @@index([teacherId, createdAt])
+  @@index([categoryId, createdAt])
+  @@index([draftId, teacherId])
+  @@index([model, thinking, questionCount, status])
+}

@@ -67,6 +67,9 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
   const [shuffleQuestions, setShuffleQuestions] = useState(false);
   const [assignedClassIds, setAssignedClassIds] = useState<string[]>([]);
   const newContentId = useRef<string | null>(null);
+  const aiDraftId = useRef(crypto.randomUUID());
+  const [savedAIQuizId,setSavedAIQuizId] = useState<string|null>(null);
+  useEffect(() => { aiDraftId.current = crypto.randomUUID(); setSavedAIQuizId(null); }, [editId, contentType]);
 
   const [questions, setQuestions] = useState<QuestionForm[]>([
     { id: 1, type: contentTypeMode === 'survey' ? "single-choice" : "multiple-choice", text: "", options: ["", "", "", "", ""], correctAnswer: 0 }
@@ -201,10 +204,11 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
           order: index + 1,
       }));
       const quizIdToUse = editId || (newContentId.current ??= crypto.randomUUID());
-      await contentSaveApi.save(contentType, quizIdToUse, { ...payload, questions: questionsToAdd });
+      await contentSaveApi.save(contentType, quizIdToUse, { ...payload, questions: questionsToAdd, aiDraftId: aiDraftId.current });
       return quizIdToUse;
     },
     onSuccess: (_quizId, status) => {
+      setSavedAIQuizId(_quizId);
       queryClient.invalidateQueries({ queryKey: ['quizzes'] });
       toast({
         title: status === 'published'
@@ -413,6 +417,7 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
                   onGenerate={handleAIGenerated} 
                   quizTitle={title}
                   quizDescription={description}
+                  usageContext={{draftId:aiDraftId.current,quizId:editId||savedAIQuizId||undefined,quizTitle:title,categoryId:dbCategories.find(c=>c.name===category)?.id||null}}
                 contentType={contentType}
                 />
               </CardContent>

@@ -32,6 +32,7 @@ import QuizResultDetailPage from "@/pages/quiz-result-detail";
 const TeachersPage = lazy(() => import("@/pages/teachers"));
 const TeacherDetailPage = lazy(() => import("@/pages/teacher-detail"));
 import AuthPage from "@/pages/auth";
+const AIManagementPage = lazy(() => import("@/pages/ai-management"));
 const AdminManagementPage = lazy(() => import("@/pages/admin-management"));
 const ClassListPage = lazy(() => import("@/pages/classlist"));
 const ClassDetailPage = lazy(() => import("@/pages/class-detail"));
@@ -125,6 +126,7 @@ const ROUTES: RouteConfig[] = [
   { path: '/admin/classes/:id', component: AdminClassDetailPage, roles: ['admin'] },
   { path: '/teachers',          component: TeachersPage,         roles: ['admin'] },
   { path: '/teachers/:id',      component: TeacherDetailPage,    roles: ['admin'] },
+  { path: '/ai-management', component: AIManagementPage, roles: ['admin'] },
   { path: '/management',        component: AdminManagementPage,  roles: ['admin'] },
   { path: '/archive',           component: ArchivePage,          roles: ['admin'] },
   { path: '/server-setup',      component: ServerSetupPage,      roles: ['admin'] },

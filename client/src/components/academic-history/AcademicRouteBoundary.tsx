@@ -7,7 +7,7 @@ export function AcademicRouteBoundary({children}:{children:ReactNode}) {
   const {role} = useAuth();
   const context = useAcademicYear();
   const [path] = useLocation();
-  if(path==='/reset-password')return <>{children}</>;
+  if(path==='/reset-password' || (role==='admin' && path==='/ai-management'))return <>{children}</>;
   if (role==='admin' && context && (context.pending || context.error || context.year?.status==='closed')) return <DashboardLayout><></></DashboardLayout>;
   return <>{children}</>;
 }

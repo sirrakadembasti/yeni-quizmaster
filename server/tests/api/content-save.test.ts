@@ -5,6 +5,7 @@ import request from 'supertest';
 import { PrismaClient } from '@prisma/client';
 import quizRouter from '../../api-routes/quiz';
 import surveyRouter from '../../api-routes/survey';
+import { getAIUsageService } from '../../services/ai-usage';
 import { storage, closeStorage } from '../../storage';
 
 const db = new PrismaClient();
@@ -151,4 +152,18 @@ describe('Atomic content API using disposable Prisma database', () => {
       expect(await storage.getQuiz(newId)).toBeUndefined();
     } finally { await db.$executeRawUnsafe('DROP TRIGGER content_save_failure'); }
   });
+  it('links teacher draft usage after save and isolates linkage failure from committed content',async()=>{
+    actor=teacher;const ledger=await getAIUsageService(),draftId=randomUUID(),quizId=randomUUID();
+    const ctx=await ledger.context(teacher,{draftId,quizTitle:'Üretim anındaki başlık'},'exam');
+    const profile:any={id:'fixture',name:'Fixture',provider:'custom',model:'model',revision:1,thinking:'auto',maxOutputTokens:8192,timeoutMs:120000};
+    const usageId=await ledger.start(teacher,profile,ctx,1);
+    await ledger.finish(usageId!,{status:'success',durationMs:1});
+    expect((await request(app).put(`/quizzes/${quizId}/content`).send(payload({status:'draft',aiDraftId:draftId}))).status).toBe(200);
+    expect((await db.aIUsage.findUnique({where:{id:usageId!}}))?.quizId).toBe(quizId);
+    expect((await request(app).put(`/quizzes/${quizId}/content`).send(payload({status:'draft',aiDraftId:draftId}))).status).toBe(200);
+    expect(await db.aIUsage.count({where:{draftId}})).toBe(1);
+    const failure=vi.spyOn(ledger,'bindDraft').mockRejectedValueOnce(new Error('Injected linkage write failure'));
+    try{const saved=await request(app).put(`/quizzes/${quizId}/content`).send(payload({status:'draft',title:'Saved despite ledger failure',aiDraftId:draftId}));expect(saved.status).toBe(200);expect((await storage.getQuiz(quizId))?.title).toBe('Saved despite ledger failure');}finally{failure.mockRestore();}
+  });
+
 });

@@ -11,7 +11,7 @@ export function createAnnualCaptureGuard(db: PrismaClient = archiveDb) {
       (req.method === 'POST' && /^\/api\/auth\/(login|logout|change-password|forgot-password|reset-password)$/.test(path)) ||
       (req.method === 'POST' && /^\/api\/admin\/password-reset-requests(?:\/[^/]+\/(?:resend|cancel))?$/.test(path)) ||
       /^\/api\/(csrf-token$|notifications(?:\/|$))/.test(path) ||
-      /^\/api\/admin\/(archive|academic-history)(?:\/|$)/.test(path)) return next();
+      /^\/api\/admin\/(archive|academic-history|ai)(?:\/|$)/.test(path)) return next();
     db.archiveSnapshot.findFirst({ where: { mode: 'annual', capturedAt: { not: null }, status: { not: 'completed' }, academicYear: { status: 'active' } }, select: { id: true, label: true } })
       .then(job => {
         if (!job) return next();

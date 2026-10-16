@@ -1,5 +1,9 @@
 # Yerel bakım ve üretim provası
 
+16 Ekim 2026 güncel durum: kullanıcı onaylı iki aşamada yerel kurulum 14 → 24 → 25 migration'a yükseltildi; son eklemeli migration `20261015000200_ai_usage` oldu. Uygulama üretim kipinde 5000 portunda çalışır. [Öğretmen kullanım takibi, sekmeler ve son veri koruma kaydı](2026-10-15-ai-usage-results.md). Önceki tarihli aşağıdaki “canlı DB değiştirilmedi” ifadeleri kendi prova aşamalarına aittir. [Güncel yedek/veri doğrulama ve devreye alma kaydı](2026-10-15-ai-management-deployment.md).
+
+AI yönetimi için `20261015000100_ai_management`, öğretmen tüketim kaydı için `20261015000200_ai_usage` migration'ları eklenmiştir. Profil kayıtlarıyla `server/data/ai-encryption.key` dosyasını birlikte koruyun; native backup/restore anahtarın kayıtları çözebildiğini de doğrular. Eksik/yanlış anahtarla yeni anahtar üretip devam etmeyin. [Kurulum ve kullanım](ai-management.md).
+
 ## 15 Ekim 2026 sürüm notu
 
 Kapasite sürümü Prisma 6.19.3 ve better-sqlite3 12.8.0 (SQLite 3.51.3) kullanır; uygulama, oturum, arşiv ve yedek bağlantıları aynı yamalı sürücüdedir. WAL ve FULL dayanıklılığı korunur. Güncellemeden önce bütün app/worker süreçlerini durdurun, doğrulanmış yedek alın ve ayrı kurulumda yükseltmeyi prova edin. Frozen install ve Prisma generate sonrasında `20261014090000_notification_revision` dahil migration'ları `db:deploy` ile uygulayıp build/restart yapın. Canlı kurulum bu geliştirme sırasında yükseltilmedi.

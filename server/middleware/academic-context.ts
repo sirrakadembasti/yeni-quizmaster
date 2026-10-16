@@ -6,6 +6,8 @@ declare module 'express-session' { interface SessionData { academicYearContext?:
 export function historicalRequestPolicy(method: string, path: string, snapshotId?:string): number | null {
   path = path.toLowerCase().replace(/\/$/, '');
   const read = ['GET','HEAD','OPTIONS'].includes(method);
+  // Installation configuration has no academic data; router enforces admin.
+  if (/^\/api\/admin\/ai(?:\/|$)/.test(path)) return null;
   if (read && ['/api/auth/me','/api/csrf-token'].includes(path)) return null;
   if (method==='POST' && ['/api/auth/login','/api/auth/logout','/api/auth/forgot-password','/api/auth/reset-password'].includes(path)) return null;
   if (method==='POST' && path==='/api/auth/change-password') return null;

@@ -55,6 +55,26 @@ const open=async(file,readonly=true)=>{
 };
 const close=async db=>db.close();
 const query=async(db,sql)=>db.prepare(sql).all();
+async function validateAIEncryption(databaseFile,keyFile){
+  const db=await open(databaseFile);
+  try{
+    if(!db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='AIProfile'").get())return;
+    const profiles=db.prepare('SELECT encryptedApiKey FROM AIProfile').all();
+    if(!profiles.length)return;
+    try{
+      const key=await fsp.readFile(keyFile);
+      if(key.length!==32)throw new Error();
+      for(const profile of profiles){
+        const [version,iv,data,tag]=String(profile.encryptedApiKey).split('.');
+        if(version!=='v1')throw new Error();
+        const decipher=crypto.createDecipheriv('aes-256-gcm',key,Buffer.from(iv,'base64'));
+        decipher.setAuthTag(Buffer.from(tag,'base64'));
+        // Authenticate without logging or publishing the decrypted credential.
+        decipher.update(Buffer.from(data,'base64'));decipher.final();
+      }
+    }catch{throw new Error('AI encryption key is missing or incompatible with profile database');}
+  }finally{await close(db);}
+}
 export async function getMaintenanceSQLiteVersion(file){
   const db=await open(file);
   try{return (await query(db,'SELECT sqlite_version() AS version'))[0].version;}
@@ -113,7 +133,7 @@ function storageSources(root){
   const archives=path.resolve(root,env.ARCHIVE_BACKUP_ROOT||'server/data/backups');
   rejectAncestorLinks(archives);
   if(archives===path.parse(archives).root||archives===root||inside(archives,paths.backupsRoot)||inside(paths.backupsRoot,archives))throw new Error('Unsafe archive storage root');
-  const sources=[['.env',safePath(root,'.env')],['server/.env',paths.env],['server/data/quiz.db',paths.quizDb],['server/data/sessions.db',paths.sessionsDb],['server/data/installation.lock',paths.lock],['server/data/installation.pending',paths.pending],['server/data/deployment-config.json',paths.deploymentConfig],['server/data/setup-artifacts',paths.setupArtifacts],['server/uploads',paths.uploadsRoot],['server/data/backups',archives]];
+  const sources=[['.env',safePath(root,'.env')],['server/.env',paths.env],['server/data/quiz.db',paths.quizDb],['server/data/sessions.db',paths.sessionsDb],['server/data/ai-encryption.key',safePath(root,'server/data/ai-encryption.key')],['server/data/installation.lock',paths.lock],['server/data/installation.pending',paths.pending],['server/data/deployment-config.json',paths.deploymentConfig],['server/data/setup-artifacts',paths.setupArtifacts],['server/uploads',paths.uploadsRoot],['server/data/backups',archives]];
   for(const [relative,source]of sources){if(source!==archives)safePath(root,relative);}
   return {paths,sources};
 }
@@ -148,6 +168,7 @@ export async function createApplicationBackup(projectRoot,{name='maintenance-'+c
         manifest.files.push({backup:destination,bytes:(await fsp.stat(output)).size,sha256:await digest(output)});
       }
     }
+    await validateAIEncryption(safePath(target,'server/data/quiz.db'),safePath(target,'server/data/ai-encryption.key'));
     await fsp.writeFile(path.join(target,'manifest.json'),JSON.stringify(manifest,null,2)+'\n',{mode:0o600,flag:'wx'});
     return {backupRoot:target,files:manifest.files.length};
   }catch(error){
@@ -164,7 +185,7 @@ export async function restoreApplicationBackup(backupRoot,projectRoot){
   if(fs.existsSync(root)&&fs.lstatSync(root).isSymbolicLink())throw new Error('Symlink restore root is not supported');
   const manifest=JSON.parse(await fsp.readFile(safePath(backup,'manifest.json'),'utf8'));
   if(manifest.formatVersion!==1||!Array.isArray(manifest.files)||!manifest.files.length)throw new Error('Unsupported backup manifest');
-  const allowed=/^(?:\.env|server\/(?:\.env|data\/(?:quiz\.db|sessions\.db|installation\.(?:lock|pending)|deployment-config\.json)|(?:uploads|data\/(?:backups|setup-artifacts))\/.+))$/;
+  const allowed=/^(?:\.env|server\/(?:\.env|data\/(?:quiz\.db|sessions\.db|ai-encryption\.key|installation\.(?:lock|pending)|deployment-config\.json)|(?:uploads|data\/(?:backups|setup-artifacts))\/.+))$/;
   const seen=new Set();
   for(const file of manifest.files){
     if(!allowed.test(file.backup)||seen.has(file.backup)||!Number.isSafeInteger(file.bytes)||file.bytes<0||!/^[a-f0-9]{64}$/.test(file.sha256))throw new Error('Unsafe backup manifest');
@@ -176,6 +197,7 @@ export async function restoreApplicationBackup(backupRoot,projectRoot){
   if(actualFiles.length!==seen.size+1||actualFiles.some(file=>file!=='manifest.json'&&!seen.has(file)))throw new Error('Unlisted backup file violates manifest');
   if(!seen.has('server/data/quiz.db'))throw new Error('Backup database is missing');
   await checkDatabase(safePath(backup,'server/data/quiz.db'));
+  await validateAIEncryption(safePath(backup,'server/data/quiz.db'),safePath(backup,'server/data/ai-encryption.key'));
   if(seen.has('server/data/sessions.db'))await checkDatabase(safePath(backup,'server/data/sessions.db'));
   for(const relative of ['.env','server/.env','server/data','server/uploads'])if(fs.existsSync(safePath(root,relative)))throw new Error('Restore requires empty data storage; existing files are preserved');
   const configuration=readConfiguration(backup);

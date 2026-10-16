@@ -150,6 +150,7 @@ function backupItems(paths) {
     { source: paths.lock, destination: path.join("server", "data", "installation.lock") },
     { source: paths.pending, destination: path.join("server", "data", "installation.pending") },
     { source: paths.deploymentConfig, destination: path.join("server", "data", "deployment-config.json") },
+    { source: path.join(paths.dataRoot, "ai-encryption.key"), destination: path.join("server", "data", "ai-encryption.key") },
     { source: paths.setupArtifacts, destination: path.join("server", "data", "setup-artifacts") },
     { source: paths.archiveBackupsRoot, destination: path.join("server", "data", "backups") },
     { source: paths.uploadsRoot, destination: path.join("server", "uploads") },

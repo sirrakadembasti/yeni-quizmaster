@@ -1,45 +1,21 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { AIQuestionGenerator } from '@/components/quiz/AIQuestionGenerator';
-
-const api = vi.hoisted(() => ({ testAIConfig: vi.fn(), generateQuestions: vi.fn() }));
-vi.mock('@/lib/api', () => ({ aiApi: api }));
+const api = vi.hoisted(() => ({ models: vi.fn(), generate: vi.fn() }));
+vi.mock('@/lib/ai-management-api', () => ({ teacherAI: api }));
+vi.mock('@/context/auth-context', () => ({ useAuth: () => ({role:'teacher', user:{id:'t'}}) }));
 vi.mock('@/hooks/use-toast', () => ({ useToast: () => ({ toast: vi.fn() }) }));
-
-beforeEach(() => {
-  api.testAIConfig.mockReset().mockResolvedValue({ success: true, message: 'Ready' });
-  api.generateQuestions.mockReset();
-});
+beforeEach(() => { api.models.mockReset().mockResolvedValue({models:[{id:'p',name:'School model',provider:'google',model:'live'}],defaultProfileId:'p'}); api.generate.mockReset().mockResolvedValue({questions:[{text:'Q'}]}); });
 afterEach(cleanup);
+async function open(onGenerate=vi.fn()) { render(<AIQuestionGenerator quizTitle="Math" onGenerate={onGenerate}/>); fireEvent.click(screen.getByText('AI ile Soruları Üret')); }
+it('loads managed models and exposes no provider configuration', async()=>{ await open(); await screen.findByText(/School model/); expect(screen.queryByText(/Gelişmiş/)).toBeNull(); expect(screen.queryByLabelText(/API Anahtarı/)).toBeNull(); });
+it('sends only managed profile and question parameters',async()=>{const callback=vi.fn(); await open(callback); await screen.findByText(/School model/); fireEvent.click(screen.getByText('Sınav Sorularını Üret')); await waitFor(()=>expect(callback).toHaveBeenCalledWith([{text:'Q'}])); expect(api.generate.mock.calls[0][0]).toEqual({profileId:'p',topic:'Math',count:3,difficulty:'medium',contentType:'exam'});});
+it('distinguishes empty from loading and prevents generation',async()=>{api.models.mockResolvedValue({models:[],defaultProfileId:null}); await open(); await screen.findByText(/Yöneticinize/); expect(screen.getByText('Sınav Sorularını Üret')).toBeDisabled();});
+it('offers retry when model list fails',async()=>{api.models.mockRejectedValue(new Error('offline')); await open(); await screen.findByRole('alert'); expect(screen.getByText('Yeniden dene')).toBeEnabled();});
+it('ignores generation after closing',async()=>{let resolve!: (v:any)=>void; api.generate.mockImplementation(()=>new Promise(r=>resolve=r)); const callback=vi.fn(); await open(callback); await screen.findByText(/School model/); fireEvent.click(screen.getByText('Sınav Sorularını Üret')); fireEvent.click(screen.getByText('İptal')); resolve({questions:[{text:'Late'}]}); await waitFor(()=>expect(screen.queryByText('AI Soru Üretici')).toBeNull()); expect(callback).not.toHaveBeenCalled();});
 
-async function openConfig() {
-  const user = userEvent.setup();
-  render(<AIQuestionGenerator onGenerate={vi.fn()} quizTitle="Synthetic arithmetic" />);
-  await user.click(screen.getByRole('button', { name: 'AI ile Soruları Üret' }));
-  await user.click(screen.getByRole('button', { name: /Gelişmiş Yapılandırma/ }));
-  return user;
-}
-
-it.each(['base', 'key', 'model'])('editing the %s clears successful readiness and requires a new probe', async (field) => {
-  const user = await openConfig();
-  await user.click(screen.getByRole('button', { name: 'Yapılandırmayı Test Et' }));
-  await screen.findByText('HAZIR');
-  expect(screen.getByRole('button', { name: 'Sınav Sorularını Üret' })).toBeEnabled();
-  const placeholders = { base: 'https://.../v1/', key: 'Girilmezse sunucu anahtarı kullanılır', model: 'Örn: gpt-4o, claude-3-opus...' };
-  fireEvent.change(screen.getByPlaceholderText(placeholders[field as keyof typeof placeholders]), { target: { value: field === 'base' ? 'https://provider.example/v1/' : 'changed-value' } });
-  expect(screen.queryByText('HAZIR')).not.toBeInTheDocument();
-  expect(screen.getByRole('button', { name: 'Sınav Sorularını Üret' })).toBeDisabled();
-});
-
-it('a probe response for settings edited while pending cannot restore readiness', async () => {
-  let resolveProbe!: (result: any) => void;
-  api.testAIConfig.mockImplementation(() => new Promise((resolve) => { resolveProbe = resolve; }));
-  const user = await openConfig();
-  await user.click(screen.getByRole('button', { name: 'Yapılandırmayı Test Et' }));
-  fireEvent.change(screen.getByPlaceholderText('https://.../v1/'), { target: { value: 'https://provider.example/v1/' } });
-  resolveProbe({ success: true, message: 'Old settings ready' });
-  await waitFor(() => expect(screen.getByRole('button', { name: 'Yapılandırmayı Test Et' })).toBeEnabled());
-  expect(screen.queryByText('HAZIR')).not.toBeInTheDocument();
-  expect(screen.getByRole('button', { name: 'Sınav Sorularını Üret' })).toBeDisabled();
+it('sends draft attribution without exposing provider settings',async()=>{
+ const context={draftId:crypto.randomUUID(),quizTitle:'Tarih taslağı',categoryId:crypto.randomUUID()};
+ render(<AIQuestionGenerator quizTitle="Tarih" usageContext={context} onGenerate={vi.fn()}/>);fireEvent.click(screen.getByText('AI ile Soruları Üret'));await screen.findByText(/School model/);fireEvent.click(screen.getByText('Sınav Sorularını Üret'));
+ await waitFor(()=>expect(api.generate).toHaveBeenCalled());expect(api.generate.mock.calls[0][0].context).toEqual(context);
 });
