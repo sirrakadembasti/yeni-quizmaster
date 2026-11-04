@@ -1,0 +1,891 @@
+{
+  "generatedAt": "2026-11-04T13:53:15.351Z",
+  "summary": {
+    "totalTeachers": 10,
+    "totalClasses": 16,
+    "totalStudents": 160,
+    "totalExams": 40,
+    "totalExamQuestions": 400,
+    "totalQuestionBankItems": 400,
+    "totalCompletedExamResults": 1152,
+    "totalInProgressExamResults": 16,
+    "totalSurveys": 2,
+    "totalSurveySubmissions": 128
+  },
+  "exams": [
+    {
+      "id": "b4d194b5-77b5-4369-8b03-9c2b2cf438ac",
+      "course": "BİYOLOJİ",
+      "grade": 9,
+      "title": "9. Sınıf Biyoloji 1. Dönem 1. Yazılı: Yaşam Bilimi ve Hücre",
+      "teacherName": "zeynep",
+      "teacherEmail": "zeynep@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": 25,
+      "questionCount": 10,
+      "assignedClasses": [
+        "9-A",
+        "9-B",
+        "9-C",
+        "9-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 83
+    },
+    {
+      "id": "ee9582fe-5646-403b-926d-f8761b8cdc1b",
+      "course": "BİYOLOJİ",
+      "grade": 10,
+      "title": "10. Sınıf Biyoloji 1. Dönem 1. Yazılı: Hücre Bölünmeleri ve Kalıtım",
+      "teacherName": "zeynep",
+      "teacherEmail": "zeynep@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "10-A",
+        "10-B",
+        "10-C",
+        "10-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 82
+    },
+    {
+      "id": "89d06a0e-4711-49ed-bd83-b72da7f9c046",
+      "course": "BİYOLOJİ",
+      "grade": 11,
+      "title": "11. Sınıf Biyoloji 1. Dönem 1. Yazılı: İnsan Fizyolojisi ve Sinir Sistemi",
+      "teacherName": "zeynep",
+      "teacherEmail": "zeynep@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "11-A",
+        "11-B",
+        "11-C",
+        "11-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 31,
+      "participationRate": 78,
+      "averageScore": 74
+    },
+    {
+      "id": "44513974-66cf-4663-8952-a61f19312e5e",
+      "course": "BİYOLOJİ",
+      "grade": 12,
+      "title": "12. Sınıf Biyoloji 1. Dönem 1. Yazılı: Genden Proteine ve Enerji Dönüşümleri",
+      "teacherName": "zeynep",
+      "teacherEmail": "zeynep@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "12-A",
+        "12-B",
+        "12-C",
+        "12-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 29,
+      "participationRate": 73,
+      "averageScore": 78
+    },
+    {
+      "id": "aefc1f8c-447e-49b1-bde6-2a3d818e1530",
+      "course": "KİMYA",
+      "grade": 9,
+      "title": "9. Sınıf Kimya 1. Dönem 1. Yazılı: Kimya Bilimi ve Atomun Yapısı",
+      "teacherName": "fatma",
+      "teacherEmail": "fatma@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": 25,
+      "questionCount": 10,
+      "assignedClasses": [
+        "9-A",
+        "9-B",
+        "9-C",
+        "9-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 81
+    },
+    {
+      "id": "97a6c4fe-d4c3-410f-bb69-70c3c6198a88",
+      "course": "KİMYA",
+      "grade": 10,
+      "title": "10. Sınıf Kimya 1. Dönem 1. Yazılı: Kimyanın Temel Kanunları ve Mol Kavramı",
+      "teacherName": "fatma",
+      "teacherEmail": "fatma@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "10-A",
+        "10-B",
+        "10-C",
+        "10-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 81
+    },
+    {
+      "id": "9b543ce1-e28e-405d-b0da-f87f95a7ea7c",
+      "course": "KİMYA",
+      "grade": 11,
+      "title": "11. Sınıf Kimya 1. Dönem 1. Yazılı: Modern Atom Teorisi ve Gazlar",
+      "teacherName": "fatma",
+      "teacherEmail": "fatma@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "11-A",
+        "11-B",
+        "11-C",
+        "11-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 77
+    },
+    {
+      "id": "0cb049e5-c674-4754-8b47-5ac8bdaa0141",
+      "course": "KİMYA",
+      "grade": 12,
+      "title": "12. Sınıf Kimya 1. Dönem 1. Yazılı: Kimya ve Elektrik (İndirgenme-Yükseltgenme)",
+      "teacherName": "fatma",
+      "teacherEmail": "fatma@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "12-A",
+        "12-B",
+        "12-C",
+        "12-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 31,
+      "participationRate": 78,
+      "averageScore": 76
+    },
+    {
+      "id": "66422976-3058-44be-99ba-3bd31ac2f004",
+      "course": "FİZİK",
+      "grade": 9,
+      "title": "9. Sınıf Fizik 1. Dönem 1. Yazılı: Fizik Bilimine Giriş ve Madde ve Özellikleri",
+      "teacherName": "mehmet",
+      "teacherEmail": "mehmet@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": 25,
+      "questionCount": 10,
+      "assignedClasses": [
+        "9-A",
+        "9-B",
+        "9-C",
+        "9-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 29,
+      "participationRate": 73,
+      "averageScore": 80
+    },
+    {
+      "id": "5f030fa8-c624-4c77-be50-13b4738365d8",
+      "course": "FİZİK",
+      "grade": 10,
+      "title": "10. Sınıf Fizik 1. Dönem 1. Yazılı: Elektrik Akımı, Potansiyel Farkı ve Direnç",
+      "teacherName": "mehmet",
+      "teacherEmail": "mehmet@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "10-A",
+        "10-B",
+        "10-C",
+        "10-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 79
+    },
+    {
+      "id": "3da8c1ed-aa9e-4d8e-9f69-387e6dae9af5",
+      "course": "FİZİK",
+      "grade": 11,
+      "title": "11. Sınıf Fizik 1. Dönem 1. Yazılı: Vektörler, Bağıl Hareket ve Newton'un Hareket Yasaları",
+      "teacherName": "mehmet",
+      "teacherEmail": "mehmet@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "11-A",
+        "11-B",
+        "11-C",
+        "11-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 75
+    },
+    {
+      "id": "80540cd9-e1a6-43af-a355-8bdf40db514d",
+      "course": "FİZİK",
+      "grade": 12,
+      "title": "12. Sınıf Fizik 1. Dönem 1. Yazılı: Çembersel Hareket ve Basit Harmonik Hareket",
+      "teacherName": "mehmet",
+      "teacherEmail": "mehmet@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "12-A",
+        "12-B",
+        "12-C",
+        "12-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 73
+    },
+    {
+      "id": "f744273f-71e9-40d1-8750-631f378dd8a7",
+      "course": "MATEMATİK",
+      "grade": 9,
+      "title": "9. Sınıf Matematik 1. Dönem 1. Yazılı: Mantık ve Kümeler",
+      "teacherName": "ayse",
+      "teacherEmail": "ayse@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "9-A",
+        "9-B",
+        "9-C",
+        "9-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 30,
+      "participationRate": 75,
+      "averageScore": 79
+    },
+    {
+      "id": "a6f2b194-3b32-4a5c-aec0-31de6a92eb9a",
+      "course": "MATEMATİK",
+      "grade": 10,
+      "title": "10. Sınıf Matematik 1. Dönem 1. Yazılı: Sayma, Permütasyon, Kombinasyon ve Olasılık",
+      "teacherName": "ayse",
+      "teacherEmail": "ayse@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "10-A",
+        "10-B",
+        "10-C",
+        "10-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 29,
+      "participationRate": 73,
+      "averageScore": 83
+    },
+    {
+      "id": "ae748548-11ba-4ed5-b223-423b687a61b3",
+      "course": "MATEMATİK",
+      "grade": 11,
+      "title": "11. Sınıf Matematik 1. Dönem 1. Yazılı: Trigonometri ve Yönlü Açılar",
+      "teacherName": "ayse",
+      "teacherEmail": "ayse@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "11-A",
+        "11-B",
+        "11-C",
+        "11-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 70
+    },
+    {
+      "id": "a15f830e-2fb6-4adc-8745-7aab8b27d415",
+      "course": "MATEMATİK",
+      "grade": 12,
+      "title": "12. Sınıf Matematik 1. Dönem 1. Yazılı: Üstel ve Logaritmik Fonksiyonlar ile Diziler",
+      "teacherName": "ayse",
+      "teacherEmail": "ayse@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "12-A",
+        "12-B",
+        "12-C",
+        "12-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 76
+    },
+    {
+      "id": "52977773-b3fb-4760-9b13-303edcc535bd",
+      "course": "GEOMETRİ",
+      "grade": 9,
+      "title": "9. Sınıf Geometri 1. Dönem 1. Yazılı: Doğruda ve Üçgende Açılar",
+      "teacherName": "hasan",
+      "teacherEmail": "hasan@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": null,
+      "questionCount": 10,
+      "assignedClasses": [
+        "9-A",
+        "9-B",
+        "9-C",
+        "9-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 29,
+      "participationRate": 73,
+      "averageScore": 83
+    },
+    {
+      "id": "ca420510-46c7-40ff-9177-4152ef1022d5",
+      "course": "GEOMETRİ",
+      "grade": 10,
+      "title": "10. Sınıf Geometri 1. Dönem 1. Yazılı: Çokgenler ve Özel Dörtgenler",
+      "teacherName": "hasan",
+      "teacherEmail": "hasan@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": null,
+      "questionCount": 10,
+      "assignedClasses": [
+        "10-A",
+        "10-B",
+        "10-C",
+        "10-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 30,
+      "participationRate": 75,
+      "averageScore": 79
+    },
+    {
+      "id": "7e951635-64d2-4e5b-9c62-8dd06e3c25c9",
+      "course": "GEOMETRİ",
+      "grade": 11,
+      "title": "11. Sınıf Geometri 1. Dönem 1. Yazılı: Analitik Geometri ve Çemberde Açılar",
+      "teacherName": "hasan",
+      "teacherEmail": "hasan@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": null,
+      "questionCount": 10,
+      "assignedClasses": [
+        "11-A",
+        "11-B",
+        "11-C",
+        "11-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 29,
+      "participationRate": 73,
+      "averageScore": 76
+    },
+    {
+      "id": "a3808cf4-b043-4536-9622-a312e38cf6c6",
+      "course": "GEOMETRİ",
+      "grade": 12,
+      "title": "12. Sınıf Geometri 1. Dönem 1. Yazılı: Dönüşüm Geometrisi ve Çemberin Analitik İncelenmesi",
+      "teacherName": "hasan",
+      "teacherEmail": "hasan@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": null,
+      "questionCount": 10,
+      "assignedClasses": [
+        "12-A",
+        "12-B",
+        "12-C",
+        "12-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 75
+    },
+    {
+      "id": "ad4bbaba-6500-4254-83a9-0516b4856062",
+      "course": "PROGRAMLAMA",
+      "grade": 9,
+      "title": "9. Sınıf Programlama 1. Dönem 1. Yazılı: Algoritma Tasarımı ve Akış Şemaları",
+      "teacherName": "can",
+      "teacherEmail": "can@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": null,
+      "questionCount": 10,
+      "assignedClasses": [
+        "9-A",
+        "9-B",
+        "9-C",
+        "9-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 79
+    },
+    {
+      "id": "7dadbd7f-d07e-4f73-8ffc-a453e3a6970f",
+      "course": "PROGRAMLAMA",
+      "grade": 10,
+      "title": "10. Sınıf Programlama 1. Dönem 1. Yazılı: Python Programlama ve Veri Yapıları",
+      "teacherName": "can",
+      "teacherEmail": "can@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": 25,
+      "questionCount": 10,
+      "assignedClasses": [
+        "10-A",
+        "10-B",
+        "10-C",
+        "10-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 29,
+      "participationRate": 73,
+      "averageScore": 84
+    },
+    {
+      "id": "b90e0feb-3bfc-4609-873c-063ce938173e",
+      "course": "PROGRAMLAMA",
+      "grade": 11,
+      "title": "11. Sınıf Programlama 1. Dönem 1. Yazılı: Nesne Yönelimli Programlama ve Veritabanı",
+      "teacherName": "can",
+      "teacherEmail": "can@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "11-A",
+        "11-B",
+        "11-C",
+        "11-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 30,
+      "participationRate": 75,
+      "averageScore": 77
+    },
+    {
+      "id": "e455d87a-926d-413c-b334-798eb9abab65",
+      "course": "PROGRAMLAMA",
+      "grade": 12,
+      "title": "12. Sınıf Programlama 1. Dönem 1. Yazılı: Web Mimarisi, API Tasarımı ve Yazılım Güvenliği",
+      "teacherName": "can",
+      "teacherEmail": "can@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "12-A",
+        "12-B",
+        "12-C",
+        "12-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 29,
+      "participationRate": 73,
+      "averageScore": 76
+    },
+    {
+      "id": "0f5284b2-8a74-4379-924d-52ab7dd9becd",
+      "course": "TARİH",
+      "grade": 9,
+      "title": "9. Sınıf 1. Dönem 1. Sınav: Osmanlı'nın Kuruluşu ve İlk Türk Devletleri",
+      "teacherName": "ali",
+      "teacherEmail": "ali@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": null,
+      "questionCount": 10,
+      "assignedClasses": [
+        "9-A",
+        "9-B",
+        "9-C",
+        "9-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 80
+    },
+    {
+      "id": "ecb9341b-d48c-4c8e-98cb-a9a7ca36fde4",
+      "course": "TARİH",
+      "grade": 10,
+      "title": "10. Sınıf Tarih 1. Dönem 1. Yazılı: Beylikten Devlete Osmanlı Siyaseti ve Kuruluş Dönemi",
+      "teacherName": "ali",
+      "teacherEmail": "ali@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": 25,
+      "questionCount": 10,
+      "assignedClasses": [
+        "10-A",
+        "10-B",
+        "10-C",
+        "10-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 84
+    },
+    {
+      "id": "7a165e10-134e-49bc-b152-dc6f919d8c5c",
+      "course": "TARİH",
+      "grade": 11,
+      "title": "11. Sınıf Tarih 1. Dönem 1. Yazılı: Değişen Dünya Dengeleri Karşısında Osmanlı Siyaseti",
+      "teacherName": "ali",
+      "teacherEmail": "ali@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "11-A",
+        "11-B",
+        "11-C",
+        "11-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 29,
+      "participationRate": 73,
+      "averageScore": 72
+    },
+    {
+      "id": "5b9d7834-f750-4b99-83c3-06f0eab971ef",
+      "course": "TARİH",
+      "grade": 12,
+      "title": "12. Sınıf T.C. İnkılap Tarihi 1. Dönem 1. Yazılı: Milli Mücadele ve Kurtuluş Savaşı Hazırlık Dönemi",
+      "teacherName": "ali",
+      "teacherEmail": "ali@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "12-A",
+        "12-B",
+        "12-C",
+        "12-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 30,
+      "participationRate": 75,
+      "averageScore": 74
+    },
+    {
+      "id": "d913e398-87f6-4a09-9745-0bb0436cd557",
+      "course": "COĞRAFYA",
+      "grade": 9,
+      "title": "9. Sınıf Coğrafya 1. Dönem 1. Yazılı: Doğa, İnsan ve Harita Bilgisi",
+      "teacherName": "ahmet",
+      "teacherEmail": "ahmet@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": 25,
+      "questionCount": 10,
+      "assignedClasses": [
+        "9-A",
+        "9-B",
+        "9-C",
+        "9-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 29,
+      "participationRate": 73,
+      "averageScore": 83
+    },
+    {
+      "id": "b0083e9b-d4f0-439b-8474-40bb62df7ad6",
+      "course": "COĞRAFYA",
+      "grade": 10,
+      "title": "10. Sınıf Coğrafya 1. Dönem 1. Yazılı: Dünya'nın Tektonik Oluşumu ve İç Kuvvetler",
+      "teacherName": "ahmet",
+      "teacherEmail": "ahmet@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": 25,
+      "questionCount": 10,
+      "assignedClasses": [
+        "10-A",
+        "10-B",
+        "10-C",
+        "10-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 80
+    },
+    {
+      "id": "7ff6bcb5-37c0-4139-afee-d30be91d2328",
+      "course": "COĞRAFYA",
+      "grade": 11,
+      "title": "11. Sınıf Coğrafya 1. Dönem 1. Yazılı: Biyoçeşitlilik, Ekosistem ve Nüfus Politikaları",
+      "teacherName": "ahmet",
+      "teacherEmail": "ahmet@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "11-A",
+        "11-B",
+        "11-C",
+        "11-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 73
+    },
+    {
+      "id": "dec36503-814b-4104-aba2-333e2e9f1a1c",
+      "course": "COĞRAFYA",
+      "grade": 12,
+      "title": "12. Sınıf Coğrafya 1. Dönem 1. Yazılı: Ekstrem Doğa Olayları ve Türkiye Ekonomisi",
+      "teacherName": "ahmet",
+      "teacherEmail": "ahmet@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "12-A",
+        "12-B",
+        "12-C",
+        "12-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 29,
+      "participationRate": 73,
+      "averageScore": 73
+    },
+    {
+      "id": "937542bb-7be8-4945-843a-79850080f758",
+      "course": "EDEBİYAT",
+      "grade": 9,
+      "title": "9. Sınıf Türk Dili ve Edebiyatı 1. Dönem 1. Yazılı: Edebiyata Giriş ve Hikâye",
+      "teacherName": "veli",
+      "teacherEmail": "veli@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": 25,
+      "questionCount": 10,
+      "assignedClasses": [
+        "9-A",
+        "9-B",
+        "9-C",
+        "9-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 31,
+      "participationRate": 78,
+      "averageScore": 78
+    },
+    {
+      "id": "c8bfabaf-666d-4668-a50a-7887f41287a4",
+      "course": "EDEBİYAT",
+      "grade": 10,
+      "title": "10. Sınıf Türk Dili ve Edebiyatı 1. Dönem 1. Yazılı: İslamiyet Öncesi ve Geçiş Dönemi Edebiyatı",
+      "teacherName": "veli",
+      "teacherEmail": "veli@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "10-A",
+        "10-B",
+        "10-C",
+        "10-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 29,
+      "participationRate": 73,
+      "averageScore": 77
+    },
+    {
+      "id": "107476e7-510c-413d-bc43-bc5611a2c798",
+      "course": "EDEBİYAT",
+      "grade": 11,
+      "title": "11. Sınıf Türk Dili ve Edebiyatı 1. Dönem 1. Yazılı: Edebi Akımlar ve Tanzimat Hikâyesi",
+      "teacherName": "veli",
+      "teacherEmail": "veli@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "11-A",
+        "11-B",
+        "11-C",
+        "11-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 75
+    },
+    {
+      "id": "3cc4f3a1-bd40-4aab-9b17-bfdd239451ab",
+      "course": "EDEBİYAT",
+      "grade": 12,
+      "title": "12. Sınıf Türk Dili ve Edebiyatı 1. Dönem 1. Yazılı: Cumhuriyet Dönemi Türk Edebiyatı",
+      "teacherName": "veli",
+      "teacherEmail": "veli@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "12-A",
+        "12-B",
+        "12-C",
+        "12-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 76
+    },
+    {
+      "id": "0652000b-1d50-4c74-906a-eccf2aa168cd",
+      "course": "FELSEFE",
+      "grade": 9,
+      "title": "9. Sınıf Felsefe ve Düşünme Eğitimi 1. Dönem 1. Yazılı: Eleştirel Düşünme ve Kavramlar",
+      "teacherName": "elif",
+      "teacherEmail": "elif@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": null,
+      "questionCount": 10,
+      "assignedClasses": [
+        "9-A",
+        "9-B",
+        "9-C",
+        "9-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 81
+    },
+    {
+      "id": "e1238556-29e1-4c97-83b3-97967a1c3f8c",
+      "course": "FELSEFE",
+      "grade": 10,
+      "title": "10. Sınıf Felsefe 1. Dönem 1. Yazılı: Felsefeyi Tanıma ve Varlık Felsefesi",
+      "teacherName": "elif",
+      "teacherEmail": "elif@quizmaster.com",
+      "difficulty": "medium",
+      "timeLimit": 25,
+      "questionCount": 10,
+      "assignedClasses": [
+        "10-A",
+        "10-B",
+        "10-C",
+        "10-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 31,
+      "participationRate": 78,
+      "averageScore": 84
+    },
+    {
+      "id": "b3bc031c-f3e5-4e60-81ef-1406579f4d3f",
+      "course": "FELSEFE",
+      "grade": 11,
+      "title": "11. Sınıf Felsefe 1. Dönem 1. Yazılı: İlk Çağ ve Orta Çağ Felsefesi",
+      "teacherName": "elif",
+      "teacherEmail": "elif@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "11-A",
+        "11-B",
+        "11-C",
+        "11-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 29,
+      "participationRate": 73,
+      "averageScore": 78
+    },
+    {
+      "id": "406b4981-4389-4eab-999b-4e0206dc3d5c",
+      "course": "FELSEFE",
+      "grade": 12,
+      "title": "12. Sınıf Felsefe 1. Dönem 1. Yazılı: 20. Yüzyıl Felsefesi ve Mantık İlkeleri",
+      "teacherName": "elif",
+      "teacherEmail": "elif@quizmaster.com",
+      "difficulty": "hard",
+      "timeLimit": 30,
+      "questionCount": 10,
+      "assignedClasses": [
+        "12-A",
+        "12-B",
+        "12-C",
+        "12-D"
+      ],
+      "audienceSize": 40,
+      "completedCount": 28,
+      "participationRate": 70,
+      "averageScore": 74
+    }
+  ],
+  "surveys": [
+    {
+      "id": "8bf926e4-3ba7-4d15-88bf-85c9d32b55b4",
+      "title": "9. ve 10. Sınıflar Akademik Uyum ve Çalışma Alışkanlıkları Anketi",
+      "questionCount": 5,
+      "assignedClasses": [
+        "10-A",
+        "10-B",
+        "10-C",
+        "10-D",
+        "9-A",
+        "9-B",
+        "9-C",
+        "9-D"
+      ],
+      "submissionCount": 64
+    },
+    {
+      "id": "2e11edfe-f1cf-4d43-b275-c8e6036fc51d",
+      "title": "11. ve 12. Sınıflar Dijital Öğrenme ve Sınav Hazırlık Anketi",
+      "questionCount": 5,
+      "assignedClasses": [
+        "11-A",
+        "11-B",
+        "11-C",
+        "11-D",
+        "12-A",
+        "12-B",
+        "12-C",
+        "12-D"
+      ],
+      "submissionCount": 64
+    }
+  ]
+}

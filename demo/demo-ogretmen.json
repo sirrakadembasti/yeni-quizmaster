@@ -1,0 +1,82 @@
+[
+  {
+    "id": "cc1d95df-32e9-4362-8412-c0e724e5709b",
+    "name": "zeynep",
+    "email": "zeynep@quizmaster.com",
+    "password": "zeynep123456",
+    "course": "BİYOLOJİ",
+    "role": "teacher"
+  },
+  {
+    "id": "3c95f8ec-2d59-4d57-9fc6-7dd0d3edcadc",
+    "name": "ahmet",
+    "email": "ahmet@quizmaster.com",
+    "password": "ahmet123456",
+    "course": "COĞRAFYA",
+    "role": "teacher"
+  },
+  {
+    "id": "0cd8afef-a6ba-4ac5-a8fa-cd4df39dbbe0",
+    "name": "veli",
+    "email": "veli@quizmaster.com",
+    "password": "veli123456",
+    "course": "EDEBİYAT",
+    "role": "teacher"
+  },
+  {
+    "id": "e0f4b75f-8826-4d97-976a-207f9312a113",
+    "name": "elif",
+    "email": "elif@quizmaster.com",
+    "password": "elif123456",
+    "course": "FELSEFE",
+    "role": "teacher"
+  },
+  {
+    "id": "a1556c84-34bd-44bd-9ce3-f6852cbb77fd",
+    "name": "mehmet",
+    "email": "mehmet@quizmaster.com",
+    "password": "mehmet123456",
+    "course": "FİZİK",
+    "role": "teacher"
+  },
+  {
+    "id": "62a83180-7769-44d5-8496-da4a5a1c93a2",
+    "name": "hasan",
+    "email": "hasan@quizmaster.com",
+    "password": "hasan123456",
+    "course": "GEOMETRİ",
+    "role": "teacher"
+  },
+  {
+    "id": "db0eec17-af3e-43d3-96be-0794799ff6d3",
+    "name": "fatma",
+    "email": "fatma@quizmaster.com",
+    "password": "fatma123456",
+    "course": "KİMYA",
+    "role": "teacher"
+  },
+  {
+    "id": "17904429-43a9-4217-80be-7908487f08d6",
+    "name": "ayse",
+    "email": "ayse@quizmaster.com",
+    "password": "ayse123456",
+    "course": "MATEMATİK",
+    "role": "teacher"
+  },
+  {
+    "id": "cc3c0f5a-f671-40ed-9968-f6d4a5c16a58",
+    "name": "can",
+    "email": "can@quizmaster.com",
+    "password": "can123456",
+    "course": "PROGRAMLAMA",
+    "role": "teacher"
+  },
+  {
+    "id": "01bd8e80-3ccc-4de0-90f7-571d9afc8d12",
+    "name": "ali",
+    "email": "ali@quizmaster.com",
+    "password": "ali123456",
+    "course": "TARİH",
+    "role": "teacher"
+  }
+]

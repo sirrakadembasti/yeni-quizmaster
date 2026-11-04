@@ -1,0 +1,1602 @@
+[
+  {
+    "id": "edace6ee-1ee9-4913-b944-9f38f2e66fc2",
+    "name": "Tuna Albayrak",
+    "email": "tuna.10a@quizmaster.com",
+    "password": "tuna123456",
+    "class": "10-A",
+    "classId": "1a7d7a08-18f9-4243-b7ef-3b643e08f2fb",
+    "studentNo": 1,
+    "role": "student"
+  },
+  {
+    "id": "8dbacf1c-3740-4c50-99b7-ee8041d6d4e1",
+    "name": "Aylin Şengül",
+    "email": "aylin.10a@quizmaster.com",
+    "password": "aylin123456",
+    "class": "10-A",
+    "classId": "1a7d7a08-18f9-4243-b7ef-3b643e08f2fb",
+    "studentNo": 2,
+    "role": "student"
+  },
+  {
+    "id": "47811324-ecbd-4f42-8bc1-a9bc8bd8fd29",
+    "name": "Volkan Korkmaz",
+    "email": "volkan.10a@quizmaster.com",
+    "password": "volkan123456",
+    "class": "10-A",
+    "classId": "1a7d7a08-18f9-4243-b7ef-3b643e08f2fb",
+    "studentNo": 3,
+    "role": "student"
+  },
+  {
+    "id": "eb23f77b-d188-4697-bc08-b645ad0b0066",
+    "name": "Sezen Özkan",
+    "email": "sezen.10a@quizmaster.com",
+    "password": "sezen123456",
+    "class": "10-A",
+    "classId": "1a7d7a08-18f9-4243-b7ef-3b643e08f2fb",
+    "studentNo": 4,
+    "role": "student"
+  },
+  {
+    "id": "08c572a1-154f-4a01-87cc-1f0e903e69da",
+    "name": "Tarık Bayram",
+    "email": "tarik.10a@quizmaster.com",
+    "password": "tarik123456",
+    "class": "10-A",
+    "classId": "1a7d7a08-18f9-4243-b7ef-3b643e08f2fb",
+    "studentNo": 5,
+    "role": "student"
+  },
+  {
+    "id": "b5d78aab-1b3e-4137-99bb-4e5ec071bedd",
+    "name": "Berna Kaplan",
+    "email": "berna.10a@quizmaster.com",
+    "password": "berna123456",
+    "class": "10-A",
+    "classId": "1a7d7a08-18f9-4243-b7ef-3b643e08f2fb",
+    "studentNo": 6,
+    "role": "student"
+  },
+  {
+    "id": "817b77bc-83d5-44af-973c-3918133f0a3f",
+    "name": "Gökhan Ünal",
+    "email": "gokhan.10a@quizmaster.com",
+    "password": "gokhan123456",
+    "class": "10-A",
+    "classId": "1a7d7a08-18f9-4243-b7ef-3b643e08f2fb",
+    "studentNo": 7,
+    "role": "student"
+  },
+  {
+    "id": "2a17fc50-6e1f-44b9-a2bf-a96abcbddbe1",
+    "name": "Hande Özcan",
+    "email": "hande.10a@quizmaster.com",
+    "password": "hande123456",
+    "class": "10-A",
+    "classId": "1a7d7a08-18f9-4243-b7ef-3b643e08f2fb",
+    "studentNo": 8,
+    "role": "student"
+  },
+  {
+    "id": "7490b987-0841-446a-92ac-96bd2f7cd8be",
+    "name": "Taylan Güven",
+    "email": "taylan.10a@quizmaster.com",
+    "password": "taylan123456",
+    "class": "10-A",
+    "classId": "1a7d7a08-18f9-4243-b7ef-3b643e08f2fb",
+    "studentNo": 9,
+    "role": "student"
+  },
+  {
+    "id": "7491b97c-1e99-42ab-afb6-2f03c925fdb0",
+    "name": "Kübra Akdağ",
+    "email": "kubra.10a@quizmaster.com",
+    "password": "kubra123456",
+    "class": "10-A",
+    "classId": "1a7d7a08-18f9-4243-b7ef-3b643e08f2fb",
+    "studentNo": 10,
+    "role": "student"
+  },
+  {
+    "id": "833a42ad-a2f0-4cf8-9fc5-7ec128fb1771",
+    "name": "Selçuk Çiçek",
+    "email": "selcuk.10b@quizmaster.com",
+    "password": "selcuk123456",
+    "class": "10-B",
+    "classId": "8f8e6100-ea2b-4262-b024-fb06dd4ab1ed",
+    "studentNo": 1,
+    "role": "student"
+  },
+  {
+    "id": "ab220708-11b0-47ff-8273-5780dd06fa1a",
+    "name": "Duygu Altın",
+    "email": "duygu.10b@quizmaster.com",
+    "password": "duygu123456",
+    "class": "10-B",
+    "classId": "8f8e6100-ea2b-4262-b024-fb06dd4ab1ed",
+    "studentNo": 2,
+    "role": "student"
+  },
+  {
+    "id": "d07c0ae5-bbf4-4483-9c7d-6a2772535640",
+    "name": "Ersin Metin",
+    "email": "ersin.10b@quizmaster.com",
+    "password": "ersin123456",
+    "class": "10-B",
+    "classId": "8f8e6100-ea2b-4262-b024-fb06dd4ab1ed",
+    "studentNo": 3,
+    "role": "student"
+  },
+  {
+    "id": "2f21af09-1b41-450a-a46d-84d57ed66c3f",
+    "name": "Leyla Demirci",
+    "email": "leyla.10b@quizmaster.com",
+    "password": "leyla123456",
+    "class": "10-B",
+    "classId": "8f8e6100-ea2b-4262-b024-fb06dd4ab1ed",
+    "studentNo": 4,
+    "role": "student"
+  },
+  {
+    "id": "417a284a-0143-4522-b69e-cf5106ea82e6",
+    "name": "Kenan Özmen",
+    "email": "kenan.10b@quizmaster.com",
+    "password": "kenan123456",
+    "class": "10-B",
+    "classId": "8f8e6100-ea2b-4262-b024-fb06dd4ab1ed",
+    "studentNo": 5,
+    "role": "student"
+  },
+  {
+    "id": "d39d4937-5e3f-421a-a7de-b7d9d3acab44",
+    "name": "Nur Aksoy",
+    "email": "nur.10b@quizmaster.com",
+    "password": "nur123456",
+    "class": "10-B",
+    "classId": "8f8e6100-ea2b-4262-b024-fb06dd4ab1ed",
+    "studentNo": 6,
+    "role": "student"
+  },
+  {
+    "id": "3ad28981-c37c-4a42-a53a-8bf256a0ea24",
+    "name": "Orhan Köse",
+    "email": "orhan.10b@quizmaster.com",
+    "password": "orhan123456",
+    "class": "10-B",
+    "classId": "8f8e6100-ea2b-4262-b024-fb06dd4ab1ed",
+    "studentNo": 7,
+    "role": "student"
+  },
+  {
+    "id": "2558edd0-cbf0-4baf-aad3-1a667e20c2ff",
+    "name": "Rabia Şen",
+    "email": "rabia.10b@quizmaster.com",
+    "password": "rabia123456",
+    "class": "10-B",
+    "classId": "8f8e6100-ea2b-4262-b024-fb06dd4ab1ed",
+    "studentNo": 8,
+    "role": "student"
+  },
+  {
+    "id": "3ca9d43f-f064-4332-bada-404bdc9c74a7",
+    "name": "Sinan Uçar",
+    "email": "sinan.10b@quizmaster.com",
+    "password": "sinan123456",
+    "class": "10-B",
+    "classId": "8f8e6100-ea2b-4262-b024-fb06dd4ab1ed",
+    "studentNo": 9,
+    "role": "student"
+  },
+  {
+    "id": "bb2c192d-9c55-4c31-a8e5-28bde77b749c",
+    "name": "Sevgi Turan",
+    "email": "sevgi.10b@quizmaster.com",
+    "password": "sevgi123456",
+    "class": "10-B",
+    "classId": "8f8e6100-ea2b-4262-b024-fb06dd4ab1ed",
+    "studentNo": 10,
+    "role": "student"
+  },
+  {
+    "id": "e776147e-608b-4781-9448-ccdc39a6c604",
+    "name": "Taner Duran",
+    "email": "taner.10c@quizmaster.com",
+    "password": "taner123456",
+    "class": "10-C",
+    "classId": "e03683c2-36f1-416f-bf18-e770e16b6396",
+    "studentNo": 1,
+    "role": "student"
+  },
+  {
+    "id": "75ef825d-6491-4553-8d4f-3e68fc1d708a",
+    "name": "Yeşim Yıldırım",
+    "email": "yesim.10c@quizmaster.com",
+    "password": "yesim123456",
+    "class": "10-C",
+    "classId": "e03683c2-36f1-416f-bf18-e770e16b6396",
+    "studentNo": 2,
+    "role": "student"
+  },
+  {
+    "id": "787b5b83-49c7-4681-9840-0d5379d8e86f",
+    "name": "Zafer Vural",
+    "email": "zafer.10c@quizmaster.com",
+    "password": "zafer123456",
+    "class": "10-C",
+    "classId": "e03683c2-36f1-416f-bf18-e770e16b6396",
+    "studentNo": 3,
+    "role": "student"
+  },
+  {
+    "id": "54daa29a-6257-4255-b601-e9b8418ae4b2",
+    "name": "Zehra Mutlu",
+    "email": "zehra.10c@quizmaster.com",
+    "password": "zehra123456",
+    "class": "10-C",
+    "classId": "e03683c2-36f1-416f-bf18-e770e16b6396",
+    "studentNo": 4,
+    "role": "student"
+  },
+  {
+    "id": "ccfb1e24-76e1-44c1-a588-2abdce3f8c18",
+    "name": "Cihan Duman",
+    "email": "cihan.10c@quizmaster.com",
+    "password": "cihan123456",
+    "class": "10-C",
+    "classId": "e03683c2-36f1-416f-bf18-e770e16b6396",
+    "studentNo": 5,
+    "role": "student"
+  },
+  {
+    "id": "afb0ed65-9db8-4be2-b956-1a11fb570164",
+    "name": "Ayşegül Ay",
+    "email": "aysegul.10c@quizmaster.com",
+    "password": "aysegul123456",
+    "class": "10-C",
+    "classId": "e03683c2-36f1-416f-bf18-e770e16b6396",
+    "studentNo": 6,
+    "role": "student"
+  },
+  {
+    "id": "62e7c592-d8cd-47b3-9404-0d044cabd8dc",
+    "name": "Deniz Karaman",
+    "email": "deniz.10c@quizmaster.com",
+    "password": "deniz123456",
+    "class": "10-C",
+    "classId": "e03683c2-36f1-416f-bf18-e770e16b6396",
+    "studentNo": 7,
+    "role": "student"
+  },
+  {
+    "id": "955adff9-4027-472a-b3a0-ce3e7b0e3e35",
+    "name": "İnci Erdoğan",
+    "email": "inci.10c@quizmaster.com",
+    "password": "inci123456",
+    "class": "10-C",
+    "classId": "e03683c2-36f1-416f-bf18-e770e16b6396",
+    "studentNo": 8,
+    "role": "student"
+  },
+  {
+    "id": "618b1a27-a510-4bb0-84dc-9534bde0170a",
+    "name": "Ozan Bostan",
+    "email": "ozan.10c@quizmaster.com",
+    "password": "ozan123456",
+    "class": "10-C",
+    "classId": "e03683c2-36f1-416f-bf18-e770e16b6396",
+    "studentNo": 9,
+    "role": "student"
+  },
+  {
+    "id": "0256e6b7-5d6a-4be3-a7f3-de302a94d913",
+    "name": "Serra Aksu",
+    "email": "serra.10c@quizmaster.com",
+    "password": "serra123456",
+    "class": "10-C",
+    "classId": "e03683c2-36f1-416f-bf18-e770e16b6396",
+    "studentNo": 10,
+    "role": "student"
+  },
+  {
+    "id": "e2a0517f-9007-4e8f-94da-916cdee3a524",
+    "name": "Hakan Bektaş",
+    "email": "hakan.10d@quizmaster.com",
+    "password": "hakan123456",
+    "class": "10-D",
+    "classId": "8ccb205d-fd92-47c9-ab93-5a39171d382b",
+    "studentNo": 1,
+    "role": "student"
+  },
+  {
+    "id": "66e96399-0487-4ca1-b71c-c11def0acbcf",
+    "name": "Mine Çeliker",
+    "email": "mine.10d@quizmaster.com",
+    "password": "mine123456",
+    "class": "10-D",
+    "classId": "8ccb205d-fd92-47c9-ab93-5a39171d382b",
+    "studentNo": 2,
+    "role": "student"
+  },
+  {
+    "id": "1c5f51e8-4922-4e75-b9be-d6367d19c97e",
+    "name": "Semih Kandemir",
+    "email": "semih.10d@quizmaster.com",
+    "password": "semih123456",
+    "class": "10-D",
+    "classId": "8ccb205d-fd92-47c9-ab93-5a39171d382b",
+    "studentNo": 3,
+    "role": "student"
+  },
+  {
+    "id": "457bf316-e738-4641-9352-637daa2da5b9",
+    "name": "Gülşen Yavuzer",
+    "email": "gulsen.10d@quizmaster.com",
+    "password": "gulsen123456",
+    "class": "10-D",
+    "classId": "8ccb205d-fd92-47c9-ab93-5a39171d382b",
+    "studentNo": 4,
+    "role": "student"
+  },
+  {
+    "id": "bc619e88-3eb6-44ce-9a26-1dd69560f793",
+    "name": "Erdal Başaran",
+    "email": "erdal.10d@quizmaster.com",
+    "password": "erdal123456",
+    "class": "10-D",
+    "classId": "8ccb205d-fd92-47c9-ab93-5a39171d382b",
+    "studentNo": 5,
+    "role": "student"
+  },
+  {
+    "id": "30b0722e-be53-4849-8947-d8e16d947c01",
+    "name": "Betül Akca",
+    "email": "betul.10d@quizmaster.com",
+    "password": "betul123456",
+    "class": "10-D",
+    "classId": "8ccb205d-fd92-47c9-ab93-5a39171d382b",
+    "studentNo": 6,
+    "role": "student"
+  },
+  {
+    "id": "ac55202b-43d1-4c48-b70a-48356b141921",
+    "name": "Engin Güngör",
+    "email": "engin.10d@quizmaster.com",
+    "password": "engin123456",
+    "class": "10-D",
+    "classId": "8ccb205d-fd92-47c9-ab93-5a39171d382b",
+    "studentNo": 7,
+    "role": "student"
+  },
+  {
+    "id": "9437c97b-57b7-4a95-9839-aa86f25e8358",
+    "name": "Şeyma Yılmazer",
+    "email": "seyma.10d@quizmaster.com",
+    "password": "seyma123456",
+    "class": "10-D",
+    "classId": "8ccb205d-fd92-47c9-ab93-5a39171d382b",
+    "studentNo": 8,
+    "role": "student"
+  },
+  {
+    "id": "12e28e58-5928-4cf4-a5dd-31b8e35759e7",
+    "name": "Veysel Özbek",
+    "email": "veysel.10d@quizmaster.com",
+    "password": "veysel123456",
+    "class": "10-D",
+    "classId": "8ccb205d-fd92-47c9-ab93-5a39171d382b",
+    "studentNo": 9,
+    "role": "student"
+  },
+  {
+    "id": "9d2e7c16-a3cb-40f0-a2a2-805a28231bca",
+    "name": "Hatice Tanrıverdi",
+    "email": "hatice.10d@quizmaster.com",
+    "password": "hatice123456",
+    "class": "10-D",
+    "classId": "8ccb205d-fd92-47c9-ab93-5a39171d382b",
+    "studentNo": 10,
+    "role": "student"
+  },
+  {
+    "id": "d230e03b-7de7-49ce-a1d4-e9c7fe9a4abf",
+    "name": "Alperen Çolak",
+    "email": "alperen.11a@quizmaster.com",
+    "password": "alperen123456",
+    "class": "11-A",
+    "classId": "56218d23-37bb-420e-9eab-51a44a6ac837",
+    "studentNo": 1,
+    "role": "student"
+  },
+  {
+    "id": "569763c7-6a6f-4d0a-90f7-a85f132c7c22",
+    "name": "Şükran Erbil",
+    "email": "sukran.11a@quizmaster.com",
+    "password": "sukran123456",
+    "class": "11-A",
+    "classId": "56218d23-37bb-420e-9eab-51a44a6ac837",
+    "studentNo": 2,
+    "role": "student"
+  },
+  {
+    "id": "0bdb0044-2b00-4ff1-96b9-58887cda5d3c",
+    "name": "Bilal Özcan",
+    "email": "bilal.11a@quizmaster.com",
+    "password": "bilal123456",
+    "class": "11-A",
+    "classId": "56218d23-37bb-420e-9eab-51a44a6ac837",
+    "studentNo": 3,
+    "role": "student"
+  },
+  {
+    "id": "5e8a016f-365d-4515-b521-fedd1d2dcef0",
+    "name": "Gülşah Akpınar",
+    "email": "gulsah.11a@quizmaster.com",
+    "password": "gulsah123456",
+    "class": "11-A",
+    "classId": "56218d23-37bb-420e-9eab-51a44a6ac837",
+    "studentNo": 4,
+    "role": "student"
+  },
+  {
+    "id": "e3429211-e24d-4969-8289-04c5295c5a78",
+    "name": "Çağlar Sarıtaş",
+    "email": "caglar.11a@quizmaster.com",
+    "password": "caglar123456",
+    "class": "11-A",
+    "classId": "56218d23-37bb-420e-9eab-51a44a6ac837",
+    "studentNo": 5,
+    "role": "student"
+  },
+  {
+    "id": "c146ce55-ada5-4015-845d-472571c9564d",
+    "name": "Feride Tezel",
+    "email": "feride.11a@quizmaster.com",
+    "password": "feride123456",
+    "class": "11-A",
+    "classId": "56218d23-37bb-420e-9eab-51a44a6ac837",
+    "studentNo": 6,
+    "role": "student"
+  },
+  {
+    "id": "622f1dd4-2487-4a94-98af-c11144a42216",
+    "name": "Enes Kayalar",
+    "email": "enes.11a@quizmaster.com",
+    "password": "enes123456",
+    "class": "11-A",
+    "classId": "56218d23-37bb-420e-9eab-51a44a6ac837",
+    "studentNo": 7,
+    "role": "student"
+  },
+  {
+    "id": "dd30bd2c-ea7b-4b85-bb61-ac3461fcf672",
+    "name": "Hülya Özkan",
+    "email": "hulya.11a@quizmaster.com",
+    "password": "hulya123456",
+    "class": "11-A",
+    "classId": "56218d23-37bb-420e-9eab-51a44a6ac837",
+    "studentNo": 8,
+    "role": "student"
+  },
+  {
+    "id": "2ce87d0d-b9f8-4635-bb45-0d720e6a0faa",
+    "name": "İlker Yıldızlı",
+    "email": "ilker.11a@quizmaster.com",
+    "password": "ilker123456",
+    "class": "11-A",
+    "classId": "56218d23-37bb-420e-9eab-51a44a6ac837",
+    "studentNo": 9,
+    "role": "student"
+  },
+  {
+    "id": "fcd77d5d-31ec-44c8-be2c-baf5e5f18879",
+    "name": "Melike Çağlayan",
+    "email": "melike.11a@quizmaster.com",
+    "password": "melike123456",
+    "class": "11-A",
+    "classId": "56218d23-37bb-420e-9eab-51a44a6ac837",
+    "studentNo": 10,
+    "role": "student"
+  },
+  {
+    "id": "fd233eff-dadf-4b32-ad08-5bb673d19862",
+    "name": "Kadir Albay",
+    "email": "kadir.11b@quizmaster.com",
+    "password": "kadir123456",
+    "class": "11-B",
+    "classId": "981bd775-d94c-4acc-8393-def3880838f3",
+    "studentNo": 1,
+    "role": "student"
+  },
+  {
+    "id": "1b7fa362-f079-4838-b774-2ce03d6e2b6d",
+    "name": "Nurgül Özkul",
+    "email": "nurgul.11b@quizmaster.com",
+    "password": "nurgul123456",
+    "class": "11-B",
+    "classId": "981bd775-d94c-4acc-8393-def3880838f3",
+    "studentNo": 2,
+    "role": "student"
+  },
+  {
+    "id": "4af38584-09ba-4559-9e2c-08f33fa2d86d",
+    "name": "Murat Dağdelen",
+    "email": "murat.11b@quizmaster.com",
+    "password": "murat123456",
+    "class": "11-B",
+    "classId": "981bd775-d94c-4acc-8393-def3880838f3",
+    "studentNo": 3,
+    "role": "student"
+  },
+  {
+    "id": "42251905-7dd4-458a-922e-a43a495d7d7d",
+    "name": "Nesrin Kocabıyık",
+    "email": "nesrin.11b@quizmaster.com",
+    "password": "nesrin123456",
+    "class": "11-B",
+    "classId": "981bd775-d94c-4acc-8393-def3880838f3",
+    "studentNo": 4,
+    "role": "student"
+  },
+  {
+    "id": "03f3769b-342a-4376-bbf4-8293c15f7f4e",
+    "name": "Osman Kızıltaş",
+    "email": "osman.11b@quizmaster.com",
+    "password": "osman123456",
+    "class": "11-B",
+    "classId": "981bd775-d94c-4acc-8393-def3880838f3",
+    "studentNo": 5,
+    "role": "student"
+  },
+  {
+    "id": "26273503-88ed-4333-8d09-4095150392f3",
+    "name": "Özlem Celep",
+    "email": "ozlem.11b@quizmaster.com",
+    "password": "ozlem123456",
+    "class": "11-B",
+    "classId": "981bd775-d94c-4acc-8393-def3880838f3",
+    "studentNo": 6,
+    "role": "student"
+  },
+  {
+    "id": "e2aa057d-a38b-40fb-b04e-2bc40fa55bbb",
+    "name": "Ramazan Çınar",
+    "email": "ramazan.11b@quizmaster.com",
+    "password": "ramazan123456",
+    "class": "11-B",
+    "classId": "981bd775-d94c-4acc-8393-def3880838f3",
+    "studentNo": 7,
+    "role": "student"
+  },
+  {
+    "id": "ba900548-309a-4fd6-b4e3-eb35b8165d57",
+    "name": "Seda Bilgili",
+    "email": "seda.11b@quizmaster.com",
+    "password": "seda123456",
+    "class": "11-B",
+    "classId": "981bd775-d94c-4acc-8393-def3880838f3",
+    "studentNo": 8,
+    "role": "student"
+  },
+  {
+    "id": "52dd8ac4-766b-48ea-9bb1-c6a964210978",
+    "name": "Turgut Kesici",
+    "email": "turgut.11b@quizmaster.com",
+    "password": "turgut123456",
+    "class": "11-B",
+    "classId": "981bd775-d94c-4acc-8393-def3880838f3",
+    "studentNo": 9,
+    "role": "student"
+  },
+  {
+    "id": "19ce5f4b-ca3f-4793-8b25-2294d6b166a8",
+    "name": "Yasemin Ercan",
+    "email": "yasemin.11b@quizmaster.com",
+    "password": "yasemin123456",
+    "class": "11-B",
+    "classId": "981bd775-d94c-4acc-8393-def3880838f3",
+    "studentNo": 10,
+    "role": "student"
+  },
+  {
+    "id": "a732ba37-dce6-4d02-9205-e8637f1e7c55",
+    "name": "Yavuz Kutlu",
+    "email": "yavuz.11c@quizmaster.com",
+    "password": "yavuz123456",
+    "class": "11-C",
+    "classId": "f8275931-6806-4507-aec7-903aea36b53c",
+    "studentNo": 1,
+    "role": "student"
+  },
+  {
+    "id": "227422f0-a26c-451f-8fb2-021888432817",
+    "name": "Songül Başkurt",
+    "email": "songul.11c@quizmaster.com",
+    "password": "songul123456",
+    "class": "11-C",
+    "classId": "f8275931-6806-4507-aec7-903aea36b53c",
+    "studentNo": 2,
+    "role": "student"
+  },
+  {
+    "id": "52758013-6a8d-4123-a534-076f4a2d0575",
+    "name": "Adem Gökçe",
+    "email": "adem.11c@quizmaster.com",
+    "password": "adem123456",
+    "class": "11-C",
+    "classId": "f8275931-6806-4507-aec7-903aea36b53c",
+    "studentNo": 3,
+    "role": "student"
+  },
+  {
+    "id": "4caab7d6-e362-42b6-a696-c1e334666fb4",
+    "name": "Sümeyye Çelikkaya",
+    "email": "sumeyye.11c@quizmaster.com",
+    "password": "sumeyye123456",
+    "class": "11-C",
+    "classId": "f8275931-6806-4507-aec7-903aea36b53c",
+    "studentNo": 4,
+    "role": "student"
+  },
+  {
+    "id": "88ac8823-7ce4-49a7-99c6-aeb19a516265",
+    "name": "Bora Topuz",
+    "email": "bora.11c@quizmaster.com",
+    "password": "bora123456",
+    "class": "11-C",
+    "classId": "f8275931-6806-4507-aec7-903aea36b53c",
+    "studentNo": 5,
+    "role": "student"
+  },
+  {
+    "id": "dffffd93-33cf-445e-ba1e-22340e3dca9d",
+    "name": "Banu Sezer",
+    "email": "banu.11c@quizmaster.com",
+    "password": "banu123456",
+    "class": "11-C",
+    "classId": "f8275931-6806-4507-aec7-903aea36b53c",
+    "studentNo": 6,
+    "role": "student"
+  },
+  {
+    "id": "9e58ffdd-1e7d-401f-9a3b-21cf954d6244",
+    "name": "Cüneyt Yurttaş",
+    "email": "cuneyt.11c@quizmaster.com",
+    "password": "cuneyt123456",
+    "class": "11-C",
+    "classId": "f8275931-6806-4507-aec7-903aea36b53c",
+    "studentNo": 7,
+    "role": "student"
+  },
+  {
+    "id": "f7515f09-0c61-49e3-bc89-f45d65e7ec93",
+    "name": "Derya Kurt",
+    "email": "derya.11c@quizmaster.com",
+    "password": "derya123456",
+    "class": "11-C",
+    "classId": "f8275931-6806-4507-aec7-903aea36b53c",
+    "studentNo": 8,
+    "role": "student"
+  },
+  {
+    "id": "01c96dbb-fc02-4876-a883-a059070a9234",
+    "name": "Eyüp Özbey",
+    "email": "eyup.11c@quizmaster.com",
+    "password": "eyup123456",
+    "class": "11-C",
+    "classId": "f8275931-6806-4507-aec7-903aea36b53c",
+    "studentNo": 9,
+    "role": "student"
+  },
+  {
+    "id": "56ba4c37-e4b7-4fca-8a5d-67dc50cd0963",
+    "name": "Filiz Akbulut",
+    "email": "filiz.11c@quizmaster.com",
+    "password": "filiz123456",
+    "class": "11-C",
+    "classId": "f8275931-6806-4507-aec7-903aea36b53c",
+    "studentNo": 10,
+    "role": "student"
+  },
+  {
+    "id": "78b4ec91-13a9-4dff-b7f7-a1e66777448b",
+    "name": "Fatih Özalp",
+    "email": "fatih.11d@quizmaster.com",
+    "password": "fatih123456",
+    "class": "11-D",
+    "classId": "f2332424-5b4e-495c-91db-29d1fd1c61db",
+    "studentNo": 1,
+    "role": "student"
+  },
+  {
+    "id": "855073b3-01f5-4d14-83c2-9e60a089974d",
+    "name": "Gonca Taşkın",
+    "email": "gonca.11d@quizmaster.com",
+    "password": "gonca123456",
+    "class": "11-D",
+    "classId": "f2332424-5b4e-495c-91db-29d1fd1c61db",
+    "studentNo": 2,
+    "role": "student"
+  },
+  {
+    "id": "53add766-2025-44b1-9742-ee696e41cf5f",
+    "name": "Hasan Ali Şenocak",
+    "email": "hasanali.11d@quizmaster.com",
+    "password": "hasanali123456",
+    "class": "11-D",
+    "classId": "f2332424-5b4e-495c-91db-29d1fd1c61db",
+    "studentNo": 3,
+    "role": "student"
+  },
+  {
+    "id": "01f24680-4508-44d2-a7b6-7132355e5e43",
+    "name": "Hale Kocatürk",
+    "email": "hale.11d@quizmaster.com",
+    "password": "hale123456",
+    "class": "11-D",
+    "classId": "f2332424-5b4e-495c-91db-29d1fd1c61db",
+    "studentNo": 4,
+    "role": "student"
+  },
+  {
+    "id": "673b4bfb-a276-42cb-b580-370e74b346fe",
+    "name": "İbrahim Soydan",
+    "email": "ibrahim.11d@quizmaster.com",
+    "password": "ibrahim123456",
+    "class": "11-D",
+    "classId": "f2332424-5b4e-495c-91db-29d1fd1c61db",
+    "studentNo": 5,
+    "role": "student"
+  },
+  {
+    "id": "e7d5546f-62fa-4e33-aca5-8b2227dc3552",
+    "name": "Jale Güvener",
+    "email": "jale.11d@quizmaster.com",
+    "password": "jale123456",
+    "class": "11-D",
+    "classId": "f2332424-5b4e-495c-91db-29d1fd1c61db",
+    "studentNo": 6,
+    "role": "student"
+  },
+  {
+    "id": "16bb0163-9a19-4e1d-a132-da0cc15fbab0",
+    "name": "Lokman Akyol",
+    "email": "lokman.11d@quizmaster.com",
+    "password": "lokman123456",
+    "class": "11-D",
+    "classId": "f2332424-5b4e-495c-91db-29d1fd1c61db",
+    "studentNo": 7,
+    "role": "student"
+  },
+  {
+    "id": "f66218b7-547e-4944-83d7-81f508d249ad",
+    "name": "Kamile Saygın",
+    "email": "kamile.11d@quizmaster.com",
+    "password": "kamile123456",
+    "class": "11-D",
+    "classId": "f2332424-5b4e-495c-91db-29d1fd1c61db",
+    "studentNo": 8,
+    "role": "student"
+  },
+  {
+    "id": "a45781ee-b526-4c2a-9396-7c4a879755da",
+    "name": "Mahmut Kurtuluş",
+    "email": "mahmut.11d@quizmaster.com",
+    "password": "mahmut123456",
+    "class": "11-D",
+    "classId": "f2332424-5b4e-495c-91db-29d1fd1c61db",
+    "studentNo": 9,
+    "role": "student"
+  },
+  {
+    "id": "678129b4-bd0b-41ea-a597-c0e9acde85b6",
+    "name": "Lale Tuncer",
+    "email": "lale.11d@quizmaster.com",
+    "password": "lale123456",
+    "class": "11-D",
+    "classId": "f2332424-5b4e-495c-91db-29d1fd1c61db",
+    "studentNo": 10,
+    "role": "student"
+  },
+  {
+    "id": "11a2667c-b412-4dcf-8bc5-c29c0b175c6a",
+    "name": "Nâzım Gençel",
+    "email": "nazim.12a@quizmaster.com",
+    "password": "nazim123456",
+    "class": "12-A",
+    "classId": "6c2f9778-f703-466e-88de-fc3e9aadb865",
+    "studentNo": 1,
+    "role": "student"
+  },
+  {
+    "id": "d8215e1d-656b-43cc-b616-7250fdaa4105",
+    "name": "Mualla Alıcı",
+    "email": "mualla.12a@quizmaster.com",
+    "password": "mualla123456",
+    "class": "12-A",
+    "classId": "6c2f9778-f703-466e-88de-fc3e9aadb865",
+    "studentNo": 2,
+    "role": "student"
+  },
+  {
+    "id": "07bd4d00-9726-45d2-a454-32c468e0559e",
+    "name": "Ömer Danış",
+    "email": "omer.12a@quizmaster.com",
+    "password": "omer123456",
+    "class": "12-A",
+    "classId": "6c2f9778-f703-466e-88de-fc3e9aadb865",
+    "studentNo": 3,
+    "role": "student"
+  },
+  {
+    "id": "768195af-8b8f-46c2-b5b2-637872928964",
+    "name": "Necla Göktepe",
+    "email": "necla.12a@quizmaster.com",
+    "password": "necla123456",
+    "class": "12-A",
+    "classId": "6c2f9778-f703-466e-88de-fc3e9aadb865",
+    "studentNo": 4,
+    "role": "student"
+  },
+  {
+    "id": "45d36eb4-3a2a-424a-874d-67dbda1aaf8b",
+    "name": "Polat Kurt",
+    "email": "polat.12a@quizmaster.com",
+    "password": "polat123456",
+    "class": "12-A",
+    "classId": "6c2f9778-f703-466e-88de-fc3e9aadb865",
+    "studentNo": 5,
+    "role": "student"
+  },
+  {
+    "id": "f26aa830-535c-4c1b-a100-b71484127573",
+    "name": "Perihan Akçay",
+    "email": "perihan.12a@quizmaster.com",
+    "password": "perihan123456",
+    "class": "12-A",
+    "classId": "6c2f9778-f703-466e-88de-fc3e9aadb865",
+    "studentNo": 6,
+    "role": "student"
+  },
+  {
+    "id": "31f66972-e857-4c91-ad85-4427bb36733d",
+    "name": "Resul Ergül",
+    "email": "resul.12a@quizmaster.com",
+    "password": "resul123456",
+    "class": "12-A",
+    "classId": "6c2f9778-f703-466e-88de-fc3e9aadb865",
+    "studentNo": 7,
+    "role": "student"
+  },
+  {
+    "id": "16507763-e8eb-4a31-8157-4142f150b972",
+    "name": "Reyhan Bozdemir",
+    "email": "reyhan.12a@quizmaster.com",
+    "password": "reyhan123456",
+    "class": "12-A",
+    "classId": "6c2f9778-f703-466e-88de-fc3e9aadb865",
+    "studentNo": 8,
+    "role": "student"
+  },
+  {
+    "id": "d3c544ab-340a-4b5b-a170-f21371258922",
+    "name": "Sabri Güçlü",
+    "email": "sabri.12a@quizmaster.com",
+    "password": "sabri123456",
+    "class": "12-A",
+    "classId": "6c2f9778-f703-466e-88de-fc3e9aadb865",
+    "studentNo": 9,
+    "role": "student"
+  },
+  {
+    "id": "e62d7cba-d4a2-4865-b95d-4409e6ce5425",
+    "name": "Sibel Akdemir",
+    "email": "sibel.12a@quizmaster.com",
+    "password": "sibel123456",
+    "class": "12-A",
+    "classId": "6c2f9778-f703-466e-88de-fc3e9aadb865",
+    "studentNo": 10,
+    "role": "student"
+  },
+  {
+    "id": "11538686-621c-466c-8992-eb6edc7f02a6",
+    "name": "Şükrü Yılmaztuna",
+    "email": "sukru.12b@quizmaster.com",
+    "password": "sukru123456",
+    "class": "12-B",
+    "classId": "3a854895-214e-4bf5-8db4-67def4ece243",
+    "studentNo": 1,
+    "role": "student"
+  },
+  {
+    "id": "78b9f47f-941b-4334-91b2-6436361235d0",
+    "name": "Suzan Çelikkan",
+    "email": "suzan.12b@quizmaster.com",
+    "password": "suzan123456",
+    "class": "12-B",
+    "classId": "3a854895-214e-4bf5-8db4-67def4ece243",
+    "studentNo": 2,
+    "role": "student"
+  },
+  {
+    "id": "9da2bc22-094c-44c5-a377-45b94b4e461b",
+    "name": "Tahir Orhan",
+    "email": "tahir.12b@quizmaster.com",
+    "password": "tahir123456",
+    "class": "12-B",
+    "classId": "3a854895-214e-4bf5-8db4-67def4ece243",
+    "studentNo": 3,
+    "role": "student"
+  },
+  {
+    "id": "fd6e7527-1242-44c9-83ef-2d75d0f9ef40",
+    "name": "Tülin Demirel",
+    "email": "tulin.12b@quizmaster.com",
+    "password": "tulin123456",
+    "class": "12-B",
+    "classId": "3a854895-214e-4bf5-8db4-67def4ece243",
+    "studentNo": 4,
+    "role": "student"
+  },
+  {
+    "id": "e51286b3-a827-4113-aa6b-eae06334ac01",
+    "name": "Ufuk Çağlar",
+    "email": "ufuk.12b@quizmaster.com",
+    "password": "ufuk123456",
+    "class": "12-B",
+    "classId": "3a854895-214e-4bf5-8db4-67def4ece243",
+    "studentNo": 5,
+    "role": "student"
+  },
+  {
+    "id": "3382d4e6-9128-426c-9625-f03ec4c37cbd",
+    "name": "Ümran Sarıkaya",
+    "email": "umran.12b@quizmaster.com",
+    "password": "umran123456",
+    "class": "12-B",
+    "classId": "3a854895-214e-4bf5-8db4-67def4ece243",
+    "studentNo": 6,
+    "role": "student"
+  },
+  {
+    "id": "d7aee470-0f4a-4e35-ad93-2ea20387849d",
+    "name": "Vedat Balcı",
+    "email": "vedat.12b@quizmaster.com",
+    "password": "vedat123456",
+    "class": "12-B",
+    "classId": "3a854895-214e-4bf5-8db4-67def4ece243",
+    "studentNo": 7,
+    "role": "student"
+  },
+  {
+    "id": "3805c345-8552-4e3e-8f50-d25434124bf2",
+    "name": "Vildan Sönmezocak",
+    "email": "vildan.12b@quizmaster.com",
+    "password": "vildan123456",
+    "class": "12-B",
+    "classId": "3a854895-214e-4bf5-8db4-67def4ece243",
+    "studentNo": 8,
+    "role": "student"
+  },
+  {
+    "id": "f058c28d-5dbb-44c8-96b2-304e4dc6012d",
+    "name": "Yakup Demirtaş",
+    "email": "yakup.12b@quizmaster.com",
+    "password": "yakup123456",
+    "class": "12-B",
+    "classId": "3a854895-214e-4bf5-8db4-67def4ece243",
+    "studentNo": 9,
+    "role": "student"
+  },
+  {
+    "id": "b8033881-6ed7-427c-bddf-9eb3cf5b8fa1",
+    "name": "Yıldız Akgündüz",
+    "email": "yildiz.12b@quizmaster.com",
+    "password": "yildiz123456",
+    "class": "12-B",
+    "classId": "3a854895-214e-4bf5-8db4-67def4ece243",
+    "studentNo": 10,
+    "role": "student"
+  },
+  {
+    "id": "39697fbc-7f11-475b-bd38-7fdb48c0f171",
+    "name": "Yusuf Pehlivan",
+    "email": "yusuf.12c@quizmaster.com",
+    "password": "yusuf123456",
+    "class": "12-C",
+    "classId": "cacda5d2-7208-42ac-adf0-0e7a517aa81e",
+    "studentNo": 1,
+    "role": "student"
+  },
+  {
+    "id": "371e0605-a1d4-49b4-a877-506fa6c13be2",
+    "name": "Zuhal Kocael",
+    "email": "zuhal.12c@quizmaster.com",
+    "password": "zuhal123456",
+    "class": "12-C",
+    "classId": "cacda5d2-7208-42ac-adf0-0e7a517aa81e",
+    "studentNo": 2,
+    "role": "student"
+  },
+  {
+    "id": "830c5279-8022-4013-a59c-ee4e239da071",
+    "name": "Ali İhsan Erkan",
+    "email": "aliihsan.12c@quizmaster.com",
+    "password": "aliihsan123456",
+    "class": "12-C",
+    "classId": "cacda5d2-7208-42ac-adf0-0e7a517aa81e",
+    "studentNo": 3,
+    "role": "student"
+  },
+  {
+    "id": "b0387d0c-76e0-47f4-85f6-b09dfec54f66",
+    "name": "Aysun Kandemir",
+    "email": "aysun.12c@quizmaster.com",
+    "password": "aysun123456",
+    "class": "12-C",
+    "classId": "cacda5d2-7208-42ac-adf0-0e7a517aa81e",
+    "studentNo": 4,
+    "role": "student"
+  },
+  {
+    "id": "4a6d6ee4-5498-4a24-94f6-27431f8a7a67",
+    "name": "Bahadır Aytekin",
+    "email": "bahadir.12c@quizmaster.com",
+    "password": "bahadir123456",
+    "class": "12-C",
+    "classId": "cacda5d2-7208-42ac-adf0-0e7a517aa81e",
+    "studentNo": 5,
+    "role": "student"
+  },
+  {
+    "id": "8cb9307b-188e-47ba-ae07-b0676ce60621",
+    "name": "Beril Karasu",
+    "email": "beril.12c@quizmaster.com",
+    "password": "beril123456",
+    "class": "12-C",
+    "classId": "cacda5d2-7208-42ac-adf0-0e7a517aa81e",
+    "studentNo": 6,
+    "role": "student"
+  },
+  {
+    "id": "c58d7142-919e-4c0c-a902-86b432058770",
+    "name": "Cihangir Özbekli",
+    "email": "cihangir.12c@quizmaster.com",
+    "password": "cihangir123456",
+    "class": "12-C",
+    "classId": "cacda5d2-7208-42ac-adf0-0e7a517aa81e",
+    "studentNo": 7,
+    "role": "student"
+  },
+  {
+    "id": "323b463a-1c7c-4e1f-bca5-68f5699b8c4c",
+    "name": "Dicle Akpınar",
+    "email": "dicle.12c@quizmaster.com",
+    "password": "dicle123456",
+    "class": "12-C",
+    "classId": "cacda5d2-7208-42ac-adf0-0e7a517aa81e",
+    "studentNo": 8,
+    "role": "student"
+  },
+  {
+    "id": "8d44cea5-edbe-4508-bbf7-cdc5281874f0",
+    "name": "Erdinç Bayındır",
+    "email": "erdinc.12c@quizmaster.com",
+    "password": "erdinc123456",
+    "class": "12-C",
+    "classId": "cacda5d2-7208-42ac-adf0-0e7a517aa81e",
+    "studentNo": 9,
+    "role": "student"
+  },
+  {
+    "id": "95f186c6-b589-4931-a175-90a494d90cdd",
+    "name": "Fulya Yılmaz",
+    "email": "fulya.12c@quizmaster.com",
+    "password": "fulya123456",
+    "class": "12-C",
+    "classId": "cacda5d2-7208-42ac-adf0-0e7a517aa81e",
+    "studentNo": 10,
+    "role": "student"
+  },
+  {
+    "id": "39fa9866-6fcf-4af6-b2e6-27965e94eee0",
+    "name": "Gürkan Demirezen",
+    "email": "gurkan.12d@quizmaster.com",
+    "password": "gurkan123456",
+    "class": "12-D",
+    "classId": "723abf05-b7af-4fd6-931d-532b8e0b452f",
+    "studentNo": 1,
+    "role": "student"
+  },
+  {
+    "id": "47fdebbd-a5d6-49fd-b0e6-a30d8f1151ec",
+    "name": "Gizem Topaloğlu",
+    "email": "gizem.12d@quizmaster.com",
+    "password": "gizem123456",
+    "class": "12-D",
+    "classId": "723abf05-b7af-4fd6-931d-532b8e0b452f",
+    "studentNo": 2,
+    "role": "student"
+  },
+  {
+    "id": "c08c3631-98a0-40ff-a78b-aff5973df5e2",
+    "name": "Harun Ceylan",
+    "email": "harun.12d@quizmaster.com",
+    "password": "harun123456",
+    "class": "12-D",
+    "classId": "723abf05-b7af-4fd6-931d-532b8e0b452f",
+    "studentNo": 3,
+    "role": "student"
+  },
+  {
+    "id": "329c6885-1025-468d-a419-ea1a4102559a",
+    "name": "Hilal Karadağ",
+    "email": "hilal.12d@quizmaster.com",
+    "password": "hilal123456",
+    "class": "12-D",
+    "classId": "723abf05-b7af-4fd6-931d-532b8e0b452f",
+    "studentNo": 4,
+    "role": "student"
+  },
+  {
+    "id": "8ec8a55a-4cbb-4ea3-b4df-40a44da9ee1c",
+    "name": "İsmail Köseoğlu",
+    "email": "ismail.12d@quizmaster.com",
+    "password": "ismail123456",
+    "class": "12-D",
+    "classId": "723abf05-b7af-4fd6-931d-532b8e0b452f",
+    "studentNo": 5,
+    "role": "student"
+  },
+  {
+    "id": "9d445e12-1744-4883-896d-9cc5d4f67015",
+    "name": "Kubilay Taşdelen",
+    "email": "kubilay.12d@quizmaster.com",
+    "password": "kubilay123456",
+    "class": "12-D",
+    "classId": "723abf05-b7af-4fd6-931d-532b8e0b452f",
+    "studentNo": 6,
+    "role": "student"
+  },
+  {
+    "id": "da0edbc5-5be9-402b-adb1-ac01c3ff9231",
+    "name": "Levent Bostancı",
+    "email": "levent.12d@quizmaster.com",
+    "password": "levent123456",
+    "class": "12-D",
+    "classId": "723abf05-b7af-4fd6-931d-532b8e0b452f",
+    "studentNo": 7,
+    "role": "student"
+  },
+  {
+    "id": "0d4bd15d-fe00-4476-940c-aea75750af82",
+    "name": "Nermin Akçalı",
+    "email": "nermin.12d@quizmaster.com",
+    "password": "nermin123456",
+    "class": "12-D",
+    "classId": "723abf05-b7af-4fd6-931d-532b8e0b452f",
+    "studentNo": 8,
+    "role": "student"
+  },
+  {
+    "id": "ee0df697-fa21-4f02-82b2-7832b7d413f2",
+    "name": "Orhun Gökmen",
+    "email": "orhun.12d@quizmaster.com",
+    "password": "orhun123456",
+    "class": "12-D",
+    "classId": "723abf05-b7af-4fd6-931d-532b8e0b452f",
+    "studentNo": 9,
+    "role": "student"
+  },
+  {
+    "id": "5ab453d6-9c00-4f81-bbe9-b22985a297bc",
+    "name": "Pınar Yurteri",
+    "email": "pinar.12d@quizmaster.com",
+    "password": "pinar123456",
+    "class": "12-D",
+    "classId": "723abf05-b7af-4fd6-931d-532b8e0b452f",
+    "studentNo": 10,
+    "role": "student"
+  },
+  {
+    "id": "6540e721-ca8e-4837-99ac-53a87b97084d",
+    "name": "Kerem Yılmaz",
+    "email": "kerem.9a@quizmaster.com",
+    "password": "kerem123456",
+    "class": "9-A",
+    "classId": "3a1c67ed-37f2-4f5f-9b1b-dbfaed662d47",
+    "studentNo": 1,
+    "role": "student"
+  },
+  {
+    "id": "d9e46d5f-f9e8-4186-a03d-0f4e20c2ee0d",
+    "name": "Ece Demir",
+    "email": "ece.9a@quizmaster.com",
+    "password": "ece123456",
+    "class": "9-A",
+    "classId": "3a1c67ed-37f2-4f5f-9b1b-dbfaed662d47",
+    "studentNo": 2,
+    "role": "student"
+  },
+  {
+    "id": "6b7eb605-ab4b-44e4-a809-e60ba3499d37",
+    "name": "Burak Kaya",
+    "email": "burak.9a@quizmaster.com",
+    "password": "burak123456",
+    "class": "9-A",
+    "classId": "3a1c67ed-37f2-4f5f-9b1b-dbfaed662d47",
+    "studentNo": 3,
+    "role": "student"
+  },
+  {
+    "id": "4cec1f07-611f-4813-a322-19bc61a4991f",
+    "name": "Selin Çelik",
+    "email": "selin.9a@quizmaster.com",
+    "password": "selin123456",
+    "class": "9-A",
+    "classId": "3a1c67ed-37f2-4f5f-9b1b-dbfaed662d47",
+    "studentNo": 4,
+    "role": "student"
+  },
+  {
+    "id": "5bc3db46-24fc-49a5-851b-dfdb637cf450",
+    "name": "Emre Şahin",
+    "email": "emre.9a@quizmaster.com",
+    "password": "emre123456",
+    "class": "9-A",
+    "classId": "3a1c67ed-37f2-4f5f-9b1b-dbfaed662d47",
+    "studentNo": 5,
+    "role": "student"
+  },
+  {
+    "id": "5e5f34f2-3618-49ee-ba03-4c29dc220e4d",
+    "name": "Defne Yıldız",
+    "email": "defne.9a@quizmaster.com",
+    "password": "defne123456",
+    "class": "9-A",
+    "classId": "3a1c67ed-37f2-4f5f-9b1b-dbfaed662d47",
+    "studentNo": 6,
+    "role": "student"
+  },
+  {
+    "id": "8f0e9657-3fc4-424a-9ff2-efaccedb82d1",
+    "name": "Kaan Öztürk",
+    "email": "kaan.9a@quizmaster.com",
+    "password": "kaan123456",
+    "class": "9-A",
+    "classId": "3a1c67ed-37f2-4f5f-9b1b-dbfaed662d47",
+    "studentNo": 7,
+    "role": "student"
+  },
+  {
+    "id": "f8da74eb-0157-4e2e-8333-017577bb279d",
+    "name": "İrem Aydın",
+    "email": "irem.9a@quizmaster.com",
+    "password": "irem123456",
+    "class": "9-A",
+    "classId": "3a1c67ed-37f2-4f5f-9b1b-dbfaed662d47",
+    "studentNo": 8,
+    "role": "student"
+  },
+  {
+    "id": "ad10e8b3-4459-4078-b59d-fc01cf669127",
+    "name": "Arda Koç",
+    "email": "arda.9a@quizmaster.com",
+    "password": "arda123456",
+    "class": "9-A",
+    "classId": "3a1c67ed-37f2-4f5f-9b1b-dbfaed662d47",
+    "studentNo": 9,
+    "role": "student"
+  },
+  {
+    "id": "de7e8193-6a6a-43b3-8ab0-bec5e00bddb2",
+    "name": "Gamze Arslan",
+    "email": "gamze.9a@quizmaster.com",
+    "password": "gamze123456",
+    "class": "9-A",
+    "classId": "3a1c67ed-37f2-4f5f-9b1b-dbfaed662d47",
+    "studentNo": 10,
+    "role": "student"
+  },
+  {
+    "id": "a6e30a04-8994-437e-9098-c6f15a7ce244",
+    "name": "Onur Doğan",
+    "email": "onur.9b@quizmaster.com",
+    "password": "onur123456",
+    "class": "9-B",
+    "classId": "c625e47b-e9b4-4c6c-bea2-b75a24a39d1c",
+    "studentNo": 1,
+    "role": "student"
+  },
+  {
+    "id": "c24c2966-8650-4fd2-9336-32ca9790a3c9",
+    "name": "Melis Kılıç",
+    "email": "melis.9b@quizmaster.com",
+    "password": "melis123456",
+    "class": "9-B",
+    "classId": "c625e47b-e9b4-4c6c-bea2-b75a24a39d1c",
+    "studentNo": 2,
+    "role": "student"
+  },
+  {
+    "id": "a76de683-8d56-4187-83bf-f1eb1229851b",
+    "name": "Mert Aslan",
+    "email": "mert.9b@quizmaster.com",
+    "password": "mert123456",
+    "class": "9-B",
+    "classId": "c625e47b-e9b4-4c6c-bea2-b75a24a39d1c",
+    "studentNo": 3,
+    "role": "student"
+  },
+  {
+    "id": "866108c7-e4e0-4efa-b975-97a9a8b84814",
+    "name": "Ceren Çetin",
+    "email": "ceren.9b@quizmaster.com",
+    "password": "ceren123456",
+    "class": "9-B",
+    "classId": "c625e47b-e9b4-4c6c-bea2-b75a24a39d1c",
+    "studentNo": 4,
+    "role": "student"
+  },
+  {
+    "id": "45f07071-2b54-4d1e-9f7b-03a0eb32b0e4",
+    "name": "Umut Kara",
+    "email": "umut.9b@quizmaster.com",
+    "password": "umut123456",
+    "class": "9-B",
+    "classId": "c625e47b-e9b4-4c6c-bea2-b75a24a39d1c",
+    "studentNo": 5,
+    "role": "student"
+  },
+  {
+    "id": "b89660a2-8ddf-406e-901a-77b6ec20e4e9",
+    "name": "Ezgi Koçak",
+    "email": "ezgi.9b@quizmaster.com",
+    "password": "ezgi123456",
+    "class": "9-B",
+    "classId": "c625e47b-e9b4-4c6c-bea2-b75a24a39d1c",
+    "studentNo": 6,
+    "role": "student"
+  },
+  {
+    "id": "43b3c327-2540-4297-8f9d-996d0fa8bcb9",
+    "name": "Barış Erdoğan",
+    "email": "baris.9b@quizmaster.com",
+    "password": "baris123456",
+    "class": "9-B",
+    "classId": "c625e47b-e9b4-4c6c-bea2-b75a24a39d1c",
+    "studentNo": 7,
+    "role": "student"
+  },
+  {
+    "id": "1fd141a0-4d68-42e9-981c-93fa03f9e789",
+    "name": "Nilay Özdemir",
+    "email": "nilay.9b@quizmaster.com",
+    "password": "nilay123456",
+    "class": "9-B",
+    "classId": "c625e47b-e9b4-4c6c-bea2-b75a24a39d1c",
+    "studentNo": 8,
+    "role": "student"
+  },
+  {
+    "id": "17ce730d-c716-4f5b-bbd0-6d0ead5dfa0b",
+    "name": "Yiğit Polat",
+    "email": "yigit.9b@quizmaster.com",
+    "password": "yigit123456",
+    "class": "9-B",
+    "classId": "c625e47b-e9b4-4c6c-bea2-b75a24a39d1c",
+    "studentNo": 9,
+    "role": "student"
+  },
+  {
+    "id": "439a1d24-7678-4aeb-ade7-444b567cd704",
+    "name": "Hazal Yavuz",
+    "email": "hazal.9b@quizmaster.com",
+    "password": "hazal123456",
+    "class": "9-B",
+    "classId": "c625e47b-e9b4-4c6c-bea2-b75a24a39d1c",
+    "studentNo": 10,
+    "role": "student"
+  },
+  {
+    "id": "8a5317e7-f84d-4240-9e59-50ab949136de",
+    "name": "Tolga Sarı",
+    "email": "tolga.9c@quizmaster.com",
+    "password": "tolga123456",
+    "class": "9-C",
+    "classId": "e8100d25-a638-44f4-8cb0-29ef7cc473ac",
+    "studentNo": 1,
+    "role": "student"
+  },
+  {
+    "id": "fe41bbf7-a21b-4915-971a-6113fcbf4de1",
+    "name": "Büşra Güler",
+    "email": "busra.9c@quizmaster.com",
+    "password": "busra123456",
+    "class": "9-C",
+    "classId": "e8100d25-a638-44f4-8cb0-29ef7cc473ac",
+    "studentNo": 2,
+    "role": "student"
+  },
+  {
+    "id": "7f5470fb-2669-4ac9-8c16-68af71f76227",
+    "name": "Serkan Avcı",
+    "email": "serkan.9c@quizmaster.com",
+    "password": "serkan123456",
+    "class": "9-C",
+    "classId": "e8100d25-a638-44f4-8cb0-29ef7cc473ac",
+    "studentNo": 3,
+    "role": "student"
+  },
+  {
+    "id": "d1aff2e5-614b-4b81-b8d6-b9c243c4e542",
+    "name": "Damla Sönmez",
+    "email": "damla.9c@quizmaster.com",
+    "password": "damla123456",
+    "class": "9-C",
+    "classId": "e8100d25-a638-44f4-8cb0-29ef7cc473ac",
+    "studentNo": 4,
+    "role": "student"
+  },
+  {
+    "id": "35e1c3e6-2cdd-4cda-b28c-ee793c5b3320",
+    "name": "Oğuz Taş",
+    "email": "oguz.9c@quizmaster.com",
+    "password": "oguz123456",
+    "class": "9-C",
+    "classId": "e8100d25-a638-44f4-8cb0-29ef7cc473ac",
+    "studentNo": 5,
+    "role": "student"
+  },
+  {
+    "id": "e1fb66b9-8455-449d-9116-6630d24e2086",
+    "name": "Simge Gündüz",
+    "email": "simge.9c@quizmaster.com",
+    "password": "simge123456",
+    "class": "9-C",
+    "classId": "e8100d25-a638-44f4-8cb0-29ef7cc473ac",
+    "studentNo": 6,
+    "role": "student"
+  },
+  {
+    "id": "86cb7445-50ff-4e52-a390-821d0f5511e9",
+    "name": "Cenk Bulut",
+    "email": "cenk.9c@quizmaster.com",
+    "password": "cenk123456",
+    "class": "9-C",
+    "classId": "e8100d25-a638-44f4-8cb0-29ef7cc473ac",
+    "studentNo": 7,
+    "role": "student"
+  },
+  {
+    "id": "29c02fc0-8c3a-4da6-a40c-dc9dd237f9a7",
+    "name": "Aslı Yalçın",
+    "email": "asli.9c@quizmaster.com",
+    "password": "asli123456",
+    "class": "9-C",
+    "classId": "e8100d25-a638-44f4-8cb0-29ef7cc473ac",
+    "studentNo": 8,
+    "role": "student"
+  },
+  {
+    "id": "c75fc5ec-464b-4d64-b362-c7d320c20098",
+    "name": "Batuhan Toprak",
+    "email": "batuhan.9c@quizmaster.com",
+    "password": "batuhan123456",
+    "class": "9-C",
+    "classId": "e8100d25-a638-44f4-8cb0-29ef7cc473ac",
+    "studentNo": 9,
+    "role": "student"
+  },
+  {
+    "id": "c65f2349-eae4-4238-8133-1a4c7b32fdb4",
+    "name": "Dilara Keskin",
+    "email": "dilara.9c@quizmaster.com",
+    "password": "dilara123456",
+    "class": "9-C",
+    "classId": "e8100d25-a638-44f4-8cb0-29ef7cc473ac",
+    "studentNo": 10,
+    "role": "student"
+  },
+  {
+    "id": "74e589cb-b7b0-4d31-bc97-6f4e3bff4b3e",
+    "name": "Koray Genç",
+    "email": "koray.9d@quizmaster.com",
+    "password": "koray123456",
+    "class": "9-D",
+    "classId": "14642884-71c8-424e-bd76-30e8f65bd5e2",
+    "studentNo": 1,
+    "role": "student"
+  },
+  {
+    "id": "1f88dde2-142a-4528-a23f-ab9e4983cc44",
+    "name": "Cansu Coşkun",
+    "email": "cansu.9d@quizmaster.com",
+    "password": "cansu123456",
+    "class": "9-D",
+    "classId": "14642884-71c8-424e-bd76-30e8f65bd5e2",
+    "studentNo": 2,
+    "role": "student"
+  },
+  {
+    "id": "3901e2d8-8c3f-4a22-8bc8-7d0bbb6993bf",
+    "name": "Berk Aksoy",
+    "email": "berk.9d@quizmaster.com",
+    "password": "berk123456",
+    "class": "9-D",
+    "classId": "14642884-71c8-424e-bd76-30e8f65bd5e2",
+    "studentNo": 3,
+    "role": "student"
+  },
+  {
+    "id": "b425e4a5-3b24-49b3-bfd1-ec98d89dcef0",
+    "name": "Tuğba Karaca",
+    "email": "tugba.9d@quizmaster.com",
+    "password": "tugba123456",
+    "class": "9-D",
+    "classId": "14642884-71c8-424e-bd76-30e8f65bd5e2",
+    "studentNo": 4,
+    "role": "student"
+  },
+  {
+    "id": "b6b8903d-0ecc-4613-8ab7-b2a5d8664b83",
+    "name": "Alper Tekin",
+    "email": "alper.9d@quizmaster.com",
+    "password": "alper123456",
+    "class": "9-D",
+    "classId": "14642884-71c8-424e-bd76-30e8f65bd5e2",
+    "studentNo": 5,
+    "role": "student"
+  },
+  {
+    "id": "9b3f21ce-ce3a-4af5-ad93-aa13969306fb",
+    "name": "Sinem Ergin",
+    "email": "sinem.9d@quizmaster.com",
+    "password": "sinem123456",
+    "class": "9-D",
+    "classId": "14642884-71c8-424e-bd76-30e8f65bd5e2",
+    "studentNo": 6,
+    "role": "student"
+  },
+  {
+    "id": "a1459168-f1ce-49f1-8bc5-b5b52a06d8fb",
+    "name": "Doruk Yurt",
+    "email": "doruk.9d@quizmaster.com",
+    "password": "doruk123456",
+    "class": "9-D",
+    "classId": "14642884-71c8-424e-bd76-30e8f65bd5e2",
+    "studentNo": 7,
+    "role": "student"
+  },
+  {
+    "id": "2710366e-f9ab-495c-8de9-def47c1efb5f",
+    "name": "Gökçe Bozkurt",
+    "email": "gokce.9d@quizmaster.com",
+    "password": "gokce123456",
+    "class": "9-D",
+    "classId": "14642884-71c8-424e-bd76-30e8f65bd5e2",
+    "studentNo": 8,
+    "role": "student"
+  },
+  {
+    "id": "edae8d0e-ffc0-437a-ac70-35e3eba66725",
+    "name": "Furkan Yaman",
+    "email": "furkan.9d@quizmaster.com",
+    "password": "furkan123456",
+    "class": "9-D",
+    "classId": "14642884-71c8-424e-bd76-30e8f65bd5e2",
+    "studentNo": 9,
+    "role": "student"
+  },
+  {
+    "id": "715d173d-dcfc-4254-b8ec-08532fe8a76c",
+    "name": "Pelin Akbulut",
+    "email": "pelin.9d@quizmaster.com",
+    "password": "pelin123456",
+    "class": "9-D",
+    "classId": "14642884-71c8-424e-bd76-30e8f65bd5e2",
+    "studentNo": 10,
+    "role": "student"
+  }
+]
