@@ -7,6 +7,8 @@
   ],
   "scripts": {
     "dev": "concurrently --kill-others-on-fail --prefix-colors \"blue,green\" --names \"server,client\" \"pnpm --filter quiz-master-server dev\" \"pnpm --filter quiz-master-client dev\"",
+    "db:prepare-demo": "pnpm --filter quiz-master-server run db:prepare-demo",
+    "start:demo": "pnpm --filter quiz-master-server run start:demo",
     "setup": "node scripts/setup-bootstrap.mjs",
     "setup:wizard": "pnpm --filter quiz-master-server run setup",
     "build": "pnpm --filter quiz-master-server build && pnpm --filter quiz-master-client build",

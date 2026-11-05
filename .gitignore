@@ -29,6 +29,7 @@ client/.env
 /server/data/deployment-config.json.tmp
 /server/data/installation.lock
 /server/data/setup-artifacts/
+/server/data/demo-sessions/
 /server/backups/*
 !/server/backups/README.md
 

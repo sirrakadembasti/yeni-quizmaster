@@ -6,6 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getVersionedNotificationPreferences, newerNotificationPreferences, type VersionedNotificationPreferences } from "@/lib/versioned-notification-preferences";
 import { prependNotification, type NotificationPage } from "@/lib/notification-cache";
 import { useAcademicYear } from '@/context/academic-year-context';
+import { getAppBasePath } from "@/lib/demo-mode";
 
 export function NotificationListener() {
   const { user, role, isAuthenticated } = useAuth();
@@ -30,8 +31,9 @@ export function NotificationListener() {
 
     // Use empty string to connect to the current host
     // or rely on proxy settings in vite.config.ts
+    const basePath = getAppBasePath();
     const socket = io(window.location.origin, {
-      path: "/socket.io/",
+      path: `${basePath}/socket.io/`,
       transports: ["websocket", "polling"],
       withCredentials: true,
       reconnection: true,

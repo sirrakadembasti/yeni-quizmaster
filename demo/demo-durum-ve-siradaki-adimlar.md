@@ -22,6 +22,10 @@
    - 9, 10, 11 ve 12. sınıf seviyelerinin her birinde **10'ar veli** (A şubesinden 3, B şubesinden 3, C şubesinden 2, D şubesinden 2 öğrenciye bağlı) olmak üzere toplam **40 veli** hesabı ve `GuardianStudent` bağlantısı oluşturuldu.
    - Giriş Formatı: `<veli_ad>.veli.<sinifkodu>@quizmaster.com` / `<veli_ad>123456`
    - Dosyalar: `demo/demo-veli.json` ve `demo/demo-veli.md`
+5. **`domain/demo` Salt-Okunur İkinci Kopya (`demo.db`) ve 4 Hazır Vitrin Hesabı Oluşturuldu:**
+   - Bağımsız `server/data/demo.db` veritabanı ve `APP_DEMO_MODE=true` / `APP_BASE_PATH=/demo` ikinci kopya altyapısı (`pnpm run db:prepare-demo`, `pnpm run start:demo`) hazırlandı.
+   - 4 hazır vitrin hesabı (`demo-admin@quizmaster.com`, `demo-ogretmen@quizmaster.com`, `demo-ogrenci@quizmaster.com`, `demo-veli@quizmaster.com` / Şifre: `demo123456`), tek tıkla giriş kartları, üst bar rol değiştirici ve yazma işlemlerinde salt-okunur uyarı (`DEMO_MODE_READ_ONLY`) katmanı eklendi.
+   - Dosyalar: `demo/demo-vitrin-hesaplari.md` ve `demo/demo-vitrin-hesaplari.json`
 
 ## Durum
-- **Tüm demo hazırlık ve simülasyon adımları (öğretmen, öğrenci, sınav/anket ve veli hesapları) eksiksiz tamamlanmıştır.**
+- **Tüm demo hazırlık, simülasyon ve `domain/demo` salt-okunur vitrin ikinci kopya adımları eksiksiz tamamlanmıştır.**

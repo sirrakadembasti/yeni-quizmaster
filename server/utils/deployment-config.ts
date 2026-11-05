@@ -120,8 +120,10 @@ export function loadSavedDeploymentConfig(): DeploymentConfig | null {
 }
 
 export function getEffectiveDeploymentConfig(): DeploymentConfig {
+  const hasExplicitEnvBasePath = Boolean(process.env.APP_BASE_PATH && process.env.APP_BASE_PATH.trim());
+  const isDemoModeEnv = process.env.APP_DEMO_MODE === "true" || process.env.APP_DEMO_MODE === "1";
   const saved = loadSavedDeploymentConfig();
-  if (saved) return saved;
+  if (saved && !hasExplicitEnvBasePath && !isDemoModeEnv) return saved;
 
   const publicUrl = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
   const envBasePath = normalizeBasePath(process.env.APP_BASE_PATH);

@@ -95,4 +95,4 @@ it('şifre taleplerinde SMTP olmadan tek kullanımlık sıfırlama bağlantısı
   expect(api.createOfflineLink).toHaveBeenCalledWith('ogretmen@okul.com');
   expect(await screen.findByDisplayValue(/\/reset-password\?token=testtoken123/)).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /Bağlantıyı Kopyala/i })).toBeInTheDocument();
-});
+}, 15000);

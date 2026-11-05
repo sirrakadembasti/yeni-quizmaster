@@ -1,4 +1,11 @@
 import { ApiError } from './http-error';
+import {
+  DEMO_READ_ONLY_CODE,
+  notifyDemoReadOnly,
+  withAppBasePath,
+  type DemoRoleKey,
+  type DemoShowcaseAccount,
+} from './demo-mode';
 const API_BASE = '/api';
 
 let csrfToken: string | null = null;
@@ -10,7 +17,7 @@ async function getCsrfToken() {
 
   csrfPromise = (async () => {
     try {
-      const res = await window.fetch(`${API_BASE}/csrf-token`, { credentials: 'include' });
+      const res = await window.fetch(withAppBasePath(`${API_BASE}/csrf-token`), { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
         // Server returns { csrfToken: '...' } — read the correct field
@@ -48,6 +55,7 @@ export const uploadApi = {
 
 export async function apiFetch(url: string, options: RequestInit = {}) {
   const method = options.method || 'GET';
+  const resolvedUrl = withAppBasePath(url);
   
   if (!['GET', 'HEAD', 'OPTIONS'].includes(method.toUpperCase())) {
     const token = await getCsrfToken();
@@ -59,14 +67,16 @@ export async function apiFetch(url: string, options: RequestInit = {}) {
     }
   }
   
-  let response = await window.fetch(url, options);
+  let response = await window.fetch(resolvedUrl, options);
 
-  // Automatically retry once if CSRF token is invalid
+  // Automatically retry once if CSRF token is invalid, or notify if Demo Read-Only
   if (response.status === 403) {
     const clonedResponse = response.clone();
     try {
       const errorData = await clonedResponse.json();
-      if (errorData.message === "invalid csrf token") {
+      if (errorData.code === DEMO_READ_ONLY_CODE) {
+        notifyDemoReadOnly(errorData.message);
+      } else if (errorData.message === "invalid csrf token") {
         console.warn("CSRF Token invalid, refreshing and retrying...");
         csrfToken = null; // Clear global token
         csrfPromise = null; // Clear global promise lock
@@ -76,7 +86,7 @@ export async function apiFetch(url: string, options: RequestInit = {}) {
             ...(options.headers || {}),
             'x-csrf-token': newToken
           };
-          response = await window.fetch(url, {
+          response = await window.fetch(resolvedUrl, {
             ...options,
             headers: newHeaders
           });
@@ -153,6 +163,7 @@ export interface User {
   name: string;
   email: string;
   role: 'admin' | 'teacher' | 'student' | 'parent';
+  isDemoUser?: boolean;
   classId?: string | null;
   createdAt: string;
   classNo?: string | null;
@@ -370,6 +381,28 @@ export const authApi = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
+      credentials: 'include',
+    });
+    return handleResponse<{ user: User }>(response);
+  },
+
+  async getDemoInfo() {
+    const response = await apiFetch(`${API_BASE}/auth/demo-info`, {
+      credentials: 'include',
+    });
+    return handleResponse<{
+      enabled: boolean;
+      basePath: string;
+      readOnlyMessage: string;
+      accounts: DemoShowcaseAccount[];
+    }>(response);
+  },
+
+  async demoLogin(roleKey: DemoRoleKey) {
+    const response = await apiFetch(`${API_BASE}/auth/demo-login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roleKey }),
       credentials: 'include',
     });
     return handleResponse<{ user: User }>(response);

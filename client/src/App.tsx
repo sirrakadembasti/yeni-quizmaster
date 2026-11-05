@@ -12,6 +12,7 @@ import { AcademicYearProvider, useAcademicYear } from "@/context/academic-year-c
 import { AcademicRouteBoundary } from "@/components/academic-history/AcademicRouteBoundary";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { getAppBasePath } from "@/lib/demo-mode";
 
 // Pages
 import HomePage from "@/pages/home";
@@ -88,6 +89,7 @@ const ROUTES: RouteConfig[] = [
   // ── Public ──────────────────────────────────────────────────────────────────
   { path: '/',               component: HomeRoute,         roles: [] },
   { path: '/auth',           component: AuthPage,          roles: [] },
+  { path: '/demo',           component: AuthPage,          roles: [] },
   { path: '/reset-password', component: ResetPasswordPage, roles: [] },
 
   // ── All authenticated roles ──────────────────────────────────────────────────
@@ -200,7 +202,7 @@ export function RouteGuard({ component: Component, roles }: RouteConfig) {
 
   if (isPublic) {
     // Prevent authenticated users from seeing the login page again
-    if (isAuthenticated && location === '/auth') return <Redirect to="/" />;
+    if (isAuthenticated && (location === '/auth' || location === '/demo')) return <Redirect to="/" />;
     return <Component />;
   }
 
@@ -258,9 +260,7 @@ function LiveNotificationListener() {
 }
 
 function App() {
-  const basePath = import.meta.env.BASE_URL === '/'
-    ? ''
-    : import.meta.env.BASE_URL.replace(/\/$/, '');
+  const basePath = getAppBasePath();
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -55,6 +55,12 @@ import { toast } from "sonner";
 import { useAcademicYear } from '@/context/academic-year-context';
 import { AcademicYearSelector } from '@/components/academic-history/AcademicYearSelector';
 import { HistoricalWorkspace } from '@/components/academic-history/HistoricalWorkspace';
+import {
+  DEFAULT_DEMO_SHOWCASE_ACCOUNTS,
+  isClientDemoMode,
+  isDemoShowcaseUserEmail,
+  type DemoRoleKey,
+} from '@/lib/demo-mode';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -62,12 +68,36 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children, hideNavigation = false }: DashboardLayoutProps) {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
+  const [switchingDemoRole, setSwitchingDemoRole] = useState<DemoRoleKey | null>(null);
   const menuTriggerRef = useRef<HTMLButtonElement>(null);
   const sidebarRef = useRef<HTMLElement>(null);
   const [isMobileNavigation, setIsMobileNavigation] = useState(() => typeof window.matchMedia !== "function" || !window.matchMedia("(min-width: 1024px)").matches);
-  const { user, role, logout } = useAuth();
+  const { user, role, demoLogin, logout } = useAuth();
+  const isDemoActive = Boolean(user?.isDemoUser || isClientDemoMode() || isDemoShowcaseUserEmail(user?.email));
+
+  const handleSwitchDemoRole = async (roleKey: DemoRoleKey) => {
+    if (!demoLogin || switchingDemoRole) return;
+    setSwitchingDemoRole(roleKey);
+    try {
+      const nextUser = await demoLogin(roleKey);
+      if (nextUser) {
+        toast.success(`Demo görünümü değiştirildi: ${nextUser.name}`);
+        const target =
+          nextUser.role === 'student'
+            ? '/student/dashboard'
+            : nextUser.role === 'parent'
+              ? '/parent/dashboard'
+              : '/';
+        setLocation(target);
+      } else {
+        toast.error('Demo rolü değiştirilemedi.');
+      }
+    } finally {
+      setSwitchingDemoRole(null);
+    }
+  };
   const academic = useAcademicYear();
   const historical = role === 'admin' && academic?.year?.status === 'closed';
   const sessionContext = role !== 'admin' || !academic || (!!academic.year && !academic.pending && !academic.error);
@@ -295,6 +325,43 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
 
       {/* Main Content */}
       <main data-dashboard-main inert={mobileNavigationOpen ? true : undefined} aria-hidden={mobileNavigationOpen ? true : undefined} className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        {!hideNavigation && isDemoActive && (
+          <div
+            data-testid="demo-mode-banner"
+            className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-300/70 bg-amber-50/95 dark:border-amber-800/60 dark:bg-amber-950/60 px-4 py-2 text-xs text-amber-950 dark:text-amber-100 print:hidden"
+          >
+            <div className="flex items-center gap-2">
+              <span className="rounded-md bg-amber-500 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">
+                DEMO MODU (SALT OKUNUR)
+              </span>
+              <span className="font-medium">
+                Tüm ekranları ve raporları inceleyebilirsiniz; değişiklik işlemleri simülasyon amaçlı engellenir.
+              </span>
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[11px] font-semibold text-amber-800 dark:text-amber-300 mr-1">
+                Rol Değiştir:
+              </span>
+              {DEFAULT_DEMO_SHOWCASE_ACCOUNTS.map((acc) => {
+                const isCurrentRole = role === acc.role;
+                return (
+                  <Button
+                    key={acc.key}
+                    type="button"
+                    size="sm"
+                    variant={isCurrentRole ? "default" : "outline"}
+                    disabled={Boolean(switchingDemoRole) || isCurrentRole}
+                    data-testid={`demo-switch-${acc.key}`}
+                    className="h-6 px-2.5 text-[11px] font-bold"
+                    onClick={() => void handleSwitchDemoRole(acc.key)}
+                  >
+                    {acc.label}
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+        )}
         {!hideNavigation && (
         <header className="flex h-16 shrink-0 items-center justify-between border-b border-border/70 bg-card/95 px-4 backdrop-blur sm:px-6 lg:justify-end lg:px-8 print:hidden">
           <Button

@@ -22,7 +22,9 @@ export async function validateSocketSession(socket: Socket): Promise<string | nu
 
 export function setupSocket(httpServer: HTTPServer, sessionMiddleware: RequestHandler) {
   const config = getEffectiveDeploymentConfig();
+  const socketPath = config.basePath === "/" ? "/socket.io/" : `${config.basePath}/socket.io/`;
   io = new SocketIOServer(httpServer, {
+    path: socketPath,
     cors: { origin: config.allowedOrigins, methods: ["GET", "POST"], credentials: true },
     allowRequest: (req, callback) => callback(null, !req.headers.origin || config.allowedOrigins.includes(req.headers.origin)),
   });

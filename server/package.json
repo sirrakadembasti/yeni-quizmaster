@@ -20,6 +20,9 @@
     "db:seed": "prisma db seed",
     "db:create-admin": "tsx prisma/create-admin.ts",
     "db:reset-admin": "tsx prisma/reset-admin.ts",
+    "db:prepare-demo": "tsx prisma/prepare-demo-db.ts",
+    "dev:demo": "cross-env APP_DEMO_MODE=true APP_BASE_PATH=/demo DATABASE_URL=file:../data/demo.db PORT=5001 tsx watch --exclude \"../node_modules/**\" --exclude \"node_modules/**\" index.ts",
+    "start:demo": "cross-env NODE_ENV=production APP_DEMO_MODE=true APP_BASE_PATH=/demo DATABASE_URL=file:../data/demo.db PORT=5001 node ../dist/index.cjs",
     "test": "vitest run"
   },
   "prisma": {

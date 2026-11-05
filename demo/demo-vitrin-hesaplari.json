@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-11-05T13:05:00+03:00",
+  "databaseFile": "server/data/demo.db",
+  "basePath": "/demo",
+  "readOnlyCode": "DEMO_MODE_READ_ONLY",
+  "readOnlyMessage": "Demo modundasınız: Bu işlem örnek amaçlıdır, veritabanında değişiklik yapılmaz.",
+  "accounts": [
+    {
+      "key": "demo-admin",
+      "role": "admin",
+      "label": "Demo Yönetici",
+      "name": "Demo Yönetici (Okul Müdürü)",
+      "email": "demo-admin@quizmaster.com",
+      "password": "demo123456"
+    },
+    {
+      "key": "demo-ogretmen",
+      "role": "teacher",
+      "label": "Demo Öğretmen",
+      "name": "Demo Öğretmen (Matematik Zümresi)",
+      "email": "demo-ogretmen@quizmaster.com",
+      "password": "demo123456"
+    },
+    {
+      "key": "demo-ogrenci",
+      "role": "student",
+      "label": "Demo Öğrenci",
+      "name": "Demo Öğrenci (9-A Sınıfı)",
+      "email": "demo-ogrenci@quizmaster.com",
+      "password": "demo123456"
+    },
+    {
+      "key": "demo-veli",
+      "role": "parent",
+      "label": "Demo Veli",
+      "name": "Demo Veli (Öğrenci Velisi)",
+      "email": "demo-veli@quizmaster.com",
+      "password": "demo123456"
+    }
+  ]
+}

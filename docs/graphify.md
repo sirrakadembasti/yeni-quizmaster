@@ -1,10 +1,10 @@
 # QuizMaster Graphify Mimari Haritası
 
-## 5 Kasım 2026 kayıt bilgilendirme e-postası, SMTP'siz parola sıfırlama ve PostgreSQL hazırlık güncellemesi
+## 5 Kasım 2026 `domain/demo` salt-okunur ikinci kopya (`demo.db`), kayıt bilgilendirme e-postası, SMTP'siz parola sıfırlama ve PostgreSQL hazırlık güncellemesi
 
-`graphify update .` ve `graphify diagnose multigraph --graph graphify-out/graph.json --json` çıkış 0 ile tamamlandı: **4.198 düğüm, 8.852 kenar, 302 topluluk**. Kayıt başarı bilgilendirme e-postası (`sendRegistrationSuccessEmail`), SMTP'siz tek kullanımlık parola sıfırlama bağlantısı (`issueOfflinePasswordReset`), yerel yönetici kurtarma betiği (`server/prisma/reset-admin.ts`), PostgreSQL hazırlık yardımcıları (`detectDatabaseProvider`, `resolveConfiguredDatabaseUrl`, `getDatabaseMigrationReadiness`) ve 40 demo veli hesabı belgeleri çalışma ağacından çıkarıldı. Eksik/sarkan/dış uç, unverified düğüm, tam yinelenen kenar ve self-loop 0; producer suppression 11. Tanı üretilmiş grafiği inceler; ham üretici ilişki kaybını kanıtlamaz.
+`graphify update .` ve `graphify diagnose multigraph --graph graphify-out/graph.json --json` çıkış 0 ile tamamlandı: **4.253 düğüm, 9.013 kenar, 305 topluluk**. Salt-okunur `domain/demo` ikinci kopya mimarisi (`server/utils/demo-mode.ts`, `server/middleware/demo-guard.ts`, `server/prisma/prepare-demo-db.ts`, `client/src/lib/demo-mode.ts`, `renderIndexHtmlForBasePath`), 4 hazır vitrin hesabı (`demo-admin`, `demo-ogretmen`, `demo-ogrenci`, `demo-veli`), kayıt başarı bilgilendirme e-postası (`sendRegistrationSuccessEmail`), SMTP'siz tek kullanımlık parola sıfırlama bağlantısı (`issueOfflinePasswordReset`), yerel yönetici kurtarma betiği (`server/prisma/reset-admin.ts`), PostgreSQL hazırlık yardımcıları (`detectDatabaseProvider`, `resolveConfiguredDatabaseUrl`, `getDatabaseMigrationReadiness`) ve 40 demo veli hesabı belgeleri çalışma ağacından çıkarıldı. Eksik/sarkan/dış uç, unverified düğüm, tam yinelenen kenar ve self-loop 0; producer suppression 11. Tanı üretilmiş grafiği inceler; ham üretici ilişki kaybını kanıtlamaz.
 
-25 SQL dosyası `tree_sitter_sql` eksikliği nedeniyle katkı vermedi. Markdown/görsel semantiği ve LLM topluluk etiketleri yenilenmedi; token maliyeti 0. `built_at_commit=4fbf338e` üretim başlangıcındaki HEAD'dir; harita commit öncesi çalışma ağacını içerir. Aşağıdaki üretimler tarihsel kayıttır.
+25 SQL dosyası `tree_sitter_sql` eksikliği nedeniyle katkı vermedi. Markdown/görsel semantiği ve LLM topluluk etiketleri yenilenmedi; token maliyeti 0. `built_at_commit=2790c69e` üretim başlangıcındaki HEAD'dir; harita commit öncesi çalışma ağacını içerir. Aşağıdaki üretimler tarihsel kayıttır.
 
 ## 16 Ekim 2026 AI yönetimi ve öğretmen kullanım takibi
 

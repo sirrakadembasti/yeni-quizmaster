@@ -29,6 +29,8 @@ import { initializeStorage } from './storage';
 import { getArchiveBackupRoot } from './api-routes/archive';
 import { createAnnualCaptureGuard } from './middleware/annual-capture-guard';
 import { createAcademicContextGuard } from './middleware/academic-context';
+import { createDemoModeGuard } from './middleware/demo-guard';
+import { getSessionCookieName, isDemoInstanceEnabled } from './utils/demo-mode';
 import { captureTrustedRequestReceipt } from './utils/request-receipt';
 
 // DNS Fallback: Windows/MEB ağında getaddrinfo ENOTFOUND hatalarını önler
@@ -120,8 +122,21 @@ const authLimiter = rateLimit({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+if (deploymentConfig.basePath !== "/") {
+  const basePrefix = deploymentConfig.basePath;
+  app.use((req, _res, next) => {
+    if (
+      req.url.startsWith(`${basePrefix}/api/`) ||
+      req.url === `${basePrefix}/api` ||
+      req.url.startsWith(`${basePrefix}/uploads/`)
+    ) {
+      req.url = req.url.slice(basePrefix.length) || "/";
+    }
+    next();
+  });
+}
 app.use(captureTrustedRequestReceipt);
-app.use(["/api/auth/login", "/api/auth/register", "/api/auth/forgot-password", "/api/auth/reset-password"], authLimiter);
+app.use(["/api/auth/login", "/api/auth/demo-login", "/api/auth/register", "/api/auth/forgot-password", "/api/auth/reset-password"], authLimiter);
 
 // CORS configuration
 const allowedOrigins = deploymentConfig.allowedOrigins;
@@ -143,7 +158,10 @@ app.set("trust proxy", deploymentConfig.trustProxyHops);
 // HTTP (pnpm dev / localhost) üzerinde Secure çerez yazılmaz → CSRF/login kırılır.
 // Yalnızca gerçek HTTPS üretiminde secure + sameSite=none kullan.
 
-const sessionDirectory = path.join(serverDirectory, "data");
+const demoInstance = isDemoInstanceEnabled();
+const sessionDirectory = demoInstance
+  ? path.join(serverDirectory, "data", "demo-sessions")
+  : path.join(serverDirectory, "data");
 fs.mkdirSync(sessionDirectory, { recursive: true });
 const sessionMiddleware = session({
   store: createSessionStore(sessionDirectory, { touchIntervalMs: 60000 }),
@@ -151,7 +169,7 @@ const sessionMiddleware = session({
   resave: false,
   rolling: false,
   saveUninitialized: false,
-  name: "quizmaster.sid", // Custom cookie name for better security
+  name: getSessionCookieName(), // Custom cookie name for better security & demo isolation
   cookie: {
     secure: isHttpsDeploy,
     sameSite: isHttpsDeploy ? "none" : "lax",
@@ -199,6 +217,7 @@ app.use(httpLogger);
     // Initialize application routes
     app.use(createAnnualCaptureGuard());
     app.use(createAcademicContextGuard());
+    app.use(createDemoModeGuard());
     await registerRoutes(httpServer, app);
 
     // API 404 Handler - If it starts with /api and reaches here, it's a 404
@@ -238,10 +257,12 @@ app.use(httpLogger);
         host,
       },
       () => {
-        logger.info({ host, port, basePath: deploymentConfig.basePath }, "Server serving");
-        startEmailWorker();
-        startDataRetentionWorker();
-        archiveWorker.start();
+        logger.info({ host, port, basePath: deploymentConfig.basePath, demoMode: demoInstance }, "Server serving");
+        if (!demoInstance) {
+          startEmailWorker();
+          startDataRetentionWorker();
+          archiveWorker.start();
+        }
       },
     );
   } catch (error) {

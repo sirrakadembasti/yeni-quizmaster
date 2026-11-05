@@ -6,6 +6,7 @@
 - İstemci üretim paketinde `student-dashboard.tsx` dinamik/statik `api.ts` içe aktarma uyarısı giderildi ve `client/vite.config.ts` içinde `manualChunks` (`vendor-react`, `vendor-ui`) yapılandırılarak 500 kB üzeri chunk uyarısı sıfırlandı.
 - `server/utils/sqlite-runtime-config.ts` içine sağlayıcı algılama (`detectDatabaseProvider`), URL çözümleme (`resolveConfiguredDatabaseUrl`) ve PostgreSQL geçiş hazırlık kontrolü (`getDatabaseMigrationReadiness`) yardımcıları eklendi; `docs/postgresql-gecis-rehberi.md` güncellendi.
 - Demo ortamında veli panelini test etmek için 9, 10, 11 ve 12. sınıf seviyelerinde 10'ar adet olmak üzere toplam 40 demo veli (`parent`) hesabı oluşturuldu, öğrencilere `GuardianStudent` üzerinden bağlandı ve `demo/demo-veli.json`, `demo/demo-veli.md` ile `demo/demo-durum-ve-siradaki-adimlar.md` belgelerine kaydedildi.
+- `domain/demo` adresinde bağımsız `server/data/demo.db` veritabanı ile çalışan salt-okunur ikinci kopya (`APP_DEMO_MODE=true`, `APP_BASE_PATH=/demo`, `pnpm run db:prepare-demo`, `pnpm run start:demo`), 4 hazır vitrin hesabı (`demo-admin`, `demo-ogretmen`, `demo-ogrenci`, `demo-veli`), tek tıkla rol değiştirici ve yazma işlemlerinde `"Demo modundasınız: Bu işlem örnek amaçlıdır, veritabanında değişiklik yapılmaz."` uyarısı eklendi; `demo/demo-vitrin-hesaplari.md` oluşturuldu.
 
 ## 16 Ekim 2026 güncellemesi
 

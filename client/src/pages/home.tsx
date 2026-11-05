@@ -51,6 +51,14 @@ export default function HomePage() {
             >
               Başlayın <ArrowRight className="w-5 h-5" />
             </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => setLocation("/demo")}
+              className="text-base h-12 px-8 gap-2 border-indigo-200 dark:border-indigo-800"
+            >
+              Canlı Demo Vitrin (4 Rol)
+            </Button>
           </div>
         </div>
       </div>

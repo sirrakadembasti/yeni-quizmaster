@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { authApi, refreshCsrfToken, type User } from '../lib/api';
+import { type DemoRoleKey } from '../lib/demo-mode';
 import { clearOfflineUser, getOfflineUser, saveOfflineUser } from '../lib/offline-quiz';
 import { queryClient } from '../lib/queryClient';
 
@@ -12,6 +13,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
+  demoLogin: (roleKey: DemoRoleKey) => Promise<User | null>;
   register: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   updateUser: (user: User) => void;
@@ -81,6 +83,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const demoLogin = async (roleKey: DemoRoleKey): Promise<User | null> => {
+    try {
+      const { user } = await authApi.demoLogin(roleKey);
+      await refreshCsrfToken().catch(() => { /* refreshed on the next mutation */ });
+      queryClient.clear();
+      setUser(user);
+      setIsAuthenticated(true);
+      saveOfflineUser(user);
+      return user;
+    } catch (error) {
+      console.error('Demo login failed:', error);
+      return null;
+    }
+  };
+
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
     try {
       const { user } = await authApi.register(name, email, password);
@@ -118,6 +135,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAuthenticated,
       loading,
       login,
+      demoLogin,
       register,
       logout,
       updateUser

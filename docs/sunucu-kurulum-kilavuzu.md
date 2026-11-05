@@ -44,9 +44,17 @@ QuizMaster Node.js (Express + Socket.IO)
 Örnek: `https://www.kurum.gov.tr/quizmaster/`
 
 - `APP_BASE_PATH=/quizmaster` ayarlanır.
-- Frontend `VITE_BASE_PATH=/quizmaster/` ile yeniden derlenir.
+- Frontend `VITE_BASE_PATH=/quizmaster/` ile yeniden derlenir (veya `serveStatic` çalışma zamanı alt yol enjeksiyonu kullanılır).
 - Reverse proxy `/quizmaster/` yanında istemcinin kullandığı `/api/`, `/uploads/` ve `/socket.io/` kök yollarını da QuizMaster'a yönlendirmelidir.
-- Kurumun ana uygulaması bu kök yolları zaten kullanıyorsa çakışma olur. Bu durumda subdomain kullanılmalı veya API prefix'i için ayrıca kapsamlı uygulama değişikliği planlanmalıdır.
+- Kurumun ana uygulaması bu kök yolları zaten kullanıyorsa çakışma olur. Bu durumda subdomain kullanılmalı veya alt yol önekli ikinci kopya modeli tercih edilmelidir.
+
+### Seçenek C — `domain/demo` altında bağımsız salt-okunur demo ikinci kopyası
+
+Örnek: `https://sinav.kurum.gov.tr/demo/`
+
+- Ana üretim uygulaması `127.0.0.1:5000` (`server/data/quiz.db`) üzerinde çalışırken, salt-okunur vitrin kopyası `127.0.0.1:5001` (`server/data/demo.db`, `APP_DEMO_MODE=true`, `APP_BASE_PATH=/demo`) üzerinde ikinci bir süreç olarak çalıştırılır (`pnpm run db:prepare-demo` ve `pnpm run start:demo`).
+- Bu modda istemci tüm API (`/demo/api/...`), görsel (`/demo/uploads/...`), Socket.IO (`/demo/socket.io/...`) ve oturum çerezi (`quizmaster.demo.sid`) isteklerini `/demo` önekiyle gönderir; ana uygulamanın veritabanı veya oturumlarıyla çakışmaz.
+- Ziyaretçiler `demo-admin`, `demo-ogretmen`, `demo-ogrenci` ve `demo-veli` hesaplarıyla tek tıkla giriş yapıp tüm ekranları inceleyebilir; veri değiştiren istekler `DEMO_MODE_READ_ONLY` ile engellenir. Ayrıntılar [`demo/demo-vitrin-hesaplari.md`](../demo/demo-vitrin-hesaplari.md) belgesindedir.
 
 ## 2. Üretim ön koşulları
 
