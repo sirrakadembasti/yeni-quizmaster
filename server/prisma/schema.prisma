@@ -41,10 +41,10 @@ model User {
   resetToken       String?
   resetTokenExpiry DateTime?
 
-  // E-posta Doğrulama Alanları
-  // TODO: E-posta doğrulama akışı — bkz. Zafiyet 6
-  // Aktif akış henüz eklenmedi; altyapı hazır tutulmaktadır.
-  // Aktivasyon: kayıt sonrası token oluştur → e-posta gönder → /verify-email?token=... endpoint'i ekle
+  // E-posta Alanları
+  // Tasarım tercihi olarak kayıt sırasında ayrı bir e-posta doğrulama adımı zorunlu tutulmaz;
+  // kullanıcıya kayıt işleminin başarıyla gerçekleştirildiğini bildiren bilgilendirme e-postası gönderilir
+  // ve şifre unutulduğunda kayıtlı e-posta adresi üzerinden sıfırlama bağlantısı iletilir.
   emailVerified          Boolean @default(false)
   emailVerificationToken String?
   notificationMuted      Boolean @default(false)

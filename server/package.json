@@ -19,6 +19,7 @@
     "db:generate": "prisma generate",
     "db:seed": "prisma db seed",
     "db:create-admin": "tsx prisma/create-admin.ts",
+    "db:reset-admin": "tsx prisma/reset-admin.ts",
     "test": "vitest run"
   },
   "prisma": {

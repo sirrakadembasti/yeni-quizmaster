@@ -202,5 +202,51 @@ export const sendResetPasswordEmail = async (email: string, token: string) => {
   });
 };
 
+/**
+ * Send registration confirmation / welcome email via Outbox queue
+ */
+export const sendRegistrationSuccessEmail = async (email: string, name: string) => {
+  const loginUrl = `${getPublicAppUrl()}/auth`;
+  const safeName = String(name || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+
+  const html = `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 25px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; color: #1e293b;">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h1 style="color: #4f46e5; margin: 0; font-size: 24px; font-weight: 800;">QuizMaster</h1>
+        <p style="color: #64748b; font-size: 14px; margin-top: 4px;">Sınav ve Değerlendirme Sistemi</p>
+      </div>
+      <div style="padding: 20px; background-color: #f8fafc; border-radius: 12px; margin-bottom: 20px;">
+        <h2 style="color: #0f172a; margin-top: 0; font-size: 18px;">Kayıt İşleminiz Tamamlandı</h2>
+        <p style="font-size: 14px; line-height: 1.6; color: #334155;">
+          Sayın <strong>${safeName}</strong>, QuizMaster uygulamasına kayıt işleminiz başarıyla gerçekleştirilmiştir.
+        </p>
+        <p style="font-size: 14px; line-height: 1.6; color: #334155;">
+          Kayıtlı e-posta adresiniz (<strong>${email}</strong>) ile sisteme giriş yapabilir; şifrenizi unutmanız durumunda bu e-posta adresi üzerinden şifre sıfırlama talebinde bulunabilirsiniz.
+        </p>
+        <div style="text-align: center; margin: 28px 0;">
+          <a href="${loginUrl}" style="background-color: #4f46e5; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 14px; display: inline-block; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);">
+            Uygulamaya Giriş Yap
+          </a>
+        </div>
+      </div>
+      <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
+      <p style="font-size: 12px; color: #94a3b8; text-align: center; margin: 0;">
+        Uygulama adresi: <a href="${loginUrl}" style="color: #4f46e5; word-break: break-all;">${loginUrl}</a>
+      </p>
+    </div>
+  `;
+
+  return queueEmail({
+    to: email,
+    subject: "QuizMaster - Kayıt İşleminiz Başarıyla Gerçekleştirildi",
+    body: html,
+    type: "registration_welcome",
+  });
+};
+
 // Backwards compatibility alias
 export const sendEmail = sendDirectEmail;

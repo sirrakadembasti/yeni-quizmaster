@@ -3,7 +3,7 @@ import { storage } from "../storage";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { logger } from "../utils/logger";
 import { getEmailStatus, sendDirectEmail, verifyEmailTransport } from "../utils/email";
-import { issuePasswordReset } from "../services/password-reset";
+import { issuePasswordReset, issueOfflinePasswordReset } from "../services/password-reset";
 import { respondToClassError } from '../utils/class-errors';
 import { z } from 'zod';
 import archiveRouter from './archive';
@@ -98,6 +98,46 @@ router.post("/password-reset-requests", requireAuth, requireRole(["admin"]), asy
   } catch (error: any) {
     logger.warn({ err: error, adminId: req.user!.id }, "[PasswordResetAdmin] Talep oluşturulamadı");
     res.status(502).json({ message: "Gmail gönderim kuyruğu oluşturulamadı.", code: error?.code || "EMAIL_QUEUE_ERROR" });
+  }
+});
+
+router.post("/password-reset-requests/offline-link", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ message: "Geçerli bir kullanıcı e-postası giriniz." });
+    const user = await storage.getUserByEmail(email);
+    if (!user) return res.status(404).json({ message: "Bu e-posta ile kayıtlı kullanıcı bulunamadı." });
+    const result = await issueOfflinePasswordReset(user, { requestedBy: req.user!.id, requestIp: req.ip });
+    await storage.createLog(req.user!.id, "ADMIN_OFFLINE_PASSWORD_RESET_LINK", `SMTP'siz tek kullanımlık şifre sıfırlama bağlantısı üretildi: ${user.id}`);
+    res.status(201).json({
+      message: "Tek kullanımlık şifre sıfırlama bağlantısı üretildi.",
+      request: result.request,
+      resetUrl: result.resetUrl,
+      expiresAt: result.expiresAt,
+    });
+  } catch (error: any) {
+    logger.warn({ err: error, adminId: req.user!.id }, "[PasswordResetAdmin] Offline bağlantı üretilemedi");
+    res.status(500).json({ message: "Tek kullanımlık şifre sıfırlama bağlantısı üretilemedi." });
+  }
+});
+
+router.post("/password-reset-requests/:id/offline-link", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const current = await storage.getPasswordResetRequest(req.params.id);
+    if (!current) return res.status(404).json({ message: "Şifre sıfırlama talebi bulunamadı." });
+    const user = await storage.getUser(current.userId);
+    if (!user) return res.status(404).json({ message: "Kullanıcı bulunamadı." });
+    const result = await issueOfflinePasswordReset(user, { requestedBy: req.user!.id, requestIp: req.ip });
+    await storage.createLog(req.user!.id, "REGENERATE_OFFLINE_PASSWORD_RESET_LINK", `SMTP'siz şifre sıfırlama bağlantısı yenilendi: ${user.id}`);
+    res.json({
+      message: "Yeni tek kullanımlık şifre sıfırlama bağlantısı üretildi.",
+      request: result.request,
+      resetUrl: result.resetUrl,
+      expiresAt: result.expiresAt,
+    });
+  } catch (error: any) {
+    logger.warn({ err: error, adminId: req.user!.id }, "[PasswordResetAdmin] Offline bağlantı yenilenemedi");
+    res.status(500).json({ message: "Tek kullanımlık şifre sıfırlama bağlantısı yenilenemedi." });
   }
 });
 

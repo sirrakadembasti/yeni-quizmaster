@@ -6,6 +6,7 @@ import { logger } from "../utils/logger";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { hashResetToken, issuePasswordReset } from "../services/password-reset";
+import { sendRegistrationSuccessEmail } from "../utils/email";
 import { getIO, disconnectUserSockets, disconnectSessionSockets } from "../socket";
 
 const router: Router = Router();
@@ -71,6 +72,11 @@ router.post("/register", async (req: Request, res: Response) => {
     req.session.userId = user.id;
     req.session.sessionVersion = user.sessionVersion ?? 0;
     await storage.createLog(user.id, "REGISTER", `User registered as student`);
+    try {
+      await sendRegistrationSuccessEmail(user.email, user.name);
+    } catch (emailError) {
+      logger.warn({ err: emailError, userId: user.id }, "[Auth] Kayıt bilgilendirme e-postası kuyruğa alınamadı.");
+    }
     try {
       const admins = (await storage.getAllUsers()).filter((candidate) => candidate.role === "admin");
       const notifications = await Promise.all(admins.map((admin) => storage.createNotification({

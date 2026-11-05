@@ -35,7 +35,9 @@ import {
   Server,
   Eye,
   RefreshCw,
-  KeyRound
+  KeyRound,
+  Copy,
+  Link2
 } from "lucide-react";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -144,6 +146,7 @@ export default function AdminManagementPage() {
   const [resetStatusFilter, setResetStatusFilter] = useState("all");
   const [resetSearch, setResetSearch] = useState("");
   const [resetEmail, setResetEmail] = useState("");
+  const [generatedResetLink, setGeneratedResetLink] = useState<{ email: string; resetUrl: string; expiresAt?: string } | null>(null);
 
   // Filters for System Logs
   const [systemLogSearch, setSystemLogSearch] = useState("");
@@ -252,10 +255,38 @@ export default function AdminManagementPage() {
   });
 
   const refreshResetRequests = () => queryClient.invalidateQueries({ queryKey: ['/api/admin/password-reset-requests'] });
+  const normalizeResetUrl = (rawUrl: string) => {
+    try {
+      const parsed = new URL(rawUrl, window.location.origin);
+      return `${window.location.origin}${parsed.pathname}${parsed.search}`;
+    } catch {
+      return rawUrl;
+    }
+  };
   const createResetMutation = useMutation({
     mutationFn: () => adminApi.createPasswordResetRequest(resetEmail),
     onSuccess: async () => { refreshResetRequests(); setResetEmail(""); toast({ title: "Bağlantı hazırlandı", description: "Şifre sıfırlama e-postası Gmail kuyruğuna alındı." }); },
     onError: (err: any) => toast({ title: "Gönderilemedi", description: err.message, variant: "destructive" }),
+  });
+  const createOfflineLinkMutation = useMutation({
+    mutationFn: () => adminApi.createOfflinePasswordResetLink(resetEmail),
+    onSuccess: async (data) => {
+      refreshResetRequests();
+      const targetEmail = data?.request?.email || resetEmail;
+      setGeneratedResetLink({ email: targetEmail, resetUrl: normalizeResetUrl(data.resetUrl), expiresAt: data.expiresAt });
+      setResetEmail("");
+      toast({ title: "Tek kullanımlık bağlantı üretildi", description: "Bağlantıyı kopyalayarak kullanıcıya iletebilirsiniz." });
+    },
+    onError: (err: any) => toast({ title: "Bağlantı üretilemedi", description: err.message, variant: "destructive" }),
+  });
+  const regenerateOfflineLinkMutation = useMutation({
+    mutationFn: (id: string) => adminApi.regenerateOfflinePasswordResetLink(id),
+    onSuccess: async (data) => {
+      refreshResetRequests();
+      setGeneratedResetLink({ email: data?.request?.email || "", resetUrl: normalizeResetUrl(data.resetUrl), expiresAt: data.expiresAt });
+      toast({ title: "Yeni tek kullanımlık bağlantı üretildi", description: "Bağlantıyı kopyalayarak kullanıcıya iletebilirsiniz." });
+    },
+    onError: (err: any) => toast({ title: "Bağlantı üretilemedi", description: err.message, variant: "destructive" }),
   });
   const resendResetMutation = useMutation({
     mutationFn: (id: string) => adminApi.resendPasswordResetRequest(id),
@@ -807,9 +838,33 @@ const deleteClassMutation = useMutation({
                   <div className="flex flex-col gap-3 md:flex-row md:items-end">
                     <div className="flex-1 space-y-2"><Label htmlFor="reset-email">Kullanıcı E-postası</Label><Input id="reset-email" type="email" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} placeholder="kullanici@okul.com" /></div>
                     <Button disabled={!resetEmail || createResetMutation.isPending} onClick={() => createResetMutation.mutate()} className="gap-2"><Mail className="h-4 w-4" /> Sıfırlama Bağlantısı Gönder</Button>
+                    <Button variant="outline" disabled={!resetEmail || createOfflineLinkMutation.isPending} onClick={() => createOfflineLinkMutation.mutate()} className="gap-2"><Link2 className="h-4 w-4" /> Bağlantı Üret (SMTP'siz)</Button>
                   </div>
-                  <p className="mt-2 text-xs text-muted-foreground">Gönderimler yalnızca Gmail SMTP üzerinden yapılır. E-posta logları sadece teknik gönderim takibi içindir.</p>
+                  <p className="mt-2 text-xs text-muted-foreground">Gönderimler Gmail SMTP üzerinden yapılır veya yerel ağda SMTP engelliyse tek kullanımlık bağlantı doğrudan üretilip kopyalanabilir.</p>
                 </Card>
+                {generatedResetLink && (
+                  <Card className="rounded-2xl border-emerald-500/30 bg-emerald-500/5 p-4 space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                        Tek Kullanımlık Şifre Sıfırlama Bağlantısı ({generatedResetLink.email})
+                      </p>
+                      <Button size="sm" variant="ghost" onClick={() => setGeneratedResetLink(null)} className="h-6 px-2 text-xs">Kapat</Button>
+                    </div>
+                    <div className="flex flex-col gap-2 md:flex-row">
+                      <Input aria-label="Üretilen sıfırlama bağlantısı" readOnly value={generatedResetLink.resetUrl} className="font-mono text-xs" />
+                      <Button
+                        variant="secondary"
+                        onClick={async () => {
+                          await navigator.clipboard?.writeText(generatedResetLink.resetUrl);
+                          toast({ title: "Kopyalandı", description: "Şifre sıfırlama bağlantısı panoya kopyalandı." });
+                        }}
+                        className="gap-2 shrink-0"
+                      >
+                        <Copy className="h-4 w-4" /> Bağlantıyı Kopyala
+                      </Button>
+                    </div>
+                  </Card>
+                )}
                 <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                   {[['Bekleyen', resetCounts.pending], ['Tamamlanan', resetCounts.completed], ['İptal', resetCounts.cancelled], ['Hatalı', resetCounts.failed]].map(([label, value]) => <Card key={String(label)} className="p-3"><p className="text-xs font-bold text-muted-foreground">{label}</p><p className="text-xl font-black">{value}</p></Card>)}
                 </div>
@@ -819,7 +874,7 @@ const deleteClassMutation = useMutation({
                 </div>
                 <Card className="overflow-hidden rounded-2xl">
                   <Table><TableHeader><TableRow><TableHead>Kullanıcı</TableHead><TableHead>Talep Zamanı</TableHead><TableHead>Son Geçerlilik</TableHead><TableHead>Gönderim</TableHead><TableHead>Durum</TableHead><TableHead className="text-right print:hidden">İşlemler</TableHead></TableRow></TableHeader><TableBody>
-                    {resetRequestsQuery.isPending || resetRequestsQuery.isError ? <TableRow><TableCell colSpan={6}><AdminQueryState queries={[resetRequestsQuery]} /></TableCell></TableRow> : resetRequests.length === 0 ? <TableRow><TableCell colSpan={6} className="h-24 text-center text-muted-foreground">Şifre sıfırlama talebi bulunmuyor.</TableCell></TableRow> : resetRequests.map((item: any) => <TableRow key={item.id}><TableCell><div className="font-bold">{item.user?.name || '-'}</div><div className="text-xs text-muted-foreground">{item.email}</div></TableCell><TableCell>{new Date(item.createdAt).toLocaleString('tr-TR')}</TableCell><TableCell>{new Date(item.expiresAt).toLocaleString('tr-TR')}</TableCell><TableCell><Badge variant="outline">{item.emailQueue?.status || 'kayıt yok'}</Badge></TableCell><TableCell><Badge variant={item.status === 'pending' ? 'default' : 'secondary'}>{item.status === 'pending' ? 'Bekliyor' : item.status === 'completed' ? 'Tamamlandı' : item.status === 'cancelled' ? 'İptal' : item.status === 'expired' ? 'Süresi doldu' : 'Hatalı'}</Badge></TableCell><TableCell className="text-right print:hidden"><div className="flex justify-end gap-1">{item.status !== 'completed' && <Button size="sm" variant="outline" disabled={resendResetMutation.isPending} onClick={() => resendResetMutation.mutate(item.id)}><RotateCw className="mr-1 h-3.5 w-3.5" /> Yenile</Button>}{item.status === 'pending' && <Button size="sm" variant="destructive" disabled={cancelResetMutation.isPending} onClick={() => cancelResetMutation.mutate(item.id)}>İptal</Button>}</div></TableCell></TableRow>)}
+                    {resetRequestsQuery.isPending || resetRequestsQuery.isError ? <TableRow><TableCell colSpan={6}><AdminQueryState queries={[resetRequestsQuery]} /></TableCell></TableRow> : resetRequests.length === 0 ? <TableRow><TableCell colSpan={6} className="h-24 text-center text-muted-foreground">Şifre sıfırlama talebi bulunmuyor.</TableCell></TableRow> : resetRequests.map((item: any) => <TableRow key={item.id}><TableCell><div className="font-bold">{item.user?.name || '-'}</div><div className="text-xs text-muted-foreground">{item.email}</div></TableCell><TableCell>{new Date(item.createdAt).toLocaleString('tr-TR')}</TableCell><TableCell>{new Date(item.expiresAt).toLocaleString('tr-TR')}</TableCell><TableCell><Badge variant="outline">{item.emailQueue?.status || 'kayıt yok'}</Badge></TableCell><TableCell><Badge variant={item.status === 'pending' ? 'default' : 'secondary'}>{item.status === 'pending' ? 'Bekliyor' : item.status === 'completed' ? 'Tamamlandı' : item.status === 'cancelled' ? 'İptal' : item.status === 'expired' ? 'Süresi doldu' : 'Hatalı'}</Badge></TableCell><TableCell className="text-right print:hidden"><div className="flex justify-end gap-1">{item.status !== 'completed' && <Button size="sm" variant="secondary" disabled={regenerateOfflineLinkMutation.isPending} onClick={() => regenerateOfflineLinkMutation.mutate(item.id)}><Link2 className="mr-1 h-3.5 w-3.5" /> Bağlantı Üret</Button>}{item.status !== 'completed' && <Button size="sm" variant="outline" disabled={resendResetMutation.isPending} onClick={() => resendResetMutation.mutate(item.id)}><RotateCw className="mr-1 h-3.5 w-3.5" /> Yenile</Button>}{item.status === 'pending' && <Button size="sm" variant="destructive" disabled={cancelResetMutation.isPending} onClick={() => cancelResetMutation.mutate(item.id)}>İptal</Button>}</div></TableCell></TableRow>)}
                   </TableBody></Table>
                 </Card>
               </div>

@@ -1103,6 +1103,14 @@ export const adminApi = {
     const response = await apiFetch(`${API_BASE}/admin/password-reset-requests`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }), credentials: 'include' });
     return handleResponse<{ request: any }>(response);
   },
+  async createOfflinePasswordResetLink(email: string) {
+    const response = await apiFetch(`${API_BASE}/admin/password-reset-requests/offline-link`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }), credentials: 'include' });
+    return handleResponse<{ message: string; request: any; resetUrl: string; expiresAt: string }>(response);
+  },
+  async regenerateOfflinePasswordResetLink(id: string) {
+    const response = await apiFetch(`${API_BASE}/admin/password-reset-requests/${id}/offline-link`, { method: 'POST', credentials: 'include' });
+    return handleResponse<{ message: string; request: any; resetUrl: string; expiresAt: string }>(response);
+  },
   async resendPasswordResetRequest(id: string) {
     const response = await apiFetch(`${API_BASE}/admin/password-reset-requests/${id}/resend`, { method: 'POST', credentials: 'include' });
     return handleResponse<{ message: string; request: any }>(response);

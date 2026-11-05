@@ -143,11 +143,11 @@ Yönetici okul geneline, role veya sınıfa duyuru gönderebilir. Duyuruda gönd
 **Yönetim > Loglar** dört alt sekmeden oluşur:
 
 1. **Kullanıcı Logları:** Giriş ve kullanıcı/sınav/duyuru işlemleri.
-2. **E-Posta Logları:** Outbox teslimat durumu, alıcı, konu, deneme sayısı ve hata bilgisi. Token içeren gövde istemciye verilmez.
-3. **Şifre Talepleri:** Kullanıcı adına talep oluşturma, durum/arama filtresi, yeni bağlantı gönderme ve bekleyen talebi iptal etme.
+2. **E-Posta Logları:** Outbox teslimat durumu, alıcı, konu, deneme sayısı ve hata bilgisi (`password_reset`, `registration_welcome` vb.). Token içeren gövde istemciye verilmez.
+3. **Şifre Talepleri:** Kullanıcı adına e-posta ile talep oluşturma, **Bağlantı Üret (SMTP'siz)** ile doğrudan tek kullanımlık sıfırlama bağlantısı üretip kopyalama, durum/arama filtresi, yeni bağlantı gönderme (**Yenile**), satır bazında **Bağlantı Üret** ve bekleyen talebi iptal etme (**İptal**).
 4. **Sistem Hata & İşlemleri:** Arşivleme, sınıf atlatma, tasfiye ve sistem operasyonları.
 
-Şifre talebi oluşturulduğunda eski bekleyen bağlantı iptal edilir ve yeni bağlantı Gmail Outbox kuyruğuna alınır. **Yenile** yeni token üretir; **İptal** bekleyen tokeni geçersiz kılar. Ayrıntılı kurulum için [Gmail e-posta belgesine](e-posta-yapilandirma.md) bakın.
+Yeni kullanıcı kaydında (`POST /api/auth/register` veya yönetici tarafından kullanıcı ekleme) e-posta doğrulama zorunluluğu uygulanmaz; kayıtlı adrese `registration_welcome` tipinde kayıt başarı bilgilendirme e-postası Outbox kuyruğuna eklenir. Şifre talebi oluşturulduğunda eski bekleyen bağlantı iptal edilir ve yeni bağlantı Gmail Outbox kuyruğuna alınır. Kurum ağında SMTP erişimi yoksa veya Gmail yapılandırılmamışsa **Bağlantı Üret (SMTP'siz)** ya da tablodaki **Bağlantı Üret** düğmesiyle e-posta kuyruğuna girmeden 60 dakikalık tek kullanımlık sıfırlama bağlantısı üretilir ve **Bağlantıyı Kopyala** ile kullanıcıya güvenli kanaldan iletilir. Yönetici kendi şifresini unuttuğunda sunucu terminalinden `pnpm --filter quiz-master-server run db:reset-admin` komutuyla yeni şifre atayabilir veya tek kullanımlık sıfırlama bağlantısı üretebilir. Ayrıntılı kurulum için [Gmail e-posta belgesine](e-posta-yapilandirma.md) bakın.
 
 Dört log bölümünde toplam kayıt ve sayfa bilgisi gösterilir; **Önceki / Sonraki** ile geçmiş kayıtlara ulaşılır. Filtre değişiminde ilk sayfaya dönülür. Şifre taleplerinin tarih filtresi yoktur; durum ve arama filtreleri uygulanır. **Ayarlar > İşlem Geçmişi** son altı aylık kişisel kayıtları sunucu üzerinden sayfalar.
 

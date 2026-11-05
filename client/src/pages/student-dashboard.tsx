@@ -16,7 +16,7 @@ import {
   TrendingUp,
   Target,
 } from "lucide-react";
-import { quizApi, resultApi, authApi } from "@/lib/api";
+import { quizApi, resultApi, authApi, classApi } from "@/lib/api";
 
 export default function StudentDashboard() {
   const [, setLocation] = useLocation();
@@ -41,7 +41,7 @@ export default function StudentDashboard() {
         setUser(userData.user);
         if (userData.user?.classId) {
           try {
-            const classResp = await (await import('@/lib/api')).classApi.getClass(userData.user.classId);
+            const classResp = await classApi.getClass(userData.user.classId);
             setClassName(classResp.class?.name || null);
           } catch (e) {
             setClassName(null);

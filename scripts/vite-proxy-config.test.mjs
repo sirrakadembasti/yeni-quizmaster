@@ -38,7 +38,7 @@ function fixture(t, envText = '') {
   // This config-only fixture uses the installed server dotenv without adding a
   // client dependency. Cleanup unlinks the junction before removing the fixture.
   fs.symlinkSync(path.join(repositoryRoot, 'server', 'node_modules'), dependencyLink, 'junction');
-  for (const filename of ['vite.config.ts', 'vite.admin-audit.config.ts']) {
+  for (const filename of ['vite.config.ts', 'vite.admin-audit.config.ts', 'app-shell-manifest.mjs']) {
     fs.copyFileSync(path.join(clientRoot, filename), path.join(isolatedClient, filename));
   }
   if (envText) fs.writeFileSync(path.join(isolatedServer, '.env'), envText);

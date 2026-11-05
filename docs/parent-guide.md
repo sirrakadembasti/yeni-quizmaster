@@ -12,9 +12,9 @@ Yönetici hesabı oluşturduktan sonra ayrı **Veli Eşleştirme** sayfasında a
 
 ## 2. Giriş ve şifre
 
-1. Yönetici tarafından verilen e-posta ve ilk şifreyle giriş yapın.
+1. Yönetici tarafından verilen e-posta ve ilk şifreyle giriş yapın (demo/test ortamında her sınıf seviyesi için tanımlı 40 örnek veli hesabı `demo/demo-veli.md` dosyasında listelenir).
 2. İlk fırsatta **Ayarlar** üzerinden şifrenizi değiştirin.
-3. Şifrenizi unutursanız **Şifremi Unuttum** ile Gmail bağlantısı isteyin.
+3. Şifrenizi unutursanız **Şifremi Unuttum** ile Gmail bağlantısı isteyin veya okul yöneticisinden **Şifre Talepleri** ekranı üzerinden tek kullanımlık sıfırlama bağlantısı talep edin.
 4. Ortak cihazda **Güvenli Çıkış** yapın.
 
 ## 3. Veli paneli
@@ -62,5 +62,5 @@ Profil yazdırılırken kaydedilmiş bilgiler kullanılır. Bildirimlerde mevcut
 - **Bağlı öğrenci yok:** Yöneticiden veli hesabınızı öğrenciyle ilişkilendirmesini isteyin.
 - **Bilgiler getirilemedi:** **Tekrar dene** düğmesini kullanın. Bağlantı hatası, öğrenci veya sınav kaydı olmadığı anlamına gelmez. Sonuç detayında listeye dönerek yeniden seçim yapabilirsiniz.
 - **Sonuç eksik:** Öğrencinin sınavı sunucuya teslim ettiğini doğrulayın.
-- **Şifre bağlantısı gelmedi:** Spam klasörünü kontrol edin; yöneticiden Şifre Talepleri ve E-posta Loglarını incelemesini isteyin.
+- **Şifre bağlantısı gelmedi:** Spam klasörünü kontrol edin; yöneticiden Şifre Talepleri ve E-posta Loglarını incelemesini veya **Bağlantı Üret (SMTP'siz)** ile tek kullanımlık sıfırlama bağlantısı paylaşmasını isteyin.
 - **Yetkisiz erişim:** Doğru veli hesabıyla giriş yaptığınızdan ve öğrenci bağlantısının kaldırılmadığından emin olun.

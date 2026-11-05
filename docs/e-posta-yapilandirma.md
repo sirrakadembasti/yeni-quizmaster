@@ -90,11 +90,17 @@ Başlıca durumlar:
 
 ### Şifre Talepleri
 
-- Kullanıcı e-postasıyla yönetici tarafından yeni talep oluşturma
+- Kullanıcı e-postasıyla yönetici tarafından yeni talep oluşturma (SMTP üzerinden gönderim veya **Bağlantı Üret (SMTP'siz)** ile tek kullanımlık bağlantıyı doğrudan üretip kopyalama)
 - Durum ve metin filtresi
 - Talep zamanı, son geçerlilik ve bağlı e-posta kuyruğu durumu
+- **Bağlantı Üret:** SMTP çıkışının engelli olduğu yerel/kurumsal ağlarda ilgili talep için tek kullanımlık sıfırlama bağlantısını yeniden üretir ve kopyalanabilir kutuda gösterir
 - **Yenile:** Yeni token ve yeni e-posta üretir; eski bekleyen talebi geçersizleştirir
 - **İptal:** Yalnız bekleyen talebi ve kullanıcıdaki eşleşen tokeni geçersiz kılar
+- **Terminal / CLI kurtarma:** Yönetici paneline erişilemediği durumlarda `pnpm --filter quiz-master-server run db:reset-admin` komutuyla tek kullanımlık sıfırlama bağlantısı üretilebilir veya `--password` ile parola doğrudan güncellenebilir.
+
+### Kayıt Bilgilendirme E-postası
+
+- Kendi kendine kayıt olan (`POST /api/auth/register`) veya yönetici/öğretmen tarafından oluşturulan (`POST /api/users`) kullanıcılar için kayıt işleminin başarıyla tamamlandığını bildiren `registration_welcome` türünde bilgilendirme e-postası Outbox kuyruğuna eklenir. E-posta doğrulama zorunluluğu yerine bilgilendirme + kayıtlı e-posta üzerinden parola sıfırlama modeli uygulanır.
 
 ### E-Posta Logları
 

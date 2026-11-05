@@ -112,7 +112,7 @@ Test sayıları ve süreleri raporun tarihine, veri hacmine ve ortamına aittir.
 - **Raporlama:** Anket, sınav sonucu, sınıf istatistiği, öğrenci, öğretmen ve sınıf ekranlarında A4 uyumlu yazdırma; uygun ekranlarda biçimlendirilmiş `.xlsx` Excel çıktısı.
 - **Türkçe Excel desteği:** Dışa aktarımlar gerçek Excel çalışma kitabı üretir; Türkçe karakter, sütun genişliği, başlık, filtre bilgisi ve sabit başlık satırı korunur.
 - **Duyuru ve bildirim:** Rol/sınıf hedefleme, gönderen adı ve rolü, son beş bildirim, tekil silme ve ses açma/kapatma.
-- **Gmail parola sıfırlama:** Tek kullanımlık bağlantı, SHA-256 token özeti, `PasswordResetRequest` takibi ve veritabanı tabanlı `EmailQueue` Outbox kuyruğu.
+- **Kayıt bilgilendirme ve parola sıfırlama:** Yeni kullanıcı kaydında veritabanı tabanlı `EmailQueue` Outbox kuyruğuna kayıt başarı bilgilendirme e-postası (`registration_welcome`), tek kullanımlık parola sıfırlama bağlantısı, SHA-256 token özeti, `PasswordResetRequest` takibi, yönetici panelinde SMTP'siz tek kullanımlık bağlantı üretme (**Bağlantı Üret (SMTP'siz)**) ve terminal üzerinden yerel yönetici kurtarma (`db:reset-admin`).
 - **Çevrimdışı sınav:** Süresiz sınavı önceden cihaza hazırlama, cevapları yerelde tutma ve bağlantı geldiğinde sunucuya gönderme.
 - **Güvenlik:** Oturum yenileme, CSRF koruması, hız sınırı, rol tabanlı API denetimi, parola/token alanlarının yanıtlardan temizlenmesi ve sunucu taraflı sınav süresi doğrulaması.
 
@@ -279,7 +279,7 @@ try {
 
 Linux/macOS'ta aynı `BOOTSTRAP_ADMIN_NAME`, `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD` ortam değişkenlerini güvenli terminal girdisiyle tanımlayıp `pnpm --filter quiz-master-server db:create-admin` çalıştırın; işlem sonunda değişkenleri temizleyin. Şifre en az 12 karakter olmalı; `quizmaster`, `password` veya `123456` gibi tahmin edilebilir ifadeler içermemelidir. Zaten admin varsa komut hesabı ezmez, ikinci admin oluşturmaz ve şifreyi sıfırlamaz.
 
-Ardından uygulamanın giriş ekranında belirlediğiniz e-posta ve şifreyi kullanın. Mevcut bir kurulumda şifre unutulduysa **Şifremi unuttum** akışı veya yetkili yerel kurtarma uygulanmalıdır; `db:seed` çalıştırmayın. Seed yalnız ayrı demo ortamları içindir ve mevcut verileri siler.
+Ardından uygulamanın giriş ekranında belirlediğiniz e-posta ve şifreyi kullanın. Mevcut bir kurulumda şifre unutulduysa **Şifremi unuttum** akışı, yönetici panelindeki **Şifre Talepleri > Bağlantı Üret (SMTP'siz)** seçeneği veya sunucu terminalinden `pnpm --filter quiz-master-server run db:reset-admin` komutuyla yetkili yerel kurtarma uygulanmalıdır; `db:seed` çalıştırmayın. Seed yalnız ayrı demo ortamları içindir ve mevcut verileri siler. Demo ortamı için hazırlanan öğretmen, öğrenci ve veli hesapları `demo/` dizinindeki belgelerde (`demo-ogretmen.md`, `demo-ogrenci.md`, `demo-veli.md`) listelenir.
 
 ### Kurum sunucusuna veya VPS'e kurulum
 

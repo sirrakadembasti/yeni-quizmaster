@@ -1,6 +1,6 @@
 # Demo Simülasyon Durumu ve Sıradaki Adımlar
 
-**Son Güncelleme:** 4 Kasım 2026
+**Son Güncelleme:** 5 Kasım 2026
 
 ## Tamamlanan Adımlar
 1. **10 Branş Öğretmeni Oluşturuldu & Yetkilendirildi:**
@@ -18,6 +18,10 @@
    - Her öğrencide hem tamamlanmış sınav/istatistik geçmişi hem de canlı deneme için **2 adet bekleyen (sıradaki) sınav** bırakıldı.
    - Ayrıca **2 okul anketi (128 öğrenci yanıtı)**, **5 duyuru**, bildirimler ve işlem geçmişi (`ActionLog`) eklendi.
    - Dosyalar: `demo/demo-sinavlar.json` ve `demo/demo-sinavlar.md`
+4. **40 Demo Veli (`parent`) Hesabı Oluşturuldu & Öğrencilerle Eşleştirildi:**
+   - 9, 10, 11 ve 12. sınıf seviyelerinin her birinde **10'ar veli** (A şubesinden 3, B şubesinden 3, C şubesinden 2, D şubesinden 2 öğrenciye bağlı) olmak üzere toplam **40 veli** hesabı ve `GuardianStudent` bağlantısı oluşturuldu.
+   - Giriş Formatı: `<veli_ad>.veli.<sinifkodu>@quizmaster.com` / `<veli_ad>123456`
+   - Dosyalar: `demo/demo-veli.json` ve `demo/demo-veli.md`
 
 ## Durum
-- **Tüm demo hazırlık ve simülasyon adımları eksiksiz tamamlanmıştır.**
+- **Tüm demo hazırlık ve simülasyon adımları (öğretmen, öğrenci, sınav/anket ve veli hesapları) eksiksiz tamamlanmıştır.**

@@ -4,7 +4,12 @@ import express from 'express';
 import session from 'express-session';
 import userRouter from '../../api-routes/user';
 import { storage } from '../../storage';
+import { sendRegistrationSuccessEmail } from '../../utils/email';
 import bcrypt from 'bcryptjs';
+
+vi.mock('../../utils/email', () => ({
+  sendRegistrationSuccessEmail: vi.fn(async () => ({ id: 'welcome-email-1' })),
+}));
 
 vi.mock('../../storage', () => ({
   storage: {
@@ -152,6 +157,7 @@ describe('Users API Integration Tests', () => {
 
       expect(response.status).toBe(201);
       expect(storage.createUser).toHaveBeenCalledWith(expect.objectContaining({ role: 'parent', classId: null, guardianStudentIds: [studentId] }));
+      expect(sendRegistrationSuccessEmail).toHaveBeenCalledWith('veli@example.com', 'Ayşe Veli');
       expect(response.body.user.password).toBeUndefined();
     });
   });

@@ -2,7 +2,11 @@ import { afterEach, expect, it } from 'vitest';
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { resolveRuntimeSQLitePath } from '../../utils/sqlite-runtime-config';
+import {
+  resolveRuntimeSQLitePath,
+  detectDatabaseProvider,
+  getDatabaseMigrationReadiness,
+} from '../../utils/sqlite-runtime-config';
 
 const owned: string[] = [];
 const originalUrl = process.env.DATABASE_URL;
@@ -35,4 +39,24 @@ it('uses root fallback, explicit URL and environment precedence without reading 
   process.env.DATABASE_URL = 'file:./environment.db';
   expect(resolveRuntimeSQLitePath({ projectRoot: root })).toBe(join(root, 'server', 'prisma', 'environment.db'));
   expect(resolveRuntimeSQLitePath({ projectRoot: root, databaseUrl: 'file:./explicit.db' })).toBe(join(root, 'server', 'prisma', 'explicit.db'));
+});
+
+it('detects SQLite vs PostgreSQL database URLs and reports migration readiness requirements', () => {
+  expect(detectDatabaseProvider('file:../data/quiz.db')).toBe('sqlite');
+  expect(detectDatabaseProvider('postgresql://quizmaster:secret@localhost:5432/quizmaster?schema=public')).toBe('postgresql');
+  expect(detectDatabaseProvider('postgres://quizmaster:secret@localhost:5432/quizmaster')).toBe('postgresql');
+  expect(() => detectDatabaseProvider('mysql://localhost:3306/quizmaster')).toThrow(/Unsupported database URL provider/i);
+
+  const sqliteReadiness = getDatabaseMigrationReadiness({ databaseUrl: 'file:../data/quiz.db' });
+  expect(sqliteReadiness.provider).toBe('sqlite');
+  expect(sqliteReadiness.activeRuntimeSupported).toBe(true);
+
+  const pgReadiness = getDatabaseMigrationReadiness({
+    databaseUrl: 'postgresql://quizmaster:secret@localhost:5432/quizmaster?schema=public',
+  });
+  expect(pgReadiness.provider).toBe('postgresql');
+  expect(pgReadiness.activeRuntimeSupported).toBe(false);
+  expect(pgReadiness.pendingAdaptations).toEqual(
+    expect.arrayContaining(['prisma-schema-provider', 'archive-raw-sql', 'session-store', 'maintenance-backup'])
+  );
 });

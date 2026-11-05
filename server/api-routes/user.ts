@@ -5,6 +5,8 @@ import { respondToClassError } from '../utils/class-errors';
 import { storage } from "../storage";
 import bcrypt from "bcryptjs";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
+import { sendRegistrationSuccessEmail } from "../utils/email";
+import { logger } from "../utils/logger";
 
 const router: Router = Router();
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -206,6 +208,11 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
     }
 
     const user = await storage.createUser(userPayload);
+    try {
+      await sendRegistrationSuccessEmail(user.email, user.name);
+    } catch (emailError) {
+      logger.warn({ err: emailError, userId: user.id }, "[User] Kayıt bilgilendirme e-postası kuyruğa alınamadı.");
+    }
 
     const { password: _, ...userWithoutPassword } = user;
     res.status(201).json({ user: userWithoutPassword });

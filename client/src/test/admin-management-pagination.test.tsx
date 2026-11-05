@@ -4,10 +4,10 @@ import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Page from '@/pages/admin-management';
 
-const api = vi.hoisted(() => ({ users: vi.fn(), categories: vi.fn(), classes: vi.fn(), logs: vi.fn(), emails: vi.fn(), resets: vi.fn(), system: vi.fn(), createCategory: vi.fn(), toast: vi.fn() }));
+const api = vi.hoisted(() => ({ users: vi.fn(), categories: vi.fn(), classes: vi.fn(), logs: vi.fn(), emails: vi.fn(), resets: vi.fn(), system: vi.fn(), createCategory: vi.fn(), createOfflineLink: vi.fn(), regenerateOfflineLink: vi.fn(), toast: vi.fn() }));
 vi.mock('@/components/layout/DashboardLayout', () => ({ DashboardLayout: ({ children }: any) => children }));
 vi.mock('@/hooks/use-toast', () => ({ useToast: () => ({ toast: api.toast }) }));
-vi.mock('@/lib/api', () => ({ userApi: { getAllUsers: api.users }, categoryApi: { getAllCategories: api.categories, createCategory: api.createCategory }, classApi: { getAllClasses: api.classes }, adminApi: { getLogs: api.logs, getEmailLogs: api.emails, getPasswordResetRequests: api.resets, getSystemLogs: api.system } }));
+vi.mock('@/lib/api', () => ({ userApi: { getAllUsers: api.users }, categoryApi: { getAllCategories: api.categories, createCategory: api.createCategory }, classApi: { getAllClasses: api.classes }, adminApi: { getLogs: api.logs, getEmailLogs: api.emails, getPasswordResetRequests: api.resets, getSystemLogs: api.system, createOfflinePasswordResetLink: api.createOfflineLink, regenerateOfflinePasswordResetLink: api.regenerateOfflineLink } }));
 let client: QueryClient;
 const cases = [
   ['Kullanıcı Logları', 'logs', 'İşlem ara (örn: create, delete, login)...'],
@@ -76,4 +76,23 @@ it('şifre taleplerinde uygulanmayan tarih filtresi gösterilmez, tarih destekle
   expect(screen.queryByRole('combobox', { name: 'Günlük tarih aralığı' })).not.toBeInTheDocument();
   await userEvent.click(screen.getByRole('button', { name: 'Kullanıcı Logları' }));
   expect(await screen.findByRole('combobox', { name: 'Günlük tarih aralığı' })).toBeVisible();
+});
+
+it('şifre taleplerinde SMTP olmadan tek kullanımlık sıfırlama bağlantısı üretir ve gösterir', async () => {
+  api.createOfflineLink.mockResolvedValue({
+    message: 'Tek kullanımlık şifre sıfırlama bağlantısı üretildi.',
+    request: { id: 'r-offline-1', email: 'ogretmen@okul.com', status: 'pending' },
+    resetUrl: 'http://localhost:5000/reset-password?token=testtoken123',
+    expiresAt: new Date(Date.now() + 3600_000).toISOString(),
+  });
+  mount();
+  await openLogTab('Şifre Talepleri');
+  await screen.findByText('Record 1');
+
+  await userEvent.type(screen.getByLabelText('Kullanıcı E-postası'), 'ogretmen@okul.com');
+  await userEvent.click(screen.getByRole('button', { name: /Bağlantı Üret \(SMTP'siz\)/i }));
+
+  expect(api.createOfflineLink).toHaveBeenCalledWith('ogretmen@okul.com');
+  expect(await screen.findByDisplayValue(/\/reset-password\?token=testtoken123/)).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /Bağlantıyı Kopyala/i })).toBeInTheDocument();
 });

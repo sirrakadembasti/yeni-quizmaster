@@ -2,7 +2,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import { storage } from '../../storage';
-import { sendResetPasswordEmail } from '../../utils/email';
+import { sendResetPasswordEmail, sendRegistrationSuccessEmail } from '../../utils/email';
 
 vi.mock('nodemailer',()=>({default:{createTransport:()=>({sendMail:vi.fn(async()=>({messageId:'test'}))})}}));
 
@@ -71,6 +71,19 @@ describe('Email Queue and Outbox Integration Tests', () => {
     expect(queued.body).toContain('sample-random-token-123');
 
     // Clean up created queue item
+    await storage.deleteEmailLog(queued.id);
+  });
+
+  it('sendRegistrationSuccessEmail pushes a registration confirmation email into the queue', async () => {
+    const queued = await sendRegistrationSuccessEmail('yeni-uye@quizmaster.com', 'Ali Yılmaz');
+
+    expect(queued).toBeDefined();
+    expect(queued.to).toBe('yeni-uye@quizmaster.com');
+    expect(queued.subject).toContain('Kayıt İşleminiz Başarıyla Gerçekleştirildi');
+    expect(queued.type).toBe('registration_welcome');
+    expect(queued.body).toContain('Ali Yılmaz');
+    expect(queued.body).toContain('kayıt işleminiz başarıyla gerçekleştirilmiştir');
+
     await storage.deleteEmailLog(queued.id);
   });
 

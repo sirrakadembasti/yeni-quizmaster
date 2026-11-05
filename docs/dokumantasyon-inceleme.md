@@ -1,5 +1,12 @@
 # Dokümantasyon güncellik ve temizlik kaydı
 
+## 5 Kasım 2026 güncellemesi
+
+- Kayıt başarı bilgilendirme e-postası (`registration_welcome`), yönetici panelinden SMTP'siz tek kullanımlık parola sıfırlama bağlantısı üretme (**Bağlantı Üret (SMTP'siz)**) ve terminal üzerinden yerel yönetici şifre sıfırlama/bağlantı üretme (`pnpm --filter quiz-master-server run db:reset-admin`) akışları `README.md`, `docs/admin-guide.md`, `docs/parent-guide.md` ve `docs/e-posta-yapilandirma.md` belgelerine işlendi.
+- İstemci üretim paketinde `student-dashboard.tsx` dinamik/statik `api.ts` içe aktarma uyarısı giderildi ve `client/vite.config.ts` içinde `manualChunks` (`vendor-react`, `vendor-ui`) yapılandırılarak 500 kB üzeri chunk uyarısı sıfırlandı.
+- `server/utils/sqlite-runtime-config.ts` içine sağlayıcı algılama (`detectDatabaseProvider`), URL çözümleme (`resolveConfiguredDatabaseUrl`) ve PostgreSQL geçiş hazırlık kontrolü (`getDatabaseMigrationReadiness`) yardımcıları eklendi; `docs/postgresql-gecis-rehberi.md` güncellendi.
+- Demo ortamında veli panelini test etmek için 9, 10, 11 ve 12. sınıf seviyelerinde 10'ar adet olmak üzere toplam 40 demo veli (`parent`) hesabı oluşturuldu, öğrencilere `GuardianStudent` üzerinden bağlandı ve `demo/demo-veli.json`, `demo/demo-veli.md` ile `demo/demo-durum-ve-siradaki-adimlar.md` belgelerine kaydedildi.
+
 ## 16 Ekim 2026 güncellemesi
 
 README ve admin/öğretmen/AI/bakım kılavuzları, iki AI sekmesi ve gerçek token takibiyle eşleştirildi. [154 hedef test ve yedekli yerel geçiş](2026-10-15-ai-usage-results.md) güncel kabul kaydıdır; eski raporlar tarihsel kapsamını korur. Yerel kurulum 25 migration kullanır. Aşağıdaki 14 Ekim incelemesinin “canlı değişmedi” ve açık kapasite ifadeleri kendi tarihine aittir; [kapasite onarım sonuçları](2026-10-14-capacity-school-exam-results.md) ile karıştırılmamalıdır.

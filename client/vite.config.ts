@@ -62,5 +62,32 @@ export default defineConfig((_env) => {
     globals: true,
     setupFiles: './src/test/setup.ts',
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined;
+          if (
+            id.includes('/react/') ||
+            id.includes('\\react\\') ||
+            id.includes('/react-dom/') ||
+            id.includes('\\react-dom\\') ||
+            id.includes('/scheduler/') ||
+            id.includes('\\scheduler\\')
+          ) {
+            return 'vendor-react';
+          }
+          if (
+            id.includes('@radix-ui') ||
+            id.includes('framer-motion') ||
+            id.includes('lucide-react')
+          ) {
+            return 'vendor-ui';
+          }
+          return undefined;
+        },
+      },
+    },
+  },
   }
 })
