@@ -113,7 +113,7 @@ Test sayıları ve süreleri raporun tarihine, veri hacmine ve ortamına aittir.
 - **Türkçe Excel desteği:** Dışa aktarımlar gerçek Excel çalışma kitabı üretir; Türkçe karakter, sütun genişliği, başlık, filtre bilgisi ve sabit başlık satırı korunur.
 - **Duyuru ve bildirim:** Rol/sınıf hedefleme, gönderen adı ve rolü, son beş bildirim, tekil silme ve ses açma/kapatma.
 - **Kayıt bilgilendirme ve parola sıfırlama:** Yeni kullanıcı kaydında veritabanı tabanlı `EmailQueue` Outbox kuyruğuna kayıt başarı bilgilendirme e-postası (`registration_welcome`), tek kullanımlık parola sıfırlama bağlantısı, SHA-256 token özeti, `PasswordResetRequest` takibi, yönetici panelinde SMTP'siz tek kullanımlık bağlantı üretme (**Bağlantı Üret (SMTP'siz)**) ve terminal üzerinden yerel yönetici kurtarma (`db:reset-admin`).
-- **Canlı Demo Vitrin (`domain/demo`) ve 4 hazır rol hesabı:** Ayrı bir `server/data/demo.db` veritabanı ve `APP_DEMO_MODE=true` (`APP_BASE_PATH=/demo`) ile çalışan ikinci kopya desteği; `demo-admin`, `demo-ogretmen`, `demo-ogrenci` ve `demo-veli` hesaplarıyla tek tıkla giriş, üst bardan anında rol değiştirme ve veri değiştiren işlemlerde salt-okunur simülasyon koruması (`DEMO_MODE_READ_ONLY`). Ayrıntılar [`demo/demo-vitrin-hesaplari.md`](demo/demo-vitrin-hesaplari.md) belgesindedir.
+- **Canlı Demo Vitrin (`domain/demo`) ve 4 hazır rol hesabı:** Ayrı bir `server/data/demo.db` veritabanı ve `APP_DEMO_MODE=true` (`APP_BASE_PATH=/demo`) ile çalışan ikinci kopya desteği; `demo-admin`, `demo-ogretmen`, `demo-ogrenci` ve `demo-veli` hesaplarıyla tek tıkla (**Hemen İncele**) veya **Forma Doldur** (`demo123456`) ile giriş, üst bardan anında rol değiştirme, tüm alt sayfalarda `/demo/...` tarayıcı URL önekinin korunması (`DemoAwareRouter`), `/demo` modunda yeni kullanıcı kaydı/şifre sıfırlama/demo dışı girişlerin engellenmesi ve veri değiştiren işlemlerde salt-okunur simülasyon koruması (`DEMO_MODE_READ_ONLY`). Ayrıntılar [`demo/demo-vitrin-hesaplari.md`](demo/demo-vitrin-hesaplari.md) belgesindedir.
 - **Çevrimdışı sınav:** Süresiz sınavı önceden cihaza hazırlama, cevapları yerelde tutma ve bağlantı geldiğinde sunucuya gönderme.
 - **Güvenlik:** Oturum yenileme, CSRF koruması, hız sınırı, rol tabanlı API denetimi, parola/token alanlarının yanıtlardan temizlenmesi ve sunucu taraflı sınav süresi doğrulaması.
 
@@ -482,6 +482,7 @@ pnpm test:e2e
 | `/guardian-management` | Yönetici | Aramalı veli-öğrenci eşleştirme |
 | `/settings` | Tüm giriş yapmış roller | Profil, bildirim ve güvenlik |
 | `/server-setup` | Yönetici | Salt okunur sunucu/sağlık durumu; açıkça etkinleştirilirse dağıtım profili ve saklama bakımı |
+| `/demo` ve `/demo/*` | Herkes (4 demo vitrin rolü) | Salt okunur canlı demo vitrin giriş ekranı ve `/demo` URL önekli rol dashboard/alt sayfaları (`demo-admin`, `demo-ogretmen`, `demo-ogrenci`, `demo-veli`) |
 
 ## Veri ve güvenlik notları
 

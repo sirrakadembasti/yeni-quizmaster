@@ -68,6 +68,7 @@ Arşiv ZIP indirmesi admin yetkisi ve parola onayı gerektirir. Yerel raster gö
 - Büyük sonuç listelerinde sayfalama ve timeout sonrası tercih uzlaştırması açık kapasite işleridir. Ağır frontend sayfaları bölündü; başlangıç statik gzip %43,37 azaldı, büyük entry uyarısı korundu. [Son kapasite incelemesi](production-capacity-investigation-results.md) açık işleri ayırır.
 - Sıfır bilinen bağımlılık uyarısı tüm olası açıkların kapalı olduğu anlamına gelmez. Origin listesi, HTTPS, gizli anahtarlar ve yedek geri yükleme işletimde doğrulanmalıdır.
 - Çıkış teslim edilmemiş yerel cevapları da siler. Çevrimdışı kullanıcılar bağlantı geldiğinde teslimi tamamlamadan çıkış yapmamalıdır.
+- **Canlı Demo Vitrin (`domain/demo`) ve `/demo` Salt-Okunur Sınırı (5 Kasım 2026):** `APP_DEMO_MODE=true` (`server/data/demo.db`) ikinci kopyasında veya `/demo` ad alanında (`x-quizmaster-demo: 1`, `Referer: .../demo`, `req.session.isDemoSession`) çalışan oturumlarda `createDemoModeGuard` tüm veri değiştiren istekleri, yeni kullanıcı kaydını (`POST /api/auth/register`), parola sıfırlamayı (`POST /api/auth/forgot-password`, `POST /api/auth/reset-password`) ve 4 vitrin hesabı dışındaki e-postalarla girişi (`POST /api/auth/login`) `403 DEMO_MODE_READ_ONLY` ile reddeder. Küresel `secureJsonReplacer` gerçek kullanıcı `password` özetlerini yanıtlardan silmeye devam ederken, halka açık demo vitrin şifresi yalnız `/api/auth/demo-info` içinde `demoPassword` alanıyla sunulur.
 
 ## Üretim provası ve çevrimdışı hazırlama — 14 Ekim 2026
 

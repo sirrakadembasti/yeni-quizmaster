@@ -15,11 +15,14 @@ Ziyaretçiler `/demo` ekranındaki kartlardan **"Hemen İncele"** düğmesiyle t
 
 ---
 
-## 2. Salt-Okunur (Mock) İşlem Davranışı
+## 2. Salt-Okunur (Mock) İşlem Davranışı ve `/demo` Koruma Kontrolleri
 
 - **Okuma (`GET`) İstekleri:** Tüm dashboardlar, grafikler, öğrenci karneleri, soru-cevap analizleri ve Excel/yazdırma görünümleri `server/data/demo.db` üzerindeki gerçek simülasyon verileriyle eksiksiz çalışır.
 - **Yazma (`POST`, `PUT`, `PATCH`, `DELETE`) İstekleri:** `createDemoModeGuard` (`server/middleware/demo-guard.ts`) tarafından veritabanına ulaşmadan HTTP `403` (`code: "DEMO_MODE_READ_ONLY"`) ile durdurulur ve arayüzde otomatik olarak şu bilgilendirme mesajı (toast) gösterilir:
   > **"Demo modundasınız: Bu işlem örnek amaçlıdır, veritabanında değişiklik yapılmaz."**
+- **Kayıt Ol, Şifre Sıfırlama ve Demo Dışı Giriş Koruması:** Ziyaretçi `/demo` sayfasındayken (`isRequestInDemoContext`: `APP_DEMO_MODE=true`, `x-quizmaster-demo: 1` başlığı, `Referer: .../demo` veya `req.session.isDemoSession`) **Kayıt Ol** sekmesindeki form alanları devre dışı bırakılır (`demo-register-blocked-banner`), `POST /api/auth/register`, `POST /api/auth/forgot-password`, `POST /api/auth/reset-password` ve 4 vitrin hesabı dışındaki e-postalarla `POST /api/auth/login` istekleri hem arayüzde hem sunucuda `403 DEMO_MODE_READ_ONLY` ile reddedilir.
+- **Kartlarda Şifre Gösterimi ve "Forma Doldur" Desteği:** Express'in küresel `secureJsonReplacer` filtresi `"password"` adlı alanları maskelediği için vitrin şifresi `GET /api/auth/demo-info` yanıtında `demoPassword: "demo123456"` olarak taşınır; böylece 4 rol kartında şifre her zaman görünür ve **"Forma Doldur"** düğmesi e-posta ile birlikte şifre alanını da eksiksiz doldurur.
+- **Tarayıcı Adres Çubuğunda `/demo` Önekinin Korunması (`DemoAwareRouter`):** `/demo` üzerinden giriş yapıldığında veya aktif oturum bir demo vitrin hesabına ait olduğunda Wouter yönlendiricisi `base="/demo"` olarak çalışır. Tüm alt sayfalar tarayıcı adres çubuğunda `/demo/results`, `/demo/quizzes`, `/demo/student/dashboard`, `/demo/parent/dashboard` şeklinde `/demo` altında kalır. Demo oturumundan çıkış yapıldığında kullanıcı `/demo` vitrin ekranına döner; sol üstteki Ana Sayfa düğmesi (`exitDemoNamespace`) ile `/demo` modundan çıkılarak ana `/` adresine geçilir.
 
 ---
 
