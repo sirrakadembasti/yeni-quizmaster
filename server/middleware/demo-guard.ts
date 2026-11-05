@@ -7,12 +7,37 @@ import {
   isDemoShowcaseEmail,
 } from "../utils/demo-mode";
 
+declare module "express-session" {
+  interface SessionData {
+    isDemoSession?: boolean;
+  }
+}
+
 const ALLOWED_DEMO_POST_PATHS = new Set([
   "/api/auth/login",
   "/api/auth/demo-login",
   "/api/auth/logout",
   "/api/admin/academic-history/context",
 ]);
+
+export function isRefererFromDemoPath(referer: string | undefined): boolean {
+  if (!referer) return false;
+  try {
+    const parsed = new URL(referer, "http://localhost");
+    return parsed.pathname === "/demo" || parsed.pathname.startsWith("/demo/");
+  } catch {
+    return false;
+  }
+}
+
+export function isRequestInDemoContext(req: Request): boolean {
+  if (isDemoInstanceEnabled()) return true;
+  const headerFlag = String(req.headers["x-quizmaster-demo"] || "").trim().toLowerCase();
+  if (headerFlag === "1" || headerFlag === "true") return true;
+  if (req.session?.isDemoSession === true) return true;
+  if (isRefererFromDemoPath(req.get("referer"))) return true;
+  return false;
+}
 
 export function demoRequestPolicy(method: string, rawPath: string): number | null {
   const normalizedMethod = String(method || "GET").toUpperCase();
@@ -43,7 +68,7 @@ export function createDemoModeGuard() {
       return next();
     }
 
-    if (isDemoInstanceEnabled()) {
+    if (isRequestInDemoContext(req)) {
       return res.status(policyStatus).json({
         code: DEMO_READ_ONLY_CODE,
         message: DEMO_READ_ONLY_MESSAGE,

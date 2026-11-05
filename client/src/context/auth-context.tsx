@@ -1,7 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { authApi, refreshCsrfToken, type User } from '../lib/api';
-import { type DemoRoleKey } from '../lib/demo-mode';
+import {
+  enterDemoNamespace,
+  isClientDemoMode,
+  isDemoShowcaseUserEmail,
+  type DemoRoleKey,
+} from '../lib/demo-mode';
 import { clearOfflineUser, getOfflineUser, saveOfflineUser } from '../lib/offline-quiz';
 import { queryClient } from '../lib/queryClient';
 
@@ -114,6 +119,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = async () => {
+    const stayInDemo =
+      isClientDemoMode() ||
+      Boolean(user && (user.isDemoUser || isDemoShowcaseUserEmail(user.email)));
     try {
       await authApi.logout();
     } catch (error) {
@@ -123,8 +131,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsAuthenticated(false);
       queryClient.clear();
       clearOfflineUser();
-      // Ana sayfaya yönlendir (misafir kullanıcı home page'ini görecek)
-      setLocation('/');
+      if (stayInDemo) {
+        enterDemoNamespace('/');
+      } else {
+        // Ana sayfaya yönlendir (misafir kullanıcı home page'ini görecek)
+        setLocation('/');
+      }
     }
   };
 

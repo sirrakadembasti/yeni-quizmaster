@@ -1,6 +1,7 @@
 import { ApiError } from './http-error';
 import {
   DEMO_READ_ONLY_CODE,
+  isClientDemoMode,
   notifyDemoReadOnly,
   withAppBasePath,
   type DemoRoleKey,
@@ -56,15 +57,22 @@ export const uploadApi = {
 export async function apiFetch(url: string, options: RequestInit = {}) {
   const method = options.method || 'GET';
   const resolvedUrl = withAppBasePath(url);
+  const demoHeader = isClientDemoMode() ? { 'x-quizmaster-demo': '1' } : undefined;
   
   if (!['GET', 'HEAD', 'OPTIONS'].includes(method.toUpperCase())) {
     const token = await getCsrfToken();
-    if (token) {
+    if (token || demoHeader) {
       options.headers = {
         ...options.headers,
-        'x-csrf-token': token
+        ...(demoHeader || {}),
+        ...(token ? { 'x-csrf-token': token } : {}),
       };
     }
+  } else if (demoHeader) {
+    options.headers = {
+      ...options.headers,
+      ...demoHeader,
+    };
   }
   
   let response = await window.fetch(resolvedUrl, options);

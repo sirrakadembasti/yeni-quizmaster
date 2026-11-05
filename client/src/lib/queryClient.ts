@@ -1,5 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
-import { DEMO_READ_ONLY_CODE, notifyDemoReadOnly, withAppBasePath } from "./demo-mode";
+import { DEMO_READ_ONLY_CODE, isClientDemoMode, notifyDemoReadOnly, withAppBasePath } from "./demo-mode";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -24,9 +24,12 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
+  const headers: Record<string, string> = {};
+  if (data) headers["Content-Type"] = "application/json";
+  if (isClientDemoMode()) headers["x-quizmaster-demo"] = "1";
   const res = await fetch(withAppBasePath(url), {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers,
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });

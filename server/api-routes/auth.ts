@@ -9,6 +9,7 @@ import { hashResetToken, issuePasswordReset } from "../services/password-reset";
 import { sendRegistrationSuccessEmail } from "../utils/email";
 import { getIO, disconnectUserSockets, disconnectSessionSockets } from "../socket";
 import {
+  DEMO_READ_ONLY_CODE,
   DEMO_READ_ONLY_MESSAGE,
   DEMO_SHOWCASE_ACCOUNTS,
   findDemoShowcaseAccount,
@@ -16,6 +17,7 @@ import {
   isDemoInstanceEnabled,
   isDemoShowcaseEmail,
 } from "../utils/demo-mode";
+import { isRequestInDemoContext } from "../middleware/demo-guard";
 import { getEffectiveDeploymentConfig } from "../utils/deployment-config";
 
 const router: Router = Router();
@@ -94,6 +96,7 @@ router.post("/demo-login", async (req: Request, res: Response) => {
     await regenerateSession(req);
     req.session.userId = user.id;
     req.session.sessionVersion = user.sessionVersion ?? 0;
+    req.session.isDemoSession = true;
     const { password: _, ...userWithoutPassword } = user;
     res.json({
       user: {
@@ -168,6 +171,14 @@ router.post("/login", async (req: Request, res: Response) => {
     }
 
     const { email, password } = validation.data;
+    const demoContext = isRequestInDemoContext(req);
+    if (demoContext && !isDemoShowcaseEmail(email.trim())) {
+      return res.status(403).json({
+        code: DEMO_READ_ONLY_CODE,
+        message: "Demo modunda yalnızca hazır demo hesaplarıyla (demo-admin, demo-ogretmen, demo-ogrenci, demo-veli) giriş yapılabilir.",
+      });
+    }
+
     const user = await storage.getUserByEmail(email.trim());
     if (!user || (user as any).isActive === false) {
       return res.status(401).json({ message: "Geçersiz e-posta veya şifre." });
@@ -181,8 +192,10 @@ router.post("/login", async (req: Request, res: Response) => {
     await regenerateSession(req);
     req.session.userId = user.id;
     req.session.sessionVersion = user.sessionVersion ?? 0;
-    const isDemoUser = isDemoInstanceEnabled() || isDemoShowcaseEmail(user.email);
-    if (!isDemoUser) {
+    const isDemoUser = demoContext || isDemoInstanceEnabled() || isDemoShowcaseEmail(user.email);
+    if (isDemoUser) {
+      req.session.isDemoSession = true;
+    } else {
       await storage.createLog(user.id, "LOGIN", `User logged in`);
     }
     const { password: _, ...userWithoutPassword } = user;
@@ -217,7 +230,11 @@ router.post("/logout", requireAuth, async (req: AuthRequest, res: Response) => {
 
 router.get("/me", requireAuth, (req: AuthRequest, res: Response) => {
   const { password, ...userWithoutPassword } = req.user!;
-  const isDemoUser = isDemoInstanceEnabled() || isDemoShowcaseEmail(userWithoutPassword.email);
+  const isDemoUser = Boolean(
+    req.session?.isDemoSession ||
+      isDemoInstanceEnabled() ||
+      isDemoShowcaseEmail(userWithoutPassword.email),
+  );
   res.json({ user: { ...userWithoutPassword, isDemoUser } });
 });
 

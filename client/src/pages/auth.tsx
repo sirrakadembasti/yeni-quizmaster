@@ -8,11 +8,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Mail, Lock, User, ArrowRight, Home, Eye, Sparkles } from "lucide-react";
+import { Loader2, Mail, Lock, User, ArrowRight, Home, Eye, Sparkles, ShieldAlert } from "lucide-react";
 import { authApi } from "@/lib/api";
 import {
   DEFAULT_DEMO_SHOWCASE_ACCOUNTS,
+  enterDemoNamespace,
+  exitDemoNamespace,
+  getAccountDemoPassword,
+  getAppBasePath,
+  isBrowserOnDemoPath,
   isClientDemoMode,
+  isDemoShowcaseUserEmail,
+  notifyDemoReadOnly,
   type DemoRoleKey,
   type DemoShowcaseAccount,
 } from "@/lib/demo-mode";
@@ -22,6 +29,7 @@ export default function AuthPage() {
   const [location, setLocation] = useLocation();
   const { login, demoLogin, register } = useAuth();
   const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const [isLoading, setIsLoading] = useState(false);
   const [demoLoadingRole, setDemoLoadingRole] = useState<DemoRoleKey | null>(null);
   const [isForgotLoading, setIsForgotLoading] = useState(false);
@@ -78,6 +86,17 @@ export default function AuthPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (showDemoShowcase && !isDemoShowcaseUserEmail(loginEmail)) {
+      notifyDemoReadOnly(
+        "Demo ekranında yalnızca hazır demo hesaplarıyla (demo-admin, demo-ogretmen, demo-ogrenci, demo-veli) giriş yapılabilir.",
+      );
+      toast({
+        variant: "destructive",
+        title: "Demo Modu Kısıtlaması",
+        description: "Demo ekranında yalnızca hazır vitrin hesaplarıyla giriş yapılabilir.",
+      });
+      return;
+    }
     setIsLoading(true);
 
     try {
@@ -111,6 +130,17 @@ export default function AuthPage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (showDemoShowcase) {
+      notifyDemoReadOnly(
+        "Demo modundasınız: Yeni kullanıcı kaydı yapılamaz, lütfen sağdaki hazır demo hesaplarını kullanın.",
+      );
+      toast({
+        variant: "destructive",
+        title: "Demo Modu (Salt Okunur)",
+        description: "Demo modunda yeni kullanıcı kaydı kapalıdır. Hazır demo hesaplarını kullanabilirsiniz.",
+      });
+      return;
+    }
     setIsLoading(true);
 
     // Şifre doğrulama
@@ -166,6 +196,13 @@ export default function AuthPage() {
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (showDemoShowcase) {
+      notifyDemoReadOnly(
+        "Demo modundasınız: Şifre sıfırlama işlemi kapalıdır, kartlardaki hazır şifreleri (demo123456) kullanabilirsiniz.",
+      );
+      setIsForgotOpen(false);
+      return;
+    }
     setIsForgotLoading(true);
 
     try {
@@ -219,12 +256,22 @@ export default function AuthPage() {
   };
 
   const handleFillDemoCredentials = (account: DemoShowcaseAccount) => {
+    const pwd = getAccountDemoPassword(account);
+    setActiveTab("login");
     setLoginEmail(account.email);
-    setLoginPassword(account.password);
+    setLoginPassword(pwd);
     toast({
       title: `${account.label} Bilgileri Dolduruldu`,
-      description: `${account.email} / ${account.password} giriş formuna aktarıldı.`,
+      description: `${account.email} / ${pwd} giriş formuna aktarıldı.`,
     });
+  };
+
+  const handleNavigateHome = () => {
+    if (isBrowserOnDemoPath() && getAppBasePath() !== "/demo") {
+      exitDemoNamespace();
+      return;
+    }
+    setLocation("/");
   };
 
   return (
@@ -232,7 +279,7 @@ export default function AuthPage() {
       {/* Navigation Controls */}
       <div className="absolute top-4 right-4 flex items-center gap-2 z-50">
         <ThemeToggle />
-        <Button variant="ghost" size="icon" onClick={() => setLocation("/")} className="rounded-full" title="Anasayfaya Dön">
+        <Button variant="ghost" size="icon" onClick={handleNavigateHome} className="rounded-full" title="Anasayfaya Dön">
           <Home className="h-5 w-5" />
         </Button>
       </div>
@@ -254,10 +301,12 @@ export default function AuthPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="login" className="w-full">
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "login" | "register")} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="login">Giriş Yap</TabsTrigger>
-              <TabsTrigger value="register">Kayıt Ol</TabsTrigger>
+              <TabsTrigger value="register">
+                {showDemoShowcase ? "Kayıt Ol (Demo Kapalı)" : "Kayıt Ol"}
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="login">
@@ -355,7 +404,7 @@ export default function AuthPage() {
                     type="button"
                     variant="outline"
                     className="w-full text-xs"
-                    onClick={() => setLocation("/demo")}
+                    onClick={() => enterDemoNamespace()}
                   >
                     <Sparkles className="mr-2 h-3.5 w-3.5 text-indigo-600" />
                     Canlı Demo Hesaplarını Göster (4 Rol)
@@ -365,6 +414,20 @@ export default function AuthPage() {
                 </TabsContent>            
             <TabsContent value="register">
               <form onSubmit={handleRegister} className="space-y-4">
+                {showDemoShowcase && (
+                  <div
+                    data-testid="demo-register-blocked-banner"
+                    className="flex items-start gap-2.5 rounded-xl border border-amber-300 bg-amber-50/90 dark:border-amber-800 dark:bg-amber-950/60 p-3 text-xs text-amber-950 dark:text-amber-100"
+                  >
+                    <ShieldAlert className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
+                    <div>
+                      <p className="font-bold">Demo Modunda Yeni Kayıt Kapalıdır</p>
+                      <p className="mt-0.5 text-[11px] opacity-90">
+                        Demo vitrin ortamında veritabanına yeni kullanıcı eklenemez. Uygulamayı incelemek için sağdaki 4 hazır demo rol hesabını kullanabilirsiniz.
+                      </p>
+                    </div>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <Label htmlFor="reg-name">Ad Soyad</Label>
                   <div className="relative">
@@ -375,6 +438,7 @@ export default function AuthPage() {
                       className="pl-9" 
                       value={regName}
                       onChange={(e) => setRegName(e.target.value)}
+                      disabled={showDemoShowcase}
                       required
                     />
                   </div>
@@ -390,6 +454,7 @@ export default function AuthPage() {
                       className="pl-9" 
                       value={regEmail}
                       onChange={(e) => setRegEmail(e.target.value)}
+                      disabled={showDemoShowcase}
                       required
                     />
                   </div>
@@ -406,6 +471,7 @@ export default function AuthPage() {
                       autoComplete="new-password"
                       value={regPassword}
                       onChange={(e) => setRegPassword(e.target.value)}
+                      disabled={showDemoShowcase}
                       required
                     />
                   </div>
@@ -422,6 +488,7 @@ export default function AuthPage() {
                       autoComplete="new-password"
                       value={regConfirmPassword}
                       onChange={(e) => setRegConfirmPassword(e.target.value)}
+                      disabled={showDemoShowcase}
                       required
                     />
                   </div>
@@ -432,12 +499,27 @@ export default function AuthPage() {
                   <p className="mt-1">Rol değişikliği sadece yönetici tarafından yapılabilir.</p>
                 </div>
                 <div className="pt-2">
-                  <Button className="w-full" type="submit" disabled={isLoading}>
+                  <Button
+                    className="w-full"
+                    type={showDemoShowcase ? "button" : "submit"}
+                    disabled={isLoading}
+                    data-testid="register-submit-button"
+                    onClick={
+                      showDemoShowcase
+                        ? () =>
+                            notifyDemoReadOnly(
+                              "Demo modundasınız: Yeni kullanıcı kaydı yapılamaz, lütfen sağdaki hazır demo hesaplarını kullanın.",
+                            )
+                        : undefined
+                    }
+                  >
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Hesap Oluşturuluyor...
                       </>
+                    ) : showDemoShowcase ? (
+                      "Demo Modunda Kayıt Kapalıdır"
                     ) : (
                       "Kayıt Ol ve Başla"
                     )}
@@ -495,7 +577,9 @@ export default function AuthPage() {
                       </div>
                       <div>
                         <span className="text-muted-foreground">Şifre: </span>
-                        <span className="font-semibold">{account.password}</span>
+                        <span className="font-semibold" data-testid={`demo-password-${account.key}`}>
+                          {getAccountDemoPassword(account)}
+                        </span>
                       </div>
                     </div>
                   </div>

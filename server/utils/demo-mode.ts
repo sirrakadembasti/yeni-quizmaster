@@ -8,7 +8,12 @@ export interface DemoShowcaseAccount {
   label: string;
   name: string;
   email: string;
-  password: string;
+  /**
+   * Named `demoPassword` so Express's global `secureJsonReplacer` (which strips
+   * keys literally named `password` from User records) preserves the public
+   * showcase credential in `/api/auth/demo-info`.
+   */
+  demoPassword: string;
   description: string;
 }
 
@@ -21,7 +26,7 @@ export const DEMO_SHOWCASE_ACCOUNTS: readonly DemoShowcaseAccount[] = [
     label: "Demo Yönetici",
     name: "Demo Yönetici (Okul Müdürü)",
     email: "demo-admin@quizmaster.com",
-    password: DEMO_SHOWCASE_PASSWORD,
+    demoPassword: DEMO_SHOWCASE_PASSWORD,
     description: "Okul geneli sınıflar, öğretmenler, sınavlar, analizler, AI ve arşiv yönetimi ekranlarını inceleyin.",
   },
   {
@@ -30,7 +35,7 @@ export const DEMO_SHOWCASE_ACCOUNTS: readonly DemoShowcaseAccount[] = [
     label: "Demo Öğretmen",
     name: "Demo Öğretmen (Matematik Zümresi)",
     email: "demo-ogretmen@quizmaster.com",
-    password: DEMO_SHOWCASE_PASSWORD,
+    demoPassword: DEMO_SHOWCASE_PASSWORD,
     description: "Atanmış sınıflar, sınav oluşturma, sınıf istatistikleri, öğrenci analizleri ve anket sonuçlarını inceleyin.",
   },
   {
@@ -39,7 +44,7 @@ export const DEMO_SHOWCASE_ACCOUNTS: readonly DemoShowcaseAccount[] = [
     label: "Demo Öğrenci",
     name: "Demo Öğrenci (9-A Sınıfı)",
     email: "demo-ogrenci@quizmaster.com",
-    password: DEMO_SHOWCASE_PASSWORD,
+    demoPassword: DEMO_SHOWCASE_PASSWORD,
     description: "Öğrenci dashboard'u, atanmış sınavlar, tamamlanan sınav karneleri ve konu istatistiklerini inceleyin.",
   },
   {
@@ -48,7 +53,7 @@ export const DEMO_SHOWCASE_ACCOUNTS: readonly DemoShowcaseAccount[] = [
     label: "Demo Veli",
     name: "Demo Veli (Öğrenci Velisi)",
     email: "demo-veli@quizmaster.com",
-    password: DEMO_SHOWCASE_PASSWORD,
+    demoPassword: DEMO_SHOWCASE_PASSWORD,
     description: "Bağlı öğrencilerin başarı durumu, tamamlanan sınav sonuçları ve soru/cevap detaylarını inceleyin.",
   },
 ] as const;

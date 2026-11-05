@@ -1,3 +1,4 @@
+import { useSyncExternalStore } from "react";
 import { toast } from "sonner";
 
 export type DemoRoleKey = "demo-admin" | "demo-ogretmen" | "demo-ogrenci" | "demo-veli";
@@ -8,7 +9,8 @@ export interface DemoShowcaseAccount {
   label: string;
   name: string;
   email: string;
-  password: string;
+  demoPassword: string;
+  password?: string;
   description: string;
 }
 
@@ -23,7 +25,7 @@ export const DEFAULT_DEMO_SHOWCASE_ACCOUNTS: readonly DemoShowcaseAccount[] = [
     label: "Demo Yönetici",
     name: "Demo Yönetici (Okul Müdürü)",
     email: "demo-admin@quizmaster.com",
-    password: "demo123456",
+    demoPassword: "demo123456",
     description: "Okul geneli sınıflar, öğretmenler, sınavlar, analizler, AI ve arşiv yönetimi ekranlarını inceleyin.",
   },
   {
@@ -32,7 +34,7 @@ export const DEFAULT_DEMO_SHOWCASE_ACCOUNTS: readonly DemoShowcaseAccount[] = [
     label: "Demo Öğretmen",
     name: "Demo Öğretmen (Matematik Zümresi)",
     email: "demo-ogretmen@quizmaster.com",
-    password: "demo123456",
+    demoPassword: "demo123456",
     description: "Atanmış sınıflar, sınav oluşturma, sınıf istatistikleri, öğrenci analizleri ve anket sonuçlarını inceleyin.",
   },
   {
@@ -41,7 +43,7 @@ export const DEFAULT_DEMO_SHOWCASE_ACCOUNTS: readonly DemoShowcaseAccount[] = [
     label: "Demo Öğrenci",
     name: "Demo Öğrenci (9-A Sınıfı)",
     email: "demo-ogrenci@quizmaster.com",
-    password: "demo123456",
+    demoPassword: "demo123456",
     description: "Öğrenci dashboard'u, atanmış sınavlar, tamamlanan sınav karneleri ve konu istatistiklerini inceleyin.",
   },
   {
@@ -50,7 +52,7 @@ export const DEFAULT_DEMO_SHOWCASE_ACCOUNTS: readonly DemoShowcaseAccount[] = [
     label: "Demo Veli",
     name: "Demo Veli (Öğrenci Velisi)",
     email: "demo-veli@quizmaster.com",
-    password: "demo123456",
+    demoPassword: "demo123456",
     description: "Bağlı öğrencilerin başarı durumu, tamamlanan sınav sonuçları ve soru/cevap detaylarını inceleyin.",
   },
 ] as const;
@@ -62,12 +64,68 @@ declare global {
   }
 }
 
+export function getAccountDemoPassword(account: Partial<DemoShowcaseAccount>): string {
+  return account.demoPassword || account.password || "demo123456";
+}
+
 export function getAppBasePath(): string {
   if (typeof window !== "undefined" && typeof window.__APP_BASE_PATH__ === "string") {
     return window.__APP_BASE_PATH__.replace(/\/$/, "");
   }
   const envBase = import.meta.env.BASE_URL || "/";
   return envBase === "/" ? "" : envBase.replace(/\/$/, "");
+}
+
+export function isBrowserOnDemoPath(): boolean {
+  if (typeof window === "undefined") return false;
+  const pathname = window.location?.pathname || "";
+  return pathname === "/demo" || pathname.startsWith("/demo/");
+}
+
+export function enterDemoNamespace(subpath = ""): void {
+  if (typeof window === "undefined") return;
+  const cleanSubpath =
+    subpath === "/demo" || subpath.startsWith("/demo/")
+      ? subpath.slice("/demo".length)
+      : subpath;
+  const normalized = `/demo${
+    !cleanSubpath || cleanSubpath === "/"
+      ? ""
+      : cleanSubpath.startsWith("/")
+        ? cleanSubpath
+        : `/${cleanSubpath}`
+  }`;
+  if (window.location.pathname !== normalized) {
+    window.history.pushState(null, "", normalized + (window.location.search || ""));
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  }
+}
+
+export function exitDemoNamespace(): void {
+  if (typeof window === "undefined") return;
+  window.history.pushState(null, "", "/");
+  window.dispatchEvent(new PopStateEvent("popstate"));
+}
+
+function subscribeBrowserLocation(callback: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  const handler = () => callback();
+  window.addEventListener("popstate", handler);
+  window.addEventListener("pushState", handler);
+  window.addEventListener("replaceState", handler);
+  return () => {
+    window.removeEventListener("popstate", handler);
+    window.removeEventListener("pushState", handler);
+    window.removeEventListener("replaceState", handler);
+  };
+}
+
+export function useIsBrowserOnDemoPath(): boolean {
+  return useSyncExternalStore(
+    subscribeBrowserLocation,
+    () => isBrowserOnDemoPath(),
+    () => false,
+  );
 }
 
 export function withAppBasePath(url: string): string {
@@ -84,7 +142,10 @@ export function isClientDemoMode(): boolean {
   if (typeof window !== "undefined" && window.__APP_DEMO_MODE__ === true) {
     return true;
   }
-  return getAppBasePath() === "/demo";
+  if (getAppBasePath() === "/demo") {
+    return true;
+  }
+  return isBrowserOnDemoPath();
 }
 
 export function isDemoShowcaseUserEmail(email: string | null | undefined): boolean {

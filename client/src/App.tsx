@@ -12,7 +12,13 @@ import { AcademicYearProvider, useAcademicYear } from "@/context/academic-year-c
 import { AcademicRouteBoundary } from "@/components/academic-history/AcademicRouteBoundary";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
-import { getAppBasePath } from "@/lib/demo-mode";
+import {
+  enterDemoNamespace,
+  getAppBasePath,
+  isClientDemoMode,
+  isDemoShowcaseUserEmail,
+  useIsBrowserOnDemoPath,
+} from "@/lib/demo-mode";
 
 // Pages
 import HomePage from "@/pages/home";
@@ -73,7 +79,10 @@ interface RouteConfig {
 
 function HomeRoute() {
   const { isAuthenticated, role } = useAuth();
-  if (!isAuthenticated) return <HomePage />;
+  if (!isAuthenticated) {
+    if (isClientDemoMode()) return <AuthPage />;
+    return <HomePage />;
+  }
   if (role === 'student') return <StudentDashboard />;
   if (role === 'parent') return <ParentDashboardPage />;
   return <DashboardPage />;
@@ -259,9 +268,38 @@ function LiveNotificationListener() {
   return <NotificationListener />;
 }
 
-function App() {
-  const basePath = getAppBasePath();
+function DemoAwareRouter() {
+  const { user, isAuthenticated, loading } = useAuth();
+  const isBrowserDemo = useIsBrowserOnDemoPath();
+  const isDemoUser = Boolean(
+    isAuthenticated &&
+      user &&
+      (user.isDemoUser || isDemoShowcaseUserEmail(user.email)),
+  );
+  const configuredBase = getAppBasePath();
+  const routerBase =
+    configuredBase === '/demo' || isBrowserDemo || isDemoUser
+      ? '/demo'
+      : configuredBase;
 
+  useEffect(() => {
+    if (!loading && isDemoUser && !isBrowserDemo && configuredBase !== '/demo') {
+      const currentPath =
+        typeof window !== 'undefined' ? window.location.pathname : '/';
+      enterDemoNamespace(currentPath === '/auth' ? '/' : currentPath);
+    }
+  }, [loading, isDemoUser, isBrowserDemo, configuredBase]);
+
+  return (
+    <WouterRouter base={routerBase} key={routerBase}>
+      <AcademicRouteBoundary>
+        <AppRouter />
+      </AcademicRouteBoundary>
+    </WouterRouter>
+  );
+}
+
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -270,11 +308,7 @@ function App() {
             <Toaster />
             <SonnerToaster />
             <LiveNotificationListener />
-            <WouterRouter base={basePath}>
-              <AcademicRouteBoundary>
-                <AppRouter />
-              </AcademicRouteBoundary>
-            </WouterRouter>
+            <DemoAwareRouter />
           </TooltipProvider>
         </AcademicYearProvider>
       </AuthProvider>
