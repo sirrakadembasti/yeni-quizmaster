@@ -1,7 +1,7 @@
 import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
 import {saveOfflineUser,getOfflineSession,clearOfflineUser,saveOfflineSession} from '@/lib/offline-quiz';
-import StudentQuizzesPage from './student-quizzes';
+import StudentQuizzesPage from '@/pages/student-quizzes';
 const fixture=vi.hoisted(()=>({user:{id:'student',role:'student',name:'Öğrenci'},quiz:{id:'quiz',title:'Şekil sınavı'},response:{resultId:'attempt',quiz:{id:'quiz'},questions:[{id:'q',text:'Şekil',type:'multiple-choice',options:['A','B'],imageUrl:'/uploads/diagram.png'}],existingAnswers:{},preparedAt:'2026-10-14T10:00:00Z'},prepare:vi.fn()}));
 vi.mock('@/context/auth-context',()=>({useAuth:()=>({user:fixture.user})}));
 vi.mock('@/components/layout/DashboardLayout',()=>({DashboardLayout:({children}:any)=><div>{children}</div>}));
