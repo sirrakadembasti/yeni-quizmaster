@@ -1,0 +1,122 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+const repo = process.cwd(), require = createRequire(path.join(repo, 'server/package.json'));
+const { chromium } = require('playwright');
+const root = fs.mkdtempSync(path.join(repo, 'server/data/quizmaster-test-ai-browser-'));
+const express = require('express'), app = express();
+app.use(express.static(path.join(repo, 'client/dist')));
+app.get('*', (_req, res) => res.sendFile(path.join(repo, 'client/dist/index.html')));
+const server = app.listen(0, '127.0.0.1'); await new Promise(resolve => server.once('listening', resolve));
+const port = server.address().port;
+const origin = `http://127.0.0.1:${port}`;
+let browser;
+try {
+  for (let i = 0; i < 100; i++) { try { if ((await fetch(origin)).ok) break; } catch {} await new Promise(resolve => setTimeout(resolve, 200)); }
+  browser = await chromium.launch({ headless: true });
+  let role = 'admin', profiles = [], generated = false; let usageReads=0;
+  const context = await browser.newContext({ serviceWorkers: 'block', viewport: { width: 1440, height: 1000 } });
+  await context.route('**/*', async route => {
+    const url = new URL(route.request().url());
+    if (url.origin !== origin) return route.abort();
+    if (!url.pathname.startsWith('/api/')) return route.continue();
+    const p = url.pathname, method = route.request().method(); let body = {};
+    if (p.endsWith('/csrf-token')) body = { csrfToken: 'synthetic-csrf' };
+    else if (p.endsWith('/auth/me')) body = { user: { id: role, name: 'Sentetik ' + role, email: role + '@example.invalid', role } };
+    else if (p.endsWith('/academic-history/context')) body = { years: [{ id: 'year', label: '2025-2026', status: 'closed' }], academicYearId: 'year' };
+    else if (p.endsWith('/notifications/preferences')) body = { muted: false };
+    else if (p.endsWith('/notifications')) body = { notifications: [], unreadCount: 0, total: 0 };
+    else if (p.endsWith('/ai/catalog')) body = { providers: [{ id: 'google', name: 'Google Gemini', baseURL: 'https://generativelanguage.googleapis.com/v1beta' }, { id: 'xiaomi_mimo', name: 'Xiaomi MiMo', baseURL: 'https://api.xiaomimimo.com/v1', endpoints: [{name:'PAYG',baseURL:'https://api.xiaomimimo.com/v1'},{name:'Token Plan — Singapur',baseURL:'https://token-plan-sgp.xiaomimimo.com/v1'}] }] };
+    else if (p.endsWith('/ai/usage')) {
+      usageReads++;
+      const row={id:'usage-1',createdAt:'2026-10-15T12:00:00Z',teacherName:'Sentetik Öğretmen',teacherEmail:'teacher@example.invalid',courseName:'Tarih',quizTitle:'Tarih taslağı',quizId:null,contentType:'exam',profileName:'Okul modeli',provider:'google',model:'synthetic-model',questionCount:10,validQuestionCount:10,inputTokens:240,outputTokens:3200,reasoningTokens:100,durationMs:2300,status:'success'};
+      body={rows:[row,{...row,id:'usage-2',quizTitle:'Kesilen taslak',validQuestionCount:null,inputTokens:null,outputTokens:null,reasoningTokens:null,status:'timeout'}],page:1,pageSize:25,total:2,summary:{requests:2,inputTokens:240,outputTokens:3200,unknownUsageRequests:1},averages:[]};
+    }
+    else if (p.endsWith('/ai/profiles') && method === 'POST') {
+      const { apiKey, ...input } = route.request().postDataJSON(); assert.equal(apiKey, 'synthetic-key');
+      body = { ...input, id: 'p', hasApiKey: true, enabled: false, revision: 1, lastTests: {} }; profiles = [body];
+    } else if (p.endsWith('/ai/profiles')) body = { profiles, defaultProfileId: null, settingsRevision: 0 };
+    else if (p.endsWith('/p/models')) body = {models:['model-one','model-two']};
+    else if (p.endsWith('/p/test')) { profiles[0].lastTests.quick = { revision: 1, status: 'passed', durationMs: 10, testedAt: new Date().toISOString() }; body = { message: 'Bağlantı doğrulandı.' }; }
+    else if (p.endsWith('/p/enabled')) { profiles[0].enabled = true; profiles[0].revision++; body = profiles[0]; }
+    else if (p.endsWith('/ai/models')) body = { models: profiles.filter(p => p.enabled).map(({ id, name, provider, model }) => ({ id, name, provider, model })), defaultProfileId: null };
+    else if (p.endsWith('/ai/generate-questions')) { const input = route.request().postDataJSON(); assert.equal(input.profileId, 'p'); assert.ok(input.context?.draftId); assert.equal(input.context.quizTitle,'Tarih sınavı'); assert.ok(!('customApiKey' in input)); generated = true; body = { questions: [{ text: 'Sentetik tarih sorusu', type: 'multiple-choice', options: ['Bir', 'İki'], correctAnswer: 'Bir', correctAnswerIndex: 0 }] }; }
+    else body = [];
+    await route.fulfill({ json: body });
+  });
+  const page = await context.newPage(), errors = []; page.on('pageerror', error => errors.push(error.message));
+  await page.goto(origin + '/ai-management');
+  await page.getByRole('heading', { name: 'AI Yönetimi', exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Profil ekle' }).click();
+  await page.getByLabel('Görünen ad').fill('Okul modeli'); await page.getByLabel('Sağlayıcı', { exact: true }).selectOption('google');
+  await page.getByLabel('API anahtarı', { exact: true }).fill('synthetic-key'); await page.getByLabel('Model kimliği', { exact: true }).fill('synthetic-model');
+  await page.getByRole('button', { name: 'Kaydet', exact: true }).click();
+  await page.getByRole('heading', { name: 'Okul modeli' }).waitFor();
+  await page.getByRole('button', { name: 'Bağlantı testi', exact: true }).click();
+  await page.getByRole('button', { name: 'Öğretmenlere aç', exact: true }).click();
+  await page.getByRole('button', { name: 'Kapat', exact: true }).waitFor();
+  await page.getByRole('button',{name:'Düzenle',exact:true}).click();
+  assert.equal(await page.getByLabel('API anahtarı',{exact:true}).isDisabled(),true);
+  await page.getByText('Kayıtlı anahtar korunacak.',{exact:false}).waitFor();
+  assert.equal(await page.getByLabel('Yanıt bekleme sınırı (saniye)').inputValue(),'120');
+  await page.getByRole('button',{name:'Kayıtlı profilden modelleri al'}).click();
+  await page.getByLabel('Listeden model seç').selectOption('model-two');
+  assert.equal(await page.getByLabel('Model kimliği',{exact:true}).inputValue(),'model-two');
+  await page.getByLabel('Model kimliği',{exact:true}).fill('manual-private-model');
+  assert.equal(usageReads,0);
+  await page.getByRole('tab',{name:'öğretmen ai kullanımı',exact:true}).click();
+  await page.getByRole('table').waitFor();
+  assert.ok(usageReads>0);
+  await page.getByText('Tarih taslağı',{exact:true}).waitFor();
+  assert.equal(await page.getByRole('cell',{name:'Bilinmiyor',exact:true}).count(),3);
+  await page.getByLabel('Öğretmen ara').fill('Sentetik');
+  await page.getByRole('button',{name:'Filtrele',exact:true}).click();
+  await page.getByRole('table').waitFor();
+  await page.screenshot({path:path.join(root,'teacher-usage.png'),fullPage:true});
+  await page.setViewportSize({width:390,height:844});
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  await page.screenshot({path:path.join(root,'teacher-usage-mobile.png'),fullPage:true});
+  await page.setViewportSize({width:1440,height:1000});
+  await page.getByRole('tab',{name:'ai profil yönetimi',exact:true}).click();
+  assert.equal(await page.getByLabel('Model kimliği',{exact:true}).inputValue(),'manual-private-model');
+  await page.getByRole('button',{name:'Anahtarı değiştir',exact:true}).click();
+  assert.equal(await page.getByLabel('API anahtarı',{exact:true}).isDisabled(),false);
+  assert.equal(await page.getByLabel('API anahtarı',{exact:true}).inputValue(),'');
+  await page.screenshot({path:path.join(root,'edit-key-models.png'),fullPage:true});
+  await page.getByRole('button',{name:'İptal',exact:true}).click();
+  await page.getByRole('button',{name:'Profil ekle',exact:true}).click();
+  await page.getByLabel('Sağlayıcı',{exact:true}).selectOption('xiaomi_mimo');
+  await page.getByLabel('Hizmet / bölge').selectOption('https://token-plan-sgp.xiaomimimo.com/v1');
+  assert.equal(await page.getByLabel('HTTPS API adresi').inputValue(),'https://token-plan-sgp.xiaomimimo.com/v1');
+  await page.getByText('Gelişmiş yanıt ayarları',{exact:true}).click();
+  assert.equal(await page.getByLabel('Düşünme ayarı (destekleyen modeller)').inputValue(),'disabled');
+  await page.screenshot({path:path.join(root,'mimo-presets.png'),fullPage:true});
+  await page.getByRole('button',{name:'İptal',exact:true}).click();
+  await page.screenshot({ path: path.join(root, 'admin.png'), fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+  await page.screenshot({ path: path.join(root, 'admin-mobile.png'), fullPage: true });
+  profiles[0].lastTests.questions={revision:profiles[0].revision,status:'failed',durationMs:995,code:'LLM_BILLING',upstreamStatus:402,message:'Sağlayıcı ödeme veya bakiye nedeniyle isteği reddetti.',testedAt:new Date().toISOString()};
+  profiles.push({...profiles[0],id:'closed',name:'Kapalı model',enabled:false,lastTests:{}});
+  await page.goto(origin+'/ai-management');
+  const closedOption=page.getByLabel('Varsayılan model',{exact:true}).locator('option').filter({hasText:'Kapalı model'});assert.equal(await closedOption.isDisabled(),true);
+  await page.getByText(/LLM_BILLING.*HTTP 402/).waitFor();
+  await page.getByText(/bakiye nedeniyle/).waitFor();
+  await page.screenshot({path:path.join(root,'billing-diagnostic.png'),fullPage:true});
+  role = 'teacher'; await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto(origin + '/create-quiz'); await page.locator('#title').fill('Tarih sınavı');
+  await page.getByRole('tab', { name: /Sorular/ }).click();
+  await page.getByRole('button', { name: 'AI ile Soruları Üret' }).click();
+  await page.getByLabel('AI modeli', { exact: true }).waitFor();
+  assert.equal(await page.locator('input[type=password]').count(), 0);
+  await page.getByRole('button', { name: 'Sınav Sorularını Üret', exact: true }).click();
+  await page.getByText('Sentetik tarih sorusu', { exact: true }).waitFor();
+  assert.equal(generated, true); assert.deepEqual(errors, []);
+  await page.screenshot({ path: path.join(root, 'teacher.png'), fullPage: true });
+  fs.writeFileSync(path.join(root, 'result.json'), JSON.stringify({ passed: true, mockedAPI: true, actualProductionUI: true, adminCreateTestEnable: true, teacherUsageTable: true, tabDraftPreserved: true, allDefaultProfilesVisible: true, usageMobileNoOverflow: true, billingDiagnostic: true, storedKeyUX: true, modelSelectionAndManualEntry: true, mimoPresets: true, timeoutSeconds: true, historicalAdminPage: true, teacherGeneration: true, mobileNoOverflow: true, pageErrors: errors }, null, 2));
+  console.log(JSON.stringify({ passed: true, evidence: root, mockedAPI: true }));
+} finally {
+  await browser?.close(); server.closeAllConnections();
+  await new Promise(resolve => server.close(resolve));
+}

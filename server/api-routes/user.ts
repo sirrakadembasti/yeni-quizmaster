@@ -1,7 +1,12 @@
+import { disconnectUserSockets } from "../socket";
+import { z } from "zod";
 import { Router, type Response } from "express";
+import { respondToClassError } from '../utils/class-errors';
 import { storage } from "../storage";
 import bcrypt from "bcryptjs";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
+import { sendRegistrationSuccessEmail } from "../utils/email";
+import { logger } from "../utils/logger";
 
 const router: Router = Router();
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -24,6 +29,16 @@ async function validateGuardianStudentIds(input: unknown) {
   if (ids.some((id) => typeof id !== 'string' || !UUID_PATTERN.test(id))) return null;
   const users = await Promise.all(ids.map((id) => storage.getUser(id)));
   if (users.some((user) => !user || user.role !== 'student' || (user as any).isActive === false)) return null;
+  return ids as string[];
+}
+
+async function validateTeacherAssignmentIds(input: unknown, lookup: (id: string) => Promise<unknown>) {
+  if (input === undefined) return [];
+  if (!Array.isArray(input) || input.length > 1000) return null;
+  const ids = [...new Set(input)];
+  if (ids.some((id) => typeof id !== 'string' || !UUID_PATTERN.test(id))) return null;
+  const records = await Promise.all(ids.map((id) => lookup(id as string)));
+  if (records.some((record) => !record)) return null;
   return ids as string[];
 }
 
@@ -116,7 +131,7 @@ router.get("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
 router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
     const {
-      name, email, password, role, classId, phoneNumber, address,
+      name, email, password, role, classId, phoneNumber, address, assignedCategoryIds, classIds,
       parentName, parentRelation, parentPhone, parentEmail, parentAddress
     } = req.body;
 
@@ -140,6 +155,16 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
       : undefined;
     if (requestedRole === 'parent' && !guardianStudentIds) {
       return res.status(400).json({ message: "Geçersiz öğrenci seçimi." });
+    }
+    if (requestedRole !== 'teacher' && ((Array.isArray(assignedCategoryIds) && assignedCategoryIds.length > 0) || (Array.isArray(classIds) && classIds.length > 0))) {
+      return res.status(400).json({ message: "Ders ve sınıf ataması yalnızca öğretmen hesabına yapılabilir." });
+    }
+    const teacherCategoryIds = requestedRole === 'teacher'
+      ? await validateTeacherAssignmentIds(assignedCategoryIds, (id) => storage.getCategory(id)) : [];
+    const teacherClassIds = requestedRole === 'teacher'
+      ? await validateTeacherAssignmentIds(classIds, (id) => storage.getClass(id)) : [];
+    if (!teacherCategoryIds || !teacherClassIds) {
+      return res.status(400).json({ message: "Geçersiz öğretmen ders veya sınıf seçimi." });
     }
 
     if (req.user!.role === 'teacher') {
@@ -165,6 +190,10 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
       name: name.trim(), email: normalizedEmail, password: hashedPassword, role: requestedRole, classId, phoneNumber, address
     };
     if (guardianStudentIds) userPayload.guardianStudentIds = guardianStudentIds;
+    if (requestedRole === 'teacher') {
+      userPayload.assignedCategoryIds = teacherCategoryIds;
+      userPayload.classIds = teacherClassIds;
+    }
     if (requestedRole !== 'student') {
       userPayload.classId = null;
     }
@@ -179,11 +208,17 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
     }
 
     const user = await storage.createUser(userPayload);
+    try {
+      await sendRegistrationSuccessEmail(user.email, user.name);
+    } catch (emailError) {
+      logger.warn({ err: emailError, userId: user.id }, "[User] Kayıt bilgilendirme e-postası kuyruğa alınamadı.");
+    }
 
     const { password: _, ...userWithoutPassword } = user;
     res.status(201).json({ user: userWithoutPassword });
   } catch (error) {
-    res.status(500).json({ message: "Kullanıcı oluşturulamadı." });
+      if (respondToClassError(error, res)) return;
+      res.status(500).json({ message: "Kullanıcı oluşturulamadı." });
   }
 });
 
@@ -196,6 +231,23 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
     if (!targetUser) return res.status(404).json({ message: "Kullanıcı bulunamadı." });
 
     const isUpdatingSelf = currentUser.id === targetUserId;
+    if (currentUser.role === "student") {
+      return res.status(403).json({ message: "Öğrenci profil bilgileri yalnızca okul yönetimi tarafından güncellenebilir." });
+    }
+    const updateSchema = z.object({
+      name: z.string().trim().min(2).max(100).optional(),
+      email: z.string().trim().email().optional(),
+      password: z.string().min(6).optional(),
+      role: z.enum(["admin", "teacher", "student", "parent"]).optional(),
+    }).passthrough();
+    const validation = updateSchema.safeParse(req.body);
+    if (!validation.success) return res.status(400).json({ message: "Geçersiz kullanıcı bilgileri." });
+    if (isUpdatingSelf && req.body.password !== undefined) {
+      if (typeof req.body.currentPassword !== "string" ||
+          !await bcrypt.compare(req.body.currentPassword, targetUser.password)) {
+        return res.status(400).json({ message: "Mevcut şifrenizi doğrulayın." });
+      }
+    }
     const isAdmin = currentUser.role === 'admin';
     const isTeacher = currentUser.role === 'teacher';
 
@@ -324,12 +376,19 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
     }
 
     const updatedUser = await storage.updateUser(targetUserId, filteredBody);
+    if (filteredBody.password || (filteredBody.role && filteredBody.role !== targetUser.role)) disconnectUserSockets(targetUserId);
+    if (isUpdatingSelf && filteredBody.password) {
+      await new Promise<void>((resolve, reject) => req.session.regenerate(error => error ? reject(error) : resolve()));
+      req.session.userId = updatedUser.id;
+      req.session.sessionVersion = updatedUser.sessionVersion ?? 0;
+    }
     const { password: _, ...userWithoutPassword } = updatedUser;
     res.json({ user: userWithoutPassword });
   } catch (error) {
     console.error("[PATCH /api/users/:id] Error:", error);
     if ((error as any)?.code === "P2002") return res.status(409).json({ message: "Bu e-posta adresi zaten kullanılıyor." });
-    res.status(500).json({ message: "Kullanıcı güncellenemedi." });
+      if (respondToClassError(error, res)) return;
+      res.status(500).json({ message: "Kullanıcı güncellenemedi." });
   }
 });
 router.delete("/:id", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {

@@ -1,327 +1,145 @@
-import { useState } from "react";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { adminApi, classApi, quizApi } from "@/lib/api";
-import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Archive, GraduationCap, AlertCircle, Loader2, ArrowRight, ShieldAlert, Users } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from "@/components/ui/dialog";
+import { useEffect, useRef, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { AdminQueryState } from '@/components/management/AdminQueryState';
+import { classApi, quizApi } from '@/lib/api';
+import { archiveApi, type ArchiveJob, type TransitionRule, type TransitionSummary } from '@/lib/archive-api';
+import { useAcademicYear } from '@/context/academic-year-context';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+
+const statuses: Record<string, string> = { queued: 'Sırada', capturing: 'Veriler kopyalanıyor', files_generating: 'Dosyalar hazırlanıyor', verified: 'Dosyalar doğrulandı', completed: 'Tamamlandı', retry_wait: 'Yeniden deneme bekleniyor', failed: 'Başarısız', cancelled: 'Kopyalama başlamadan iptal edildi' };
+const running = (status: string) => !['completed', 'failed', 'cancelled'].includes(status);
+const ruleLocked = (status: string) => ['capturing', 'files_generating', 'verified'].includes(status);
+function TransitionCounts({ summary }: { summary: TransitionSummary }) {
+  return <div className="space-y-2"><p>{summary.promoted} terfi · {summary.graduated} mezuniyet</p><p>Korunan kayıtlar: {summary.skippedInactive} pasif · {summary.skippedGraduated} önceki mezun · {summary.skippedClassless} sınıfsız</p>{summary.transitions.map(row => <p key={row.fromClassId}>{row.fromClassName} → {row.graduate ? 'Mezuniyet' : row.toClassName} — {row.students} aktif öğrenci</p>)}</div>;
+}
 
 export default function ArchivePage() {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
-  const [academicYear, setAcademicYear] = useState("");
-  const [isArchiveConfirmOpen, setIsArchiveConfirmOpen] = useState(false);
-
-  // Student Promotion State
-  const [promotionFromClassId, setPromotionFromClassId] = useState("");
-  const [promotionToClassId, setPromotionToClassId] = useState("graduate");
-  const [isPromoteConfirmOpen, setIsPromoteConfirmOpen] = useState(false);
-
-  const { data: classesData, isLoading: classesLoading } = useQuery({
-    queryKey: ['/api/classes'],
-    queryFn: () => classApi.getAllClasses(),
-  });
-
-  const { data: quizzesData } = useQuery({
-    queryKey: ['/api/admin/quizzes'],
-    queryFn: () => quizApi.getAllAdminQuizzes(),
-  });
-
-  const classes = classesData?.classes || [];
-  const quizzes = quizzesData?.quizzes || [];
-
-  const activeQuizzesCount = quizzes.filter((q: any) => q.status !== 'archived').length;
-  const archivedQuizzesCount = quizzes.filter((q: any) => q.status === 'archived').length;
-
-  const archiveMutation = useMutation({
-    mutationFn: (year: string) => adminApi.archiveYear(year),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/quizzes'] });
-      setIsArchiveConfirmOpen(false);
-      setAcademicYear("");
-      toast({
-        title: "Arşivleme Tamamlandı",
-        description: `${data.quizzesArchived} sınav ve ${data.resultsArchived} sonuç arşivlendi.`,
-        className: "bg-emerald-50 border-emerald-200 text-emerald-800"
-      });
-    },
-    onError: (e: any) => {
-      toast({ variant: "destructive", title: "Hata", description: e.message });
+  const academic = useAcademicYear();
+  const academicRef = useRef(academic);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [previewIds, setPreviewIds] = useState<string[]>([]);
+  const [targets, setTargets] = useState<Record<string, string>>({});
+  const [rulesDirty, setRulesDirty] = useState(false);
+  const [feedback, setFeedback] = useState('');
+  const [error, setError] = useState('');
+  const [focusJob, setFocusJob] = useState<string | null>(null);
+  const [downloadJob, setDownloadJob] = useState<ArchiveJob | null>(null);
+  const [password, setPassword] = useState('');
+  const [page, setPage] = useState(1);
+  const completedJobs = useRef(new Set<string>());
+  const years = useQuery({ queryKey: ['archive-years'], queryFn: archiveApi.years, refetchInterval: 15000 });
+  const classesQuery = useQuery({ queryKey: ['/api/classes'], queryFn: () => classApi.getAllClasses() });
+  const quizzesQuery = useQuery({ queryKey: ['/api/admin/quizzes'], queryFn: () => quizApi.getAllAdminQuizzes() });
+  const jobs = useQuery({ queryKey: ['archive-jobs'], queryFn: archiveApi.jobs, refetchInterval: query => query.state.data?.jobs.some(job => running(job.status)) ? 2000 : false });
+  const active = years.data?.years.find(year => year.status === 'active');
+  const classes = classesQuery.data?.classes ?? [];
+  const quizzes = (quizzesQuery.data?.quizzes ?? []).filter(quiz => quiz.status !== 'archived' && !(quiz as any).academicYear);
+  const rules = useQuery({ queryKey: ['archive-rules', active?.id], queryFn: () => archiveApi.rules(active!.id), enabled: !!active });
+  const transitions = useQuery({ queryKey: ['archive-transition-preview', active?.id], queryFn: () => archiveApi.transitionPreview(active!.id), enabled: !!active, refetchInterval: 15000 });
+  const preview = useQuery({ queryKey: ['archive-preview', active?.id, previewIds], queryFn: ({ signal }) => archiveApi.preview(previewIds, active?.id, signal), enabled: previewIds.length > 0 && !!active });
+  const jobQuery = useQuery({ queryKey: ['archive-job', focusJob], queryFn: () => archiveApi.job(focusJob!), enabled: !!focusJob, refetchInterval: query => query.state.data && running(query.state.data.job.status) ? 2000 : false });
+  const logs = useQuery({ queryKey: ['archive-job-logs', focusJob], queryFn: () => archiveApi.logs(focusJob!), enabled: !!focusJob, refetchInterval: focusJob && running(jobQuery.data?.job.status ?? 'queued') ? 2000 : false });
+  useEffect(() => { academicRef.current = academic; }, [academic]);
+  useEffect(() => { const timer = setTimeout(() => setPreviewIds(selected), 200); return () => clearTimeout(timer); }, [selected]);
+  useEffect(() => { setRulesDirty(false); setTargets({}); setSelected([]); }, [active?.id]);
+  useEffect(() => { if (rules.data && !rulesDirty) setTargets(Object.fromEntries(rules.data.rules.map(rule => [rule.fromClassId, rule.graduate ? 'graduate' : rule.toClassId ?? '']))); }, [rules.data, rulesDirty, active?.id]);
+  useEffect(() => {
+    const completed = jobs.data?.jobs.filter(job => job.status === 'completed' && !completedJobs.current.has(job.id)) ?? [];
+    if (!completed.length) return;
+    completed.forEach(job => completedJobs.current.add(job.id));
+    void queryClient.invalidateQueries({ queryKey: ['archive-years'] });
+    void queryClient.invalidateQueries({ queryKey: ['/api/admin/quizzes'] });
+    void queryClient.invalidateQueries({ queryKey: ['/api/classes'] });
+    void queryClient.invalidateQueries({ queryKey: ['archive-jobs'] });
+    void queryClient.invalidateQueries({ queryKey: ['archive-transition-preview'] });
+    if (completed.some(job => job.mode === 'annual')) {
+      void queryClient.invalidateQueries({ queryKey: ['academic-year-context'] });
+      const currentYear = academicRef.current?.year;
+      if (currentYear?.status === 'active' && completed.some(job => job.mode === 'annual' && job.academicYearId === currentYear.id)) academicRef.current?.reload();
     }
-  });
-
-  const promoteMutation = useMutation({
-    mutationFn: (data: { fromClassId: string, toClassId: string | null }) => 
-      adminApi.promoteStudents([data]),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/classes'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/users'] });
-      setIsPromoteConfirmOpen(false);
-      setPromotionFromClassId("");
-      setPromotionToClassId("graduate");
-      toast({
-        title: "Sınıf Atlatma Başarılı",
-        description: `${data.totalPromoted} öğrenci yeni sınıfına aktarıldı.`,
-        className: "bg-emerald-50 border-emerald-200 text-emerald-800"
-      });
-    },
-    onError: (e: any) => {
-      toast({ variant: "destructive", title: "Hata", description: e.message });
-    }
-  });
-
-  const handleArchive = () => {
-    if (!academicYear || academicYear.length < 4) {
-      toast({ variant: "destructive", title: "Hata", description: "Lütfen geçerli bir eğitim yılı girin (örn: 2025-2026)." });
-      return;
-    }
-    setIsArchiveConfirmOpen(true);
-  };
-
-  const handlePromote = () => {
-    if (!promotionFromClassId) {
-      toast({ variant: "destructive", title: "Hata", description: "Lütfen kaynak sınıfı seçin." });
-      return;
-    }
-    setIsPromoteConfirmOpen(true);
-  };
-
-  return (
-    <DashboardLayout>
-      <div className="space-y-3">
-        <div>
-          <h1 className="text-2xl font-black text-foreground tracking-tight">Yıl Sonu ve Arşiv İşlemleri</h1>
-          <p className="text-muted-foreground text-xs mt-0.5">Eğitim yılı sonu yedeklemeleri ve öğrenci sınıf atlatma işlemleri buradan yönetilir.</p>
-        </div>
-
-        <Tabs defaultValue="archive" className="w-full">
-          <TabsList className="bg-muted p-1 rounded-xl mb-3">
-            <TabsTrigger value="archive" className="rounded-lg font-bold px-4 py-1 text-xs">Sınav Arşivi</TabsTrigger>
-            <TabsTrigger value="promote" className="rounded-lg font-bold px-4 py-1 text-xs">Sınıf Atlatma</TabsTrigger>
-          </TabsList>
-
-          {/* ARCHIVE TAB */}
-          <TabsContent value="archive" className="space-y-3 m-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-              <Card className="rounded-2xl border-border bg-card shadow-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg font-black">
-                    <Archive className="h-4 w-4 text-primary" /> Yeni Arşiv Oluştur
-                  </CardTitle>
-                  <CardDescription className="text-xs">
-                    Aktif olan tüm sınavları ve sonuçları belirlediğiniz eğitim yılı altına arşivler.
-                    Arşivlenen sınavlar öğretmen panellerinde salt okunur görünür.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2.5">
-                  <div className="bg-amber-50 dark:bg-amber-950/30 p-2.5 rounded-lg border border-amber-100 dark:border-amber-900/50 flex items-start gap-2.5">
-                    <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-500 mt-0.5 shrink-0" />
-                    <p className="text-xs font-medium text-amber-800 dark:text-amber-400">
-                      Bu işlem sistemdeki <span className="font-black">{activeQuizzesCount}</span> aktif sınavı "Arşivlendi" statüsüne geçirecektir. İşlem geri alınamaz.
-                    </p>
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="font-bold text-xs">Eğitim Yılı Etiketi</Label>
-                    <Input 
-                      placeholder="Örn: 2025-2026 Eğitim Yılı" 
-                      value={academicYear}
-                      onChange={e => setAcademicYear(e.target.value)}
-                      className="rounded-lg border-border focus:border-primary h-8 text-xs"
-                    />
-                  </div>
-                  <Button 
-                    className="w-full rounded-lg font-bold bg-primary text-primary-foreground shadow-sm h-8 text-xs"
-                    onClick={handleArchive}
-                    disabled={archiveMutation.isPending}
-                  >
-                    {archiveMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <Archive className="h-3.5 w-3.5 mr-1.5" />}
-                    Sistemi Arşivle
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="rounded-2xl border-border bg-card shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-lg font-black">Arşiv Durumu</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col gap-2">
-                    <div className="flex justify-between items-center p-2.5 bg-muted rounded-lg border border-border">
-                      <span className="font-bold text-xs text-muted-foreground">Aktif Sınavlar</span>
-                      <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 text-sm py-0.5 px-2.5 shadow-none border-none">{activeQuizzesCount}</Badge>
-                    </div>
-                    <div className="flex justify-between items-center p-2.5 bg-muted rounded-lg border border-border">
-                      <span className="font-bold text-xs text-muted-foreground">Arşivlenmiş Sınavlar</span>
-                      <Badge className="bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 text-sm py-0.5 px-2.5 shadow-none border-none">{archivedQuizzesCount}</Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Card className="rounded-2xl border-border bg-card shadow-sm overflow-hidden">
-               <CardHeader className="bg-muted/50 border-b border-border py-2 px-4">
-                 <CardTitle className="text-base font-black">Geçmiş Arşiv Kayıtları</CardTitle>
-               </CardHeader>
-               <Table>
-                  <TableHeader>
-                    <TableRow className="border-border">
-                      <TableHead className="font-black text-[10px] uppercase tracking-widest pl-4 py-2">Sınav Adı</TableHead>
-                      <TableHead className="font-black text-[10px] uppercase tracking-widest py-2">Eğitim Yılı</TableHead>
-                      <TableHead className="font-black text-[10px] uppercase tracking-widest text-center py-2">Durum</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {quizzes.filter((q: any) => q.status === 'archived').length === 0 ? (
-                       <TableRow>
-                          <TableCell colSpan={3} className="text-center py-8 text-muted-foreground italic">Henüz arşivlenmiş sınav bulunmuyor.</TableCell>
-                       </TableRow>
-                    ) : (
-                      quizzes.filter((q: any) => q.status === 'archived').slice(0, 20).map((quiz: any) => (
-                        <TableRow key={quiz.id} className="border-border">
-                          <TableCell className="pl-6 font-bold">{quiz.title}</TableCell>
-                          <TableCell><Badge variant="outline">{quiz.academicYear || 'Eski Kayıt'}</Badge></TableCell>
-                          <TableCell className="text-center"><Badge className="bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-none shadow-none">Arşivlendi</Badge></TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-               </Table>
-            </Card>
-          </TabsContent>
-
-          {/* PROMOTE TAB */}
-          <TabsContent value="promote" className="space-y-6 m-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <Card className="rounded-3xl border-border bg-card shadow-sm max-w-2xl mx-auto">
-              <CardHeader className="text-center pb-2">
-                <div className="h-16 w-16 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-indigo-100 dark:border-indigo-900/50">
-                  <GraduationCap className="h-8 w-8" />
-                </div>
-                <CardTitle className="text-2xl font-black">Toplu Sınıf Atlatma</CardTitle>
-                <CardDescription className="px-4">
-                  Öğrencileri mevcut sınıflarından bir üst sınıfa toplu olarak aktarın veya mezun edin.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-8 p-8">
-                <div className="space-y-3">
-                  <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Mevcut Sınıf (Kaynak)</Label>
-                  <Select value={promotionFromClassId} onValueChange={setPromotionFromClassId}>
-                    <SelectTrigger className="h-14 rounded-xl border-2 border-border focus:border-indigo-500 bg-muted/30">
-                      <SelectValue placeholder="Öğrencilerin bulunduğu sınıfı seçin..." />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      {classes.map((c: any) => (
-                         <SelectItem key={c.id} value={c.id}>
-                           {c.name} ({c._count?.students || 0} Öğrenci)
-                         </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="flex justify-center">
-                  <div className="h-10 w-10 bg-muted rounded-full flex items-center justify-center border-4 border-card z-10 text-muted-foreground shadow-sm dark:shadow-none">
-                    <ArrowRight className="h-5 w-5 rotate-90 md:rotate-0" />
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Yeni Sınıf (Hedef)</Label>
-                  <Select value={promotionToClassId} onValueChange={setPromotionToClassId}>
-                    <SelectTrigger className="h-14 rounded-xl border-2 border-border focus:border-indigo-500 bg-muted/30">
-                      <SelectValue placeholder="Hedef sınıfı seçin..." />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      <SelectItem value="graduate" className="text-emerald-600 font-bold focus:text-emerald-700">
-                        🎓 Mezun Et (Sınıf Bağlantısını Kopar)
-                      </SelectItem>
-                      {classes.filter((c: any) => c.id !== promotionFromClassId).map((c: any) => (
-                         <SelectItem key={c.id} value={c.id}>
-                           {c.name}
-                         </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <Button 
-                  className="w-full h-14 rounded-xl font-bold text-lg bg-indigo-600 hover:bg-indigo-700 shadow-xl dark:shadow-none"
-                  onClick={handlePromote}
-                  disabled={!promotionFromClassId || classesLoading || promoteMutation.isPending}
-                >
-                  {promoteMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : <GraduationCap className="h-5 w-5 mr-2" />}
-                  İşlemi Başlat
-                </Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-
-      {/* Confirmation Dialogs */}
-      <Dialog open={isArchiveConfirmOpen} onOpenChange={setIsArchiveConfirmOpen}>
-        <DialogContent className="rounded-3xl sm:max-w-md bg-card border-border">
-          <div className="py-6 text-center space-y-4">
-            <div className="h-16 w-16 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center mx-auto mb-2 border border-red-100 dark:border-red-900/50">
-              <ShieldAlert className="h-8 w-8" />
-            </div>
-            <DialogTitle className="text-xl font-black">Arşivleme Onayı</DialogTitle>
-            <DialogDescription className="text-sm font-medium">
-              Bu işlem geri alınamaz. <strong>{academicYear}</strong> etiketiyle tüm aktif sınavlar kilitlenecek. Devam etmek istiyor musunuz?
-            </DialogDescription>
-          </div>
-          <DialogFooter className="flex gap-2 p-4 pt-0 sm:justify-center">
-            <Button variant="outline" onClick={() => setIsArchiveConfirmOpen(false)} className="rounded-xl flex-1 font-bold">Vazgeç</Button>
-            <Button variant="destructive" onClick={() => archiveMutation.mutate(academicYear)} className="rounded-xl flex-1 font-bold shadow-md dark:shadow-none">Evet, Arşivle</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isPromoteConfirmOpen} onOpenChange={setIsPromoteConfirmOpen}>
-        <DialogContent className="rounded-3xl sm:max-w-md bg-card border-border">
-          <div className="py-6 text-center space-y-4">
-            <div className="h-16 w-16 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center mx-auto mb-2 border border-indigo-100 dark:border-indigo-900/50">
-              <Users className="h-8 w-8" />
-            </div>
-            <DialogTitle className="text-xl font-black">Toplu Sınıf Aktarımı</DialogTitle>
-            <DialogDescription className="text-sm font-medium space-y-2">
-              <p>Seçilen sınıftaki tüm öğrenciler hedef sınıfa aktarılacak.</p>
-              {(() => {
-                const fromClass = classes.find(c => c.id === promotionFromClassId);
-                const toClass = classes.find(c => c.id === promotionToClassId);
-                const fromLevel = fromClass?.name.split("-")[0] || "Seviyesiz";
-                const toLevel = promotionToClassId === "graduate" ? "Mezuniyet" : toClass?.name.split("-")[0] || "Seviyesiz";
-
-                if (fromLevel !== toLevel) {
-                  return (
-                    <div className="p-3 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900 rounded-xl text-amber-800 dark:text-amber-300 font-bold mt-2">
-                      ⚠️ Öğrenciler mevcut sınıf seviyesinden ({fromLevel}) farklı bir seviyeye ({toLevel}) geçirilecektir. Bunu onaylıyor musunuz?
-                    </div>
-                  );
-                }
-                return null;
-              })()}
-            </DialogDescription>
-          </div>
-          <DialogFooter className="flex gap-2 p-4 pt-0 sm:justify-center">
-            <Button variant="outline" onClick={() => setIsPromoteConfirmOpen(false)} className="rounded-xl flex-1 font-bold">Vazgeç</Button>
-            <Button className="rounded-xl flex-1 font-bold bg-indigo-600 hover:bg-indigo-700 shadow-md dark:shadow-none text-white" onClick={() => promoteMutation.mutate({
-              fromClassId: promotionFromClassId,
-              toClassId: promotionToClassId === "graduate" ? null : promotionToClassId
-            })}>Evet, İşlemi Yap</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-    </DashboardLayout>
-  );
+  }, [jobs.data?.jobs, queryClient]);
+  const fail = (err: Error) => { setError(err.message); setFeedback(''); };
+  const refreshJob = (id: string) => { void queryClient.invalidateQueries({ queryKey: ['archive-jobs'] }); void queryClient.invalidateQueries({ queryKey: ['archive-job', id] }); void queryClient.invalidateQueries({ queryKey: ['archive-job-logs', id] }); };
+  const acceptJob = ({ job }: { job: ArchiveJob }) => { setError(''); setSelected([]); setFeedback('Arşiv işlemi kuyruğa alındı. İlerlemeyi aşağıdan izleyebilirsiniz.'); setFocusJob(job.id); refreshJob(job.id); };
+  const create = useMutation({ mutationFn: () => archiveApi.create(selected, active?.id), onSuccess: acceptJob, onError: fail });
+  const close = useMutation({ mutationFn: () => archiveApi.closeYear(active!.id), onSuccess: acceptJob, onError: fail });
+  const retry = useMutation({ mutationFn: (id: string) => archiveApi.retry(id), onSuccess: acceptJob, onError: fail });
+  const cancel = useMutation({ mutationFn: (id: string) => archiveApi.cancel(id), onSuccess: ({ job }) => { setError(''); setFocusJob(job.id); setFeedback('Kopyalama başlamadan arşiv iptal edildi. İş verileri korunur; yıllık arşiv devam edebilir.'); refreshJob(job.id); }, onError: fail });
+  const missing = classes.filter(cls => !targets[cls.id]);
+  const ruleValues: TransitionRule[] = classes.filter(cls => !!targets[cls.id]).map(cls => ({ fromClassId: cls.id, toClassId: targets[cls.id] === 'graduate' ? null : targets[cls.id], graduate: targets[cls.id] === 'graduate' }));
+  const save = useMutation({ mutationFn: () => archiveApi.saveRules(active!.id, ruleValues), onSuccess: data => { queryClient.setQueryData(['archive-rules', active?.id], data); setRulesDirty(false); void queryClient.invalidateQueries({ queryKey: ['archive-transition-preview', active?.id] }); setError(''); setFeedback('Sınıf geçiş kuralları kaydedildi. Öğrenciler doğrulanmış yıl sonu arşivinden sonra taşınacak.'); }, onError: fail });
+  const download = useMutation({ mutationFn: async () => { await archiveApi.authorizeDownload(downloadJob!.id, password); setPassword(''); await archiveApi.download(downloadJob!.id); }, onSuccess: () => { setDownloadJob(null); setError(''); setFeedback('Doğrulanmış arşiv indirmesi başlatıldı.'); }, onError: err => { setPassword(''); fail(err); } });
+  const queries = [years, classesQuery, quizzesQuery, jobs];
+  if (queries.some(query => query.isPending || query.isError)) return <DashboardLayout><AdminQueryState queries={queries} /></DashboardLayout>;
+  const busy = create.isPending || close.isPending || retry.isPending || cancel.isPending;
+  const previewReady = selected.length > 0 && selected === previewIds && preview.isSuccess && !preview.isFetching;
+  const rulesReady = rules.isSuccess && !rulesDirty && transitions.isSuccess && !transitions.isFetching && transitions.data.ready;
+  const due = !!active?.canClose;
+  const annualRunning = jobs.data?.jobs.some(job => job.academicYearId === active?.id && job.mode === 'annual' && running(job.status));
+  const rulesLocked = jobs.data?.jobs.some(job => job.academicYearId === active?.id && job.mode === 'annual' && ruleLocked(job.status));
+  const allJobs = jobs.data?.jobs ?? [];
+  const completedTransition = years.data?.latestCompletedAnnual ?? allJobs.filter(job => job.mode === 'annual' && job.status === 'completed').sort((a, b) => b.label.localeCompare(a.label))[0];
+  const focusedJob = jobQuery.data?.job;
+  const blockers = allJobs.filter(job => job.mode === 'annual' && job.academicYearId === active?.id).flatMap(job => job.blockers ?? []);
+  const pages = Math.max(1, Math.ceil(allJobs.length / 20));
+  return <DashboardLayout><div className="space-y-4">
+    <h1 className="text-2xl font-bold">Yıl Sonu ve Arşiv İşlemleri</h1>
+    <p className="text-muted-foreground">Aktif eğitim yılı: {active?.label ?? 'Bulunamadı'}. Arşiv PDF ve CSV iş verilerini içerir.</p>
+    {error && <p role="alert" className="text-destructive">{error}</p>}{feedback && <p role="status">{feedback}</p>}
+    <Tabs defaultValue="manual"><TabsList className="flex flex-wrap h-auto"><TabsTrigger value="manual">Manuel Arşiv</TabsTrigger><TabsTrigger value="annual">Yıl Sonu</TabsTrigger><TabsTrigger value="history">Geçmiş ve İşler</TabsTrigger><TabsTrigger value="rules">Sınıf Geçişi</TabsTrigger></TabsList>
+      <TabsContent value="manual"><Card><CardHeader><CardTitle>İçerikleri Seçin</CardTitle></CardHeader><CardContent className="space-y-3">
+        <p>Yalnız seçilen sınav ve anketler ile ilişkili iş verileri arşivlenir. Bu işlem yılı kapatmaz ve öğrenci taşımaz.</p>
+        {!quizzes.length && <p>Arşivlenebilir içerik bulunmuyor.</p>}
+        <div className="max-h-80 overflow-auto space-y-2">{quizzes.map(quiz => <label key={quiz.id} className="flex items-center gap-3 rounded-lg border p-3"><input type="checkbox" checked={selected.includes(quiz.id)} onChange={event => setSelected(ids => event.target.checked ? [...ids, quiz.id] : ids.filter(id => id !== quiz.id))} />{quiz.title} ({quiz.contentType === 'survey' ? 'Anket' : 'Sınav'})</label>)}</div>
+        {selected.length > 0 && <div aria-live="polite">{previewReady ? <p>{preview.data.quizzes} içerik, {preview.data.results} sınav sonucu, {preview.data.surveySubmissions} anket yanıtı, {preview.data.questions ?? 0} soru seçildi.</p> : preview.isError ? <div role="alert">{preview.error.message} <Button onClick={() => void preview.refetch()}>Ön İzlemeyi Yenile</Button></div> : <p>Seçim ön izlemesi yükleniyor...</p>}</div>}
+        <Button disabled={!active || !previewReady || busy} onClick={() => create.mutate()}>Seçilenleri Arşivle</Button>
+      </CardContent></Card></TabsContent>
+      <TabsContent value="annual"><Card><CardHeader><CardTitle>Eğitim Yılını Kapat</CardTitle></CardHeader><CardContent className="space-y-3">
+        <p>Otomatik kapanış 15 Temmuz 00:05 (Europe/Istanbul). Bu yılın sınırı: {active ? new Date(active.scheduledCloseAt).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }) : '—'}.</p>
+        <p>Yılın bütün iş verileri arşivlenir. Dosyalar doğrulandıktan sonra kayıtlı sınıf geçişleri uygulanır ve yeni eğitim yılı açılır. Öğretmen atamaları değişmez.</p>
+        {!due && <p>Kapanış zamanı henüz gelmedi.</p>}{!rulesReady && <p role="status">Yıl sonu için Sınıf Geçişi sekmesindeki önkontrolü tamamlayın ve kuralları kaydedin.</p>}
+        {blockers.length > 0 && <div role="status" className="space-y-2"><p>Yıllık arşiv aşağıdaki manuel işlerin tamamlanmasını bekliyor:</p>{blockers.map(blocker => <div key={blocker.id}><p>İş {blocker.id}: {blocker.reason} {blocker.remedy}</p><Button variant="outline" aria-label={`İşi Aç: ${blocker.id}`} onClick={() => setFocusJob(blocker.id)}>İşi Aç</Button></div>)}</div>}
+        <Button disabled={!due || !rulesReady || busy || annualRunning} onClick={() => close.mutate()}>Yılı Kapat</Button>
+      </CardContent></Card></TabsContent>
+      <TabsContent value="history" className="space-y-3">
+        <Card><CardHeader><CardTitle>Tamamlanan Eğitim Yılları</CardTitle></CardHeader><CardContent>{years.data?.years.filter(year => year.status === 'closed').map(year => <p key={year.id}>{year.label} — Tamamlandı{year.closedAt ? ` (${new Date(year.closedAt).toLocaleDateString('tr-TR')})` : ''}</p>)}{!years.data?.years.some(year => year.status === 'closed') && <p>Henüz tamamlanan eğitim yılı yok.</p>}</CardContent></Card>
+        <Card><CardHeader><CardTitle>Arşiv İşleri</CardTitle></CardHeader><CardContent className="space-y-3">
+          {!allJobs.length && <p>Henüz arşiv işi yok.</p>}{allJobs.slice((Math.min(page, pages) - 1) * 20, Math.min(page, pages) * 20).map(job => <div key={job.id} className="border rounded-lg p-3 space-y-2">
+            <p>{job.label} — {job.mode === 'annual' ? 'Yıllık' : 'Manuel'} — {statuses[job.status] ?? job.status}</p>
+            <p className="text-xs text-muted-foreground">İş {job.id} · {job.createdAt && new Date(job.createdAt).toLocaleString('tr-TR')} · Bu döngüde deneme: {job.attempts} · Toplam deneme: {job.lifetimeAttempts ?? job.attempts} · Yönetici kurtarması: {job.recoveryCount ?? 0}</p>
+            {job.error && <p role="alert">{job.error}</p>}
+            {job.blockers?.map(blocker => <p key={blocker.id}>Beklenen iş {blocker.id}: {blocker.reason} {blocker.remedy}</p>)}
+            {job.status === 'failed' && <p>Yeniden Dene aynı dondurulmuş verilerle yeni, sınırlı bir deneme döngüsü başlatır. Bozuk tamamlanmamış paket gerekçesiyle karantinaya alınır.</p>}
+            <Button variant="outline" onClick={() => setFocusJob(job.id)}>İlerleme ve Kayıtlar</Button> {job.status === 'failed' && <Button disabled={retry.isPending || cancel.isPending} onClick={() => retry.mutate(job.id)}>Yeniden Dene</Button>} {job.status === 'failed' && job.canCancel && <Button variant="outline" disabled={cancel.isPending || retry.isPending} onClick={() => cancel.mutate(job.id)}>Kopyalama başlamadan iptal</Button>} {job.status === 'completed' && <Button onClick={() => { setPassword(''); setError(''); setDownloadJob(job); }}>Arşivi İndir</Button>}
+          </div>)}
+          {pages > 1 && <div className="flex gap-3"><Button disabled={page <= 1} onClick={() => setPage(value => value - 1)}>Önceki</Button><span>{Math.min(page, pages)} / {pages}</span><Button disabled={page >= pages} onClick={() => setPage(value => value + 1)}>Sonraki</Button></div>}
+        </CardContent></Card>
+      </TabsContent>
+      <TabsContent value="rules"><Card><CardHeader><CardTitle>Kalıcı Sınıf Geçiş Kuralları</CardTitle></CardHeader><CardContent className="space-y-3">
+        <p>Aktif öğrencisi bulunan her kaynak sınıf için hedef sınıf veya mezuniyet seçin. Pasif öğrenciler, önceki mezunlar ve sınıfsız kayıtlar korunur. Her aktif öğrenci başlangıç sınıfından bir defa geçer. Öğretmen atamaları değişmez.</p><AdminQueryState queries={active ? [rules] : []} />
+        {classes.map(cls => <div key={cls.id} className="flex flex-wrap items-center gap-3"><Label htmlFor={`target-${cls.id}`}>{cls.name} hedefi</Label><select id={`target-${cls.id}`} className="border rounded-md p-2 bg-background" disabled={!active || rulesLocked || save.isPending} value={targets[cls.id] ?? ''} onChange={event => { setRulesDirty(true); setTargets(values => ({ ...values, [cls.id]: event.target.value })); }}><option value="">Hedef seçin</option><option value="graduate">Mezuniyet</option>{classes.filter(target => target.id !== cls.id).map(target => <option key={target.id} value={target.id}>{target.name}</option>)}</select><span className="text-muted-foreground text-sm">{cls._count?.students ?? 0} öğrenci</span></div>)}
+        {missing.length > 0 && <p>{missing.length} sınıfın hedefi seçilmedi. Önkontrol yalnız geçişe uygun aktif öğrencilerin kaynak sınıfları için hedef ister.</p>}<Button disabled={!active || !rules.isSuccess || !rulesDirty || save.isPending || rulesLocked} onClick={() => save.mutate()}>Geçiş Kurallarını Kaydet</Button>
+        <section role="region" aria-label="Geçiş önkontrolü" className="rounded-lg border p-3 space-y-2"><h2 className="font-semibold">{active?.label} geçiş önkontrolü</h2><AdminQueryState queries={active ? [transitions] : []} />{rulesDirty && <p role="status">Önkontrol kayıtlı kuralları kullanır. Değişiklikleri kaydedin.</p>}{transitions.data?.source === 'snapshot' && <p>Dondurulmuş arşivdeki başlangıç üyelikleri kullanılıyor.</p>}{transitions.data?.summary && <TransitionCounts summary={transitions.data.summary} />}{transitions.data?.issues.map((issue, index) => <p role="alert" key={`${issue.code}-${index}`}>{issue.message}{issue.fromClassId && ` Kaynak: ${classes.find(cls => cls.id === issue.fromClassId)?.name ?? issue.fromClassId}.`}{issue.toClassId && ` Hedef: ${classes.find(cls => cls.id === issue.toClassId)?.name ?? issue.toClassId}.`}</p>)}<Button variant="outline" disabled={!active || transitions.isFetching} onClick={() => void transitions.refetch()}>Önkontrolü Yenile</Button></section>
+        {completedTransition && <section role="region" aria-label="Tamamlanan sınıf geçişi" className="rounded-lg border p-3 space-y-2"><h2 className="font-semibold">Tamamlanan geçiş: {completedTransition.label}</h2>{completedTransition.transitionSummary ? <TransitionCounts summary={completedTransition.transitionSummary} /> : <p>Bu eski arşivde kayıtlı geçiş özeti bulunmuyor.</p>}</section>}
+      </CardContent></Card></TabsContent>
+    </Tabs>
+    {focusJob && <Card role="region" aria-label="Seçilen arşiv işi"><CardHeader><CardTitle>İş İlerlemesi</CardTitle></CardHeader><CardContent className="space-y-2">
+      <AdminQueryState queries={[jobQuery, logs]} />
+      {focusedJob && <><p>İş {focusedJob.id}</p><p role="status">{statuses[focusedJob.status] ?? focusedJob.status}</p></>}
+      {focusedJob?.error && <p role="alert">{focusedJob.error}</p>}
+      {jobQuery.isSuccess && focusedJob?.status === 'failed' && <div className="flex flex-wrap gap-2">
+        <Button aria-label={`Yeniden Dene: ${focusedJob.id}`} disabled={busy || jobQuery.isFetching} onClick={() => retry.mutate(focusedJob.id)}>Yeniden Dene</Button>
+        {focusedJob.canCancel && <Button variant="outline" aria-label={`Kopyalama başlamadan iptal: ${focusedJob.id}`} disabled={busy || jobQuery.isFetching} onClick={() => cancel.mutate(focusedJob.id)}>Kopyalama başlamadan iptal</Button>}
+      </div>}
+      {logs.data?.logs.map(log => <p key={log.id} className="text-sm">{new Date(log.createdAt).toLocaleString('tr-TR')} — {log.action}</p>)}
+    </CardContent></Card>}
+    <Dialog open={!!downloadJob} onOpenChange={open => { if (!open && !download.isPending) { setDownloadJob(null); setPassword(''); } }}><DialogContent><DialogTitle>Arşiv İndirme Doğrulaması</DialogTitle><DialogDescription>Tamamlanan arşivi indirmek için yönetici şifrenizi tekrar doğrulayın.</DialogDescription><form className="space-y-3" onSubmit={event => { event.preventDefault(); if (password && downloadJob?.status === 'completed') download.mutate(); }}><Label htmlFor="archive-password">Yönetici şifresi</Label><Input id="archive-password" type="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} disabled={download.isPending} />{error && <p role="alert">{error}</p>}<Button type="submit" disabled={!password || download.isPending}>Şifreyi Doğrula ve İndir</Button></form></DialogContent></Dialog>
+  </div></DashboardLayout>;
 }

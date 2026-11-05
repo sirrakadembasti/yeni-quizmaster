@@ -1,0 +1,110 @@
+{
+  "test": "survey all five canonical types",
+  "phases": [
+    {
+      "phase": "started",
+      "timestamp": "2026-10-03T21:49:02.132Z"
+    },
+    {
+      "phase": "create editor opened",
+      "timestamp": "2026-10-03T21:49:10.944Z"
+    },
+    {
+      "phase": "question GUI verified",
+      "timestamp": "2026-10-03T21:49:12.439Z",
+      "type": "single-choice",
+      "questionCount": 1
+    },
+    {
+      "phase": "question GUI verified",
+      "timestamp": "2026-10-03T21:49:13.882Z",
+      "type": "multiple-choice",
+      "questionCount": 2
+    },
+    {
+      "phase": "question GUI verified",
+      "timestamp": "2026-10-03T21:49:15.257Z",
+      "type": "open-text",
+      "questionCount": 3
+    },
+    {
+      "phase": "question GUI verified",
+      "timestamp": "2026-10-03T21:49:16.643Z",
+      "type": "rating",
+      "questionCount": 4
+    },
+    {
+      "phase": "question GUI verified",
+      "timestamp": "2026-10-03T21:49:18.223Z",
+      "type": "likert",
+      "questionCount": 5
+    },
+    {
+      "phase": "published",
+      "timestamp": "2026-10-03T21:49:29.241Z",
+      "status": 200,
+      "id": "cc68e845-16ad-4529-bd40-2def8dd1c0b9"
+    },
+    {
+      "phase": "all five persisted",
+      "timestamp": "2026-10-03T21:49:30.659Z",
+      "status": 200,
+      "questionCount": 5,
+      "types": [
+        "likert",
+        "rating",
+        "open-text",
+        "multiple-choice",
+        "single-choice"
+      ]
+    },
+    {
+      "phase": "results reloaded",
+      "timestamp": "2026-10-03T21:49:31.252Z"
+    },
+    {
+      "phase": "published survey card visible",
+      "timestamp": "2026-10-03T21:49:34.588Z"
+    },
+    {
+      "phase": "reopened five cards",
+      "timestamp": "2026-10-03T21:49:37.230Z",
+      "questionCount": 5
+    },
+    {
+      "phase": "reopened GUI values verified",
+      "timestamp": "2026-10-03T21:49:37.506Z"
+    },
+    {
+      "phase": "all five question contents edited",
+      "timestamp": "2026-10-03T21:49:39.127Z"
+    },
+    {
+      "phase": "edited content saved",
+      "timestamp": "2026-10-03T21:49:41.619Z",
+      "status": 200
+    },
+    {
+      "phase": "edited API readback verified",
+      "timestamp": "2026-10-03T21:49:44.042Z",
+      "status": 200,
+      "questionCount": 5,
+      "preservedQuestionIds": true
+    },
+    {
+      "phase": "edited GUI reloaded and verified",
+      "timestamp": "2026-10-03T21:49:51.845Z",
+      "questionCount": 5
+    },
+    {
+      "phase": "cleanup started",
+      "timestamp": "2026-10-03T21:49:51.847Z",
+      "id": "cc68e845-16ad-4529-bd40-2def8dd1c0b9"
+    },
+    {
+      "phase": "cleanup succeeded",
+      "timestamp": "2026-10-03T21:49:54.437Z",
+      "status": 200
+    }
+  ]
+}

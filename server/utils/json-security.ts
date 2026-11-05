@@ -3,6 +3,7 @@ const SENSITIVE_JSON_FIELDS = new Set([
   "resetToken",
   "resetTokenExpiry",
   "emailVerificationToken",
+  "sessionVersion",
 ]);
 
 /**

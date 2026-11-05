@@ -1,0 +1,18 @@
+{
+  "route": "/quizzes",
+  "labels": [],
+  "views": [],
+  "errors": [],
+  "network": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 1,
+    "unlabeledInputs": [
+      {
+        "placeholder": "Sınav adı veya açıklama ile ara...",
+        "type": null
+      }
+    ]
+  }
+}

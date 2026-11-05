@@ -3,20 +3,27 @@ import { storage } from "../storage";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { logger } from "../utils/logger";
 import { getEmailStatus, sendDirectEmail, verifyEmailTransport } from "../utils/email";
-import { issuePasswordReset } from "../services/password-reset";
+import { issuePasswordReset, issueOfflinePasswordReset } from "../services/password-reset";
+import { respondToClassError } from '../utils/class-errors';
+import { z } from 'zod';
+import archiveRouter from './archive';
 
 const router: Router = Router();
+router.use('/archive', archiveRouter);
 
 // ==================== LOG ROUTES ====================
 
 router.get("/logs/me", requireAuth, async (req: AuthRequest, res: Response) => {
   try {
-    const { page, limit } = req.query;
+    const { page, limit, startDate } = req.query;
+    const cutoff = startDate ? new Date(String(startDate)) : undefined;
+    if (cutoff && !Number.isFinite(cutoff.getTime())) return res.status(400).json({ message: 'Geçersiz başlangıç tarihi.' });
     const pageNum = page ? Math.max(1, parseInt(page as string, 10)) : 1;
     const limitNum = limit ? Math.min(100, Math.max(1, parseInt(limit as string, 10))) : 50;
 
     const { data: logs, total } = await storage.getLogs({
       userId: req.user!.id,
+      startDate: cutoff,
       page: pageNum,
       limit: limitNum,
     });
@@ -91,6 +98,46 @@ router.post("/password-reset-requests", requireAuth, requireRole(["admin"]), asy
   } catch (error: any) {
     logger.warn({ err: error, adminId: req.user!.id }, "[PasswordResetAdmin] Talep oluşturulamadı");
     res.status(502).json({ message: "Gmail gönderim kuyruğu oluşturulamadı.", code: error?.code || "EMAIL_QUEUE_ERROR" });
+  }
+});
+
+router.post("/password-reset-requests/offline-link", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ message: "Geçerli bir kullanıcı e-postası giriniz." });
+    const user = await storage.getUserByEmail(email);
+    if (!user) return res.status(404).json({ message: "Bu e-posta ile kayıtlı kullanıcı bulunamadı." });
+    const result = await issueOfflinePasswordReset(user, { requestedBy: req.user!.id, requestIp: req.ip });
+    await storage.createLog(req.user!.id, "ADMIN_OFFLINE_PASSWORD_RESET_LINK", `SMTP'siz tek kullanımlık şifre sıfırlama bağlantısı üretildi: ${user.id}`);
+    res.status(201).json({
+      message: "Tek kullanımlık şifre sıfırlama bağlantısı üretildi.",
+      request: result.request,
+      resetUrl: result.resetUrl,
+      expiresAt: result.expiresAt,
+    });
+  } catch (error: any) {
+    logger.warn({ err: error, adminId: req.user!.id }, "[PasswordResetAdmin] Offline bağlantı üretilemedi");
+    res.status(500).json({ message: "Tek kullanımlık şifre sıfırlama bağlantısı üretilemedi." });
+  }
+});
+
+router.post("/password-reset-requests/:id/offline-link", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+  try {
+    const current = await storage.getPasswordResetRequest(req.params.id);
+    if (!current) return res.status(404).json({ message: "Şifre sıfırlama talebi bulunamadı." });
+    const user = await storage.getUser(current.userId);
+    if (!user) return res.status(404).json({ message: "Kullanıcı bulunamadı." });
+    const result = await issueOfflinePasswordReset(user, { requestedBy: req.user!.id, requestIp: req.ip });
+    await storage.createLog(req.user!.id, "REGENERATE_OFFLINE_PASSWORD_RESET_LINK", `SMTP'siz şifre sıfırlama bağlantısı yenilendi: ${user.id}`);
+    res.json({
+      message: "Yeni tek kullanımlık şifre sıfırlama bağlantısı üretildi.",
+      request: result.request,
+      resetUrl: result.resetUrl,
+      expiresAt: result.expiresAt,
+    });
+  } catch (error: any) {
+    logger.warn({ err: error, adminId: req.user!.id }, "[PasswordResetAdmin] Offline bağlantı yenilenemedi");
+    res.status(500).json({ message: "Tek kullanımlık şifre sıfırlama bağlantısı yenilenemedi." });
   }
 });
 
@@ -269,66 +316,16 @@ router.get("/quizzes", requireAuth, requireRole(["admin"]), async (req: AuthRequ
   }
 });
 
-router.post("/archive", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
-  try {
-    const { academicYear } = req.body;
-    if (!academicYear) {
-      return res.status(400).json({ message: "Eğitim yılı (academicYear) belirtilmelidir." });
-    }
-    const result = await storage.archiveQuizzesAndResults(academicYear);
-    
-    // Log the action
-    await storage.createLog(req.user!.id, "ARCHIVE_YEAR", `Yıl sonu arşivi yapıldı: ${academicYear}. Sınavlar: ${result.quizzesArchived}, Sonuçlar: ${result.resultsArchived}`);
-
-    res.json({ message: "Yıl sonu arşivleme başarıyla tamamlandı.", ...result });
-  } catch (error) {
-    logger.error({ err: error }, "[POST /api/admin/archive] Error");
-    res.status(500).json({ message: "Arşivleme işlemi başarısız oldu." });
-  }
+router.post("/promote-students", requireAuth, requireRole(["admin"]), (_req: AuthRequest, res: Response) => {
+  res.status(409).json({ message: 'Sınıf geçişleri doğrulanmış yıllık arşiv tamamlanınca otomatik uygulanır. Geçiş kurallarını arşiv sayfasında ayarlayın.' });
 });
 
-router.post("/promote-students", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
-  try {
-    // academicYear opsiyoneldir. Verilirse, taşınmadan önce tamamlanmış
-    // sonuçlara yıl damgası vurulur — yeni sınıf istatistiklerini kirletmez.
-    const { promotions, academicYear } = req.body; // Array of { fromClassId, toClassId }
-    if (!promotions || !Array.isArray(promotions)) {
-      return res.status(400).json({ message: "Sınıf atlatma listesi (promotions) gereklidir." });
-    }
-
-    let totalPromoted = 0;
-    for (const promo of promotions) {
-      const count = await storage.promoteStudents(promo.fromClassId, promo.toClassId, academicYear || undefined);
-      totalPromoted += count;
-    }
-
-    // Log the action
-    await storage.createLog(req.user!.id, "PROMOTE_STUDENTS", `Öğrenci sınıf atlatma yapıldı. Toplam öğrenci: ${totalPromoted}${academicYear ? `. Yıl damgası: ${academicYear}` : ''}`);
-
-    res.json({ message: "Öğrenciler başarıyla yeni sınıflarına aktarıldı.", totalPromoted });
-  } catch (error) {
-    logger.error({ err: error }, "[POST /api/admin/promote-students] Error");
-    res.status(500).json({ message: "Öğrenci sınıf atlatma başarısız oldu." });
-  }
-});
-
-// GERİ ALINAMAZ: Belirtilen akademik yıla ait arşivlenmiş sınavları ve öğrenci
-// sonuçlarını veritabanından fiziksel olarak siler. Sadece admin yetkisiyle erişilebilir.
+// Historical records are immutable; the legacy destructive endpoint stays closed.
 router.post("/purge", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
   try {
-    const { academicYear } = req.body;
-    if (!academicYear) {
-      return res.status(400).json({ message: "Silinecek eğitim yılı (academicYear) belirtilmelidir." });
-    }
-
-    const result = await storage.purgeArchivedData(academicYear);
-    await storage.createLog(req.user!.id, "PURGE_ARCHIVED_DATA", `Arşiv silindi: ${academicYear}. Sınavlar: ${result.quizzesPurged}, Sonuçlar: ${result.resultsPurged}`);
-
-    res.json({ message: `${academicYear} yılına ait arşiv kalıcı olarak silindi.`, ...result });
-  } catch (error) {
-    logger.error({ err: error }, "[POST /api/admin/purge] Error");
-    res.status(500).json({ message: "Arşiv silme işlemi başarısız oldu." });
-  }
+    await storage.createLog(req.user!.id, 'ARCHIVE_WRITE_DENIED', 'Arşiv kalıcı silme isteği reddedildi.');
+  } catch (error) { logger.error({ err: error }, 'Archive purge denial audit failed'); }
+  return res.status(403).json({ message: 'Arşivler değişmez geçmiş kayıtlardır; kalıcı silme devre dışıdır.' });
 });
 
 export default router;

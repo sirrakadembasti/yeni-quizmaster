@@ -1,0 +1,24 @@
+- main:
+  - button "Bildirimleri aç": "23"
+  - button "Karanlık Moda Geç"
+  - button "P Parent Audit Guardian Veli"
+  - heading "Sınav Sonuçları" [level=1]
+  - paragraph: Bağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.
+  - combobox "Öğrenci seçin": Beren Audit Child · Sınıfsız
+  - text: Tamamlanan Sınavlar
+  - table:
+    - rowgroup:
+      - row "Sınav Ders Puan Tarih İşlem":
+        - columnheader "Sınav"
+        - columnheader "Ders"
+        - columnheader "Puan"
+        - columnheader "Tarih"
+        - columnheader "İşlem"
+    - rowgroup:
+      - row "Parent Audit Completed Exam Audit Mathematics %50 04.10.2026 Detay":
+        - cell "Parent Audit Completed Exam"
+        - cell "Audit Mathematics"
+        - cell "%50"
+        - cell "04.10.2026"
+        - cell "Detay":
+          - button "Detay"

@@ -1,0 +1,382 @@
+{
+  "config": {
+    "argv": [
+      "/home/ahmet/.cache/quizmaster-closure/tools-XpIGnI/node-v22.23.2-linux-x64/bin/node",
+      "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/node_modules/playwright/cli.js",
+      "test",
+      "-c",
+      "playwright.teacher-audit.config.ts",
+      "teacher-editor-depth-audit.spec.ts:85",
+      "teacher-print-audit.spec.ts"
+    ],
+    "configFile": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/playwright.teacher-audit.config.ts",
+    "rootDir": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "teacher-*-audit.spec.ts"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/teacher-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "teacher-editor-depth-audit.spec.ts",
+      "file": "teacher-editor-depth-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Teacher audit: editor depth",
+          "file": "teacher-editor-depth-audit.spec.ts",
+          "line": 37,
+          "column": 6,
+          "specs": [
+            {
+              "title": "survey GUI creates all five canonical question types and edits persisted content",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 94789,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-audit-helpers.ts",
+                            "column": 42,
+                            "line": 45
+                          },
+                          "message": "Error: apiRequestContext.get: Test timeout of 90000ms exceeded.\n\n   at teacher-audit-helpers.ts:45\n\n  43 | export async function api(page: Page, path: string, method = 'GET', data?: unknown) {\n  44 |   assertIsolatedRuntime();\n> 45 |   const csrf = await (await page.request.get('/api/csrf-token')).json();\n     |                                          ^\n  46 |   const response = await page.request.fetch('/api' + path, { method,\n  47 |     headers: { 'x-csrf-token': [redacted]\n  48 |     ...(data === undefined ? {} : { data }) });\n    at api (/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-audit-helpers.ts:45:42)\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-editor-depth-audit.spec.ts:166:39"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T18:22:10.667Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-editor-depth-audit-694a6-and-edits-persisted-content/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-editor-depth-audit-694a6-and-edits-persisted-content/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "e45d73e6cabcf5459b83-079e283b234ed667226b",
+              "file": "teacher-editor-depth-audit.spec.ts",
+              "line": 85,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "teacher-print-audit.spec.ts",
+      "file": "teacher-print-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "teacher results PDF includes all fourteen report rows then selected zero-score row",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 68829,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#results-student')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('#results-student') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('#results-student')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#results-student')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('#results-student') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('#results-student')\u001b[22m\n\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-print-audit.spec.ts:87:50",
+                    "location": {
+                      "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-print-audit.spec.ts",
+                      "column": 50,
+                      "line": 87
+                    },
+                    "snippet": "  85 | test('teacher results PDF includes all fourteen report rows then selected zero-score row', async ({ page }, info) => {\n  86 |   await page.goto('/results');\n> 87 |   await expect(page.locator('#results-student')).toBeVisible();\n     |                                                  ^\n  88 |   await page.getByRole('tab', { name: /Raporlar/ }).click();\n  89 |   await expect(page.locator('tbody tr')).toHaveCount(14);\n  90 |   await expect(page.getByRole('row').filter({ hasText: ownedNames[0] })).toContainText('0%');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-print-audit.spec.ts",
+                        "column": 50,
+                        "line": 87
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#results-student')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('#results-student') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('#results-student')\u001b[22m\n\n\n  85 | test('teacher results PDF includes all fourteen report rows then selected zero-score row', async ({ page }, info) => {\n  86 |   await page.goto('/results');\n> 87 |   await expect(page.locator('#results-student')).toBeVisible();\n     |                                                  ^\n  88 |   await page.getByRole('tab', { name: /Raporlar/ }).click();\n  89 |   await expect(page.locator('tbody tr')).toHaveCount(14);\n  90 |   await expect(page.getByRole('row').filter({ hasText: ownedNames[0] })).toContainText('0%');\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-print-audit.spec.ts:87:50"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T18:26:31.827Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-print-audit-teache-b45f0-hen-selected-zero-score-row/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-print-audit-teache-b45f0-hen-selected-zero-score-row/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-print-audit.spec.ts",
+                    "column": 50,
+                    "line": 87
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "ec60fce75f7a31217b7c-290abbfced0e3a6dab66",
+          "file": "teacher-print-audit.spec.ts",
+          "line": 85,
+          "column": 5
+        },
+        {
+          "title": "teacher class PDF includes fourteen students and filter metadata without unselected rows",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 93371,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-print-audit.spec.ts",
+                        "column": 14,
+                        "line": 48
+                      },
+                      "message": "Error: page.screenshot: Test timeout of 90000ms exceeded.\nCall log:\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\n\n  46 |   writeFileSync(`${output}/${name}-expected.json`, JSON.stringify({ title, required, forbidden,\n  47 |     format: 'A4', bytes: buffer.length, source: 'Chromium page.pdf with production print CSS' }, null, 2));\n> 48 |   await page.screenshot({ path: `${output}/${name}-print-dom.png`, fullPage: true });\n     |              ^\n  49 |\n  50 |   const metadata = page.locator('.print-report-meta');\n  51 |   await expect(metadata).toBeVisible();\n    at pdfReport (/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-print-audit.spec.ts:48:14)\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-print-audit.spec.ts:108:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T18:28:11.305Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "teacher-class-all-real-pdf",
+                      "contentType": "application/pdf",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-print-audit-teache-b137f-ata-without-unselected-rows/attachments/teacher-class-all-real-pdf-b69b9b6466ad0f2e7ae18b9e245c9c58edae6cf8.pdf"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-print-audit-teache-b137f-ata-without-unselected-rows/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-print-audit-teache-b137f-ata-without-unselected-rows/error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "ec60fce75f7a31217b7c-64be415d04c233ff4e95",
+          "file": "teacher-print-audit.spec.ts",
+          "line": 104,
+          "column": 5
+        },
+        {
+          "title": "teacher student-analysis PDF preserves zero-score report and student identity",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 26518,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T18:29:48.723Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "teacher-student-zero-real-pdf",
+                      "contentType": "application/pdf",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-print-audit-teache-af8fb-report-and-student-identity/attachments/teacher-student-zero-real-pdf-601afd0451b5b24f190a5cc18ca25184197c688d.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec60fce75f7a31217b7c-6139ee6cecca9b471a4e",
+          "file": "teacher-print-audit.spec.ts",
+          "line": 116,
+          "column": 5
+        },
+        {
+          "title": "teacher statistics PDF reports assigned class participation and average matching real API",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12079,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T18:30:16.157Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "teacher-statistics-real-pdf",
+                      "contentType": "application/pdf",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-print-audit-teache-3132b-d-average-matching-real-API/attachments/teacher-statistics-real-pdf-1975e711ff9cdeab2207977edcd45b5898c5d61e.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec60fce75f7a31217b7c-c5b672720239ef47536a",
+          "file": "teacher-print-audit.spec.ts",
+          "line": 130,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-03T18:22:06.359Z",
+    "duration": 503098.851,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

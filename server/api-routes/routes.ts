@@ -8,6 +8,7 @@ import classRouter from "./class";
 import categoryRouter from "./category";
 import dashboardRouter from "./dashboard";
 import aiRouter from "./ai";
+import { createAIManagementRouter } from "./ai-management";
 import adminRouter from "./admin";
 import uploadRouter from "./upload";
 import parentRouter from "./parent";
@@ -18,6 +19,7 @@ import studentRouter from "./student";
 import analyticsRouter from "./analytics";
 import surveyRouter from "./survey";
 import deploymentRouter from "./deployment";
+import { createAcademicHistoryRouter } from "./academic-history";
 
 export async function registerRoutes(_httpServer: Server, app: Express) {
   const router: Router = Router();
@@ -30,6 +32,8 @@ export async function registerRoutes(_httpServer: Server, app: Express) {
   router.use("/categories", categoryRouter);
   router.use("/dashboard", dashboardRouter);
   router.use("/ai", aiRouter);
+  router.use("/admin/ai", createAIManagementRouter());
+  router.use("/admin/academic-history", createAcademicHistoryRouter());
   router.use("/admin", adminRouter);
   router.use("/upload", uploadRouter);
   router.use("/parents", parentRouter);

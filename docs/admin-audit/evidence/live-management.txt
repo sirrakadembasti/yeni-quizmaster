@@ -1,0 +1,5 @@
+Browser tab: 3, Title: "QuizMaster - Admin Dashboard", URL: "http://127.0.0.1:5511/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 49
++				65 text audit-teacher-exam
+The focused UI element is 0 AXWebArea QuizMaster - Admin Dashboard, URL: 127.0.0.1:5511/

@@ -1,0 +1,399 @@
+{
+  "currentConfig": "playwright.parent-audit.config.ts",
+  "total": 41,
+  "passed": 26,
+  "failed": 15,
+  "notRun": 0,
+  "skipped": 0,
+  "cohorts": [
+    {
+      "file": "results-baseline.json",
+      "stats": {
+        "startTime": "2026-10-04T08:54:24.123Z",
+        "duration": 547494.9600000001,
+        "expected": 19,
+        "skipped": 0,
+        "unexpected": 13,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "results-depth.json",
+      "stats": {
+        "startTime": "2026-10-04T09:05:55.276Z",
+        "duration": 114528.91900000001,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 3,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "results-readiness.json",
+      "stats": {
+        "startTime": "2026-10-04T09:11:35.578Z",
+        "duration": 72245.572,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 2,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "results-print.json",
+      "stats": {
+        "startTime": "2026-10-04T09:15:00.402Z",
+        "duration": 49193.405,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "46ce5bf097207d1ba53f-867397d62b8401e6090a",
+      "title": "linked completed result permission and foreign overview/result rejection are checked independently of secret-field assertions",
+      "file": "parent-boundaries-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-depth.json",
+      "durationMs": 8671
+    },
+    {
+      "id": "46ce5bf097207d1ba53f-10071234058eb7e0cc96",
+      "title": "parent GUI login loads connected children and GUI logout denies a protected page and API",
+      "file": "parent-boundaries-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-depth.json",
+      "durationMs": 16960
+    },
+    {
+      "id": "46ce5bf097207d1ba53f-2a216dde7485f763c819",
+      "title": "logging out and signing in as a different parent clears the previous children and result cache",
+      "file": "parent-boundaries-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-depth.json",
+      "durationMs": 16671
+    },
+    {
+      "id": "cedb4db72fa8275d3def-5eff7f2871033c098200",
+      "title": "P-N01 dashboard, home alias and results direct URLs, reload, mobile, keyboard and real network",
+      "file": "parent-panel-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 42892
+    },
+    {
+      "id": "cedb4db72fa8275d3def-2b495852f85840279b90",
+      "title": "P-F01 dashboard metrics, assigned exams and switching both linked students use real records",
+      "file": "parent-panel-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 8399
+    },
+    {
+      "id": "cedb4db72fa8275d3def-2054b6ebf5cf2f7fda06",
+      "title": "P-F02 results detail, correct and incorrect answers, back and child change",
+      "file": "parent-panel-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 9332
+    },
+    {
+      "id": "cedb4db72fa8275d3def-56124dd5988e6bd9c321",
+      "title": "P-F03 results link preserves dashboard selected child",
+      "file": "parent-panel-audit.spec.ts",
+      "status": "failed",
+      "report": "results-baseline.json",
+      "durationMs": 20859,
+      "error": "Error: expect(locator).toContainText(expected) failed\n\nLocator: getByRole('combobox')\nExpected substring: \"Beren Audit Child\"\nReceived string:    \"Ada Audit Child · Parent Audit 7A\"\nTimeout: 15000ms\n\nCall log:\n  - Expect \"toContainText\" getByRole('combobox') with timeout 15000ms\n  - waiting for getByRole('combobox')\n    33 × locator resolved to <button dir=\"ltr\" type=\"button\" role=\"combobox\" data-state=\"closed\" aria-expanded=\"false\" aria-autocomplete=\"none\" class=\"flex h-9 items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm dark:shadow-none ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-full md:w-72\">…</button>\n       - unexpected value \"Ada Audit Child · Parent Audit 7A\"\n"
+    },
+    {
+      "id": "cedb4db72fa8275d3def-b83416dbbf9a67df18e2",
+      "title": "P-E01 genuinely unlinked parent empty dashboard and results",
+      "file": "parent-panel-audit.spec.ts",
+      "status": "failed",
+      "report": "results-baseline.json",
+      "durationMs": 23313,
+      "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByText('Hesabınıza bağlı öğrenci bulunmuyor')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByText('Hesabınıza bağlı öğrenci bulunmuyor') with timeout 15000ms\n  - waiting for getByText('Hesabınıza bağlı öğrenci bulunmuyor')\n"
+    },
+    {
+      "id": "cedb4db72fa8275d3def-9bdbe189ac909e874b84",
+      "title": "P-E02 students API500 distinguishes failure from empty and retries real API",
+      "file": "parent-panel-audit.spec.ts",
+      "status": "failed",
+      "report": "results-baseline.json",
+      "durationMs": 22547,
+      "error": "Error: expect(locator).toContainText(expected) failed\n\nLocator: locator('main')\nExpected pattern: /Controlled parent students failure|hata|getirilemedi/i\nReceived string:  \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Hesabınıza bağlı öğrenci bulunmuyorOkul yöneticinizden veli hesabınızı öğrenciyle ilişkilendirmesini isteyin.\"\nTimeout: 15000ms\n\nCall log:\n  - Expect \"toContainText\" locator('main') with timeout 15000ms\n  - waiting for locator('main')\n    2 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\n      - unexpected value \"PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Hesabınıza bağlı öğrenci bulunmuyorOkul yöneticinizden veli hesabınızı öğrenciyle ilişkilendirmesini isteyin.\"\n    31 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\n       - unexpected value \"23PParent Aud"
+    },
+    {
+      "id": "cedb4db72fa8275d3def-a9958de06b70dfbef64b",
+      "title": "P-E03 students API500 distinguishes failure from empty and retries real API",
+      "file": "parent-panel-audit.spec.ts",
+      "status": "failed",
+      "report": "results-baseline.json",
+      "durationMs": 20582,
+      "error": "Error: expect(locator).toContainText(expected) failed\n\nLocator: locator('main')\nExpected pattern: /Controlled parent students failure|hata|getirilemedi/i\nReceived string:  \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Tamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\nTimeout: 15000ms\n\nCall log:\n  - Expect \"toContainText\" locator('main') with timeout 15000ms\n  - waiting for locator('main')\n    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\n       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Tamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\n"
+    },
+    {
+      "id": "cedb4db72fa8275d3def-2984e080759e5361d5ec",
+      "title": "P-E04 overview API500 displays failure and real retry",
+      "file": "parent-panel-audit.spec.ts",
+      "status": "failed",
+      "report": "results-baseline.json",
+      "durationMs": 22182,
+      "error": "Error: expect(locator).toContainText(expected) failed\n\nLocator: locator('main')\nExpected pattern: /Controlled parent overview failure|hata|getirilemedi/i\nReceived string:  \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Ada Audit Child · Parent Audit 7A\"\nTimeout: 15000ms\n\nCall log:\n  - Expect \"toContainText\" locator('main') with timeout 15000ms\n  - waiting for locator('main')\n    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\n       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Ada Audit Child · Parent Audit 7A\"\n"
+    },
+    {
+      "id": "cedb4db72fa8275d3def-606436c787967df034e7",
+      "title": "P-E05 overview API500 displays failure and real retry",
+      "file": "parent-panel-audit.spec.ts",
+      "status": "failed",
+      "report": "results-baseline.json",
+      "durationMs": 22421,
+      "error": "Error: expect(locator).toContainText(expected) failed\n\nLocator: locator('main')\nExpected pattern: /Controlled parent overview failure|hata|getirilemedi/i\nReceived string:  \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\nTimeout: 15000ms\n\nCall log:\n  - Expect \"toContainText\" locator('main') with timeout 15000ms\n  - waiting for locator('main')\n    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\n       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\n"
+    },
+    {
+      "id": "cedb4db72fa8275d3def-f5223bacf0b7497bb6a1",
+      "title": "P-E06 result detail API500 is visible and retry recovers",
+      "file": "parent-panel-audit.spec.ts",
+      "status": "failed",
+      "report": "results-baseline.json",
+      "durationMs": 21837,
+      "error": "Error: expect(locator).toContainText(expected) failed\n\nLocator: locator('main')\nExpected pattern: /Controlled parent detail failure|hata|getirilemedi/i\nReceived string:  \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemParent Audit Completed ExamAudit Mathematics%004.10.2026Detay\"\nTimeout: 15000ms\n\nCall log:\n  - Expect \"toContainText\" locator('main') with timeout 15000ms\n  - waiting for locator('main')\n    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\n       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemParent Audit Completed ExamAudit Mathematics%004.10.2026Detay\"\n"
+    },
+    {
+      "id": "cedb4db72fa8275d3def-74f47f064686dfbdfa40",
+      "title": "P-E07 delayed overview advertises loading rather than empty",
+      "file": "parent-panel-audit.spec.ts",
+      "status": "failed",
+      "report": "results-readiness.json",
+      "durationMs": 36707,
+      "error": "Error: expect(locator).toContainText(expected) failed\n\nLocator: locator('main')\nExpected pattern: /yükleniyor/i\nReceived string:  \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\nTimeout: 15000ms\n\nCall log:\n  - Expect \"toContainText\" locator('main') with timeout 15000ms\n  - waiting for locator('main')\n    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\n       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\n"
+    },
+    {
+      "id": "cedb4db72fa8275d3def-ae983b68caa8258b163f",
+      "title": "P-A01 both student selectors expose a purpose label",
+      "file": "parent-panel-audit.spec.ts",
+      "status": "failed",
+      "report": "results-baseline.json",
+      "durationMs": 20777,
+      "error": "Error: expect(locator).toHaveAccessibleName(expected) failed\n\nLocator: getByRole('combobox')\nExpected pattern: /öğrenci seç/i\nReceived string:  \"\"\nTimeout: 15000ms\n\nCall log:\n  - Expect \"toHaveAccessibleName\" getByRole('combobox') with timeout 15000ms\n  - waiting for getByRole('combobox')\n    33 × locator resolved to <button dir=\"ltr\" type=\"button\" role=\"combobox\" data-state=\"closed\" aria-expanded=\"false\" aria-autocomplete=\"none\" class=\"flex h-9 items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm dark:shadow-none ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-full md:w-72\">…</button>\n       - unexpected value \"\"\n"
+    },
+    {
+      "id": "cedb4db72fa8275d3def-4b78b7be368392fa097d",
+      "title": "P-F04 a question image is available in parent result detail",
+      "file": "parent-panel-audit.spec.ts",
+      "status": "failed",
+      "report": "results-baseline.json",
+      "durationMs": 23694,
+      "error": "Error: expect(locator).toHaveCount(expected) failed\n\nLocator:  locator('main img')\nExpected: 1\nReceived: 0\nTimeout:  15000ms\n\nCall log:\n  - Expect \"toHaveCount\" locator('main img') with timeout 15000ms\n  - waiting for locator('main img')\n    33 × locator resolved to 0 elements\n       - unexpected value \"0\"\n"
+    },
+    {
+      "id": "8cd0abe1161bdad69ed3-7553f13638cebabc5c46",
+      "title": "P-X01 announcements and all four settings tabs invoke print and render real browser PDF",
+      "file": "parent-print-audit.spec.ts",
+      "status": "passed",
+      "report": "results-print.json",
+      "durationMs": 23780
+    },
+    {
+      "id": "8cd0abe1161bdad69ed3-57f3dac4befb265d9dec",
+      "title": "P-X02 parent announcement audience badge names parents",
+      "file": "parent-print-audit.spec.ts",
+      "status": "failed",
+      "report": "results-print.json",
+      "durationMs": 19866,
+      "error": "Error: expect(locator).toContainText(expected) failed\n\nLocator: getByRole('heading', { name: 'Parent Audit Parent Announcement', exact: true }).locator('xpath=ancestor::div[contains(@class,\"group\")][1]')\nExpected pattern: /VELİLERE|VELİLER/\nReceived string:  \"PParent Audit AdminSistem Yöneticisi4 Ekim 2026, 12:14Parent Audit Parent AnnouncementIsolated parent announcementHedef:ÖĞRETMENLEREDuyuru \"\nTimeout: 15000ms\n\nCall log:\n  - Expect \"toContainText\" getByRole('heading', { name: 'Parent Audit Parent Announcement', exact: true }).locator('xpath=ancestor::div[contains(@class,\"group\")][1]') with timeout 15000ms\n  - waiting for getByRole('heading', { name: 'Parent Audit Parent Announcement', exact: true }).locator('xpath=ancestor::div[contains(@class,\"group\")][1]')\n    33 × locator resolved to <div data-slot=\"card\" class=\"rounded-2xl border border-border/70 bg-card text-card-foreground shadow-sm group overflow-hidden transition-colors hover:border-primary/40\">…</div>\n       - unexpected value \"PParent Audit AdminSistem Yöneticisi4 Ekim 2026, 12:14Parent Audit Parent AnnouncementIsolated parent announcementHedef:ÖĞRETMENLEREDuyuru \"\n"
+    },
+    {
+      "id": "a23149ff290453ad4608-d6f61ca3510393dc39d5",
+      "title": "anonymous reads return 401 and student sessions cannot enter parent routes",
+      "file": "parent-security-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 12656
+    },
+    {
+      "id": "a23149ff290453ad4608-ce31fe5412792b2dee80",
+      "title": "linked students and completed answers are visible without authentication secrets or foreign results",
+      "file": "parent-security-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 17747
+    },
+    {
+      "id": "a23149ff290453ad4608-35c66f780615278c6a0a",
+      "title": "parent cannot start exams, mutate child records, manage guardian links or archive data",
+      "file": "parent-security-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 15297
+    },
+    {
+      "id": "a23149ff290453ad4608-85de66477dd4b3acd16b",
+      "title": "parent cannot answer a legacy in-progress attempt owned by their former student identity",
+      "file": "parent-security-audit.spec.ts",
+      "status": "failed",
+      "report": "results-depth.json",
+      "durationMs": 2526,
+      "error": "Error: Parent role must be denied even when a retained attempt belongs to the same user ID\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: 403\nReceived: 200"
+    },
+    {
+      "id": "a23149ff290453ad4608-64c014fbd108769111f4",
+      "title": "unfinished child results are absent from overview and cannot expose the answer key",
+      "file": "parent-security-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 4147
+    },
+    {
+      "id": "a23149ff290453ad4608-ac2bd943f8d27031723d",
+      "title": "removing a guardian link revokes overview and result access in the existing session",
+      "file": "parent-security-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 4432
+    },
+    {
+      "id": "a23149ff290453ad4608-45ad3ea53b85e97ce109",
+      "title": "deactivating the linked student hides the child and denies previously authorized results",
+      "file": "parent-security-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 3131
+    },
+    {
+      "id": "a23149ff290453ad4608-7851c732a34808664c78",
+      "title": "server-side parent session revocation returns 401 and protected page reload requires login",
+      "file": "parent-security-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 8965
+    },
+    {
+      "id": "a23149ff290453ad4608-dacc22430c0a5cdedc2a",
+      "title": "classless child assigned exams match the exams visible in the child account",
+      "file": "parent-security-audit.spec.ts",
+      "status": "failed",
+      "report": "results-depth.json",
+      "durationMs": 5004,
+      "error": "Error: expect(received).toEqual(expected) // deep equality\n\n- Expected  - 3\n+ Received  + 1\n\n- Array [\n-   \"parent-audit-unassigned-exam\",\n- ]\n+ Array []"
+    },
+    {
+      "id": "a23149ff290453ad4608-8422cfe3df24e1cf3000",
+      "title": "class-targeted parent announcement creates a real notification for the linked parent",
+      "file": "parent-security-audit.spec.ts",
+      "status": "failed",
+      "report": "results-depth.json",
+      "durationMs": 7411,
+      "error": "Error: expect(received).toContain(expected) // indexOf\n\nExpected value: \"Parent audit class notice cc912211-a689-4def-8176-b3e7d07e826e\"\nReceived array: [\"Parent Audit Notification 0\", \"Parent Audit Notification 1\", \"Parent Audit Notification 2\", \"Parent Audit Notification 3\", \"Parent Audit Notification 4\", \"Parent Audit Notification 5\", \"Parent Audit Notification 6\", \"Parent Audit Notification 7\", \"Parent Audit Notification 8\", \"Parent Audit Notification 9\", …]"
+    },
+    {
+      "id": "bdb4b69badf720d1ab99-3855b201dbe9ba49f65a",
+      "title": "P-S01 parent edits own profile through GUI and reload persists actual DB values",
+      "file": "parent-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 9367
+    },
+    {
+      "id": "bdb4b69badf720d1ab99-89c491cf1fb05a5e3902",
+      "title": "P-S02 notification GUI paginates, marks read, deletes own record and rejects foreign deletion",
+      "file": "parent-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 28556
+    },
+    {
+      "id": "bdb4b69badf720d1ab99-f2cdf4a6426be1027fb3",
+      "title": "P-S03 notification sound preference persists after reload and is restored",
+      "file": "parent-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 10428
+    },
+    {
+      "id": "bdb4b69badf720d1ab99-bdbbfbdaaeac938a3321",
+      "title": "P-S04 own operation history paginates and excludes old and foreign entries",
+      "file": "parent-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 32553
+    },
+    {
+      "id": "bdb4b69badf720d1ab99-b267cc28a8eba2ee897f",
+      "title": "P-S05 security form rejects mismatch and incorrect current password without changing password",
+      "file": "parent-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 5257
+    },
+    {
+      "id": "bdb4b69badf720d1ab99-d4f345bf4a7639534b09",
+      "title": "P-S06 dedicated parent changes password, revokes other session and new login works",
+      "file": "parent-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 30451
+    },
+    {
+      "id": "bdb4b69badf720d1ab99-1b081ec92c1f0778df09",
+      "title": "P-S07 parent sees intended announcements and cannot create or delete",
+      "file": "parent-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 8842
+    },
+    {
+      "id": "bdb4b69badf720d1ab99-37c20ce43495126f3972",
+      "title": "P-S08 announcement API error shows retry and recovers from the real server",
+      "file": "parent-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 5110
+    },
+    {
+      "id": "bdb4b69badf720d1ab99-e3c4819852e74523ed08",
+      "title": "P-S09 mobile settings tabs work with keyboard and preserve query navigation",
+      "file": "parent-shared-audit.spec.ts",
+      "status": "passed",
+      "report": "results-baseline.json",
+      "durationMs": 16925
+    },
+    {
+      "id": "d57cf61ed978def519f0-5986fb07e96d249beded",
+      "title": "P-A03 results student selector independently exposes a purpose label",
+      "file": "parent-shared-depth-audit.spec.ts",
+      "status": "failed",
+      "report": "results-readiness.json",
+      "durationMs": 28255,
+      "error": "Error: expect(locator).toHaveAccessibleName(expected) failed\n\nLocator: getByRole('combobox')\nExpected pattern: /öğrenci seç/i\nReceived string:  \"\"\nTimeout: 15000ms\n\nCall log:\n  - Expect \"toHaveAccessibleName\" getByRole('combobox') with timeout 15000ms\n  - waiting for getByRole('combobox')\n    33 × locator resolved to <button dir=\"ltr\" type=\"button\" role=\"combobox\" data-state=\"closed\" aria-expanded=\"false\" aria-autocomplete=\"none\" class=\"flex h-9 items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm dark:shadow-none ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-full md:w-72\">…</button>\n       - unexpected value \"\"\n"
+    },
+    {
+      "id": "d57cf61ed978def519f0-e497c2f06c65cabb0155",
+      "title": "P-D01 settings notifications controlled API500 and real recovery",
+      "file": "parent-shared-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-depth.json",
+      "durationMs": 7615
+    },
+    {
+      "id": "d57cf61ed978def519f0-82a3658cbd8f3ac4515c",
+      "title": "P-D02 settings logs controlled API500 and real recovery",
+      "file": "parent-shared-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-depth.json",
+      "durationMs": 6278
+    },
+    {
+      "id": "d57cf61ed978def519f0-0ff9105daa1494ebc3b8",
+      "title": "P-A02 long valid child name and email remain inside mobile document",
+      "file": "parent-shared-depth-audit.spec.ts",
+      "status": "passed",
+      "report": "results-depth.json",
+      "durationMs": 6514
+    }
+  ]
+}

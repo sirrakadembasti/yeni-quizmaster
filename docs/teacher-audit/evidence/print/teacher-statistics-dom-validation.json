@@ -1,0 +1,36 @@
+{
+  "required": [
+    {
+      "value": "Teacher Audit 7A",
+      "present": true
+    },
+    {
+      "value": "Sınıf Bazında Ayrıntılı Sonuçlar",
+      "present": true
+    },
+    {
+      "value": "%100",
+      "present": true
+    },
+    {
+      "value": "%93",
+      "present": true
+    },
+    {
+      "value": "14",
+      "present": true
+    }
+  ],
+  "forbidden": [],
+  "controls": 0,
+  "tables": [
+    {
+      "left": 1,
+      "right": 717,
+      "width": 716,
+      "rows": 1
+    }
+  ],
+  "viewport": 718,
+  "overflowingRows": 0
+}

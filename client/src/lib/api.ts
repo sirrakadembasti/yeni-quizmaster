@@ -1,3 +1,12 @@
+import { ApiError } from './http-error';
+import {
+  DEMO_READ_ONLY_CODE,
+  isClientDemoMode,
+  notifyDemoReadOnly,
+  withAppBasePath,
+  type DemoRoleKey,
+  type DemoShowcaseAccount,
+} from './demo-mode';
 const API_BASE = '/api';
 
 let csrfToken: string | null = null;
@@ -9,7 +18,7 @@ async function getCsrfToken() {
 
   csrfPromise = (async () => {
     try {
-      const res = await window.fetch(`${API_BASE}/csrf-token`, { credentials: 'include' });
+      const res = await window.fetch(withAppBasePath(`${API_BASE}/csrf-token`), { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
         // Server returns { csrfToken: '...' } — read the correct field
@@ -45,27 +54,37 @@ export const uploadApi = {
   },
 };
 
-async function apiFetch(url: string, options: RequestInit = {}) {
+export async function apiFetch(url: string, options: RequestInit = {}) {
   const method = options.method || 'GET';
+  const resolvedUrl = withAppBasePath(url);
+  const demoHeader = isClientDemoMode() ? { 'x-quizmaster-demo': '1' } : undefined;
   
   if (!['GET', 'HEAD', 'OPTIONS'].includes(method.toUpperCase())) {
     const token = await getCsrfToken();
-    if (token) {
+    if (token || demoHeader) {
       options.headers = {
         ...options.headers,
-        'x-csrf-token': token
+        ...(demoHeader || {}),
+        ...(token ? { 'x-csrf-token': token } : {}),
       };
     }
+  } else if (demoHeader) {
+    options.headers = {
+      ...options.headers,
+      ...demoHeader,
+    };
   }
   
-  let response = await window.fetch(url, options);
+  let response = await window.fetch(resolvedUrl, options);
 
-  // Automatically retry once if CSRF token is invalid
+  // Automatically retry once if CSRF token is invalid, or notify if Demo Read-Only
   if (response.status === 403) {
     const clonedResponse = response.clone();
     try {
       const errorData = await clonedResponse.json();
-      if (errorData.message === "invalid csrf token") {
+      if (errorData.code === DEMO_READ_ONLY_CODE) {
+        notifyDemoReadOnly(errorData.message);
+      } else if (errorData.message === "invalid csrf token") {
         console.warn("CSRF Token invalid, refreshing and retrying...");
         csrfToken = null; // Clear global token
         csrfPromise = null; // Clear global promise lock
@@ -75,7 +94,7 @@ async function apiFetch(url: string, options: RequestInit = {}) {
             ...(options.headers || {}),
             'x-csrf-token': newToken
           };
-          response = await window.fetch(url, {
+          response = await window.fetch(resolvedUrl, {
             ...options,
             headers: newHeaders
           });
@@ -152,6 +171,7 @@ export interface User {
   name: string;
   email: string;
   role: 'admin' | 'teacher' | 'student' | 'parent';
+  isDemoUser?: boolean;
   classId?: string | null;
   createdAt: string;
   classNo?: string | null;
@@ -341,13 +361,13 @@ export interface AIQuestion {
   correctAnswerIndex?: number;
 }
 
-async function handleResponse<T>(response: Response): Promise<T> {
+export async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'İstek başarısız oldu.' }));
     const errorMsg = error.details 
       ? `${error.message || 'Hata'} (${error.details})` 
       : (error.message || `İstek ${response.status} koduyla başarısız oldu.`);
-    throw new Error(errorMsg);
+    throw new ApiError(errorMsg, response.status);
   }
   return response.json();
 }
@@ -369,6 +389,28 @@ export const authApi = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
+      credentials: 'include',
+    });
+    return handleResponse<{ user: User }>(response);
+  },
+
+  async getDemoInfo() {
+    const response = await apiFetch(`${API_BASE}/auth/demo-info`, {
+      credentials: 'include',
+    });
+    return handleResponse<{
+      enabled: boolean;
+      basePath: string;
+      readOnlyMessage: string;
+      accounts: DemoShowcaseAccount[];
+    }>(response);
+  },
+
+  async demoLogin(roleKey: DemoRoleKey) {
+    const response = await apiFetch(`${API_BASE}/auth/demo-login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roleKey }),
       credentials: 'include',
     });
     return handleResponse<{ user: User }>(response);
@@ -1027,13 +1069,21 @@ export const adminApi = {
     const response = await apiFetch(`${API_BASE}/admin/logs?${params.toString()}`, {
       credentials: "include",
     });
-    return handleResponse<{ logs: any[] }>(response);
+    return handleResponse<{ logs: any[]; pagination: { page: number; limit: number; total: number; totalPages: number } }>(response);
   },
-  async getLogsMe() {
-    const response = await apiFetch(`${API_BASE}/admin/logs/me`, {
+  async getLogsMe(filters?: { page?: number; limit?: number; startDate?: string }) {
+    const params = new URLSearchParams();
+    if (filters?.page) params.set('page', String(filters.page));
+    if (filters?.limit) params.set('limit', String(filters.limit));
+    if (filters?.startDate) params.set('startDate', filters.startDate);
+    const response = await apiFetch(`${API_BASE}/admin/logs/me?${params}`, {
       credentials: "include",
     });
-    return handleResponse<{ logs: any[] }>(response);
+    return handleResponse<{ logs: any[]; pagination: { page: number; limit: number; total: number; totalPages: number } }>(response);
+  },
+  async getArchiveCandidates() {
+    const response = await apiFetch(`${API_BASE}/admin/archive/preview`, { credentials: 'include' });
+    return handleResponse<{ quizzes: number; results: number }>(response);
   },
   async archiveYear(academicYear: string) {
     const response = await apiFetch(`${API_BASE}/admin/archive`, {
@@ -1093,6 +1143,14 @@ export const adminApi = {
   async createPasswordResetRequest(email: string) {
     const response = await apiFetch(`${API_BASE}/admin/password-reset-requests`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }), credentials: 'include' });
     return handleResponse<{ request: any }>(response);
+  },
+  async createOfflinePasswordResetLink(email: string) {
+    const response = await apiFetch(`${API_BASE}/admin/password-reset-requests/offline-link`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }), credentials: 'include' });
+    return handleResponse<{ message: string; request: any; resetUrl: string; expiresAt: string }>(response);
+  },
+  async regenerateOfflinePasswordResetLink(id: string) {
+    const response = await apiFetch(`${API_BASE}/admin/password-reset-requests/${id}/offline-link`, { method: 'POST', credentials: 'include' });
+    return handleResponse<{ message: string; request: any; resetUrl: string; expiresAt: string }>(response);
   },
   async resendPasswordResetRequest(id: string) {
     const response = await apiFetch(`${API_BASE}/admin/password-reset-requests/${id}/resend`, { method: 'POST', credentials: 'include' });

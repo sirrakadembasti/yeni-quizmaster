@@ -1,0 +1,14 @@
+{
+  "recordedAt": "2026-10-03T15:50:22.245Z",
+  "stage": "bootstrap",
+  "job": {
+    "type": "wizard",
+    "status": "running",
+    "message": "Kurulum sihirbazı başlatılıyor...",
+    "exitCode": null,
+    "logs": [
+      "> quiz-master-server@1.0.0 setup /home/ahmet/.cache/quizmaster-closure/tmp/quizmaster-fresh-sh-wySs57/server",
+      "> tsx setup-wizard/server.ts"
+    ]
+  }
+}

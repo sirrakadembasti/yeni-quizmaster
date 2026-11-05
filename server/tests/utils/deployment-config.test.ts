@@ -2,6 +2,11 @@ import { describe, expect, it } from "vitest";
 import { buildDeploymentArtifacts, deploymentConfigSchema, normalizeBasePath } from "../../utils/deployment-config";
 
 describe("deployment configuration", () => {
+  it('malformed localhost URLs return validation issues instead of throwing', () => {
+    let result: ReturnType<typeof deploymentConfigSchema.safeParse> | undefined;
+    expect(() => { result = deploymentConfigSchema.safeParse({ mode: 'localhost', publicUrl: 'invalid', allowedOrigins: ['http://localhost:5000'] }); }).not.toThrow();
+    expect(result?.success).toBe(false);
+  });
   it("alt yolu tek biçime getirir ve geçersiz karakterleri reddeder", () => {
     expect(normalizeBasePath("quizmaster/" )).toBe("/quizmaster");
     expect(normalizeBasePath("/")).toBe("/");
@@ -28,5 +33,45 @@ describe("deployment configuration", () => {
     expect(artifacts.nginxText).toContain("location /quizmaster/");
     expect(artifacts.buildCommand).toContain("VITE_BASE_PATH");
     expect(artifacts.envText).not.toContain("actual-secret");
+  });
+
+  it("localhost profili yerel deneme için kabul edilir ve proxy gerekmediğini yazar", () => {
+    const config = deploymentConfigSchema.parse({
+      mode: "localhost",
+      publicUrl: "http://localhost:5000",
+      basePath: "/",
+      allowedOrigins: ["http://localhost:5000", "http://127.0.0.1:5000"],
+      trustProxyHops: 0,
+      retention: {
+        enabled: false,
+        actionLogDays: 365,
+        readNotificationDays: 180,
+        emailLogDays: 90,
+        passwordResetDays: 90,
+      },
+    });
+    const artifacts = buildDeploymentArtifacts(config);
+    expect(artifacts.nginxText).toContain("reverse proxy gerekmez");
+    expect(artifacts.envText).toContain("TRUST_PROXY_HOPS=0");
+  });
+
+  it("localhost modunda / olmayan alt yol ve uzak adres reddedilir", () => {
+    expect(() => deploymentConfigSchema.parse({
+      mode: "localhost",
+      publicUrl: "http://localhost:5000",
+      basePath: "/quiz",
+      allowedOrigins: ["http://localhost:5000"],
+      trustProxyHops: 0,
+      retention: { enabled: false, actionLogDays: 365, readNotificationDays: 180, emailLogDays: 90, passwordResetDays: 90 },
+    })).toThrow();
+
+    expect(() => deploymentConfigSchema.parse({
+      mode: "localhost",
+      publicUrl: "https://sinav.kurum.gov.tr",
+      basePath: "/",
+      allowedOrigins: ["https://sinav.kurum.gov.tr"],
+      trustProxyHops: 0,
+      retention: { enabled: false, actionLogDays: 365, readNotificationDays: 180, emailLogDays: 90, passwordResetDays: 90 },
+    })).toThrow();
   });
 });

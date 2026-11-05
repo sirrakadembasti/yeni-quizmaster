@@ -1,0 +1,1870 @@
+{
+  "numTotalTestSuites": 39,
+  "numPassedTestSuites": 39,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 149,
+  "numPassedTests": 149,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1791113002656,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Excel export"
+          ],
+          "fullName": "Excel export geçerli OpenXML sıralaması ve Türkçe metinlerle çalışma kitabı üretir",
+          "status": "passed",
+          "title": "geçerli OpenXML sıralaması ve Türkçe metinlerle çalışma kitabı üretir",
+          "duration": 45.67190000000028,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Excel export"
+          ],
+          "fullName": "Excel export formül enjeksiyonunu önler",
+          "status": "passed",
+          "title": "formül enjeksiyonunu önler",
+          "duration": 0.8762000000006083,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "CSV compatibility helpers"
+          ],
+          "fullName": "CSV compatibility helpers keeps the UTF-8 BOM and Turkish characters for legacy integrations",
+          "status": "passed",
+          "title": "keeps the UTF-8 BOM and Turkish characters for legacy integrations",
+          "duration": 1.9477999999999156,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "CSV compatibility helpers"
+          ],
+          "fullName": "CSV compatibility helpers uses Excel's semicolon separator declaration and quotes values",
+          "status": "passed",
+          "title": "uses Excel's semicolon separator declaration and quotes values",
+          "duration": 0.8288999999995212,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113146358,
+      "endTime": 1791113146408.8289,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/lib/export.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "offline retry boundaries"
+          ],
+          "fullName": "offline retry boundaries does not queue permanent HTTP 400 failures",
+          "status": "passed",
+          "title": "does not queue permanent HTTP 400 failures",
+          "duration": 4.880100000000311,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "offline retry boundaries"
+          ],
+          "fullName": "offline retry boundaries does not queue permanent HTTP 401 failures",
+          "status": "passed",
+          "title": "does not queue permanent HTTP 401 failures",
+          "duration": 0.7632000000003245,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "offline retry boundaries"
+          ],
+          "fullName": "offline retry boundaries does not queue permanent HTTP 403 failures",
+          "status": "passed",
+          "title": "does not queue permanent HTTP 403 failures",
+          "duration": 0.41489999999976135,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "offline retry boundaries"
+          ],
+          "fullName": "offline retry boundaries does not queue permanent HTTP 404 failures",
+          "status": "passed",
+          "title": "does not queue permanent HTTP 404 failures",
+          "duration": 0.6235999999998967,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "offline retry boundaries"
+          ],
+          "fullName": "offline retry boundaries does not queue permanent HTTP 409 failures",
+          "status": "passed",
+          "title": "does not queue permanent HTTP 409 failures",
+          "duration": 0.49679999999989377,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "offline retry boundaries"
+          ],
+          "fullName": "offline retry boundaries allows retry for transient HTTP 408 failures",
+          "status": "passed",
+          "title": "allows retry for transient HTTP 408 failures",
+          "duration": 0.5510000000003856,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "offline retry boundaries"
+          ],
+          "fullName": "offline retry boundaries allows retry for transient HTTP 429 failures",
+          "status": "passed",
+          "title": "allows retry for transient HTTP 429 failures",
+          "duration": 0.7812000000003536,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "offline retry boundaries"
+          ],
+          "fullName": "offline retry boundaries allows retry for transient HTTP 500 failures",
+          "status": "passed",
+          "title": "allows retry for transient HTTP 500 failures",
+          "duration": 0.7028000000000247,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "offline retry boundaries"
+          ],
+          "fullName": "offline retry boundaries allows retry for transient HTTP 503 failures",
+          "status": "passed",
+          "title": "allows retry for transient HTTP 503 failures",
+          "duration": 1.7983000000003813,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "offline retry boundaries"
+          ],
+          "fullName": "offline retry boundaries allows retry for a lost network connection",
+          "status": "passed",
+          "title": "allows retry for a lost network connection",
+          "duration": 0.9481000000005224,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113159070,
+      "endTime": 1791113159083.948,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/lib/http-error.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "offline quiz storage"
+          ],
+          "fullName": "offline quiz storage stores answers and a pending submission per student and quiz",
+          "status": "passed",
+          "title": "stores answers and a pending submission per student and quiz",
+          "duration": 12.680299999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "offline quiz storage"
+          ],
+          "fullName": "offline quiz storage reduces a cached timed quiz using elapsed wall time",
+          "status": "passed",
+          "title": "reduces a cached timed quiz using elapsed wall time",
+          "duration": 8.030899999999747,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "offline quiz storage"
+          ],
+          "fullName": "offline quiz storage tracks unsent changes without marking unchanged server answers dirty",
+          "status": "passed",
+          "title": "tracks unsent changes without marking unchanged server answers dirty",
+          "duration": 1.7435000000004948,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "offline answer reconciliation"
+          ],
+          "fullName": "offline answer reconciliation preserves only unsent answers for the current attempt and current questions",
+          "status": "passed",
+          "title": "preserves only unsent answers for the current attempt and current questions",
+          "duration": 2.9328999999997905,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "offline answer reconciliation"
+          ],
+          "fullName": "offline answer reconciliation keeps server changes over clean cache and migrates only missing legacy answers",
+          "status": "passed",
+          "title": "keeps server changes over clean cache and migrates only missing legacy answers",
+          "duration": 2.1009000000003653,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "offline answer reconciliation"
+          ],
+          "fullName": "offline answer reconciliation does not acknowledge a newer answer or another attempt with a late response",
+          "status": "passed",
+          "title": "does not acknowledge a newer answer or another attempt with a late response",
+          "duration": 2.1822000000001935,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "offline answer reconciliation"
+          ],
+          "fullName": "offline answer reconciliation does not let the first A response acknowledge a later A after A to B to A",
+          "status": "passed",
+          "title": "does not let the first A response acknowledge a later A after A to B to A",
+          "duration": 2.5838999999996304,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "offline answer reconciliation"
+          ],
+          "fullName": "offline answer reconciliation preserves a legacy queued submission snapshot when server has an older answer",
+          "status": "passed",
+          "title": "preserves a legacy queued submission snapshot when server has an older answer",
+          "duration": 0.8614999999999782,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "offline logout privacy"
+          ],
+          "fullName": "offline logout privacy removes saved answers and quiz lists when clearing the offline identity",
+          "status": "passed",
+          "title": "removes saved answers and quiz lists when clearing the offline identity",
+          "duration": 3.770599999999831,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "stable quiz question order"
+          ],
+          "fullName": "stable quiz question order shuffles enabled quizzes consistently on resume without mutating source",
+          "status": "passed",
+          "title": "shuffles enabled quizzes consistently on resume without mutating source",
+          "duration": 2.346799999999348,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "stable quiz question order"
+          ],
+          "fullName": "stable quiz question order preserves teacher order when shuffling is disabled",
+          "status": "passed",
+          "title": "preserves teacher order when shuffling is disabled",
+          "duration": 0.7319999999999709,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113147422,
+      "endTime": 1791113147464.732,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/lib/offline-quiz.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "cn utility"
+          ],
+          "fullName": "cn utility should merge class names correctly",
+          "status": "passed",
+          "title": "should merge class names correctly",
+          "duration": 16.868199999999888,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "cn utility"
+          ],
+          "fullName": "cn utility should handle conditional classes",
+          "status": "passed",
+          "title": "should handle conditional classes",
+          "duration": 0.7256999999999607,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "cn utility"
+          ],
+          "fullName": "cn utility should merge Tailwind classes correctly",
+          "status": "passed",
+          "title": "should merge Tailwind classes correctly",
+          "duration": 1.3677999999999884,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "cn utility"
+          ],
+          "fullName": "cn utility should handle empty inputs",
+          "status": "passed",
+          "title": "should handle empty inputs",
+          "duration": 0.5348000000003594,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "cn utility"
+          ],
+          "fullName": "cn utility should handle undefined and null values",
+          "status": "passed",
+          "title": "should handle undefined and null values",
+          "duration": 0.369499999999789,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113153206,
+      "endTime": 1791113153226.3694,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/lib/utils.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "archive year and promotion selectors have meaningful visible-label names",
+          "status": "passed",
+          "title": "archive year and promotion selectors have meaningful visible-label names",
+          "duration": 666.4421999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "student report search and filters expose names independent of their selected values",
+          "status": "passed",
+          "title": "student report search and filters expose names independent of their selected values",
+          "duration": 389.89390000000094,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "category dialog Escape restores focus to its 'Yeni Ders Ekle' opener",
+          "status": "passed",
+          "title": "category dialog Escape restores focus to its 'Yeni Ders Ekle' opener",
+          "duration": 421.34469999999965,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "category dialog Escape restores focus to its 'Türkçe dersini düzenle' opener",
+          "status": "passed",
+          "title": "category dialog Escape restores focus to its 'Türkçe dersini düzenle' opener",
+          "duration": 440.41879999999946,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113071803,
+      "endTime": 1791113073721.4187,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/admin-accessibility-final-repairs.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Admin question editor data preservation"
+          ],
+          "fullName": "Admin question editor data preservation keeps the requested Açık Uçlu survey type during batched updates",
+          "status": "passed",
+          "title": "keeps the requested Açık Uçlu survey type during batched updates",
+          "duration": 2415.7034999999996,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin question editor data preservation"
+          ],
+          "fullName": "Admin question editor data preservation keeps the requested Derecelendirme survey type during batched updates",
+          "status": "passed",
+          "title": "keeps the requested Derecelendirme survey type during batched updates",
+          "duration": 1850.2003999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin question editor data preservation"
+          ],
+          "fullName": "Admin question editor data preservation keeps the requested Likert Ölçeği survey type during batched updates",
+          "status": "passed",
+          "title": "keeps the requested Likert Ölçeği survey type during batched updates",
+          "duration": 1709.6685000000016,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin question editor data preservation"
+          ],
+          "fullName": "Admin question editor data preservation saves B as correct after choosing B and deleting the preceding A option",
+          "status": "passed",
+          "title": "saves B as correct after choosing B and deleting the preceding A option",
+          "duration": 1778.5664999999972,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin question editor data preservation"
+          ],
+          "fullName": "Admin question editor data preservation requires a new correct answer after deleting the selected option",
+          "status": "passed",
+          "title": "requires a new correct answer after deleting the selected option",
+          "duration": 1653.3210999999974,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Admin question editor data preservation"
+          ],
+          "fullName": "Admin question editor data preservation reuses the same UUID on a failed new-content save retry",
+          "status": "passed",
+          "title": "reuses the same UUID on a failed new-content save retry",
+          "duration": 1342.570499999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113013650,
+      "endTime": 1791113024400.5706,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/admin-audit-question-editor.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "a successful user mutation refreshes active class relations and invalidates every cached user/class view",
+          "status": "passed",
+          "title": "a successful user mutation refreshes active class relations and invalidates every cached user/class view",
+          "duration": 86.14469999999892,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113133948,
+      "endTime": 1791113134034.1448,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/admin-cache.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "personal history requests the six-month range and exposes the 51st action through paging",
+          "status": "passed",
+          "title": "personal history requests the six-month range and exposes the 51st action through paging",
+          "duration": 1038.9272,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "dashboard labels the combined exam/material/survey count as total content",
+          "status": "passed",
+          "title": "dashboard labels the combined exam/material/survey count as total content",
+          "duration": 91.11369999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113098583,
+      "endTime": 1791113099713.1138,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/admin-history-pagination.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "profile save synchronizes the header, clean form and offline identity",
+          "status": "passed",
+          "title": "profile save synchronizes the header, clean form and offline identity",
+          "duration": 2044.8525000000009,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "profile fields expose their visible labels and clicking each label focuses its field",
+          "status": "passed",
+          "title": "profile fields expose their visible labels and clicking each label focuses its field",
+          "duration": 725.9069,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "password fields have distinct visible-label names and their labels focus the matching field",
+          "status": "passed",
+          "title": "password fields have distinct visible-label names and their labels focus the matching field",
+          "duration": 557.1476999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "unsupported settings deep links select the profile panel",
+          "status": "passed",
+          "title": "unsupported settings deep links select the profile panel",
+          "duration": 310.1214,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "valid settings deep links follow browser history back to profile",
+          "status": "passed",
+          "title": "valid settings deep links follow browser history back to profile",
+          "duration": 392.2417999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "announcement fetch errors show retry and recover to the real list",
+          "status": "passed",
+          "title": "announcement fetch errors show retry and recover to the real list",
+          "duration": 436.7371999999996,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "personal history fetch errors are distinct from empty history and can be retried",
+          "status": "passed",
+          "title": "personal history fetch errors are distinct from empty history and can be retried",
+          "duration": 493.4385999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "personal notification fetch errors can be retried without presenting an empty list",
+          "status": "passed",
+          "title": "personal notification fetch errors can be retried without presenting an empty list",
+          "duration": 493.23439999999755,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "header notification mute failures show actionable feedback",
+          "status": "passed",
+          "title": "header notification mute failures show actionable feedback",
+          "duration": 537.0972000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "pending announcement deletion disables resubmission and refreshes the list on success",
+          "status": "passed",
+          "title": "pending announcement deletion disables resubmission and refreshes the list on success",
+          "duration": 722.3420000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "announcement delete asks for named confirmation and cancellation preserves the row",
+          "status": "passed",
+          "title": "announcement delete asks for named confirmation and cancellation preserves the row",
+          "duration": 579.4419999999991,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "failed announcement deletion retains confirmation and offers visible retry",
+          "status": "passed",
+          "title": "failed announcement deletion retains confirmation and offers visible retry",
+          "duration": 807.4120000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "mobile menu Escape closes the modal and restores trigger focus",
+          "status": "passed",
+          "title": "mobile menu Escape closes the modal and restores trigger focus",
+          "duration": 296.10159999999814,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "mobile menu keeps Tab focus inside its controls",
+          "status": "passed",
+          "title": "mobile menu keeps Tab focus inside its controls",
+          "duration": 347.4242000000013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113036017,
+      "endTime": 1791113044762.4243,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/admin-inventory.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "Kullanıcı Logları sunucudaki ikinci sayfaya ulaşır ve sınırda durur",
+          "status": "passed",
+          "title": "Kullanıcı Logları sunucudaki ikinci sayfaya ulaşır ve sınırda durur",
+          "duration": 1141.8185999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "E-Posta Logları sunucudaki ikinci sayfaya ulaşır ve sınırda durur",
+          "status": "passed",
+          "title": "E-Posta Logları sunucudaki ikinci sayfaya ulaşır ve sınırda durur",
+          "duration": 1199.5362999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "Şifre Talepleri sunucudaki ikinci sayfaya ulaşır ve sınırda durur",
+          "status": "passed",
+          "title": "Şifre Talepleri sunucudaki ikinci sayfaya ulaşır ve sınırda durur",
+          "duration": 1052.1021,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "Sistem Hata & İşlemleri sunucudaki ikinci sayfaya ulaşır ve sınırda durur",
+          "status": "passed",
+          "title": "Sistem Hata & İşlemleri sunucudaki ikinci sayfaya ulaşır ve sınırda durur",
+          "duration": 1002.9725999999991,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "Kullanıcı Logları arama değişince ilk sayfaya döner",
+          "status": "passed",
+          "title": "Kullanıcı Logları arama değişince ilk sayfaya döner",
+          "duration": 1128.1296000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "E-Posta Logları arama değişince ilk sayfaya döner",
+          "status": "passed",
+          "title": "E-Posta Logları arama değişince ilk sayfaya döner",
+          "duration": 1332.9157000000014,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "Şifre Talepleri arama değişince ilk sayfaya döner",
+          "status": "passed",
+          "title": "Şifre Talepleri arama değişince ilk sayfaya döner",
+          "duration": 1221.7080000000024,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "Sistem Hata & İşlemleri arama değişince ilk sayfaya döner",
+          "status": "passed",
+          "title": "Sistem Hata & İşlemleri arama değişince ilk sayfaya döner",
+          "duration": 1062.9265000000014,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "Kullanıcı Logları sorgu hatası boş liste değildir ve tekrar denenir",
+          "status": "passed",
+          "title": "Kullanıcı Logları sorgu hatası boş liste değildir ve tekrar denenir",
+          "duration": 713.2449000000015,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "E-Posta Logları sorgu hatası boş liste değildir ve tekrar denenir",
+          "status": "passed",
+          "title": "E-Posta Logları sorgu hatası boş liste değildir ve tekrar denenir",
+          "duration": 856.0987000000023,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "Şifre Talepleri sorgu hatası boş liste değildir ve tekrar denenir",
+          "status": "passed",
+          "title": "Şifre Talepleri sorgu hatası boş liste değildir ve tekrar denenir",
+          "duration": 1027.4786999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "Sistem Hata & İşlemleri sorgu hatası boş liste değildir ve tekrar denenir",
+          "status": "passed",
+          "title": "Sistem Hata & İşlemleri sorgu hatası boş liste değildir ve tekrar denenir",
+          "duration": 808.4356000000007,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "Dersler sorgusu hata verdiğinde boş kayıt gösterilmez",
+          "status": "passed",
+          "title": "Dersler sorgusu hata verdiğinde boş kayıt gösterilmez",
+          "duration": 188.55569999999716,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "Sınıflar sorgusu hata verdiğinde boş kayıt gösterilmez",
+          "status": "passed",
+          "title": "Sınıflar sorgusu hata verdiğinde boş kayıt gösterilmez",
+          "duration": 284.05609999999797,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "Kullanıcılar sorgusu hata verdiğinde boş kayıt gösterilmez",
+          "status": "passed",
+          "title": "Kullanıcılar sorgusu hata verdiğinde boş kayıt gösterilmez",
+          "duration": 252.14250000000175,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "ders kaydetme beklerken tekrar gönderim engellenir ve hata formu korur",
+          "status": "passed",
+          "title": "ders kaydetme beklerken tekrar gönderim engellenir ve hata formu korur",
+          "duration": 1178.2626999999993,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "şifre taleplerinde uygulanmayan tarih filtresi gösterilmez, tarih destekleyen günlüklerde korunur",
+          "status": "passed",
+          "title": "şifre taleplerinde uygulanmayan tarih filtresi gösterilmez, tarih destekleyen günlüklerde korunur",
+          "duration": 1074.2127,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113013703,
+      "endTime": 1791113029229.2126,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/admin-management-pagination.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "archive history exposes the twenty-first record",
+          "status": "passed",
+          "title": "archive history exposes the twenty-first record",
+          "duration": 598.4766,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "archive confirmation shows exact candidate and result counts",
+          "status": "passed",
+          "title": "archive confirmation shows exact candidate and result counts",
+          "duration": 872.6791000000012,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "server refresh preserves unsaved profile edits",
+          "status": "passed",
+          "title": "server refresh preserves unsaved profile edits",
+          "duration": 1864.3891000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "retention cleanup waits for the edited policy to be saved",
+          "status": "passed",
+          "title": "retention cleanup waits for the edited policy to be saved",
+          "duration": 395.83240000000114,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "server status errors offer a retry instead of showing default configuration as loaded",
+          "status": "passed",
+          "title": "server status errors offer a retry instead of showing default configuration as loaded",
+          "duration": 199.59509999999864,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "cleanup stays blocked if a refreshed saved policy differs from the displayed policy",
+          "status": "passed",
+          "title": "cleanup stays blocked if a refreshed saved policy differs from the displayed policy",
+          "duration": 2850.983900000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "admin action history can navigate to the next server page",
+          "status": "passed",
+          "title": "admin action history can navigate to the next server page",
+          "duration": 567.378999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113054256,
+      "endTime": 1791113061606.379,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/admin-operations.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "öğrenciler sorgu hatasını ve yeniden denemeyi gösterir",
+          "status": "passed",
+          "title": "öğrenciler sorgu hatasını ve yeniden denemeyi gösterir",
+          "duration": 499.39220000000023,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "öğretmenler sorgu hatasını ve yeniden denemeyi gösterir",
+          "status": "passed",
+          "title": "öğretmenler sorgu hatasını ve yeniden denemeyi gösterir",
+          "duration": 110.85239999999976,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "sınıflar sorgu hatasını ve yeniden denemeyi gösterir",
+          "status": "passed",
+          "title": "sınıflar sorgu hatasını ve yeniden denemeyi gösterir",
+          "duration": 69.23129999999946,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "öğretmen detayı sorgu hatasını ve yeniden denemeyi gösterir",
+          "status": "passed",
+          "title": "öğretmen detayı sorgu hatasını ve yeniden denemeyi gösterir",
+          "duration": 85.93329999999878,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "sınıf yönetimi sorgu hatasını ve yeniden denemeyi gösterir",
+          "status": "passed",
+          "title": "sınıf yönetimi sorgu hatasını ve yeniden denemeyi gösterir",
+          "duration": 190.7471999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "veli yönetimi sorgu hatasını ve yeniden denemeyi gösterir",
+          "status": "passed",
+          "title": "veli yönetimi sorgu hatasını ve yeniden denemeyi gösterir",
+          "duration": 150.71450000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "öğretmenin on birinci sınavını da gösterir",
+          "status": "passed",
+          "title": "öğretmenin on birinci sınavını da gösterir",
+          "duration": 169.33660000000054,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "sınıf sayıları kullanıcı sorgusu bitmeden sıfır gibi sunulmaz",
+          "status": "passed",
+          "title": "sınıf sayıları kullanıcı sorgusu bitmeden sıfır gibi sunulmaz",
+          "duration": 18.9375,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "büyük öğretmen sınav geçmişinin sonraki sayfasına ulaşılır",
+          "status": "passed",
+          "title": "büyük öğretmen sınav geçmişinin sonraki sayfasına ulaşılır",
+          "duration": 316.22320000000036,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "sınıftan çıkarma odaklanabilir adlandırılmış bir düğmedir ve beklerken tekrar gönderilmez",
+          "status": "passed",
+          "title": "sınıftan çıkarma odaklanabilir adlandırılmış bir düğmedir ve beklerken tekrar gönderilmez",
+          "duration": 378.89969999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "sorumlu öğretmenin bağımsız kalan dersini mevcut atamalardan açıklar",
+          "status": "passed",
+          "title": "sorumlu öğretmenin bağımsız kalan dersini mevcut atamalardan açıklar",
+          "duration": 186.94790000000103,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "öğretmen formu etiketlerle doldurulur ve seçili ders klavyeyle kaldırılır",
+          "status": "passed",
+          "title": "öğretmen formu etiketlerle doldurulur ve seçili ders klavyeyle kaldırılır",
+          "duration": 333.04869999999937,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "öğrenci satırının işlem menüsü öğrencinin adıyla okunur",
+          "status": "passed",
+          "title": "öğrenci satırının işlem menüsü öğrencinin adıyla okunur",
+          "duration": 24.64769999999953,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "veli bağlantısı sorgu hatasını boş öğrenci listesi gibi sunmaz",
+          "status": "passed",
+          "title": "veli bağlantısı sorgu hatasını boş öğrenci listesi gibi sunmaz",
+          "duration": 471.6160999999993,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "veli bağlantısını kaldırırken yeniden istek engellenir ve hata mevcut bağı korur",
+          "status": "passed",
+          "title": "veli bağlantısını kaldırırken yeniden istek engellenir ve hata mevcut bağı korur",
+          "duration": 510.88380000000143,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113056208,
+      "endTime": 1791113059726.8838,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/admin-people-ui.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "shows a load failure and successfully retries the admin list",
+          "status": "passed",
+          "title": "shows a load failure and successfully retries the admin list",
+          "duration": 466.90480000000025,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "clamps the last page after deletion and labels archived exams",
+          "status": "passed",
+          "title": "clamps the last page after deletion and labels archived exams",
+          "duration": 1540.0697,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "clamps the last page after deletion and labels archived exams",
+          "status": "passed",
+          "title": "clamps the last page after deletion and labels archived exams",
+          "duration": 2171.4246999999996,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "invalidates previously visited related screens after permanent deletion",
+          "status": "passed",
+          "title": "invalidates previously visited related screens after permanent deletion",
+          "duration": 1049.116399999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "invalidates previously visited related screens after permanent deletion",
+          "status": "passed",
+          "title": "invalidates previously visited related screens after permanent deletion",
+          "duration": 1273.6369999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "weights aggregate participation by students and score by completed attempts",
+          "status": "passed",
+          "title": "weights aggregate participation by students and score by completed attempts",
+          "duration": 104.16760000000068,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "shows a statistics failure without fabricated zero KPI values",
+          "status": "passed",
+          "title": "shows a statistics failure without fabricated zero KPI values",
+          "duration": 167.45050000000265,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "gives question actions contextual names and exposes correct answer selection",
+          "status": "passed",
+          "title": "gives question actions contextual names and exposes correct answer selection",
+          "duration": 73.66340000000127,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "names rule switches and category selection",
+          "status": "passed",
+          "title": "names rule switches and category selection",
+          "duration": 74.64530000000013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113039577,
+      "endTime": 1791113046498.6453,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/admin-quiz-management.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "renders teacher correct-answer counts from the API including zero",
+          "status": "passed",
+          "title": "renders teacher correct-answer counts from the API including zero",
+          "duration": 830.2561999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "names every result filter using its visible label",
+          "status": "passed",
+          "title": "names every result filter using its visible label",
+          "duration": 375.39919999999984,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "excludes unfinished and ungraded attempts from average and failing grades",
+          "status": "passed",
+          "title": "excludes unfinished and ungraded attempts from average and failing grades",
+          "duration": 290.3672999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "includes completed zero scores in the average and failing grades",
+          "status": "passed",
+          "title": "includes completed zero scores in the average and failing grades",
+          "duration": 264.5673999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "shows no average instead of zero when every attempt is unfinished",
+          "status": "passed",
+          "title": "shows no average instead of zero when every attempt is unfinished",
+          "duration": 218.70690000000104,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "lets an admin select exams created by teachers",
+          "status": "passed",
+          "title": "lets an admin select exams created by teachers",
+          "duration": 611.3811000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "exports authorized student email and selected teacher/student provenance into Excel and print metadata",
+          "status": "passed",
+          "title": "exports authorized student email and selected teacher/student provenance into Excel and print metadata",
+          "duration": 1040.8294000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "resolves email through nested student identity and keeps email already supplied by a result",
+          "status": "passed",
+          "title": "resolves email through nested student identity and keeps email already supplied by a result",
+          "duration": 304.8220999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113068543,
+      "endTime": 1791113072480.822,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/admin-results.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "does not export or print a selected student report until the identity request completes",
+          "status": "passed",
+          "title": "does not export or print a selected student report until the identity request completes",
+          "duration": 758.4534999999996,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "exports the loaded selected student identity and completed numeric zero rather than the admin identity",
+          "status": "passed",
+          "title": "exports the loaded selected student identity and completed numeric zero rather than the admin identity",
+          "duration": 385.02800000000025,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "keeps reports disabled and shows an identity error when the selected student cannot be resolved",
+          "status": "passed",
+          "title": "keeps reports disabled and shows an identity error when the selected student cannot be resolved",
+          "duration": 323.53470000000016,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113093256,
+      "endTime": 1791113094723.5347,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/admin-student-report-readiness.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "ignores late student A results when the same mounted page is already resolving student B identity",
+          "status": "passed",
+          "title": "ignores late student A results when the same mounted page is already resolving student B identity",
+          "duration": 1363.5683000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113104426,
+      "endTime": 1791113105789.5684,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/admin-student-report-request-race.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "admin teacher detail shows and exports the teacher exam despite a warm owner-only quiz cache",
+          "status": "passed",
+          "title": "admin teacher detail shows and exports the teacher exam despite a warm owner-only quiz cache",
+          "duration": 554.7762999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "teacher detail preserves the teacher owner-list contract",
+          "status": "passed",
+          "title": "teacher detail preserves the teacher owner-list contract",
+          "duration": 112.72980000000098,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "prints all 21 teacher quizzes while screen pagination and Excel preserve their contracts",
+          "status": "passed",
+          "title": "prints all 21 teacher quizzes while screen pagination and Excel preserve their contracts",
+          "duration": 486.34009999999944,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113110894,
+      "endTime": 1791113112048.34,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/admin-teacher-detail-export.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "application renders Sonner success and error feedback",
+          "status": "passed",
+          "title": "application renders Sonner success and error feedback",
+          "duration": 318.1938000000009,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113139607,
+      "endTime": 1791113139925.1938,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/admin-toast-host.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Atomic content transport"
+          ],
+          "fullName": "Atomic content transport sends exam content in one authenticated PUT with the CSRF token",
+          "status": "passed",
+          "title": "sends exam content in one authenticated PUT with the CSRF token",
+          "duration": 43.61750000000029,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Atomic content transport"
+          ],
+          "fullName": "Atomic content transport sends survey content in one authenticated PUT with the CSRF token",
+          "status": "passed",
+          "title": "sends survey content in one authenticated PUT with the CSRF token",
+          "duration": 4.978100000000268,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Atomic content transport"
+          ],
+          "fullName": "Atomic content transport preserves the error status and message when content cannot be saved",
+          "status": "passed",
+          "title": "preserves the error status and message when content cannot be saved",
+          "duration": 6.064799999999195,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113140851,
+      "endTime": 1791113140906.0647,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/content-save.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "parent result question images and answer status"
+          ],
+          "fullName": "parent result question images and answer status shows the uploaded question image with a useful alternative text",
+          "status": "passed",
+          "title": "shows the uploaded question image with a useful alternative text",
+          "duration": 593.739599999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "parent result question images and answer status"
+          ],
+          "fullName": "parent result question images and answer status shows an image failure message when a valid source fails to load",
+          "status": "passed",
+          "title": "shows an image failure message when a valid source fails to load",
+          "duration": 204.79719999999907,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "parent result question images and answer status"
+          ],
+          "fullName": "parent result question images and answer status does not render unsafe image source javascript:alert(1)",
+          "status": "passed",
+          "title": "does not render unsafe image source javascript:alert(1)",
+          "duration": 148.01840000000084,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "parent result question images and answer status"
+          ],
+          "fullName": "parent result question images and answer status does not render unsafe image source data:text/html;base64,PHNjcmlwdD4=",
+          "status": "passed",
+          "title": "does not render unsafe image source data:text/html;base64,PHNjcmlwdD4=",
+          "duration": 152.91169999999875,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "parent result question images and answer status"
+          ],
+          "fullName": "parent result question images and answer status does not render unsafe image source data:image/svg+xml,<svg/>",
+          "status": "passed",
+          "title": "does not render unsafe image source data:image/svg+xml,<svg/>",
+          "duration": 170.8120999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "parent result question images and answer status"
+          ],
+          "fullName": "parent result question images and answer status renders an allowed image source https://example.test/question.png",
+          "status": "passed",
+          "title": "renders an allowed image source https://example.test/question.png",
+          "duration": 155.9362999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "parent result question images and answer status"
+          ],
+          "fullName": "parent result question images and answer status renders an allowed image source data:image/png;base64,aW1hZ2U=",
+          "status": "passed",
+          "title": "renders an allowed image source data:image/png;base64,aW1hZ2U=",
+          "duration": 164.02659999999923,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "parent result question images and answer status"
+          ],
+          "fullName": "parent result question images and answer status describes unanswered questions separately from incorrect answers",
+          "status": "passed",
+          "title": "describes unanswered questions separately from incorrect answers",
+          "duration": 154.60699999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113082689,
+      "endTime": 1791113084434.607,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/parent-result-image.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "transports the reason in a CSRF protected DELETE request",
+          "status": "passed",
+          "title": "transports the reason in a CSRF protected DELETE request",
+          "duration": 22.567200000000412,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113154677,
+      "endTime": 1791113154699.5671,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/quiz-delete-transport.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "blocks repeated form submits while pending and allows retry after failure",
+          "status": "passed",
+          "title": "blocks repeated form submits while pending and allows retry after failure",
+          "duration": 1719.1990999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113083926,
+      "endTime": 1791113085645.1992,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/test/reset-password-pending.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Auth Context & useAuth"
+          ],
+          "fullName": "Auth Context & useAuth initializes with logged-out state if no user session",
+          "status": "passed",
+          "title": "initializes with logged-out state if no user session",
+          "duration": 114.13650000000052,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Auth Context & useAuth"
+          ],
+          "fullName": "Auth Context & useAuth initializes with logged-in state if user session exists",
+          "status": "passed",
+          "title": "initializes with logged-in state if user session exists",
+          "duration": 86.72400000000016,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Auth Context & useAuth"
+          ],
+          "fullName": "Auth Context & useAuth login updates context state on success",
+          "status": "passed",
+          "title": "login updates context state on success",
+          "duration": 84.59029999999984,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Auth Context & useAuth"
+          ],
+          "fullName": "Auth Context & useAuth login handles failure correctly",
+          "status": "passed",
+          "title": "login handles failure correctly",
+          "duration": 84.48390000000109,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Auth Context & useAuth"
+          ],
+          "fullName": "Auth Context & useAuth logout clears user state",
+          "status": "passed",
+          "title": "logout clears user state",
+          "duration": 83.80099999999948,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113120998,
+      "endTime": 1791113121452.801,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/context/__tests__/auth-context.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Button Component"
+          ],
+          "fullName": "Button Component renders correctly with children",
+          "status": "passed",
+          "title": "renders correctly with children",
+          "duration": 278.34710000000086,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Button Component"
+          ],
+          "fullName": "Button Component handles click events",
+          "status": "passed",
+          "title": "handles click events",
+          "duration": 103.01530000000093,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Button Component"
+          ],
+          "fullName": "Button Component is disabled when disabled prop is true",
+          "status": "passed",
+          "title": "is disabled when disabled prop is true",
+          "duration": 29.113400000000183,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Button Component"
+          ],
+          "fullName": "Button Component applies variant classes correctly",
+          "status": "passed",
+          "title": "applies variant classes correctly",
+          "duration": 21.806800000000294,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Button Component"
+          ],
+          "fullName": "Button Component renders asChild correctly",
+          "status": "passed",
+          "title": "renders asChild correctly",
+          "duration": 21.278199999998833,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113124608,
+      "endTime": 1791113125062.2783,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/components/ui/__tests__/button.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Input Component"
+          ],
+          "fullName": "Input Component renders correctly",
+          "status": "passed",
+          "title": "renders correctly",
+          "duration": 108.73719999999958,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Input Component"
+          ],
+          "fullName": "Input Component allows user to type",
+          "status": "passed",
+          "title": "allows user to type",
+          "duration": 353.1311999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Input Component"
+          ],
+          "fullName": "Input Component is disabled when disabled prop is true",
+          "status": "passed",
+          "title": "is disabled when disabled prop is true",
+          "duration": 17.509800000001633,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Input Component"
+          ],
+          "fullName": "Input Component applies custom classes",
+          "status": "passed",
+          "title": "applies custom classes",
+          "duration": 16.209100000000035,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Input Component"
+          ],
+          "fullName": "Input Component handles different types",
+          "status": "passed",
+          "title": "handles different types",
+          "duration": 14.029700000000958,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1791113115147,
+      "endTime": 1791113115658.0298,
+      "status": "passed",
+      "message": "",
+      "name": "F:/projeler/yeni-quizmaster-main/client/src/components/ui/__tests__/input.test.tsx"
+    }
+  ]
+}

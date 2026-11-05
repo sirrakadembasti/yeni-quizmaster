@@ -1,0 +1,50 @@
+{
+  "startedAt": "2026-10-04T13:55:05.663Z",
+  "mode": "load-only",
+  "databaseHashBefore": "8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158",
+  "load": [
+    {
+      "concurrency": 20,
+      "requests": 60,
+      "statuses": {
+        "200": 60
+      },
+      "errors": {},
+      "elapsedMs": 31079,
+      "requestsPerSecond": 1.93,
+      "p50Ms": 9845,
+      "p95Ms": 12492,
+      "maxMs": 14422,
+      "passed": true
+    }
+  ],
+  "ux": [],
+  "cleanup": [
+    {
+      "name": "api",
+      "stopProven": true,
+      "handlesReleased": true
+    }
+  ],
+  "isolatedFixture": true,
+  "fixtureIdentityVerified": true,
+  "detailExitCode": 0,
+  "detailCoverageComplete": true,
+  "mobileAccepted": true,
+  "status": "executed",
+  "ports": [
+    {
+      "kind": "fixture-port",
+      "port": 5560,
+      "stopped": true
+    },
+    {
+      "kind": "fixture-port",
+      "port": 5561,
+      "stopped": true
+    }
+  ],
+  "databaseHashAfter": "8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158",
+  "databaseUnchanged": true,
+  "finishedAt": "2026-10-04T13:55:58.166Z"
+}

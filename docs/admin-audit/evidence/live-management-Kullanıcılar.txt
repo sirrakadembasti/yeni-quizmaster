@@ -1,0 +1,74 @@
+Browser tab: 3, Title: "QuizMaster - Admin Dashboard", URL: "http://127.0.0.1:5511/management".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 41, 43-46
+~				36 tab (selectable, settable, boolean) Sınıflar, Value: 0, ID: radix-_r_3_-trigger-classes
+~				37 tab (selected, settable, boolean) Kullanıcılar, Value: 1, ID: radix-_r_3_-trigger-users
+~			39 container Description: Kullanıcılar, ID: radix-_r_3_-content-users
+~				40 heading Kullanıcı Yönetimi, Value: 2
++					41 text Kullanıcı Yönetimi
+~				42 button Yeni Kullanıcı Oluştur
++				43 tab group
++					44 tab (selected, settable, boolean) Tümü, Value: 1, ID: radix-_r_v_-trigger-all
++					45 tab (selectable, settable, boolean) Yöneticiler, Value: 0, ID: radix-_r_v_-trigger-admin
++					46 tab (selectable, settable, boolean) Öğretmenler, Value: 0, ID: radix-_r_v_-trigger-teacher
++					47 tab (selectable, settable, boolean) Öğrenciler, Value: 0, ID: radix-_r_v_-trigger-student
++					48 tab (selectable, settable, boolean) Veliler, Value: 0, ID: radix-_r_v_-trigger-parent
++				49 table
++					50 row
++						51 cell
++							52 text KULLANICI BILGILERI
++						53 cell
++							54 text SISTEM ROLÜ
++						55 cell
++							56 text İLETIŞIM
++						57 cell
++							58 text İŞLEMLER
++					59 row
++						60 cell
++							61 text A
++							62 text Audit Admin
++							63 text AUDIT-ADMIN@EXAMPLE.TEST
++						64 cell
++							65 text YÖNETICI
++						66 cell
++							67 text No yok
++						68 cell
++							69 button
++							70 button
++					71 row
++						72 cell
++							73 text A
++							74 text Audit Teacher
++							75 text AUDIT-TEACHER@EXAMPLE.TEST
++						76 cell
++							77 text ÖĞRETMEN
++						78 cell
++							79 text No yok
++						80 cell
++							81 button
++							82 button
++					83 row
++						84 cell
++							85 text A
++							86 text Audit Student
++							87 text AUDIT-STUDENT@EXAMPLE.TEST
++						88 cell
++							89 text ÖĞRENCI
++						90 cell
++							91 text No yok
++						92 cell
++							93 button
++							94 button
++					95 row
++						96 cell
++							97 text A
++							98 text Audit Parent
++							99 text AUDIT-PARENT@EXAMPLE.TEST
++						100 cell
++							101 text VELI
++						102 cell
++							103 text No yok
++						104 cell
++							105 button
++							106 button
+The focused UI element is 37 tab (selected, settable, boolean) Kullanıcılar, Value: 1, ID: radix-_r_3_-trigger-users

@@ -7,6 +7,7 @@ import "express-session";
 declare module "express-session" {
   interface SessionData {
     userId: string;
+    sessionVersion?: number;
   }
 }
 
@@ -25,6 +26,10 @@ export const requireAuth = async (req: AuthRequest, res: Response, next: NextFun
     if (!user || (user as any).isActive === false) {
       if ((user as any)?.isActive === false) req.session.destroy(() => undefined);
       return res.status(401).json({ message: "Kullanıcı bulunamadı." });
+    }
+    if ((req.session.sessionVersion ?? 0) !== (user.sessionVersion ?? 0)) {
+      req.session.destroy?.(() => undefined);
+      return res.status(401).json({ message: "Şifreniz veya yetkiniz değişti. Yeniden giriş yapın." });
     }
     req.user = user;
     next();

@@ -1,3 +1,5 @@
+import { AdminQueryState } from "@/components/management/AdminQueryState";
+import { invalidateAdminRelations } from '@/lib/admin-cache';
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { useParams, Link } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -55,26 +57,31 @@ export default function AdminClassDetailPage() {
   const [fromLevel, setFromLevel] = useState("");
 
   // Data Fetching — standart key'ler: ['classes', id], ['users'], ['categories'], ['classes']
-  const { data: classData, isLoading: classLoading } = useQuery({
+  const classQuery = useQuery({
     queryKey: ['classes', id],
     queryFn: () => classApi.getClass(id as string),
     enabled: !!id,
   });
 
-  const { data: usersData } = useQuery({
+  const usersQuery = useQuery({
     queryKey: ['users'],
     queryFn: () => userApi.getAllUsers(),
   });
 
-  const { data: categories = [] } = useQuery({
+  const categoriesQuery = useQuery({
     queryKey: ['categories'],
     queryFn: () => categoryApi.getAllCategories(),
   });
 
-  const { data: allClassesData } = useQuery({
+  const allClassesQuery = useQuery({
     queryKey: ['classes'],
     queryFn: () => classApi.getAllClasses(),
   });
+
+  const { data: classData, isLoading: classLoading } = classQuery;
+  const { data: usersData } = usersQuery;
+  const { data: categories = [] } = categoriesQuery;
+  const { data: allClassesData } = allClassesQuery;
 
   const cls = classData?.class;
   const classStudents = classData?.students || [];
@@ -103,14 +110,14 @@ export default function AdminClassDetailPage() {
 
   const assignStudentMutation = useMutation({
     mutationFn: (studentId: string) => classApi.assignStudentToClass(id as string, studentId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       setSelectedStudentToAdd("");
       setIsLevelChangeOpen(false);
       setPendingStudentId(null);
       toast({ title: "Başarılı", description: "Öğrenci sınıfa eklendi." });
-    }
+    },
+    onError: (error: Error) => toast({ variant: 'destructive', title: 'Öğrenci eklenemedi', description: error.message || 'İşlem başarısız. Tekrar deneyin.' })
   });
 
   const handleStudentAssignment = (studentId: string) => {
@@ -134,43 +141,44 @@ export default function AdminClassDetailPage() {
 
   const removeStudentMutation = useMutation({
     mutationFn: (studentId: string) => classApi.removeStudentFromClass(id as string, studentId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       toast({ title: "Başarılı", description: "Öğrenci sınıftan çıkarıldı." });
-    }
+    },
+    onError: (error: Error) => toast({ variant: 'destructive', title: 'Öğrenci çıkarılamadı', description: error.message || 'İşlem başarısız. Tekrar deneyin.' })
   });
 
   const assignTeacherMutation = useMutation({
     mutationFn: (data: { teacherId: string, categoryId: string }) =>
       classApi.assignTeacherToClassWithCourse(id as string, data.teacherId, data.categoryId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       setSelectedTeacherId("");
       setSelectedCategoryId("");
       toast({ title: "Başarılı", description: "Öğretmen atandı." });
-    }
+    },
+    onError: (error: Error) => toast({ variant: 'destructive', title: 'Öğretmen atanamadı', description: error.message || 'İşlem başarısız. Tekrar deneyin.' })
   });
 
   const removeTeacherMutation = useMutation({
     mutationFn: (assignmentId: string) => classApi.removeTeacherFromClassWithCourse(assignmentId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       toast({ title: "Başarılı", description: "Öğretmen ataması kaldırıldı." });
-    }
+    },
+    onError: (error: Error) => toast({ variant: 'destructive', title: 'Atama kaldırılamadı', description: error.message || 'İşlem başarısız. Tekrar deneyin.' })
   });
 
   // Sorumlu öğretmen güncelleme (classTeacherId)
   const updateResponsibleTeacherMutation = useMutation({
     mutationFn: (teacherId: string | null) =>
       classApi.updateClass(id as string, { classTeacherId: teacherId }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       setSelectedResponsibleTeacherId("");
       toast({ title: "Başarılı", description: "Sorumlu öğretmen güncellendi." });
     },
-    onError: () => toast({ variant: "destructive", title: "Hata", description: "Güncelleme başarısız." })
+    onError: (error: Error) => toast({ variant: "destructive", title: "Sorumlu öğretmen güncellenemedi", description: error.message || "Güncelleme başarısız." })
   });
 
   const exportStudents = () => downloadCsv({
@@ -185,6 +193,8 @@ export default function AdminClassDetailPage() {
       { header: "E-posta", value: (row: any) => row.email || "-" },
     ],
   });
+  const pageQueries = [classQuery, usersQuery, categoriesQuery, allClassesQuery];
+  if (pageQueries.some(query => query.isPending || query.isError)) return <DashboardLayout><AdminQueryState queries={pageQueries} /></DashboardLayout>;
   if (classLoading) return <div className="flex h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
   if (!cls) return <div className="p-8">Sınıf bulunamadı.</div>;
 
@@ -195,7 +205,7 @@ export default function AdminClassDetailPage() {
         <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Button variant="outline" size="icon" asChild className="rounded-xl">
-              <Link href="/management"><ArrowLeft className="h-5 w-5" /></Link>
+              <Link href="/management" aria-label="Yönetim ekranına dön"><ArrowLeft className="h-5 w-5" /></Link>
             </Button>
             <div>
               <h1 className="text-3xl font-black text-foreground tracking-tight">Sınıf Yönetimi: {cls.name}</h1>
@@ -221,6 +231,8 @@ export default function AdminClassDetailPage() {
               </CardHeader>
               <CardContent className="p-3 space-y-2">
                 {/* Mevcut sorumlu öğretmeni göster */}
+                <p className="text-xs text-muted-foreground">Sorumlu öğretmen atamasını kaldırmak bağımsız ders atamalarını kaldırmaz. Bu atamalar ayrıca aşağıdan yönetilir.</p>
+                {cls.teacherAssignments?.some((assignment: any) => assignment.teacherId === cls.classTeacherId) && <p className="text-xs font-medium">Kalan dersler: {cls.teacherAssignments.filter((assignment: any) => assignment.teacherId === cls.classTeacherId).map((assignment: any) => assignment.category?.name).filter(Boolean).join(', ')}</p>}
                 <div className="p-3 bg-muted/50 rounded-xl border border-border">
                   <p className="text-[10px] font-black uppercase text-muted-foreground tracking-wider mb-1">Şu An Atanmış</p>
                   <p className="font-bold text-foreground">
@@ -231,9 +243,9 @@ export default function AdminClassDetailPage() {
                 </div>
                 {/* Değiştirme dropdown'u */}
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold uppercase text-muted-foreground">Yeni Öğretmen Seç</Label>
+                  <Label htmlFor="responsible-teacher" className="text-xs font-bold uppercase text-muted-foreground">Yeni Öğretmen Seç</Label>
                   <Select value={selectedResponsibleTeacherId} onValueChange={setSelectedResponsibleTeacherId}>
-                    <SelectTrigger className="rounded-xl border-border bg-muted/30">
+                    <SelectTrigger id="responsible-teacher" className="rounded-xl border-border bg-muted/30">
                       <SelectValue placeholder="Öğretmen seçin..." />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
@@ -267,9 +279,9 @@ export default function AdminClassDetailPage() {
               </CardHeader>
               <CardContent className="p-3 space-y-2">
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold uppercase text-muted-foreground">Seviyeye Uygun Öğrenciler</Label>
+                  <Label htmlFor="assign-student" className="text-xs font-bold uppercase text-muted-foreground">Seviyeye Uygun Öğrenciler</Label>
                   <Select value={selectedStudentToAdd} onValueChange={setSelectedStudentToAdd}>
-                    <SelectTrigger className="rounded-xl h-11 border-border bg-muted/30">
+                    <SelectTrigger id="assign-student" className="rounded-xl h-11 border-border bg-muted/30">
                       <SelectValue placeholder="Öğrenci seçin..." />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl max-h-[250px]">
@@ -301,18 +313,18 @@ export default function AdminClassDetailPage() {
               <CardContent className="p-3 space-y-2">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase text-muted-foreground">Ders Seçin</Label>
+                    <Label htmlFor="assign-course" className="text-xs font-bold uppercase text-muted-foreground">Ders Seçin</Label>
                     <Select value={selectedCategoryId} onValueChange={setSelectedCategoryId}>
-                      <SelectTrigger className="rounded-xl border-border bg-muted/30"><SelectValue placeholder="Ders..." /></SelectTrigger>
+                      <SelectTrigger id="assign-course" className="rounded-xl border-border bg-muted/30"><SelectValue placeholder="Ders..." /></SelectTrigger>
                       <SelectContent className="rounded-xl">
                         {categories.map((cat: any) => (<SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>))}
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase text-muted-foreground">Öğretmen Seçin</Label>
+                    <Label htmlFor="assign-teacher" className="text-xs font-bold uppercase text-muted-foreground">Öğretmen Seçin</Label>
                     <Select value={selectedTeacherId} onValueChange={setSelectedTeacherId}>
-                      <SelectTrigger className="rounded-xl border-border bg-muted/30"><SelectValue placeholder="Öğretmen..." /></SelectTrigger>
+                      <SelectTrigger id="assign-teacher" className="rounded-xl border-border bg-muted/30"><SelectValue placeholder="Öğretmen..." /></SelectTrigger>
                       <SelectContent className="rounded-xl">
                         {teachers.map(t => (<SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>))}
                       </SelectContent>
@@ -338,7 +350,7 @@ export default function AdminClassDetailPage() {
                   <CardTitle className="text-lg font-black flex items-center gap-2"><Users className="h-5 w-5 text-indigo-600" /> Aktif Öğrenci Listesi</CardTitle>
                   <div className="relative w-48">
                     <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
-                    <Input placeholder="Ara..." className="pl-8 h-8 rounded-lg text-xs" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+                    <Input aria-label="Sınıf öğrencilerini ara" placeholder="Ara..." className="pl-8 h-8 rounded-lg text-xs" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                   </div>
                 </div>
               </CardHeader>
@@ -346,7 +358,7 @@ export default function AdminClassDetailPage() {
                 <TableHeader className="bg-muted/50">
                   <TableRow>
                     <TableHead className="pl-6 font-black text-[10px] uppercase py-3">Öğrenci</TableHead>
-                    <TableHead className="text-right pr-6 font-black text-[10px] uppercase py-3">İşlemler</TableHead>
+                    <TableHead className="text-right pr-6 font-black text-[10px] uppercase py-3 print:hidden">İşlemler</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -364,8 +376,8 @@ export default function AdminClassDetailPage() {
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell className="text-right pr-6">
-                          <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-red-500" onClick={() => removeStudentMutation.mutate(s.id)}><Trash2 className="h-4 w-4" /></Button>
+                        <TableCell className="text-right pr-6 print:hidden">
+                          <Button variant="ghost" size="icon" aria-label={`${s.name} öğrencisini sınıftan çıkar`} disabled={removeStudentMutation.isPending} className="h-8 w-8 text-muted-foreground hover:text-red-500 focus-visible:ring-2" onClick={() => removeStudentMutation.mutate(s.id)}><Trash2 className="h-4 w-4" /></Button>
                         </TableCell>
                       </TableRow>
                     ))
@@ -388,7 +400,7 @@ export default function AdminClassDetailPage() {
                         <p className="text-sm font-bold text-foreground">{ta.teacher?.name}</p>
                       </div>
                     </div>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-red-500" onClick={() => removeTeacherMutation.mutate(ta.id)}><Trash2 className="h-4 w-4" /></Button>
+                    <Button variant="ghost" size="icon" aria-label={`${ta.teacher?.name} öğretmeninin ${ta.category?.name} atamasını kaldır`} disabled={removeTeacherMutation.isPending} className="h-8 w-8 text-muted-foreground hover:text-red-500 focus-visible:ring-2" onClick={() => removeTeacherMutation.mutate(ta.id)}><Trash2 className="h-4 w-4" /></Button>
                   </div>
                 ))}
               </div>
@@ -412,7 +424,7 @@ export default function AdminClassDetailPage() {
           </div>
           <DialogFooter className="flex gap-2 p-4 pt-0">
             <Button variant="outline" onClick={() => { setIsLevelChangeOpen(false); setPendingStudentId(null); }} className="rounded-xl flex-1 font-bold">Vazgeç</Button>
-            <Button onClick={() => assignStudentMutation.mutate(pendingStudentId!)} className="rounded-xl flex-1 font-bold bg-indigo-600 hover:bg-indigo-700">Onayla</Button>
+            <Button disabled={assignStudentMutation.isPending || !pendingStudentId} onClick={() => assignStudentMutation.mutate(pendingStudentId!)} className="rounded-xl flex-1 font-bold bg-indigo-600 hover:bg-indigo-700">Onayla</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -1,0 +1,32 @@
+QuizMaster Yönetim ve Sınav Sistemi Audit Admin · Yönetici
+Anket Sonuçları
+01.10.2026 17:56:18
+Anket
+Görü ş  Anketi 9652cd38
+Ba ş langıç
+2026-09-01
+Biti ş
+2026-10-01
+GÖRÜNTÜLENEN ANKET
+1
+Görü ş  Anketi 9652cd38
+TOPLAM KATILIM
+1
+Filtrelenen yanıtlama sayısı
+HEDEF KATILIMCI
+2
+Anketlere atanmı ş  ö ğ renci
+GENEL KATILIM ORANI
+%50
+1 soru analiz edildi
+Grafiklerde adet ve oran birlikte gösterilir; ayrıntılı de ğ erler yan tablodadır.
+Görü ş  Anketi 9652cd38
+01.10.2026 1 soru 1 / 2 katılımcı
+Katılım ilerlemesi %50
+1 Açık görü ş ünüz & öneriniz?
+Açık uçlu 1 yanıtlayan
+%50
+KATILIM
+Katılımcı Yanıt Yanıt zamanı
+Ça ğ rı I ş ık
+9652cd38 =HYPERLINK("https://example.test"," Ş üpheli") 01.10.2026 17:54:40

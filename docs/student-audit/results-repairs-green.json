@@ -1,0 +1,380 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\.pnpm\\playwright@1.63.0\\node_modules\\playwright\\cli.js",
+      "test",
+      "-c",
+      "playwright.student-audit.config.ts",
+      "--grep",
+      "offline survives|S-N04|S-D01|S-D03|S-D06|S-D07"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.student-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/student-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "student-*-audit.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/student-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "student-exams-audit.spec.ts",
+      "file": "student-exams-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Student exam real-server audit",
+          "file": "student-exams-audit.spec.ts",
+          "line": 48,
+          "column": 6,
+          "specs": [
+            {
+              "title": "an answer saved offline survives reconnecting and reloading before submission",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 120290,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-exams-audit.spec.ts",
+                            "column": 74,
+                            "line": 209
+                          },
+                          "message": "Error: locator.click: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Quizi Bitir', exact: true })\u001b[22m\n\n\n  207 |       await expect.poll(async () => JSON.parse((await db.studentResult.findUniqueOrThrow({ where: { id: resultId } })).answers as string)[questions[0].id]).toBe('B');\n  208 |     } finally { await db.$disconnect(); }\n> 209 |     await page.getByRole('button', { name: 'Sonraki', exact: true }).click();\n      |                                                                          ^\n  210 |     await page.getByRole('button', { name: 'Quizi Bitir', exact: true }).click();\n  211 |     await page.getByRole('button', { name: 'Evet, Bitir', exact: true }).click();\n  212 |     await expect(page).toHaveURL(`/student/result/${resultId}`, { timeout: 20000 });\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-exams-audit.spec.ts:209:74"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:29:10.759Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-exams-audit-Studen-25e98-reloading-before-submission\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-exams-audit-Studen-25e98-reloading-before-submission\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1c0f3e3e698de5c6cfac-e7d2ae22354edaa10633",
+              "file": "student-exams-audit.spec.ts",
+              "line": 190,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "student-navigation-audit.spec.ts",
+      "file": "student-navigation-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "S-N04 missing quiz back navigation stays in authorized student panel",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8656,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:31:21.922Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-b29250562dc94a218b98",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 78,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "student-navigation-depth-audit.spec.ts",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "S-D01 dashboard all-results action with five own completed records opens authorized results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17859,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:31:31.479Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-8a9aee50fd4ec95a6db9",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 50,
+          "column": 5
+        },
+        {
+          "title": "S-D03 choosing an actual category preserves its completed results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7086,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:31:49.440Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-e2cb144728d3b19d962d",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 105,
+          "column": 5
+        },
+        {
+          "title": "S-D06 injected dashboard API failure must not claim all exams completed",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9263,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:31:56.568Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-f30cfb4ce4e159e1d0fe",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 172,
+          "column": 5
+        },
+        {
+          "title": "S-D07 injected survey API failure must show error and retry instead of empty success",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 19940,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Student Audit Survey', exact: true })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('heading', { name: 'Student Audit Survey', exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Student Audit Survey', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Student Audit Survey', exact: true })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('heading', { name: 'Student Audit Survey', exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Student Audit Survey', exact: true })\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:206:90",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                      "column": 90,
+                      "line": 206
+                    },
+                    "snippet": "  204 |   await retry.click();\n  205 |   await recovered;\n> 206 |   await expect(page.getByRole('heading', { name: 'Student Audit Survey', exact: true })).toBeVisible();\n      |                                                                                          ^\n  207 |   await expect(page.getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })).toHaveCount(0);\n  208 |   await expect(page.locator('main')).not.toContainText('Depth controlled survey failure');\n  209 | });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                        "column": 90,
+                        "line": 206
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Student Audit Survey', exact: true })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('heading', { name: 'Student Audit Survey', exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Student Audit Survey', exact: true })\u001b[22m\n\n\n  204 |   await retry.click();\n  205 |   await recovered;\n> 206 |   await expect(page.getByRole('heading', { name: 'Student Audit Survey', exact: true })).toBeVisible();\n      |                                                                                          ^\n  207 |   await expect(page.getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })).toHaveCount(0);\n  208 |   await expect(page.locator('main')).not.toContainText('Depth controlled survey failure');\n  209 | });\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:206:90"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:32:05.866Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-95105-ry-instead-of-empty-success\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-95105-ry-instead-of-empty-success\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                    "column": 90,
+                    "line": 206
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-2258a9df04ea441e3bd8",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 191,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-04T07:29:04.343Z",
+    "duration": 201987.439,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

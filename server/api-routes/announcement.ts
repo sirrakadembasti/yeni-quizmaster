@@ -6,6 +6,7 @@ import { getIO } from "../socket";
 import { logger } from "../utils/logger";
 import {
   isValidTeacherAnnouncementTarget,
+  matchesAnnouncementAudience,
   matchesAnnouncementRecipient
 } from "../utils/notification-policy";
 
@@ -17,13 +18,32 @@ router.get("/", requireAuth, async (req: AuthRequest, res: Response) => {
     let filtered = all;
 
     if (req.user!.role === 'student') {
-      filtered = all.filter(a => {
-        if (a.targetClassId) {
-          return a.targetClassId === req.user!.classId;
-        }
-
-        return a.targetRole === 'all' || a.targetRole === 'student';
-      });
+      filtered = all.filter(a =>
+        (a.targetRole === 'all' || a.targetRole === 'student') &&
+        matchesAnnouncementAudience({
+          recipientId: req.user!.id,
+          recipientRole: req.user!.role,
+          recipientClassId: req.user!.classId,
+          creatorId: a.createdBy,
+          targetRole: a.targetRole,
+          targetClassId: a.targetClassId,
+        })
+      );
+    } else if (req.user!.role === 'parent') {
+      const links = await storage.getGuardianStudents(req.user!.id);
+      const classIds = links.map(link => link.student?.classId).filter((id): id is string => Boolean(id));
+      filtered = all.filter(a =>
+        (a.targetRole === 'all' || a.targetRole === 'parent') &&
+        matchesAnnouncementAudience({
+          recipientId: req.user!.id,
+          recipientRole: req.user!.role,
+          recipientActive: req.user!.isActive,
+          recipientLinkedStudentClassIds: classIds,
+          creatorId: a.createdBy,
+          targetRole: a.targetRole,
+          targetClassId: a.targetClassId,
+        })
+      );
     } else if (req.user!.role === 'teacher') {
       filtered = all.filter(a =>
         a.createdBy === req.user!.id ||
@@ -64,10 +84,21 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
 
     try {
       const allUsers = await storage.getAllUsers();
+      const parentClassIds = new Map<string, string[]>();
+      if (targetClassId && (!targetRole || targetRole === "all" || targetRole === "parent")) {
+        // Resolve only active children in the targeted class, rather than querying every parent.
+        const students = allUsers.filter(user => user.role === "student" && user.isActive && user.classId === targetClassId);
+        const links = await Promise.all(students.map(student => storage.getStudentGuardians(student.id)));
+        for (const link of links.flat()) {
+          if (link.guardian?.role === "parent") parentClassIds.set(link.guardianId, [targetClassId]);
+        }
+      }
       const recipients = allUsers.filter(user => matchesAnnouncementRecipient({
         recipientId: user.id,
         recipientRole: user.role,
         recipientClassId: user.classId,
+        recipientLinkedStudentClassIds: parentClassIds.get(user.id),
+        recipientActive: user.isActive,
         creatorId: req.user!.id,
         targetRole,
         targetClassId,

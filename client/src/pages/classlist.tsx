@@ -1,3 +1,4 @@
+import { AdminQueryState } from "@/components/management/AdminQueryState";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { 
   Table, 
@@ -30,15 +31,18 @@ export default function ClassesPage() {
   const { role } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { data: classesData, isLoading: isClassesLoading } = useQuery({
+  const classesQuery = useQuery({
     queryKey: ['/api/classes'],
     queryFn: () => role === 'admin' ? classApi.getAllClasses() : classApi.getTeacherClasses(),
   });
 
-  const { data: usersData } = useQuery({
+  const usersQuery = useQuery({
     queryKey: ['/api/users'],
     queryFn: () => userApi.getAllUsers(),
   });
+
+  const { data: classesData, isLoading: isClassesLoading } = classesQuery;
+  const { data: usersData } = usersQuery;
 
   const classes = classesData?.classes || [];
   const students = usersData?.users.filter(u => u.role === 'student') || [];
@@ -60,6 +64,8 @@ export default function ClassesPage() {
     ],
     rows: filteredClasses,
   });
+  const pageQueries = [classesQuery, usersQuery];
+  if (pageQueries.some(query => query.isPending || query.isError)) return <DashboardLayout><AdminQueryState queries={pageQueries} /></DashboardLayout>;
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -86,6 +92,7 @@ export default function ClassesPage() {
           <div className="relative group max-w-sm">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
             <Input 
+              aria-label="Sınıf ara"
               placeholder="Sınıf ara..." 
               className="rounded-xl border-input bg-card pl-10 shadow-sm transition-colors focus:border-primary/50"
               value={searchTerm}
@@ -106,7 +113,7 @@ export default function ClassesPage() {
                     <TableHead className="py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Açıklama</TableHead>
                     <TableHead className="py-4 text-center text-xs font-bold uppercase tracking-wider text-muted-foreground">Öğrenci Sayısı</TableHead>
                     <TableHead className="py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Sorumlu Öğretmen</TableHead>
-                    <TableHead className="py-4 pr-6 text-right text-xs font-bold uppercase tracking-wider text-muted-foreground">İşlemler</TableHead>
+                    <TableHead className="py-4 pr-6 text-right text-xs font-bold uppercase tracking-wider text-muted-foreground print:hidden">İşlemler</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -147,7 +154,7 @@ export default function ClassesPage() {
                               <span className="text-xs font-medium text-slate-400 dark:text-slate-500 italic">Atanmamış</span>
                             )}
                           </TableCell>
-                          <TableCell className="py-4 text-right pr-6">
+                          <TableCell className="py-4 text-right pr-6 print:hidden">
                             <Link href={`/classes/${cls.id}`}>
                               <Button variant="ghost" size="sm" className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 font-bold gap-1 rounded-xl">
                                 <Eye className="h-4 w-4" />

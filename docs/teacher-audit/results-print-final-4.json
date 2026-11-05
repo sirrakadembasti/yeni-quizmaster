@@ -1,0 +1,258 @@
+{
+  "config": {
+    "argv": [
+      "/home/ahmet/.cache/quizmaster-closure/tools-XpIGnI/node-v22.23.2-linux-x64/bin/node",
+      "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/node_modules/playwright/cli.js",
+      "test",
+      "-c",
+      "playwright.teacher-audit.config.ts",
+      "teacher-print-audit.spec.ts"
+    ],
+    "configFile": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/playwright.teacher-audit.config.ts",
+    "rootDir": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "teacher-*-audit.spec.ts"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/teacher-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "teacher-print-audit.spec.ts",
+      "file": "teacher-print-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "teacher results PDF includes all fourteen report rows then selected zero-score row",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11638,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T17:30:17.325Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "teacher-results-all-real-pdf",
+                      "contentType": "application/pdf",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-print-audit-teache-b45f0-hen-selected-zero-score-row/attachments/teacher-results-all-real-pdf-639c4084f858fbbf64daab2d4cb85d257b620c0e.pdf"
+                    },
+                    {
+                      "name": "teacher-results-zero-filter-real-pdf",
+                      "contentType": "application/pdf",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-print-audit-teache-b45f0-hen-selected-zero-score-row/attachments/teacher-results-zero-filter-real-pdf-3cd12e6e2cb7551cdd01cdbf6df6503d19310b54.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec60fce75f7a31217b7c-290abbfced0e3a6dab66",
+          "file": "teacher-print-audit.spec.ts",
+          "line": 76,
+          "column": 5
+        },
+        {
+          "title": "teacher class PDF includes fourteen students and filter metadata without unselected rows",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4309,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T17:30:30.271Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "teacher-class-all-real-pdf",
+                      "contentType": "application/pdf",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-print-audit-teache-b137f-ata-without-unselected-rows/attachments/teacher-class-all-real-pdf-b69b9b6466ad0f2e7ae18b9e245c9c58edae6cf8.pdf"
+                    },
+                    {
+                      "name": "teacher-class-filter-real-pdf",
+                      "contentType": "application/pdf",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-print-audit-teache-b137f-ata-without-unselected-rows/attachments/teacher-class-filter-real-pdf-30ed5c26d86261b36d64359b08c1d6b16c5ef04f.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec60fce75f7a31217b7c-64be415d04c233ff4e95",
+          "file": "teacher-print-audit.spec.ts",
+          "line": 95,
+          "column": 5
+        },
+        {
+          "title": "teacher student-analysis PDF preserves zero-score report and student identity",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4819,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T17:30:34.625Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "teacher-student-zero-real-pdf",
+                      "contentType": "application/pdf",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-print-audit-teache-af8fb-report-and-student-identity/attachments/teacher-student-zero-real-pdf-601afd0451b5b24f190a5cc18ca25184197c688d.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec60fce75f7a31217b7c-6139ee6cecca9b471a4e",
+          "file": "teacher-print-audit.spec.ts",
+          "line": 107,
+          "column": 5
+        },
+        {
+          "title": "teacher statistics PDF reports assigned class participation and average matching real API",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4802,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T17:30:39.500Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "teacher-statistics-real-pdf",
+                      "contentType": "application/pdf",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-print-audit-teache-3132b-d-average-matching-real-API/attachments/teacher-statistics-real-pdf-1975e711ff9cdeab2207977edcd45b5898c5d61e.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec60fce75f7a31217b7c-c5b672720239ef47536a",
+          "file": "teacher-print-audit.spec.ts",
+          "line": 121,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-03T17:30:14.877Z",
+    "duration": 29605.741,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

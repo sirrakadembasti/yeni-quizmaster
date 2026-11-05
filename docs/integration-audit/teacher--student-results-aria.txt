@@ -1,0 +1,35 @@
+- main:
+  - button "Menüyü aç"
+  - button "Bildirimleri aç"
+  - button "Karanlık Moda Geç"
+  - button "P"
+  - button "Dashboard'a Dön"
+  - heading "Sınav Sonuçlarım" [level=1]
+  - paragraph: Tamamladığınız tüm sınavların gelişmiş dökümü.
+  - button "Excel"
+  - button "Yazdır"
+  - text: Toplam 0 Kayıt Gelişmiş Sorgulama Paneli
+  - button "Filtreleri Temizle"
+  - text: Sınav Adı
+  - textbox "Sınav Adı":
+    - /placeholder: Başlık ile ara...
+  - text: Ders / Kategori
+  - combobox "Ders / Kategori": Tüm Dersler
+  - text: Başarı Durumu
+  - combobox "Başarı Durumu": Tüm Puanlar
+  - text: Sıralama Ölçütü
+  - combobox "Sıralama Ölçütü": En Yeni Tarih
+  - heading "Detaylı Sonuç Listesi" [level=2]
+  - table:
+    - rowgroup:
+      - row "Quiz & Ders Tamamlama Doğruluk Süre Puan Eylem":
+        - columnheader "Quiz & Ders"
+        - columnheader "Tamamlama"
+        - columnheader "Doğruluk"
+        - columnheader "Süre"
+        - columnheader "Puan"
+        - columnheader "Eylem"
+    - rowgroup
+  - heading "Sonuç Bulunamadı" [level=3]
+  - paragraph: Seçtiğiniz kriterlere uygun sınav sonucu bulunmuyor. Filtreleri değiştirmeyi deneyin.
+  - button "Tüm Filtreleri Sıfırla"

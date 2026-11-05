@@ -1,0 +1,22 @@
+{
+  "route": "/results",
+  "labels": [
+    " Genel Bakış"
+  ],
+  "views": [
+    "Genel Bakış"
+  ],
+  "errors": [],
+  "network": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 0,
+    "unlabeledInputs": [
+      {
+        "placeholder": "Sınav veya ders ara...",
+        "type": null
+      }
+    ]
+  }
+}

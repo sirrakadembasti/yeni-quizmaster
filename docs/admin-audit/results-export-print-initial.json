@@ -1,0 +1,1048 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\playwright\\cli.js",
+      "test",
+      "--config",
+      "playwright.admin-audit.config.ts",
+      "admin-export-print.spec.ts"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.admin-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/admin-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "admin-audit.spec.ts",
+          "admin-audit-people-flows.spec.ts",
+          "admin-audit-system-flows.spec.ts",
+          "admin-results-regression.spec.ts",
+          "admin-quiz-repairs.spec.ts",
+          "admin-inventory-repairs.spec.ts",
+          "admin-critical-repairs.spec.ts",
+          "admin-session-expiry.spec.ts",
+          "admin-export-print.spec.ts",
+          "admin-accessibility-closure.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "docs/admin-audit/playwright-report-latest",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/admin-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "admin-export-print.spec.ts",
+      "file": "admin-export-print.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "teacher list workbook exports only matching rows and preserves Turkish relationships",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 27492,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T11:10:38.203Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-teacher-737b6-erves-Turkish-relationships\\attachments\\downloaded-workbook-0209aedae68afe839f58966e64087177f152c682.xlsx"
+                    },
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-teacher-737b6-erves-Turkish-relationships\\attachments\\printed-report-e5a3a1c3baf62b1d80699ec99536c5a8b93a1cb7.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-0c57ba301a930bd7f251",
+          "file": "admin-export-print.spec.ts",
+          "line": 149,
+          "column": 5
+        },
+        {
+          "title": "student list workbook keeps selected row and admin parent/contact fields",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13183,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T11:11:12.973Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-student-afdda-admin-parent-contact-fields\\attachments\\downloaded-workbook-7c1f3304e2bcd0d318f7d6f4226370ff28c330be.xlsx"
+                    },
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-student-afdda-admin-parent-contact-fields\\attachments\\printed-report-8c004d423ac0e0219bc131345cc66c2e8d09249b.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-f65c11825c6350cd14f1",
+          "file": "admin-export-print.spec.ts",
+          "line": 159,
+          "column": 5
+        },
+        {
+          "title": "class list workbook count and responsible teacher match the isolated class",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15327,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T11:11:26.185Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-class-l-cb8b6-er-match-the-isolated-class\\attachments\\downloaded-workbook-27d120583a4aedbd33995bbcb9d03595e13f9c8f.xlsx"
+                    },
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-class-l-cb8b6-er-match-the-isolated-class\\attachments\\printed-report-ada95d3e45c8e4703fc5b36521a94e885218a779.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-d82abf2ca50709c94fa7",
+          "file": "admin-export-print.spec.ts",
+          "line": 169,
+          "column": 5
+        },
+        {
+          "title": "read-only class detail exports the searched student and prints the roster",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16614,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T11:11:41.550Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-read-on-1656a-udent-and-prints-the-roster\\attachments\\downloaded-workbook-161f518f81321fdc6b386eaebbf0f1c23168aa15.xlsx"
+                    },
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-read-on-1656a-udent-and-prints-the-roster\\attachments\\printed-report-b1d4b39291b3e39cb5563d7030148c20760da94a.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-24e46f2832cdda62654d",
+          "file": "admin-export-print.spec.ts",
+          "line": 178,
+          "column": 40
+        },
+        {
+          "title": "management class detail exports the searched student and prints the roster",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10348,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T11:11:58.207Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-managem-20b64-udent-and-prints-the-roster\\attachments\\downloaded-workbook-5e4f3f18a192de160dc8bcd943d51aca61672593.xlsx"
+                    },
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-managem-20b64-udent-and-prints-the-roster\\attachments\\printed-report-a17a0d3f8b1c207124abd56d2c85de1fbe3bfdac.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-4b4927b9522bd71cef8c",
+          "file": "admin-export-print.spec.ts",
+          "line": 178,
+          "column": 40
+        },
+        {
+          "title": "teacher detail workbook contains the teacher class and exam rather than unrelated records",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 19759,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\nExpected: \u001b[32mArrayContaining [[\"Sınıf\", \"1-Çığ 0c8960b7\", \"Sorumlu öğretmen\"], [\"Sınav\", \"Sıfır Puanlı Sınav 0c8960b7\", \"published\"]]\u001b[39m\nReceived: \u001b[31m[[\"Sınıf\", \"1-Çığ 0c8960b7\", \"Sorumlu öğretmen\"]]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\nExpected: \u001b[32mArrayContaining [[\"Sınıf\", \"1-Çığ 0c8960b7\", \"Sorumlu öğretmen\"], [\"Sınav\", \"Sıfır Puanlı Sınav 0c8960b7\", \"published\"]]\u001b[39m\nReceived: \u001b[31m[[\"Sınıf\", \"1-Çığ 0c8960b7\", \"Sorumlu öğretmen\"]]\u001b[39m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts:193:35",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                      "column": 35,
+                      "line": 193
+                    },
+                    "snippet": "  191 |   const xlsx = await workbook(page, info);\n  192 |   expect(xlsx.values).toContain(fixture.teacher);\n> 193 |   expect(xlsx.data('Kayıt Türü')).toEqual(expect.arrayContaining([['Sınıf', fixture.cls, 'Sorumlu öğretmen'], ['Sınav', fixture.exam, 'published']]));\n      |                                   ^\n  194 |   expect(xlsx.data('Kayıt Türü').every(row => [fixture.cls, fixture.exam, fixture.survey].includes(row[1]))).toBe(true);\n  195 |   await printReport(page, info, fixture.teacher);\n  196 | });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                        "column": 35,
+                        "line": 193
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\nExpected: \u001b[32mArrayContaining [[\"Sınıf\", \"1-Çığ 0c8960b7\", \"Sorumlu öğretmen\"], [\"Sınav\", \"Sıfır Puanlı Sınav 0c8960b7\", \"published\"]]\u001b[39m\nReceived: \u001b[31m[[\"Sınıf\", \"1-Çığ 0c8960b7\", \"Sorumlu öğretmen\"]]\u001b[39m\n\n  191 |   const xlsx = await workbook(page, info);\n  192 |   expect(xlsx.values).toContain(fixture.teacher);\n> 193 |   expect(xlsx.data('Kayıt Türü')).toEqual(expect.arrayContaining([['Sınıf', fixture.cls, 'Sorumlu öğretmen'], ['Sınav', fixture.exam, 'published']]));\n      |                                   ^\n  194 |   expect(xlsx.data('Kayıt Türü').every(row => [fixture.cls, fixture.exam, fixture.survey].includes(row[1]))).toBe(true);\n  195 |   await printReport(page, info, fixture.teacher);\n  196 | });\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts:193:35"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T11:12:08.592Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-teacher-87fbf-ther-than-unrelated-records\\attachments\\downloaded-workbook-4861009b6cb02b62e6d4f122e15cea4dbf3cd620.xlsx"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-teacher-87fbf-ther-than-unrelated-records\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-teacher-87fbf-ther-than-unrelated-records\\error-context.md"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-teacher-87fbf-ther-than-unrelated-records\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-teacher-87fbf-ther-than-unrelated-records\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                    "column": 35,
+                    "line": 193
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-3bba78c82136dea1f6b7",
+          "file": "admin-export-print.spec.ts",
+          "line": 188,
+          "column": 5
+        },
+        {
+          "title": "results workbook records selected teacher/student provenance and preserves completed zero",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 12101,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -1,10 +1,10 @@\u001b[39m\n\u001b[2m  Array [\u001b[22m\n\u001b[2m    \"Sıfır Puanlı Sınav f3bc787a\",\u001b[22m\n\u001b[2m    \"Türkçe f3bc787a\",\u001b[22m\n\u001b[2m    \"Çağrı Işık f3bc787a\",\u001b[22m\n\u001b[32m-   \"student-f3bc787a@example.test\",\u001b[39m\n\u001b[31m+   \"\",\u001b[39m\n\u001b[2m    \"1-Çığ f3bc787a\",\u001b[22m\n\u001b[2m    \"Tamamlandı\",\u001b[22m\n\u001b[2m    \"0\",\u001b[22m\n\u001b[2m    \"0\",\u001b[22m\n\u001b[2m    \"1\",\u001b[22m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -1,10 +1,10 @@\u001b[39m\n\u001b[2m  Array [\u001b[22m\n\u001b[2m    \"Sıfır Puanlı Sınav f3bc787a\",\u001b[22m\n\u001b[2m    \"Türkçe f3bc787a\",\u001b[22m\n\u001b[2m    \"Çağrı Işık f3bc787a\",\u001b[22m\n\u001b[32m-   \"student-f3bc787a@example.test\",\u001b[39m\n\u001b[31m+   \"\",\u001b[39m\n\u001b[2m    \"1-Çığ f3bc787a\",\u001b[22m\n\u001b[2m    \"Tamamlandı\",\u001b[22m\n\u001b[2m    \"0\",\u001b[22m\n\u001b[2m    \"0\",\u001b[22m\n\u001b[2m    \"1\",\u001b[22m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts:207:50",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                      "column": 50,
+                      "line": 207
+                    },
+                    "snippet": "  205 |   const xlsx = await workbook(page, info);\n  206 |   expect(xlsx.data('Sınav Adı')).toHaveLength(1);\n> 207 |   expect(xlsx.data('Sınav Adı')[0].slice(0, 10)).toEqual([fixture.exam, fixture.category, fixture.student, `student-${suffix}@example.test`, fixture.cls, 'Tamamlandı', '0', '0', '1', '120']);\n      |                                                  ^\n  208 |   expect(xlsx.rows.find(row => row[0]?.value === fixture.exam)?.[6].numeric, 'Completed zero must remain a numeric score').toBe(true);\n  209 |   expect.soft(xlsx.rows.some(row => row[0]?.value === 'Öğretmen' && row[1]?.value === fixture.teacher), 'Selected teacher must be recorded in workbook report metadata').toBe(true);\n  210 |   expect.soft(xlsx.rows.some(row => row[0]?.value === 'Öğrenci' && row[1]?.value === fixture.student), 'Selected student must be recorded in workbook report metadata').toBe(true);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                        "column": 50,
+                        "line": 207
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -1,10 +1,10 @@\u001b[39m\n\u001b[2m  Array [\u001b[22m\n\u001b[2m    \"Sıfır Puanlı Sınav f3bc787a\",\u001b[22m\n\u001b[2m    \"Türkçe f3bc787a\",\u001b[22m\n\u001b[2m    \"Çağrı Işık f3bc787a\",\u001b[22m\n\u001b[32m-   \"student-f3bc787a@example.test\",\u001b[39m\n\u001b[31m+   \"\",\u001b[39m\n\u001b[2m    \"1-Çığ f3bc787a\",\u001b[22m\n\u001b[2m    \"Tamamlandı\",\u001b[22m\n\u001b[2m    \"0\",\u001b[22m\n\u001b[2m    \"0\",\u001b[22m\n\u001b[2m    \"1\",\u001b[22m\n\n  205 |   const xlsx = await workbook(page, info);\n  206 |   expect(xlsx.data('Sınav Adı')).toHaveLength(1);\n> 207 |   expect(xlsx.data('Sınav Adı')[0].slice(0, 10)).toEqual([fixture.exam, fixture.category, fixture.student, `student-${suffix}@example.test`, fixture.cls, 'Tamamlandı', '0', '0', '1', '120']);\n      |                                                  ^\n  208 |   expect(xlsx.rows.find(row => row[0]?.value === fixture.exam)?.[6].numeric, 'Completed zero must remain a numeric score').toBe(true);\n  209 |   expect.soft(xlsx.rows.some(row => row[0]?.value === 'Öğretmen' && row[1]?.value === fixture.teacher), 'Selected teacher must be recorded in workbook report metadata').toBe(true);\n  210 |   expect.soft(xlsx.rows.some(row => row[0]?.value === 'Öğrenci' && row[1]?.value === fixture.student), 'Selected student must be recorded in workbook report metadata').toBe(true);\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts:207:50"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T11:12:33.414Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-results-8c797-nd-preserves-completed-zero\\attachments\\downloaded-workbook-e8a996694e417731c694237ba615442d007f6957.xlsx"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-results-8c797-nd-preserves-completed-zero\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-results-8c797-nd-preserves-completed-zero\\error-context.md"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-results-8c797-nd-preserves-completed-zero\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-results-8c797-nd-preserves-completed-zero\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                    "column": 50,
+                    "line": 207
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-8de594532982f52d0b9d",
+          "file": "admin-export-print.spec.ts",
+          "line": 198,
+          "column": 5
+        },
+        {
+          "title": "admin student analysis workbook keeps the real zero score and selected student identity",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 9307,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m\"Çağrı Işık 85fb7c00\"\u001b[39m\nReceived array: \u001b[31m[\"Öğrenci Analizi\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"Öğrenci\", \"Audit Admin\", …]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m\"Çağrı Işık 85fb7c00\"\u001b[39m\nReceived array: \u001b[31m[\"Öğrenci Analizi\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"Öğrenci\", \"Audit Admin\", …]\u001b[39m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts:220:23",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                      "column": 23,
+                      "line": 220
+                    },
+                    "snippet": "  218 |   await expect(page.getByRole('button', { name: 'Excel', exact: true })).toBeVisible();\n  219 |   const xlsx = await workbook(page, info);\n> 220 |   expect(xlsx.values).toContain(fixture.student);\n      |                       ^\n  221 |   expect(xlsx.data('Sınav')).toHaveLength(1);\n  222 |   expect(xlsx.data('Sınav')[0].slice(0, 7)).toEqual([fixture.exam, fixture.category, '0', '0', '1', '2', 'Tamamlandı']);\n  223 |   await printReport(page, info, fixture.student);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                        "column": 23,
+                        "line": 220
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m\"Çağrı Işık 85fb7c00\"\u001b[39m\nReceived array: \u001b[31m[\"Öğrenci Analizi\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"Öğrenci\", \"Audit Admin\", …]\u001b[39m\n\n  218 |   await expect(page.getByRole('button', { name: 'Excel', exact: true })).toBeVisible();\n  219 |   const xlsx = await workbook(page, info);\n> 220 |   expect(xlsx.values).toContain(fixture.student);\n      |                       ^\n  221 |   expect(xlsx.data('Sınav')).toHaveLength(1);\n  222 |   expect(xlsx.data('Sınav')[0].slice(0, 7)).toEqual([fixture.exam, fixture.category, '0', '0', '1', '2', 'Tamamlandı']);\n  223 |   await printReport(page, info, fixture.student);\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts:220:23"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T11:12:56.259Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-s-7e9e0-d-selected-student-identity\\attachments\\downloaded-workbook-11a2c5010580b6fc229da009043c28f62e0b5cc6.xlsx"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-s-7e9e0-d-selected-student-identity\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-s-7e9e0-d-selected-student-identity\\error-context.md"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-s-7e9e0-d-selected-student-identity\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-s-7e9e0-d-selected-student-identity\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                    "column": 23,
+                    "line": 220
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-ec0f3528dbb49eca5bec",
+          "file": "admin-export-print.spec.ts",
+          "line": 216,
+          "column": 5
+        },
+        {
+          "title": "result detail workbook exports question and actual wrong answer, then prints the detail",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11357,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T11:13:17.392Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-result--1cf3b-swer-then-prints-the-detail\\attachments\\downloaded-workbook-f09331020c74daaa7682e3c58516c2b0b5032446.xlsx"
+                    },
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-result--1cf3b-swer-then-prints-the-detail\\attachments\\printed-report-f31145f287cdf70fef7a725465559d4a00309a51.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-13c52b5e0f7822bc8475",
+          "file": "admin-export-print.spec.ts",
+          "line": 226,
+          "column": 5
+        },
+        {
+          "title": "class analytics workbook matches real participation and zero average and prints its chart/table",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 27757,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  0\u001b[39m\n\u001b[31m+ Received  + 14\u001b[39m\n\n\u001b[33m@@ -1,7 +1,21 @@\u001b[39m\n\u001b[2m  Array [\u001b[22m\n\u001b[2m    Array [\u001b[22m\n\u001b[31m+     \"\",\u001b[39m\n\u001b[31m+     \"\",\u001b[39m\n\u001b[31m+     \"\",\u001b[39m\n\u001b[31m+     \"\",\u001b[39m\n\u001b[31m+     \"\",\u001b[39m\n\u001b[31m+   ],\u001b[39m\n\u001b[31m+   Array [\u001b[39m\n\u001b[31m+     \"Sınıf\",\u001b[39m\n\u001b[31m+     \"Öğrenci Sayısı\",\u001b[39m\n\u001b[31m+     \"Katılımcı Sayısı\",\u001b[39m\n\u001b[31m+     \"Katılım Oranı (%)\",\u001b[39m\n\u001b[31m+     \"Ortalama Başarı (%)\",\u001b[39m\n\u001b[31m+   ],\u001b[39m\n\u001b[31m+   Array [\u001b[39m\n\u001b[2m      \"1-Çığ c392282f\",\u001b[22m\n\u001b[2m      \"2\",\u001b[22m\n\u001b[2m      \"1\",\u001b[22m\n\u001b[2m      \"50\",\u001b[22m\n\u001b[2m      \"0\",\u001b[22m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  0\u001b[39m\n\u001b[31m+ Received  + 14\u001b[39m\n\n\u001b[33m@@ -1,7 +1,21 @@\u001b[39m\n\u001b[2m  Array [\u001b[22m\n\u001b[2m    Array [\u001b[22m\n\u001b[31m+     \"\",\u001b[39m\n\u001b[31m+     \"\",\u001b[39m\n\u001b[31m+     \"\",\u001b[39m\n\u001b[31m+     \"\",\u001b[39m\n\u001b[31m+     \"\",\u001b[39m\n\u001b[31m+   ],\u001b[39m\n\u001b[31m+   Array [\u001b[39m\n\u001b[31m+     \"Sınıf\",\u001b[39m\n\u001b[31m+     \"Öğrenci Sayısı\",\u001b[39m\n\u001b[31m+     \"Katılımcı Sayısı\",\u001b[39m\n\u001b[31m+     \"Katılım Oranı (%)\",\u001b[39m\n\u001b[31m+     \"Ortalama Başarı (%)\",\u001b[39m\n\u001b[31m+   ],\u001b[39m\n\u001b[31m+   Array [\u001b[39m\n\u001b[2m      \"1-Çığ c392282f\",\u001b[22m\n\u001b[2m      \"2\",\u001b[22m\n\u001b[2m      \"1\",\u001b[22m\n\u001b[2m      \"50\",\u001b[22m\n\u001b[2m      \"0\",\u001b[22m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts:240:30",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                      "column": 30,
+                      "line": 240
+                    },
+                    "snippet": "  238 |   await expect(page.getByRole('row').filter({ hasText: fixture.cls })).toHaveCount(1);\n  239 |   const xlsx = await workbook(page, info);\n> 240 |   expect(xlsx.data('Sınıf')).toEqual([[fixture.cls, '2', '1', '50', '0']]);\n      |                              ^\n  241 |   await printReport(page, info, fixture.cls);\n  242 | });\n  243 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                        "column": 30,
+                        "line": 240
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  0\u001b[39m\n\u001b[31m+ Received  + 14\u001b[39m\n\n\u001b[33m@@ -1,7 +1,21 @@\u001b[39m\n\u001b[2m  Array [\u001b[22m\n\u001b[2m    Array [\u001b[22m\n\u001b[31m+     \"\",\u001b[39m\n\u001b[31m+     \"\",\u001b[39m\n\u001b[31m+     \"\",\u001b[39m\n\u001b[31m+     \"\",\u001b[39m\n\u001b[31m+     \"\",\u001b[39m\n\u001b[31m+   ],\u001b[39m\n\u001b[31m+   Array [\u001b[39m\n\u001b[31m+     \"Sınıf\",\u001b[39m\n\u001b[31m+     \"Öğrenci Sayısı\",\u001b[39m\n\u001b[31m+     \"Katılımcı Sayısı\",\u001b[39m\n\u001b[31m+     \"Katılım Oranı (%)\",\u001b[39m\n\u001b[31m+     \"Ortalama Başarı (%)\",\u001b[39m\n\u001b[31m+   ],\u001b[39m\n\u001b[31m+   Array [\u001b[39m\n\u001b[2m      \"1-Çığ c392282f\",\u001b[22m\n\u001b[2m      \"2\",\u001b[22m\n\u001b[2m      \"1\",\u001b[22m\n\u001b[2m      \"50\",\u001b[22m\n\u001b[2m      \"0\",\u001b[22m\n\n  238 |   await expect(page.getByRole('row').filter({ hasText: fixture.cls })).toHaveCount(1);\n  239 |   const xlsx = await workbook(page, info);\n> 240 |   expect(xlsx.data('Sınıf')).toEqual([[fixture.cls, '2', '1', '50', '0']]);\n      |                              ^\n  241 |   await printReport(page, info, fixture.cls);\n  242 | });\n  243 |\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts:240:30"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T11:13:33.470Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-class-a-0f002--and-prints-its-chart-table\\attachments\\downloaded-workbook-02e1adcfa74c4a27cdb5d7442c21871747b24846.xlsx"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-class-a-0f002--and-prints-its-chart-table\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-class-a-0f002--and-prints-its-chart-table\\error-context.md"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-class-a-0f002--and-prints-its-chart-table\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-class-a-0f002--and-prints-its-chart-table\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                    "column": 30,
+                    "line": 240
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-db181a9f31133d932a3a",
+          "file": "admin-export-print.spec.ts",
+          "line": 234,
+          "column": 5
+        },
+        {
+          "title": "survey workbook exports real open-text response safely and prints landscape results",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 14850,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m1\u001b[39m\nReceived length: \u001b[31m7\u001b[39m\nReceived array:  \u001b[31m[[\"Başlangıç\", \"2026-09-01\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"], [\"Bitiş\", \"2026-10-01\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"], [\"Toplam Katılım\", \"1\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"], [\"Genel Katılım Oranı\", \"%50\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"], [\"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"], [\"Anket\", \"Soru\", \"Soru Türü\", \"Seçenek / Yanıt\", \"Yanıt Sayısı\", \"Oran\", \"Ortalama\", \"Katılımcı / Yanıtlayan\", \"Yanıt Tarihi\"], [\"Görüş Anketi 63791ccb\", \"Açık görüşünüz & öneriniz?\", \"Açık uçlu\", \"'=HYPERLINK(\\\"https://example.test\\\",\\\"Şüpheli\\\")\", \"1\", \"\", \"\", \"Çağrı Işık 63791ccb\", \"01.10.2026 14:14:37\"]]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m1\u001b[39m\nReceived length: \u001b[31m7\u001b[39m\nReceived array:  \u001b[31m[[\"Başlangıç\", \"2026-09-01\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"], [\"Bitiş\", \"2026-10-01\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"], [\"Toplam Katılım\", \"1\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"], [\"Genel Katılım Oranı\", \"%50\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"], [\"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"], [\"Anket\", \"Soru\", \"Soru Türü\", \"Seçenek / Yanıt\", \"Yanıt Sayısı\", \"Oran\", \"Ortalama\", \"Katılımcı / Yanıtlayan\", \"Yanıt Tarihi\"], [\"Görüş Anketi 63791ccb\", \"Açık görüşünüz & öneriniz?\", \"Açık uçlu\", \"'=HYPERLINK(\\\"https://example.test\\\",\\\"Şüpheli\\\")\", \"1\", \"\", \"\", \"Çağrı Işık 63791ccb\", \"01.10.2026 14:14:37\"]]\u001b[39m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts:251:16",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                      "column": 16,
+                      "line": 251
+                    },
+                    "snippet": "  249 |   const xlsx = await workbook(page, info);\n  250 |   const rows = xlsx.data('Anket');\n> 251 |   expect(rows).toHaveLength(1);\n      |                ^\n  252 |   expect(rows[0][0]).toBe(fixture.survey);\n  253 |   expect(rows[0][1]).toBe('Açık görüşünüz & öneriniz?');\n  254 |   expect(rows[0][3]).toBe(`'${fixture.answer}`);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                        "column": 16,
+                        "line": 251
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m1\u001b[39m\nReceived length: \u001b[31m7\u001b[39m\nReceived array:  \u001b[31m[[\"Başlangıç\", \"2026-09-01\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"], [\"Bitiş\", \"2026-10-01\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"], [\"Toplam Katılım\", \"1\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"], [\"Genel Katılım Oranı\", \"%50\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"], [\"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"], [\"Anket\", \"Soru\", \"Soru Türü\", \"Seçenek / Yanıt\", \"Yanıt Sayısı\", \"Oran\", \"Ortalama\", \"Katılımcı / Yanıtlayan\", \"Yanıt Tarihi\"], [\"Görüş Anketi 63791ccb\", \"Açık görüşünüz & öneriniz?\", \"Açık uçlu\", \"'=HYPERLINK(\\\"https://example.test\\\",\\\"Şüpheli\\\")\", \"1\", \"\", \"\", \"Çağrı Işık 63791ccb\", \"01.10.2026 14:14:37\"]]\u001b[39m\n\n  249 |   const xlsx = await workbook(page, info);\n  250 |   const rows = xlsx.data('Anket');\n> 251 |   expect(rows).toHaveLength(1);\n      |                ^\n  252 |   expect(rows[0][0]).toBe(fixture.survey);\n  253 |   expect(rows[0][1]).toBe('Açık görüşünüz & öneriniz?');\n  254 |   expect(rows[0][3]).toBe(`'${fixture.answer}`);\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts:251:16"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T11:14:34.006Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-survey--345d3-nd-prints-landscape-results\\attachments\\downloaded-workbook-6080772edff19cad390e053ef11121a703c73ba3.xlsx"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-survey--345d3-nd-prints-landscape-results\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-survey--345d3-nd-prints-landscape-results\\error-context.md"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-survey--345d3-nd-prints-landscape-results\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-survey--345d3-nd-prints-landscape-results\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                    "column": 16,
+                    "line": 251
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-0404f720de92d45a1b75",
+          "file": "admin-export-print.spec.ts",
+          "line": 244,
+          "column": 5
+        },
+        {
+          "title": "admin /quizzes print action produces a portrait report without interactive controls",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12064,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T11:14:59.567Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-q-d826b-ithout-interactive-controls\\attachments\\printed-report-7a0ea4a93d8355407399849dfe2c4ae94916c1e1.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-fc07f7a74f1e67908f59",
+          "file": "admin-export-print.spec.ts",
+          "line": 260,
+          "column": 85
+        },
+        {
+          "title": "admin /management print action produces a portrait report without interactive controls",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 8980,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at printReport (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts:142:34)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts:264:3",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                      "column": 34,
+                      "line": 142
+                    },
+                    "snippet": "  140 |   expect(mediaBoxes.length, 'Generated PDF must contain page dimensions').toBeGreaterThan(0);\n  141 |   for (const box of mediaBoxes) expect(Number(box[1]) > Number(box[2])).toBe(landscape);\n> 142 |   expect(layout.hasRequiredText).toBe(true);\n      |                                  ^\n  143 |   expect(layout.chrome).toEqual([]);\n  144 |   expect(layout.controls).toEqual([]);\n  145 |   expect(layout.clippedTables, 'Report tables must fit the printable content width').toEqual([]);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                        "column": 34,
+                        "line": 142
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  140 |   expect(mediaBoxes.length, 'Generated PDF must contain page dimensions').toBeGreaterThan(0);\n  141 |   for (const box of mediaBoxes) expect(Number(box[1]) > Number(box[2])).toBe(landscape);\n> 142 |   expect(layout.hasRequiredText).toBe(true);\n      |                                  ^\n  143 |   expect(layout.chrome).toEqual([]);\n  144 |   expect(layout.controls).toEqual([]);\n  145 |   expect(layout.clippedTables, 'Report tables must fit the printable content width').toEqual([]);\n    at printReport (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts:142:34)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts:264:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T11:15:18.004Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiBmYWxzZSwKICAiY2hyb21lIjogW10sCiAgImNvbnRyb2xzIjogW10sCiAgImNsaXBwZWRUYWJsZXMiOiBbXSwKICAicmVwZWF0ZWRIZWFkZXJzIjogdHJ1ZQp9"
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-m-51028-ithout-interactive-controls\\attachments\\printed-report-b67cc0531b408dac8452b21951acde276ddbef85.pdf"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-m-51028-ithout-interactive-controls\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-m-51028-ithout-interactive-controls\\error-context.md"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-m-51028-ithout-interactive-controls\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-m-51028-ithout-interactive-controls\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-export-print.spec.ts",
+                    "column": 34,
+                    "line": 142
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-7b71f286a2f31e609d5e",
+          "file": "admin-export-print.spec.ts",
+          "line": 260,
+          "column": 85
+        },
+        {
+          "title": "admin /announcements print action produces a portrait report without interactive controls",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 37077,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T11:15:40.688Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-a-6994a-ithout-interactive-controls\\attachments\\printed-report-dd410bd166b9008d952937ae631e7bebd044b76e.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-4b27a460b7c0ea88526e",
+          "file": "admin-export-print.spec.ts",
+          "line": 260,
+          "column": 85
+        },
+        {
+          "title": "admin /settings print action produces a portrait report without interactive controls",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10009,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T11:16:39.808Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-s-a0d39-ithout-interactive-controls\\attachments\\printed-report-b12b6a47901f92c98012da8c9d6bad5a87078e8d.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-e6ffc9beaa578f806c4d",
+          "file": "admin-export-print.spec.ts",
+          "line": 260,
+          "column": 85
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-01T11:10:34.245Z",
+    "duration": 379504.278,
+    "expected": 9,
+    "skipped": 0,
+    "unexpected": 6,
+    "flaky": 0
+  }
+}

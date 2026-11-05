@@ -1,0 +1,32 @@
+- main:
+  - button "Menüyü aç"
+  - button "Bildirimleri aç": "1"
+  - button "Karanlık Moda Geç"
+  - button "S"
+  - button "Sonuçlara Dön"
+  - button "Yazdır / PDF"
+  - button "Excel"
+  - text: Student Audit Completed Exam
+  - paragraph: Puan
+  - paragraph: "0"
+  - paragraph: Doğru
+  - paragraph: "0"
+  - paragraph: Yanlış
+  - paragraph: "2"
+  - paragraph: Süre
+  - paragraph: 0:00
+  - heading "Soru İncelemesi" [level=2]
+  - text: Soru 1 Yanlış Audit question 1?
+  - paragraph: A
+  - text: Doğru Cevap
+  - paragraph: B
+  - text: Senin Cevabın
+  - paragraph: C
+  - paragraph: D
+  - text: Soru 2 Yanlış Audit question 2?
+  - paragraph: A
+  - text: Doğru Cevap
+  - paragraph: B
+  - text: Senin Cevabın
+  - paragraph: C
+  - paragraph: D

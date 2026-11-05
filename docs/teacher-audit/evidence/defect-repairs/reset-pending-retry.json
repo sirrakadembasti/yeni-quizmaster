@@ -1,0 +1,8 @@
+{
+  "requestCount": 2,
+  "pendingDisabled": true,
+  "rejectedStatus": 400,
+  "retryStatus": 400,
+  "retryEnabled": true,
+  "passwordPreserved": true
+}

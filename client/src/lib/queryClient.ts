@@ -1,7 +1,19 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { DEMO_READ_ONLY_CODE, isClientDemoMode, notifyDemoReadOnly, withAppBasePath } from "./demo-mode";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
+    if (res.status === 403) {
+      try {
+        const cloned = res.clone();
+        const data = await cloned.json();
+        if (data?.code === DEMO_READ_ONLY_CODE) {
+          notifyDemoReadOnly(data.message);
+        }
+      } catch {
+        // Ignored
+      }
+    }
     const text = (await res.text()) || res.statusText;
     throw new Error(`${res.status}: ${text}`);
   }
@@ -12,9 +24,12 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+  const headers: Record<string, string> = {};
+  if (data) headers["Content-Type"] = "application/json";
+  if (isClientDemoMode()) headers["x-quizmaster-demo"] = "1";
+  const res = await fetch(withAppBasePath(url), {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers,
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
@@ -29,7 +44,7 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey.join("/") as string, {
+    const res = await fetch(withAppBasePath(queryKey.join("/") as string), {
       credentials: "include",
     });
 

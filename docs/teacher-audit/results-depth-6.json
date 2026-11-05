@@ -1,0 +1,380 @@
+{
+  "config": {
+    "argv": [
+      "/home/ahmet/.cache/quizmaster-closure/tools-XpIGnI/node-v22.23.2-linux-x64/bin/node",
+      "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/node_modules/playwright/cli.js",
+      "test",
+      "-c",
+      "playwright.teacher-audit.config.ts",
+      "teacher-editor-depth-audit.spec.ts",
+      "teacher-dashboard-depth-audit.spec.ts"
+    ],
+    "configFile": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/playwright.teacher-audit.config.ts",
+    "rootDir": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "teacher-*-audit.spec.ts"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/teacher-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "teacher-dashboard-depth-audit.spec.ts",
+      "file": "teacher-dashboard-depth-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "dashboard KPI and recent participation readbacks match the real teacher APIs",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 48533,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T17:37:47.832Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "773d50fef908cc89e3e5-604893dede833f1a6246",
+          "file": "teacher-dashboard-depth-audit.spec.ts",
+          "line": 16,
+          "column": 5
+        },
+        {
+          "title": "dashboard own-class card and task buttons navigate to actual destinations",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 20815,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T17:38:37.897Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "773d50fef908cc89e3e5-12c847d9cde90ee10060",
+          "file": "teacher-dashboard-depth-audit.spec.ts",
+          "line": 57,
+          "column": 5
+        },
+        {
+          "title": "invalid statistics date range is rejected by API and visible in UI then restored",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4609,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T17:38:58.824Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "773d50fef908cc89e3e5-deff9d74135932879b2a",
+          "file": "teacher-dashboard-depth-audit.spec.ts",
+          "line": 75,
+          "column": 5
+        },
+        {
+          "title": "teacher report correct-answer cells match persisted API counts including zero",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 18976,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('row').filter({ hasText: 'Teacher Audit Student 13' }).getByRole('cell').nth(2)\nExpected: \u001b[32m\"\u001b[7m1\u001b[27m / 1\"\u001b[39m\nReceived: \u001b[31m\" / 1\"\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" getByRole('row').filter({ hasText: 'Teacher Audit Student 13' }).getByRole('cell').nth(2) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('row').filter({ hasText: 'Teacher Audit Student 13' }).getByRole('cell').nth(2)\u001b[22m\n\u001b[2m    33 × locator resolved to <td class=\"p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] text-center\">…</td>\u001b[22m\n\u001b[2m       - unexpected value \" / 1\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('row').filter({ hasText: 'Teacher Audit Student 13' }).getByRole('cell').nth(2)\nExpected: \u001b[32m\"\u001b[7m1\u001b[27m / 1\"\u001b[39m\nReceived: \u001b[31m\" / 1\"\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" getByRole('row').filter({ hasText: 'Teacher Audit Student 13' }).getByRole('cell').nth(2) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('row').filter({ hasText: 'Teacher Audit Student 13' }).getByRole('cell').nth(2)\u001b[22m\n\u001b[2m    33 × locator resolved to <td class=\"p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] text-center\">…</td>\u001b[22m\n\u001b[2m       - unexpected value \" / 1\"\u001b[22m\n\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-dashboard-depth-audit.spec.ts:116:48",
+                    "location": {
+                      "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-dashboard-depth-audit.spec.ts",
+                      "column": 48,
+                      "line": 116
+                    },
+                    "snippet": "  114 |     await expect(row).toBeVisible();\n  115 |     // Doğru/Toplam is the third report column. Undefined is not zero.\n> 116 |     await expect(row.getByRole('cell').nth(2)).toHaveText(`${result.correctAnswersCount} / ${result.totalQuestions}`);\n      |                                                ^\n  117 |   }\n  118 | });\n  119 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-dashboard-depth-audit.spec.ts",
+                        "column": 48,
+                        "line": 116
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('row').filter({ hasText: 'Teacher Audit Student 13' }).getByRole('cell').nth(2)\nExpected: \u001b[32m\"\u001b[7m1\u001b[27m / 1\"\u001b[39m\nReceived: \u001b[31m\" / 1\"\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" getByRole('row').filter({ hasText: 'Teacher Audit Student 13' }).getByRole('cell').nth(2) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('row').filter({ hasText: 'Teacher Audit Student 13' }).getByRole('cell').nth(2)\u001b[22m\n\u001b[2m    33 × locator resolved to <td class=\"p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] text-center\">…</td>\u001b[22m\n\u001b[2m       - unexpected value \" / 1\"\u001b[22m\n\n\n  114 |     await expect(row).toBeVisible();\n  115 |     // Doğru/Toplam is the third report column. Undefined is not zero.\n> 116 |     await expect(row.getByRole('cell').nth(2)).toHaveText(`${result.correctAnswersCount} / ${result.totalQuestions}`);\n      |                                                ^\n  117 |   }\n  118 | });\n  119 |\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-dashboard-depth-audit.spec.ts:116:48"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T17:39:03.506Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-dashboard-depth-au-1a9d9-d-API-counts-including-zero/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-dashboard-depth-au-1a9d9-d-API-counts-including-zero/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-dashboard-depth-audit.spec.ts",
+                    "column": 48,
+                    "line": 116
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "773d50fef908cc89e3e5-684b3de59f3585d0dff4",
+          "file": "teacher-dashboard-depth-audit.spec.ts",
+          "line": 103,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "teacher-editor-depth-audit.spec.ts",
+      "file": "teacher-editor-depth-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Teacher audit: editor depth",
+          "file": "teacher-editor-depth-audit.spec.ts",
+          "line": 37,
+          "column": 6,
+          "specs": [
+            {
+              "title": "real valid question image upload persists through draft save and reopen",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12380,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T17:39:24.630Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e45d73e6cabcf5459b83-a92758686472a6ba448f",
+              "file": "teacher-editor-depth-audit.spec.ts",
+              "line": 41,
+              "column": 7
+            },
+            {
+              "title": "survey GUI creates all five canonical question types and edits persisted content",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 16425,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeNull\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mundefined\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeNull\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mundefined\u001b[39m\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-editor-depth-audit.spec.ts:137:40",
+                        "location": {
+                          "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-editor-depth-audit.spec.ts",
+                          "column": 40,
+                          "line": 137
+                        },
+                        "snippet": "  135 |         const question = stored.body.questions.find((q: any) => q.text === item.text);\n  136 |         expect(question.type).toBe(item.value);\n> 137 |         expect(question.correctAnswer).toBeNull();\n      |                                        ^\n  138 |         expect(question.options).toEqual(item.options);\n  139 |         if (item.value === 'rating') expect(question.config.max).toBe(8);\n  140 |       }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-editor-depth-audit.spec.ts",
+                            "column": 40,
+                            "line": 137
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeNull\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mundefined\u001b[39m\n\n  135 |         const question = stored.body.questions.find((q: any) => q.text === item.text);\n  136 |         expect(question.type).toBe(item.value);\n> 137 |         expect(question.correctAnswer).toBeNull();\n      |                                        ^\n  138 |         expect(question.options).toEqual(item.options);\n  139 |         if (item.value === 'rating') expect(question.config.max).toBe(8);\n  140 |       }\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-editor-depth-audit.spec.ts:137:40"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T17:39:37.712Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-editor-depth-audit-694a6-and-edits-persisted-content/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-editor-depth-audit-694a6-and-edits-persisted-content/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-editor-depth-audit.spec.ts",
+                        "column": 40,
+                        "line": 137
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "e45d73e6cabcf5459b83-079e283b234ed667226b",
+              "file": "teacher-editor-depth-audit.spec.ts",
+              "line": 85,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-03T17:37:44.429Z",
+    "duration": 129920.15700000002,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

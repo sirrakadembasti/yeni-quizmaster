@@ -1,0 +1,567 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\.pnpm\\playwright@1.63.0\\node_modules\\playwright\\cli.js",
+      "test",
+      "-c",
+      "playwright.parent-audit.config.ts",
+      "--grep",
+      "legacy|classless|class-targeted|P-D|P-A02|P-X01|checked independently|GUI login|logging out and signing"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.parent-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/parent-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "parent-*-audit.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/parent-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "parent-boundaries-depth-audit.spec.ts",
+      "file": "parent-boundaries-depth-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "linked completed result permission and foreign overview/result rejection are checked independently of secret-field assertions",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8671,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T09:06:03.123Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "46ce5bf097207d1ba53f-867397d62b8401e6090a",
+          "file": "parent-boundaries-depth-audit.spec.ts",
+          "line": 34,
+          "column": 5
+        },
+        {
+          "title": "parent GUI login loads connected children and GUI logout denies a protected page and API",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16960,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T09:06:13.377Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "46ce5bf097207d1ba53f-10071234058eb7e0cc96",
+          "file": "parent-boundaries-depth-audit.spec.ts",
+          "line": 61,
+          "column": 5
+        },
+        {
+          "title": "logging out and signing in as a different parent clears the previous children and result cache",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16671,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T09:06:30.380Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "46ce5bf097207d1ba53f-2a216dde7485f763c819",
+          "file": "parent-boundaries-depth-audit.spec.ts",
+          "line": 83,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "parent-print-audit.spec.ts",
+      "file": "parent-print-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P-X01 announcements and all four settings tabs invoke print and render real browser PDF",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18727,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T09:06:47.154Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8cd0abe1161bdad69ed3-7553f13638cebabc5c46",
+          "file": "parent-print-audit.spec.ts",
+          "line": 5,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "parent-security-audit.spec.ts",
+      "file": "parent-security-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Parent real API access boundaries",
+          "file": "parent-security-audit.spec.ts",
+          "line": 37,
+          "column": 6,
+          "specs": [
+            {
+              "title": "parent cannot answer a legacy in-progress attempt owned by their former student identity",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 2526,
+                      "error": {
+                        "message": "Error: Parent role must be denied even when a retained attempt belongs to the same user ID\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: Parent role must be denied even when a retained attempt belongs to the same user ID\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts:135:120",
+                        "location": {
+                          "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                          "column": 120,
+                          "line": 135
+                        },
+                        "snippet": "  133 |       const after = await db.studentResult.findUniqueOrThrow({ where: { id } });\n  134 |       writeFileSync('docs/parent-audit/legacy-answer-observation.json', JSON.stringify({ status: response.status(), role: 'parent', priorAnswers: {}, storedAnswers: JSON.parse(after.answers || '{}'), isolatedSyntheticAttempt: true }, null, 2));\n> 135 |       expect(response.status(), 'Parent role must be denied even when a retained attempt belongs to the same user ID').toBe(403);\n      |                                                                                                                        ^\n  136 |       expect((await db.studentResult.findUniqueOrThrow({ where: { id } })).answers).toBe('{}');\n  137 |     } finally {\n  138 |       await db.studentResult.deleteMany({ where: { id, studentId: parentId, quizId: 'parent-audit-exam' } });"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                            "column": 120,
+                            "line": 135
+                          },
+                          "message": "Error: Parent role must be denied even when a retained attempt belongs to the same user ID\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n  133 |       const after = await db.studentResult.findUniqueOrThrow({ where: { id } });\n  134 |       writeFileSync('docs/parent-audit/legacy-answer-observation.json', JSON.stringify({ status: response.status(), role: 'parent', priorAnswers: {}, storedAnswers: JSON.parse(after.answers || '{}'), isolatedSyntheticAttempt: true }, null, 2));\n> 135 |       expect(response.status(), 'Parent role must be denied even when a retained attempt belongs to the same user ID').toBe(403);\n      |                                                                                                                        ^\n  136 |       expect((await db.studentResult.findUniqueOrThrow({ where: { id } })).answers).toBe('{}');\n  137 |     } finally {\n  138 |       await db.studentResult.deleteMany({ where: { id, studentId: parentId, quizId: 'parent-audit-exam' } });\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts:135:120"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:07:05.957Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-security-audit-Pare-0d903-eir-former-student-identity\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-security-audit-Pare-0d903-eir-former-student-identity\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                        "column": 120,
+                        "line": 135
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-85de66477dd4b3acd16b",
+              "file": "parent-security-audit.spec.ts",
+              "line": 122,
+              "column": 7
+            },
+            {
+              "title": "classless child assigned exams match the exams visible in the child account",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 5004,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 3\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[32m- Array [\u001b[39m\n\u001b[32m-   \"parent-audit-unassigned-exam\",\u001b[39m\n\u001b[32m- ]\u001b[39m\n\u001b[31m+ Array []\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 3\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[32m- Array [\u001b[39m\n\u001b[32m-   \"parent-audit-unassigned-exam\",\u001b[39m\n\u001b[32m- ]\u001b[39m\n\u001b[31m+ Array []\u001b[39m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts:227:23",
+                        "location": {
+                          "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                          "column": 23,
+                          "line": 227
+                        },
+                        "snippet": "  225 |     mkdirSync('docs/parent-audit', { recursive: true });\n  226 |     writeFileSync('docs/parent-audit/classless-exams-observation.json', JSON.stringify({ childIds, parentIds, status: overview.status() }, null, 2));\n> 227 |     expect(parentIds).toEqual(childIds);\n      |                       ^\n  228 |   });\n  229 |\n  230 |   test('class-targeted parent announcement creates a real notification for the linked parent', async ({ page }) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                            "column": 23,
+                            "line": 227
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 3\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[32m- Array [\u001b[39m\n\u001b[32m-   \"parent-audit-unassigned-exam\",\u001b[39m\n\u001b[32m- ]\u001b[39m\n\u001b[31m+ Array []\u001b[39m\n\n  225 |     mkdirSync('docs/parent-audit', { recursive: true });\n  226 |     writeFileSync('docs/parent-audit/classless-exams-observation.json', JSON.stringify({ childIds, parentIds, status: overview.status() }, null, 2));\n> 227 |     expect(parentIds).toEqual(childIds);\n      |                       ^\n  228 |   });\n  229 |\n  230 |   test('class-targeted parent announcement creates a real notification for the linked parent', async ({ page }) => {\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts:227:23"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:07:10.534Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-security-audit-Pare-0d84d-isible-in-the-child-account\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-security-audit-Pare-0d84d-isible-in-the-child-account\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                        "column": 23,
+                        "line": 227
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-dacc22430c0a5cdedc2a",
+              "file": "parent-security-audit.spec.ts",
+              "line": 215,
+              "column": 7
+            },
+            {
+              "title": "class-targeted parent announcement creates a real notification for the linked parent",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7411,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m\"Parent audit class notice cc912211-a689-4def-8176-b3e7d07e826e\"\u001b[39m\nReceived array: \u001b[31m[\"Parent Audit Notification 0\", \"Parent Audit Notification 1\", \"Parent Audit Notification 2\", \"Parent Audit Notification 3\", \"Parent Audit Notification 4\", \"Parent Audit Notification 5\", \"Parent Audit Notification 6\", \"Parent Audit Notification 7\", \"Parent Audit Notification 8\", \"Parent Audit Notification 9\", …]\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m\"Parent audit class notice cc912211-a689-4def-8176-b3e7d07e826e\"\u001b[39m\nReceived array: \u001b[31m[\"Parent Audit Notification 0\", \"Parent Audit Notification 1\", \"Parent Audit Notification 2\", \"Parent Audit Notification 3\", \"Parent Audit Notification 4\", \"Parent Audit Notification 5\", \"Parent Audit Notification 6\", \"Parent Audit Notification 7\", \"Parent Audit Notification 8\", \"Parent Audit Notification 9\", …]\u001b[39m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts:247:83",
+                        "location": {
+                          "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                          "column": 83,
+                          "line": 247
+                        },
+                        "snippet": "  245 |       mkdirSync('docs/parent-audit', { recursive: true });\n  246 |       writeFileSync('docs/parent-audit/class-announcement-observation.json', JSON.stringify({ createdStatus: created.status(), parentListIncludes: true, parentNotificationCount: await db.notification.count({ where: { userId: parentId, title } }), foreignNotificationCount: await db.notification.count({ where: { userId: privateChildId, title } }) }, null, 2));\n> 247 |       expect((await notifications.json()).notifications.map((n: any) => n.title)).toContain(title);\n      |                                                                                   ^\n  248 |       expect(await db.notification.count({ where: { userId: parentId, title } })).toBe(1);\n  249 |       expect(await db.notification.count({ where: { userId: privateChildId, title } })).toBe(0);\n  250 |     } finally {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                            "column": 83,
+                            "line": 247
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m\"Parent audit class notice cc912211-a689-4def-8176-b3e7d07e826e\"\u001b[39m\nReceived array: \u001b[31m[\"Parent Audit Notification 0\", \"Parent Audit Notification 1\", \"Parent Audit Notification 2\", \"Parent Audit Notification 3\", \"Parent Audit Notification 4\", \"Parent Audit Notification 5\", \"Parent Audit Notification 6\", \"Parent Audit Notification 7\", \"Parent Audit Notification 8\", \"Parent Audit Notification 9\", …]\u001b[39m\n\n  245 |       mkdirSync('docs/parent-audit', { recursive: true });\n  246 |       writeFileSync('docs/parent-audit/class-announcement-observation.json', JSON.stringify({ createdStatus: created.status(), parentListIncludes: true, parentNotificationCount: await db.notification.count({ where: { userId: parentId, title } }), foreignNotificationCount: await db.notification.count({ where: { userId: privateChildId, title } }) }, null, 2));\n> 247 |       expect((await notifications.json()).notifications.map((n: any) => n.title)).toContain(title);\n      |                                                                                   ^\n  248 |       expect(await db.notification.count({ where: { userId: parentId, title } })).toBe(1);\n  249 |       expect(await db.notification.count({ where: { userId: privateChildId, title } })).toBe(0);\n  250 |     } finally {\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts:247:83"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:07:18.078Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-security-audit-Pare-f1740-ation-for-the-linked-parent\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-security-audit-Pare-f1740-ation-for-the-linked-parent\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                        "column": 83,
+                        "line": 247
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-8422cfe3df24e1cf3000",
+              "file": "parent-security-audit.spec.ts",
+              "line": 230,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "parent-shared-depth-audit.spec.ts",
+      "file": "parent-shared-depth-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P-D01 settings notifications controlled API500 and real recovery",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7615,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T09:07:28.045Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d57cf61ed978def519f0-e497c2f06c65cabb0155",
+          "file": "parent-shared-depth-audit.spec.ts",
+          "line": 15,
+          "column": 7
+        },
+        {
+          "title": "P-D02 settings logs controlled API500 and real recovery",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6278,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T09:07:36.328Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d57cf61ed978def519f0-82a3658cbd8f3ac4515c",
+          "file": "parent-shared-depth-audit.spec.ts",
+          "line": 15,
+          "column": 7
+        },
+        {
+          "title": "P-A02 long valid child name and email remain inside mobile document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6514,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T09:07:42.643Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d57cf61ed978def519f0-0ff9105daa1494ebc3b8",
+          "file": "parent-shared-depth-audit.spec.ts",
+          "line": 27,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-04T09:05:55.276Z",
+    "duration": 114528.91900000001,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

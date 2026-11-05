@@ -1,0 +1,80 @@
+{
+  "recordedDate": "2026-10-01",
+  "scope": "Real production build/start integration with already installed dependencies. This is not fresh-install evidence.",
+  "command": "pnpm exec node --test --test-concurrency=1 scripts/server-build-startup.test.mjs",
+  "workingDirectory": "F:/projeler/yeni-quizmaster-main",
+  "productionChange": {
+    "file": "server/package.json",
+    "change": "Append --external:sharp to the existing esbuild build script",
+    "unchanged": ["CommonJS output format", "dependency versions", "lockfile", "existing --external:sqlite3"]
+  },
+  "runs": [
+    {
+      "phase": "baseline-red",
+      "launch": "Direct Node invocation of isolated actual production bundle",
+      "exitCode": 1,
+      "passed": 0,
+      "failed": 1,
+      "durationSeconds": 18.6484085,
+      "nativePng": "passed before bundle startup",
+      "failure": "ERR_INVALID_ARG_VALUE: createRequire received undefined at bundled index.cjs line 83221; API readiness not reached",
+      "classification": "Reproduces the production Sharp bundling defect"
+    },
+    {
+      "phase": "direct-node-integration-green",
+      "launch": "Direct Node invocation with explicit installed external dependency junctions and a copied real Prisma engine",
+      "exitCode": 0,
+      "passed": 1,
+      "failed": 0,
+      "durationSeconds": 14.5601823,
+      "nativePng": "passed",
+      "csrfEndpoint": "actual HTTP response passed; token type/length asserted, value never recorded",
+      "classification": "Sharp-focused integration only; direct Node does not prove canonical pnpm startup dependency discovery"
+    },
+    {
+      "phase": "canonical-pnpm-integration-green",
+      "launch": "pnpm --filter quiz-master-server start",
+      "exitCode": 0,
+      "passed": 1,
+      "failed": 0,
+      "durationSeconds": 17.8395795,
+      "nativePng": "passed",
+      "csrfEndpoint": "actual HTTP response passed; token type/length asserted, value never recorded",
+      "nodePath": "Inherited NODE_PATH removed; no manual NODE_PATH assigned. Actual pnpm/cross-env launch shim supplies installed-layout dependency resolution.",
+      "classification": "Canonical installed-layout production startup integration; fresh terminal/BAT/SH proofs remain separate"
+    }
+  ],
+  "intermediateHarnessFailures": [
+    {
+      "kind": "Relocated Prisma native engine lookup",
+      "exitCode": 1,
+      "durationSeconds": 13.6853705,
+      "observation": "After the Sharp flag, server reached Server serving, then relocated bundle could not find the Windows Prisma native library",
+      "correction": "Copy the real installed generated Prisma library into guarded fixture output and set PRISMA_QUERY_ENGINE_LIBRARY to that copy",
+      "classification": "Integration relocation accommodation; not a production packaging fix or fresh-install success"
+    },
+    {
+      "kind": "Native PNG subprocess exceeded initial 15-second budget",
+      "exitCode": 1,
+      "durationSeconds": 48.6270181,
+      "observation": "Canonical launch had not yet been attempted",
+      "correction": "Raise only native subprocess budget to 45 seconds; assertions unchanged",
+      "classification": "Harness timeout; not evidence of canonical startup failure"
+    }
+  ],
+  "guardsAndLimits": {
+    "fixture": "Guarded OS temporary root named quizmaster-server-startup-*",
+    "rootResolution": "Fixture contains actual client/server package manifests; cwd makes getProjectRoot resolve fixture. QUIZMASTER_PROJECT_ROOT is not relied on.",
+    "database": "Absolute SQLite URL within fixture/server/data",
+    "sessionStore": "Actual sessions.db existence asserted within fixture/server/data",
+    "uploads": "Actual uploads directory existence asserted within fixture/server/uploads",
+    "environmentFile": "No fixture server/.env created; inherited application configuration removed",
+    "ports": "Dynamically allocated loopback port; existing application ports untouched",
+    "buildOutput": "Real pnpm server build with appended --outfile=<guarded fixture>/dist/index.cjs. Normal production output size and mtime verified unchanged.",
+    "dependencies": "Canonical integration links complete already installed root/server node_modules. It does not install dependencies or establish source-only freshness.",
+    "nativeEngine": "Real installed Prisma native library copied because bundle output is relocated; no native mocks",
+    "cleanup": "Only owned child/process tree terminated; dependency junctions unlinked before guarded fixture recursive removal",
+    "credentials": "No password, session secret, CSRF token or cookie values recorded",
+    "remainingProof": "Actual fresh terminal, BAT and SH runs are separate coordinating-agent evidence"
+  }
+}

@@ -7,16 +7,20 @@ Bu belge QuizMaster'ın mevcut SQLite kurulumundan PostgreSQL'e güvenli biçimd
 ### Doğrudan uyumlu olanlar
 
 - Prisma modelleri, UUID tabanlı `String` kimlikler, ilişkiler, benzersiz alanlar ve çoğu indeks PostgreSQL tarafından desteklenir.
-- Uygulamanın çalışan sorguları Prisma Client üzerinden yürür; runtime kodunda SQLite'a özel `$queryRaw` veya `$executeRaw` sorgusu bulunmaz.
+- Genel CRUD sorgularının çoğu Prisma Client üzerinden yürür; bu sorguların sağlayıcı davranışları geçiş provasına dahildir.
 - `DateTime`, `Boolean`, `Int` ve isteğe bağlı alanlar PostgreSQL sağlayıcısında karşılık bulur.
 - Anket soru ayarları ve cevaplarındaki JSON verileri şu anda `String` olarak saklandığından ilk geçişte veri türü dönüşümü gerektirmez.
 - Anket tablolarında büyüme açısından önemli birleşik/bireysel indeksler vardır: `SurveySubmission(surveyId, submittedAt)`, `SurveySubmission(studentId)` ve `SurveyAnswer(questionId)`.
 
 ### Otomatik uyumlu olmayanlar
 
+- Akademik arşiv, geçiş ve geçmiş projeksiyonu katmanları SQLite'a özel ham SQL, JSON fonksiyonları, tuple cursor ve transaction içi izin tabloları kullanır; bunlar doğrudan PostgreSQL uyumlu değildir.
+- Snapshot değişmezliği, yıllık capture fence, finalization izinleri ve tek aktif yıl kuralı SQLite trigger/index SQL'iyle korunur. Yalnız Prisma şemasından üretilen migration bunları taşımaz; PostgreSQL karşılıkları ayrıca geliştirilip bypass/rollback/lease testleriyle doğrulanmalıdır.
+- Arşiv worker, geçmiş projeksiyonu ve sorgu katmanındaki ham SQL ile tarih/boolean gösterimleri uyarlanmalıdır. Snapshot byte'ları, checksum ve arama eşitliği korunmalıdır.
+- Bakım/yükseltme araçları standart yerel SQLite kurulumunu hedefler; PostgreSQL backup/restore ve hibrit kurulum desteği hazır değildir. Sağlayıcı adını değiştirmek çalışan bir PostgreSQL kurulumu oluşturmaz. `server/utils/sqlite-runtime-config.ts` içindeki `detectDatabaseProvider` ve `getDatabaseMigrationReadiness` yardımcıları, aktif `DATABASE_URL` sağlayıcısını (`sqlite` / `postgresql`) ve geçiş öncesinde tamamlanması gereken alt sistem uyarlamalarını (`prisma-schema-provider`, `archive-raw-sql`, `session-store`, `maintenance-backup`) programatik olarak doğrular.
 - `server/prisma/migrations` içindeki SQL dosyaları ve `migration_lock.toml` SQLite'a özeldir. PostgreSQL üzerinde kullanılamaz.
 - Prisma şema migration'ı mevcut kayıtları SQLite'tan PostgreSQL'e kopyalamaz.
-- HTTP oturumları `connect-sqlite3` ile ayrı bir `sessions.db` dosyasında tutulur. Ana veritabanını PostgreSQL yapmak oturum deposunu değiştirmez.
+- HTTP oturumları better-sqlite3 tabanlı depo ile ayrı bir `sessions.db` dosyasında tutulur. Ana veritabanını PostgreSQL yapmak oturum deposunu değiştirmez.
 - Yüklenen soru görselleri dosya sistemindedir; veritabanı aktarımına dahil değildir.
 - SQLite ve PostgreSQL'i kalıcı olarak farklı ortamlarda aynı migration geçmişiyle kullanmak güvenli değildir. PostgreSQL'e geçişten sonra geliştirme, test, staging ve üretimde aynı sağlayıcı tercih edilmelidir.
 
@@ -52,6 +56,8 @@ DATABASE_URL="postgresql://quizmaster_user:GUCLU_PAROLA@db-host:5432/quizmaster?
 ```
 
 ## 4. PostgreSQL migration geçmişini oluşturma
+
+Bu bölüm gelecekteki geçiş geliştirmesi içindir; tamamlanmış geçiş komutu değildir. Ham SQL, trigger, bakım ve oturum bağımlılıkları uyarlanmadan canlıya uygulanmamalıdır. İzole prova önce sentetik veriyle yapılmalıdır; gerçek veri kopyası ancak kurumun veri erişimi/yedekleme süreci kapsamında kullanılır.
 
 Prisma migration SQL'i sağlayıcıya özeldir. Bu nedenle mevcut SQLite migration klasörü düzenlenmemeli ve PostgreSQL'e uygulanmamalıdır.
 
@@ -124,7 +130,7 @@ Sayı eşitliği tek başına yeterli değildir. Ayrıca en az şunları kontrol
 
 ## 6. Oturum deposu
 
-Mevcut backend `connect-sqlite3` kullanır. Tek backend örneğinde ana veritabanı PostgreSQL olsa bile teknik olarak çalışabilir; fakat aşağıdaki durumlarda uygun değildir:
+Mevcut backend better-sqlite3 tabanlı yerel oturum deposunu kullanır. Tek backend örneğinde ana veritabanı PostgreSQL olsa bile teknik olarak çalışabilir; fakat aşağıdaki durumlarda uygun değildir:
 
 - Birden fazla backend örneği,
 - Konteyner/instance yeniden oluşturma,
@@ -139,8 +145,7 @@ Mevcut backend `connect-sqlite3` kullanır. Tek backend örneğinde ana veritaba
 - Bir backend örneğinde açılan oturumun diğer örnekte kullanılabilmesi,
 - Süresi dolmuş oturumların temizlenmesi.
 
-Bu store seçimi yapılmadan `connect-sqlite3` bağımlılığını kaldırmayın.
-Merkezi store geçişi tamamlandığında `connect-sqlite3`, ilgili tip paketi ve backend derleme komutundaki `--external:sqlite3` ayarı da birlikte gözden geçirilmelidir.
+Merkezi store geçişinde `server/utils/session-store.ts` ve oturum regresyonları birlikte uyarlanmalıdır. better-sqlite3 uygulama, arşiv ve bakım yollarında da kullanılır; yalnız oturum geçişi bu bağımlılığı kaldırmak için yeterli değildir.
 
 ## 7. JSON alanları için ikinci aşama
 

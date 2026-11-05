@@ -1,0 +1,666 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\playwright\\cli.js",
+      "test",
+      "--config",
+      "playwright.admin-audit.config.ts"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.admin-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/admin-audit/test-results-flows",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "admin-audit-people-flows.spec.ts",
+          "admin-audit-system-flows.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "docs/admin-audit/playwright-report-flows",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/admin-audit/results-flows.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "admin-audit-people-flows.spec.ts",
+      "file": "admin-audit-people-flows.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "people: student creation in real modal persists enrollment and automatic number",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 95321,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:59:33.343Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "student-created",
+                      "contentType": "application/json",
+                      "body": "ewogICJpZCI6ICI3MTMzZWUxMi1iYWI1LTQ4YTEtYjBiYy0wMjU4MDRlYzRiYTQiLAogICJuYW1lIjogIlBlb3BsZSBTdHVkZW50IDE3OTA3NzY4MzM5NDgtYzFhNTMiLAogICJlbWFpbCI6ICJwZW9wbGUtdWktc3R1ZGVudC0xNzkwNzc2ODMzOTQ4LWMxYTUzQGV4YW1wbGUudGVzdCIsCiAgInJvbGUiOiAic3R1ZGVudCIsCiAgInBob25lTnVtYmVyIjogIiIsCiAgImFkZHJlc3MiOiAiIiwKICAic3R1ZGVudE5vIjogMSwKICAiY2xhc3NObyI6IG51bGwsCiAgImlzQWN0aXZlIjogdHJ1ZSwKICAiZGVhY3RpdmF0ZWRBdCI6IG51bGwsCiAgInBhcmVudE5hbWUiOiAiIiwKICAicGFyZW50UmVsYXRpb24iOiAiIiwKICAicGFyZW50UGhvbmUiOiAiIiwKICAicGFyZW50RW1haWwiOiAiIiwKICAicGFyZW50QWRkcmVzcyI6ICIiLAogICJjcmVhdGVkQXQiOiAiMjAyNi0wOS0zMFQxNDowMTowNi42NjlaIiwKICAiZW1haWxWZXJpZmllZCI6IGZhbHNlLAogICJub3RpZmljYXRpb25NdXRlZCI6IGZhbHNlLAogICJjbGFzc0lkIjogIjBjMmRlYjFkLTk5ZDktNDFmNi1hNGUyLWE0YzhiMmUwMjU2NCIsCiAgImNsYXNzIjogewogICAgImlkIjogIjBjMmRlYjFkLTk5ZDktNDFmNi1hNGUyLWE0YzhiMmUwMjU2NCIsCiAgICAibmFtZSI6ICI4OS1BLTE3OTA3NzY4MzM5NDgtYzFhNTMiLAogICAgImRlc2NyaXB0aW9uIjogbnVsbCwKICAgICJtYXhTdHVkZW50cyI6IG51bGwsCiAgICAiY3JlYXRlZEF0IjogIjIwMjYtMDktMzBUMTQ6MDA6NDkuMDk5WiIsCiAgICAiY2xhc3NUZWFjaGVySWQiOiBudWxsCiAgfSwKICAiYXNzaWduZWRDYXRlZ29yaWVzIjogW10sCiAgIm1hbmFnZWRDbGFzc2VzIjogW10sCiAgInJlc3BvbnNpYmxlRm9yQ2xhc3NlcyI6IFtdLAogICJ0ZWFjaGVyQXNzaWdubWVudHMiOiBbXSwKICAiY2xhc3NlcyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f4bbfe3ef2be4ed8b2c-eb0205b152f4703bbb09",
+          "file": "admin-audit-people-flows.spec.ts",
+          "line": 54,
+          "column": 5
+        },
+        {
+          "title": "people: teacher creation must retain selected course and class",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 26708,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m\"8a32b981-5e3b-449d-80d6-c3eed5b91d85\"\u001b[39m\nReceived array: \u001b[31m[]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m\"8a32b981-5e3b-449d-80d6-c3eed5b91d85\"\u001b[39m\nReceived array: \u001b[31m[]\u001b[39m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-people-flows.spec.ts:105:77",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-people-flows.spec.ts",
+                      "column": 77,
+                      "line": 105
+                    },
+                    "snippet": "  103 |   const persisted = users.body.users.find((user: any) => user.email === email);\n  104 |   await evidence(page, info, 'teacher-selected-assignments', { persisted, expectedClassId: classroom.id, expectedCategoryId: categoryId });\n> 105 |   expect.soft(persisted.assignedCategories.map((course: any) => course.id)).toContain(categoryId);\n      |                                                                             ^\n  106 |   expect.soft(persisted.classes.map((item: any) => item.id)).toContain(classroom.id);\n  107 | });\n  108 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-people-flows.spec.ts",
+                        "column": 77,
+                        "line": 105
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m\"8a32b981-5e3b-449d-80d6-c3eed5b91d85\"\u001b[39m\nReceived array: \u001b[31m[]\u001b[39m\n\n  103 |   const persisted = users.body.users.find((user: any) => user.email === email);\n  104 |   await evidence(page, info, 'teacher-selected-assignments', { persisted, expectedClassId: classroom.id, expectedCategoryId: categoryId });\n> 105 |   expect.soft(persisted.assignedCategories.map((course: any) => course.id)).toContain(categoryId);\n      |                                                                             ^\n  106 |   expect.soft(persisted.classes.map((item: any) => item.id)).toContain(classroom.id);\n  107 | });\n  108 |\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-people-flows.spec.ts:105:77"
+                    },
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-people-flows.spec.ts",
+                        "column": 62,
+                        "line": 106
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m\"763f8d6f-4eab-40fe-8df6-97db38ca3aa7\"\u001b[39m\nReceived array: \u001b[31m[]\u001b[39m\n\n  104 |   await evidence(page, info, 'teacher-selected-assignments', { persisted, expectedClassId: classroom.id, expectedCategoryId: categoryId });\n  105 |   expect.soft(persisted.assignedCategories.map((course: any) => course.id)).toContain(categoryId);\n> 106 |   expect.soft(persisted.classes.map((item: any) => item.id)).toContain(classroom.id);\n      |                                                              ^\n  107 | });\n  108 |\n  109 | test('people: guardian link and unlink persist after reload', async ({ page }, info) => {\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-people-flows.spec.ts:106:62"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T14:01:15.719Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "teacher-selected-assignments",
+                      "contentType": "application/json",
+                      "body": "ewogICJwZXJzaXN0ZWQiOiB7CiAgICAiaWQiOiAiMjRjNmVlZDQtNzg4NC00MDM3LTgxZTUtOWRlZTg5NzIzM2YzIiwKICAgICJuYW1lIjogIlBlb3BsZSBUZWFjaGVyIDE3OTA3NzY4Nzk5OTYtODY3YmQiLAogICAgImVtYWlsIjogInBlb3BsZS11aS10ZWFjaGVyLTE3OTA3NzY4Nzk5OTYtODY3YmRAZXhhbXBsZS50ZXN0IiwKICAgICJyb2xlIjogInRlYWNoZXIiLAogICAgInBob25lTnVtYmVyIjogIiIsCiAgICAiYWRkcmVzcyI6ICIiLAogICAgInN0dWRlbnRObyI6IG51bGwsCiAgICAiY2xhc3NObyI6IG51bGwsCiAgICAiaXNBY3RpdmUiOiB0cnVlLAogICAgImRlYWN0aXZhdGVkQXQiOiBudWxsLAogICAgInBhcmVudE5hbWUiOiAiIiwKICAgICJwYXJlbnRSZWxhdGlvbiI6ICIiLAogICAgInBhcmVudFBob25lIjogIiIsCiAgICAicGFyZW50RW1haWwiOiAiIiwKICAgICJwYXJlbnRBZGRyZXNzIjogIiIsCiAgICAiY3JlYXRlZEF0IjogIjIwMjYtMDktMzBUMTQ6MDE6MzIuNzE0WiIsCiAgICAiZW1haWxWZXJpZmllZCI6IGZhbHNlLAogICAgIm5vdGlmaWNhdGlvbk11dGVkIjogZmFsc2UsCiAgICAiY2xhc3NJZCI6IG51bGwsCiAgICAiY2xhc3MiOiBudWxsLAogICAgImFzc2lnbmVkQ2F0ZWdvcmllcyI6IFtdLAogICAgIm1hbmFnZWRDbGFzc2VzIjogW10sCiAgICAicmVzcG9uc2libGVGb3JDbGFzc2VzIjogW10sCiAgICAidGVhY2hlckFzc2lnbm1lbnRzIjogW10sCiAgICAiY2xhc3NlcyI6IFtdCiAgfSwKICAiZXhwZWN0ZWRDbGFzc0lkIjogIjc2M2Y4ZDZmLTRlYWItNDBmZS04ZGY2LTk3ZGIzOGNhM2FhNyIsCiAgImV4cGVjdGVkQ2F0ZWdvcnlJZCI6ICI4YTMyYjk4MS01ZTNiLTQ0OWQtODBkNi1jM2VlZDViOTFkODUiCn0="
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-flows\\admin-audit-people-flows-p-4e8a0-n-selected-course-and-class\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-flows\\admin-audit-people-flows-p-4e8a0-n-selected-course-and-class\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-flows\\admin-audit-people-flows-p-4e8a0-n-selected-course-and-class\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-people-flows.spec.ts",
+                    "column": 77,
+                    "line": 105
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "8f4bbfe3ef2be4ed8b2c-912b4c81314bf79c9595",
+          "file": "admin-audit-people-flows.spec.ts",
+          "line": 80,
+          "column": 5
+        },
+        {
+          "title": "people: guardian link and unlink persist after reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 45182,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T14:01:47.218Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "guardian-unlinked",
+                      "contentType": "application/json",
+                      "body": "ewogICJzdGF0dXMiOiAyMDAsCiAgImJvZHkiOiB7CiAgICAic3R1ZGVudHMiOiBbXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f4bbfe3ef2be4ed8b2c-6345dabbcba7ef5695e1",
+          "file": "admin-audit-people-flows.spec.ts",
+          "line": 109,
+          "column": 5
+        },
+        {
+          "title": "people: same-level student transfer persists target and removes old enrollment",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 65089,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T14:02:32.905Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "student-transfer",
+                      "contentType": "application/json",
+                      "body": "ewogICJvbGRDbGFzcyI6IHsKICAgICJzdGF0dXMiOiAyMDAsCiAgICAiYm9keSI6IHsKICAgICAgImNsYXNzIjogewogICAgICAgICJpZCI6ICIxNjM2NWZjMi00NTQyLTRkYWQtOWY5NC1mNzMyMWY4NWZhMWIiLAogICAgICAgICJuYW1lIjogIjkxLUEtMTc5MDc3Njk2NTQ5NC0yZDliNCIsCiAgICAgICAgImRlc2NyaXB0aW9uIjogbnVsbCwKICAgICAgICAibWF4U3R1ZGVudHMiOiBudWxsLAogICAgICAgICJjcmVhdGVkQXQiOiAiMjAyNi0wOS0zMFQxNDowMjo1Ni41MTRaIiwKICAgICAgICAiY2xhc3NUZWFjaGVySWQiOiBudWxsLAogICAgICAgICJ0ZWFjaGVycyI6IFtdLAogICAgICAgICJjbGFzc1RlYWNoZXIiOiBudWxsLAogICAgICAgICJhc3NpZ25lZENhdGVnb3JpZXMiOiBbXSwKICAgICAgICAidGVhY2hlckFzc2lnbm1lbnRzIjogW10KICAgICAgfSwKICAgICAgInN0dWRlbnRzIjogW10KICAgIH0KICB9LAogICJuZXdDbGFzcyI6IHsKICAgICJzdGF0dXMiOiAyMDAsCiAgICAiYm9keSI6IHsKICAgICAgImNsYXNzIjogewogICAgICAgICJpZCI6ICI0MGFkOGM4My1jYWQ3LTQ2M2ItYTU4My0xNzJiNTIzYzhkNTYiLAogICAgICAgICJuYW1lIjogIjkxLUItMTc5MDc3Njk2NTQ5NC0yZDliNCIsCiAgICAgICAgImRlc2NyaXB0aW9uIjogbnVsbCwKICAgICAgICAibWF4U3R1ZGVudHMiOiBudWxsLAogICAgICAgICJjcmVhdGVkQXQiOiAiMjAyNi0wOS0zMFQxNDowMjo1OC4zMjFaIiwKICAgICAgICAiY2xhc3NUZWFjaGVySWQiOiBudWxsLAogICAgICAgICJ0ZWFjaGVycyI6IFtdLAogICAgICAgICJjbGFzc1RlYWNoZXIiOiBudWxsLAogICAgICAgICJhc3NpZ25lZENhdGVnb3JpZXMiOiBbXSwKICAgICAgICAidGVhY2hlckFzc2lnbm1lbnRzIjogW10KICAgICAgfSwKICAgICAgInN0dWRlbnRzIjogWwogICAgICAgIHsKICAgICAgICAgICJpZCI6ICJiZDgzNGRmMy1mMGUwLTRiODItOGU2YS0xMDgxNWIzNWJkNTgiLAogICAgICAgICAgIm5hbWUiOiAiUGVvcGxlIFRyYW5zZmVyIDE3OTA3NzY5NjU0OTQtMmQ5YjQiLAogICAgICAgICAgImVtYWlsIjogInBlb3BsZS1zdHVkZW50LTE3OTA3NzY5NjU0OTQtMmQ5YjRAZXhhbXBsZS50ZXN0IiwKICAgICAgICAgICJyb2xlIjogInN0dWRlbnQiLAogICAgICAgICAgInBob25lTnVtYmVyIjogbnVsbCwKICAgICAgICAgICJhZGRyZXNzIjogbnVsbCwKICAgICAgICAgICJzdHVkZW50Tm8iOiAxLAogICAgICAgICAgImNsYXNzTm8iOiBudWxsLAogICAgICAgICAgImlzQWN0aXZlIjogdHJ1ZSwKICAgICAgICAgICJkZWFjdGl2YXRlZEF0IjogbnVsbCwKICAgICAgICAgICJwYXJlbnROYW1lIjogbnVsbCwKICAgICAgICAgICJwYXJlbnRSZWxhdGlvbiI6IG51bGwsCiAgICAgICAgICAicGFyZW50UGhvbmUiOiBudWxsLAogICAgICAgICAgInBhcmVudEVtYWlsIjogbnVsbCwKICAgICAgICAgICJwYXJlbnRBZGRyZXNzIjogbnVsbCwKICAgICAgICAgICJjcmVhdGVkQXQiOiAiMjAyNi0wOS0zMFQxNDowMjo1OS44NThaIiwKICAgICAgICAgICJlbWFpbFZlcmlmaWVkIjogZmFsc2UsCiAgICAgICAgICAibm90aWZpY2F0aW9uTXV0ZWQiOiBmYWxzZSwKICAgICAgICAgICJjbGFzc0lkIjogIjQwYWQ4YzgzLWNhZDctNDYzYi1hNTgzLTE3MmI1MjNjOGQ1NiIKICAgICAgICB9CiAgICAgIF0KICAgIH0KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8f4bbfe3ef2be4ed8b2c-2dd80b46e408c8da7113",
+          "file": "admin-audit-people-flows.spec.ts",
+          "line": 143,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "admin-audit-system-flows.spec.ts",
+      "file": "admin-audit-system-flows.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "management class required fields, create, edit, cancel delete, delete and persisted reload",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 120554,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts",
+                        "column": 53,
+                        "line": 21
+                      },
+                      "message": "Error: locator.fill: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('E-posta', { exact: true })\u001b[22m\n\n\n  19 |   await page.goto('/auth',{waitUntil:'domcontentloaded'});\n  20 |   expect(new URL(page.url()).origin).toBe('http://127.0.0.1:5511');\n> 21 |   await page.getByLabel('E-posta', { exact: true }).fill('audit-admin@example.test');\n     |                                                     ^\n  22 |   await page.getByLabel('Şifre', { exact: true }).fill('AuditOnly2026!');\n  23 |   await page.getByRole('button', { name: /Giriş Yap/ }).last().click();\n  24 |   await expect(page.locator('[data-dashboard-shell]')).toBeVisible();\n    at login (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts:21:53)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts:49:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T14:03:38.621Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-flows\\admin-audit-system-flows-m-8a63a-delete-and-persisted-reload\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-flows\\admin-audit-system-flows-m-8a63a-delete-and-persisted-reload\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-flows\\admin-audit-system-flows-m-8a63a-delete-and-persisted-reload\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "7be15fe10641ee3a35e2-6a50eda057752a400b08",
+          "file": "admin-audit-system-flows.spec.ts",
+          "line": 48,
+          "column": 5
+        },
+        {
+          "title": "management user invalid input visible validation, create, edit, cancel and delete persist",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 65659,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts:127:60",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts",
+                      "column": 60,
+                      "line": 127
+                    },
+                    "snippet": "  125 |   await expect(row).toHaveCount(0);\n  126 |   await page.reload({waitUntil:'domcontentloaded'});\n> 127 |   expect((await api(page, '/users/' + created.id)).status).toBe(404);\n      |                                                            ^\n  128 | });\n  129 |\n  130 | test('parent creation requires contact information before submit', async ({ page }) => {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts",
+                        "column": 60,
+                        "line": 127
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n  125 |   await expect(row).toHaveCount(0);\n  126 |   await page.reload({waitUntil:'domcontentloaded'});\n> 127 |   expect((await api(page, '/users/' + created.id)).status).toBe(404);\n      |                                                            ^\n  128 | });\n  129 |\n  130 | test('parent creation requires contact information before submit', async ({ page }) => {\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts:127:60"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T14:05:42.066Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-flows\\admin-audit-system-flows-m-c9103-t-cancel-and-delete-persist\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-flows\\admin-audit-system-flows-m-c9103-t-cancel-and-delete-persist\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-flows\\admin-audit-system-flows-m-c9103-t-cancel-and-delete-persist\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts",
+                    "column": 60,
+                    "line": 127
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "7be15fe10641ee3a35e2-15e734c976bdedfa5859",
+          "file": "admin-audit-system-flows.spec.ts",
+          "line": 91,
+          "column": 5
+        },
+        {
+          "title": "parent creation requires contact information before submit",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 25614,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T14:06:55.597Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7be15fe10641ee3a35e2-d43ab2b4e0ef0bde5229",
+          "file": "admin-audit-system-flows.spec.ts",
+          "line": 130,
+          "column": 5
+        },
+        {
+          "title": "archive promotion moves only isolated new students, updates counts and graduation persists",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 56097,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T14:07:23.087Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7be15fe10641ee3a35e2-2903c2b52cf229e09d45",
+          "file": "admin-audit-system-flows.spec.ts",
+          "line": 143,
+          "column": 5
+        },
+        {
+          "title": "deployment invalid origin receives API 400 and visible error instead of silent failure",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 16654,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m500\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts:191:29",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts",
+                      "column": 29,
+                      "line": 191
+                    },
+                    "snippet": "  189 |   await page.getByRole('button', { name: 'Profili Kaydet' }).click();\n  190 |   const response = await failed;\n> 191 |   expect(response.status()).toBe(400);\n      |                             ^\n  192 |   await info.attach('invalid-deployment-response', { body: await response.text(), contentType: 'application/json' });\n  193 |   await page.screenshot({ path: 'docs/admin-audit/evidence/deployment-invalid-profile.png', fullPage: true });\n  194 |   // Desired UX assertion intentionally exposes the absent Sonner renderer."
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts",
+                        "column": 29,
+                        "line": 191
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n\n  189 |   await page.getByRole('button', { name: 'Profili Kaydet' }).click();\n  190 |   const response = await failed;\n> 191 |   expect(response.status()).toBe(400);\n      |                             ^\n  192 |   await info.attach('invalid-deployment-response', { body: await response.text(), contentType: 'application/json' });\n  193 |   await page.screenshot({ path: 'docs/admin-audit/evidence/deployment-invalid-profile.png', fullPage: true });\n  194 |   // Desired UX assertion intentionally exposes the absent Sonner renderer.\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts:191:29"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T14:08:19.221Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-flows\\admin-audit-system-flows-d-063f6-r-instead-of-silent-failure\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-flows\\admin-audit-system-flows-d-063f6-r-instead-of-silent-failure\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-flows\\admin-audit-system-flows-d-063f6-r-instead-of-silent-failure\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts",
+                    "column": 29,
+                    "line": 191
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "7be15fe10641ee3a35e2-400f9c110640c62bdd7e",
+          "file": "admin-audit-system-flows.spec.ts",
+          "line": 183,
+          "column": 5
+        },
+        {
+          "title": "deployment profile saves only under isolated root and survives HTTP reload",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 23546,
+                  "error": {
+                    "message": "Error: locator.fill: Error: strict mode violation: getByPlaceholder('http://127.0.0.1:5173') resolved to 2 elements:\n    1) <input value=\"http://127.0.0.1:5511\" placeholder=\"http://127.0.0.1:5173\" class=\"flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\"/> aka getByPlaceholder('http://127.0.0.1:5173', { exact: true })\n    2) <textarea rows=\"4\" placeholder=\"http://127.0.0.1:5173↵http://localhost:5173↵http://127.0.0.1:5000\" class=\"flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm dark:shadow-none placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\">http://127.0.0.1:5511</textarea> aka getByPlaceholder('http://127.0.0.1:5173\\nhttp://localhost:5173\\nhttp://127.0.0.1:')\n\nCall log:\n\u001b[2m  - waiting for getByPlaceholder('http://127.0.0.1:5173')\u001b[22m\n",
+                    "stack": "Error: locator.fill: Error: strict mode violation: getByPlaceholder('http://127.0.0.1:5173') resolved to 2 elements:\n    1) <input value=\"http://127.0.0.1:5511\" placeholder=\"http://127.0.0.1:5173\" class=\"flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\"/> aka getByPlaceholder('http://127.0.0.1:5173', { exact: true })\n    2) <textarea rows=\"4\" placeholder=\"http://127.0.0.1:5173↵http://localhost:5173↵http://127.0.0.1:5000\" class=\"flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm dark:shadow-none placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\">http://127.0.0.1:5511</textarea> aka getByPlaceholder('http://127.0.0.1:5173\\nhttp://localhost:5173\\nhttp://127.0.0.1:')\n\nCall log:\n\u001b[2m  - waiting for getByPlaceholder('http://127.0.0.1:5173')\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts:208:58",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts",
+                      "column": 58,
+                      "line": 208
+                    },
+                    "snippet": "  206 |     await expect(page.getByRole('button', { name: 'Profili Kaydet' })).toBeEnabled();\n  207 |     await option(page, page.getByRole('combobox'), 'Yerel / localhost (deneme)');\n> 208 |     await page.getByPlaceholder('http://127.0.0.1:5173').fill(updated.publicUrl);\n      |                                                          ^\n  209 |     await page.locator('textarea').first().fill(updated.allowedOrigins.join('\\n'));\n  210 |     await page.locator('input[type=number]').first().fill('0');\n  211 |     const saved = page.waitForResponse(r => r.url().endsWith('/api/admin/deployment/configuration') && r.request().method() === 'PUT');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts",
+                        "column": 58,
+                        "line": 208
+                      },
+                      "message": "Error: locator.fill: Error: strict mode violation: getByPlaceholder('http://127.0.0.1:5173') resolved to 2 elements:\n    1) <input value=\"http://127.0.0.1:5511\" placeholder=\"http://127.0.0.1:5173\" class=\"flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm dark:shadow-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\"/> aka getByPlaceholder('http://127.0.0.1:5173', { exact: true })\n    2) <textarea rows=\"4\" placeholder=\"http://127.0.0.1:5173↵http://localhost:5173↵http://127.0.0.1:5000\" class=\"flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm dark:shadow-none placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\">http://127.0.0.1:5511</textarea> aka getByPlaceholder('http://127.0.0.1:5173\\nhttp://localhost:5173\\nhttp://127.0.0.1:')\n\nCall log:\n\u001b[2m  - waiting for getByPlaceholder('http://127.0.0.1:5173')\u001b[22m\n\n\n  206 |     await expect(page.getByRole('button', { name: 'Profili Kaydet' })).toBeEnabled();\n  207 |     await option(page, page.getByRole('combobox'), 'Yerel / localhost (deneme)');\n> 208 |     await page.getByPlaceholder('http://127.0.0.1:5173').fill(updated.publicUrl);\n      |                                                          ^\n  209 |     await page.locator('textarea').first().fill(updated.allowedOrigins.join('\\n'));\n  210 |     await page.locator('input[type=number]').first().fill('0');\n  211 |     const saved = page.waitForResponse(r => r.url().endsWith('/api/admin/deployment/configuration') && r.request().method() === 'PUT');\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts:208:58"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T14:08:39.256Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-flows\\admin-audit-system-flows-d-fe032-ot-and-survives-HTTP-reload\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-flows\\admin-audit-system-flows-d-fe032-ot-and-survives-HTTP-reload\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-flows\\admin-audit-system-flows-d-fe032-ot-and-survives-HTTP-reload\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit-system-flows.spec.ts",
+                    "column": 58,
+                    "line": 208
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "7be15fe10641ee3a35e2-a7dd1a0da722d003955c",
+          "file": "admin-audit-system-flows.spec.ts",
+          "line": 198,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-30T13:59:26.699Z",
+    "duration": 578059.137,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 5,
+    "flaky": 0
+  }
+}

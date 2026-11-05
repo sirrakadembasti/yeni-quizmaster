@@ -23,7 +23,7 @@ import {
   VolumeX,
   AlertTriangle
 } from "lucide-react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "@/context/auth-context";
 import { authApi, notificationApi, adminApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
@@ -31,22 +31,26 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { format, isAfter, subMonths } from "date-fns";
+import { format, subMonths } from "date-fns";
 import { tr } from "date-fns/locale";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Switch } from "@/components/ui/switch";
-import { useLocation } from "wouter";
+import { useLocation, useSearch } from "wouter";
 import { removeNotification, type NotificationPage } from "@/lib/notification-cache";
+import { getVersionedNotificationPreferences, saveVersionedNotificationPreferences, newerNotificationPreferences, type VersionedNotificationPreferences } from "@/lib/versioned-notification-preferences";
 
 export default function SettingsPage() {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [currentLocation] = useLocation();
+  const [, setLocation] = useLocation();
+  const search = useSearch();
   
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const [notificationPage, setNotificationPage] = useState(1);
+  const [historyPage, setHistoryPage] = useState(1);
+  const [historyStartDate] = useState(() => subMonths(new Date(), 6).toISOString());
   
   const [formData, setFormData] = useState({
     name: "",
@@ -62,31 +66,35 @@ export default function SettingsPage() {
   });
 
   // Notifications Query
-  const { data: notificationsData } = useQuery({
+  const { data: notificationsData, isLoading: notificationsLoading, isError: notificationsError, error: notificationError, refetch: retryNotifications } = useQuery({
     queryKey: ["notifications", "all", notificationPage],
     queryFn: () => notificationApi.getUserNotifications(notificationPage, 20),
     enabled: !!user
   });
 
-  const { data: notificationPreferences } = useQuery({
-    queryKey: ["notifications", "preferences"],
-    queryFn: () => notificationApi.getPreferences(),
-    enabled: !!user
+  const preferenceOwner = useRef({ userId: user?.id, epoch: 0, busy: false });
+  if (preferenceOwner.current.userId !== user?.id) {
+    preferenceOwner.current = { userId: user?.id, epoch: preferenceOwner.current.epoch + 1, busy: false };
+  }
+  useEffect(() => () => { preferenceOwner.current.epoch++; }, []);
+  const preferenceQueryKey = ["notifications", "preferences", "versioned", user?.id];
+  const { data: notificationPreferences, isFetching: preferencesFetching } = useQuery({
+    queryKey: preferenceQueryKey,
+    queryFn: () => getVersionedNotificationPreferences(),
+    enabled: !!user,
+    structuralSharing: (previous, incoming) => newerNotificationPreferences(previous as VersionedNotificationPreferences | undefined, incoming as VersionedNotificationPreferences),
   });
 
   // Logs Query (6 months)
-  const { data: logsData, isLoading: logsLoading } = useQuery({
-    queryKey: ['dashboard-logs', user?.id],
-    queryFn: () => adminApi.getLogsMe(),
+  const { data: logsData, isLoading: logsLoading, isError: logsError, error: logError, refetch: retryLogs } = useQuery({
+    queryKey: ['settings-logs', user?.id, historyPage, historyStartDate],
+    queryFn: () => adminApi.getLogsMe({ page: historyPage, limit: 50, startDate: historyStartDate }),
     enabled: !!user && activeTab === "logs"
   });
 
   const notifications = notificationsData?.notifications || [];
-  const logs = useMemo(() => {
-    if (!logsData?.logs) return [];
-    const sixMonthsAgo = subMonths(new Date(), 6);
-    return logsData.logs.filter((log: any) => isAfter(new Date(log.timestamp), sixMonthsAgo));
-  }, [logsData]);
+  const logs = logsData?.logs || [];
+  const historyTotalPages = Math.max(1, logsData?.pagination?.totalPages ?? 1);
 
   const markAllReadMutation = useMutation({
     mutationFn: () => notificationApi.markAllAsRead(),
@@ -124,24 +132,49 @@ export default function SettingsPage() {
   });
 
   const muteNotificationsMutation = useMutation({
-    mutationFn: (muted: boolean) => notificationApi.updatePreferences(muted),
-    onSuccess: (preferences) => {
-      queryClient.setQueryData(["notifications", "preferences"], preferences);
+    mutationFn: async (command: { muted: boolean; revision: number; userId: string; epoch: number }) => {
+      await queryClient.cancelQueries({ queryKey: ["notifications", "preferences", "versioned", command.userId], exact: true });
+      if (preferenceOwner.current.userId !== command.userId || preferenceOwner.current.epoch !== command.epoch) throw new Error('Tercih sahibi değişti.');
+      return saveVersionedNotificationPreferences(command.muted, command.revision);
+    },
+    retry: false,
+    onSuccess: ({ preferences, saved }, command) => {
+      const capturedKey = ["notifications", "preferences", "versioned", command.userId];
+      if (preferenceOwner.current.userId !== command.userId || preferenceOwner.current.epoch !== command.epoch) {
+        // A mounted listener for the same user re-reads with its current session.
+        // Never cache an ambiguous reconciliation obtained after account change.
+        queryClient.invalidateQueries({ queryKey: capturedKey, exact: true });
+        return;
+      }
+      const current = queryClient.getQueryData<VersionedNotificationPreferences>(capturedKey);
+      if (current && current.revision > preferences.revision) return;
+      queryClient.setQueryData<VersionedNotificationPreferences>(capturedKey, previous => newerNotificationPreferences(previous, preferences));
+      queryClient.invalidateQueries({ queryKey: ["notifications", "preferences"], exact: true });
       toast({
-        title: preferences.muted ? "Bildirimler sessize alındı" : "Bildirimlerin sesi açıldı"
+        title: saved ? (preferences.muted ? "Bildirimler sessize alındı" : "Bildirimlerin sesi açıldı") : "Hata",
+        ...(saved ? {} : { description: "Bildirim tercihi doğrulanamadı. Güncel tercihiniz gösteriliyor; lütfen tekrar deneyin.", variant: "destructive" as const })
       });
-    }
+    },
+    onError: (_error, command) => {
+      queryClient.invalidateQueries({ queryKey: ["notifications", "preferences", "versioned", command.userId], exact: true });
+      if (preferenceOwner.current.userId !== command.userId || preferenceOwner.current.epoch !== command.epoch) return;
+      queryClient.invalidateQueries({ queryKey: preferenceQueryKey, exact: true });
+      toast({ title: "Hata", description: "Bildirim tercihleri güncellenemedi. Lütfen tekrar deneyin.", variant: "destructive" });
+    },
+    onSettled: (_result, _error, command) => {
+      if (preferenceOwner.current.userId === command.userId && preferenceOwner.current.epoch === command.epoch) preferenceOwner.current.busy = false;
+    },
   });
 
   const notificationsMuted = notificationPreferences?.muted ?? false;
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(search);
     const tab = params.get("tab");
-    if (tab) {
-      setActiveTab(tab);
-    }
+    setActiveTab(tab && ["profile", "notifications", "logs", "security"].includes(tab) ? tab : "profile");
+  }, [search]);
 
+  useEffect(() => {
     if (user) {
       setFormData({
         name: user.name || "",
@@ -150,7 +183,7 @@ export default function SettingsPage() {
         address: user.address || ""
       });
     }
-  }, [user, currentLocation]);
+  }, [user]);
 
   const isProfileChanged = useMemo(() => {
     if (!user) return false;
@@ -169,7 +202,8 @@ export default function SettingsPage() {
     
     setLoading(true);
     try {
-      await authApi.updateProfile(formData);
+      const { user: updatedUser } = await authApi.updateProfile(formData);
+      updateUser(updatedUser);
       queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
       toast({ title: "Başarılı", description: "Profil bilgileriniz güncellendi." });
     } catch (error: any) {
@@ -201,13 +235,13 @@ export default function SettingsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8 pb-12">
+      <div className="space-y-8 pb-12 print:pb-0">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-black text-foreground tracking-tight">Hesap Ayarları</h1>
             <p className="text-muted-foreground mt-1 font-medium">Profilinizi, güvenliğinizi ve bildirimlerinizi buradan yönetin.</p>
           </div>
-          <div className="flex gap-2 print:hidden">
+          {activeTab !== 'security' && <div className="flex gap-2 print:hidden">
             <Button 
               variant="outline" 
               onClick={() => window.print()}
@@ -215,10 +249,10 @@ export default function SettingsPage() {
             >
               <Printer className="h-4 w-4" /> Yazdır
             </Button>
-          </div>
+          </div>}
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs value={activeTab} onValueChange={(tab) => { setActiveTab(tab); setLocation(`/settings?tab=${tab}`); }} className="space-y-6">
           <TabsList className="bg-muted/50 p-1 rounded-xl w-full max-w-2xl overflow-x-auto h-auto">
             <TabsTrigger value="profile" className="gap-2 rounded-lg py-2 px-4 whitespace-nowrap">
               <UserIcon className="h-4 w-4" /> Profil Bilgileri
@@ -241,7 +275,20 @@ export default function SettingsPage() {
                   <CardTitle className="text-xl font-black">Kişisel Bilgiler</CardTitle>
                   <CardDescription>Adınız ve iletişim bilgileriniz.</CardDescription>
                 </CardHeader>
-                <form onSubmit={handleProfileUpdate}>
+                <dl className="hidden print:grid grid-cols-2 gap-4 px-6 py-4">
+                  {[
+                    ['Ad Soyad', user.name],
+                    ['E-posta', user.email],
+                    ['Telefon', user.phoneNumber],
+                    ['Adres', user.address],
+                  ].map(([label, value]) => (
+                    <div key={label} className="min-w-0">
+                      <dt className="text-xs font-bold text-muted-foreground">{label}</dt>
+                      <dd className="break-words whitespace-pre-wrap">{value || 'Belirtilmemiş'}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <form onSubmit={handleProfileUpdate} className="print:hidden">
                   <CardContent className="space-y-4 pt-6">
                     {user?.role === 'student' && (
                       <div className="mb-4 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-3 text-amber-900 dark:text-amber-200">
@@ -254,10 +301,11 @@ export default function SettingsPage() {
                     )}
                     <div className="grid gap-4 sm:grid-cols-2">
                       <div className="space-y-2">
-                        <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Ad Soyad</Label>
+                        <Label htmlFor="profile-name" className="text-xs font-bold text-muted-foreground uppercase ml-1">Ad Soyad</Label>
                         <div className="relative">
                           <UserIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                           <Input 
+                            id="profile-name"
                             disabled={user?.role === 'student'}
                             value={formData.name}
                             onChange={(e) => setFormData({...formData, name: e.target.value})}
@@ -267,11 +315,12 @@ export default function SettingsPage() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">E-posta</Label>
+                        <Label htmlFor="profile-email" className="text-xs font-bold text-muted-foreground uppercase ml-1">E-posta</Label>
                         <div className="relative">
                           <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                           <Input 
                             disabled={user?.role === 'student'}
+                            id="profile-email"
                             value={formData.email}
                             onChange={(e) => setFormData({...formData, email: e.target.value})}
                             className="pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30" 
@@ -281,17 +330,17 @@ export default function SettingsPage() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Telefon</Label>
+                        <Label htmlFor="profile-phone" className="text-xs font-bold text-muted-foreground uppercase ml-1">Telefon</Label>
                         <div className="relative">
                           <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                          <Input disabled={user?.role === 'student'} value={formData.phoneNumber} onChange={(e) => setFormData({...formData, phoneNumber: e.target.value})} className="pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30" placeholder="05xx xxx xx xx" />
+                          <Input id="profile-phone" disabled={user?.role === 'student'} value={formData.phoneNumber} onChange={(e) => setFormData({...formData, phoneNumber: e.target.value})} className="pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30" placeholder="05xx xxx xx xx" />
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Adres</Label>
+                        <Label htmlFor="profile-address" className="text-xs font-bold text-muted-foreground uppercase ml-1">Adres</Label>
                         <div className="relative">
                           <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                          <Input disabled={user?.role === 'student'} value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} className="pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30" placeholder="İletişim adresi" />
+                          <Input id="profile-address" disabled={user?.role === 'student'} value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} className="pl-10 rounded-xl disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-muted/30" placeholder="İletişim adresi" />
                         </div>
                       </div>
                     </div>
@@ -434,17 +483,30 @@ export default function SettingsPage() {
                   <Switch
                     id="notification-sound"
                     checked={!notificationsMuted}
-                    disabled={muteNotificationsMutation.isPending}
-                    onCheckedChange={(enabled) => muteNotificationsMutation.mutate(!enabled)}
+                    disabled={muteNotificationsMutation.isPending || preferencesFetching || !notificationPreferences}
+                    onCheckedChange={(enabled) => {
+                      if (!user || !notificationPreferences || preferenceOwner.current.busy) return;
+                      preferenceOwner.current.busy = true;
+                      const epoch = ++preferenceOwner.current.epoch;
+                      muteNotificationsMutation.mutate({ muted: !enabled, revision: notificationPreferences.revision, userId: user.id, epoch });
+                    }}
                     aria-label="Bildirim sesini aç veya kapat"
                   />
                 </div>
-                <ScrollArea className="h-[400px]">
-                  {notifications.length > 0 ? (
+                <p className="hidden print:block px-4 py-2 text-sm">Baskı kapsamı: mevcut {notifications.length} bildirim; bölüm {notificationPage} / {notificationsData?.pagination?.totalPages ?? 1}.</p>
+                <ScrollArea className="settings-notification-scroll h-[400px]">
+                  {notificationsLoading ? (
+                    <p role="status" className="py-12 text-center text-muted-foreground">Bildirimler yükleniyor...</p>
+                  ) : notificationsError ? (
+                    <div role="alert" className="space-y-3 p-6 text-center">
+                      <p>Bildirimler yüklenemedi. {notificationError instanceof Error ? notificationError.message : "Lütfen tekrar deneyin."}</p>
+                      <Button variant="outline" onClick={() => retryNotifications()}>Tekrar dene</Button>
+                    </div>
+                  ) : notifications.length > 0 ? (
                     <div className="divide-y divide-border/50">
                       {notifications.map((notification: any) => (
                         <div key={notification.id} className={cn(
-                          "p-4 hover:bg-muted/30 transition-colors flex items-start gap-4",
+                          "settings-notification-row p-4 hover:bg-muted/30 transition-colors flex items-start gap-4",
                           !notification.isRead && "bg-primary/5"
                         )}>
                           <div className={cn(
@@ -487,7 +549,7 @@ export default function SettingsPage() {
                   )}
                 </ScrollArea>
                 {(notificationsData?.pagination?.totalPages ?? 1) > 1 && (
-                  <div className="flex items-center justify-between border-t border-border/50 px-4 py-3">
+                  <div className="flex items-center justify-between border-t border-border/50 px-4 py-3 print:hidden">
                     <Button
                       variant="outline"
                       size="sm"
@@ -522,14 +584,20 @@ export default function SettingsPage() {
                     <CardDescription>Son 6 ay içinde gerçekleştirdiğiniz tüm sistem hareketleri.</CardDescription>
                   </div>
                   <Badge variant="outline" className="gap-1.5 py-1.5 px-4 rounded-full border-blue-200 bg-blue-50 text-blue-700 font-bold">
-                    <History className="h-3.5 w-3.5" /> {logs.length} İşlem
+                    <History className="h-3.5 w-3.5" /> {logsData?.pagination?.total ?? logs.length} İşlem
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent className="p-0">
+                <p className="hidden print:block px-4 py-2 text-sm">Baskı kapsamı: mevcut {logs.length} işlem; bölüm {historyPage} / {historyTotalPages}.</p>
                 {logsLoading ? (
                   <div className="flex items-center justify-center py-20">
                     <Loader2 className="h-8 w-8 animate-spin text-primary opacity-20" />
+                  </div>
+                ) : logsError ? (
+                  <div role="alert" className="space-y-3 p-6 text-center">
+                    <p>İşlem geçmişi yüklenemedi. {logError instanceof Error ? logError.message : "Lütfen tekrar deneyin."}</p>
+                    <Button variant="outline" onClick={() => retryLogs()}>Tekrar dene</Button>
                   </div>
                 ) : logs.length > 0 ? (
                   <div className="overflow-x-auto">
@@ -561,10 +629,10 @@ export default function SettingsPage() {
                             <td className="py-4 px-6 text-right">
                               <div className="flex flex-col items-end">
                                 <span className="text-sm font-bold text-foreground">
-                                  {format(new Date(log.timestamp), "d MMM yyyy", { locale: tr })}
+                                  {format(new Date(log.createdAt ?? log.timestamp), "d MMM yyyy", { locale: tr })}
                                 </span>
                                 <span className="text-[10px] text-muted-foreground font-medium">
-                                  {format(new Date(log.timestamp), "HH:mm:ss")}
+                                  {format(new Date(log.createdAt ?? log.timestamp), "HH:mm:ss")}
                                 </span>
                               </div>
                             </td>
@@ -582,12 +650,23 @@ export default function SettingsPage() {
                     <p className="text-xs text-muted-foreground max-w-xs mt-1">Sistemdeki hareketleriniz burada listelenecektir.</p>
                   </div>
                 )}
+                {!logsLoading && !logsError && historyTotalPages > 1 && (
+                  <div className="flex items-center justify-between border-t border-border/50 px-4 py-3 print:hidden">
+                    <Button variant="outline" size="sm" disabled={historyPage <= 1} onClick={() => setHistoryPage(page => Math.max(1, page - 1))}>Önceki</Button>
+                    <span className="text-xs font-medium text-muted-foreground">Sayfa {historyPage} / {historyTotalPages}</span>
+                    <Button variant="outline" size="sm" disabled={historyPage >= historyTotalPages} onClick={() => setHistoryPage(page => page + 1)}>Sonraki</Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
 
           <TabsContent value="security" className="animate-in fade-in-50 duration-500">
-            <Card className="rounded-3xl border-border/50 shadow-sm overflow-hidden">
+            <div className="hidden print:block">
+              <h2 className="text-xl font-bold">Güvenlik Bilgileri</h2>
+              <p>Şifre değiştirme alanları gizlilik için yazdırılmaz. Şifrenizi uygulamadaki Güvenlik sekmesinden değiştirebilirsiniz.</p>
+            </div>
+            <Card className="rounded-3xl border-border/50 shadow-sm overflow-hidden print:hidden">
               <CardHeader className="bg-muted/20 border-b border-border/50">
                 <CardTitle className="text-xl font-black">Şifre Değiştir</CardTitle>
                 <CardDescription>Hesabınızı güvende tutmak için şifrenizi düzenli olarak güncelleyin.</CardDescription>
@@ -595,10 +674,11 @@ export default function SettingsPage() {
               <form onSubmit={handlePasswordChange}>
                 <CardContent className="space-y-4 pt-6">
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Mevcut Şifre</Label>
+                    <Label htmlFor="security-current-password" className="text-xs font-bold text-muted-foreground uppercase ml-1">Mevcut Şifre</Label>
                     <div className="relative">
                       <Key className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input 
+                        id="security-current-password"
                         value={passwordData.currentPassword}
                         onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
                         type="password" 
@@ -609,10 +689,11 @@ export default function SettingsPage() {
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
-                      <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Yeni Şifre</Label>
+                      <Label htmlFor="security-new-password" className="text-xs font-bold text-muted-foreground uppercase ml-1">Yeni Şifre</Label>
                       <div className="relative">
                         <Key className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
+                          id="security-new-password"
                           value={passwordData.newPassword}
                           onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
                           type="password" 
@@ -622,10 +703,11 @@ export default function SettingsPage() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-xs font-bold text-muted-foreground uppercase ml-1">Yeni Şifre (Tekrar)</Label>
+                      <Label htmlFor="security-password-confirmation" className="text-xs font-bold text-muted-foreground uppercase ml-1">Yeni Şifre (Tekrar)</Label>
                       <div className="relative">
                         <Key className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
+                          id="security-password-confirmation"
                           value={passwordData.confirmPassword}
                           onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
                           type="password" 

@@ -1,0 +1,51 @@
+{
+  "startedAt": "2026-10-04T16:31:04.589Z",
+  "mode": "ux-only",
+  "databaseHashBefore": "8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158",
+  "load": [],
+  "ux": [],
+  "cleanup": [
+    {
+      "name": "ui",
+      "stopProven": true,
+      "handlesReleased": true
+    },
+    {
+      "name": "api",
+      "stopProven": true,
+      "handlesReleased": true
+    }
+  ],
+  "ownedProcesses": [
+    {
+      "name": "api",
+      "pid": 338900
+    },
+    {
+      "name": "ui",
+      "pid": 336688
+    }
+  ],
+  "isolatedFixture": true,
+  "fixtureIdentityVerified": true,
+  "mobileSkipped": true,
+  "detailExitCode": 0,
+  "detailCoverageComplete": true,
+  "mobileAccepted": true,
+  "status": "executed",
+  "ports": [
+    {
+      "kind": "fixture-port",
+      "port": 5560,
+      "stopped": true
+    },
+    {
+      "kind": "fixture-port",
+      "port": 5561,
+      "stopped": true
+    }
+  ],
+  "databaseHashAfter": "8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158",
+  "databaseUnchanged": true,
+  "finishedAt": "2026-10-04T16:33:56.088Z"
+}

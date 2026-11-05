@@ -3,6 +3,7 @@ import { storage } from "../storage";
 import { requireAuth, type AuthRequest } from "../middleware/auth";
 import { logger } from "../utils/logger";
 import { z } from "zod";
+import { NotificationPreferenceConflict } from "../services/notification-preferences";
 
 const router: Router = Router();
 
@@ -37,7 +38,8 @@ router.post("/mark-read", requireAuth, async (req: AuthRequest, res: Response) =
 
 router.get("/preferences", requireAuth, async (req: AuthRequest, res: Response) => {
   try {
-    res.json(await storage.getNotificationPreferences(req.user!.id));
+    const preferences = await storage.getVersionedNotificationPreferences(req.user!.id);
+    res.set('ETag', `"${preferences.revision}"`).set('Cache-Control', 'no-store').json({ muted: preferences.muted });
   } catch (error) {
     logger.error({ err: error }, "[Notification] Bildirim tercihleri getirilemedi.");
     res.status(500).json({ message: "Bildirim tercihleri getirilemedi." });
@@ -50,8 +52,15 @@ router.patch("/preferences", requireAuth, async (req: AuthRequest, res: Response
     if (!parsed.success) {
       return res.status(400).json({ message: "Geçerli bir bildirim tercihi gönderilmelidir." });
     }
-    res.json(await storage.updateNotificationPreferences(req.user!.id, parsed.data.muted));
+    const header = req.get('If-Match');
+    const revision = header === undefined ? undefined : /^"(0|[1-9]\d*)"$/.test(header) ? Number(header.slice(1, -1)) : NaN;
+    if (revision !== undefined && (!Number.isSafeInteger(revision) || revision < 0 || revision >= 2147483647)) {
+      return res.status(400).json({ message: "Geçerli bir bildirim tercihi sürümü gönderilmelidir." });
+    }
+    const preferences = await storage.updateVersionedNotificationPreferences(req.user!.id, parsed.data.muted, revision);
+    res.set('ETag', `"${preferences.revision}"`).set('Cache-Control', 'no-store').json({ muted: preferences.muted });
   } catch (error) {
+    if (error instanceof NotificationPreferenceConflict) return res.status(409).json({ message: error.message });
     logger.error({ err: error }, "[Notification] Bildirim tercihleri güncellenemedi.");
     res.status(500).json({ message: "Bildirim tercihleri güncellenemedi." });
   }

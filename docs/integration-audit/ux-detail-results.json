@@ -1,0 +1,858 @@
+{
+  "startedAt": "2026-10-04T16:32:07.539Z",
+  "checks": [
+    {
+      "id": "S-U01",
+      "status": "passed",
+      "before": {
+        "opacity": "1",
+        "name": "Parent Audit Completed Exam sonuç detaylarını gör"
+      },
+      "tabReached": true,
+      "focusedOpacity": "1",
+      "enteredResult": true
+    },
+    {
+      "id": "S-U02",
+      "status": "passed",
+      "statusAria": "- combobox \"Sınav Durumu\": Tamamlanan",
+      "selectedCompleted": true
+    },
+    {
+      "id": "S-U04",
+      "status": "passed",
+      "whitespaceSubmitEnabled": false,
+      "validTextSubmitEnabled": true,
+      "aria": "- main:\n  - button \"Menüyü aç\"\n  - button \"Bildirimleri aç\": \"1\"\n  - button \"Karanlık Moda Geç\"\n  - button \"A\"\n  - heading \"Parent Audit Survey\" [level=1]\n  - paragraph: Tüm soruları yanıtlayıp anketi gönderin.\n  - text: 1. Audit open response\n  - group \"1. Audit open response\":\n    - textbox \"1. Audit open response\": Synthetic valid feedback\n  - text: 2. Audit rating\n  - group \"2. Audit rating\":\n    - button \"1\" [pressed]\n    - button \"2\"\n    - button \"3\"\n    - button \"4\"\n    - button \"5\"\n  - text: 3. Audit single choice\n  - group \"3. Audit single choice\":\n    - button \"A\" [pressed]\n    - button \"B\"\n    - button \"C\"\n  - text: 4. Audit multiple choice\n  - group \"4. Audit multiple choice\":\n    - checkbox \"A\" [checked]\n    - text: A\n    - checkbox \"B\"\n    - text: B\n    - checkbox \"C\"\n    - text: C\n  - text: 5. Audit likert\n  - group \"5. Audit likert\":\n    - button \"Katılmıyorum\"\n    - button \"Kararsızım\"\n    - button \"Katılıyorum\" [pressed]\n  - button \"Anketi Gönder\"",
+      "submitted": false
+    },
+    {
+      "id": "S-U04-error",
+      "status": "passed",
+      "controlledStatus": 500,
+      "retryRecovered": true
+    },
+    {
+      "id": "T-U02-S-U03",
+      "status": "passed",
+      "selectedAria": "- button \"A) A\" [pressed]",
+      "previewBanner": "Bu quiz'i önizleme modunda görüntülüyorsunuz. Sonuçlar kaydedilmeyecektir.",
+      "modal": "Önizlemeyi Bitirmek İstiyor musunuz?\n\nÖnizleme tamamlanacak. Cevaplarınız ve sonuçlarınız kaydedilmeyecek.\n\nHayır, Devam Et\nEvet, Bitir",
+      "confirmed": false
+    },
+    {
+      "id": "T-U01",
+      "status": "passed",
+      "aria": "- textbox \"Sınav veya ders ara\":\n  - /placeholder: Sınav veya ders ara...\n  - text: Audit",
+      "linkedLabels": [
+        "Sınav veya ders ara"
+      ]
+    },
+    {
+      "id": "S-U07",
+      "status": "passed",
+      "controlledStatus": 500,
+      "loadingDistinct": true,
+      "errorDistinct": true,
+      "retryRecoveredToEmpty": true
+    },
+    {
+      "id": "T-U03",
+      "status": "passed",
+      "fixtureStudentId": "parent-audit-student",
+      "display": "ÖĞRENCI KODU\n\nparent-audit-student",
+      "printActionCells": [
+        {
+          "tag": "TH",
+          "text": "Eylem",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "text": "İncele",
+          "display": "none"
+        }
+      ],
+      "pdf": "ux-detail-T-U03.pdf"
+    },
+    {
+      "id": "T-U04",
+      "status": "passed",
+      "firstLoaded": {
+        "geometry": {
+          "baseline": 180,
+          "top": 20,
+          "box": {
+            "x": 9.5,
+            "y": 212.234375,
+            "width": 1261,
+            "height": 280,
+            "top": 212.234375,
+            "right": 1270.5,
+            "bottom": 492.234375,
+            "left": 9.5
+          },
+          "groups": [
+            {
+              "className": "Parent Audit 7A",
+              "bars": [
+                {
+                  "series": "participationRate",
+                  "y": 20,
+                  "height": 160,
+                  "width": 24
+                },
+                {
+                  "series": "averageScore",
+                  "y": 180,
+                  "height": 0,
+                  "width": 24
+                }
+              ]
+            },
+            {
+              "className": "Private Other 7B",
+              "bars": [
+                {
+                  "series": "participationRate",
+                  "y": 20,
+                  "height": 160,
+                  "width": 24
+                },
+                {
+                  "series": "averageScore",
+                  "y": 180,
+                  "height": 0,
+                  "width": 24
+                }
+              ]
+            }
+          ]
+        },
+        "table": [
+          {
+            "className": "Parent Audit 7A",
+            "participation": 100,
+            "score": 0
+          },
+          {
+            "className": "Private Other 7B",
+            "participation": 100,
+            "score": 0
+          }
+        ],
+        "pdf": "ux-detail-T-U04-fast.pdf"
+      },
+      "filtered": {
+        "geometry": {
+          "baseline": 180,
+          "top": 20,
+          "box": {
+            "x": 9.5,
+            "y": 212.234375,
+            "width": 1261,
+            "height": 280,
+            "top": 212.234375,
+            "right": 1270.5,
+            "bottom": 492.234375,
+            "left": 9.5
+          },
+          "groups": [
+            {
+              "className": "Parent Audit 7A",
+              "bars": [
+                {
+                  "series": "participationRate",
+                  "y": 20,
+                  "height": 160,
+                  "width": 24
+                },
+                {
+                  "series": "averageScore",
+                  "y": 180,
+                  "height": 0,
+                  "width": 24
+                }
+              ]
+            },
+            {
+              "className": "Private Other 7B",
+              "bars": [
+                {
+                  "series": "participationRate",
+                  "y": 20,
+                  "height": 160,
+                  "width": 24
+                },
+                {
+                  "series": "averageScore",
+                  "y": 180,
+                  "height": 0,
+                  "width": 24
+                }
+              ]
+            }
+          ]
+        },
+        "table": [
+          {
+            "className": "Parent Audit 7A",
+            "participation": 100,
+            "score": 0
+          },
+          {
+            "className": "Private Other 7B",
+            "participation": 100,
+            "score": 0
+          }
+        ],
+        "pdf": "ux-detail-T-U04-filter-fast.pdf"
+      },
+      "manyClasses": {
+        "classCount": 30,
+        "groups": [
+          {
+            "viewBox": "0 0 600 240",
+            "box": {
+              "x": 9.5,
+              "y": 212.234375,
+              "width": 1261,
+              "height": 280,
+              "top": 212.234375,
+              "right": 1270.5,
+              "bottom": 492.234375,
+              "left": 9.5
+            },
+            "labels": [
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              }
+            ],
+            "names": [
+              "PrintAudit-00",
+              "PrintAudit-01",
+              "PrintAudit-02",
+              "PrintAudit-03",
+              "PrintAudit-04"
+            ],
+            "bars": [
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              }
+            ]
+          },
+          {
+            "viewBox": "0 0 600 240",
+            "box": {
+              "x": 9.5,
+              "y": 492.234375,
+              "width": 1261,
+              "height": 280,
+              "top": 492.234375,
+              "right": 1270.5,
+              "bottom": 772.234375,
+              "left": 9.5
+            },
+            "labels": [
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              }
+            ],
+            "names": [
+              "PrintAudit-05",
+              "PrintAudit-06",
+              "PrintAudit-07",
+              "PrintAudit-08",
+              "PrintAudit-09"
+            ],
+            "bars": [
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              }
+            ]
+          },
+          {
+            "viewBox": "0 0 600 240",
+            "box": {
+              "x": 9.5,
+              "y": 772.234375,
+              "width": 1261,
+              "height": 280,
+              "top": 772.234375,
+              "right": 1270.5,
+              "bottom": 1052.234375,
+              "left": 9.5
+            },
+            "labels": [
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              }
+            ],
+            "names": [
+              "PrintAudit-10",
+              "PrintAudit-11",
+              "PrintAudit-12",
+              "PrintAudit-13",
+              "PrintAudit-14"
+            ],
+            "bars": [
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              }
+            ]
+          },
+          {
+            "viewBox": "0 0 600 240",
+            "box": {
+              "x": 9.5,
+              "y": 1052.234375,
+              "width": 1261,
+              "height": 280,
+              "top": 1052.234375,
+              "right": 1270.5,
+              "bottom": 1332.234375,
+              "left": 9.5
+            },
+            "labels": [
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              }
+            ],
+            "names": [
+              "PrintAudit-15",
+              "PrintAudit-16",
+              "PrintAudit-17",
+              "PrintAudit-18",
+              "PrintAudit-19"
+            ],
+            "bars": [
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              }
+            ]
+          },
+          {
+            "viewBox": "0 0 600 240",
+            "box": {
+              "x": 9.5,
+              "y": 1332.234375,
+              "width": 1261,
+              "height": 280,
+              "top": 1332.234375,
+              "right": 1270.5,
+              "bottom": 1612.234375,
+              "left": 9.5
+            },
+            "labels": [
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              }
+            ],
+            "names": [
+              "PrintAudit-20",
+              "PrintAudit-21",
+              "PrintAudit-22",
+              "PrintAudit-23",
+              "PrintAudit-24"
+            ],
+            "bars": [
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              }
+            ]
+          },
+          {
+            "viewBox": "0 0 600 240",
+            "box": {
+              "x": 9.5,
+              "y": 1612.234375,
+              "width": 1261,
+              "height": 280,
+              "top": 1612.234375,
+              "right": 1270.5,
+              "bottom": 1892.234375,
+              "left": 9.5
+            },
+            "labels": [
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              },
+              {
+                "fontSize": "11px",
+                "height": 29
+              }
+            ],
+            "names": [
+              "PrintAudit-25",
+              "PrintAudit-26",
+              "PrintAudit-27",
+              "PrintAudit-28",
+              "PrintAudit-29"
+            ],
+            "bars": [
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              },
+              {
+                "series": "participationRate",
+                "height": 160
+              },
+              {
+                "series": "averageScore",
+                "height": 120
+              }
+            ]
+          }
+        ],
+        "pdf": "ux-detail-T-U04-many.pdf",
+        "scope": "controlled analytics response; no database writes"
+      },
+      "stablePercentGeometry": true
+    },
+    {
+      "id": "A-U01",
+      "status": "passed",
+      "printActionCells": [
+        {
+          "tag": "TH",
+          "text": "İşlemler",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "text": "",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "text": "",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "text": "",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "text": "",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "text": "",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "text": "",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "text": "",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "text": "",
+          "display": "none"
+        }
+      ],
+      "pdf": "ux-detail-A-U01.pdf"
+    },
+    {
+      "id": "S-U04-403-404-recovery",
+      "status": "passed",
+      "observations": [
+        {
+          "status": 403,
+          "message": "Bu ankete erişim yetkiniz yok."
+        },
+        {
+          "status": 404,
+          "message": "Anket bulunamadı."
+        }
+      ],
+      "recovery": "real survey response restored by retry for each status",
+      "retryButton": true
+    },
+    {
+      "id": "S-U05",
+      "status": "passed",
+      "response": "controlled real-shaped fixture results; DB unchanged",
+      "dashboard": [
+        {
+          "score": 50,
+          "success": false
+        },
+        {
+          "score": 69,
+          "success": false
+        },
+        {
+          "score": 70,
+          "success": true
+        }
+      ],
+      "statsPassText": "1 başarılı sonuç",
+      "threshold": 70
+    },
+    {
+      "id": "S-U08",
+      "status": "passed",
+      "button": "Yazdır / PDF olarak kaydet",
+      "printCalls": 1,
+      "scope": "JavaScript print invocation; OS dialog outside scope"
+    },
+    {
+      "id": "S-U06",
+      "status": "passed",
+      "cache": {
+        "count": 4,
+        "completedPresent": true
+      },
+      "onlineRow": "Parent Audit Completed Exam\n\nAçıklama yok.\n\n\t\n\nAudit Mathematics\n\nParent Audit Teacher\n\n\tOrta\t2\tSüresiz\t\nTamamlandı\n\n%0.0\n\n\t\nDetayları Gör",
+      "offlineRow": "Parent Audit Completed Exam\n\nAçıklama yok.\n\n\t\n\nAudit Mathematics\n\nParent Audit Teacher\n\n\tOrta\t2\tSüresiz\t\nTamamlandı\n\n%0.0\n\n\t\nDetayları Gör",
+      "pendingSubmissionSeparate": true,
+      "scope": "controlled transport failures; browser-only pendingSubmit fixture, no submission"
+    },
+    {
+      "id": "S-U07-fresh-GET",
+      "status": "passed",
+      "controlledStatus": 500,
+      "popover": "BILDIRIMLER\n\nBildirimler yüklenemedi.\n\nYeniden dene\nTÜM BILDIRIMLERI GÖR",
+      "retryAvailable": true
+    },
+    {
+      "id": "S-U07-markAll",
+      "status": "passed",
+      "controlledStatus": 500,
+      "failureFeedbackVisible": true,
+      "unreadContentPreserved": true
+    }
+  ],
+  "unresolved": [
+    {
+      "id": "S-U08-OS",
+      "reason": "OS print dialog outside scope"
+    },
+    {
+      "id": "T-U04-PDF-QA",
+      "reason": "Actual PDFs captured; separate render/text verification required"
+    }
+  ],
+  "finishedAt": "2026-10-04T16:33:47.571Z"
+}

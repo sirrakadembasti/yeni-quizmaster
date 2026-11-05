@@ -1,0 +1,216 @@
+{
+  "date": "2026-10-03T15:49:42.429Z",
+  "entry": "sh",
+  "fullApplyRequested": true,
+  "root": "/home/ahmet/.cache/quizmaster-closure/tmp/quizmaster-fresh-sh-wySs57",
+  "copiedSourceFiles": 286,
+  "runtime": {
+    "platform": "linux",
+    "node": "v22.23.2",
+    "arch": "x64",
+    "osRelease": "6.18.33.2-microsoft-standard-WSL2"
+  },
+  "initialState": "source-only; no env/database/config/lock/node_modules",
+  "phases": [
+    "real entrypoint + token exchange + fresh/no-dependencies browser state",
+    "real package install finished; independent node_modules verified",
+    "real web wizard opened with fresh preflight",
+    "real browser apply: server/client builds, migration, first admin, config/env/lock",
+    "persisted form values + bootstrap reload installed/disabled + actual reentry rejection",
+    "actual built API startup + first-admin login/auth cookie",
+    "actual unmodified Vite frontend + browser first-admin login + authenticated admin route"
+  ],
+  "status": "passed-full-install-api-and-ui-login",
+  "ports": {
+    "bootstrapPort": 43693,
+    "wizardPort": 45355,
+    "appPort": 44907,
+    "uiPort": 38627
+  },
+  "ownedBrowserPid": 537,
+  "lastProgress": {
+    "stage": "wizard-apply",
+    "message": "QuizMaster kurulumu tamamlandı. Birazdan giriş sayfasına yönlendirileceksiniz.",
+    "lastLogLines": [],
+    "steps": [
+      {
+        "id": "prepare",
+        "status": "done"
+      },
+      {
+        "id": "buildServer",
+        "status": "done"
+      },
+      {
+        "id": "buildClient",
+        "status": "done"
+      },
+      {
+        "id": "migrate",
+        "status": "done"
+      },
+      {
+        "id": "admin",
+        "status": "done"
+      },
+      {
+        "id": "artifacts",
+        "status": "done"
+      },
+      {
+        "id": "env",
+        "status": "done"
+      },
+      {
+        "id": "finish",
+        "status": "done"
+      }
+    ]
+  },
+  "navigationDiagnostics": [
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "dom-and-selector-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "fresh-state-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "wizard-entry",
+      "outcome": "dom-and-preflight-ready",
+      "file": "wizard-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-locked",
+      "outcome": "dom-and-selector-ready",
+      "file": "bootstrap-locked-navigation.json"
+    },
+    {
+      "phase": "fresh-login",
+      "outcome": "dom-and-selector-ready",
+      "file": "fresh-login-navigation.json"
+    }
+  ],
+  "cleanup": [
+    {
+      "kind": "owned-linux-process-tree",
+      "pid": 907,
+      "stopped": true,
+      "knownProcessCount": 3,
+      "remainingPids": [],
+      "outcomes": [
+        {
+          "pid": 919,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 932,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 907,
+          "signal": "SIGTERM"
+        }
+      ]
+    },
+    {
+      "kind": "owned-linux-process-tree",
+      "pid": 866,
+      "stopped": true,
+      "knownProcessCount": 5,
+      "remainingPids": [],
+      "outcomes": [
+        {
+          "pid": 878,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 879,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 891,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 866,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 969,
+          "signal": "SIGTERM"
+        }
+      ]
+    },
+    {
+      "kind": "owned-linux-process-tree",
+      "pid": 537,
+      "stopped": true,
+      "knownProcessCount": 9,
+      "remainingPids": [],
+      "outcomes": []
+    },
+    {
+      "kind": "owned-linux-process-tree",
+      "pid": 450,
+      "stopped": true,
+      "knownProcessCount": 9,
+      "remainingPids": [],
+      "outcomes": [
+        {
+          "pid": 499,
+          "signal": "SIGTERM"
+        },
+        {
+          "pid": 450,
+          "signal": "SIGTERM"
+        }
+      ]
+    },
+    {
+      "kind": "fixture-port",
+      "port": 43693,
+      "stopped": true
+    },
+    {
+      "kind": "fixture-port",
+      "port": 45355,
+      "stopped": true
+    },
+    {
+      "kind": "fixture-port",
+      "port": 44907,
+      "stopped": true
+    },
+    {
+      "kind": "fixture-port",
+      "port": 38627,
+      "stopped": true
+    }
+  ],
+  "browserCloseErrors": [],
+  "handleRelease": [
+    {
+      "pid": 907,
+      "handlesReleased": true
+    },
+    {
+      "pid": 866,
+      "handlesReleased": true
+    },
+    {
+      "pid": 537,
+      "handlesReleased": true
+    },
+    {
+      "pid": 450,
+      "handlesReleased": true
+    }
+  ],
+  "cleanupSucceeded": true,
+  "sourceProtectedFilesUnchanged": true,
+  "finishedAt": "2026-10-03T15:51:21.170Z"
+}

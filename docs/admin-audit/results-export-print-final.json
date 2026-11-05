@@ -1,0 +1,835 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\playwright\\cli.js",
+      "test",
+      "--config",
+      "playwright.admin-audit.config.ts",
+      "admin-export-print.spec.ts",
+      "--workers=1"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.admin-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/admin-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "admin-audit.spec.ts",
+          "admin-audit-people-flows.spec.ts",
+          "admin-audit-system-flows.spec.ts",
+          "admin-results-regression.spec.ts",
+          "admin-quiz-repairs.spec.ts",
+          "admin-inventory-repairs.spec.ts",
+          "admin-critical-repairs.spec.ts",
+          "admin-session-expiry.spec.ts",
+          "admin-export-print.spec.ts",
+          "admin-accessibility-closure.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "docs/admin-audit/playwright-report-latest",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/admin-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "admin-export-print.spec.ts",
+      "file": "admin-export-print.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "teacher list workbook exports only matching rows and preserves Turkish relationships",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14376,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:54:32.342Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-teacher-737b6-erves-Turkish-relationships\\attachments\\downloaded-workbook-0209aedae68afe839f58966e64087177f152c682.xlsx"
+                    },
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-teacher-737b6-erves-Turkish-relationships\\attachments\\printed-report-e5a3a1c3baf62b1d80699ec99536c5a8b93a1cb7.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-0c57ba301a930bd7f251",
+          "file": "admin-export-print.spec.ts",
+          "line": 156,
+          "column": 5
+        },
+        {
+          "title": "student list workbook keeps selected row and admin parent/contact fields",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9196,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:54:56.722Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-student-afdda-admin-parent-contact-fields\\attachments\\downloaded-workbook-7c1f3304e2bcd0d318f7d6f4226370ff28c330be.xlsx"
+                    },
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-student-afdda-admin-parent-contact-fields\\attachments\\printed-report-8c004d423ac0e0219bc131345cc66c2e8d09249b.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-f65c11825c6350cd14f1",
+          "file": "admin-export-print.spec.ts",
+          "line": 166,
+          "column": 5
+        },
+        {
+          "title": "class list workbook count and responsible teacher match the isolated class",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11125,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:55:05.958Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-class-l-cb8b6-er-match-the-isolated-class\\attachments\\downloaded-workbook-27d120583a4aedbd33995bbcb9d03595e13f9c8f.xlsx"
+                    },
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-class-l-cb8b6-er-match-the-isolated-class\\attachments\\printed-report-ada95d3e45c8e4703fc5b36521a94e885218a779.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-d82abf2ca50709c94fa7",
+          "file": "admin-export-print.spec.ts",
+          "line": 176,
+          "column": 5
+        },
+        {
+          "title": "read-only class detail exports the searched student and prints the roster",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7142,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:55:17.124Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-read-on-1656a-udent-and-prints-the-roster\\attachments\\downloaded-workbook-2df966a11b656973f781f3fe458ba45a290677bb.xlsx"
+                    },
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-read-on-1656a-udent-and-prints-the-roster\\attachments\\printed-report-b1d4b39291b3e39cb5563d7030148c20760da94a.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-24e46f2832cdda62654d",
+          "file": "admin-export-print.spec.ts",
+          "line": 185,
+          "column": 40
+        },
+        {
+          "title": "management class detail exports the searched student and prints the roster",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9155,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:55:24.309Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-managem-20b64-udent-and-prints-the-roster\\attachments\\downloaded-workbook-8ec136b3b3a90f9016f790ee6e69583bce3f4b9a.xlsx"
+                    },
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-managem-20b64-udent-and-prints-the-roster\\attachments\\printed-report-a17a0d3f8b1c207124abd56d2c85de1fbe3bfdac.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-4b4927b9522bd71cef8c",
+          "file": "admin-export-print.spec.ts",
+          "line": 185,
+          "column": 40
+        },
+        {
+          "title": "teacher detail workbook contains the teacher class and exam rather than unrelated records",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7218,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:55:33.498Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-teacher-87fbf-ther-than-unrelated-records\\attachments\\downloaded-workbook-591b719fda28bb564700af4691e35939e3c9a274.xlsx"
+                    },
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-teacher-87fbf-ther-than-unrelated-records\\attachments\\printed-report-603138a6c05d8fc5dc47449efc8f9f43a3077e74.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-3bba78c82136dea1f6b7",
+          "file": "admin-export-print.spec.ts",
+          "line": 198,
+          "column": 5
+        },
+        {
+          "title": "results workbook records selected teacher/student provenance and preserves completed zero",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9666,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:55:40.747Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-results-8c797-nd-preserves-completed-zero\\attachments\\downloaded-workbook-e8a996694e417731c694237ba615442d007f6957.xlsx"
+                    },
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-results-8c797-nd-preserves-completed-zero\\attachments\\printed-report-22cde135dc22c649916c5b73d8ebe8f3e83ecce3.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-8de594532982f52d0b9d",
+          "file": "admin-export-print.spec.ts",
+          "line": 208,
+          "column": 5
+        },
+        {
+          "title": "admin student analysis workbook keeps the real zero score and selected student identity",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7790,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:55:50.440Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-s-7e9e0-d-selected-student-identity\\attachments\\downloaded-workbook-37299ac11b71d51787d16c3bf7757ba269fdcff1.xlsx"
+                    },
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-s-7e9e0-d-selected-student-identity\\attachments\\printed-report-8eebb37cb5b0a87bb5679af2276ba1aa38674de7.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-ec0f3528dbb49eca5bec",
+          "file": "admin-export-print.spec.ts",
+          "line": 226,
+          "column": 5
+        },
+        {
+          "title": "result detail workbook exports question and actual wrong answer, then prints the detail",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4871,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:55:58.263Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-result--1cf3b-swer-then-prints-the-detail\\attachments\\downloaded-workbook-cd5b4ce8563b84c8babf86af24e000fe8c5424ed.xlsx"
+                    },
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-result--1cf3b-swer-then-prints-the-detail\\attachments\\printed-report-f31145f287cdf70fef7a725465559d4a00309a51.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-13c52b5e0f7822bc8475",
+          "file": "admin-export-print.spec.ts",
+          "line": 236,
+          "column": 5
+        },
+        {
+          "title": "class analytics workbook matches real participation and zero average and prints its chart/table",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8504,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:56:03.164Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-class-a-0f002--and-prints-its-chart-table\\attachments\\downloaded-workbook-02e1adcfa74c4a27cdb5d7442c21871747b24846.xlsx"
+                    },
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-class-a-0f002--and-prints-its-chart-table\\attachments\\printed-report-4a00c6cfe79f64331cc324fa87ff0e83c4e50f2f.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-db181a9f31133d932a3a",
+          "file": "admin-export-print.spec.ts",
+          "line": 244,
+          "column": 5
+        },
+        {
+          "title": "survey workbook exports real open-text response safely and prints landscape results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9791,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:56:11.697Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "downloaded-workbook",
+                      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-survey--345d3-nd-prints-landscape-results\\attachments\\downloaded-workbook-6080772edff19cad390e053ef11121a703c73ba3.xlsx"
+                    },
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-survey--345d3-nd-prints-landscape-results\\attachments\\printed-report-7df1e5b2f78142a1a28c4d5f9a82727df0b040f6.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-0404f720de92d45a1b75",
+          "file": "admin-export-print.spec.ts",
+          "line": 254,
+          "column": 5
+        },
+        {
+          "title": "admin /quizzes print action produces a portrait report without interactive controls",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5504,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:56:21.524Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-q-d826b-ithout-interactive-controls\\attachments\\printed-report-7a0ea4a93d8355407399849dfe2c4ae94916c1e1.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-fc07f7a74f1e67908f59",
+          "file": "admin-export-print.spec.ts",
+          "line": 270,
+          "column": 85
+        },
+        {
+          "title": "admin /management print action produces a portrait report without interactive controls",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3284,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:56:27.067Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-m-51028-ithout-interactive-controls\\attachments\\printed-report-b67cc0531b408dac8452b21951acde276ddbef85.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-7b71f286a2f31e609d5e",
+          "file": "admin-export-print.spec.ts",
+          "line": 270,
+          "column": 85
+        },
+        {
+          "title": "admin /announcements print action produces a portrait report without interactive controls",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5922,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:56:30.385Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-a-6994a-ithout-interactive-controls\\attachments\\printed-report-dd410bd166b9008d952937ae631e7bebd044b76e.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-4b27a460b7c0ea88526e",
+          "file": "admin-export-print.spec.ts",
+          "line": 270,
+          "column": 85
+        },
+        {
+          "title": "admin /settings print action produces a portrait report without interactive controls",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4402,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T14:56:36.329Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "print-layout",
+                      "contentType": "application/json",
+                      "body": "ewogICJoYXNSZXF1aXJlZFRleHQiOiB0cnVlLAogICJjaHJvbWUiOiBbXSwKICAiY29udHJvbHMiOiBbXSwKICAiY2xpcHBlZFRhYmxlcyI6IFtdLAogICJyZXBlYXRlZEhlYWRlcnMiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "printed-report",
+                      "contentType": "application/pdf",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results-latest\\admin-export-print-admin-s-a0d39-ithout-interactive-controls\\attachments\\printed-report-b12b6a47901f92c98012da8c9d6bad5a87078e8d.pdf"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ec943067b6f22081ea98-e6ffc9beaa578f806c4d",
+          "file": "admin-export-print.spec.ts",
+          "line": 270,
+          "column": 85
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-01T14:54:26.189Z",
+    "duration": 142736.77300000002,
+    "expected": 15,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

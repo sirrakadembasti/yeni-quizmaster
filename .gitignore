@@ -22,10 +22,14 @@ client/.env
 /server/prisma/dev.db-journal
 /server/data/*.db
 /server/data/*.db-journal
+/server/data/*.db-wal
+/server/data/*.db-shm
+/server/data/ai-encryption.key
 /server/data/deployment-config.json
 /server/data/deployment-config.json.tmp
 /server/data/installation.lock
 /server/data/setup-artifacts/
+/server/data/demo-sessions/
 /server/backups/*
 !/server/backups/README.md
 
@@ -64,5 +68,42 @@ graphify-out/*
 .pnpm-store/
 .superpowers/
 .agents/
+.mimocode/
 *.exe
 tools/mailpit/*.exe
+
+/server/data/quizmaster-test-*/
+
+# Admin audit runtime and browser traces (may contain local paths/session data)
+/docs/admin-audit/runtime.json
+/docs/admin-audit/playwright-report*/
+/docs/admin-audit/test-results*/
+/docs/admin-audit/**/trace.zip
+/docs/teacher-audit/runtime.json
+/docs/teacher-audit/results-latest.json
+/docs/teacher-audit/runner-windows-port-guard.json
+/docs/teacher-audit/runtime-logs/
+/docs/teacher-audit/test-results*/
+/docs/teacher-audit/playwright-report*/
+/docs/teacher-audit/**/trace.zip
+/docs/student-audit/runtime.json
+/docs/student-audit/results-latest.json
+/docs/student-audit/runtime-logs/
+/docs/student-audit/test-results*/
+/docs/student-audit/playwright-report*/
+/docs/student-audit/**/trace.zip
+/docs/student-audit/results-fix.json
+/docs/student-audit/runner-fix.json
+/docs/student-audit/runner-windows-port-guard.json
+/docs/student-audit/student-results-export.csv
+
+# Parent audit isolated runtime; durable sanitized evidence is versioned.
+/docs/parent-audit/runtime.json
+/docs/parent-audit/results-latest.json
+/docs/parent-audit/runtime-logs/
+/docs/parent-audit/test-results*/
+/docs/parent-audit/playwright-report*/
+/docs/parent-audit/**/trace.zip
+
+# Isolated integration checks: raw server logs contain session metadata.
+/docs/integration-audit/runtime-logs/

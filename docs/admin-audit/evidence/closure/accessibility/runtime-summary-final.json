@@ -1,0 +1,1693 @@
+{
+  "source": "docs/admin-audit/results-accessibility-final.json",
+  "reportStats": {
+    "startTime": "2026-10-01T17:18:02.023Z",
+    "duration": 650368.225,
+    "expected": 53,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "diagnosticCount": 53,
+  "totals": {
+    "pageErrors": 0,
+    "consoleErrors": 1,
+    "apiErrors": 0,
+    "failedRequests": 1,
+    "abortedRequests": 0
+  },
+  "recordsWithEvents": 1,
+  "timingSummary": {
+    "responseStart": {
+      "samples": 53,
+      "unmeasuredOrZero": 0,
+      "min": 6.300000011920929,
+      "median": 13.199999988079071,
+      "p95": 197.69999998807907,
+      "max": 4149.799999952316
+    },
+    "domInteractive": {
+      "samples": 53,
+      "unmeasuredOrZero": 0,
+      "min": 24.69999998807907,
+      "median": 42.299999952316284,
+      "p95": 246.89999997615814,
+      "max": 4175.599999964237
+    },
+    "domContentLoadedEventEnd": {
+      "samples": 53,
+      "unmeasuredOrZero": 0,
+      "min": 267.30000001192093,
+      "median": 431.19999998807907,
+      "p95": 1411,
+      "max": 4695
+    },
+    "loadEventEnd": {
+      "samples": 40,
+      "unmeasuredOrZero": 13,
+      "min": 792.7999999523163,
+      "median": 1443.6500000059605,
+      "p95": 5063.199999988079,
+      "max": 7930.199999988079
+    },
+    "transferSize": {
+      "samples": 53,
+      "unmeasuredOrZero": 0,
+      "min": 1428,
+      "median": 1428,
+      "p95": 1428,
+      "max": 1428
+    }
+  },
+  "limits": [
+    "Only console error events are captured; warnings are outside this inventory.",
+    "API errors include HTTP >=400 only; guard/error states require contextual classification.",
+    "Aborted requests are retained separately; they are not silently counted as benign.",
+    "Navigation timing is the last captured document timing per test, not every SPA transition or a controlled performance benchmark.",
+    "No cookies, headers, credentials or query parameters are copied into this summary."
+  ],
+  "failures": [
+    {
+      "title": "computed accessibility mobile /student/result/audit-result",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/student/result/audit-result",
+      "testStatus": "passed",
+      "category": "consoleErrors",
+      "classification": "GET /css2 DNS resolution failure ERR_NAME_NOT_RESOLVED; paired console/request events. External Google Fonts attribution inferred from client/index.html because attachments retain pathname only. Recovery not established.",
+      "event": {
+        "message": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+        "location": {
+          "pathname": "/css2",
+          "line": 0
+        }
+      }
+    },
+    {
+      "title": "computed accessibility mobile /student/result/audit-result",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/student/result/audit-result",
+      "testStatus": "passed",
+      "category": "failedRequests",
+      "classification": "GET /css2 DNS resolution failure ERR_NAME_NOT_RESOLVED; paired console/request events. External Google Fonts attribution inferred from client/index.html because attachments retain pathname only. Recovery not established.",
+      "event": {
+        "method": "GET",
+        "pathname": "/css2",
+        "error": "net::ERR_NAME_NOT_RESOLVED"
+      }
+    }
+  ],
+  "runtimeIncidents": [
+    {
+      "title": "computed accessibility mobile /student/result/audit-result",
+      "request": "GET /css2",
+      "error": "net::ERR_NAME_NOT_RESOLVED",
+      "events": [
+        "consoleErrors",
+        "failedRequests"
+      ],
+      "testStatus": "passed",
+      "interpretation": "One DNS failure emitted two diagnostics; no HTTP error status or uncaught JavaScript exception. Pathname matches Google Fonts stylesheet in client/index.html; hostname omitted by collector, so font attribution is an inference. Test passing does not establish recovery."
+    }
+  ],
+  "timingUnits": {
+    "responseStart": "milliseconds",
+    "domInteractive": "milliseconds",
+    "domContentLoadedEventEnd": "milliseconds",
+    "loadEventEnd": "milliseconds",
+    "transferSize": "document response bytes"
+  },
+  "records": [
+    {
+      "title": "computed accessibility desktop /",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/",
+      "testStatus": "passed",
+      "testDurationMs": 16635,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 197.69999998807907,
+        "domInteractive": 407.19999998807907,
+        "domContentLoadedEventEnd": 981.1999999880791,
+        "loadEventEnd": 7930.199999988079,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /admin-quizzes",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/admin-quizzes",
+      "testStatus": "passed",
+      "testDurationMs": 10798,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/admin-quizzes"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 23.69999998807907,
+        "domInteractive": 47.5,
+        "domContentLoadedEventEnd": 502.10000002384186,
+        "loadEventEnd": 1439.5,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /quizzes",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/quizzes",
+      "testStatus": "passed",
+      "testDurationMs": 12209,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/quizzes"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 11.5,
+        "domInteractive": 42.299999952316284,
+        "domContentLoadedEventEnd": 471.89999997615814,
+        "loadEventEnd": 2716.2999999523163,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /statistics",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/statistics",
+      "testStatus": "passed",
+      "testDurationMs": 7723,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/statistics"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 15.899999976158142,
+        "domInteractive": 49.69999998807907,
+        "domContentLoadedEventEnd": 1340.800000011921,
+        "loadEventEnd": 2546.300000011921,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /results",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/results",
+      "testStatus": "passed",
+      "testDurationMs": 10362,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/results"
+      ],
+      "inventoryStates": [
+        "initial",
+        "tablist-0-tab-0"
+      ],
+      "navigationTiming": {
+        "responseStart": 24.80000001192093,
+        "domInteractive": 52.5,
+        "domContentLoadedEventEnd": 471.80000001192093,
+        "loadEventEnd": 1178,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /survey-results",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/survey-results",
+      "testStatus": "passed",
+      "testDurationMs": 10633,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/survey-results"
+      ],
+      "inventoryStates": [
+        "initial",
+        "tablist-0-tab-0",
+        "tablist-0-tab-1"
+      ],
+      "navigationTiming": {
+        "responseStart": 8.400000035762787,
+        "domInteractive": 36.5,
+        "domContentLoadedEventEnd": 404.9000000357628,
+        "loadEventEnd": 1553.4000000357628,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /students",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/students",
+      "testStatus": "passed",
+      "testDurationMs": 11089,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/students"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 125.70000004768372,
+        "domInteractive": 155.20000004768372,
+        "domContentLoadedEventEnd": 791.7000000476837,
+        "loadEventEnd": 877.7000000476837,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /teachers",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/teachers",
+      "testStatus": "passed",
+      "testDurationMs": 10318,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/teachers"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 9.899999976158142,
+        "domInteractive": 34.39999997615814,
+        "domContentLoadedEventEnd": 516.6000000238419,
+        "loadEventEnd": 2044.5,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /guardian-management",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/guardian-management",
+      "testStatus": "passed",
+      "testDurationMs": 7144,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/guardian-management"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 31.80000001192093,
+        "domInteractive": 77.40000003576279,
+        "domContentLoadedEventEnd": 598.1000000238419,
+        "loadEventEnd": 1447.800000011921,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /classlist",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/classlist",
+      "testStatus": "passed",
+      "testDurationMs": 6486,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/classlist"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 20.80000001192093,
+        "domInteractive": 43.30000001192093,
+        "domContentLoadedEventEnd": 396.19999998807907,
+        "loadEventEnd": 2304.600000023842,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /management",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/management",
+      "testStatus": "passed",
+      "testDurationMs": 37358,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/management"
+      ],
+      "inventoryStates": [
+        "initial",
+        "tablist-0-tab-0",
+        "tablist-0-tab-1",
+        "tablist-0-tab-2",
+        "tablist-0-tab-2-nested-0-0",
+        "tablist-0-tab-2-nested-0-1",
+        "tablist-0-tab-2-nested-0-2",
+        "tablist-0-tab-2-nested-0-3",
+        "tablist-0-tab-2-nested-0-4",
+        "tablist-0-tab-3",
+        "management-log-users",
+        "management-log-emails",
+        "management-log-password-resets",
+        "management-log-system"
+      ],
+      "navigationTiming": {
+        "responseStart": 17.899999976158142,
+        "domInteractive": 39.89999997615814,
+        "domContentLoadedEventEnd": 357.0999999642372,
+        "loadEventEnd": 994.0999999642372,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /archive",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/archive",
+      "testStatus": "passed",
+      "testDurationMs": 11503,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/archive"
+      ],
+      "inventoryStates": [
+        "initial",
+        "tablist-0-tab-0",
+        "tablist-0-tab-1"
+      ],
+      "navigationTiming": {
+        "responseStart": 10.600000023841858,
+        "domInteractive": 43.5,
+        "domContentLoadedEventEnd": 363.5,
+        "loadEventEnd": 967.1000000238419,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /server-setup",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/server-setup",
+      "testStatus": "passed",
+      "testDurationMs": 12214,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/server-setup"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 57.40000003576279,
+        "domInteractive": 85.90000003576279,
+        "domContentLoadedEventEnd": 2253,
+        "loadEventEnd": 2256.2000000476837,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /announcements",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/announcements",
+      "testStatus": "passed",
+      "testDurationMs": 16557,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/announcements"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 95.90000003576279,
+        "domInteractive": 131.4000000357628,
+        "domContentLoadedEventEnd": 1411,
+        "loadEventEnd": 1494.2000000476837,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /settings",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/settings",
+      "testStatus": "passed",
+      "testDurationMs": 13037,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/settings",
+        "/settings",
+        "/settings",
+        "/settings",
+        "/settings"
+      ],
+      "inventoryStates": [
+        "initial",
+        "tablist-0-tab-0",
+        "tablist-0-tab-1",
+        "tablist-0-tab-2",
+        "tablist-0-tab-3"
+      ],
+      "navigationTiming": {
+        "responseStart": 18.100000023841858,
+        "domInteractive": 44,
+        "domContentLoadedEventEnd": 503,
+        "loadEventEnd": 0,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /create-quiz",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/create-quiz",
+      "testStatus": "passed",
+      "testDurationMs": 10197,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/create-quiz"
+      ],
+      "inventoryStates": [
+        "initial",
+        "tablist-0-tab-0",
+        "tablist-0-tab-1"
+      ],
+      "navigationTiming": {
+        "responseStart": 11.599999964237213,
+        "domInteractive": 35.09999996423721,
+        "domContentLoadedEventEnd": 411.5999999642372,
+        "loadEventEnd": 792.7999999523163,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /quizzes/audit-exam",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/quizzes/audit-exam",
+      "testStatus": "passed",
+      "testDurationMs": 11917,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/quizzes/audit-exam"
+      ],
+      "inventoryStates": [
+        "initial",
+        "tablist-0-tab-0",
+        "tablist-0-tab-1"
+      ],
+      "navigationTiming": {
+        "responseStart": 12.600000023841858,
+        "domInteractive": 42.30000001192093,
+        "domContentLoadedEventEnd": 403.69999998807907,
+        "loadEventEnd": 902.6000000238419,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /teachers/audit-teacher",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/teachers/audit-teacher",
+      "testStatus": "passed",
+      "testDurationMs": 6293,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/teachers/audit-teacher"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 16.399999976158142,
+        "domInteractive": 39.10000002384186,
+        "domContentLoadedEventEnd": 401.5,
+        "loadEventEnd": 1047.699999988079,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /classes/audit-class",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/classes/audit-class",
+      "testStatus": "passed",
+      "testDurationMs": 5185,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/classes/audit-class"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 13,
+        "domInteractive": 41.5,
+        "domContentLoadedEventEnd": 426.60000002384186,
+        "loadEventEnd": 1075.699999988079,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /admin/classes/audit-class",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/admin/classes/audit-class",
+      "testStatus": "passed",
+      "testDurationMs": 6765,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/admin/classes/audit-class"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 9.299999952316284,
+        "domInteractive": 37.39999997615814,
+        "domContentLoadedEventEnd": 389.39999997615814,
+        "loadEventEnd": 3223.599999964237,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /student/result/audit-result",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/student/result/audit-result",
+      "testStatus": "passed",
+      "testDurationMs": 5532,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/student/result/audit-result"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 10.700000047683716,
+        "domInteractive": 47.700000047683716,
+        "domContentLoadedEventEnd": 447.2000000476837,
+        "loadEventEnd": 1099.4000000357628,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /student/quiz/audit-teacher-exam",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/student/quiz/audit-teacher-exam",
+      "testStatus": "passed",
+      "testDurationMs": 5510,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/student/quiz/audit-teacher-exam"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 12.399999976158142,
+        "domInteractive": 42,
+        "domContentLoadedEventEnd": 382.39999997615814,
+        "loadEventEnd": 933.6999999880791,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility desktop /student/results",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/student/results",
+      "testStatus": "passed",
+      "testDurationMs": 6599,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/student/results"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 14.399999976158142,
+        "domInteractive": 41.30000001192093,
+        "domContentLoadedEventEnd": 396.80000001192093,
+        "loadEventEnd": 944.1000000238419,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "keyboard tabs and profile labels desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/settings",
+      "testStatus": "passed",
+      "testDurationMs": 8611,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/settings",
+        "/settings",
+        "/settings",
+        "/settings"
+      ],
+      "inventoryStates": [
+        "security"
+      ],
+      "navigationTiming": {
+        "responseStart": 20.299999952316284,
+        "domInteractive": 55.299999952316284,
+        "domContentLoadedEventEnd": 418.69999998807907,
+        "loadEventEnd": 1545,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "keyboard dialog focus trap and restoration desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/management",
+      "testStatus": "passed",
+      "testDurationMs": 8648,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/management"
+      ],
+      "inventoryStates": [
+        "category-dialog"
+      ],
+      "navigationTiming": {
+        "responseStart": 9.800000011920929,
+        "domInteractive": 33.89999997615814,
+        "domContentLoadedEventEnd": 358.69999998807907,
+        "loadEventEnd": 0,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "keyboard results select escape restoration desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "finalPathname": "/results",
+      "testStatus": "passed",
+      "testDurationMs": 14817,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/results"
+      ],
+      "inventoryStates": [
+        "results-select"
+      ],
+      "navigationTiming": {
+        "responseStart": 45.19999998807907,
+        "domInteractive": 79.59999996423721,
+        "domContentLoadedEventEnd": 477,
+        "loadEventEnd": 4354.099999964237,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/",
+      "testStatus": "passed",
+      "testDurationMs": 8668,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 13.199999988079071,
+        "domInteractive": 40,
+        "domContentLoadedEventEnd": 443.4000000357628,
+        "loadEventEnd": 0,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /admin-quizzes",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/admin-quizzes",
+      "testStatus": "passed",
+      "testDurationMs": 25502,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/admin-quizzes"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 30.19999998807907,
+        "domInteractive": 54.60000002384186,
+        "domContentLoadedEventEnd": 496.4000000357628,
+        "loadEventEnd": 5063.199999988079,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /quizzes",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/quizzes",
+      "testStatus": "passed",
+      "testDurationMs": 27311,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/quizzes"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 11.599999964237213,
+        "domInteractive": 38.69999998807907,
+        "domContentLoadedEventEnd": 387.2999999523163,
+        "loadEventEnd": 3576.599999964237,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /statistics",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/statistics",
+      "testStatus": "passed",
+      "testDurationMs": 6254,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/statistics"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 10.699999988079071,
+        "domInteractive": 39.89999997615814,
+        "domContentLoadedEventEnd": 351.10000002384186,
+        "loadEventEnd": 3502.399999976158,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /results",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/results",
+      "testStatus": "passed",
+      "testDurationMs": 25584,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/results"
+      ],
+      "inventoryStates": [
+        "initial",
+        "tablist-0-tab-0"
+      ],
+      "navigationTiming": {
+        "responseStart": 13.199999988079071,
+        "domInteractive": 47.59999996423721,
+        "domContentLoadedEventEnd": 532,
+        "loadEventEnd": 1298.300000011921,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /survey-results",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/survey-results",
+      "testStatus": "passed",
+      "testDurationMs": 10733,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/survey-results"
+      ],
+      "inventoryStates": [
+        "initial",
+        "tablist-0-tab-0",
+        "tablist-0-tab-1"
+      ],
+      "navigationTiming": {
+        "responseStart": 12.5,
+        "domInteractive": 35.299999952316284,
+        "domContentLoadedEventEnd": 408.89999997615814,
+        "loadEventEnd": 1072.2999999523163,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /students",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/students",
+      "testStatus": "passed",
+      "testDurationMs": 19682,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/students"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 36.60000002384186,
+        "domInteractive": 58,
+        "domContentLoadedEventEnd": 836.5,
+        "loadEventEnd": 929.5,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /teachers",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/teachers",
+      "testStatus": "passed",
+      "testDurationMs": 5574,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/teachers"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 13.600000023841858,
+        "domInteractive": 47.30000001192093,
+        "domContentLoadedEventEnd": 431.19999998807907,
+        "loadEventEnd": 1071,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /guardian-management",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/guardian-management",
+      "testStatus": "passed",
+      "testDurationMs": 4681,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/guardian-management"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 13.099999964237213,
+        "domInteractive": 40.5,
+        "domContentLoadedEventEnd": 333.0999999642372,
+        "loadEventEnd": 837.5999999642372,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /classlist",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/classlist",
+      "testStatus": "passed",
+      "testDurationMs": 5827,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/classlist"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 15.5,
+        "domInteractive": 45.59999996423721,
+        "domContentLoadedEventEnd": 379,
+        "loadEventEnd": 1094.300000011921,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /management",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/management",
+      "testStatus": "passed",
+      "testDurationMs": 31961,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/management"
+      ],
+      "inventoryStates": [
+        "initial",
+        "tablist-0-tab-0",
+        "tablist-0-tab-1",
+        "tablist-0-tab-2",
+        "tablist-0-tab-2-nested-0-0",
+        "tablist-0-tab-2-nested-0-1",
+        "tablist-0-tab-2-nested-0-2",
+        "tablist-0-tab-2-nested-0-3",
+        "tablist-0-tab-2-nested-0-4",
+        "tablist-0-tab-3",
+        "management-log-users",
+        "management-log-emails",
+        "management-log-password-resets",
+        "management-log-system"
+      ],
+      "navigationTiming": {
+        "responseStart": 8.299999952316284,
+        "domInteractive": 32.5,
+        "domContentLoadedEventEnd": 456.39999997615814,
+        "loadEventEnd": 1524.0999999642372,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /archive",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/archive",
+      "testStatus": "passed",
+      "testDurationMs": 9235,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/archive"
+      ],
+      "inventoryStates": [
+        "initial",
+        "tablist-0-tab-0",
+        "tablist-0-tab-1"
+      ],
+      "navigationTiming": {
+        "responseStart": 15.699999988079071,
+        "domInteractive": 43.39999997615814,
+        "domContentLoadedEventEnd": 492.69999998807907,
+        "loadEventEnd": 2630.399999976158,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /server-setup",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/server-setup",
+      "testStatus": "passed",
+      "testDurationMs": 6011,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/server-setup"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 9.300000011920929,
+        "domInteractive": 42.39999997615814,
+        "domContentLoadedEventEnd": 419.19999998807907,
+        "loadEventEnd": 1214.6000000238419,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /announcements",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/announcements",
+      "testStatus": "passed",
+      "testDurationMs": 7146,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/announcements"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 8.800000011920929,
+        "domInteractive": 39,
+        "domContentLoadedEventEnd": 436.39999997615814,
+        "loadEventEnd": 1024.3999999761581,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /settings",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/settings",
+      "testStatus": "passed",
+      "testDurationMs": 10686,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/settings",
+        "/settings",
+        "/settings",
+        "/settings",
+        "/settings"
+      ],
+      "inventoryStates": [
+        "initial",
+        "tablist-0-tab-0",
+        "tablist-0-tab-1",
+        "tablist-0-tab-2",
+        "tablist-0-tab-3"
+      ],
+      "navigationTiming": {
+        "responseStart": 10.399999976158142,
+        "domInteractive": 32.39999997615814,
+        "domContentLoadedEventEnd": 463.5,
+        "loadEventEnd": 1532.300000011921,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /create-quiz",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/create-quiz",
+      "testStatus": "passed",
+      "testDurationMs": 11110,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/create-quiz"
+      ],
+      "inventoryStates": [
+        "initial",
+        "tablist-0-tab-0",
+        "tablist-0-tab-1"
+      ],
+      "navigationTiming": {
+        "responseStart": 16.19999998807907,
+        "domInteractive": 36.39999997615814,
+        "domContentLoadedEventEnd": 560,
+        "loadEventEnd": 1632,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /quizzes/audit-exam",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/quizzes/audit-exam",
+      "testStatus": "passed",
+      "testDurationMs": 19985,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/quizzes/audit-exam"
+      ],
+      "inventoryStates": [
+        "initial",
+        "tablist-0-tab-0",
+        "tablist-0-tab-1"
+      ],
+      "navigationTiming": {
+        "responseStart": 23,
+        "domInteractive": 58.09999996423721,
+        "domContentLoadedEventEnd": 761.0999999642372,
+        "loadEventEnd": 0,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /teachers/audit-teacher",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/teachers/audit-teacher",
+      "testStatus": "passed",
+      "testDurationMs": 5502,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/teachers/audit-teacher"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 10,
+        "domInteractive": 31.5,
+        "domContentLoadedEventEnd": 358.5999999642372,
+        "loadEventEnd": 0,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /classes/audit-class",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/classes/audit-class",
+      "testStatus": "passed",
+      "testDurationMs": 4183,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/classes/audit-class"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 7.5,
+        "domInteractive": 28.5,
+        "domContentLoadedEventEnd": 340.5999999642372,
+        "loadEventEnd": 0,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /admin/classes/audit-class",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/admin/classes/audit-class",
+      "testStatus": "passed",
+      "testDurationMs": 6592,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/admin/classes/audit-class"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 227.5999999642372,
+        "domInteractive": 246.89999997615814,
+        "domContentLoadedEventEnd": 528.8999999761581,
+        "loadEventEnd": 0,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /student/result/audit-result",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/student/result/audit-result",
+      "testStatus": "passed",
+      "testDurationMs": 13156,
+      "pageErrors": [],
+      "consoleErrors": [
+        {
+          "message": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+          "location": {
+            "pathname": "/css2",
+            "line": 0
+          }
+        }
+      ],
+      "apiErrors": [],
+      "failedRequests": [
+        {
+          "method": "GET",
+          "pathname": "/css2",
+          "error": "net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "abortedRequests": [],
+      "navigation": [
+        "/student/result/audit-result"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 6.300000011920929,
+        "domInteractive": 24.69999998807907,
+        "domContentLoadedEventEnd": 267.30000001192093,
+        "loadEventEnd": 7605.800000011921,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /student/quiz/audit-teacher-exam",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/student/quiz/audit-teacher-exam",
+      "testStatus": "passed",
+      "testDurationMs": 10043,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/student/quiz/audit-teacher-exam"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 4149.799999952316,
+        "domInteractive": 4175.599999964237,
+        "domContentLoadedEventEnd": 4695,
+        "loadEventEnd": 0,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "computed accessibility mobile /student/results",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/student/results",
+      "testStatus": "passed",
+      "testDurationMs": 4112,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/student/results"
+      ],
+      "inventoryStates": [
+        "initial"
+      ],
+      "navigationTiming": {
+        "responseStart": 8.400000035762787,
+        "domInteractive": 39.60000002384186,
+        "domContentLoadedEventEnd": 335.9000000357628,
+        "loadEventEnd": 0,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "keyboard tabs and profile labels mobile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/settings",
+      "testStatus": "passed",
+      "testDurationMs": 6645,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/settings",
+        "/settings",
+        "/settings",
+        "/settings"
+      ],
+      "inventoryStates": [
+        "security"
+      ],
+      "navigationTiming": {
+        "responseStart": 10,
+        "domInteractive": 35.700000047683716,
+        "domContentLoadedEventEnd": 357.30000001192093,
+        "loadEventEnd": 0,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "keyboard dialog focus trap and restoration mobile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/management",
+      "testStatus": "passed",
+      "testDurationMs": 7337,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/management"
+      ],
+      "inventoryStates": [
+        "category-dialog"
+      ],
+      "navigationTiming": {
+        "responseStart": 7.5,
+        "domInteractive": 28.399999976158142,
+        "domContentLoadedEventEnd": 346.69999998807907,
+        "loadEventEnd": 0,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "keyboard results select escape restoration mobile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/results",
+      "testStatus": "passed",
+      "testDurationMs": 13121,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/results"
+      ],
+      "inventoryStates": [
+        "results-select"
+      ],
+      "navigationTiming": {
+        "responseStart": 12.199999988079071,
+        "domInteractive": 40.5,
+        "domContentLoadedEventEnd": 365.5,
+        "loadEventEnd": 0,
+        "transferSize": 1428
+      }
+    },
+    {
+      "title": "mobile keyboard navigation trap, Escape and link activation",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalPathname": "/settings",
+      "testStatus": "passed",
+      "testDurationMs": 17738,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "apiErrors": [],
+      "failedRequests": [],
+      "abortedRequests": [],
+      "navigation": [
+        "/management",
+        "/settings"
+      ],
+      "inventoryStates": [
+        "mobile-menu"
+      ],
+      "navigationTiming": {
+        "responseStart": 96.30000001192093,
+        "domInteractive": 125,
+        "domContentLoadedEventEnd": 1226.5,
+        "loadEventEnd": 0,
+        "transferSize": 1428
+      }
+    }
+  ],
+  "timingSummaryMethod": "Median of positive measured values (middle pair averaged for even samples); nearest-rank p95. Zero/unmeasured timings reported separately."
+}

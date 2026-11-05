@@ -1,0 +1,287 @@
+{
+  "date": "2026-10-02T05:25:31.987Z",
+  "entry": "sh",
+  "fullApplyRequested": true,
+  "root": "C:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-sh-esx3zA",
+  "copiedSourceFiles": 282,
+  "initialState": "source-only; no env/database/config/lock/node_modules",
+  "phases": [
+    "real entrypoint + token exchange + fresh/no-dependencies browser state",
+    "real package install finished; independent node_modules verified",
+    "real web wizard opened with fresh preflight",
+    "real browser apply: server/client builds, migration, first admin, config/env/lock",
+    "persisted form values + bootstrap reload installed/disabled + actual reentry rejection"
+  ],
+  "status": "failed",
+  "ports": {
+    "bootstrapPort": 62415,
+    "wizardPort": 62416,
+    "appPort": 62417,
+    "uiPort": 62418
+  },
+  "ownershipSnapshotError": "Windows process ownership snapshot unavailable",
+  "ownedBrowserPid": 519580,
+  "lastProgress": {
+    "stage": "wizard-apply",
+    "message": "QuizMaster kurulumu tamamlandı. Birazdan giriş sayfasına yönlendirileceksiniz.",
+    "lastLogLines": [],
+    "steps": [
+      {
+        "id": "prepare",
+        "status": "done"
+      },
+      {
+        "id": "buildServer",
+        "status": "done"
+      },
+      {
+        "id": "buildClient",
+        "status": "done"
+      },
+      {
+        "id": "migrate",
+        "status": "done"
+      },
+      {
+        "id": "admin",
+        "status": "done"
+      },
+      {
+        "id": "artifacts",
+        "status": "done"
+      },
+      {
+        "id": "env",
+        "status": "done"
+      },
+      {
+        "id": "finish",
+        "status": "done"
+      }
+    ]
+  },
+  "navigationDiagnostics": [
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "dom-and-selector-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "fresh-state-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "wizard-entry",
+      "outcome": "dom-and-preflight-ready",
+      "file": "wizard-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-locked",
+      "outcome": "dom-and-selector-ready",
+      "file": "bootstrap-locked-navigation.json"
+    },
+    {
+      "phase": "bootstrap-failure",
+      "outcome": "failed",
+      "file": "bootstrap-failure-navigation.json"
+    }
+  ],
+  "statusReadMisses": [
+    {
+      "at": "2026-10-02T05:29:40.420Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: socket hang up\nCall log:\n  - → GET http://127.0.0.1:62415/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "dependencies",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Scope: all 3 workspace projects",
+          "Lockfile is up to date, resolution step is skipped",
+          "Progress: resolved 1, reused 0, downloaded 0, added 0",
+          "Packages: +623",
+          "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",
+          "Progress: resolved 623, reused 0, downloaded 0, added 0"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-02T05:29:52.791Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: socket hang up\nCall log:\n  - → GET http://127.0.0.1:62415/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "bootstrap",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 2, downloaded 0, added 0",
+          "Progress: resolved 623, reused 10, downloaded 0, added 0",
+          "Progress: resolved 623, reused 14, downloaded 0, added 0",
+          "Progress: resolved 623, reused 15, downloaded 0, added 0",
+          "Progress: resolved 623, reused 18, downloaded 0, added 0",
+          "Progress: resolved 623, reused 22, downloaded 0, added 0",
+          "Progress: resolved 623, reused 27, downloaded 0, added 0",
+          "Progress: resolved 623, reused 28, downloaded 0, added 0"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-02T05:30:30.441Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: socket hang up\nCall log:\n  - → GET http://127.0.0.1:62415/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "dependencies",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 56, downloaded 0, added 0",
+          "Progress: resolved 623, reused 64, downloaded 0, added 0",
+          "Progress: resolved 623, reused 79, downloaded 0, added 0",
+          "Progress: resolved 623, reused 90, downloaded 0, added 0",
+          "Progress: resolved 623, reused 101, downloaded 0, added 0",
+          "Progress: resolved 623, reused 102, downloaded 0, added 0",
+          "Progress: resolved 623, reused 107, downloaded 0, added 0",
+          "Progress: resolved 623, reused 109, downloaded 0, added 0"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-02T05:31:07.136Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: Timeout 20000ms exceeded.",
+      "lastProgress": {
+        "stage": "bootstrap",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 107, downloaded 0, added 0",
+          "Progress: resolved 623, reused 109, downloaded 0, added 0",
+          "Progress: resolved 623, reused 110, downloaded 0, added 0",
+          "Progress: resolved 623, reused 111, downloaded 0, added 0",
+          "Progress: resolved 623, reused 112, downloaded 0, added 0",
+          "Progress: resolved 623, reused 113, downloaded 0, added 0",
+          "Progress: resolved 623, reused 118, downloaded 0, added 0",
+          "Progress: resolved 623, reused 120, downloaded 0, added 0"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-02T05:34:14.353Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: socket hang up\nCall log:\n  - → GET http://127.0.0.1:62415/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "bootstrap",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 623, downloaded 0, added 103",
+          "Progress: resolved 623, reused 623, downloaded 0, added 104",
+          "Progress: resolved 623, reused 623, downloaded 0, added 105",
+          "Progress: resolved 623, reused 623, downloaded 0, added 106",
+          "Progress: resolved 623, reused 623, downloaded 0, added 107",
+          "Progress: resolved 623, reused 623, downloaded 0, added 108",
+          "Progress: resolved 623, reused 623, downloaded 0, added 109",
+          "Progress: resolved 623, reused 623, downloaded 0, added 110"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-02T05:36:50.515Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: socket hang up\nCall log:\n  - → GET http://127.0.0.1:62415/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "dependencies",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 623, downloaded 0, added 118",
+          "Progress: resolved 623, reused 623, downloaded 0, added 119",
+          "Progress: resolved 623, reused 623, downloaded 0, added 121",
+          "Progress: resolved 623, reused 623, downloaded 0, added 122",
+          "Progress: resolved 623, reused 623, downloaded 0, added 123",
+          "Progress: resolved 623, reused 623, downloaded 0, added 124",
+          "Progress: resolved 623, reused 623, downloaded 0, added 125",
+          "Progress: resolved 623, reused 623, downloaded 0, added 126"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-02T05:47:43.885Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: read ECONNRESET\nCall log:\n  - → GET http://127.0.0.1:62416/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "wizard-apply",
+        "message": "Kurulum uygulanıyor; adımlar ekranda canlı izleniyor…",
+        "lastLogLines": [],
+        "steps": [
+          {
+            "id": "prepare",
+            "status": "done"
+          },
+          {
+            "id": "buildServer",
+            "status": "done"
+          },
+          {
+            "id": "buildClient",
+            "status": "done"
+          },
+          {
+            "id": "migrate",
+            "status": "running"
+          },
+          {
+            "id": "admin",
+            "status": "pending"
+          },
+          {
+            "id": "artifacts",
+            "status": "pending"
+          },
+          {
+            "id": "env",
+            "status": "pending"
+          },
+          {
+            "id": "finish",
+            "status": "pending"
+          }
+        ]
+      }
+    }
+  ],
+  "statusResponseDisposalError": "Timed out: status response disposal",
+  "error": "Timed out: freshly built actual API startup (single check)",
+  "cleanup": [
+    {
+      "kind": "owned-process-tree",
+      "pid": 518344,
+      "stopped": false,
+      "error": "Cannot verify launch identity/known descendant absence; no unknown PID was killed"
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 519580,
+      "stopped": false,
+      "error": "Cannot verify launch identity/known descendant absence; no unknown PID was killed"
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 519396,
+      "stopped": false,
+      "error": "Cannot verify launch identity/known descendant absence; no unknown PID was killed"
+    }
+  ],
+  "browserCloseErrors": [],
+  "cleanupSucceeded": false,
+  "productStatusBeforeCleanup": "failed",
+  "sourceProtectedFilesUnchanged": true,
+  "finishedAt": "2026-10-02T05:49:30.128Z"
+}

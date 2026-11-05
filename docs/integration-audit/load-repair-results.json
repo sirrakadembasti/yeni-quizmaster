@@ -1,0 +1,84 @@
+{
+  "startedAt": "2026-10-04T15:07:10.751Z",
+  "mode": "load-only",
+  "databaseHashBefore": "8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158",
+  "load": [
+    {
+      "concurrency": 2,
+      "requests": 180,
+      "statuses": {
+        "200": 180
+      },
+      "errors": {},
+      "elapsedMs": 26801,
+      "requestsPerSecond": 6.72,
+      "p50Ms": 110,
+      "p95Ms": 2017,
+      "maxMs": 2890,
+      "passed": true
+    },
+    {
+      "concurrency": 8,
+      "requests": 180,
+      "statuses": {
+        "200": 180
+      },
+      "errors": {},
+      "elapsedMs": 22099,
+      "requestsPerSecond": 8.15,
+      "p50Ms": 603,
+      "p95Ms": 2651,
+      "maxMs": 3232,
+      "passed": true
+    },
+    {
+      "concurrency": 20,
+      "requests": 180,
+      "statuses": {
+        "200": 180
+      },
+      "errors": {},
+      "elapsedMs": 15485,
+      "requestsPerSecond": 11.62,
+      "p50Ms": 1629,
+      "p95Ms": 3066,
+      "maxMs": 3483,
+      "passed": true
+    }
+  ],
+  "ux": [],
+  "cleanup": [
+    {
+      "name": "api",
+      "stopProven": true,
+      "handlesReleased": true
+    }
+  ],
+  "ownedProcesses": [
+    {
+      "name": "api",
+      "pid": 331300
+    }
+  ],
+  "isolatedFixture": true,
+  "fixtureIdentityVerified": true,
+  "detailExitCode": 0,
+  "detailCoverageComplete": true,
+  "mobileAccepted": true,
+  "status": "executed",
+  "ports": [
+    {
+      "kind": "fixture-port",
+      "port": 5560,
+      "stopped": true
+    },
+    {
+      "kind": "fixture-port",
+      "port": 5561,
+      "stopped": true
+    }
+  ],
+  "databaseHashAfter": "8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158",
+  "databaseUnchanged": true,
+  "finishedAt": "2026-10-04T15:08:26.513Z"
+}

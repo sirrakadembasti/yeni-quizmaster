@@ -1,0 +1,269 @@
+{
+  "startedAt": "2026-10-04T14:24:16.506Z",
+  "checks": [
+    {
+      "id": "S-U06",
+      "status": "passed",
+      "onlineRow": "Parent Audit Completed Exam\n\nAçıklama yok.\n\n\t\n\nAudit Mathematics\n\nParent Audit Teacher\n\n\tOrta\t2\tSüresiz\t\nTamamlandı\n\n%0.0\n\n\t\nDetayları Gör",
+      "offlineRow": "Parent Audit Completed Exam\n\nAçıklama yok.\n\n\t\n\nAudit Mathematics\n\nParent Audit Teacher\n\n\tOrta\t2\tSüresiz\t\nTamamlandı\n\n%0.0\n\n\t\nDetayları Gör",
+      "completedBecomesPending": false,
+      "scope": "Controlled503 triggers actual cached-list fallback; no DB writes"
+    },
+    {
+      "id": "A-U02",
+      "status": "passed",
+      "sourceRows": 60,
+      "domRows": 60,
+      "zeroScoreIncluded": true,
+      "printActionCells": [
+        {
+          "tag": "TH",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        },
+        {
+          "tag": "TD",
+          "display": "none"
+        }
+      ],
+      "pdf": "ux-extra-large-report.pdf",
+      "scope": "60 controlled real-shaped result records, long titles; PDF text/render assessed separately"
+    }
+  ],
+  "finishedAt": "2026-10-04T14:24:48.812Z"
+}

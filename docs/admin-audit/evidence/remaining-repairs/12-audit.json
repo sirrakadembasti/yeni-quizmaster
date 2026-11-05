@@ -1,0 +1,46 @@
+{
+  "route": "/server-setup",
+  "labels": [],
+  "views": [],
+  "errors": [],
+  "network": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 1,
+    "unlabeledInputs": [
+      {
+        "placeholder": null,
+        "type": "number"
+      },
+      {
+        "placeholder": "http://127.0.0.1:5173",
+        "type": null
+      },
+      {
+        "placeholder": "/quizmaster",
+        "type": null
+      },
+      {
+        "placeholder": "http://127.0.0.1:5173\nhttp://localhost:5173\nhttp://127.0.0.1:5000",
+        "type": null
+      },
+      {
+        "placeholder": null,
+        "type": "number"
+      },
+      {
+        "placeholder": null,
+        "type": "number"
+      },
+      {
+        "placeholder": null,
+        "type": "number"
+      },
+      {
+        "placeholder": null,
+        "type": "number"
+      }
+    ]
+  }
+}

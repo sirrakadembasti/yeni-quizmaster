@@ -223,12 +223,12 @@ export default function DashboardPage() {
         {!isStudent && (
           <div className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-4">
             <StatCard 
-              title="Toplam Sınav" 
+                title={isAdmin ? "Toplam İçerik" : "Toplam Sınav"}
               value={stats?.totalQuizzes} 
               loading={statsLoading}
               icon={<FileText className="h-6 w-6 text-indigo-600" />}
               color="bg-indigo-50"
-              description="Sistemdeki toplam materyal"
+                description={isAdmin ? "Sınav, materyal ve anketler" : "Sistemdeki toplam materyal"}
             />
             <StatCard 
               title={isAdmin ? "Toplam Öğrenci" : "Aktif Öğrenci"} 

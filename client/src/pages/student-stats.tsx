@@ -140,7 +140,7 @@ export default function StudentStats() {
               className="gap-2 border-red-200 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20 print:hidden"
             >
               <Download className="h-4 w-4" />
-              PDF İndir
+              Yazdır / PDF olarak kaydet
             </Button>
           </div>
         </div>
@@ -240,6 +240,7 @@ export default function StudentStats() {
                         itemStyle={{ color: 'hsl(var(--primary))' }}
                       />
                       <Bar 
+                        isAnimationActive={false}
                         dataKey="score" 
                         name="Puan" 
                         fill="hsl(var(--primary))" 
@@ -296,6 +297,7 @@ export default function StudentStats() {
                         itemStyle={{ color: 'hsl(var(--chart-2))' }}
                       />
                       <Bar 
+                        isAnimationActive={false}
                         dataKey="averageScore" 
                         name="Ortalama Puan" 
                         fill="hsl(var(--chart-2))" 

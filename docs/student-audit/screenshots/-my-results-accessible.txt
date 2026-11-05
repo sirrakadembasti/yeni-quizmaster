@@ -1,0 +1,52 @@
+- main:
+  - button "Menüyü aç"
+  - button "Bildirimleri aç": "1"
+  - button "Karanlık Moda Geç"
+  - button "S"
+  - button "Dashboard'a Dön"
+  - heading "Sınav Sonuçlarım" [level=1]
+  - paragraph: Tamamladığınız tüm sınavların gelişmiş dökümü.
+  - button "Excel"
+  - button "Yazdır"
+  - text: Toplam 2 Kayıt Gelişmiş Sorgulama Paneli
+  - button "Filtreleri Temizle"
+  - text: Sınav Adı
+  - textbox "Sınav Adı":
+    - /placeholder: Başlık ile ara...
+  - text: Ders / Kategori
+  - combobox "Ders / Kategori": Tüm Dersler
+  - text: Başarı Durumu
+  - combobox "Başarı Durumu": Tüm Puanlar
+  - text: Sıralama Ölçütü
+  - combobox "Sıralama Ölçütü": En Yeni Tarih
+  - heading "Detaylı Sonuç Listesi" [level=2]
+  - table:
+    - rowgroup:
+      - row "Quiz & Ders Tamamlama Doğruluk Süre Puan Eylem":
+        - columnheader "Quiz & Ders"
+        - columnheader "Tamamlama"
+        - columnheader "Doğruluk"
+        - columnheader "Süre"
+        - columnheader "Puan"
+        - columnheader "Eylem"
+    - rowgroup:
+      - row "Student Audit Exam Audit Mathematics 04.10.2026 11:09 0 2 0dk 6sn 0 İncele":
+        - cell "Student Audit Exam Audit Mathematics":
+          - paragraph: Student Audit Exam
+          - text: Audit Mathematics
+        - cell "04.10.2026 11:09"
+        - cell "0 2"
+        - cell "0dk 6sn"
+        - cell "0"
+        - cell "İncele":
+          - button "İncele"
+      - row "Student Audit Completed Exam Audit Mathematics 04.10.2026 11:06 0 2 0dk 0sn 0 İncele":
+        - cell "Student Audit Completed Exam Audit Mathematics":
+          - paragraph: Student Audit Completed Exam
+          - text: Audit Mathematics
+        - cell "04.10.2026 11:06"
+        - cell "0 2"
+        - cell "0dk 0sn"
+        - cell "0"
+        - cell "İncele":
+          - button "İncele"

@@ -1,0 +1,28 @@
+{
+  "route": "/create-quiz",
+  "viewport": "mobile",
+  "tabs": [
+    "Sınav Ayarları",
+    "Sorular (1)"
+  ],
+  "tabStates": [
+    {
+      "name": "Sınav Ayarları",
+      "visiblePanels": 1
+    },
+    {
+      "name": "Sorular (1)",
+      "visiblePanels": 1
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "apiHttpErrors": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 1,
+    "inputsWithoutLabel": []
+  }
+}

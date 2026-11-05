@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { parentApi } from "@/lib/api";
@@ -7,22 +7,30 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { BookOpenCheck, Clock3, GraduationCap, ShieldCheck, Trophy, Users } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation, useSearch } from "wouter";
 import { Button } from "@/components/ui/button";
 
 export default function ParentDashboardPage() {
-  const [studentId, setStudentId] = useState("");
+  const [location, navigate] = useLocation();
+  const search = useSearch();
+  const requestedStudentId = new URLSearchParams(search).get("studentId") || "";
   const studentsQuery = useQuery({ queryKey: ["parent", "students"], queryFn: parentApi.getStudents });
   const students = studentsQuery.data?.students ?? [];
+  const studentId = students.find(student => student.id === requestedStudentId)?.id || students[0]?.id || "";
+  const selectStudent = (id: string, replace = false) => {
+    const params = new URLSearchParams(search);
+    if (id) params.set("studentId", id); else params.delete("studentId");
+    navigate(`${location}${params.size ? `?${params}` : ""}`, { replace });
+  };
 
   useEffect(() => {
-    if (!studentId && students[0]?.id) setStudentId(students[0].id);
-  }, [studentId, students]);
+    if (studentsQuery.isSuccess && requestedStudentId && requestedStudentId !== studentId) selectStudent(studentId, true);
+  }, [studentsQuery.isSuccess, requestedStudentId, studentId, search, location]);
 
   const overviewQuery = useQuery({
     queryKey: ["parent", "overview", studentId],
     queryFn: () => parentApi.getStudentOverview(studentId),
-    enabled: Boolean(studentId),
+    enabled: studentsQuery.isSuccess && Boolean(studentId),
   });
   const overview = overviewQuery.data;
   const completed = overview?.results ?? [];
@@ -41,20 +49,26 @@ export default function ParentDashboardPage() {
               <h1 className="text-2xl font-black">Öğrenci Takibi</h1>
               <p className="mt-1 text-sm text-muted-foreground">Bağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.</p>
             </div>
-            {students.length > 0 && (
-              <Select value={studentId} onValueChange={setStudentId}>
-                <SelectTrigger className="w-full md:w-72"><SelectValue placeholder="Öğrenci seçin" /></SelectTrigger>
+            {studentsQuery.isSuccess && students.length > 0 && (
+              <Select value={studentId} onValueChange={selectStudent}>
+                <SelectTrigger aria-label="Öğrenci seçin" className="w-full md:w-72"><SelectValue placeholder="Öğrenci seçin" /></SelectTrigger>
                 <SelectContent>{students.map((student) => <SelectItem key={student.id} value={student.id}>{student.name} {student.class?.name ? `· ${student.class.name}` : ""}</SelectItem>)}</SelectContent>
               </Select>
             )}
           </CardContent>
         </Card>
 
-        {!studentsQuery.isLoading && students.length === 0 && (
+        {studentsQuery.isLoading ? (
+          <Card><CardContent role="status" className="p-6 text-center text-muted-foreground">Öğrenciler yükleniyor...</CardContent></Card>
+        ) : studentsQuery.isError ? (
+          <Card role="alert"><CardContent className="space-y-3 p-6 text-center"><p>Öğrenci listesi getirilemedi. {studentsQuery.error instanceof Error ? studentsQuery.error.message : "Lütfen tekrar deneyin."}</p><Button variant="outline" disabled={studentsQuery.isFetching} onClick={() => studentsQuery.refetch()}>Tekrar dene</Button></CardContent></Card>
+        ) : students.length === 0 ? (
           <Card><CardContent className="flex flex-col items-center gap-3 py-14 text-center"><Users className="h-10 w-10 text-muted-foreground" /><h2 className="font-bold">Hesabınıza bağlı öğrenci bulunmuyor</h2><p className="text-sm text-muted-foreground">Okul yöneticinizden veli hesabınızı öğrenciyle ilişkilendirmesini isteyin.</p></CardContent></Card>
-        )}
-
-        {overview && (
+        ) : overviewQuery.isError ? (
+          <Card role="alert"><CardContent className="space-y-3 p-6 text-center"><p>Öğrenci bilgileri getirilemedi. {overviewQuery.error instanceof Error ? overviewQuery.error.message : "Lütfen tekrar deneyin."}</p><Button variant="outline" disabled={overviewQuery.isFetching} onClick={() => overviewQuery.refetch()}>Tekrar dene</Button></CardContent></Card>
+        ) : !overview || overview.student.id !== studentId ? (
+          <Card><CardContent role="status" className="p-6 text-center text-muted-foreground">Öğrenci bilgileri yükleniyor...</CardContent></Card>
+        ) : (
           <>
             <Card><CardContent className="flex flex-wrap items-center gap-4 p-4"><div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10"><GraduationCap className="h-6 w-6 text-primary" /></div><div><h2 className="font-black">{overview.student.name}</h2><p className="text-sm text-muted-foreground">{overview.student.class?.name || "Sınıf atanmamış"} · {overview.student.email}</p></div></CardContent></Card>
             <div className="grid gap-4 md:grid-cols-3">
@@ -63,7 +77,7 @@ export default function ParentDashboardPage() {
               <Metric icon={Clock3} label="Bekleyen Sınav" value={pending.length} />
             </div>
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between"><CardTitle className="text-lg">Sınav Sonuçları</CardTitle><Button asChild size="sm" variant="outline"><Link href="/parent/results">Tümünü ve detayları gör</Link></Button></CardHeader>
+              <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3"><CardTitle className="text-lg">Sınav Sonuçları</CardTitle><Button asChild size="sm" variant="outline"><Link href={`/parent/results?studentId=${encodeURIComponent(studentId)}`}>Tümünü ve detayları gör</Link></Button></CardHeader>
               <CardContent className="overflow-x-auto p-0">
                 <Table><TableHeader><TableRow><TableHead>Sınav</TableHead><TableHead>Ders</TableHead><TableHead>Puan</TableHead><TableHead>Tarih</TableHead></TableRow></TableHeader><TableBody>
                   {completed.length === 0 ? <TableRow><TableCell colSpan={4} className="h-24 text-center text-muted-foreground">Tamamlanmış sınav bulunmuyor.</TableCell></TableRow> : completed.map((result) => <TableRow key={result.id}><TableCell className="font-semibold">{result.quiz?.title || result.quizTitle || "Sınav"}</TableCell><TableCell>{typeof result.quiz?.category === "string" ? result.quiz.category : (result.quiz?.category as any)?.name || "-"}</TableCell><TableCell><Badge variant="secondary">%{result.score ?? 0}</Badge></TableCell><TableCell>{result.submittedAt ? new Date(result.submittedAt).toLocaleDateString("tr-TR") : "-"}</TableCell></TableRow>)}

@@ -1,0 +1,69 @@
+{
+  "at": "2026-10-02T05:48:11.379Z",
+  "phase": "bootstrap-locked",
+  "outcome": "dom-and-selector-ready",
+  "url": "http://127.0.0.1:62415/setup",
+  "pending": [],
+  "events": [
+    {
+      "at": "2026-10-02T05:48:11.016Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62415/setup",
+      "type": "document",
+      "method": "GET",
+      "navigation": true
+    },
+    {
+      "at": "2026-10-02T05:48:11.068Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62415/setup",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:48:11.101Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62415/bootstrap.js",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:48:11.176Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62415/bootstrap.js",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:48:11.198Z",
+      "kind": "domcontentloaded",
+      "url": "http://127.0.0.1:62415/setup"
+    },
+    {
+      "at": "2026-10-02T05:48:11.204Z",
+      "kind": "load",
+      "url": "http://127.0.0.1:62415/setup"
+    },
+    {
+      "at": "2026-10-02T05:48:11.205Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62415/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:48:11.280Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62415/api/status",
+      "status": 200
+    }
+  ],
+  "document": {
+    "readyState": "complete",
+    "title": "QuizMaster Kurulum Başlatıcısı",
+    "installerPresent": true,
+    "wizardPresent": false,
+    "loginPresent": false,
+    "bootstrapState": "Uygulama zaten kurulu"
+  }
+}

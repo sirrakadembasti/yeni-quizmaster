@@ -1,6 +1,18 @@
 # QuizMaster Sunucu Kurulum Kılavuzu
 
+15 Ekim kapasite sürümü Prisma 6.19.3 ve native better-sqlite3 12.8.0 / SQLite 3.51.3 gerektirir. Mevcut kurulumda önce uygulama/worker süreçlerini durdurup doğrulanmış yedek alın; frozen install, Prisma generate ve `20261014090000_notification_revision` dahil production migration'larını ayrı kurulumda prova edin. [Bakım adımları](production-maintenance.md) ve [80 öğrencilik ölçüm/saha sınırları](2026-10-14-capacity-school-exam-results.md). Bu geliştirme sırasında canlı kurulum yükseltilmedi.
+
 Bu kılavuz QuizMaster'ın başka bir kurumun domain altyapısında subdomain veya alt yol altında üretime alınmasını kapsar. Önerilen model ayrı bir subdomain ve HTTPS reverse proxy'dir.
+
+Yerel geliştirmede sihirbazın kaydettiği API portu `server/.env` içindeki `PORT` değeridir. Vite'ın API, `/uploads` ve Socket.IO proxy'leri aynı portu kullanır: süreç ortamı, `server/.env`, ardından kök `.env`; değer yoksa 5000. Backend'in okumadığı `.env.local` ve Vite mode dosyaları bu seçime dahil edilmez. Sunucu gizli değerleri istemciye enjekte edilmez. API portunu değiştirince backend ve Vite'ı yeniden başlatın; arayüzün 5173 portu ayrı bir ayardır.
+
+Başlatıcı çalışma zamanı sürümlerini süreç başında doğrular ve status polling sırasında aynı snapshot'ı kullanır; paket işi ve kurulum durumu canlı kontrol edilir. Terminal/BAT/SH → paket kurulumu → web sihirbazı için gerçek izole denemeler ve kapsam sınırları [hibrit kurulum doğrulama kaydındadır](admin-audit/hybrid-setup-closure.md). Unit/config testinin geçmesi taze kurulumun tamamlandığı anlamına gelmez.
+
+3 Ekim 2026'da Windows terminali, BAT ve Git SH için ayrı temiz kurulumların üçü de geçti: gerçek paket kurulumu, sihirbaz, migration/ilk admin, ayarların kalıcılığı, API ve tarayıcı girişi ile test süreçlerinin temizliği doğrulandı. Daha sonra Ubuntu 22.04.5 LTS / WSL2 üzerinde native Linux Node.js 22.23.2, pnpm 9.15.1 ve Chromium ile gerçek SH temiz kurulumu **1/1 geçti**; iki build, 14 migration, ilk admin, kalıcı ayarlar, üretim API/Vite girişi ve dört fixture portunun bırakılması ayrıca doğrulandı. [Native Linux/WSL sonucu](admin-audit/evidence/closure/hybrid/linux-wsl-first-passed/result.json). Windows 3/3 tarihsel kanıttır; yeni Linux cleanup desteğiyle Windows tekrar edilmediğinden aynı kodla 4/4 kabul iddiası yoktur. WSL dışı Linux, başlatıcının otomatik işletim sistemi tarayıcı açması, sihirbazın geliştirme başlatma düğmesi ve gerçek SMTP/DNS/Nginx/TLS bu izole kabulün dışındadır.
+
+Başlatıcı aynı anda yalnız bir durum sorgusu gönderir; 30 saniyede yanıt gelmeyen durum okuması sonlandırılır ve sonraki yenilemeye izin verilir. Paket kurulumu ve sihirbazı uygulama işlemleri bu timeout ile kesilmez. Otomatik tarayıcı açılışını istemiyorsanız `pnpm run setup --no-open`, `kurulum.bat --no-open` veya `sh kurulum.sh --no-open` kullanın ve terminaldeki yerel adresi açın; seçenek verilmezse mevcut otomatik açılış davranışı sürer.
+
+Sihirbaz yalnız migration alt sürecinde `RUST_LOG=info` kullanır. Prisma 5.22'nin eksik SQLite dosyasını otomatik oluşturması, dış ortamdan gelen `warn/error` seviyesinde bozulabildiği için bu işlem ayrıştırıcının beklediği başlangıç logunu korur. Uygulamanın genel log tercihi değiştirilmez. Paket indirme veya Prisma postinstall ağ hatası migration başarısı sayılmaz; hata giderilince paket kurulumunu yeniden deneyin.
 
 ## 1. Mimari ve karar
 
@@ -13,7 +25,7 @@ Kurum DNS + Nginx/IIS reverse proxy
         ▼
 QuizMaster Node.js (Express + Socket.IO)
         ├── client/dist
-        ├── SQLite/PostgreSQL
+        ├── SQLite (PostgreSQL geçişi ayrı geliştirme)
         ├── sessions.db veya merkezi session store
         └── uploads
 ```
@@ -32,9 +44,17 @@ QuizMaster Node.js (Express + Socket.IO)
 Örnek: `https://www.kurum.gov.tr/quizmaster/`
 
 - `APP_BASE_PATH=/quizmaster` ayarlanır.
-- Frontend `VITE_BASE_PATH=/quizmaster/` ile yeniden derlenir.
+- Frontend `VITE_BASE_PATH=/quizmaster/` ile yeniden derlenir (veya `serveStatic` çalışma zamanı alt yol enjeksiyonu kullanılır).
 - Reverse proxy `/quizmaster/` yanında istemcinin kullandığı `/api/`, `/uploads/` ve `/socket.io/` kök yollarını da QuizMaster'a yönlendirmelidir.
-- Kurumun ana uygulaması bu kök yolları zaten kullanıyorsa çakışma olur. Bu durumda subdomain kullanılmalı veya API prefix'i için ayrıca kapsamlı uygulama değişikliği planlanmalıdır.
+- Kurumun ana uygulaması bu kök yolları zaten kullanıyorsa çakışma olur. Bu durumda subdomain kullanılmalı veya alt yol önekli ikinci kopya modeli tercih edilmelidir.
+
+### Seçenek C — `domain/demo` altında bağımsız salt-okunur demo ikinci kopyası
+
+Örnek: `https://sinav.kurum.gov.tr/demo/`
+
+- Ana üretim uygulaması `127.0.0.1:5000` (`server/data/quiz.db`) üzerinde çalışırken, salt-okunur vitrin kopyası `127.0.0.1:5001` (`server/data/demo.db`, `APP_DEMO_MODE=true`, `APP_BASE_PATH=/demo`) üzerinde ikinci bir süreç olarak çalıştırılır (`pnpm run db:prepare-demo` ve `pnpm run start:demo`).
+- Bu modda istemci tüm API (`/demo/api/...`), görsel (`/demo/uploads/...`), Socket.IO (`/demo/socket.io/...`) ve oturum çerezi (`quizmaster.demo.sid`) isteklerini `/demo` önekiyle gönderir; ana uygulamanın veritabanı veya oturumlarıyla çakışmaz.
+- Ziyaretçiler `demo-admin`, `demo-ogretmen`, `demo-ogrenci` ve `demo-veli` hesaplarıyla tek tıkla giriş yapıp tüm ekranları inceleyebilir; veri değiştiren istekler `DEMO_MODE_READ_ONLY` ile engellenir. Ayrıntılar [`demo/demo-vitrin-hesaplari.md`](../demo/demo-vitrin-hesaplari.md) belgesindedir.
 
 ## 2. Üretim ön koşulları
 
@@ -170,7 +190,9 @@ $env:VITE_BASE_PATH="/quizmaster/"
 pnpm build
 ```
 
-Derleme sonunda `client/dist` ve kökte `dist/index.cjs` bulunmalıdır. Derleme yapılan Node ana sürümü ile üretimdeki Node ana sürümü aynı tutulmalıdır.
+Derleme sonunda `client/dist` ve kökte `dist/index.cjs` bulunmalıdır. Derleme yapılan Node ana sürümü ile üretimdeki Node ana sürümü aynı tutulmalıdır. Sunucuyu workspace kökünden `pnpm --filter quiz-master-server start` ile çalıştırın; paket komutu pnpm'in native bağımlılık çözümlemesini de sağlar. SQLite3 ve Sharp build dışında bırakılır, kurulu `node_modules` gerektirir; yalnız `dist/index.cjs` dosyasını başka bir yere taşımak bağımsız dağıtım oluşturmaz.
+
+Kurulu sürüm yükseltmesinde app/worker süreçlerini durdurup onaylı kaynakları veri/ayar dizinlerini ezmeden yerleştirin. `pnpm run upgrade --project <kurulum>` veya terminal/BAT/SH başlangıç ekranındaki **Mevcut Kurulumu Güncelle**, doğrulanmış private yedek ardından frozen install/build/migration/status çalıştırır. İlk kurulum sihirbazını tekrar çalıştırmayın. Sonuç sonrası yukarıdaki resmi start komutuyla giriş ve Sunucu Durumu doğrulanmalıdır. [Bakım/yükseltme belgesi](production-maintenance.md#veri-koruyan-sürüm-yükseltme) kesilme, kilit ve sürüm+veri geri dönüş sınırlarını açıklar; 13 Ekim terminal/BAT/web ve native SH/web kabulü [yükseltme raporunda](production-upgrade-rehearsal-results.md) tamamlandı; ortam ve cache sınırları korundu.
 
 ## 9. systemd servisi
 
@@ -306,10 +328,18 @@ Kurulumdan sonra **Sunucu Durumu** ekranında HTTPS, forwarded header ve algıla
 Windows'ta `kurulum.bat`, Linux/macOS'ta `./kurulum.sh` önerilir. Node.js ve pnpm zaten doğru sürümdeyse eşdeğer doğrudan komut:
 
 ```bash
-pnpm setup
+pnpm run setup
 ```
 
-İlk aşama yalnız Node.js yerleşik modüllerini kullanır ve `127.0.0.1:5049` adresine bağlanır. Kurulum durumunu gösterir, `pnpm install --frozen-lockfile` işlemini başlatır ve gerçek işlem çıktısını ekranda sunar. Paketler hazır olduğunda mevcut ana sihirbaz `127.0.0.1:5050` üzerinde başlatılır.
+İlk aşama yalnız Node.js yerleşik modüllerini kullanır ve `127.0.0.1:5049` adresine bağlanır. Kurulum durumunu gösterir, `pnpm install --frozen-lockfile` işlemini başlatır ve gerçek işlem çıktısını ekranda sunar. Paketler hazır olduğunda mevcut ana sihirbaz `127.0.0.1:5050` üzerinde başlatılır. Sihirbaz portu doluysa başlatıcı PID ile uyarır ve süreci durdurmayı teklif eder. Terminal sihirbaz bitene kadar kapatılmamalıdır.
+
+Sihirbazda **kurulum biçimi** seçenekleri:
+
+- **Yerel / localhost** — deneme (`pnpm dev`: arayüz `http://127.0.0.1:5173`, API `:5000`); reverse proxy/TLS gerekmez
+- **Subdomain** — üretim önerilen (bu kılavuzun ana senaryosu)
+- **Subpath** — kurum sitesi alt yol
+
+Kurulum uygulandıktan sonra sihirbaz **kör yönlendirme yapmaz**. Bitişteki **Uygulamayı başlat** düğmesi yerelde `pnpm dev` (arka plan, terminal penceresiz), kurum kurulumunda üretim servisini başlatır. Yerel giriş: `http://127.0.0.1:5173/auth`. Kurum (subdomain/alt yol) adresi ancak Nginx + DNS + TLS hazır ve uygulama ayaktaysa açılır. Aksi halde “sayfaya ulaşılamıyor” görünür; bu bir kurulum hatası değildir.
 
 VPS üzerinde iki portu da internete veya yerel ağa açmayın. Yönetici bilgisayarından SSH tüneli kurun:
 
@@ -437,3 +467,27 @@ Güncellemeden önce veritabanı ve uploads yedeği alın. Migration uygulanmı�
 - [Nginx HTTP proxy modülü](https://nginx.org/en/docs/http/ngx_http_proxy_module.html)
 - [Nginx WebSocket proxy](https://nginx.org/en/docs/http/websocket.html)
 - [Prisma geliştirme ve üretim migration akışı](https://www.prisma.io/docs/orm/v6/prisma-migrate/workflows/development-and-production)
+
+## Mevcut kurulumda güvenlik bakımı
+
+1. Bakım penceresinde sunucuyu durdurun. SQLite backup API/tutarlı snapshot ile veritabanını ve session verisini yedekleyin; WAL açıkken yalnız ana db dosyasını kopyalamayın.
+2. `pnpm install` ve `pnpm --filter quiz-master-server db:deploy` çalıştırın. Migration `sessionVersion`, `processingUntil` ve sonuç indeksleri ekler; kayıtları silmez.
+3. `pnpm build` ardından sunucuyu yeniden başlatın. Session store çalışma dizininden bağımsız olarak `server/data` altındadır. Eski kök `data/sessions.db` varsa bakım sırasında taşıyın veya yeniden giriş sağlayın.
+4. HTTP/Socket.IO gerçek arayüz origin'lerini izin listesine ekleyin. Üretimde localhost istisnası yoktur.
+5. Giriş, rol ekranları, görsel, teslim ve parola sıfırlamayı kontrol edin.
+
+Kimliği doğrulanmış genel API/sınav limitleri kullanıcı bazındadır. Dar auth limiti IP+hedef hesap/token kullanır; `/me` ve çıkış buna dahil değildir. Çok sunuculu dağıtım merkezi session/rate-limit store ve Socket.IO adaptörü gerektirir.
+
+Anket şeması uyumu: 20260930120000_nullable_survey_answers migration'ı Question.correctAnswer alanını nullable yapar. SQLite tablo yeniden oluşturması bütün soru sütunlarını ve UUID'leri kopyalar; SurveyAnswer bağlantıları korunur. Yedek ve bakım penceresiyle birlikte db:deploy çalıştırın.
+
+## Akademik arşiv işletimi — 7 Ekim 2026
+
+12 Ekim güncel kaynak kabulü tamamlandı: backend 412/412, frontend 272/272, ayrı gerçek DB/hacim 74/74, setup 14/14, tip kontrolleri ve üretim build geçti. Beş tarayıcı senaryosu doğrulanmış boş migration şablonu ve izole kaynak bundle'ı kullandı. Bu opt-in, varsayılan geliştirme açılışını veya taze hibrit kurulumu doğrulamaz; önceki 3 Ekim kurulum sonuçları yeni 22-migration sürümü için başarı diye kullanılmaz. Yeni sürüm yedek/geri yükleme ve terminal/BAT/SH yükseltme/geri dönüşü ayrı üretim provasında doğrulanacaktır.
+
+Terminal, BAT/SH ve web yapılandırma adımları birlikte kullanılan hibrit kurulum akışı korunur. Akademik arşiv için Chromium'un sunucu hesabında çalışabildiğini ayrıca doğrulayın; gerekiyorsa aynı hesapla `pnpm exec playwright install chromium` çalıştırın. Bağımlılık kurmak veya derlemeyi geçirmek PDF üretimini tek başına doğrulamaz.
+
+`ARCHIVE_BACKUP_ROOT`, kalıcı akademik paket dizinini belirler. Varsayılan dizin `server/data/backups` altındadır. Bu dizinin (özellikle dışarıda yapılandırılmışsa) veritabanıyla birlikte tam uygulama yedeğine dahil edildiğini ayrıca kontrol edin. Akademik ZIP parolaları/oturumları/SMTP ayarlarını içermez ve sunucu geri yükleme yedeği yerine kullanılamaz. Yedekleme ve yükseltme provası [ayrı planda](superpowers/plans/2026-10-06-production-rehearsal-plan.md) yer alır; henüz doğrulanmamış prova tamamlanmış sayılmaz.
+
+Yeni sürüm additive migration'larla capture sınırlarını, değişmez geçiş özetini, geçmiş arama projeksiyonunu ve lookup indeksini ekler. Önce mevcut DB, uploads, session/config ve paket dizinlerinin tutarlı yedeğini alın; sonra `db:deploy` ve build/restart adımlarını uygulayın. Uygulanmış migration dosyalarını değiştirmeyin. Salt eski kodu checkout etmek veritabanını önceki şemaya döndürmez.
+
+Sunucu açılışı, kaçırılmış yıllık işleri ve tamamlanmış eski arşivlerin arama hazırlığını ele alır. Eski arşivde hazırlık sürerken geçmiş sorgusu açık hazırlık/tekrar deneme yanıtı verebilir; canlı veriye geçmez. Otomatik kapanış İstanbul saatiyle 15 Temmuz 00:05'tedir; başarısız işin nedeni ve kurtarma işlemi admin Arşiv ekranında takip edilir. Dosya ve geçiş kabul sınırları [arşiv paketi](academic-archive-review/artifacts.md) ve [doğrulama](academic-archive-review/verification.md) belgelerindedir.

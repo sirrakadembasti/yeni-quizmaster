@@ -1,0 +1,36 @@
+{
+  "required": [
+    {
+      "value": "Teacher Audit Student 00",
+      "present": true
+    },
+    {
+      "value": "Teacher Audit 7A",
+      "present": true
+    },
+    {
+      "value": "Arama",
+      "present": true
+    },
+    {
+      "value": "Öğrenci sayısı",
+      "present": true
+    },
+    {
+      "value": "1",
+      "present": true
+    }
+  ],
+  "forbidden": [],
+  "controls": 0,
+  "tables": [
+    {
+      "left": 1,
+      "right": 717,
+      "width": 716,
+      "rows": 1
+    }
+  ],
+  "viewport": 718,
+  "overflowingRows": 0
+}

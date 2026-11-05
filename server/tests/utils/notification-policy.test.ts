@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   matchesAnnouncementRecipient,
+  matchesAnnouncementAudience,
   isValidTeacherAnnouncementTarget,
   shouldNotifyAdminAboutQuiz,
   shouldNotifyQuizOwnerOfSubmission,
@@ -38,5 +39,19 @@ describe("notification policy", () => {
     expect(isValidTeacherAnnouncementTarget("teacher", "class-a")).toBe(false);
     expect(isValidTeacherAnnouncementTarget("all", "class-a")).toBe(false);
     expect(isValidTeacherAnnouncementTarget("student", null)).toBe(false);
+  });
+
+  it("targets a parent through children's classes rather than the parent's own class", () => {
+    const parent = { recipientId: "parent-1", recipientRole: "parent", recipientClassId: null,
+      recipientLinkedStudentClassIds: ["class-a", "class-b", "class-a"], creatorId: "admin-1",
+      targetRole: "parent", targetClassId: "class-a" };
+    expect(matchesAnnouncementRecipient(parent)).toBe(true);
+    expect(matchesAnnouncementRecipient({ ...parent, targetClassId: "class-c" })).toBe(false);
+    expect(matchesAnnouncementRecipient({ ...parent, recipientLinkedStudentClassIds: [], recipientClassId: "class-a" })).toBe(false);
+    expect(matchesAnnouncementRecipient({ ...parent, recipientId: "admin-1" })).toBe(false);
+    expect(matchesAnnouncementAudience({ ...parent, recipientId: "admin-1" })).toBe(true);
+    expect(matchesAnnouncementRecipient({ ...parent, recipientActive: false })).toBe(false);
+    expect(matchesAnnouncementRecipient({ ...parent, targetRole: "student" })).toBe(false);
+    expect(matchesAnnouncementRecipient({ ...parent, targetRole: "all" })).toBe(true);
   });
 });

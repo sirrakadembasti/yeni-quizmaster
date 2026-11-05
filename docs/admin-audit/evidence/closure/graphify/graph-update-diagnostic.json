@@ -1,0 +1,43 @@
+{
+  "recordedAt": "2026-10-03T22:18:31.836Z",
+  "provenance": "Actual final Graphify update/diagnose exits plus actual Chromium visual result; coordinator viewed map",
+  "update": {
+    "uncachedFiles": 559,
+    "semanticLabelsRefreshed": false,
+    "sqlSkipped": 14,
+    "exitCode": 0,
+    "operation": "graphify update .",
+    "hubLabelsRenamed": 4,
+    "method": "local AST; no semantic LLM"
+  },
+  "graph": {
+    "communities": 124,
+    "builtAtCommit": "2c2e9fd",
+    "edges": 6316,
+    "includesUncommittedWorkingTree": true,
+    "nodes": 2340
+  },
+  "diagnose": {
+    "unverifiedCodeNodes": 0,
+    "selfLoops": 4,
+    "danglingEndpointEdges": 0,
+    "exitCode": 0,
+    "rawProducerLosslessnessProven": false,
+    "missingEndpointEdges": 0,
+    "externalReferenceEdges": 0,
+    "exactDuplicateEdges": 0,
+    "producerSuppressionSites": 12
+  },
+  "visual": {
+    "status": "passed",
+    "cleanup": {
+      "browserClosed": true,
+      "serverClosed": true
+    },
+    "failedRequests": 0,
+    "startedAt": "2026-10-03T22:17:48.049Z",
+    "consoleErrors": 0,
+    "finishedAt": "2026-10-03T22:18:31.836Z",
+    "pageErrors": 0
+  }
+}

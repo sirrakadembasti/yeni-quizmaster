@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
@@ -46,11 +46,21 @@ import {
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { notificationApi } from "@/lib/api";
+import { getVersionedNotificationPreferences, saveVersionedNotificationPreferences, newerNotificationPreferences, type VersionedNotificationPreferences } from "@/lib/versioned-notification-preferences";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { removeNotification, type NotificationPage } from "@/lib/notification-cache";
 import { toast } from "sonner";
+import { useAcademicYear } from '@/context/academic-year-context';
+import { AcademicYearSelector } from '@/components/academic-history/AcademicYearSelector';
+import { HistoricalWorkspace } from '@/components/academic-history/HistoricalWorkspace';
+import {
+  DEFAULT_DEMO_SHOWCASE_ACCOUNTS,
+  isClientDemoMode,
+  isDemoShowcaseUserEmail,
+  type DemoRoleKey,
+} from '@/lib/demo-mode';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -58,30 +68,110 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children, hideNavigation = false }: DashboardLayoutProps) {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
-  const { user, role, logout } = useAuth();
-  const queryClient = useQueryClient();
+  const [switchingDemoRole, setSwitchingDemoRole] = useState<DemoRoleKey | null>(null);
+  const menuTriggerRef = useRef<HTMLButtonElement>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
+  const [isMobileNavigation, setIsMobileNavigation] = useState(() => typeof window.matchMedia !== "function" || !window.matchMedia("(min-width: 1024px)").matches);
+  const { user, role, demoLogin, logout } = useAuth();
+  const isDemoActive = Boolean(user?.isDemoUser || isClientDemoMode() || isDemoShowcaseUserEmail(user?.email));
 
-  const { data: notificationsData } = useQuery({
+  const handleSwitchDemoRole = async (roleKey: DemoRoleKey) => {
+    if (!demoLogin || switchingDemoRole) return;
+    setSwitchingDemoRole(roleKey);
+    try {
+      const nextUser = await demoLogin(roleKey);
+      if (nextUser) {
+        toast.success(`Demo görünümü değiştirildi: ${nextUser.name}`);
+        const target =
+          nextUser.role === 'student'
+            ? '/student/dashboard'
+            : nextUser.role === 'parent'
+              ? '/parent/dashboard'
+              : '/';
+        setLocation(target);
+      } else {
+        toast.error('Demo rolü değiştirilemedi.');
+      }
+    } finally {
+      setSwitchingDemoRole(null);
+    }
+  };
+  const academic = useAcademicYear();
+  const historical = role === 'admin' && academic?.year?.status === 'closed';
+  const sessionContext = role !== 'admin' || !academic || (!!academic.year && !academic.pending && !academic.error);
+  const queryClient = useQueryClient();
+  const preferenceOwner = useRef({ userId: user?.id, epoch: 0, busy: false });
+  if (preferenceOwner.current.userId !== user?.id) preferenceOwner.current = { userId: user?.id, epoch: preferenceOwner.current.epoch + 1, busy: false };
+  const preferenceKey = ["notifications", "preferences", "versioned", user?.id];
+  useEffect(() => () => { preferenceOwner.current.epoch++; }, []);
+
+  useEffect(() => {
+    if (typeof window.matchMedia !== "function") return;
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const update = () => {
+      setIsMobileNavigation(!desktop.matches);
+      if (desktop.matches) setMobileNavigationOpen(false);
+    };
+    desktop.addEventListener("change", update);
+    return () => desktop.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (!mobileNavigationOpen || hideNavigation) return;
+    const sidebar = sidebarRef.current;
+    if (!sidebar) return;
+    const controls = () => Array.from(sidebar.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), select:not([disabled]), [tabindex="0"]'));
+    controls()[0]?.focus();
+    const keydown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setMobileNavigationOpen(false);
+      } else if (event.key === "Tab") {
+        const items = controls();
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (event.shiftKey && (document.activeElement === first || !sidebar.contains(document.activeElement))) {
+          event.preventDefault(); last?.focus();
+        } else if (!event.shiftKey && (document.activeElement === last || !sidebar.contains(document.activeElement))) {
+          event.preventDefault(); first?.focus();
+        }
+      }
+    };
+    const keepFocus = (event: FocusEvent) => {
+      if (!sidebar.contains(event.target as Node)) controls()[0]?.focus();
+    };
+    document.addEventListener("keydown", keydown);
+    document.addEventListener("focusin", keepFocus);
+    return () => {
+      document.removeEventListener("keydown", keydown);
+      document.removeEventListener("focusin", keepFocus);
+      menuTriggerRef.current?.focus();
+    };
+  }, [mobileNavigationOpen, hideNavigation]);
+
+  const { data: notificationsData, isPending: notificationsLoading, isError: notificationsError, isFetching: notificationsFetching, refetch: retryNotifications } = useQuery({
     queryKey: ["notifications", "nav"],
     queryFn: () => notificationApi.getUserNotifications(1, 5),
     refetchInterval: 10000,
     refetchOnWindowFocus: true,
-    enabled: !!user
+    enabled: !!user && sessionContext && !hideNavigation
   });
 
   const { data: notificationPreferences } = useQuery({
-    queryKey: ["notifications", "preferences"],
-    queryFn: () => notificationApi.getPreferences(),
-    enabled: !!user
+    queryKey: preferenceKey,
+    queryFn: getVersionedNotificationPreferences,
+    structuralSharing: (previous, incoming) => newerNotificationPreferences(previous as VersionedNotificationPreferences | undefined, incoming as VersionedNotificationPreferences),
+    enabled: !!user && sessionContext && !hideNavigation
   });
 
   const markAllReadMutation = useMutation({
     mutationFn: () => notificationApi.markAllAsRead(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
-    }
+    },
+    onError: () => toast.error("Bildirimler okundu olarak işaretlenemedi. Lütfen tekrar deneyin.")
   });
 
   const deleteNotificationMutation = useMutation({
@@ -106,10 +196,31 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
   });
 
   const muteNotificationsMutation = useMutation({
-    mutationFn: (muted: boolean) => notificationApi.updatePreferences(muted),
-    onSuccess: (preferences) => {
-      queryClient.setQueryData(["notifications", "preferences"], preferences);
-    }
+    mutationFn: (command: { muted: boolean; revision: number; userId: string; epoch: number }) => {
+      if (preferenceOwner.current.userId !== command.userId || preferenceOwner.current.epoch !== command.epoch) throw new Error('Tercih sahibi değişti.');
+      return saveVersionedNotificationPreferences(command.muted, command.revision);
+    },
+    onMutate: async command => { await queryClient.cancelQueries({ queryKey: ["notifications", "preferences", "versioned", command.userId], exact: true }); },
+    onSuccess: ({ preferences, saved }, command) => {
+      const key = ["notifications", "preferences", "versioned", command.userId];
+      if (preferenceOwner.current.userId !== command.userId || preferenceOwner.current.epoch !== command.epoch) {
+        queryClient.invalidateQueries({ queryKey: key, exact: true });
+        return;
+      }
+      const current = queryClient.getQueryData<VersionedNotificationPreferences>(key);
+      if (current && current.revision > preferences.revision) return;
+      queryClient.setQueryData<VersionedNotificationPreferences>(key, previous => newerNotificationPreferences(previous, preferences));
+      if (!saved) toast.error("Bildirim tercihi doğrulanamadı. Güncel tercihiniz gösteriliyor; lütfen tekrar deneyin.");
+    },
+    onError: (_error, command) => {
+      queryClient.invalidateQueries({ queryKey: ["notifications", "preferences", "versioned", command.userId], exact: true });
+      if (preferenceOwner.current.userId !== command.userId || preferenceOwner.current.epoch !== command.epoch) return;
+      queryClient.invalidateQueries({ queryKey: ["notifications", "preferences", "versioned", command.userId], exact: true });
+      toast.error("Bildirim tercihleri güncellenemedi. Lütfen tekrar deneyin.");
+    },
+    onSettled: (_result, _error, command) => {
+      if (preferenceOwner.current.userId === command.userId && preferenceOwner.current.epoch === command.epoch) preferenceOwner.current.busy = false;
+    },
   });
 
   const notifications = notificationsData?.notifications || [];
@@ -145,6 +256,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
       { label: "Öğretmenler", href: "/teachers", icon: Briefcase },
       { label: "Veli Eşleştirme", href: "/guardian-management", icon: UserCircle },
       { label: "Sınıflar", href: "/classlist", icon: GraduationCap },
+      { label: "AI Yönetimi", href: "/ai-management", icon: Settings },
       { label: "Yönetim", href: "/management", icon: Settings },
       { label: "Arşiv", href: "/archive", icon: Archive },
       { label: "Sunucu Durumu", href: "/server-setup", icon: ServerCog },
@@ -160,14 +272,15 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
         <button
           type="button"
           aria-label="Menüyü kapat"
+          tabIndex={-1}
           className="fixed inset-0 z-40 bg-slate-950/45 backdrop-blur-sm lg:hidden print:hidden"
           onClick={() => setMobileNavigationOpen(false)}
         />
       )}
       {!hideNavigation && (
-      <aside className={cn(
+      <aside ref={sidebarRef} id="dashboard-navigation" role={mobileNavigationOpen ? "dialog" : undefined} aria-modal={mobileNavigationOpen ? true : undefined} aria-label="Ana menü" aria-hidden={isMobileNavigation && !mobileNavigationOpen ? true : undefined} inert={isMobileNavigation && !mobileNavigationOpen ? true : undefined} className={cn(
         "fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-border/70 bg-card shadow-xl transition-transform duration-200 lg:static lg:w-64 lg:translate-x-0 lg:shadow-sm print:hidden",
-        mobileNavigationOpen ? "translate-x-0" : "-translate-x-full"
+        mobileNavigationOpen ? "translate-x-0" : "-translate-x-full invisible lg:visible"
       )}>
         <div className="p-6">
           <div className="flex items-center justify-between gap-3">
@@ -179,12 +292,13 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
               Quiz<span className="text-indigo-600">Master</span>
             </span>
             </div>
-            <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileNavigationOpen(false)}>
+            <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Menüyü kapat" onClick={() => setMobileNavigationOpen(false)}>
               <X className="h-5 w-5" />
             </Button>
           </div>
         </div>
 
+        {role === 'admin' && <AcademicYearSelector />}
         <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto custom-scrollbar">
           {menuItems.map((item) => (
             <Link
@@ -210,7 +324,44 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
       )}
 
       {/* Main Content */}
-      <main data-dashboard-main className="flex min-w-0 flex-1 flex-col overflow-hidden">
+      <main data-dashboard-main inert={mobileNavigationOpen ? true : undefined} aria-hidden={mobileNavigationOpen ? true : undefined} className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        {!hideNavigation && isDemoActive && (
+          <div
+            data-testid="demo-mode-banner"
+            className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-300/70 bg-amber-50/95 dark:border-amber-800/60 dark:bg-amber-950/60 px-4 py-2 text-xs text-amber-950 dark:text-amber-100 print:hidden"
+          >
+            <div className="flex items-center gap-2">
+              <span className="rounded-md bg-amber-500 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">
+                DEMO MODU (SALT OKUNUR)
+              </span>
+              <span className="font-medium">
+                Tüm ekranları ve raporları inceleyebilirsiniz; değişiklik işlemleri simülasyon amaçlı engellenir.
+              </span>
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[11px] font-semibold text-amber-800 dark:text-amber-300 mr-1">
+                Rol Değiştir:
+              </span>
+              {DEFAULT_DEMO_SHOWCASE_ACCOUNTS.map((acc) => {
+                const isCurrentRole = role === acc.role;
+                return (
+                  <Button
+                    key={acc.key}
+                    type="button"
+                    size="sm"
+                    variant={isCurrentRole ? "default" : "outline"}
+                    disabled={Boolean(switchingDemoRole) || isCurrentRole}
+                    data-testid={`demo-switch-${acc.key}`}
+                    className="h-6 px-2.5 text-[11px] font-bold"
+                    onClick={() => void handleSwitchDemoRole(acc.key)}
+                  >
+                    {acc.label}
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+        )}
         {!hideNavigation && (
         <header className="flex h-16 shrink-0 items-center justify-between border-b border-border/70 bg-card/95 px-4 backdrop-blur sm:px-6 lg:justify-end lg:px-8 print:hidden">
           <Button
@@ -218,13 +369,16 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
             size="icon"
             className="lg:hidden"
             aria-label="Menüyü aç"
+            ref={menuTriggerRef}
+            aria-expanded={mobileNavigationOpen}
+            aria-controls="dashboard-navigation"
             onClick={() => setMobileNavigationOpen(true)}
           >
             <Menu className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2 sm:gap-3">
           {/* Notification Bell with Popover */}
-          <Popover>
+          {sessionContext && <Popover>
             <PopoverTrigger asChild>
               <Button variant="ghost" size="icon" aria-label="Bildirimleri aç" className="relative rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-slate-50 dark:hover:bg-slate-800">
                 {notificationsMuted ? <VolumeX className="h-5 w-5" /> : <Bell className="h-5 w-5" />}
@@ -237,7 +391,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
             </PopoverTrigger>
             <PopoverContent align="end" className="w-80 sm:w-96 p-0 rounded-2xl shadow-2xl border-border/60 overflow-hidden bg-white dark:bg-slate-900">
               <div className="p-4 border-b bg-muted/20 dark:bg-muted/5 flex items-center justify-between">
-                <h3 className="font-black text-sm uppercase tracking-wider">Bildirimler</h3>
+                <h3 className="font-black text-sm uppercase tracking-wider">{historical ? 'Mevcut oturum bildirimleri' : 'Bildirimler'}</h3>
                 <div className="flex items-center gap-1">
                   <Button
                     variant="ghost"
@@ -245,8 +399,12 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
                     className="h-7 w-7 rounded-lg"
                     aria-label={notificationsMuted ? "Bildirimlerin sesini aç" : "Bildirimleri sessize al"}
                     title={notificationsMuted ? "Bildirimlerin sesini aç" : "Bildirimleri sessize al"}
-                    disabled={muteNotificationsMutation.isPending}
-                    onClick={() => muteNotificationsMutation.mutate(!notificationsMuted)}
+                    disabled={muteNotificationsMutation.isPending || !notificationPreferences}
+                    onClick={() => {
+                      if (!user || !notificationPreferences || preferenceOwner.current.busy) return;
+                      preferenceOwner.current.busy = true;
+                      muteNotificationsMutation.mutate({ muted: !notificationsMuted, revision: notificationPreferences.revision, userId: user.id, epoch: preferenceOwner.current.epoch });
+                    }}
                   >
                     {notificationsMuted ? <VolumeX className="h-4 w-4 text-muted-foreground" /> : <Volume2 className="h-4 w-4" />}
                   </Button>
@@ -255,6 +413,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
                     variant="ghost" 
                     size="sm" 
                     className="h-7 px-2 text-[10px] font-bold rounded-lg"
+                    disabled={markAllReadMutation.isPending}
                     onClick={() => markAllReadMutation.mutate()}
                   >
                     Hepsini Oku
@@ -263,7 +422,14 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
                 </div>
               </div>
               <ScrollArea className="h-[400px]">
-                {notifications.length > 0 ? (
+                {notificationsLoading ? (
+                  <div role="status" className="py-16 text-center text-xs text-muted-foreground">Bildirimler yükleniyor...</div>
+                ) : notificationsError ? (
+                  <div role="alert" className="flex flex-col items-center gap-3 py-16 text-center text-xs">
+                    <p>Bildirimler yüklenemedi.</p>
+                    <Button variant="outline" size="sm" disabled={notificationsFetching} onClick={() => retryNotifications()}>Yeniden dene</Button>
+                  </div>
+                ) : notifications.length > 0 ? (
                   <div className="divide-y divide-border/40">
                     {notifications.map((n: any) => (
                       <div key={n.id} className={cn(
@@ -302,7 +468,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
                             <p className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
                               <Clock className="h-3 w-3" /> {format(new Date(n.createdAt), "d MMM, HH:mm", { locale: tr })}
                             </p>
-                            {n.type === 'announcement' && (
+                            {n.type === 'announcement' && !historical && (
                               <Link href="/announcements" className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-0.5 hover:underline">
                                 Detay <ExternalLink className="h-2.5 w-2.5" />
                               </Link>
@@ -320,12 +486,12 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
                 )}
               </ScrollArea>
               <div className="p-3 border-t bg-slate-50 dark:bg-slate-800/20 text-center">
-                <Link href="/settings?tab=notifications" className="text-[11px] font-black text-indigo-600 dark:text-indigo-400 hover:underline uppercase tracking-tighter">
+                {historical ? <p className="text-xs text-muted-foreground">Bu bildirimler mevcut oturuma aittir. Ayrıntılar ve tüm bildirimler için aktif yıla dönün.</p> : <Link href="/settings?tab=notifications" className="text-[11px] font-black text-indigo-600 dark:text-indigo-400 hover:underline uppercase tracking-tighter">
                   Tüm Bildirimleri Gör
-                </Link>
+                </Link>}
               </div>
             </PopoverContent>
-          </Popover>
+          </Popover>}
 
           {/* Theme Toggle */}
           <ThemeToggle />
@@ -381,7 +547,7 @@ export function DashboardLayout({ children, hideNavigation = false }: DashboardL
             <div>{user?.name} · {role === 'admin' ? 'Yönetici' : role === 'teacher' ? 'Öğretmen' : role === 'parent' ? 'Veli' : 'Öğrenci'}</div>
           </div>
           <div className="dashboard-page mx-auto w-full max-w-[1600px]">
-            {children}
+            {role === 'admin' && location === '/ai-management' ? children : role === 'admin' && academic?.pending ? <p role="status">Eğitim yılı doğrulanıyor…</p> : role === 'admin' && academic?.error ? <div role="alert"><p>{academic.error}</p><Button onClick={academic.reload}>Yeniden dene</Button>{academic.years.find(year => year.status === 'active') && <Button variant="outline" onClick={() => void academic.selectYear(academic.years.find(year => year.status === 'active')!.id)}>Aktif yıla dön</Button>}</div> : historical ? <HistoricalWorkspace /> : children}
           </div>
         </div>
       </main>

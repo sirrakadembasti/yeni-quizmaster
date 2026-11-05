@@ -36,11 +36,19 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { announcementApi, classApi } from "@/lib/api";
 
+const announcementAudienceLabels: Record<string, string> = {
+  all: 'HERKESE',
+  student: 'ÖĞRENCİLERE',
+  teacher: 'ÖĞRETMENLERE',
+  parent: 'VELİLERE',
+};
+
 export default function AnnouncementsPage() {
   const { role } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [announcementToDelete, setAnnouncementToDelete] = useState<{ id: string; title: string } | null>(null);
 
   // Sayfa açıldığında CSRF token'ı yenile — stale token nedeniyle oluşabilecek
   // 403 hatalarını önlemek için. (Sunucu yeniden başlatıldığında session değişebilir.)
@@ -61,7 +69,7 @@ export default function AnnouncementsPage() {
     setIsCreateOpen(true);
   };
 
-  const { data: announcementsData, isLoading } = useQuery({
+  const { data: announcementsData, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['announcements'],
     queryFn: () => announcementApi.getAllAnnouncements()
   });
@@ -92,8 +100,10 @@ export default function AnnouncementsPage() {
     mutationFn: (id: string) => announcementApi.deleteAnnouncement(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['announcements'] });
+      setAnnouncementToDelete(null);
       toast({ title: "Başarılı", description: "Duyuru silindi." });
-    }
+    },
+    onError: (error: Error) => toast({ title: "Duyuru silinemedi", description: `${error.message || "Silme işlemi başarısız."} Lütfen tekrar deneyin.`, variant: "destructive" })
   });
 
   const announcements = announcementsData?.announcements || [];
@@ -136,6 +146,11 @@ export default function AnnouncementsPage() {
         <div className="grid gap-4">
           {isLoading ? (
             <div className="text-center py-20 font-black animate-pulse text-muted-foreground">DUYURULAR YÜKLENİYOR...</div>
+          ) : isError ? (
+            <Card role="alert" className="space-y-3 p-6 text-center">
+              <p>Duyurular yüklenemedi. {error instanceof Error ? error.message : "Lütfen tekrar deneyin."}</p>
+              <Button variant="outline" onClick={() => refetch()}>Tekrar dene</Button>
+            </Card>
           ) : announcements.length === 0 ? (
             <Card className="border-dashed bg-card py-16 text-center">
               <Bell className="h-12 w-12 mx-auto text-muted-foreground opacity-20 mb-4" />
@@ -151,7 +166,8 @@ export default function AnnouncementsPage() {
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        onClick={() => deleteMutation.mutate(ann.id)}
+                        onClick={() => { deleteMutation.reset(); setAnnouncementToDelete({ id: ann.id, title: ann.title }); }}
+                        disabled={deleteMutation.isPending}
                         className="rounded-xl text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0"
                         aria-label="Duyuruyu sil"
                       >
@@ -173,7 +189,7 @@ export default function AnnouncementsPage() {
                     <div className="flex flex-wrap items-center gap-2">
                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Hedef:</span>
                        <Badge variant="outline" className="rounded-lg text-[10px] font-bold uppercase">
-                         {ann.targetRole === 'all' ? 'HERKESE' : ann.targetRole === 'student' ? 'ÖĞRENCİLERE' : 'ÖĞRETMENLERE'}
+                          {announcementAudienceLabels[ann.targetRole] || 'HEDEF BELİRTİLMEMİŞ'}
                        </Badge>
                        {ann.targetClassId && (
                          <Badge variant="outline" className="rounded-lg border-emerald-500/25 bg-emerald-500/10 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
@@ -191,6 +207,20 @@ export default function AnnouncementsPage() {
           )}
         </div>
       </div>
+
+      <Dialog open={!!announcementToDelete} onOpenChange={(open) => { if (!open && !deleteMutation.isPending) setAnnouncementToDelete(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Duyuruyu sil</DialogTitle>
+            <DialogDescription>“{announcementToDelete?.title}” duyurusu kalıcı olarak silinecek. Devam etmek istiyor musunuz?</DialogDescription>
+          </DialogHeader>
+          {deleteMutation.isError && <p role="alert" className="text-sm text-destructive">{deleteMutation.error.message || "Duyuru silinemedi."} Lütfen tekrar deneyin.</p>}
+          <DialogFooter>
+            <Button variant="outline" disabled={deleteMutation.isPending} onClick={() => setAnnouncementToDelete(null)}>İptal</Button>
+            <Button variant="destructive" disabled={deleteMutation.isPending} onClick={() => { if (announcementToDelete && !deleteMutation.isPending) deleteMutation.mutate(announcementToDelete.id); }}>{deleteMutation.isPending ? "Siliniyor..." : "Sil"}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* CREATE DIALOG */}
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
@@ -236,6 +266,7 @@ export default function AnnouncementsPage() {
                   <SelectContent className="rounded-xl">
                     {!isTeacher && <SelectItem value="all">Herkes</SelectItem>}
                     {!isTeacher && <SelectItem value="teacher">Öğretmenler</SelectItem>}
+                    {!isTeacher && <SelectItem value="parent">Veliler</SelectItem>}
                     <SelectItem value="student">Öğrenciler</SelectItem>
                   </SelectContent>
                 </Select>

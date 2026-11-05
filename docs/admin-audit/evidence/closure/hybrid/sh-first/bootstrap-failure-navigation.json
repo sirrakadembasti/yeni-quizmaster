@@ -1,0 +1,717 @@
+{
+  "at": "2026-10-02T05:49:02.258Z",
+  "phase": "bootstrap-failure",
+  "outcome": "failed",
+  "url": "http://127.0.0.1:62416/setup",
+  "error": "Timed out: freshly built actual API startup (single check)",
+  "pending": [],
+  "events": [
+    {
+      "at": "2026-10-02T05:46:06.253Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:06.306Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:07.516Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:07.552Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:08.765Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:08.840Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:10.046Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:10.088Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:11.313Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:11.343Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:12.540Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:12.575Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:13.779Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:13.830Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:15.022Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:15.048Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:16.263Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:16.329Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:17.519Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:17.545Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:18.752Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:18.786Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:19.996Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:20.177Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:21.425Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:21.482Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:22.684Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:22.712Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:23.920Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:23.946Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:25.152Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:25.183Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:26.405Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:26.443Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:27.659Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:27.678Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:30.910Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:46:49.382Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:46:51.182Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:14.717Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:15.860Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:15.903Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:17.099Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:17.131Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:18.336Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:18.377Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:19.585Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:19.615Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:20.821Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:20.857Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:22.067Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:22.098Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:23.319Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:23.366Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:24.711Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:25.275Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:26.413Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:26.556Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:27.800Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:27.959Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:29.217Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:29.387Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:30.617Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:30.770Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:32.057Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:32.647Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:33.870Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:35.058Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:35.949Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:37.438Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:40.257Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:44.059Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:44.120Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:44.203Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:45.387Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:45.727Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:47.107Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:47.422Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:48.838Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:48.986Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:50.251Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:50.555Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:51.775Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:52.023Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:53.196Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:53.342Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:54.560Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:55.175Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:56.574Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:56.783Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:57.947Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:57.979Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:47:59.199Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:47:59.299Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:48:00.525Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:48:00.600Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:48:01.806Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:48:02.001Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:48:09.990Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:62416/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:48:10.307Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:62416/api/status",
+      "status": 200
+    }
+  ],
+  "document": {
+    "readyState": "complete",
+    "title": "QuizMaster Kurulum Sihirbazı",
+    "installerPresent": false,
+    "wizardPresent": true,
+    "loginPresent": false
+  }
+}

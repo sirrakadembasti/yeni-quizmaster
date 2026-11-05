@@ -1,0 +1,191 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\.pnpm\\playwright@1.63.0\\node_modules\\playwright\\cli.js",
+      "test",
+      "-c",
+      "playwright.parent-audit.config.ts",
+      "tests-e2e/parent-print-audit.spec.ts"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.parent-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/parent-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "parent-*-audit.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/parent-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "parent-print-audit.spec.ts",
+      "file": "parent-print-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P-X01 announcements and all four settings tabs invoke print and render real browser PDF",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23780,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T09:15:04.387Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8cd0abe1161bdad69ed3-7553f13638cebabc5c46",
+          "file": "parent-print-audit.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "P-X02 parent announcement audience badge names parents",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 19866,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Parent Audit Parent Announcement', exact: true }).locator('xpath=ancestor::div[contains(@class,\"group\")][1]')\nExpected pattern: \u001b[32m/VELİLERE|VELİLER/\u001b[39m\nReceived string:  \u001b[31m\"PParent Audit AdminSistem Yöneticisi4 Ekim 2026, 12:14Parent Audit Parent AnnouncementIsolated parent announcementHedef:ÖĞRETMENLEREDuyuru \"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('heading', { name: 'Parent Audit Parent Announcement', exact: true }).locator('xpath=ancestor::div[contains(@class,\"group\")][1]') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Parent Audit Parent Announcement', exact: true }).locator('xpath=ancestor::div[contains(@class,\"group\")][1]')\u001b[22m\n\u001b[2m    33 × locator resolved to <div data-slot=\"card\" class=\"rounded-2xl border border-border/70 bg-card text-card-foreground shadow-sm group overflow-hidden transition-colors hover:border-primary/40\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"PParent Audit AdminSistem Yöneticisi4 Ekim 2026, 12:14Parent Audit Parent AnnouncementIsolated parent announcementHedef:ÖĞRETMENLEREDuyuru \"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Parent Audit Parent Announcement', exact: true }).locator('xpath=ancestor::div[contains(@class,\"group\")][1]')\nExpected pattern: \u001b[32m/VELİLERE|VELİLER/\u001b[39m\nReceived string:  \u001b[31m\"PParent Audit AdminSistem Yöneticisi4 Ekim 2026, 12:14Parent Audit Parent AnnouncementIsolated parent announcementHedef:ÖĞRETMENLEREDuyuru \"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('heading', { name: 'Parent Audit Parent Announcement', exact: true }).locator('xpath=ancestor::div[contains(@class,\"group\")][1]') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Parent Audit Parent Announcement', exact: true }).locator('xpath=ancestor::div[contains(@class,\"group\")][1]')\u001b[22m\n\u001b[2m    33 × locator resolved to <div data-slot=\"card\" class=\"rounded-2xl border border-border/70 bg-card text-card-foreground shadow-sm group overflow-hidden transition-colors hover:border-primary/40\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"PParent Audit AdminSistem Yöneticisi4 Ekim 2026, 12:14Parent Audit Parent AnnouncementIsolated parent announcementHedef:ÖĞRETMENLEREDuyuru \"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-print-audit.spec.ts:38:22",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-print-audit.spec.ts",
+                      "column": 22,
+                      "line": 38
+                    },
+                    "snippet": "  36 |   const card = title.locator('xpath=ancestor::div[contains(@class,\"group\")][1]');\n  37 |   await page.screenshot({ path: 'docs/parent-audit/screenshots/parent-announcement-audience.png', fullPage: true });\n> 38 |   await expect(card).toContainText(/VELİLERE|VELİLER/);\n     |                      ^\n  39 | });\n  40 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-print-audit.spec.ts",
+                        "column": 22,
+                        "line": 38
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Parent Audit Parent Announcement', exact: true }).locator('xpath=ancestor::div[contains(@class,\"group\")][1]')\nExpected pattern: \u001b[32m/VELİLERE|VELİLER/\u001b[39m\nReceived string:  \u001b[31m\"PParent Audit AdminSistem Yöneticisi4 Ekim 2026, 12:14Parent Audit Parent AnnouncementIsolated parent announcementHedef:ÖĞRETMENLEREDuyuru \"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('heading', { name: 'Parent Audit Parent Announcement', exact: true }).locator('xpath=ancestor::div[contains(@class,\"group\")][1]') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Parent Audit Parent Announcement', exact: true }).locator('xpath=ancestor::div[contains(@class,\"group\")][1]')\u001b[22m\n\u001b[2m    33 × locator resolved to <div data-slot=\"card\" class=\"rounded-2xl border border-border/70 bg-card text-card-foreground shadow-sm group overflow-hidden transition-colors hover:border-primary/40\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"PParent Audit AdminSistem Yöneticisi4 Ekim 2026, 12:14Parent Audit Parent AnnouncementIsolated parent announcementHedef:ÖĞRETMENLEREDuyuru \"\u001b[22m\n\n\n  36 |   const card = title.locator('xpath=ancestor::div[contains(@class,\"group\")][1]');\n  37 |   await page.screenshot({ path: 'docs/parent-audit/screenshots/parent-announcement-audience.png', fullPage: true });\n> 38 |   await expect(card).toContainText(/VELİLERE|VELİLER/);\n     |                      ^\n  39 | });\n  40 |\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-print-audit.spec.ts:38:22"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T09:15:29.212Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-print-audit-P-X02-p-f1322-udience-badge-names-parents\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-print-audit-P-X02-p-f1322-udience-badge-names-parents\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-print-audit.spec.ts",
+                    "column": 22,
+                    "line": 38
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "8cd0abe1161bdad69ed3-57f3dac4befb265d9dec",
+          "file": "parent-print-audit.spec.ts",
+          "line": 32,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-04T09:15:00.402Z",
+    "duration": 49193.405,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

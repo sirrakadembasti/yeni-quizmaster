@@ -1,0 +1,93 @@
+{
+  "tool": "pypdf extraction and PyMuPDF rendering",
+  "checks": [
+    {
+      "pdf": "teacher-class-all.pdf",
+      "pages": 1,
+      "missing": [
+        "Sorumlu öğretmen",
+        "Öğrenci sayısı"
+      ],
+      "forbidden": [],
+      "rendered": [
+        "teacher-class-all-page-1.png"
+      ],
+      "passed": false
+    },
+    {
+      "pdf": "teacher-class-filter.pdf",
+      "pages": 1,
+      "missing": [
+        "Öğrenci sayısı"
+      ],
+      "forbidden": [],
+      "rendered": [
+        "teacher-class-filter-page-1.png"
+      ],
+      "passed": false
+    },
+    {
+      "pdf": "teacher-results-all.pdf",
+      "pages": 1,
+      "missing": [
+        "Teacher Audit Student 00",
+        "Teacher Audit Student 01",
+        "Teacher Audit Student 02",
+        "Teacher Audit Student 03",
+        "Teacher Audit Student 04",
+        "Teacher Audit Student 05",
+        "Teacher Audit Student 06",
+        "Teacher Audit Student 07",
+        "Teacher Audit Student 08",
+        "Teacher Audit Student 09",
+        "Teacher Audit Student 10",
+        "Teacher Audit Student 11",
+        "Teacher Audit Student 12",
+        "Teacher Audit Student 13",
+        "Teacher Audit Exam",
+        "14 Toplam Sonuç",
+        "0%"
+      ],
+      "forbidden": [],
+      "rendered": [
+        "teacher-results-all-page-1.png"
+      ],
+      "passed": false
+    },
+    {
+      "pdf": "teacher-results-zero-filter.pdf",
+      "pages": 1,
+      "missing": [
+        "Teacher Audit Exam",
+        "0%",
+        "1 Toplam Sonuç"
+      ],
+      "forbidden": [],
+      "rendered": [
+        "teacher-results-zero-filter-page-1.png"
+      ],
+      "passed": false
+    },
+    {
+      "pdf": "teacher-statistics.pdf",
+      "pages": 1,
+      "missing": [],
+      "forbidden": [],
+      "rendered": [
+        "teacher-statistics-page-1.png"
+      ],
+      "passed": true
+    },
+    {
+      "pdf": "teacher-student-zero.pdf",
+      "pages": 1,
+      "missing": [],
+      "forbidden": [],
+      "rendered": [
+        "teacher-student-zero-page-1.png"
+      ],
+      "passed": true
+    }
+  ],
+  "passed": false
+}

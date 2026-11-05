@@ -1,0 +1,36 @@
+{
+  "route": "/settings",
+  "labels": [
+    " Profil Bilgileri",
+    " Bildirimler",
+    " İşlem Geçmişi",
+    " Güvenlik"
+  ],
+  "views": [
+    "Profil Bilgileri",
+    "Bildirimler",
+    "İşlem Geçmişi",
+    "Güvenlik"
+  ],
+  "errors": [],
+  "network": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 0,
+    "unlabeledInputs": [
+      {
+        "placeholder": "••••••••",
+        "type": "password"
+      },
+      {
+        "placeholder": "••••••••",
+        "type": "password"
+      },
+      {
+        "placeholder": "••••••••",
+        "type": "password"
+      }
+    ]
+  }
+}

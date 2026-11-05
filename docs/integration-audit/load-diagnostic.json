@@ -1,0 +1,31 @@
+{
+  "at": "2026-10-04T12:24:01.810Z",
+  "scope": "Native fetch single student/quizzes endpoint, distinct from six-endpoint Playwright load",
+  "rounds": [
+    {
+      "concurrency": 2,
+      "requests": 40,
+      "statuses": {
+        "200": 40
+      },
+      "errors": {},
+      "p50Ms": 1632,
+      "p95Ms": 3904,
+      "maxMs": 4293
+    },
+    {
+      "concurrency": 20,
+      "requests": 40,
+      "statuses": {
+        "200": 37
+      },
+      "errors": {
+        "TypeError/ECONNRESET": 1,
+        "TimeoutError/none": 2
+      },
+      "p50Ms": 11573,
+      "p95Ms": 14466,
+      "maxMs": 15016
+    }
+  ]
+}

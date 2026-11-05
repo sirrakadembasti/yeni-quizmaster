@@ -1,0 +1,83 @@
+{
+  "at": "2026-10-04T13:50:03.285Z",
+  "silentLogger": true,
+  "eventLoop": {
+    "meanMs": 177,
+    "p95Ms": 407,
+    "maxMs": 14798
+  },
+  "timings": {
+    "session.sqlite.exec": {
+      "count": 1,
+      "p50Ms": 75,
+      "p95Ms": 75,
+      "maxMs": 75
+    },
+    "session.sqlite.get": {
+      "count": 60,
+      "p50Ms": 1159,
+      "p95Ms": 7249,
+      "maxMs": 14828
+    },
+    "storage.getUserByEmail": {
+      "count": 4,
+      "p50Ms": 3,
+      "p95Ms": 19,
+      "maxMs": 19
+    },
+    "session.sqlite.run": {
+      "count": 53,
+      "p50Ms": 6174,
+      "p95Ms": 15003,
+      "maxMs": 15006
+    },
+    "storage.createLog": {
+      "count": 4,
+      "p50Ms": 348,
+      "p95Ms": 708,
+      "maxMs": 708
+    },
+    "storage.claimPendingEmails": {
+      "count": 4,
+      "p50Ms": 746,
+      "p95Ms": 5386,
+      "maxMs": 5386
+    },
+    "storage.getUser": {
+      "count": 65,
+      "p50Ms": 67,
+      "p95Ms": 1885,
+      "maxMs": 14798
+    },
+    "storage.getAllQuizzes": {
+      "count": 19,
+      "p50Ms": 414,
+      "p95Ms": 14795,
+      "maxMs": 14795
+    },
+    "storage.getGuardianStudents": {
+      "count": 17,
+      "p50Ms": 412,
+      "p95Ms": 14794,
+      "maxMs": 14794
+    },
+    "storage.getQuizzesByCreator": {
+      "count": 9,
+      "p50Ms": 404,
+      "p95Ms": 955,
+      "maxMs": 955
+    },
+    "storage.getResultsByStudent": {
+      "count": 19,
+      "p50Ms": 411,
+      "p95Ms": 14795,
+      "maxMs": 14795
+    },
+    "storage.getUserNotifications": {
+      "count": 10,
+      "p50Ms": 62,
+      "p95Ms": 725,
+      "maxMs": 725
+    }
+  }
+}

@@ -1,341 +1,68 @@
-import { Router, type Response } from "express";
-import rateLimit from "express-rate-limit";
-import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
-import { logger } from "../utils/logger";
-import { z } from "zod";
+import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
+import { requireAuth, requireRole, type AuthRequest } from '../middleware/auth';
+import { managedQuestionRequest, buildQuestionPrompt, parseGeneratedQuestions } from '../services/ai-question-format';
+import { defaultAIDependencies, sendAIError, withAIOperation, type AIHandlerDependencies } from '../services/ai-http';
+import { supportsQuestionJSON } from '../services/ai-provider-validation';
+import { classifyLLMError, type AIUsageMetadata } from '../services/ai-runtime';
 
-const router: Router = Router();
-
-// ==================== SSRF KORUMASI ====================
-
-// Resmi Google Gemini endpoint'i — bu URL için env API key kullanılmasına izin verilir.
-const OFFICIAL_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/";
-
-/**
- * Verilen URL'nin SSRF saldırılarına karşı güvenli olup olmadığını kontrol eder.
- * Kural: Sadece HTTPS + genel internet adresleri kabul edilir.
- * localhost, 127.x, 10.x, 172.16-31.x, 192.168.x ve IPv6 loopback reddedilir.
- */
-function isSafeUrl(urlString: string): boolean {
-  try {
-    const url = new URL(urlString);
-    if (url.protocol !== "https:") return false;
-    const h = url.hostname;
-    const blocked = [
-      /^localhost$/i,
-      /^127\./,
-      /^10\./,
-      /^172\.(1[6-9]|2[0-9]|3[01])\./,
-      /^192\.168\./,
-      /^0\./,
-      /^::1$/,
-      /^fc00:/i,
-      /^fe80:/i,
-    ];
-    return !blocked.some((pattern) => pattern.test(h));
-  } catch {
-    return false;
-  }
-}
-
-/**
- * API key izolasyon kuralı:
- * - Resmi endpoint → env key fallback'e izin verilir.
- * - Özel/bilinmeyen URL → yalnızca kullanıcının sağladığı key kullanılır;
- *   env key ASLA gönderilmez (SSRF ile token hırsızlığını engeller).
- */
-function resolveApiKey(
-  requestApiKey: string | undefined,
-  requestBaseUrl: string | undefined
-): string | undefined {
-  const isOfficial = !requestBaseUrl || requestBaseUrl === OFFICIAL_BASE_URL;
-  const cleanKey = requestApiKey?.trim() ? requestApiKey.trim() : undefined;
-  return isOfficial
-    ? cleanKey || process.env.GEMINI_API_KEY
-    : cleanKey; // Özel URL — env key kullanma
-}
-
-// test-config için kısıtlayıcı rate limiter (harici HTTP isteği yapıyor)
-const aiTestLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 dakika
-  max: 10,                   // IP başına 15 dakikada en fazla 10 istek
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { message: "Çok fazla bağlantı testi yapıldı, lütfen daha sonra tekrar deneyin." },
-});
-
-// ==================== SCHEMAS ====================
-
-const QuestionSchema = z.object({
-  text: z.string().min(1, "Soru metni boş olamaz"),
-  type: z.enum(["multiple-choice", "true-false", "short-answer"]),
-  options: z.array(z.string()).default([]),
-  correctAnswer: z.string().min(1, "Doğru cevap belirtilmelidir"),
-});
-
-const AIResponseSchema = z.array(QuestionSchema).or(z.object({
-  questions: z.array(QuestionSchema)
-}));
-const SurveyQuestionSchema = z.object({
-  text: z.string().min(1, "Soru metni boş olamaz"),
-  type: z.enum(["single-choice", "multiple-choice", "open-text", "rating", "likert"]),
-  options: z.array(z.string()).default([]),
-  correctAnswer: z.null().optional(),
-  config: z.record(z.any()).optional().nullable(),
-});
-
-const SurveyResponseSchema = z.array(SurveyQuestionSchema).or(z.object({
-  questions: z.array(SurveyQuestionSchema),
-}));
-
-// ==================== AI UTILS ====================
-
-function extractJsonArray(content: string): any[] {
-  const trimmed = content.trim();
-
-  // Strateji 1: Doğrudan JSON parse dene
-  try {
-    const parsed = JSON.parse(trimmed);
-    return Array.isArray(parsed) ? parsed : (parsed.questions || []);
-  } catch {
-    // Bu strateji başarısız — sonraki stratejiye geç
-  }
-
-  // Strateji 2: Markdown bloklarını ayıkla (```json ... ``` veya ``` ... ```)
-  // Her strateji kendi try-catch'ine sahip; biri hata verse bile fallback devreye girer.
-  const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-  if (jsonMatch && jsonMatch[1]) {
+export function createAIRouter(dependencies: AIHandlerDependencies = defaultAIDependencies): Router {
+  const router = Router();
+  router.use(requireAuth, requireRole(['admin', 'teacher']));
+  const generateLimit = rateLimit({ windowMs: 15 * 60 * 1000, max: 30, standardHeaders: true, legacyHeaders: false,
+    keyGenerator: req => (req as AuthRequest).user!.id,
+    message: { code: 'AI_RATE_LIMIT', message: 'AI üretim sınırına ulaşıldı. Bir süre sonra tekrar deneyin.' },
+  });
+  router.get('/models', async (_req, res) => {
     try {
-      const parsed = JSON.parse(jsonMatch[1].trim());
-      return Array.isArray(parsed) ? parsed : (parsed.questions || []);
-    } catch {
-      // Markdown bloğu var ama içindeki JSON bozuk — sonraki stratejiye geç
-    }
-  }
-
-  // Strateji 3: İlk [ ve son ] arasını bul
-  const startBracket = content.indexOf('[');
-  const endBracket = content.lastIndexOf(']');
-  if (startBracket !== -1 && endBracket !== -1 && startBracket < endBracket) {
-    try {
-      const potentialJson = content.substring(startBracket, endBracket + 1).trim();
-      const parsed = JSON.parse(potentialJson);
-      return Array.isArray(parsed) ? parsed : (parsed.questions || []);
-    } catch {
-      // Bracket aralığı da geçersiz JSON — tüm stratejiler tükendi
-    }
-  }
-
-  // Tüm stratejiler başarısız
-  const err = new Error("AI yanıtından JSON dizisi ayıklanamadı");
-  logger.error({ err }, "[AI] JSON parse hatası — AI yanıtı beklenmedik formatta.");
-  throw err;
-}
-
-// ==================== AI ROUTES ====================
-
-router.post("/test-config", aiTestLimiter, requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
-  try {
-    const {
-      baseUrl: rawBaseUrl,
-      apiKey: requestApiKey,
-      model = "gemini-3.8-flash",
-    } = req.body;
-
-    const baseUrl: string = rawBaseUrl || OFFICIAL_BASE_URL;
-
-    // 1. URL güvenlik kontrolü: localhost / private IP / HTTP engellenir
-    if (!isSafeUrl(baseUrl)) {
-      return res.status(400).json({
-        success: false,
-        message: "Geçersiz URL. Sadece HTTPS ve genel internet adresleri kabul edilir.",
-      });
-    }
-
-    // 2. Key izolasyonu: özel URL kullanılıyorsa env key asla gönderilmez
-    const apiKey = resolveApiKey(requestApiKey, rawBaseUrl);
-    if (!apiKey) {
-      return res.status(400).json({
-        success: false,
-        message: rawBaseUrl && rawBaseUrl !== OFFICIAL_BASE_URL
-          ? "Özel URL kullanıldığında API anahtarı zorunludur."
-          : "API anahtarı bulunamadı.",
-      });
-    }
-
-    const endpoint = `${baseUrl.endsWith("/") ? baseUrl : baseUrl + "/"}chat/completions`;
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
-        "x-goog-api-key": apiKey,
-      },
-      body: JSON.stringify({
-        model,
-        messages: [{ role: "user", content: "hi" }],
-        max_tokens: 5,
-      }),
-    });
-
-    if (response.ok) {
-      res.json({ success: true, message: "Bağlantı başarılı!" });
-    } else {
-      const errorData = (await response.json().catch(() => ({}))) as any;
-      res.status(response.status).json({
-        success: false,
-        message: "Bağlantı başarısız.",
-        details: errorData.error?.message || "Servis sağlayıcı hatası.",
-      });
-    }
-  } catch (error: any) {
-    logger.error({ err: error }, "[AI] test-config bağlantı hatası");
-    res.status(500).json({
-      success: false,
-      message: "Bağlantı testi sırasında bir hata oluştu.",
-      details: error?.message || (error?.cause ? error.cause.message : undefined)
-    });
-  }
-});
-
-router.post("/generate-questions", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
-  try {
-    const {
-      topic,
-      count = 3,
-      difficulty = "medium",
-      model = "gemini-3.8-flash",
-      customBaseUrl,
-      customApiKey,
-      questionType = "multiple-choice",
-      contentType: requestedContentType = "exam"
-    } = req.body;
-
-    const contentType = requestedContentType === "survey" ? "survey" : "exam";
-    const baseUrl = customBaseUrl || OFFICIAL_BASE_URL;
-
-    // URL güvenlik kontrolü
-    if (!isSafeUrl(baseUrl)) {
-      return res.status(400).json({ message: "Geçersiz URL. Sadece HTTPS ve genel internet adresleri kabul edilir." });
-    }
-
-    // Key izolasyonu: özel URL kullanılıyorsa env key asla gönderilmez
-    const apiKey = resolveApiKey(customApiKey, customBaseUrl);
-    if (!apiKey) {
-      return res.status(500).json({
-        message: customBaseUrl && customBaseUrl !== OFFICIAL_BASE_URL
-          ? "Özel URL kullanıldığında API anahtarı zorunludur."
-          : "API anahtarı yapılandırılmamış.",
-      });
-    }
-
-    // customApiKey asla log'a yazılmıyor — sadece topic ve model bilgisi loglanıyor
-    logger.info({ topic, model, questionType, count, difficulty }, "[AI] Soru üretimi başlatılıyor.");
-
-    const prompt = contentType === "survey"
-      ? `Generate ${count} survey questions in Turkish about "${topic}". Use a useful mix of single-choice, multiple-choice, open-text, rating and likert types.
-Respond ONLY with a valid JSON array. Each item must follow: {"text":"...","type":"single-choice|multiple-choice|open-text|rating|likert","options":[],"correctAnswer":null,"config":null}.
-Use options for choice and likert questions. For rating use {"max":5} in config. Do not score answers and do not include a correct answer.`
-      : `Generate ${count} ${questionType} questions about "${topic}" at a ${difficulty} difficulty level.
-Respond ONLY with a valid JSON array of objects.
-Structure: {"text":"...","type":"multiple-choice","options":["A","B","C","D","E"],"correctAnswer":"A"}.
-Output ONLY raw JSON.`;
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 seconds timeout
-
-    let response;
-    try {
-      response = await fetch(`${baseUrl.endsWith('/') ? baseUrl : baseUrl + '/'}chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-          'x-goog-api-key': apiKey
-        },
-        body: JSON.stringify({
-          model: model,
-          messages: [{ role: "user", content: prompt }],
-          temperature: 0.7,
-          max_tokens: 2048
-        }),
-        signal: controller.signal
-      });
-    } catch (fetchError: any) {
-      clearTimeout(timeoutId);
-      logger.error({ err: fetchError }, "[AI] Dış servis bağlantı hatası (Fetch Error)");
-      return res.status(502).json({
-        message: fetchError.name === 'AbortError'
-          ? "AI sağlayıcısı çok geç yanıt verdi (Timeout)."
-          : "AI sağlayıcısına bağlanılamadı.",
-        details: fetchError.message || (fetchError.cause ? fetchError.cause.message : undefined)
-      });
-    } finally {
-      clearTimeout(timeoutId);
-    }
-
-    if (!response.ok) {
-      const errorData = (await response.json().catch(() => ({}))) as any;
-      logger.warn({ statusCode: response.status, aiError: errorData.error?.message }, "[AI] Sağlayıcıdan hata yanıtı alındı.");
-      return res.status(500).json({
-        message: "AI sağlayıcısından soru oluşturulamadı.",
-        details: errorData.error?.message || "Bilinmeyen hata"
-      });
-    }
-
-    const data = await response.json() as any;
-    const content = data.choices?.[0]?.message?.content;
-
-    if (!content) {
-      return res.status(500).json({ message: "AI sağlayıcısından boş içerik döndü." });
-    }
-
-    try {
-      const rawData = extractJsonArray(content);
-      const responseSchema = contentType === "survey" ? SurveyResponseSchema : AIResponseSchema;
-      const validation = responseSchema.safeParse(rawData);
-
-      if (!validation.success) {
-        logger.error({ validationError: validation.error.format() }, "[AI] Yanıt şema doğrulaması başarısız.");
-        return res.status(500).json({ message: "AI yanıtı beklenen formatta değil." });
+      const list = await (await dependencies.getStore()).list();
+      const models = list.profiles.filter(p => p.enabled).map(p => ({ id: p.id, name: p.name, provider: p.provider, model: p.model }));
+      res.set('Cache-Control', 'no-store').json({ models, defaultProfileId: models.some(p => p.id === list.defaultProfileId) ? list.defaultProfileId : null });
+    } catch (error) { sendAIError(res, error); }
+  });
+  router.post('/test-config', requireRole(['admin']), (_req, res) => {
+    res.status(410).json({ code: 'AI_CONFIG_MOVED', message: 'Bağlantı testini AI Yönetimi sayfasındaki kayıtlı profil üzerinden yapın.' });
+  });
+  router.post('/generate-questions', generateLimit, async (req: AuthRequest, res) => {
+    const parsed = managedQuestionRequest.safeParse(req.body);
+    if (!parsed.success) { res.status(400).json({ message: 'Geçerli bir AI profili, konu ve 1–10 soru sayısı seçin. Özel bağlantı ayarları kabul edilmez.' }); return; }
+    await withAIOperation(req, res, async signal => {
+      const input = parsed.data;
+      const profile = await (await dependencies.getStore()).getEnabled(input.profileId);
+      if (!profile) { res.status(409).json({ code: 'AI_MODEL_UNAVAILABLE', message: 'Seçilen model artık kullanılamıyor. Model listesini yenileyin.' }); return; }
+      const jsonObject = supportsQuestionJSON(profile);
+      const usageService = dependencies.getUsage ? await dependencies.getUsage() : undefined;
+      // Validate attribution separately: a logging failure must not bypass ownership.
+      const context = usageService ? await usageService.context(req.user!, input.context || {}, input.contentType) : undefined;
+      const usageId = context ? await usageService!.start(req.user!, profile, context, input.count) : null;
+      const started = Date.now(); let usage: AIUsageMetadata | undefined, questions: ReturnType<typeof parseGeneratedQuestions> | undefined, failure: unknown;
+      let status: 'success' | 'invalid' | 'error' | 'timeout' | 'cancelled' = 'success';
+      try {
+        const messages = [{ role: 'user' as const, content: buildQuestionPrompt(input, { jsonObject }) }];
+        const options = { signal, purpose: 'questions' as const, jsonObject };
+        let text: string;
+        if (dependencies.generateDetailed) { const result = await dependencies.generateDetailed(messages, profile, options); text = result.text; usage = result.usage; }
+        else text = await dependencies.generate(messages, profile, options);
+        try { questions = parseGeneratedQuestions(text, input.count, input.contentType); }
+        catch { throw Object.assign(new Error('Invalid AI questions'), { code: 'AI_INVALID_QUESTIONS' }); }
+      } catch (error) {
+        failure = error; usage ??= (error as { usage?: AIUsageMetadata })?.usage;
+        const code = (error as {code?:string})?.code;
+        status = signal.aborted ? 'cancelled' : code === 'AI_INVALID_QUESTIONS' ? 'invalid' : classifyLLMError(error).code === 'LLM_TIMEOUT' ? 'timeout' : 'error';
+      } finally {
+        if (signal.aborted) status = 'cancelled';
+        if (usageId) await usageService!.finish(usageId, { status, durationMs: Date.now() - started, validQuestionCount: questions?.length, usage,
+          errorCode: failure ? (failure as {code?:string})?.code === 'AI_INVALID_QUESTIONS' ? 'AI_INVALID_QUESTIONS' : classifyLLMError(failure).code : undefined });
       }
-
-      const validatedQuestions: any[] = Array.isArray(validation.data)
-        ? validation.data
-        : validation.data.questions;
-
-      if (contentType === "survey") {
-        return res.json({ questions: validatedQuestions });
+      if (signal.aborted) return;
+      if (failure) {
+        if (status === 'invalid') res.status(502).json({ code: 'AI_INVALID_QUESTIONS', message: 'AI yanıtı geçerli soru biçiminde değil. Yeniden deneyin.' });
+        else sendAIError(res, failure);
+        return;
       }
-
-      const questions = validatedQuestions.map((q) => {
-        let options = [...q.options];
-        let correctText = q.correctAnswer;
-
-        if (q.type === "multiple-choice" && options.length > 0) {
-          // Shuffle options but keep correct answer reference
-          for (let i = options.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [options[i], options[j]] = [options[j], options[i]];
-          }
-        }
-
-        return {
-          ...q,
-          options,
-          correctAnswerIndex: options.indexOf(correctText) !== -1 ? options.indexOf(correctText) : 0
-        };
-      });
-
       res.json({ questions });
-    } catch (parseError) {
-      logger.error({ err: parseError }, "[AI] Yanıt verisi işlenemedi.");
-      res.status(500).json({ message: "AI verisi işlenemedi." });
-    }
-  } catch (error) {
-    logger.error({ err: error }, "[AI] Soru üretimi sırasında sunucu hatası.");
-    res.status(500).json({ message: "Sunucu hatası oluştu." });
-  }
-});
-
-export default router;
+    });
+  });
+  return router;
+}
+export default createAIRouter();

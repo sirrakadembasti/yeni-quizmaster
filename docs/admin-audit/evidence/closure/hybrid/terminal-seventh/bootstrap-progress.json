@@ -1,0 +1,16 @@
+{
+  "recordedAt": "2026-10-01T18:32:27.833Z",
+  "stage": "bootstrap",
+  "job": {
+    "type": "wizard",
+    "status": "running",
+    "message": "Ana kurulum sihirbazı hazır. Terminali açık tutun; sihirbaz bu süreçte çalışır.",
+    "exitCode": null,
+    "logs": [
+      "> quiz-master-server@1.0.0 setup C:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-terminal-uTLhPt\\server",
+      "> tsx setup-wizard/server.ts",
+      "QuizMaster kurulum sihirbazı: http://127.0.0.1:50600/setup?token=[redacted]",
+      "Bu bağlantıyı paylaşmayın. Kurulum tamamlandığında sihirbaz otomatik kapanır."
+    ]
+  }
+}

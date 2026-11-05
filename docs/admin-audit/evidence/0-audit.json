@@ -1,0 +1,18 @@
+{
+  "route": "/",
+  "labels": [],
+  "views": [],
+  "errors": [],
+  "network": [
+    {
+      "url": "http://127.0.0.1:5511/api/auth/me",
+      "status": 401
+    }
+  ],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 1,
+    "unlabeledInputs": []
+  }
+}

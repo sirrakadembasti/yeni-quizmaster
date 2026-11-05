@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { createRuntimePrismaClient } from '../utils/sqlite-runtime';
 import bcrypt from 'bcryptjs';
 
-const prisma = new PrismaClient();
+const prisma = createRuntimePrismaClient();
 
 async function main() {
   console.log('Seeding database...');

@@ -1,0 +1,55 @@
+{
+  "recordedAt": "2026-10-03T13:13:18.412Z",
+  "stage": "wizard-apply",
+  "apply": {
+    "status": "success",
+    "message": "QuizMaster kurulumu tamamlandı. Birazdan giriş sayfasına yönlendirileceksiniz.",
+    "steps": [
+      {
+        "id": "prepare",
+        "label": "Kurulum ortamı hazırlanıyor",
+        "status": "done",
+        "detail": "Geçici ortam dosyası hazırlandı."
+      },
+      {
+        "id": "buildServer",
+        "label": "Sunucu derlemesi",
+        "status": "done"
+      },
+      {
+        "id": "buildClient",
+        "label": "İstemci (web) derlemesi",
+        "status": "done"
+      },
+      {
+        "id": "migrate",
+        "label": "Veritabanı migration'ları",
+        "status": "done"
+      },
+      {
+        "id": "admin",
+        "label": "İlk yönetici hesabı",
+        "status": "done",
+        "detail": "fresh-205d520abd@example.test"
+      },
+      {
+        "id": "artifacts",
+        "label": "Dağıtım profili ve Nginx örneği",
+        "status": "done",
+        "detail": "server/data/setup-artifacts"
+      },
+      {
+        "id": "env",
+        "label": "Gizli ayarların yazılması (server/.env)",
+        "status": "done",
+        "detail": "server/.env"
+      },
+      {
+        "id": "finish",
+        "label": "Kurulum kilidi ve kapanış",
+        "status": "done",
+        "detail": "installation.lock yazıldı"
+      }
+    ]
+  }
+}

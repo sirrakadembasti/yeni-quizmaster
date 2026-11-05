@@ -1,0 +1,2977 @@
+{
+  "config": {
+    "argv": [
+      "/home/ahmet/.cache/quizmaster-closure/tools-XpIGnI/node-v22.23.2-linux-x64/bin/node",
+      "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/node_modules/playwright/cli.js",
+      "test",
+      "-c",
+      "playwright.teacher-audit.config.ts"
+    ],
+    "configFile": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/playwright.teacher-audit.config.ts",
+    "rootDir": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "teacher-*-audit.spec.ts"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/teacher-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "teacher-people-results-audit.spec.ts",
+      "file": "teacher-people-results-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "students filter export and detail navigation respect teacher scope",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15099,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:36:19.254Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "export-validation",
+                      "contentType": "application/json",
+                      "body": "eyJmaWxlbmFtZSI6Im9ncmVuY2lfbGlzdGVzaV8yMDI2LTEwLTAzLnhsc3giLCJyb3dzIjo3fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1ff1d1927a0faf0185ad-1e9620d7b5f4402a850e",
+          "file": "teacher-people-results-audit.spec.ts",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "classes filter detail export and keyboard return show only assigned class",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6457,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:36:36.829Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "export-validation",
+                      "contentType": "application/json",
+                      "body": "eyJmaWxlbmFtZSI6InNpbmlmX2xpc3Rlc2lfMjAyNi0xMC0wMy54bHN4Iiwicm93cyI6Nn0="
+                    },
+                    {
+                      "name": "export-validation",
+                      "contentType": "application/json",
+                      "body": "eyJmaWxlbmFtZSI6IlRlYWNoZXIgQXVkaXQgN0Etb2dyZW5jaS1saXN0ZXNpLnhsc3giLCJyb3dzIjo3fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1ff1d1927a0faf0185ad-d9dceedb6185eb4027ff",
+          "file": "teacher-people-results-audit.spec.ts",
+          "line": 93,
+          "column": 5
+        },
+        {
+          "title": "foreign class student result and analytics requests are denied",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10699,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:36:43.456Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1ff1d1927a0faf0185ad-3911f4b20441cae144b6",
+          "file": "teacher-people-results-audit.spec.ts",
+          "line": 116,
+          "column": 5
+        },
+        {
+          "title": "results filters reports keyboard tabs and export preserve zero score",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6174,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:36:54.230Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "export-validation",
+                      "contentType": "application/json",
+                      "body": "eyJmaWxlbmFtZSI6InNpbmF2X3NvbnVjbGFyaV8wM18xMF8yMDI2Lnhsc3giLCJyb3dzIjoxMH0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1ff1d1927a0faf0185ad-408e383927dc9045c875",
+          "file": "teacher-people-results-audit.spec.ts",
+          "line": 130,
+          "column": 5
+        },
+        {
+          "title": "student report score filters empty reset and individual answer details",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12424,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:37:00.489Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "export-validation",
+                      "contentType": "application/json",
+                      "body": "eyJmaWxlbmFtZSI6IlRlYWNoZXIgQXVkaXQgU3R1ZGVudCAwMC1zaW5hdi1zb251Y2xhcmkueGxzeCIsInJvd3MiOjd9"
+                    },
+                    {
+                      "name": "export-validation",
+                      "contentType": "application/json",
+                      "body": "eyJmaWxlbmFtZSI6IlRlYWNoZXIgQXVkaXQgRXhhbS54bHN4Iiwicm93cyI6OH0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1ff1d1927a0faf0185ad-bea4867c9c9e3e427e07",
+          "file": "teacher-people-results-audit.spec.ts",
+          "line": 151,
+          "column": 5
+        },
+        {
+          "title": "statistics class filter matches API participation average and export",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3687,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:37:12.955Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "export-validation",
+                      "contentType": "application/json",
+                      "body": "eyJmaWxlbmFtZSI6InNpbmlmX2lzdGF0aXN0aWtsZXJpXzIwMjYtMDktMDNfMjAyNi0xMC0wMy54bHN4Iiwicm93cyI6N30="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1ff1d1927a0faf0185ad-9c0fe90644fe3eb66f90",
+          "file": "teacher-people-results-audit.spec.ts",
+          "line": 180,
+          "column": 5
+        },
+        {
+          "title": "survey results filters show real response and export owned survey only",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 2717,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Teacher audit response', { exact: true })\nExpected: visible\nError: strict mode violation: getByText('Teacher audit response', { exact: true }) resolved to 2 elements:\n    1) <span class=\"break-words font-medium\">Teacher audit response</span> aka locator('#root').getByText('Teacher audit response')\n    2) <span aria-hidden=\"true\" id=\"recharts_measurement_span\">Teacher audit response</span> aka locator('#recharts_measurement_span')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Teacher audit response', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Teacher audit response', { exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Teacher audit response', { exact: true })\nExpected: visible\nError: strict mode violation: getByText('Teacher audit response', { exact: true }) resolved to 2 elements:\n    1) <span class=\"break-words font-medium\">Teacher audit response</span> aka locator('#root').getByText('Teacher audit response')\n    2) <span aria-hidden=\"true\" id=\"recharts_measurement_span\">Teacher audit response</span> aka locator('#recharts_measurement_span')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Teacher audit response', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Teacher audit response', { exact: true })\u001b[22m\n\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-people-results-audit.spec.ts:200:75",
+                    "location": {
+                      "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-people-results-audit.spec.ts",
+                      "column": 75,
+                      "line": 200
+                    },
+                    "snippet": "  198 | test('survey results filters show real response and export owned survey only', async ({ page }, info) => {\n  199 |   await page.goto('/survey-results');\n> 200 |   await expect(page.getByText('Teacher audit response', { exact: true })).toBeVisible();\n      |                                                                           ^\n  201 |   await choose(page, '#survey-results-survey', 'Teacher Audit Survey');\n  202 |   const rows = (await exportedRows(page, info)).flat();\n  203 |   expect(rows).toContain('Teacher Audit Survey');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-people-results-audit.spec.ts",
+                        "column": 75,
+                        "line": 200
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Teacher audit response', { exact: true })\nExpected: visible\nError: strict mode violation: getByText('Teacher audit response', { exact: true }) resolved to 2 elements:\n    1) <span class=\"break-words font-medium\">Teacher audit response</span> aka locator('#root').getByText('Teacher audit response')\n    2) <span aria-hidden=\"true\" id=\"recharts_measurement_span\">Teacher audit response</span> aka locator('#recharts_measurement_span')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Teacher audit response', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Teacher audit response', { exact: true })\u001b[22m\n\n\n  198 | test('survey results filters show real response and export owned survey only', async ({ page }, info) => {\n  199 |   await page.goto('/survey-results');\n> 200 |   await expect(page.getByText('Teacher audit response', { exact: true })).toBeVisible();\n      |                                                                           ^\n  201 |   await choose(page, '#survey-results-survey', 'Teacher Audit Survey');\n  202 |   const rows = (await exportedRows(page, info)).flat();\n  203 |   expect(rows).toContain('Teacher Audit Survey');\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-people-results-audit.spec.ts:200:75"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:37:16.689Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-people-results-aud-47757-nd-export-owned-survey-only/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-people-results-aud-47757-nd-export-owned-survey-only/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-people-results-audit.spec.ts",
+                    "column": 75,
+                    "line": 200
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "1ff1d1927a0faf0185ad-f4ad00d5b1d4296835d9",
+          "file": "teacher-people-results-audit.spec.ts",
+          "line": 198,
+          "column": 5
+        },
+        {
+          "title": "students delayed real response loading and retry after injected error",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6259,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:37:20.790Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1ff1d1927a0faf0185ad-2e1d0fe0e2fe97608063",
+          "file": "teacher-people-results-audit.spec.ts",
+          "line": 214,
+          "column": 5
+        },
+        {
+          "title": "statistics injected error is visible then real retry restores report",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2914,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:37:27.345Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1ff1d1927a0faf0185ad-15de5f020825215a39e4",
+          "file": "teacher-people-results-audit.spec.ts",
+          "line": 231,
+          "column": 5
+        },
+        {
+          "title": "survey injected error is explicit and real retry restores answers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3618,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:37:30.293Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1ff1d1927a0faf0185ad-436a7d37acefd4f54f86",
+          "file": "teacher-people-results-audit.spec.ts",
+          "line": 242,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "teacher-quizzes-audit.spec.ts",
+      "file": "teacher-quizzes-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Teacher audit: quizzes and survey creation",
+          "file": "teacher-quizzes-audit.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "new exam navigation and invalid title do not persist content",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3435,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:37:34.023Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fe1bd1bdcc828f7e3d4e-8e2e03cd270a9bcdf674",
+              "file": "teacher-quizzes-audit.spec.ts",
+              "line": 50,
+              "column": 7
+            },
+            {
+              "title": "create draft, edit metadata and rules, reload persistence",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9950,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:37:37.531Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fe1bd1bdcc828f7e3d4e-6080723b89360678f927",
+              "file": "teacher-quizzes-audit.spec.ts",
+              "line": 66,
+              "column": 7
+            },
+            {
+              "title": "duplicate options block save and question/option controls preserve valid answer",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4752,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:37:47.528Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fe1bd1bdcc828f7e3d4e-8b21e4089f7436429605",
+              "file": "teacher-quizzes-audit.spec.ts",
+              "line": 104,
+              "column": 7
+            },
+            {
+              "title": "publish exam and return it to draft using the editor",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6180,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:37:52.313Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fe1bd1bdcc828f7e3d4e-3f56d605c7351a13c823",
+              "file": "teacher-quizzes-audit.spec.ts",
+              "line": 132,
+              "column": 7
+            },
+            {
+              "title": "delete requires reason, cancellation retains exam, confirmation removes it",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4933,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:37:58.560Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fe1bd1bdcc828f7e3d4e-b4bd9447b0dd6488d71a",
+              "file": "teacher-quizzes-audit.spec.ts",
+              "line": 151,
+              "column": 7
+            },
+            {
+              "title": "list pagination, description search, empty state and filters",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6036,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:38:03.537Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fe1bd1bdcc828f7e3d4e-cd8dec16562f2a5473e6",
+              "file": "teacher-quizzes-audit.spec.ts",
+              "line": 173,
+              "column": 7
+            },
+            {
+              "title": "foreign teacher exam stays inaccessible through API and direct editor URL",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3460,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:38:09.609Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fe1bd1bdcc828f7e3d4e-68e0035d1b1d242bde2e",
+              "file": "teacher-quizzes-audit.spec.ts",
+              "line": 207,
+              "column": 7
+            },
+            {
+              "title": "survey create tab saves real open-text and rating questions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8311,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:38:13.134Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fe1bd1bdcc828f7e3d4e-e5790c371e2818e75284",
+              "file": "teacher-quizzes-audit.spec.ts",
+              "line": 227,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "teacher-routes-audit.spec.ts",
+      "file": "teacher-routes-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "teacher desktop route /",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4627,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:38:21.501Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-2094b903a5a43b8b63f5",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher desktop route /quizzes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4029,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:38:26.154Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-c0bc78c5635278ac689a",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher desktop route /create-quiz",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5224,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:38:30.222Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-4ce15c9445efdb5b1ea7",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher desktop route /quizzes/teacher-audit-draft",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5781,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:38:35.474Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-37a182429c3cddf28c4d",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher desktop route /results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6968,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:38:41.295Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-edb386d57b2a54b8bde7",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher desktop route /statistics",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4812,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:38:48.302Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-3f209d2db89537699989",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher desktop route /survey-results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8769,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:38:53.157Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-dcb28964d470503ccf63",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher desktop route /students",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4762,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:39:01.967Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-21baa5c57133d459c05f",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher desktop route /classlist",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4802,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:39:06.767Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-a4649c0b61aef95eae27",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher desktop route /classes/11111111-1111-4111-8111-111111111111",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4139,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:39:11.670Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-8b96d44458e4d0c7ad63",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher desktop route /settings",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7782,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:39:15.866Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-79001cf87dacaf367d8c",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher desktop route /announcements",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8320,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:39:23.697Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-5f29ee8e458ae0832ca7",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher desktop route /student/results?studentId=teacher-audit-student",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5268,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:39:32.092Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-cdf31ea20884efca8906",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher desktop route /student/results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4018,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:39:37.390Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-d5bafc0c698e56ad720a",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher desktop route /student/result/teacher-audit-result",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3743,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:39:41.438Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-76402beb444c56208999",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher desktop route /student/quiz/teacher-audit-exam",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4563,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:39:45.215Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-abe25a10096dea4203aa",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher desktop route /student-quizzes/teacher-audit-exam",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4193,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:39:49.811Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-804e4a28b52b6f1d5293",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher mobile route /",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6349,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:39:54.046Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-4f4901bc2bb656e2d7a2",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher mobile route /quizzes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5133,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:40:00.442Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-9bc50de6ac7ea5590e80",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher mobile route /create-quiz",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4517,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:40:05.608Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-a0eb3ca3b520e59059be",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher mobile route /quizzes/teacher-audit-draft",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7076,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:40:10.170Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-ca83c94210f7617ae66e",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher mobile route /results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9929,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:40:17.288Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-060c861512387587636e",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher mobile route /statistics",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4707,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:40:27.252Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-bcdfe08aa29e70bc0390",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher mobile route /survey-results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6484,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:40:31.997Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-83131f22f16e7707a139",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher mobile route /students",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5020,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:40:38.533Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-a1f405d94fa2177045d7",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher mobile route /classlist",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3714,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:40:43.602Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-b182a43675af0fb5995b",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher mobile route /classes/11111111-1111-4111-8111-111111111111",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4858,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:40:47.353Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-f55b5dd5a8b7378d9320",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher mobile route /settings",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7271,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:40:52.277Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-c5f5305ca12786644f50",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher mobile route /announcements",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3790,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:40:59.609Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-92c311cf262e960f907b",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher mobile route /student/results?studentId=teacher-audit-student",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4688,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:41:03.435Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-807a9e5daf4d7b8d0784",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher mobile route /student/results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4540,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:41:08.163Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-fcf624c56e4e41c7069a",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher mobile route /student/result/teacher-audit-result",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4139,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:41:12.742Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-afff96d98ece65cb6868",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher mobile route /student/quiz/teacher-audit-exam",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4282,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:41:16.922Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-58365294ef851dd7ffb8",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher mobile route /student-quizzes/teacher-audit-exam",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3769,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:41:21.291Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-15f3e93446c2db94cf76",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 11,
+          "column": 7
+        },
+        {
+          "title": "teacher real UI login and logout",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4985,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:41:25.102Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-bd3a63135eb514cc9abd",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "teacher admin/student/parent routes reject and admin API denies",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 35197,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:41:30.138Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-c8a717fb50e25b8b521c",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 74,
+          "column": 5
+        },
+        {
+          "title": "teacher cleared session redirects protected destination and anonymous API denies",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3631,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:42:05.394Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-0f8c98c2f1fd04fed963",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 82,
+          "column": 5
+        },
+        {
+          "title": "teacher settings profile save survives navigation and reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5579,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:42:09.066Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-1feda014d457c1dfd40f",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 88,
+          "column": 5
+        },
+        {
+          "title": "teacher preview does not submit or change student results",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 222,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-routes-audit.spec.ts:99:112",
+                    "location": {
+                      "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-routes-audit.spec.ts",
+                      "column": 112,
+                      "line": 99
+                    },
+                    "snippet": "   97 | });\n   98 | test('teacher preview does not submit or change student results', async ({ page }) => {\n>  99 |   await login(page); const before = await api(page, '/results/quiz/teacher-audit-exam'); expect(before.status).toBe(200);\n      |                                                                                                                ^\n  100 |   await page.goto('/student/quiz/teacher-audit-exam');\n  101 |   await expect(page.getByRole('button', { name: 'Önizlemeyi Bitir', exact: true })).toBeVisible();\n  102 |   await page.getByRole('button', { name: 'Önizlemeyi Bitir', exact: true }).click();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-routes-audit.spec.ts",
+                        "column": 112,
+                        "line": 99
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n\n   97 | });\n   98 | test('teacher preview does not submit or change student results', async ({ page }) => {\n>  99 |   await login(page); const before = await api(page, '/results/quiz/teacher-audit-exam'); expect(before.status).toBe(200);\n      |                                                                                                                ^\n  100 |   await page.goto('/student/quiz/teacher-audit-exam');\n  101 |   await expect(page.getByRole('button', { name: 'Önizlemeyi Bitir', exact: true })).toBeVisible();\n  102 |   await page.getByRole('button', { name: 'Önizlemeyi Bitir', exact: true }).click();\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-routes-audit.spec.ts:99:112"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T16:42:14.675Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-routes-audit-teach-6f2d5-t-or-change-student-results/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-routes-audit-teach-6f2d5-t-or-change-student-results/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-routes-audit.spec.ts",
+                    "column": 112,
+                    "line": 99
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-e6a4d85cf822bd83d73f",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 98,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "teacher-shared-audit.spec.ts",
+      "file": "teacher-shared-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Teacher audit: shared functions",
+          "file": "teacher-shared-audit.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "notification preferences persist across reload and bell/settings agree",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 691,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:14:27",
+                        "location": {
+                          "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                          "column": 27,
+                          "line": 14
+                        },
+                        "snippet": "  12 |   test('notification preferences persist across reload and bell/settings agree', async ({ page }) => {\n  13 |     const before = await api(page, '/notifications/preferences');\n> 14 |     expect(before.status).toBe(200);\n     |                           ^\n  15 |     try {\n  16 |       await page.goto('/settings?tab=notifications');\n  17 |       const sound = page.getByRole('switch', { name: 'Bildirim sesini aç veya kapat', exact: true });"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                            "column": 27,
+                            "line": 14
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n\n  12 |   test('notification preferences persist across reload and bell/settings agree', async ({ page }) => {\n  13 |     const before = await api(page, '/notifications/preferences');\n> 14 |     expect(before.status).toBe(200);\n     |                           ^\n  15 |     try {\n  16 |       await page.goto('/settings?tab=notifications');\n  17 |       const sound = page.getByRole('switch', { name: 'Bildirim sesini aç veya kapat', exact: true });\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:14:27"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:42:15.910Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-e514d-oad-and-bell-settings-agree/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-e514d-oad-and-bell-settings-agree/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                        "column": 27,
+                        "line": 14
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "91672f998a6a1418a129-a7a12138f125c1818ec6",
+              "file": "teacher-shared-audit.spec.ts",
+              "line": 12,
+              "column": 7
+            },
+            {
+              "title": "notification pagination, mark-read and delete synchronize bell and settings",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 599,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:35:25",
+                        "location": {
+                          "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                          "column": 25,
+                          "line": 35
+                        },
+                        "snippet": "  33 |   test('notification pagination, mark-read and delete synchronize bell and settings', async ({ page }) => {\n  34 |     const list = await api(page, '/notifications?limit=100');\n> 35 |     expect(list.status).toBe(200);\n     |                         ^\n  36 |     expect(list.body.pagination.total).toBeGreaterThan(20);\n  37 |     const owned = list.body.notifications;\n  38 |     expect(owned.every((n: any) => n.userId === 'teacher-audit-teacher')).toBe(true);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                            "column": 25,
+                            "line": 35
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n\n  33 |   test('notification pagination, mark-read and delete synchronize bell and settings', async ({ page }) => {\n  34 |     const list = await api(page, '/notifications?limit=100');\n> 35 |     expect(list.status).toBe(200);\n     |                         ^\n  36 |     expect(list.body.pagination.total).toBeGreaterThan(20);\n  37 |     const owned = list.body.notifications;\n  38 |     expect(owned.every((n: any) => n.userId === 'teacher-audit-teacher')).toBe(true);\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:35:25"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:42:17.998Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-b38a9-nchronize-bell-and-settings/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-b38a9-nchronize-bell-and-settings/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                        "column": 25,
+                        "line": 35
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "91672f998a6a1418a129-360ad17c6f0ac146b9f1",
+              "file": "teacher-shared-audit.spec.ts",
+              "line": 33,
+              "column": 7
+            },
+            {
+              "title": "foreign notification deletion is denied without altering foreign list",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1033,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m429\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:70:74",
+                        "location": {
+                          "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                          "column": 74,
+                          "line": 70
+                        },
+                        "snippet": "  68 |       expect(before.body.notifications.length).toBeGreaterThan(0);\n  69 |       const id = before.body.notifications[0].id;\n> 70 |       expect((await api(page, `/notifications/${id}`, 'DELETE')).status).toBe(404);\n     |                                                                          ^\n  71 |       expect((await api(other, '/notifications?limit=100')).body.notifications.some((n: any) => n.id === id)).toBe(true);\n  72 |     } finally { await context.close(); }\n  73 |   });"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                            "column": 74,
+                            "line": 70
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n\n  68 |       expect(before.body.notifications.length).toBeGreaterThan(0);\n  69 |       const id = before.body.notifications[0].id;\n> 70 |       expect((await api(page, `/notifications/${id}`, 'DELETE')).status).toBe(404);\n     |                                                                          ^\n  71 |       expect((await api(other, '/notifications?limit=100')).body.notifications.some((n: any) => n.id === id)).toBe(true);\n  72 |     } finally { await context.close(); }\n  73 |   });\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:70:74"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:42:19.769Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-96f78-thout-altering-foreign-list/test-failed-1.png"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-96f78-thout-altering-foreign-list/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-96f78-thout-altering-foreign-list/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                        "column": 74,
+                        "line": 70
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "91672f998a6a1418a129-7a82990e5e7eca54d106",
+              "file": "teacher-shared-audit.spec.ts",
+              "line": 61,
+              "column": 7
+            },
+            {
+              "title": "own operation history paginates and excludes other teacher history",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 702,
+                      "error": {
+                        "message": "Error: {\"message\":\"Too many requests, please try again later.\"}\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m",
+                        "stack": "Error: {\"message\":\"Too many requests, please try again later.\"}\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:77:60",
+                        "location": {
+                          "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                          "column": 60,
+                          "line": 77
+                        },
+                        "snippet": "  75 |   test('own operation history paginates and excludes other teacher history', async ({ page }) => {\n  76 |     const response = await api(page, '/admin/logs/me?page=1&limit=50');\n> 77 |     expect(response.status, JSON.stringify(response.body)).toBe(200);\n     |                                                            ^\n  78 |     expect(response.body.pagination.total).toBeGreaterThan(50);\n  79 |     expect(response.body.logs.every((log: any) => log.userId === 'teacher-audit-teacher')).toBe(true);\n  80 |     await page.goto('/settings?tab=logs');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                            "column": 60,
+                            "line": 77
+                          },
+                          "message": "Error: {\"message\":\"Too many requests, please try again later.\"}\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n\n  75 |   test('own operation history paginates and excludes other teacher history', async ({ page }) => {\n  76 |     const response = await api(page, '/admin/logs/me?page=1&limit=50');\n> 77 |     expect(response.status, JSON.stringify(response.body)).toBe(200);\n     |                                                            ^\n  78 |     expect(response.body.pagination.total).toBeGreaterThan(50);\n  79 |     expect(response.body.logs.every((log: any) => log.userId === 'teacher-audit-teacher')).toBe(true);\n  80 |     await page.goto('/settings?tab=logs');\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:77:60"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:42:21.977Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-17032-ludes-other-teacher-history/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-17032-ludes-other-teacher-history/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                        "column": 60,
+                        "line": 77
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "91672f998a6a1418a129-4f677f89c4ea755ec831",
+              "file": "teacher-shared-audit.spec.ts",
+              "line": 75,
+              "column": 7
+            },
+            {
+              "title": "security form rejects mismatch and wrong current password",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 17181,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeDisabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Şifreyi Güncelle', exact: true })\nExpected: disabled\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeDisabled\" getByRole('button', { name: 'Şifreyi Güncelle', exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Şifreyi Güncelle', exact: true })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeDisabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Şifreyi Güncelle', exact: true })\nExpected: disabled\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeDisabled\" getByRole('button', { name: 'Şifreyi Güncelle', exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Şifreyi Güncelle', exact: true })\u001b[22m\n\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:95:87",
+                        "location": {
+                          "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                          "column": 87,
+                          "line": 95
+                        },
+                        "snippet": "  93 |   test('security form rejects mismatch and wrong current password', async ({ page }) => {\n  94 |     await page.goto('/settings?tab=security');\n> 95 |     await expect(page.getByRole('button', { name: 'Şifreyi Güncelle', exact: true })).toBeDisabled();\n     |                                                                                       ^\n  96 |     await page.getByLabel('Mevcut Şifre', { exact: true }).fill('[redacted]');\n  97 |     await page.getByLabel('Yeni Şifre', { exact: true }).fill('[redacted]');\n  98 |     await page.getByLabel('Yeni Şifre (Tekrar)', { exact: true }).fill('[redacted]');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                            "column": 87,
+                            "line": 95
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeDisabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Şifreyi Güncelle', exact: true })\nExpected: disabled\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeDisabled\" getByRole('button', { name: 'Şifreyi Güncelle', exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Şifreyi Güncelle', exact: true })\u001b[22m\n\n\n  93 |   test('security form rejects mismatch and wrong current password', async ({ page }) => {\n  94 |     await page.goto('/settings?tab=security');\n> 95 |     await expect(page.getByRole('button', { name: 'Şifreyi Güncelle', exact: true })).toBeDisabled();\n     |                                                                                       ^\n  96 |     await page.getByLabel('Mevcut Şifre', { exact: true }).fill('[redacted]');\n  97 |     await page.getByLabel('Yeni Şifre', { exact: true }).fill('[redacted]');\n  98 |     await page.getByLabel('Yeni Şifre (Tekrar)', { exact: true }).fill('[redacted]');\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:95:87"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:42:23.842Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-ea29a--and-wrong-current-password/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-ea29a--and-wrong-current-password/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                        "column": 87,
+                        "line": 95
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "91672f998a6a1418a129-cd6959d7a81f7d77e816",
+              "file": "teacher-shared-audit.spec.ts",
+              "line": 93,
+              "column": 7
+            },
+            {
+              "title": "password change regenerates own session, permits new login and restores password",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 90302,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                            "column": 62,
+                            "line": 116
+                          },
+                          "message": "Error: locator.fill: Test timeout of 90000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Mevcut Şifre', { exact: true })\u001b[22m\n\n\n  114 |     try {\n  115 |       await page.goto('/settings?tab=security');\n> 116 |       await page.getByLabel('Mevcut Şifre', { exact: true }).fill(original);\n      |                                                              ^\n  117 |       await page.getByLabel('Yeni Şifre', { exact: true }).fill(temporary);\n  118 |       await page.getByLabel('Yeni Şifre (Tekrar)', { exact: true }).fill(temporary);\n  119 |       const pending = page.waitForResponse(r => new URL(r.url()).pathname === '/api/auth/change-password' && r.request().method() === 'POST');\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:116:62"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:42:42.603Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-48d87-login-and-restores-password/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-48d87-login-and-restores-password/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "91672f998a6a1418a129-111c867316af2f772274",
+              "file": "teacher-shared-audit.spec.ts",
+              "line": 109,
+              "column": 7
+            },
+            {
+              "title": "teacher announcement GUI requires own class and teacher cannot delete",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 90282,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                            "column": 76,
+                            "line": 146
+                          },
+                          "message": "Error: locator.click: Test timeout of 90000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Yeni Duyuru', exact: true })\u001b[22m\n\n\n  144 |     try {\n  145 |       await page.goto('/announcements');\n> 146 |       await page.getByRole('button', { name: 'Yeni Duyuru', exact: true }).click();\n      |                                                                            ^\n  147 |       const dialog = page.getByRole('dialog');\n  148 |       await expect(dialog.getByRole('button', { name: 'Duyuruyu Yayınla', exact: true })).toBeDisabled();\n  149 |       await dialog.getByPlaceholder('ÖRN: SINAV TAKVİMİ GÜNCELLEMESİ').fill(title);\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:146:76"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:44:14.266Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-5b785-s-and-teacher-cannot-delete/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-5b785-s-and-teacher-cannot-delete/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "91672f998a6a1418a129-6de8c5aafb8f2adf8740",
+              "file": "teacher-shared-audit.spec.ts",
+              "line": 141,
+              "column": 7
+            },
+            {
+              "title": "mobile menu traps focus, closes with Escape/backdrop and follows links",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 90273,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                            "column": 19,
+                            "line": 189
+                          },
+                          "message": "Error: locator.click: Test timeout of 90000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Menüyü aç', exact: true })\u001b[22m\n\n\n  187 |     await page.goto('/quizzes');\n  188 |     const trigger = page.getByRole('button', { name: 'Menüyü aç', exact: true });\n> 189 |     await trigger.click();\n      |                   ^\n  190 |     const dialog = page.getByRole('dialog', { name: 'Ana menü', exact: true });\n  191 |     await expect(dialog).toBeVisible();\n  192 |     await expect(dialog.getByRole('button', { name: 'Menüyü kapat', exact: true })).toBeFocused();\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:189:19"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:45:45.915Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-07db5--backdrop-and-follows-links/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-07db5--backdrop-and-follows-links/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "91672f998a6a1418a129-7c4441e2357919852627",
+              "file": "teacher-shared-audit.spec.ts",
+              "line": 185,
+              "column": 7
+            },
+            {
+              "title": "theme toggles and persists across reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4753,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:47:17.312Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "91672f998a6a1418a129-3d1970b08e142172e561",
+              "file": "teacher-shared-audit.spec.ts",
+              "line": 211,
+              "column": 7
+            },
+            {
+              "title": "question bank API creates, lists and deletes only this teacher item",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 241,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m429\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:231:30",
+                        "location": {
+                          "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                          "column": 30,
+                          "line": 231
+                        },
+                        "snippet": "  229 |     try {\n  230 |       const invalid = await api(page, '/question-bank', 'POST', { text: '', options: [] });\n> 231 |       expect(invalid.status).toBe(400);\n      |                              ^\n  232 |       const created = await api(page, '/question-bank', 'POST', { text, options: ['One', 'Two'], correctAnswer: 'Two', categoryId: teacherAuditIds.category });\n  233 |       id = created.body.question?.id;\n  234 |       expect(created.status, JSON.stringify(created.body)).toBe(201);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                            "column": 30,
+                            "line": 231
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n\n  229 |     try {\n  230 |       const invalid = await api(page, '/question-bank', 'POST', { text: '', options: [] });\n> 231 |       expect(invalid.status).toBe(400);\n      |                              ^\n  232 |       const created = await api(page, '/question-bank', 'POST', { text, options: ['One', 'Two'], correctAnswer: 'Two', categoryId: teacherAuditIds.category });\n  233 |       id = created.body.question?.id;\n  234 |       expect(created.status, JSON.stringify(created.body)).toBe(201);\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:231:30"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:47:22.342Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-39687-etes-only-this-teacher-item/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-39687-etes-only-this-teacher-item/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                        "column": 30,
+                        "line": 231
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "91672f998a6a1418a129-bbc1b2d31f1d140a480a",
+              "file": "teacher-shared-audit.spec.ts",
+              "line": 226,
+              "column": 7
+            },
+            {
+              "title": "image upload API rejects invalid type and over 5MB without creating an asset",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 611,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m429\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:255:33",
+                        "location": {
+                          "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                          "column": 33,
+                          "line": 255
+                        },
+                        "snippet": "  253 |       const csrf = await (await page.request.get('/api/csrf-token')).json();\n  254 |       const response = await page.request.post('/api/upload', { headers: { 'x-csrf-token': [redacted]\n> 255 |       expect(response.status()).toBe(400);\n      |                                 ^\n  256 |       const body = await response.json();\n  257 |       expect(body.message).toBe(fixture.message);\n  258 |       expect(body.imageUrl).toBeUndefined();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                            "column": 33,
+                            "line": 255
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m429\u001b[39m\n\n  253 |       const csrf = await (await page.request.get('/api/csrf-token')).json();\n  254 |       const response = await page.request.post('/api/upload', { headers: { 'x-csrf-token': [redacted]\n> 255 |       expect(response.status()).toBe(400);\n      |                                 ^\n  256 |       const body = await response.json();\n  257 |       expect(body.message).toBe(fixture.message);\n  258 |       expect(body.imageUrl).toBeUndefined();\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:255:33"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:47:23.560Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-d2e0c-B-without-creating-an-asset/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-d2e0c-B-without-creating-an-asset/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                        "column": 33,
+                        "line": 255
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "91672f998a6a1418a129-2dd114b3079e2515272b",
+              "file": "teacher-shared-audit.spec.ts",
+              "line": 248,
+              "column": 7
+            },
+            {
+              "title": "AI dialog requires a topic and custom provider without key fails locally",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 90504,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts",
+                            "column": 83,
+                            "line": 264
+                          },
+                          "message": "Error: locator.click: Test timeout of 90000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'AI ile Soruları Üret', exact: true })\u001b[22m\n\n\n  262 |   test('AI dialog requires a topic and custom provider without key fails locally', async ({ page }) => {\n  263 |     await page.goto('/create-quiz');\n> 264 |     await page.getByRole('button', { name: 'AI ile Soruları Üret', exact: true }).click();\n      |                                                                                   ^\n  265 |     await expect(page.getByRole('dialog')).toBeVisible();\n  266 |     await expect(page.getByRole('button', { name: 'Sınav Sorularını Üret', exact: true })).toBeDisabled();\n  267 |     await page.getByRole('button', { name: 'İptal', exact: true }).click();\n    at /home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e/teacher-shared-audit.spec.ts:264:83"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:47:25.321Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-263f0-r-without-key-fails-locally/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest/teacher-shared-audit-Teach-263f0-r-without-key-fails-locally/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "91672f998a6a1418a129-81e7c62acc0cedf090f7",
+              "file": "teacher-shared-audit.spec.ts",
+              "line": 262,
+              "column": 7
+            },
+            {
+              "title": "expired own server session retains cookie, rejects API and redirects teacher",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6280,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-03T16:48:57.781Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "91672f998a6a1418a129-aee44cf6e765ef968578",
+              "file": "teacher-shared-audit.spec.ts",
+              "line": 278,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-03T16:36:14.641Z",
+    "duration": 770202.3219999999,
+    "expected": 57,
+    "skipped": 0,
+    "unexpected": 13,
+    "flaky": 0
+  }
+}

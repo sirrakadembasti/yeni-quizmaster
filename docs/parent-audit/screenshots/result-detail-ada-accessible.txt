@@ -1,0 +1,13 @@
+- main:
+  - button "Bildirimleri aç": "23"
+  - button "Karanlık Moda Geç"
+  - button "P Parent Audit Guardian Veli"
+  - heading "Sınav Sonuçları" [level=1]
+  - paragraph: Bağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.
+  - combobox "Öğrenci seçin": Ada Audit Child · Parent Audit 7A
+  - button "Sonuç listesine dön"
+  - text: "Parent Audit Completed Exam Puan: %0 Doğru: 0/2 1. Audit question 1?"
+  - paragraph: "Yanıt durumu: Yanlış"
+  - text: "Öğrencinin cevabı: B Doğru cevap: A 2. Audit question 2?"
+  - paragraph: "Yanıt durumu: Yanlış"
+  - text: "Öğrencinin cevabı: B Doğru cevap: A"

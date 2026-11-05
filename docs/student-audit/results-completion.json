@@ -1,0 +1,738 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\.pnpm\\playwright@1.63.0\\node_modules\\playwright\\cli.js",
+      "test",
+      "-c",
+      "playwright.student-audit.config.ts",
+      "student-navigation-audit.spec.ts",
+      "student-surveys-shared-audit.spec.ts",
+      "student-question-types-audit.spec.ts"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.student-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/student-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "student-*-audit.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/student-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "student-navigation-audit.spec.ts",
+      "file": "student-navigation-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "S-N01 group 1: loaded student routes, aliases, reload, mobile and console",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 59534,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T06:24:15.512Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-7d71f453c7742dca8ce2",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 8,
+          "column": 5
+        },
+        {
+          "title": "S-N01 group 2: loaded student routes, aliases, reload, mobile and console",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 68817,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T06:25:16.537Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-7f17da42533035895425",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 8,
+          "column": 5
+        },
+        {
+          "title": "S-N02 anonymous protected route and server endpoints reject access",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11368,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T06:26:25.389Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-cfeaffec61b3eb1bb98d",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 37,
+          "column": 5
+        },
+        {
+          "title": "S-N03 quiz search and result export/print use real student records",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 21638,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T06:26:36.786Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-34777e65ede7ac9bf564",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 50,
+          "column": 5
+        },
+        {
+          "title": "S-N04 missing quiz back navigation stays in authorized student panel",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 21249,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/student\\/quizzes$/\u001b[39m\nReceived string:  \u001b[31m\"http://127.0.0.1:5541/\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    33 × locator resolved to <html lang=\"en\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"http://127.0.0.1:5541/\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/student\\/quizzes$/\u001b[39m\nReceived string:  \u001b[31m\"http://127.0.0.1:5541/\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    33 × locator resolved to <html lang=\"en\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"http://127.0.0.1:5541/\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-audit.spec.ts:82:22",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-audit.spec.ts",
+                      "column": 22,
+                      "line": 82
+                    },
+                    "snippet": "  80 |   await page.goto('/student/quiz/does-not-exist');\n  81 |   await page.getByRole('button', {name:/Geri|Dön/}).first().click();\n> 82 |   await expect(page).toHaveURL(/\\/student\\/quizzes$/);\n     |                      ^\n  83 | });\n  84 |\n  85 | test('S-N05 stats display category names from real relation objects', async ({page}) => {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-audit.spec.ts",
+                        "column": 22,
+                        "line": 82
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/student\\/quizzes$/\u001b[39m\nReceived string:  \u001b[31m\"http://127.0.0.1:5541/\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    33 × locator resolved to <html lang=\"en\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"http://127.0.0.1:5541/\"\u001b[22m\n\n\n  80 |   await page.goto('/student/quiz/does-not-exist');\n  81 |   await page.getByRole('button', {name:/Geri|Dön/}).first().click();\n> 82 |   await expect(page).toHaveURL(/\\/student\\/quizzes$/);\n     |                      ^\n  83 | });\n  84 |\n  85 | test('S-N05 stats display category names from real relation objects', async ({page}) => {\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-audit.spec.ts:82:22"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T06:26:58.456Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-audit-S-1a561-in-authorized-student-panel\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-audit-S-1a561-in-authorized-student-panel\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-audit.spec.ts",
+                    "column": 22,
+                    "line": 82
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-b29250562dc94a218b98",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 78,
+          "column": 5
+        },
+        {
+          "title": "S-N05 stats display category names from real relation objects",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8173,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T06:27:21.934Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-4077d6349da7c75a8df0",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 85,
+          "column": 5
+        },
+        {
+          "title": "S-N06 empty student and controlled survey failure observation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9838,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T06:27:30.976Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-0fccb7fc371a27c6c9b7",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 92,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "student-question-types-audit.spec.ts",
+      "file": "student-question-types-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Student storage/API question types and real image audit",
+          "file": "student-question-types-audit.spec.ts",
+          "line": 65,
+          "column": 6,
+          "specs": [
+            {
+              "title": "true-false choices render, save and grade different correct values",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11368,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T06:27:40.867Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "428713d66afe13c8cab4-5bad3448c76f798499c8",
+              "file": "student-question-types-audit.spec.ts",
+              "line": 66,
+              "column": 7
+            },
+            {
+              "title": "short-answer question offers a usable text input and persists its exact answer",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 22108,
+                      "error": {
+                        "message": "Error: A supported short-answer exam question must offer a student text input\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.border-2').filter({ has: getByText('Kısa cevap: Türkiye başkenti nedir?', { exact: true }) }).getByRole('textbox')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - A supported short-answer exam question must offer a student text input locator('.border-2').filter({ has: getByText('Kısa cevap: Türkiye başkenti nedir?', { exact: true }) }).getByRole('textbox') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('.border-2').filter({ has: getByText('Kısa cevap: Türkiye başkenti nedir?', { exact: true }) }).getByRole('textbox')\u001b[22m\n",
+                        "stack": "Error: A supported short-answer exam question must offer a student text input\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.border-2').filter({ has: getByText('Kısa cevap: Türkiye başkenti nedir?', { exact: true }) }).getByRole('textbox')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - A supported short-answer exam question must offer a student text input locator('.border-2').filter({ has: getByText('Kısa cevap: Türkiye başkenti nedir?', { exact: true }) }).getByRole('textbox') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('.border-2').filter({ has: getByText('Kısa cevap: Türkiye başkenti nedir?', { exact: true }) }).getByRole('textbox')\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-question-types-audit.spec.ts:103:101",
+                        "location": {
+                          "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-question-types-audit.spec.ts",
+                          "column": 101,
+                          "line": 103
+                        },
+                        "snippet": "  101 |       const questionCard = page.locator('.border-2').filter({ has: page.getByText(question.text, { exact: true }) });\n  102 |       const input = questionCard.getByRole('textbox');\n> 103 |       await expect(input, 'A supported short-answer exam question must offer a student text input').toBeVisible();\n      |                                                                                                     ^\n  104 |       await expect(input).toBeEditable();\n  105 |       const saved = page.waitForResponse(r => r.url().endsWith(`/student/quiz/${resultId}/answer`) && r.request().method() === 'POST');\n  106 |       await input.fill('Ankara');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-question-types-audit.spec.ts",
+                            "column": 101,
+                            "line": 103
+                          },
+                          "message": "Error: A supported short-answer exam question must offer a student text input\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.border-2').filter({ has: getByText('Kısa cevap: Türkiye başkenti nedir?', { exact: true }) }).getByRole('textbox')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - A supported short-answer exam question must offer a student text input locator('.border-2').filter({ has: getByText('Kısa cevap: Türkiye başkenti nedir?', { exact: true }) }).getByRole('textbox') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('.border-2').filter({ has: getByText('Kısa cevap: Türkiye başkenti nedir?', { exact: true }) }).getByRole('textbox')\u001b[22m\n\n\n  101 |       const questionCard = page.locator('.border-2').filter({ has: page.getByText(question.text, { exact: true }) });\n  102 |       const input = questionCard.getByRole('textbox');\n> 103 |       await expect(input, 'A supported short-answer exam question must offer a student text input').toBeVisible();\n      |                                                                                                     ^\n  104 |       await expect(input).toBeEditable();\n  105 |       const saved = page.waitForResponse(r => r.url().endsWith(`/student/quiz/${resultId}/answer`) && r.request().method() === 'POST');\n  106 |       await input.fill('Ankara');\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-question-types-audit.spec.ts:103:101"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T06:27:52.275Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-question-types-aud-c525f-d-persists-its-exact-answer\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-question-types-aud-c525f-d-persists-its-exact-answer\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-question-types-audit.spec.ts",
+                        "column": 101,
+                        "line": 103
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "428713d66afe13c8cab4-25fd84e200db1cf37edd",
+              "file": "student-question-types-audit.spec.ts",
+              "line": 91,
+              "column": 7
+            },
+            {
+              "title": "real public image loads and shuffled questions retain order and saved answers across reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 24823,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T06:28:16.049Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "428713d66afe13c8cab4-9506a77e32ecf42ee093",
+              "file": "student-question-types-audit.spec.ts",
+              "line": 116,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "student-surveys-shared-audit.spec.ts",
+      "file": "student-surveys-shared-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Student audit: surveys and shared functions",
+          "file": "student-surveys-shared-audit.spec.ts",
+          "line": 15,
+          "column": 6,
+          "specs": [
+            {
+              "title": "all five survey types validate, submit once, persist real answers and remain completed after reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 38415,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T06:28:41.368Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-057be88c12479f4b82a1",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 19,
+              "column": 7
+            },
+            {
+              "title": "foreign student cannot list, view or submit the own-class survey",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13884,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T06:29:19.886Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-864974255370f4bdb3fc",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 109,
+              "column": 7
+            },
+            {
+              "title": "student profile is read-only in GUI and update API rejects changes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11341,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T06:29:33.844Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-0ce209e43b15661e36eb",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 128,
+              "column": 7
+            },
+            {
+              "title": "student security form validates mismatch and incorrect current password without mutation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9869,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T06:29:45.217Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-086aaf2baf34f75c5731",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 143,
+              "column": 7
+            },
+            {
+              "title": "student notification sound preference persists and operation history is private",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16226,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T06:29:55.128Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-782cfc8f4a51b49b6fe0",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 160,
+              "column": 7
+            },
+            {
+              "title": "student announcement target filtering is real and create/delete controls remain forbidden",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13799,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T06:30:11.398Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee60b689b271e41f19ef-fc210aa3da925b04c33a",
+              "file": "student-surveys-shared-audit.spec.ts",
+              "line": 185,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-04T06:24:10.663Z",
+    "duration": 375261.49700000003,
+    "expected": 14,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

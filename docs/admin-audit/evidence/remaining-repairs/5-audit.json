@@ -1,0 +1,28 @@
+{
+  "route": "/survey-results",
+  "labels": [
+    "Sonuçlar",
+    "Anket Oluştur"
+  ],
+  "views": [
+    "Sonuçlar",
+    "Anket Oluştur"
+  ],
+  "errors": [],
+  "network": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 0,
+    "unlabeledInputs": [
+      {
+        "placeholder": null,
+        "type": "date"
+      },
+      {
+        "placeholder": null,
+        "type": "date"
+      }
+    ]
+  }
+}

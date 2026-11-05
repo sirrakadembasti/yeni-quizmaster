@@ -1,0 +1,10 @@
+- main:
+  - button "Bildirimleri aç": "23"
+  - button "Karanlık Moda Geç"
+  - button "P Parent Audit Guardian Veli"
+  - text: Veli Paneli
+  - heading "Öğrenci Takibi" [level=1]
+  - paragraph: Bağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.
+  - alert:
+    - paragraph: Öğrenci listesi getirilemedi. Controlled parent students failure
+    - button "Tekrar dene"

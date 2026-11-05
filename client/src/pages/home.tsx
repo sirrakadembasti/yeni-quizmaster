@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Users, BarChart3, Zap, ArrowRight } from "lucide-react";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { enterDemoNamespace } from "@/lib/demo-mode";
 
 export default function HomePage() {
   const [, setLocation] = useLocation();
@@ -50,6 +51,14 @@ export default function HomePage() {
               className="text-base h-12 px-8 gap-2"
             >
               Başlayın <ArrowRight className="w-5 h-5" />
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => enterDemoNamespace()}
+              className="text-base h-12 px-8 gap-2 border-indigo-200 dark:border-indigo-800"
+            >
+              Canlı Demo Vitrin (4 Rol)
             </Button>
           </div>
         </div>

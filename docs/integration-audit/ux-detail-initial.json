@@ -1,0 +1,171 @@
+{
+  "startedAt": "2026-10-04T12:24:01.091Z",
+  "checks": [
+    {
+      "id": "S-U01",
+      "status": "observed",
+      "before": {
+        "opacity": "0",
+        "name": null,
+        "text": ""
+      },
+      "tabReached": true,
+      "focusedOpacity": "0",
+      "aria": "- button"
+    },
+    {
+      "id": "S-U02",
+      "status": "observed",
+      "aria": "- main:\n  - button \"Menüyü aç\"\n  - button \"Bildirimleri aç\"\n  - button \"Karanlık Moda Geç\"\n  - button \"A\"\n  - heading \"Sınavlarım\" [level=1]\n  - paragraph: Size atanan sınavları buradan görebilir ve çözebilirsiniz.\n  - text: Çözülecek Sınavlar 0\n  - paragraph: Yapılması gereken sınavlar\n  - text: Tamamlanan Sınavlar 0\n  - paragraph: Bitirilen sınavlar\n  - textbox \"Sınav adı veya konu ara...\"\n  - combobox: Tümü\n  - paragraph: Sınavlar yükleniyor...",
+      "statusAria": "- combobox: Tümü"
+    },
+    {
+      "id": "S-U04",
+      "status": "unresolved",
+      "reason": "Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'A', exact: true }) resolved to 2 elements:\n    1) <button type=\"button\" id=\"radix-_r_1_\" data-state=\"closed\" aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-"
+    },
+    {
+      "id": "S-U04-error",
+      "status": "observed",
+      "controlledStatus": 500,
+      "body": "A\nAnket bulunamadı."
+    },
+    {
+      "id": "T-U02-S-U03",
+      "status": "unresolved",
+      "reason": "TimeoutError: locator.click: Timeout 6500ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /A\\) A/ }).first()\u001b[22m\n"
+    },
+    {
+      "id": "T-U01",
+      "status": "unresolved",
+      "reason": "TimeoutError: locator.waitFor: Timeout 6500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('main') to be visible\u001b[22m\n"
+    },
+    {
+      "id": "S-U07",
+      "status": "unresolved",
+      "reason": "TimeoutError: locator.waitFor: Timeout 6500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('main') to be visible\u001b[22m\n"
+    },
+    {
+      "id": "T-U03",
+      "status": "unresolved",
+      "reason": "TimeoutError: locator.waitFor: Timeout 6500ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('Öğrenci Kodu', { exact: true }) to be visible\u001b[22m\n\u001b[2m    3 × locator resolved to hidden <p class=\"text-[9px] uppercase tracking-widest font-black text-muted-foreground\">Öğrenci Kodu</p>\u001b[22m\n"
+    },
+    {
+      "id": "T-U04",
+      "status": "observed",
+      "geometry": {
+        "viewBox": "0 0 336 312",
+        "rect": {
+          "x": 27,
+          "y": 575.375,
+          "width": 336,
+          "height": 312,
+          "top": 575.375,
+          "right": 363,
+          "bottom": 887.375,
+          "left": 27
+        },
+        "bars": [
+          {
+            "d": "M77,219.80173323097785A 4,4,0,0,1,81,215.80173323097785L 110,215.80173323097785A 4,4,0,0,1,\n        114,219.80173323097785L 114,248L 77,248Z",
+            "box": {
+              "x": 104,
+              "y": 791.1767578125,
+              "width": 37,
+              "height": 32.1982421875,
+              "top": 791.1767578125,
+              "right": 141,
+              "bottom": 823.375,
+              "left": 104
+            }
+          },
+          {
+            "d": "M212,219.80173323097785A 4,4,0,0,1,216,215.80173323097785L 245,215.80173323097785A 4,4,0,0,1,\n        249,219.80173323097785L 249,248L 212,248Z",
+            "box": {
+              "x": 239,
+              "y": 791.1767578125,
+              "width": 37,
+              "height": 32.1982421875,
+              "top": 791.1767578125,
+              "right": 276,
+              "bottom": 823.375,
+              "left": 239
+            }
+          }
+        ]
+      },
+      "pdf": "ux-detail-T-U04-fast.pdf",
+      "verdict": "geometry captured; visual/axis proportionality comparison unresolved"
+    },
+    {
+      "id": "A-U01",
+      "status": "observed",
+      "printHeaders": [
+        {
+          "text": "Sınav Başlığı",
+          "display": "table-cell",
+          "visibility": "visible"
+        },
+        {
+          "text": "Öğretmen (Oluşturan)",
+          "display": "table-cell",
+          "visibility": "visible"
+        },
+        {
+          "text": "Ders / Kategori",
+          "display": "table-cell",
+          "visibility": "visible"
+        },
+        {
+          "text": "Sınıf",
+          "display": "table-cell",
+          "visibility": "visible"
+        },
+        {
+          "text": "Durum",
+          "display": "table-cell",
+          "visibility": "visible"
+        },
+        {
+          "text": "Oluşturulma Tarihi",
+          "display": "table-cell",
+          "visibility": "visible"
+        },
+        {
+          "text": "İşlemler",
+          "display": "table-cell",
+          "visibility": "visible"
+        }
+      ],
+      "pdf": "ux-detail-A-U01.pdf",
+      "pdfVisualQA": "not performed"
+    }
+  ],
+  "unresolved": [
+    {
+      "id": "S-U05",
+      "reason": "50/69/70 comparison needs fixture augmentation; no DB writes performed"
+    },
+    {
+      "id": "S-U06",
+      "reason": "completed/local pendingSubmit offline list needs prepared cache fixture; not exercised"
+    },
+    {
+      "id": "S-U08",
+      "reason": "OS print dialog not controlled; source action known to call window.print"
+    },
+    {
+      "id": "A-U02",
+      "reason": "large/long multi-page fixture and PDF visual QA not exercised"
+    },
+    {
+      "id": "S-U07-markAll",
+      "reason": "mutation failure not exercised; header GET only"
+    },
+    {
+      "id": "S-U04-403-404",
+      "reason": "only controlled 500 characterized"
+    }
+  ],
+  "finishedAt": "2026-10-04T12:25:26.108Z"
+}

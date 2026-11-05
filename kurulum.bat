@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
-chcp 65001 >nul
-title QuizMaster Kurulum Ã–n KontrolÃ¼
+chcp 1254 >nul
+title QuizMaster Kurulum Ön Kontrolü
 
 set "PROJECT_ROOT=%~dp0"
 pushd "%PROJECT_ROOT%" >nul 2>&1
@@ -13,19 +13,19 @@ if errorlevel 1 (
 
 echo.
 echo ============================================================
-echo   QuizMaster Kurulum Ã–n KontrolÃ¼
+echo   QuizMaster Kurulum Ön Kontrolü
 echo ============================================================
 echo Proje dizini: %PROJECT_ROOT%
 echo.
 
 if not exist "package.json" (
-  echo [HATA] package.json bulunamadÄ±. Bu dosyayÄ± QuizMaster ana dizininden Ã§alÄ±ÅŸtÄ±rÄ±n.
+  echo [HATA] package.json bulunamadı. Bu dosyayı QuizMaster ana dizininden çalıştırın.
   goto :failed
 )
 
 findstr /C:"quiz-master" "package.json" >nul
 if errorlevel 1 (
-  echo [HATA] Bu dizin geÃ§erli QuizMaster proje kÃ¶kÃ¼ olarak doÄŸrulanamadÄ±.
+  echo [HATA] Bu dizin geçerli QuizMaster proje kökü olarak doğrulanamadı.
   goto :failed
 )
 
@@ -34,7 +34,7 @@ set "NODE_VERSION="
 set "NODE_MAJOR="
 where node >nul 2>&1
 if errorlevel 1 (
-  echo [EKSÄ°K] Node.js bulunamadÄ±.
+  echo [EKSİK] Node.js bulunamadı.
   set "HAS_ERROR=1"
 ) else (
   for /f "delims=" %%V in ('node -p "process.versions.node" 2^>nul') do set "NODE_VERSION=%%V"
@@ -52,29 +52,102 @@ if errorlevel 1 (
 set "PNPM_VERSION="
 where pnpm >nul 2>&1
 if errorlevel 1 (
-  echo [EKSÄ°K] pnpm bulunamadÄ±. Gerekli sÃ¼rÃ¼m: 9.15.1
+  echo [EKSİK] pnpm bulunamadı. Gerekli sürüm: 9.15.1
   set "HAS_ERROR=1"
 ) else (
   for /f "delims=" %%V in ('pnpm --version 2^>nul') do set "PNPM_VERSION=%%V"
   if "!PNPM_VERSION!"=="9.15.1" (
     echo [TAMAM] pnpm !PNPM_VERSION!
   ) else (
-    echo [UYUMSUZ] pnpm !PNPM_VERSION! bulundu. Gerekli sÃ¼rÃ¼m: 9.15.1
+    echo [UYUMSUZ] pnpm !PNPM_VERSION! bulundu. Gerekli sürüm: 9.15.1
     set "HAS_ERROR=1"
   )
 )
 
 if "%HAS_ERROR%"=="1" goto :requirements
 
+set "CHECK_PORT=5049"
+if defined SETUP_BOOTSTRAP_PORT set "CHECK_PORT=%SETUP_BOOTSTRAP_PORT%"
+
+rem --- Kurulum baslangic portu kontrolu ---
+set "PORT_HOLDER_PID="
+for /f "delims=" %%P in ('node "scripts\find-port-holder.mjs" !CHECK_PORT! 2^>nul') do set "PORT_HOLDER_PID=%%P"
+
+if defined PORT_HOLDER_PID (
+  echo.
+  echo [UYARI] Kurulum başlangıç portu zaten kullanımda: 127.0.0.1:!CHECK_PORT!
+  echo.
+  echo Bu durum, önceki kurulum penceresi veya kurulum.bat kapatıldığında
+  echo arka planda kalan kurulum sürecinin portu bırakmamasından kaynaklanır.
+  echo.
+  echo   listen EADDRINUSE: address already in use 127.0.0.1:!CHECK_PORT!
+  echo.
+  echo Portu tutan süreç: PID !PORT_HOLDER_PID!
+  echo.
+  echo Yapılması gerekenler:
+  echo   1. Hâlâ açık bir kurulum penceresi varsa onu kullanın veya kapatın.
+  echo   2. Aşağıdaki komutla kalan kurulum sürecini durdurun:
+  echo        taskkill /PID !PORT_HOLDER_PID! /F
+  echo   3. kurulum.bat dosyasını yeniden çalıştırın.
+  echo.
+  echo Not: Kurulum verileri bu uyarı nedeniyle değiştirilmez.
+  echo.
+  choice /C DK /N /M "Kalan kurulum süreci şimdi durdurulsun mu? [D=durdur ve devam et / K=kapat]: "
+  if errorlevel 2 goto :failed
+  echo.
+  echo PID !PORT_HOLDER_PID! durduruluyor...
+  taskkill /PID !PORT_HOLDER_PID! /F >nul 2>&1
+  if errorlevel 1 (
+    echo [HATA] Süreç durdurulamadı. Elle deneyin: taskkill /PID !PORT_HOLDER_PID! /F
+    goto :failed
+  )
+  ping -n 2 127.0.0.1 >nul
+)
+
+set "WIZARD_PORT=5050"
+if defined SETUP_WIZARD_PORT set "WIZARD_PORT=%SETUP_WIZARD_PORT%"
+set "WIZARD_PID="
+for /f "delims=" %%P in ('node "scripts\find-port-holder.mjs" !WIZARD_PORT! 2^>nul') do set "WIZARD_PID=%%P"
+if defined WIZARD_PID (
+  echo.
+  echo [UYARI] Sihirbaz portu zaten kullanilda: 127.0.0.1:!WIZARD_PORT!
+  echo Onceki sihirbaz kalmis olabilir. Devam ederseniz 2. asamada
+  echo "port zaten kullanilda" hatasi alabilirsiniz.
+  echo Portu tutan surec: PID !WIZARD_PID!
+  echo.
+  choice /C DK /N /M "Sihirbaz portu simdi durdurulsun mu? [D=durdur ve devam / K=gec ve devam]: "
+  if not errorlevel 2 (
+    taskkill /PID !WIZARD_PID! /F >nul 2>&1
+    ping -n 2 127.0.0.1 >nul
+  )
+)
+
 echo.
-echo [TAMAM] Gerekli Ã§alÄ±ÅŸma ortamÄ± hazÄ±r.
-echo Grafik kurulum baÅŸlangÄ±cÄ± aÃ§Ä±lÄ±yor...
+echo [TAMAM] Gerekli çalışma ortamı hazır.
+echo Grafik kurulum başlangıcı açılıyor...
 echo.
-call pnpm setup
+call pnpm run setup %*
 set "SETUP_EXIT=%ERRORLEVEL%"
 if not "%SETUP_EXIT%"=="0" (
   echo.
-  echo [HATA] Kurulum baÅŸlangÄ±cÄ± %SETUP_EXIT% koduyla kapandÄ±.
+  echo [HATA] Kurulum başlangıcı %SETUP_EXIT% koduyla kapandı.
+  echo.
+  echo ------------------------------------------------------------
+  echo Bu hata genellikle önceki kurulum penceresi kapatıldığında
+  echo arka planda kalan kurulum sürecinin neden olduğu port
+  echo çakışmasından kaynaklanır:
+  echo   listen EADDRINUSE: address already in use 127.0.0.1:!CHECK_PORT!
+  echo.
+  echo Yapılması gerekenler:
+  echo   1. Hâlâ açık bir kurulum penceresi varsa onu kullanın veya kapatın.
+  echo   2. Portu tutan süreci bulun:
+  echo        node scripts\find-port-holder.mjs !CHECK_PORT!
+  echo   3. Dönen PID değeriyle süreci durdurun:
+  echo        taskkill /PID ^<PID^> /F
+  echo   4. kurulum.bat dosyasını yeniden çalıştırın.
+  echo.
+  echo Kurulum verileri bu hata nedeniyle değiştirilmez.
+  echo ------------------------------------------------------------
   pause
 )
 popd
@@ -83,7 +156,7 @@ exit /b %SETUP_EXIT%
 :requirements
 echo.
 echo ------------------------------------------------------------
-echo KurulmasÄ± veya dÃ¼zeltilmesi gereken bileÅŸenler var.
+echo Kurulması veya düzeltilmesi gereken bileşenler var.
 echo.
 echo Node.js 24 LTS indirme:
 echo   https://nodejs.org/en/download
@@ -91,22 +164,22 @@ echo.
 echo pnpm resmi kurulum belgesi:
 echo   https://pnpm.io/installation/
 echo.
-echo Node.js kuruluysa pnpm 9.15.1 iÃ§in:
+echo Node.js kuruluysa pnpm 9.15.1 için:
 echo   npm install --global pnpm@9.15.1
 echo.
-echo YÃ¶netici yetkiniz yoksa kurum bilgi iÅŸlem biriminden kurulum isteyin.
-echo Proxy, DNS veya sistem PATH ayarlarÄ± bu betik tarafÄ±ndan deÄŸiÅŸtirilmez.
-echo Kurulumlardan sonra terminali kapatÄ±p yeniden aÃ§Ä±n ve kurulum.bat dosyasÄ±nÄ± tekrar Ã§alÄ±ÅŸtÄ±rÄ±n.
+echo Yönetici yetkiniz yoksa kurum bilgi işlem biriminden kurulum isteyin.
+echo Proxy, DNS veya sistem PATH ayarları bu betik tarafından değiştirilmez.
+echo Kurulumlardan sonra terminali kapatıp yeniden açın ve kurulum.bat dosyasını tekrar çalıştırın.
 echo ------------------------------------------------------------
 echo.
-choice /C EH /N /M "Resmi indirme sayfalarÄ± aÃ§Ä±lsÄ±n mÄ±? [E/H]: "
+choice /C EH /N /M "Resmi indirme sayfaları açılsın mı? [E/H]: "
 if errorlevel 2 goto :failed
 start "" "https://nodejs.org/en/download"
 start "" "https://pnpm.io/installation/"
 
 :failed
 echo.
-echo Kurulum baÅŸlatÄ±lmadÄ±; mevcut dosya ve veriler deÄŸiÅŸtirilmedi.
+echo Kurulum başlatılmadı; mevcut dosya ve veriler değiştirilmedi.
 popd
 pause
 exit /b 1

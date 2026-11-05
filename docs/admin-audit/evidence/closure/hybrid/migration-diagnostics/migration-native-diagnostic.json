@@ -1,0 +1,20 @@
+[
+  {
+    "command": "create-database",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "",
+    "stderr": "",
+    "databaseExists": true
+  },
+  {
+    "command": "can-connect-to-database",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "",
+    "stderr": "",
+    "databaseExists": true
+  }
+]

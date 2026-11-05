@@ -1,0 +1,10 @@
+- main:
+  - button "Bildirimleri aç": "23"
+  - button "Karanlık Moda Geç"
+  - button "P Parent Audit Guardian Veli"
+  - heading "Sınav Sonuçları" [level=1]
+  - paragraph: Bağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.
+  - combobox "Öğrenci seçin": Ada Audit Child · Parent Audit 7A
+  - alert:
+    - paragraph: Öğrenci bilgileri getirilemedi. Controlled parent overview failure
+    - button "Tekrar dene"

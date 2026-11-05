@@ -88,37 +88,47 @@ export default function StudentResultsPage() {
   const [activeTab, setActiveTab] = useState("exams");
 
   useEffect(() => {
+    let active = true;
     const fetchData = async () => {
       try {
         setLoading(true);
+        setError(null);
+        setStudent(null);
+        setResults([]);
+        setCategories([]);
         const [resultsData, catsData] = await Promise.all([
           resultApi.getStudentResults(studentId),
           categoryApi.getAllCategories()
         ]);
 
-        setResults(resultsData.results || []);
-        setCategories(catsData || []);
-
+        if (!active) return;
+        let selectedStudent = null;
         if (studentId) {
           try {
             const userData = await userApi.getUser(studentId);
-            if (userData?.user) {
-              setStudent(userData.user);
-            }
+            selectedStudent = userData?.user;
           } catch {
+            if (!active) return;
             const usersData = await userApi.getAllUsers();
-            const foundStudent = usersData.users.find((u: any) => u.id === studentId);
-            if (foundStudent) setStudent(foundStudent);
+            selectedStudent = usersData.users.find((u: any) => u.id === studentId);
           }
+          if (!active) return;
+          if (!selectedStudent || selectedStudent.id !== studentId) throw new Error('Öğrenci bilgileri yüklenemedi.');
         }
+        if (!active) return;
+        // Keep identity, results and categories from the same active request.
+        setResults(resultsData.results || []);
+        setCategories(catsData || []);
+        setStudent(selectedStudent);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Veriler yüklenemedi");
+        if (active) setError(err instanceof Error ? err.message : "Veriler yüklenemedi");
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
 
     fetchData();
+    return () => { active = false; };
   }, [studentId]);
 
   const filteredResults = useMemo(() => {
@@ -164,26 +174,31 @@ export default function StudentResultsPage() {
       });
   }, [results, student, user, role, searchTerm, filterCategory, filterScore, sortBy, categories]);
 
-  const exportResults = () => downloadCsv({
-    filename: `${student?.name || user?.name || "ogrenci"}-sinav-sonuclari.csv`,
-    title: studentId ? "Öğrenci Analizi" : "Sınav Sonuçlarım",
-    filters: [
-      { label: "Öğrenci", value: student?.name || user?.name },
-      { label: "Ders", value: categories.find((item: any) => item.id === filterCategory)?.name || "Tüm dersler" },
-      { label: "Kayıt sayısı", value: filteredResults.length },
-    ],
-    rows: filteredResults,
-    columns: [
-      { header: "Sınav", value: (row: any) => row.quiz?.title || row.quizTitle || row.quizId },
-      { header: "Ders", value: (row: any) => row.quiz?.category?.name || row.quiz?.category || "Genel" },
-      { header: "Puan", value: (row: any) => row.score ?? 0 },
-      { header: "Doğru", value: (row: any) => row.correctAnswersCount ?? 0 },
-      { header: "Toplam Soru", value: (row: any) => row.totalQuestions ?? 0 },
-      { header: "Süre (dk)", value: (row: any) => Math.round((row.timeTaken || 0) / 60) },
-      { header: "Durum", value: (row: any) => row.status === "completed" ? "Tamamlandı" : "Devam Ediyor" },
-      { header: "Tarih", value: (row: any) => row.submittedAt ? new Date(row.submittedAt).toLocaleString("tr-TR") : "-" },
-    ],
-  });
+  const reportUnavailable = loading || Boolean(error) || Boolean(studentId && student?.id !== studentId);
+  const reportStudentName = studentId ? (student?.id === studentId ? student.name : 'Öğrenci') : (user?.name || 'Öğrenci');
+  const exportResults = () => {
+    if (reportUnavailable) return;
+    downloadCsv({
+      filename: `${reportStudentName}-sinav-sonuclari.csv`,
+      title: studentId ? "Öğrenci Analizi" : "Sınav Sonuçlarım",
+      filters: [
+        { label: "Öğrenci", value: reportStudentName },
+        { label: "Ders", value: categories.find((item: any) => item.id === filterCategory)?.name || "Tüm dersler" },
+        { label: "Kayıt sayısı", value: filteredResults.length },
+      ],
+      rows: filteredResults,
+      columns: [
+        { header: "Sınav", value: (row: any) => row.quiz?.title || row.quizTitle || row.quizId },
+        { header: "Ders", value: (row: any) => row.quiz?.category?.name || row.quiz?.category || "Genel" },
+        { header: "Puan", value: (row: any) => row.score ?? 0 },
+        { header: "Doğru", value: (row: any) => row.correctAnswersCount ?? 0 },
+        { header: "Toplam Soru", value: (row: any) => row.totalQuestions ?? 0 },
+        { header: "Süre (dk)", value: (row: any) => Math.round((row.timeTaken || 0) / 60) },
+        { header: "Durum", value: (row: any) => row.status === "completed" ? "Tamamlandı" : "Devam Ediyor" },
+        { header: "Tarih", value: (row: any) => row.submittedAt ? new Date(row.submittedAt).toLocaleString("tr-TR") : "-" },
+      ],
+    });
+  };
   const resetFilters = () => {
     setSearchTerm("");
     setFilterCategory("all");
@@ -319,7 +334,7 @@ export default function StudentResultsPage() {
         <PrintMeta
           title={studentId ? "\u00d6\u011frenci Analizi" : "S\u0131nav Sonu\u00e7lar\u0131m"}
           filters={[
-            { label: "\u00d6\u011frenci", value: student?.name || user?.name },
+            { label: "\u00d6\u011frenci", value: reportStudentName },
             { label: "Arama", value: searchTerm || "T\u00fcm\u00fc" },
             { label: "Ders", value: categories.find((item: any) => item.id === filterCategory)?.name || "T\u00fcm dersler" },
           ]}
@@ -348,10 +363,10 @@ export default function StudentResultsPage() {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" className="rounded-xl gap-2" onClick={exportResults}>
+              <Button variant="outline" className="rounded-xl gap-2" onClick={exportResults} disabled={reportUnavailable}>
                 <Download className="h-4 w-4" /> Excel
               </Button>
-              <PrintButton className="rounded-xl" />
+              <PrintButton className="rounded-xl" disabled={reportUnavailable} />
             </div>
             {!loading && (
               <Badge variant="secondary" className="h-8 px-4 text-sm font-bold bg-primary/10 text-primary border-primary/20"> 
@@ -394,7 +409,7 @@ export default function StudentResultsPage() {
               <div className="flex items-center gap-2.5">
                 <div className="text-right hidden sm:block mr-1">
                   <p className="text-[9px] uppercase tracking-widest font-black text-muted-foreground">Öğrenci Kodu</p>    
-                  <p className="font-mono text-xs font-bold">{student.id.substring(0, 8)}</p>
+                  <p className="font-mono text-xs font-bold break-all">{student.id}</p>
                 </div>
                 <div className="h-8 w-[1px] bg-border mx-1 hidden sm:block" />
                 <Trophy className="h-6 w-6 text-amber-500" />
@@ -449,10 +464,11 @@ export default function StudentResultsPage() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               {/* Search */}
               <div className="space-y-2">
-                <Label className="text-[11px] font-bold uppercase opacity-60">Sınav Adı</Label>
+                <Label htmlFor="student-results-search" className="text-[11px] font-bold uppercase opacity-60">Sınav Adı</Label>
                 <div className="relative">
                   <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
+                    id="student-results-search"
                     placeholder="Başlık ile ara..."
                     className="pl-9 bg-muted/20"
                     value={searchTerm}
@@ -463,15 +479,15 @@ export default function StudentResultsPage() {
 
               {/* Category */}
               <div className="space-y-2">
-                <Label className="text-[11px] font-bold uppercase opacity-60">Ders / Kategori</Label>
+                <Label htmlFor="student-results-category" className="text-[11px] font-bold uppercase opacity-60">Ders / Kategori</Label>
                 <Select value={filterCategory} onValueChange={setFilterCategory}>
-                  <SelectTrigger className="bg-muted/20">
+                  <SelectTrigger id="student-results-category" className="bg-muted/20">
                     <SelectValue placeholder="Tüm Dersler" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Tüm Dersler</SelectItem>
                     {categories.map(cat => (
-                      <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                      <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -479,9 +495,9 @@ export default function StudentResultsPage() {
 
               {/* Success Level */}
               <div className="space-y-2">
-                <Label className="text-[11px] font-bold uppercase opacity-60">Başarı Durumu</Label>
+                <Label htmlFor="student-results-score" className="text-[11px] font-bold uppercase opacity-60">Başarı Durumu</Label>
                 <Select value={filterScore} onValueChange={setFilterScore}>
-                  <SelectTrigger className="bg-muted/20">
+                  <SelectTrigger id="student-results-score" className="bg-muted/20">
                     <SelectValue placeholder="Tüm Puanlar" />
                   </SelectTrigger>
                   <SelectContent>
@@ -495,9 +511,9 @@ export default function StudentResultsPage() {
 
               {/* Sorting */}
               <div className="space-y-2">
-                <Label className="text-[11px] font-bold uppercase opacity-60">Sıralama Ölçütü</Label>
+                <Label htmlFor="student-results-sort" className="text-[11px] font-bold uppercase opacity-60">Sıralama Ölçütü</Label>
                 <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="bg-muted/20">
+                  <SelectTrigger id="student-results-sort" className="bg-muted/20">
                     <SelectValue placeholder="Sıralama" />
                   </SelectTrigger>
                   <SelectContent>
@@ -551,7 +567,7 @@ export default function StudentResultsPage() {
                         <th className="text-center py-5 px-6">Doğruluk</th>
                         <th className="text-center py-5 px-6">Süre</th>
                         <th className="text-center py-5 px-6">Puan</th>
-                        <th className="text-right py-5 px-8">Eylem</th>
+                        <th className="text-right py-5 px-8 print:hidden">Eylem</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/40">
@@ -602,7 +618,7 @@ export default function StudentResultsPage() {
                                 {score.toFixed(0)}
                               </div>
                             </td>
-                            <td className="py-5 px-8 text-right">
+                            <td className="py-5 px-8 text-right print:hidden">
                               <Button
                                 size="sm"
                                 className="h-10 px-6 rounded-xl font-bold gap-2 shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all"

@@ -1,3 +1,4 @@
+import { AdminQueryState } from "@/components/management/AdminQueryState";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,15 +32,18 @@ export default function StudentsPage() {
   } = useUserManagement('student');
 
   // Data Queries
-  const { data: usersData, isLoading: usersLoading } = useQuery({
+  const usersQuery = useQuery({
     queryKey: ['users', currentUser?.id, role],
     queryFn: () => userApi.getAllUsers(),
   });
 
-  const { data: classesData } = useQuery({
+  const classesQuery = useQuery({
     queryKey: ['/api/classes', currentUser?.id, role],
     queryFn: () => classApi.getAllClasses(),
   });
+
+  const { data: usersData, isLoading: usersLoading } = usersQuery;
+  const { data: classesData } = classesQuery;
 
   const students = useMemo(() => {
     if (!usersData?.users) return [];
@@ -93,6 +97,8 @@ export default function StudentsPage() {
       rows: students,
     });
   };
+  const pageQueries = [usersQuery, classesQuery];
+  if (pageQueries.some(query => query.isPending || query.isError)) return <DashboardLayout><AdminQueryState queries={pageQueries} /></DashboardLayout>;
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -125,6 +131,7 @@ export default function StudentsPage() {
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
+              aria-label="Öğrenci ara"
               placeholder="Öğrenci ara..."
               className="pl-10"
               value={searchTerm}
@@ -134,7 +141,7 @@ export default function StudentsPage() {
           <div className="w-full md:w-64 flex gap-2">
             <span className="sr-only">Sınıf Filtresi</span>
             <Select value={selectedClassFilter} onValueChange={setSelectedClassFilter}>
-              <SelectTrigger className="bg-card">
+              <SelectTrigger aria-label="Sınıf Filtresi" className="bg-card">
                 <div className="flex items-center gap-2">
                   <Filter className="h-4 w-4 text-muted-foreground" />
                   <SelectValue placeholder="Sınıf Seçin" />

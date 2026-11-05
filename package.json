@@ -7,17 +7,30 @@
   ],
   "scripts": {
     "dev": "concurrently --kill-others-on-fail --prefix-colors \"blue,green\" --names \"server,client\" \"pnpm --filter quiz-master-server dev\" \"pnpm --filter quiz-master-client dev\"",
+    "db:prepare-demo": "pnpm --filter quiz-master-server run db:prepare-demo",
+    "start:demo": "pnpm --filter quiz-master-server run start:demo",
     "setup": "node scripts/setup-bootstrap.mjs",
-    "setup:wizard": "pnpm --filter quiz-master-server setup",
+    "setup:wizard": "pnpm --filter quiz-master-server run setup",
     "build": "pnpm --filter quiz-master-server build && pnpm --filter quiz-master-client build",
     "install-all": "pnpm install && cd client && pnpm install && cd ../server && pnpm install",
-    "test:setup": "node --test scripts/setup-bootstrap.test.mjs",
+    "test:setup": "node --test scripts/setup-bootstrap.test.mjs scripts/find-port-holder.test.mjs",
+    "maintenance": "node scripts/maintenance.mjs",
+    "upgrade": "node scripts/upgrade.mjs",
+    "test:upgrade": "node --test scripts/upgrade.test.mjs scripts/upgrade-process.test.mjs scripts/pnpm-invocation.test.mjs scripts/setup-bootstrap-runtime.test.mjs",
+    "test:maintenance": "node --test scripts/maintenance-backup.test.mjs scripts/maintenance-native.test.mjs scripts/maintenance-cli.test.mjs",
     "test:e2e": "playwright test"
   },
   "packageManager": "pnpm@9.15.1+sha512.1acb565e6193efbebda772702950469150cf12bcc764262e7587e71d19dc98a423dff9536e57ea44c49bdf790ff694e83c27be5faa23d67e0c033b583be4bfcf",
   "devDependencies": {
-    "@playwright/test": "^1.58.2",
-    "concurrently": "^9.2.1",
-    "playwright": "^1.58.2"
+    "@playwright/test": "^1.63.0",
+    "concurrently": "^9.2.4"
+  },
+  "dependencies": { "playwright": "^1.63.0", "better-sqlite3": "12.8.0" },
+  "pnpm": {
+    "overrides": {
+      "@prisma/adapter-better-sqlite3>better-sqlite3": "12.8.0",
+      "tar@<7.5.21": "^7.5.21",
+      "@tootallnate/once@<2.0.1": "^2.0.1"
+    }
   }
 }

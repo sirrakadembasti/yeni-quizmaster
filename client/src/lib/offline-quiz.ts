@@ -5,6 +5,8 @@ export interface OfflineQuestion {
   text: string;
   type: string;
   options?: string[];
+  imageUrl?: string | null;
+  offlineImageSource?: string;
 }
 
 export interface OfflineQuizSession {
@@ -19,11 +21,20 @@ export interface OfflineQuizSession {
   timerCapturedAt: string;
   cachedAt: string;
   pendingSubmit: boolean;
+  started?: boolean;
+  pendingAnswers?: Record<string, string>;
+  answerRevisions?: Record<string, number>;
+  offlinePrepared?: boolean;
+  offlineEntry?: string;
 }
 
 const SESSION_PREFIX = 'quiz-master:offline-session:';
 const LIST_PREFIX = 'quiz-master:offline-list:';
 const USER_KEY = 'quiz-master:offline-user';
+let identityGeneration = 0;
+export const offlineIdentityGeneration = () => identityGeneration;
+export const offlineEntry = import.meta.url;
+export const isOfflineSessionPrepared = (session:OfflineQuizSession|null) => Boolean(session?.offlinePrepared&&session.offlineEntry===offlineEntry);
 
 function readJson<T>(key: string): T | null {
   if (typeof window === 'undefined') return null;
@@ -60,6 +71,16 @@ export function saveOfflineSession(session: OfflineQuizSession) {
   writeJson(sessionKey(session.userId, session.quizId), session);
 }
 
+// Preparation alone needs a checked write. An older same-attempt value is not
+// proof that the new images and newest queued revisions were persisted.
+export function savePreparedOfflineSession(session: OfflineQuizSession) {
+  const key=sessionKey(session.userId,session.quizId),serialized=JSON.stringify(session);
+  try {
+    window.localStorage.setItem(key,serialized);
+    if(window.localStorage.getItem(key)!==serialized)throw Error('Storage readback mismatch');
+  } catch { throw Error('Sınav cihazda saklanamadı. Depolama iznini veya boş alanı kontrol edip yeniden deneyin.'); }
+}
+
 export function getOfflineSession(userId: string, quizId: string) {
   const session = readJson<OfflineQuizSession>(sessionKey(userId, quizId));
   return session?.version === 1 ? session : null;
@@ -80,7 +101,50 @@ export function removeOfflineSession(userId: string, quizId: string) {
 
 export function updateOfflineAnswers(userId: string, quizId: string, answers: Record<string, string>) {
   const session = getOfflineSession(userId, quizId);
-  if (session) saveOfflineSession({ ...session, answers });
+  if (session) {
+    const pendingAnswers = { ...session.pendingAnswers };
+    const answerRevisions = { ...session.answerRevisions };
+    for (const [id, answer] of Object.entries(answers)) {
+      if (session.answers[id] !== answer) {
+        pendingAnswers[id] = answer;
+        answerRevisions[id] = (answerRevisions[id] || 0) + 1;
+      }
+    }
+    saveOfflineSession({ ...session, answers, pendingAnswers, answerRevisions });
+    return answerRevisions;
+  }
+}
+
+export function acknowledgeOfflineAnswer(userId: string, quizId: string, resultId: string, questionId: string, answer: string, revision: number | undefined) {
+  const session = getOfflineSession(userId, quizId);
+  if (!session || session.resultId !== resultId || session.pendingAnswers?.[questionId] !== answer || revision === undefined || session.answerRevisions?.[questionId] !== revision) return;
+  const pendingAnswers = { ...session.pendingAnswers };
+  delete pendingAnswers[questionId];
+  saveOfflineSession({ ...session, pendingAnswers });
+}
+
+// Never restore a different attempt or overwrite a newer server answer with a clean cache.
+export function reconcileOfflineSession(server: OfflineQuizSession, cached: OfflineQuizSession | null): OfflineQuizSession {
+  const sameAttempt = cached?.userId === server.userId && cached.quizId === server.quizId && cached.resultId === server.resultId;
+  const pendingAnswers: Record<string, string> = {};
+  const answerRevisions: Record<string, number> = sameAttempt ? { ...cached.answerRevisions } : {};
+  if (sameAttempt) {
+    const candidates = cached.pendingSubmit ? cached.answers : cached.pendingAnswers ?? Object.fromEntries(Object.entries(cached.answers).filter(([id]) => !Object.prototype.hasOwnProperty.call(server.answers, id)));
+    for (const question of server.questions) {
+      const answer = candidates[question.id];
+      if (typeof answer === 'string' && question.options?.includes(answer) && answer !== server.answers[question.id]) {
+        pendingAnswers[question.id] = answer;
+        answerRevisions[question.id] ||= 1;
+      }
+    }
+  }
+  const questions=server.questions.map(question=>{
+    const previous=sameAttempt?cached.questions.find(q=>q.id===question.id):null;
+    return previous&&previous.offlineImageSource===question.imageUrl&&previous.imageUrl?.startsWith('data:image/')
+      ? {...question,imageUrl:previous.imageUrl,offlineImageSource:previous.offlineImageSource}
+      : question;
+  });
+  return { ...server, questions, offlineEntry:server.offlineEntry||(sameAttempt?cached.offlineEntry:undefined), offlinePrepared:Boolean(server.offlinePrepared||(sameAttempt&&cached.offlinePrepared&&questions.every(q=>!q.imageUrl||q.imageUrl.startsWith('data:image/')))), answers: { ...server.answers, ...pendingAnswers }, pendingAnswers, answerRevisions, started: Boolean(server.started || (sameAttempt && cached.started)), pendingSubmit: Boolean(sameAttempt && cached.pendingSubmit) };
 }
 
 export function markOfflineSubmit(userId: string, quizId: string, pendingSubmit: boolean) {
@@ -88,12 +152,29 @@ export function markOfflineSubmit(userId: string, quizId: string, pendingSubmit:
   if (session) saveOfflineSession({ ...session, pendingSubmit });
 }
 
-export function saveOfflineQuizList(userId: string, quizzes: any[]) {
-  writeJson(`${LIST_PREFIX}${userId}`, quizzes);
+function displayResults(results: any[]): any[] {
+  const fields = new Set(['id', 'quizId', 'status', 'score']);
+  return results.filter(result => result && typeof result === 'object')
+    .map(result => Object.fromEntries(Object.entries(result).filter(([key]) => fields.has(key))));
 }
 
-export function getOfflineQuizList(userId: string) {
-  return readJson<any[]>(`${LIST_PREFIX}${userId}`) || [];
+export function saveOfflineQuizList(userId: string, quizzes: any[], results?: any[]) {
+  writeJson(`${LIST_PREFIX}${userId}`, { version: 1, quizzes, results: displayResults(results ?? getOfflineQuizResults(userId)) });
+}
+
+export function getOfflineQuizList(userId: string): any[] {
+  const cached = readJson<any>(`${LIST_PREFIX}${userId}`);
+  return Array.isArray(cached) ? cached : Array.isArray(cached?.quizzes) ? cached.quizzes : [];
+}
+
+export function getOfflineQuizResults(userId: string): any[] {
+  const cached = readJson<any>(`${LIST_PREFIX}${userId}`);
+  return Array.isArray(cached?.results) ? displayResults(cached.results) : [];
+}
+
+export function cacheOfflineCompletion(userId: string, quizId: string, resultId: string) {
+  const results = getOfflineQuizResults(userId).filter(result => result.quizId !== quizId);
+  saveOfflineQuizList(userId, getOfflineQuizList(userId), [...results, { id: resultId, quizId, status: 'completed' }]);
 }
 
 export function saveOfflineUser(user: User) {
@@ -106,5 +187,26 @@ export function getOfflineUser() {
 }
 
 export function clearOfflineUser() {
-  if (typeof window !== 'undefined') window.localStorage.removeItem(USER_KEY);
+  identityGeneration++;
+  if (typeof window === 'undefined') return;
+  try {
+    const keys = Object.keys(window.localStorage);
+    for (const key of keys) {
+      if (key === USER_KEY || key.startsWith(SESSION_PREFIX) || key.startsWith(LIST_PREFIX)) window.localStorage.removeItem(key);
+    }
+  } catch { /* Storage disabled by browser. */ }
+}
+
+// A result-specific seed keeps the displayed order stable across reloads.
+export function orderQuizQuestions<T>(questions: T[], shuffle: boolean, seed: string): T[] {
+  const result = [...questions];
+  if (!shuffle) return result;
+  let state = 2166136261;
+  for (const character of seed) state = Math.imul(state ^ character.charCodeAt(0), 16777619) >>> 0;
+  for (let i = result.length - 1; i > 0; i--) {
+    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+    const j = Math.floor(state / 4294967296 * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
 }

@@ -1,0 +1,55 @@
+Browser tab: 3, Title: "QuizMaster - Admin Dashboard", URL: "http://127.0.0.1:5511/management".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 41, 44-48, 50-106
+~				37 tab (selectable, settable, boolean) Kullanıcılar, Value: 0, ID: radix-_r_3_-trigger-users
+~				38 tab (selected, settable, boolean) Loglar, Value: 1, ID: radix-_r_3_-trigger-logs
+~			39 container Description: Loglar, ID: radix-_r_3_-content-logs
+~				40 button Kullanıcı Logları
++				41 button E-Posta Logları
+~				42 button Şifre Talepleri
+~				43 button Sistem Hata & İşlemleri
++				44 combo box (collapsed) Value: Bu Eğitim Yılı (1 Tem'den), Secondary Actions: Expand
++					45 text Bu Eğitim Yılı (1 Tem'den)
++				46 text field (settable)
++				47 combo box (collapsed) Value: Tüm Roller, Secondary Actions: Expand
++					48 text Tüm Roller
+~				49 text 3
++				50 text  Kayıt Listeleniyor
++				51 table
++					52 row
++						53 cell
++							54 text ZAMAN
++						55 cell
++							56 text KULLANICI & ROL
++						57 cell
++							58 text İŞLEM
++						59 cell
++							60 text DETAYLAR
++					61 row
++						62 cell
++							63 text 30.09.2026 16:06:27
++						64 cell
++							65 text Audit Admin ADMIN
++						66 cell
++							67 text LOGIN
++						68 cell
++							69 text User logged in
++					70 row
++						71 cell
++							72 text 30.09.2026 16:06:01
++						73 cell
++							74 text Audit Admin ADMIN
++						75 cell
++							76 text LOGIN
++						77 cell
++							78 text User logged in
++					79 row
++						80 cell
++							81 text 30.09.2026 16:04:42
++						82 cell
++							83 text Audit Admin ADMIN
++						84 cell
++							85 text LOGIN
++						86 cell
++							87 text User logged in
+The focused UI element is 38 tab (selected, settable, boolean) Loglar, Value: 1, ID: radix-_r_3_-trigger-logs

@@ -2,6 +2,8 @@
 
 Bu belge e-posta servisinin yapılandırmasını, parola sıfırlama iş akışını, yönetici ekranlarını ve ağ sorunlarını tek yerde açıklar.
 
+4 Ekim 2026 gerçek bağlantı kontrolünde 587/STARTTLS, Gmail hesap doğrulaması ve kullanıcının izin verdiği adrese tek test gönderimi geçti; SMTP bir alıcıyı kabul etti. Kullanıcı bu konuşmada aynı test e-postasının ulaştığını ve mesaj içeriğini doğruladı. Bu teslim kanıtı kullanıcının beyanıdır; araçlarla gelen kutusu okunmadı ve yeni test e-postası gönderilmedi. Gerçek parola sıfırlama gönderimi bu koşuda doğrulanmadı. [Kullanıcı teslim doğrulaması](integration-audit/smtp-delivery-confirmation.json), [gizli değer içermeyen transport sonucu](integration-audit/smtp-probe.json), [güncel kabul kapsamı](integration-audit/defect-repairs.md).
+
 ## 1. Desteklenen servis
 
 QuizMaster yalnız Gmail SMTP kullanır:
@@ -24,7 +26,7 @@ Kurumsal Google Workspace hesabında Uygulama Parolası seçeneği görünmüyor
 
 ## 3. Ortam değişkenleri
 
-Yeni ve temiz bir sunucuda `pnpm setup` kurulum sihirbazı Gmail alanlarını güvenli form üzerinden alıp `server/.env` dosyasına yazabilir. Sihirbaz yalnız Gmail adresi ve Google Uygulama Parolası kabul eder; parolayı kurulum profiline, kilit dosyasına veya üretilen Nginx örneğine eklemez. Mevcut kurulumlarda veya elle yapılandırmada aşağıdaki alanları kullanın.
+Yeni ve temiz bir sunucuda `pnpm run setup` kurulum sihirbazı Gmail alanlarını güvenli form üzerinden alıp `server/.env` dosyasına yazabilir. Sihirbaz yalnız Gmail adresi ve Google Uygulama Parolası kabul eder; parolayı kurulum profiline, kilit dosyasına veya üretilen Nginx örneğine eklemez. Mevcut kurulumlarda veya elle yapılandırmada aşağıdaki alanları kullanın.
 
 `server/.env` dosyasına aşağıdaki alanları ekleyin:
 
@@ -88,11 +90,17 @@ Başlıca durumlar:
 
 ### Şifre Talepleri
 
-- Kullanıcı e-postasıyla yönetici tarafından yeni talep oluşturma
+- Kullanıcı e-postasıyla yönetici tarafından yeni talep oluşturma (SMTP üzerinden gönderim veya **Bağlantı Üret (SMTP'siz)** ile tek kullanımlık bağlantıyı doğrudan üretip kopyalama)
 - Durum ve metin filtresi
 - Talep zamanı, son geçerlilik ve bağlı e-posta kuyruğu durumu
+- **Bağlantı Üret:** SMTP çıkışının engelli olduğu yerel/kurumsal ağlarda ilgili talep için tek kullanımlık sıfırlama bağlantısını yeniden üretir ve kopyalanabilir kutuda gösterir
 - **Yenile:** Yeni token ve yeni e-posta üretir; eski bekleyen talebi geçersizleştirir
 - **İptal:** Yalnız bekleyen talebi ve kullanıcıdaki eşleşen tokeni geçersiz kılar
+- **Terminal / CLI kurtarma:** Yönetici paneline erişilemediği durumlarda `pnpm --filter quiz-master-server run db:reset-admin` komutuyla tek kullanımlık sıfırlama bağlantısı üretilebilir veya `--password` ile parola doğrudan güncellenebilir.
+
+### Kayıt Bilgilendirme E-postası
+
+- Kendi kendine kayıt olan (`POST /api/auth/register`) veya yönetici/öğretmen tarafından oluşturulan (`POST /api/users`) kullanıcılar için kayıt işleminin başarıyla tamamlandığını bildiren `registration_welcome` türünde bilgilendirme e-postası Outbox kuyruğuna eklenir. E-posta doğrulama zorunluluğu yerine bilgilendirme + kayıtlı e-posta üzerinden parola sıfırlama modeli uygulanır.
 
 ### E-Posta Logları
 
@@ -158,3 +166,9 @@ Proxy veya DNS ayarlarını değiştirmeden önce cep interneti gibi SMTP çık�
 - Gmail hesabı veya Uygulama Parolası değiştiğinde backend'i yeniden başlatın.
 - Uygulama Parolasını düzenli olarak döndürün ve eski parolayı Google hesabından iptal edin.
 - Üretim geçişinde `FRONTEND_URL`, HTTPS, oturum çerezi ve ters proxy ayarlarını birlikte doğrulayın.
+
+## Eşzamanlı worker ve oturumlar
+
+Worker e-postayı gönderimden önce beş dakika için veritabanında sahiplenir. Başka worker bu sürede aynı kaydı seçmez; başarı/hata kaydı sahiplenmeyi serbest bırakır. Çöken işlemin kaydı süre dolunca yeniden alınabilir. SMTP kabulünden sonra başarı kaydı yazılmadan çökme tekrar teslim üretebilir; Outbox en az bir kez teslim yaklaşımıdır. Aktif gönderim manuel yeniden denemeyle kopyalanamaz.
+
+Sıfırlama talebi öğretmen/veli ilişkilerini korur. Parola gerçekten değiştiğinde oturum sürümü artar; eski HTTP oturumları geçersiz olur ve bildirim bağlantıları kapanır. SMTP testleri gerçek Gmail kimlik bilgilerini yüklemez.

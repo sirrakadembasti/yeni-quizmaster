@@ -107,7 +107,7 @@ router.put("/configuration", requireRuntimeChanges, async (req: AuthRequest, res
     });
   } catch (error) {
     if (error instanceof ZodError) {
-      return res.status(400).json({ message: "Yapılandırma geçersiz.", issues: error.issues });
+      return res.status(400).json({ message: `Yapılandırma geçersiz: ${error.issues.map(issue => `${issue.path.join('.')}: ${issue.message}`).join('; ')}`, issues: error.issues });
     }
     logger.error({ err: error }, "[Deployment] Yapılandırma kaydedilemedi");
     res.status(500).json({ message: "Yapılandırma kaydedilemedi." });

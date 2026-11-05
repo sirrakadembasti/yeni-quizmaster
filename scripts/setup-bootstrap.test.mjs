@@ -1,14 +1,18 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import net from "node:net";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import {
   CLEAN_INSTALL_CONFIRMATION,
+  describePortConflict,
+  findListeningProcess,
   getSetupPaths,
   inspectInstallationState,
   readConfiguredPort,
   resetInstallation,
+  stopPortProcess,
   validateRuntime,
 } from "./setup-bootstrap-lib.mjs";
 
@@ -18,6 +22,11 @@ function fixture() {
   fs.mkdirSync(paths.dataRoot, { recursive: true });
   fs.mkdirSync(paths.uploadsRoot, { recursive: true });
   fs.mkdirSync(paths.backupsRoot, { recursive: true });
+  fs.mkdirSync(path.join(paths.serverRoot, "node_modules"), { recursive: true });
+  fs.mkdirSync(path.join(root, "client", "node_modules"), { recursive: true });
+  fs.mkdirSync(paths.nodeModules, { recursive: true });
+  fs.writeFileSync(path.join(paths.serverRoot, "package.json"), "{}\n", "utf8");
+  fs.writeFileSync(path.join(root, "client", "package.json"), "{}\n", "utf8");
   fs.writeFileSync(path.join(paths.dataRoot, "README.md"), "korunacak\n", "utf8");
   fs.writeFileSync(path.join(paths.uploadsRoot, ".gitkeep"), "", "utf8");
   return { root, paths, cleanup: () => fs.rmSync(root, { recursive: true, force: true }) };
@@ -36,6 +45,24 @@ test("boş dizin yeni kurulum olarak algılanır", (t) => {
   const state = inspectInstallationState(item.root);
   assert.equal(state.state, "fresh");
   assert.equal(state.evidence.installationLock, false);
+});
+
+test("eksik workspace paketleri sihirbaza geçiş için yeterli sayılmaz", (t) => {
+  const item = fixture();
+  t.after(item.cleanup);
+  fs.rmSync(path.join(item.paths.serverRoot, "node_modules"), { recursive: true, force: true });
+  const state = inspectInstallationState(item.root);
+  assert.equal(state.evidence.dependenciesInstalled, false);
+  assert.equal(state.dependencies.ready, false);
+  assert.equal(state.dependencies.serverModules, false);
+});
+
+test("tam workspace paketleri dependenciesInstalled olarak görünür", (t) => {
+  const item = fixture();
+  t.after(item.cleanup);
+  const state = inspectInstallationState(item.root);
+  assert.equal(state.evidence.dependenciesInstalled, true);
+  assert.equal(state.dependencies.ready, true);
 });
 
 test("env veya veritabanı varsa yarım kurulum algılanır", (t) => {
@@ -98,4 +125,81 @@ test("temiz kurulum önce doğrulanmış yedek alır ve yalnız çalışma veril
   assert.equal(fs.existsSync(path.join(item.paths.uploadsRoot, ".gitkeep")), true);
   assert.equal(fs.existsSync(path.join(item.paths.dataRoot, "README.md")), true);
   assert.equal(result.state.state, "fresh");
+});
+
+test("port dinleyen süreç bulunur ve çakışma açıklaması üretilir", async (t) => {
+  const server = net.createServer();
+  await new Promise((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", resolve);
+  });
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  const { port } = server.address();
+
+  const holder = findListeningProcess(port);
+  assert.ok(holder, "dinleyen süreç bulunmalı");
+  assert.equal(typeof holder.pid, "number");
+  assert.ok(holder.pid > 0);
+
+  const conflict = describePortConflict(port);
+  assert.equal(conflict.port, port);
+  assert.equal(conflict.holder.pid, holder.pid);
+  assert.match(conflict.message, /EADDRINUSE|address already in use|zaten kullanımda/);
+  assert.match(conflict.message, /kurulum\.bat/);
+  assert.match(conflict.message, /taskkill|kill/);
+  assert.match(conflict.message, /değiştirilmez/i);
+});
+
+test("boş portta süreç bulunamaz ve yine de yol gösterilir", () => {
+  // 1 üzerinden dinleme yapan bir servis olması beklenmez; bulunamazsa null döner.
+  const holder = findListeningProcess(1);
+  assert.equal(holder, null);
+
+  const conflict = describePortConflict(1);
+  assert.equal(conflict.holder, null);
+  assert.match(conflict.message, /netstat|lsof/);
+  assert.match(conflict.message, /kurulum\.bat/);
+});
+
+test("kurulum betikleri sihirbaz portu olan SETUP_PORT'u ezmez", () => {
+  const bat = fs.readFileSync(path.join(process.cwd(), "kurulum.bat"), "utf8");
+  const sh = fs.readFileSync(path.join(process.cwd(), "kurulum.sh"), "utf8");
+  // Port kontrolü için CHECK_PORT kullanılmalı; SETUP_PORT sihirbazın dinlediği porttur (5050).
+  assert.equal(/set\s+"SETUP_PORT=/.test(bat), false, "kurulum.bat SETUP_PORT atamamalı");
+  assert.match(bat, /CHECK_PORT=/);
+  assert.equal(/SETUP_PORT=/.test(sh), false, "kurulum.sh SETUP_PORT atamamalı");
+  assert.match(sh, /CHECK_PORT=/);
+});
+
+test("stopPortProcess dinleyen süreci durdurur", async (t) => {
+  const { spawn } = await import("node:child_process");
+  const holder = spawn(
+    process.execPath,
+    [
+      "-e",
+      "const net=require('net');const s=net.createServer();s.listen(0,'127.0.0.1',()=>{console.log(s.address().port)});setInterval(()=>{},1000)",
+    ],
+    { stdio: ["ignore", "pipe", "pipe"], windowsHide: true },
+  );
+  const port = await new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error("holder timeout")), 5000);
+    holder.stdout.once("data", (chunk) => {
+      clearTimeout(timer);
+      resolve(Number(String(chunk).trim()));
+    });
+    holder.once("error", reject);
+  });
+  t.after(() => {
+    try {
+      holder.kill();
+    } catch {}
+  });
+
+  assert.equal(findListeningProcess(port)?.pid, holder.pid);
+  const result = stopPortProcess(port);
+  assert.equal(result.stopped, true);
+  assert.equal(result.pid, holder.pid);
+
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  assert.equal(findListeningProcess(port), null);
 });

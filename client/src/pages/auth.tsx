@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,17 +8,57 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Mail, Lock, User, ArrowRight, Home } from "lucide-react";
+import { Loader2, Mail, Lock, User, ArrowRight, Home, Eye, Sparkles, ShieldAlert } from "lucide-react";
 import { authApi } from "@/lib/api";
+import {
+  DEFAULT_DEMO_SHOWCASE_ACCOUNTS,
+  enterDemoNamespace,
+  exitDemoNamespace,
+  getAccountDemoPassword,
+  getAppBasePath,
+  isBrowserOnDemoPath,
+  isClientDemoMode,
+  isDemoShowcaseUserEmail,
+  notifyDemoReadOnly,
+  type DemoRoleKey,
+  type DemoShowcaseAccount,
+} from "@/lib/demo-mode";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 export default function AuthPage() {
-  const [, setLocation] = useLocation();
-  const { login, register } = useAuth();
+  const [location, setLocation] = useLocation();
+  const { login, demoLogin, register } = useAuth();
   const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const [isLoading, setIsLoading] = useState(false);
+  const [demoLoadingRole, setDemoLoadingRole] = useState<DemoRoleKey | null>(null);
   const [isForgotLoading, setIsForgotLoading] = useState(false);
   const [isForgotOpen, setIsForgotOpen] = useState(false);
+  const [demoAccounts, setDemoAccounts] = useState<readonly DemoShowcaseAccount[]>(DEFAULT_DEMO_SHOWCASE_ACCOUNTS);
+  const [isServerDemoInstance, setIsServerDemoInstance] = useState<boolean>(() => isClientDemoMode());
+
+  useEffect(() => {
+    let active = true;
+    authApi
+      .getDemoInfo()
+      .then((info) => {
+        if (!active) return;
+        if (Array.isArray(info.accounts) && info.accounts.length > 0) {
+          setDemoAccounts(info.accounts);
+        }
+        if (info.enabled) {
+          setIsServerDemoInstance(true);
+        }
+      })
+      .catch(() => {
+        // Fallback to DEFAULT_DEMO_SHOWCASE_ACCOUNTS
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const showDemoShowcase = isServerDemoInstance || isClientDemoMode() || location === "/demo";
 
   // Login State
   const [loginEmail, setLoginEmail] = useState("");
@@ -46,6 +86,17 @@ export default function AuthPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (showDemoShowcase && !isDemoShowcaseUserEmail(loginEmail)) {
+      notifyDemoReadOnly(
+        "Demo ekranında yalnızca hazır demo hesaplarıyla (demo-admin, demo-ogretmen, demo-ogrenci, demo-veli) giriş yapılabilir.",
+      );
+      toast({
+        variant: "destructive",
+        title: "Demo Modu Kısıtlaması",
+        description: "Demo ekranında yalnızca hazır vitrin hesaplarıyla giriş yapılabilir.",
+      });
+      return;
+    }
     setIsLoading(true);
 
     try {
@@ -79,6 +130,17 @@ export default function AuthPage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (showDemoShowcase) {
+      notifyDemoReadOnly(
+        "Demo modundasınız: Yeni kullanıcı kaydı yapılamaz, lütfen sağdaki hazır demo hesaplarını kullanın.",
+      );
+      toast({
+        variant: "destructive",
+        title: "Demo Modu (Salt Okunur)",
+        description: "Demo modunda yeni kullanıcı kaydı kapalıdır. Hazır demo hesaplarını kullanabilirsiniz.",
+      });
+      return;
+    }
     setIsLoading(true);
 
     // Şifre doğrulama
@@ -134,6 +196,13 @@ export default function AuthPage() {
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (showDemoShowcase) {
+      notifyDemoReadOnly(
+        "Demo modundasınız: Şifre sıfırlama işlemi kapalıdır, kartlardaki hazır şifreleri (demo123456) kullanabilirsiniz.",
+      );
+      setIsForgotOpen(false);
+      return;
+    }
     setIsForgotLoading(true);
 
     try {
@@ -157,12 +226,60 @@ export default function AuthPage() {
     }
   };
 
+  const handleDemoQuickLogin = async (account: DemoShowcaseAccount) => {
+    setDemoLoadingRole(account.key);
+    try {
+      const user = await demoLogin(account.key);
+      if (user) {
+        toast({
+          title: `${account.label} Girişi Başarılı`,
+          description: "Salt-okunur demo görünümüne yönlendiriliyorsunuz...",
+          className: "bg-emerald-50 border-emerald-200 text-emerald-800",
+        });
+        const target =
+          user.role === "student"
+            ? "/student/dashboard"
+            : user.role === "parent"
+              ? "/parent/dashboard"
+              : "/";
+        setTimeout(() => setLocation(target), 200);
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Demo Girişi Başarısız",
+          description: "Demo hesabı bulunamadı veya sunucuya ulaşılamadı.",
+        });
+      }
+    } finally {
+      setDemoLoadingRole(null);
+    }
+  };
+
+  const handleFillDemoCredentials = (account: DemoShowcaseAccount) => {
+    const pwd = getAccountDemoPassword(account);
+    setActiveTab("login");
+    setLoginEmail(account.email);
+    setLoginPassword(pwd);
+    toast({
+      title: `${account.label} Bilgileri Dolduruldu`,
+      description: `${account.email} / ${pwd} giriş formuna aktarıldı.`,
+    });
+  };
+
+  const handleNavigateHome = () => {
+    if (isBrowserOnDemoPath() && getAppBasePath() !== "/demo") {
+      exitDemoNamespace();
+      return;
+    }
+    setLocation("/");
+  };
+
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-background relative overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row items-center justify-center gap-6 py-8 px-4 bg-background relative overflow-hidden">
       {/* Navigation Controls */}
       <div className="absolute top-4 right-4 flex items-center gap-2 z-50">
         <ThemeToggle />
-        <Button variant="ghost" size="icon" onClick={() => setLocation("/")} className="rounded-full" title="Anasayfaya Dön">
+        <Button variant="ghost" size="icon" onClick={handleNavigateHome} className="rounded-full" title="Anasayfaya Dön">
           <Home className="h-5 w-5" />
         </Button>
       </div>
@@ -184,10 +301,12 @@ export default function AuthPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="login" className="w-full">
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "login" | "register")} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="login">Giriş Yap</TabsTrigger>
-              <TabsTrigger value="register">Kayıt Ol</TabsTrigger>
+              <TabsTrigger value="register">
+                {showDemoShowcase ? "Kayıt Ol (Demo Kapalı)" : "Kayıt Ol"}
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="login">
@@ -280,10 +399,35 @@ export default function AuthPage() {
                     </>
                   )}
                 </Button>
+                {!showDemoShowcase && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full text-xs"
+                    onClick={() => enterDemoNamespace()}
+                  >
+                    <Sparkles className="mr-2 h-3.5 w-3.5 text-indigo-600" />
+                    Canlı Demo Hesaplarını Göster (4 Rol)
+                  </Button>
+                )}
                 </form>
                 </TabsContent>            
             <TabsContent value="register">
               <form onSubmit={handleRegister} className="space-y-4">
+                {showDemoShowcase && (
+                  <div
+                    data-testid="demo-register-blocked-banner"
+                    className="flex items-start gap-2.5 rounded-xl border border-amber-300 bg-amber-50/90 dark:border-amber-800 dark:bg-amber-950/60 p-3 text-xs text-amber-950 dark:text-amber-100"
+                  >
+                    <ShieldAlert className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
+                    <div>
+                      <p className="font-bold">Demo Modunda Yeni Kayıt Kapalıdır</p>
+                      <p className="mt-0.5 text-[11px] opacity-90">
+                        Demo vitrin ortamında veritabanına yeni kullanıcı eklenemez. Uygulamayı incelemek için sağdaki 4 hazır demo rol hesabını kullanabilirsiniz.
+                      </p>
+                    </div>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <Label htmlFor="reg-name">Ad Soyad</Label>
                   <div className="relative">
@@ -294,6 +438,7 @@ export default function AuthPage() {
                       className="pl-9" 
                       value={regName}
                       onChange={(e) => setRegName(e.target.value)}
+                      disabled={showDemoShowcase}
                       required
                     />
                   </div>
@@ -309,6 +454,7 @@ export default function AuthPage() {
                       className="pl-9" 
                       value={regEmail}
                       onChange={(e) => setRegEmail(e.target.value)}
+                      disabled={showDemoShowcase}
                       required
                     />
                   </div>
@@ -325,6 +471,7 @@ export default function AuthPage() {
                       autoComplete="new-password"
                       value={regPassword}
                       onChange={(e) => setRegPassword(e.target.value)}
+                      disabled={showDemoShowcase}
                       required
                     />
                   </div>
@@ -341,6 +488,7 @@ export default function AuthPage() {
                       autoComplete="new-password"
                       value={regConfirmPassword}
                       onChange={(e) => setRegConfirmPassword(e.target.value)}
+                      disabled={showDemoShowcase}
                       required
                     />
                   </div>
@@ -351,12 +499,27 @@ export default function AuthPage() {
                   <p className="mt-1">Rol değişikliği sadece yönetici tarafından yapılabilir.</p>
                 </div>
                 <div className="pt-2">
-                  <Button className="w-full" type="submit" disabled={isLoading}>
+                  <Button
+                    className="w-full"
+                    type={showDemoShowcase ? "button" : "submit"}
+                    disabled={isLoading}
+                    data-testid="register-submit-button"
+                    onClick={
+                      showDemoShowcase
+                        ? () =>
+                            notifyDemoReadOnly(
+                              "Demo modundasınız: Yeni kullanıcı kaydı yapılamaz, lütfen sağdaki hazır demo hesaplarını kullanın.",
+                            )
+                        : undefined
+                    }
+                  >
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Hesap Oluşturuluyor...
                       </>
+                    ) : showDemoShowcase ? (
+                      "Demo Modunda Kayıt Kapalıdır"
                     ) : (
                       "Kayıt Ol ve Başla"
                     )}
@@ -370,6 +533,89 @@ export default function AuthPage() {
           </Tabs>
         </CardContent>
       </Card>
+
+      {showDemoShowcase && (
+        <Card
+          data-testid="demo-showcase-panel"
+          className="w-full max-w-xl shadow-2xl border-indigo-200/70 dark:border-indigo-900/60 backdrop-blur-sm bg-card/95"
+        >
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+              <Eye className="h-4 w-4" />
+              <span>Canlı Demo Vitrin Modu (Salt Okunur)</span>
+            </div>
+            <CardTitle className="text-xl font-bold">
+              Hazır Rol Hesaplarıyla Uygulamayı İnceleyin
+            </CardTitle>
+            <CardDescription className="text-xs leading-relaxed">
+              Aşağıdaki 4 hazır demo hesabından birini seçerek ilgili rolün tüm dashboard, analiz ve rapor ekranlarını gerçek okul verileriyle gezebilirsiniz. Demo modunda veri değiştirme ve silme işlemleri simülasyon amaçlı engellenir.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid sm:grid-cols-2 gap-3">
+            {demoAccounts.map((account) => {
+              const isBusy = demoLoadingRole === account.key;
+              return (
+                <div
+                  key={account.key}
+                  data-testid={`demo-card-${account.key}`}
+                  className="flex flex-col justify-between rounded-xl border border-border/80 bg-muted/30 p-3.5 space-y-3"
+                >
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-bold text-sm text-foreground">{account.label}</span>
+                      <span className="rounded-md bg-indigo-100 dark:bg-indigo-950 px-2 py-0.5 text-[10px] font-bold uppercase text-indigo-700 dark:text-indigo-300">
+                        {account.key}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground leading-snug">
+                      {account.description}
+                    </p>
+                    <div className="rounded-lg bg-background/90 border border-border/60 px-2.5 py-1.5 text-[11px] font-mono space-y-0.5">
+                      <div className="truncate" title={account.email}>
+                        <span className="text-muted-foreground">E-posta: </span>
+                        <span className="font-semibold">{account.email}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Şifre: </span>
+                        <span className="font-semibold" data-testid={`demo-password-${account.key}`}>
+                          {getAccountDemoPassword(account)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 pt-1">
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="flex-1 h-8 text-xs font-bold"
+                      disabled={Boolean(demoLoadingRole)}
+                      data-testid={`demo-login-${account.key}`}
+                      onClick={() => void handleDemoQuickLogin(account)}
+                    >
+                      {isBusy ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        "Hemen İncele"
+                      )}
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      className="h-8 px-2.5 text-xs"
+                      disabled={Boolean(demoLoadingRole)}
+                      data-testid={`demo-fill-${account.key}`}
+                      onClick={() => handleFillDemoCredentials(account)}
+                    >
+                      Forma Doldur
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

@@ -1,0 +1,171 @@
+{
+  "config": {
+    "argv": [
+      "/home/ahmet/.cache/quizmaster-closure/tools-XpIGnI/node-v22.23.2-linux-x64/bin/node",
+      "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/node_modules/playwright/cli.js",
+      "test",
+      "-c",
+      "playwright.teacher-audit.config.ts",
+      "teacher-routes-audit.spec.ts:66",
+      "teacher-people-results-audit.spec.ts:198"
+    ],
+    "configFile": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/playwright.teacher-audit.config.ts",
+    "rootDir": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/docs/teacher-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/ahmet/.cache/quizmaster-closure/source-YUPg29/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "teacher-*-audit.spec.ts"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/teacher-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "teacher-people-results-audit.spec.ts",
+      "file": "teacher-people-results-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "survey results filters show real response and export owned survey only",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8981,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T17:22:02.793Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "export-validation",
+                      "contentType": "application/json",
+                      "body": "eyJmaWxlbmFtZSI6ImFua2V0X3NvbnVjbGFyaV8yMDI2LTEwLTAzLnhsc3giLCJyb3dzIjo5fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1ff1d1927a0faf0185ad-f4ad00d5b1d4296835d9",
+          "file": "teacher-people-results-audit.spec.ts",
+          "line": 198,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "teacher-routes-audit.spec.ts",
+      "file": "teacher-routes-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "teacher real UI login and logout",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5968,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T17:22:13.403Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e127f67c14eefc708224-bd3a63135eb514cc9abd",
+          "file": "teacher-routes-audit.spec.ts",
+          "line": 66,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-03T17:21:59.252Z",
+    "duration": 20550.74,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

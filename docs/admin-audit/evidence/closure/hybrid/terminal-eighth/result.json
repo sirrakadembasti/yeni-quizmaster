@@ -1,0 +1,199 @@
+{
+  "date": "2026-10-01T19:06:51.836Z",
+  "entry": "terminal",
+  "fullApplyRequested": true,
+  "root": "C:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-terminal-ehMn4A",
+  "copiedSourceFiles": 280,
+  "initialState": "source-only; no env/database/config/lock/node_modules",
+  "phases": [
+    "real entrypoint + token exchange + fresh/no-dependencies browser state",
+    "real package install finished; independent node_modules verified"
+  ],
+  "status": "failed",
+  "ports": {
+    "bootstrapPort": 5912,
+    "wizardPort": 5913,
+    "appPort": 5914,
+    "uiPort": 5915
+  },
+  "ownedBrowserPid": 461340,
+  "lastProgress": {
+    "stage": "bootstrap",
+    "jobStatus": "running",
+    "jobExitCode": null,
+    "message": "Kurulum sihirbazı başlatılıyor...",
+    "lastLogLines": [
+      "> quiz-master-server@1.0.0 setup C:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-terminal-ehMn4A\\server",
+      "> tsx setup-wizard/server.ts"
+    ]
+  },
+  "navigationDiagnostics": [
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "dom-and-selector-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "fresh-state-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "wizard-entry",
+      "outcome": "failed",
+      "file": "wizard-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-failure",
+      "outcome": "failed",
+      "file": "bootstrap-failure-navigation.json"
+    }
+  ],
+  "statusReadMisses": [
+    {
+      "at": "2026-10-01T19:07:58.147Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: Timeout 20000ms exceeded.\nCall log:\n  - → GET http://127.0.0.1:5912/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "dependencies",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 71, downloaded 0, added 0",
+          "Progress: resolved 623, reused 79, downloaded 0, added 0",
+          "Progress: resolved 623, reused 85, downloaded 0, added 0",
+          "Progress: resolved 623, reused 89, downloaded 0, added 0",
+          "Progress: resolved 623, reused 101, downloaded 0, added 0",
+          "Progress: resolved 623, reused 107, downloaded 0, added 0",
+          "Progress: resolved 623, reused 109, downloaded 0, added 0",
+          "Progress: resolved 623, reused 110, downloaded 0, added 0"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-01T19:08:19.373Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: socket hang up\nCall log:\n  - → GET http://127.0.0.1:5912/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "bootstrap",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 79, downloaded 0, added 0",
+          "Progress: resolved 623, reused 85, downloaded 0, added 0",
+          "Progress: resolved 623, reused 89, downloaded 0, added 0",
+          "Progress: resolved 623, reused 101, downloaded 0, added 0",
+          "Progress: resolved 623, reused 107, downloaded 0, added 0",
+          "Progress: resolved 623, reused 109, downloaded 0, added 0",
+          "Progress: resolved 623, reused 110, downloaded 0, added 0",
+          "Progress: resolved 623, reused 111, downloaded 0, added 0"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-01T19:14:52.907Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: Timeout 20000ms exceeded.",
+      "lastProgress": {
+        "stage": "bootstrap",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 623, downloaded 0, added 622",
+          "Progress: resolved 623, reused 623, downloaded 0, added 623",
+          "Progress: resolved 623, reused 623, downloaded 0, added 623, done",
+          "devDependencies:",
+          "+ @playwright/test 1.63.0",
+          "+ concurrently 9.2.4",
+          "+ playwright 1.63.0",
+          "server postinstall$ prisma generate"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-01T19:15:13.852Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: read ECONNRESET\nCall log:\n  - → GET http://127.0.0.1:5912/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "dependencies",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 623, downloaded 0, added 623",
+          "Progress: resolved 623, reused 623, downloaded 0, added 623, done",
+          "devDependencies:",
+          "+ @playwright/test 1.63.0",
+          "+ concurrently 9.2.4",
+          "+ playwright 1.63.0",
+          "server postinstall$ prisma generate",
+          "server postinstall: Prisma schema loaded from prisma\\schema.prisma"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-01T19:15:27.145Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: socket hang up\nCall log:\n  - → GET http://127.0.0.1:5912/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "dependencies",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 623, downloaded 0, added 623",
+          "Progress: resolved 623, reused 623, downloaded 0, added 623, done",
+          "devDependencies:",
+          "+ @playwright/test 1.63.0",
+          "+ concurrently 9.2.4",
+          "+ playwright 1.63.0",
+          "server postinstall$ prisma generate",
+          "server postinstall: Prisma schema loaded from prisma\\schema.prisma"
+        ]
+      }
+    }
+  ],
+  "statusResponseDisposalError": "Timed out: status response disposal",
+  "ownershipSnapshotError": "Windows process ownership snapshot unavailable",
+  "error": "page.waitForURL: Timeout 120000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"http://127.0.0.1:5913/setup\" until \"domcontentloaded\"\n============================================================",
+  "cleanup": [
+    {
+      "kind": "owned-process-tree",
+      "pid": 461340,
+      "stopped": false,
+      "error": "Cannot verify launch identity/known descendant absence; no unknown PID was killed"
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 455724,
+      "stopped": false,
+      "knownProcessCount": 7,
+      "outcomes": [
+        {
+          "pid": 460932,
+          "exitCode": 0
+        },
+        {
+          "pid": 461028,
+          "error": "Identity snapshot unavailable"
+        },
+        {
+          "pid": 455724,
+          "error": "Identity snapshot unavailable"
+        }
+      ],
+      "error": "Final identity/absence snapshot unavailable"
+    }
+  ],
+  "browserCloseErrors": [
+    "Timed out: owned browser server close",
+    "Timed out: owned browser server kill"
+  ],
+  "cleanupSucceeded": false,
+  "productStatusBeforeCleanup": "failed",
+  "sourceProtectedFilesUnchanged": true,
+  "finishedAt": "2026-10-01T19:22:02.654Z"
+}

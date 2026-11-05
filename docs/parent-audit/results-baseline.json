@@ -1,0 +1,1672 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\.pnpm\\playwright@1.63.0\\node_modules\\playwright\\cli.js",
+      "test",
+      "-c",
+      "playwright.parent-audit.config.ts"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.parent-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/parent-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "parent-*-audit.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/parent-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "parent-panel-audit.spec.ts",
+      "file": "parent-panel-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P-N01 dashboard, home alias and results direct URLs, reload, mobile, keyboard and real network",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 42892,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T08:54:28.776Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-5eff7f2871033c098200",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 17,
+          "column": 5
+        },
+        {
+          "title": "P-F01 dashboard metrics, assigned exams and switching both linked students use real records",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8399,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T08:55:13.147Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-2b495852f85840279b90",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 44,
+          "column": 5
+        },
+        {
+          "title": "P-F02 results detail, correct and incorrect answers, back and child change",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9332,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T08:55:21.580Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-2054b6ebf5cf2f7fda06",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 62,
+          "column": 5
+        },
+        {
+          "title": "P-F03 results link preserves dashboard selected child",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 20859,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('combobox')\nExpected substring: \u001b[32m\"\u001b[7mBeren\u001b[27m Audit Child\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mAda\u001b[27m Audit Child\u001b[7m · Parent Audit 7A\u001b[27m\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('combobox') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('combobox')\u001b[22m\n\u001b[2m    33 × locator resolved to <button dir=\"ltr\" type=\"button\" role=\"combobox\" data-state=\"closed\" aria-expanded=\"false\" aria-autocomplete=\"none\" class=\"flex h-9 items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm dark:shadow-none ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-full md:w-72\">…</button>\u001b[22m\n\u001b[2m       - unexpected value \"Ada Audit Child · Parent Audit 7A\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('combobox')\nExpected substring: \u001b[32m\"\u001b[7mBeren\u001b[27m Audit Child\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mAda\u001b[27m Audit Child\u001b[7m · Parent Audit 7A\u001b[27m\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('combobox') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('combobox')\u001b[22m\n\u001b[2m    33 × locator resolved to <button dir=\"ltr\" type=\"button\" role=\"combobox\" data-state=\"closed\" aria-expanded=\"false\" aria-autocomplete=\"none\" class=\"flex h-9 items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm dark:shadow-none ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-full md:w-72\">…</button>\u001b[22m\n\u001b[2m       - unexpected value \"Ada Audit Child · Parent Audit 7A\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:85:44",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                      "column": 44,
+                      "line": 85
+                    },
+                    "snippet": "  83 |   await expect(page.getByRole('button', { name: 'Detay', exact: true })).toBeVisible();\n  84 |   await shot(page, 'results-context-after-dashboard');\n> 85 |   await expect(page.getByRole('combobox')).toContainText('Beren Audit Child');\n     |                                            ^\n  86 | });\n  87 |\n  88 | test('P-E01 genuinely unlinked parent empty dashboard and results', async ({ page }) => {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                        "column": 44,
+                        "line": 85
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('combobox')\nExpected substring: \u001b[32m\"\u001b[7mBeren\u001b[27m Audit Child\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mAda\u001b[27m Audit Child\u001b[7m · Parent Audit 7A\u001b[27m\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('combobox') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('combobox')\u001b[22m\n\u001b[2m    33 × locator resolved to <button dir=\"ltr\" type=\"button\" role=\"combobox\" data-state=\"closed\" aria-expanded=\"false\" aria-autocomplete=\"none\" class=\"flex h-9 items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm dark:shadow-none ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-full md:w-72\">…</button>\u001b[22m\n\u001b[2m       - unexpected value \"Ada Audit Child · Parent Audit 7A\"\u001b[22m\n\n\n  83 |   await expect(page.getByRole('button', { name: 'Detay', exact: true })).toBeVisible();\n  84 |   await shot(page, 'results-context-after-dashboard');\n> 85 |   await expect(page.getByRole('combobox')).toContainText('Beren Audit Child');\n     |                                            ^\n  86 | });\n  87 |\n  88 | test('P-E01 genuinely unlinked parent empty dashboard and results', async ({ page }) => {\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:85:44"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T08:55:30.939Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-F03-r-951fc-es-dashboard-selected-child\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-F03-r-951fc-es-dashboard-selected-child\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                    "column": 44,
+                    "line": 85
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-56124dd5988e6bd9c321",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 79,
+          "column": 5
+        },
+        {
+          "title": "P-E01 genuinely unlinked parent empty dashboard and results",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 23313,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Hesabınıza bağlı öğrenci bulunmuyor')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Hesabınıza bağlı öğrenci bulunmuyor') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Hesabınıza bağlı öğrenci bulunmuyor')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Hesabınıza bağlı öğrenci bulunmuyor')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Hesabınıza bağlı öğrenci bulunmuyor') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Hesabınıza bağlı öğrenci bulunmuyor')\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:94:71",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                      "column": 71,
+                      "line": 94
+                    },
+                    "snippet": "  92 |   await page.goto('/parent/results');\n  93 |   await shot(page, 'results-no-linked-students');\n> 94 |   await expect(page.getByText('Hesabınıza bağlı öğrenci bulunmuyor')).toBeVisible();\n     |                                                                       ^\n  95 | });\n  96 |\n  97 | for (const [id, route] of [['P-E02', '/parent/dashboard'], ['P-E03', '/parent/results']]) {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                        "column": 71,
+                        "line": 94
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Hesabınıza bağlı öğrenci bulunmuyor')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Hesabınıza bağlı öğrenci bulunmuyor') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Hesabınıza bağlı öğrenci bulunmuyor')\u001b[22m\n\n\n  92 |   await page.goto('/parent/results');\n  93 |   await shot(page, 'results-no-linked-students');\n> 94 |   await expect(page.getByText('Hesabınıza bağlı öğrenci bulunmuyor')).toBeVisible();\n     |                                                                       ^\n  95 | });\n  96 |\n  97 | for (const [id, route] of [['P-E02', '/parent/dashboard'], ['P-E03', '/parent/results']]) {\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:94:71"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T08:55:53.695Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-E01-g-1dca2-empty-dashboard-and-results\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-E01-g-1dca2-empty-dashboard-and-results\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                    "column": 71,
+                    "line": 94
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-b83416dbbf9a67df18e2",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 88,
+          "column": 5
+        },
+        {
+          "title": "P-E02 students API500 distinguishes failure from empty and retries real API",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 22547,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main')\nExpected pattern: \u001b[32m/Controlled parent students failure|hata|getirilemedi/i\u001b[39m\nReceived string:  \u001b[31m\"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Hesabınıza bağlı öğrenci bulunmuyorOkul yöneticinizden veli hesabınızı öğrenciyle ilişkilendirmesini isteyin.\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('main') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main')\u001b[22m\n\u001b[2m    2 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m      - unexpected value \"PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Hesabınıza bağlı öğrenci bulunmuyorOkul yöneticinizden veli hesabınızı öğrenciyle ilişkilendirmesini isteyin.\"\u001b[22m\n\u001b[2m    31 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Hesabınıza bağlı öğrenci bulunmuyorOkul yöneticinizden veli hesabınızı öğrenciyle ilişkilendirmesini isteyin.\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main')\nExpected pattern: \u001b[32m/Controlled parent students failure|hata|getirilemedi/i\u001b[39m\nReceived string:  \u001b[31m\"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Hesabınıza bağlı öğrenci bulunmuyorOkul yöneticinizden veli hesabınızı öğrenciyle ilişkilendirmesini isteyin.\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('main') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main')\u001b[22m\n\u001b[2m    2 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m      - unexpected value \"PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Hesabınıza bağlı öğrenci bulunmuyorOkul yöneticinizden veli hesabınızı öğrenciyle ilişkilendirmesini isteyin.\"\u001b[22m\n\u001b[2m    31 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Hesabınıza bağlı öğrenci bulunmuyorOkul yöneticinizden veli hesabınızı öğrenciyle ilişkilendirmesini isteyin.\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:103:40",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                      "column": 40,
+                      "line": 103
+                    },
+                    "snippet": "  101 |     await page.goto(route); await failed;\n  102 |     await shot(page, `${id}-students-failure`);\n> 103 |     await expect(page.locator('main')).toContainText(/Controlled parent students failure|hata|getirilemedi/i);\n      |                                        ^\n  104 |     await expect(page.getByText('Hesabınıza bağlı öğrenci bulunmuyor')).toHaveCount(0);\n  105 |     await page.unroute('**/api/parents/students');\n  106 |     const loaded = page.waitForResponse(r => new URL(r.url()).pathname === '/api/parents/students' && r.status() === 200);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                        "column": 40,
+                        "line": 103
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main')\nExpected pattern: \u001b[32m/Controlled parent students failure|hata|getirilemedi/i\u001b[39m\nReceived string:  \u001b[31m\"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Hesabınıza bağlı öğrenci bulunmuyorOkul yöneticinizden veli hesabınızı öğrenciyle ilişkilendirmesini isteyin.\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('main') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main')\u001b[22m\n\u001b[2m    2 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m      - unexpected value \"PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Hesabınıza bağlı öğrenci bulunmuyorOkul yöneticinizden veli hesabınızı öğrenciyle ilişkilendirmesini isteyin.\"\u001b[22m\n\u001b[2m    31 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Hesabınıza bağlı öğrenci bulunmuyorOkul yöneticinizden veli hesabınızı öğrenciyle ilişkilendirmesini isteyin.\"\u001b[22m\n\n\n  101 |     await page.goto(route); await failed;\n  102 |     await shot(page, `${id}-students-failure`);\n> 103 |     await expect(page.locator('main')).toContainText(/Controlled parent students failure|hata|getirilemedi/i);\n      |                                        ^\n  104 |     await expect(page.getByText('Hesabınıza bağlı öğrenci bulunmuyor')).toHaveCount(0);\n  105 |     await page.unroute('**/api/parents/students');\n  106 |     const loaded = page.waitForResponse(r => new URL(r.url()).pathname === '/api/parents/students' && r.status() === 200);\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:103:40"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T08:56:20.074Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-E02-s-8a3b1--empty-and-retries-real-API\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-E02-s-8a3b1--empty-and-retries-real-API\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                    "column": 40,
+                    "line": 103
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-9bdbe189ac909e874b84",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 98,
+          "column": 7
+        },
+        {
+          "title": "P-E03 students API500 distinguishes failure from empty and retries real API",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 20582,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main')\nExpected pattern: \u001b[32m/Controlled parent students failure|hata|getirilemedi/i\u001b[39m\nReceived string:  \u001b[31m\"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Tamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('main') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main')\u001b[22m\n\u001b[2m    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Tamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main')\nExpected pattern: \u001b[32m/Controlled parent students failure|hata|getirilemedi/i\u001b[39m\nReceived string:  \u001b[31m\"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Tamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('main') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main')\u001b[22m\n\u001b[2m    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Tamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:103:40",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                      "column": 40,
+                      "line": 103
+                    },
+                    "snippet": "  101 |     await page.goto(route); await failed;\n  102 |     await shot(page, `${id}-students-failure`);\n> 103 |     await expect(page.locator('main')).toContainText(/Controlled parent students failure|hata|getirilemedi/i);\n      |                                        ^\n  104 |     await expect(page.getByText('Hesabınıza bağlı öğrenci bulunmuyor')).toHaveCount(0);\n  105 |     await page.unroute('**/api/parents/students');\n  106 |     const loaded = page.waitForResponse(r => new URL(r.url()).pathname === '/api/parents/students' && r.status() === 200);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                        "column": 40,
+                        "line": 103
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main')\nExpected pattern: \u001b[32m/Controlled parent students failure|hata|getirilemedi/i\u001b[39m\nReceived string:  \u001b[31m\"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Tamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('main') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main')\u001b[22m\n\u001b[2m    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Tamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\u001b[22m\n\n\n  101 |     await page.goto(route); await failed;\n  102 |     await shot(page, `${id}-students-failure`);\n> 103 |     await expect(page.locator('main')).toContainText(/Controlled parent students failure|hata|getirilemedi/i);\n      |                                        ^\n  104 |     await expect(page.getByText('Hesabınıza bağlı öğrenci bulunmuyor')).toHaveCount(0);\n  105 |     await page.unroute('**/api/parents/students');\n  106 |     const loaded = page.waitForResponse(r => new URL(r.url()).pathname === '/api/parents/students' && r.status() === 200);\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:103:40"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T08:56:44.808Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-E03-s-1c0e3--empty-and-retries-real-API\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-E03-s-1c0e3--empty-and-retries-real-API\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                    "column": 40,
+                    "line": 103
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-a9958de06b70dfbef64b",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 98,
+          "column": 7
+        },
+        {
+          "title": "P-E04 overview API500 displays failure and real retry",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 22182,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main')\nExpected pattern: \u001b[32m/Controlled parent overview failure|hata|getirilemedi/i\u001b[39m\nReceived string:  \u001b[31m\"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Ada Audit Child · Parent Audit 7A\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('main') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main')\u001b[22m\n\u001b[2m    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Ada Audit Child · Parent Audit 7A\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main')\nExpected pattern: \u001b[32m/Controlled parent overview failure|hata|getirilemedi/i\u001b[39m\nReceived string:  \u001b[31m\"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Ada Audit Child · Parent Audit 7A\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('main') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main')\u001b[22m\n\u001b[2m    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Ada Audit Child · Parent Audit 7A\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:118:40",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                      "column": 40,
+                      "line": 118
+                    },
+                    "snippet": "  116 |     await page.goto(route); await expect(page.getByRole('combobox')).toBeVisible(); await failed;\n  117 |     await shot(page, `${id}-overview-failure`);\n> 118 |     await expect(page.locator('main')).toContainText(/Controlled parent overview failure|hata|getirilemedi/i);\n      |                                        ^\n  119 |     await page.unroute('**/api/parents/students/*/overview');\n  120 |     await page.getByRole('button', { name: 'Tekrar dene' }).click();\n  121 |     await expect(page.getByText('Parent Audit Completed Exam', { exact: true }).first()).toBeVisible();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                        "column": 40,
+                        "line": 118
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main')\nExpected pattern: \u001b[32m/Controlled parent overview failure|hata|getirilemedi/i\u001b[39m\nReceived string:  \u001b[31m\"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Ada Audit Child · Parent Audit 7A\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('main') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main')\u001b[22m\n\u001b[2m    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · Veli Veli PaneliÖğrenci TakibiBağlı öğrencilerinizin sınav durumlarını salt okunur olarak izleyin.Ada Audit Child · Parent Audit 7A\"\u001b[22m\n\n\n  116 |     await page.goto(route); await expect(page.getByRole('combobox')).toBeVisible(); await failed;\n  117 |     await shot(page, `${id}-overview-failure`);\n> 118 |     await expect(page.locator('main')).toContainText(/Controlled parent overview failure|hata|getirilemedi/i);\n      |                                        ^\n  119 |     await page.unroute('**/api/parents/students/*/overview');\n  120 |     await page.getByRole('button', { name: 'Tekrar dene' }).click();\n  121 |     await expect(page.getByText('Parent Audit Completed Exam', { exact: true }).first()).toBeVisible();\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:118:40"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T08:57:07.935Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-E04-o-6a279-lays-failure-and-real-retry\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-E04-o-6a279-lays-failure-and-real-retry\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                    "column": 40,
+                    "line": 118
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-2984e080759e5361d5ec",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 113,
+          "column": 7
+        },
+        {
+          "title": "P-E05 overview API500 displays failure and real retry",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 22421,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main')\nExpected pattern: \u001b[32m/Controlled parent overview failure|hata|getirilemedi/i\u001b[39m\nReceived string:  \u001b[31m\"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('main') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main')\u001b[22m\n\u001b[2m    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main')\nExpected pattern: \u001b[32m/Controlled parent overview failure|hata|getirilemedi/i\u001b[39m\nReceived string:  \u001b[31m\"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('main') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main')\u001b[22m\n\u001b[2m    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:118:40",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                      "column": 40,
+                      "line": 118
+                    },
+                    "snippet": "  116 |     await page.goto(route); await expect(page.getByRole('combobox')).toBeVisible(); await failed;\n  117 |     await shot(page, `${id}-overview-failure`);\n> 118 |     await expect(page.locator('main')).toContainText(/Controlled parent overview failure|hata|getirilemedi/i);\n      |                                        ^\n  119 |     await page.unroute('**/api/parents/students/*/overview');\n  120 |     await page.getByRole('button', { name: 'Tekrar dene' }).click();\n  121 |     await expect(page.getByText('Parent Audit Completed Exam', { exact: true }).first()).toBeVisible();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                        "column": 40,
+                        "line": 118
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main')\nExpected pattern: \u001b[32m/Controlled parent overview failure|hata|getirilemedi/i\u001b[39m\nReceived string:  \u001b[31m\"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('main') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main')\u001b[22m\n\u001b[2m    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\u001b[22m\n\n\n  116 |     await page.goto(route); await expect(page.getByRole('combobox')).toBeVisible(); await failed;\n  117 |     await shot(page, `${id}-overview-failure`);\n> 118 |     await expect(page.locator('main')).toContainText(/Controlled parent overview failure|hata|getirilemedi/i);\n      |                                        ^\n  119 |     await page.unroute('**/api/parents/students/*/overview');\n  120 |     await page.getByRole('button', { name: 'Tekrar dene' }).click();\n  121 |     await expect(page.getByText('Parent Audit Completed Exam', { exact: true }).first()).toBeVisible();\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:118:40"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T08:57:32.504Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-E05-o-13cb9-lays-failure-and-real-retry\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-E05-o-13cb9-lays-failure-and-real-retry\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                    "column": 40,
+                    "line": 118
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-606436c787967df034e7",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 113,
+          "column": 7
+        },
+        {
+          "title": "P-E06 result detail API500 is visible and retry recovers",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 21837,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main')\nExpected pattern: \u001b[32m/Controlled parent detail failure|hata|getirilemedi/i\u001b[39m\nReceived string:  \u001b[31m\"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemParent Audit Completed ExamAudit Mathematics%004.10.2026Detay\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('main') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main')\u001b[22m\n\u001b[2m    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemParent Audit Completed ExamAudit Mathematics%004.10.2026Detay\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main')\nExpected pattern: \u001b[32m/Controlled parent detail failure|hata|getirilemedi/i\u001b[39m\nReceived string:  \u001b[31m\"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemParent Audit Completed ExamAudit Mathematics%004.10.2026Detay\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('main') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main')\u001b[22m\n\u001b[2m    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemParent Audit Completed ExamAudit Mathematics%004.10.2026Detay\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:132:38",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                      "column": 38,
+                      "line": 132
+                    },
+                    "snippet": "  130 |   await page.getByRole('button', { name: 'Detay', exact: true }).click(); await failed;\n  131 |   await shot(page, 'detail-failure');\n> 132 |   await expect(page.locator('main')).toContainText(/Controlled parent detail failure|hata|getirilemedi/i);\n      |                                      ^\n  133 |   await page.unroute('**/api/parents/results/*'); await page.getByRole('button', { name: 'Tekrar dene' }).click();\n  134 |   await expect(page.getByRole('button', { name: 'Sonuç listesine dön' })).toBeVisible();\n  135 | });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                        "column": 38,
+                        "line": 132
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main')\nExpected pattern: \u001b[32m/Controlled parent detail failure|hata|getirilemedi/i\u001b[39m\nReceived string:  \u001b[31m\"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemParent Audit Completed ExamAudit Mathematics%004.10.2026Detay\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('main') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main')\u001b[22m\n\u001b[2m    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemParent Audit Completed ExamAudit Mathematics%004.10.2026Detay\"\u001b[22m\n\n\n  130 |   await page.getByRole('button', { name: 'Detay', exact: true }).click(); await failed;\n  131 |   await shot(page, 'detail-failure');\n> 132 |   await expect(page.locator('main')).toContainText(/Controlled parent detail failure|hata|getirilemedi/i);\n      |                                      ^\n  133 |   await page.unroute('**/api/parents/results/*'); await page.getByRole('button', { name: 'Tekrar dene' }).click();\n  134 |   await expect(page.getByRole('button', { name: 'Sonuç listesine dön' })).toBeVisible();\n  135 | });\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:132:38"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T08:57:57.418Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-E06-r-8ebf0--visible-and-retry-recovers\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-E06-r-8ebf0--visible-and-retry-recovers\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                    "column": 38,
+                    "line": 132
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-f5223bacf0b7497bb6a1",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 125,
+          "column": 5
+        },
+        {
+          "title": "P-E07 delayed overview advertises loading rather than empty",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 21051,
+                  "error": {
+                    "message": "Error: route.continue: Route is already handled!",
+                    "stack": "Error: route.continue: Route is already handled!\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:139:99",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                      "column": 99,
+                      "line": 139
+                    },
+                    "snippet": "  137 | test('P-E07 delayed overview advertises loading rather than empty', async ({ page }) => {\n  138 |   await login(page); let release: () => void = () => {}; const gate = new Promise<void>(r => release = r);\n> 139 |   await page.route('**/api/parents/students/*/overview', async r => { await gate; await r.continue(); });\n      |                                                                                                   ^\n  140 |   try {\n  141 |     await page.goto('/parent/results'); await expect(page.getByRole('combobox')).toBeVisible();\n  142 |     await shot(page, 'results-delayed-overview');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                        "column": 99,
+                        "line": 139
+                      },
+                      "message": "Error: route.continue: Route is already handled!\n\n  137 | test('P-E07 delayed overview advertises loading rather than empty', async ({ page }) => {\n  138 |   await login(page); let release: () => void = () => {}; const gate = new Promise<void>(r => release = r);\n> 139 |   await page.route('**/api/parents/students/*/overview', async r => { await gate; await r.continue(); });\n      |                                                                                                   ^\n  140 |   try {\n  141 |     await page.goto('/parent/results'); await expect(page.getByRole('combobox')).toBeVisible();\n  142 |     await shot(page, 'results-delayed-overview');\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:139:99"
+                    },
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                        "column": 40,
+                        "line": 143
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('main')\nExpected pattern: \u001b[32m/yükleniyor/i\u001b[39m\nReceived string:  \u001b[31m\"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('main') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main')\u001b[22m\n\u001b[2m    33 × locator resolved to <main data-dashboard-main=\"true\" class=\"flex min-w-0 flex-1 flex-col overflow-hidden\">…</main>\u001b[22m\n\u001b[2m       - unexpected value \"23PParent Audit GuardianVeliQuizMaster Yönetim ve Sınav SistemiParent Audit Guardian · VeliSınav SonuçlarıBağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.Ada Audit Child · Parent Audit 7ATamamlanan SınavlarSınavDersPuanTarihİşlemTamamlanmış sınav bulunmuyor.\"\u001b[22m\n\n\n  141 |     await page.goto('/parent/results'); await expect(page.getByRole('combobox')).toBeVisible();\n  142 |     await shot(page, 'results-delayed-overview');\n> 143 |     await expect(page.locator('main')).toContainText(/yükleniyor/i);\n      |                                        ^\n  144 |     await expect(page.getByText('Tamamlanmış sınav bulunmuyor.')).toHaveCount(0);\n  145 |   } finally { release(); await page.unroute('**/api/parents/students/*/overview'); }\n  146 | });\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:143:40"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T08:58:21.592Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-E07-d-c8341-s-loading-rather-than-empty\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-E07-d-c8341-s-loading-rather-than-empty\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                    "column": 99,
+                    "line": 139
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-74f47f064686dfbdfa40",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 137,
+          "column": 5
+        },
+        {
+          "title": "P-A01 both student selectors expose a purpose label",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 8,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 20777,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('combobox')\nExpected pattern: \u001b[32m/öğrenci seç/i\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveAccessibleName\" getByRole('combobox') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('combobox')\u001b[22m\n\u001b[2m    33 × locator resolved to <button dir=\"ltr\" type=\"button\" role=\"combobox\" data-state=\"closed\" aria-expanded=\"false\" aria-autocomplete=\"none\" class=\"flex h-9 items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm dark:shadow-none ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-full md:w-72\">…</button>\u001b[22m\n\u001b[2m       - unexpected value \"\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('combobox')\nExpected pattern: \u001b[32m/öğrenci seç/i\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveAccessibleName\" getByRole('combobox') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('combobox')\u001b[22m\n\u001b[2m    33 × locator resolved to <button dir=\"ltr\" type=\"button\" role=\"combobox\" data-state=\"closed\" aria-expanded=\"false\" aria-autocomplete=\"none\" class=\"flex h-9 items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm dark:shadow-none ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-full md:w-72\">…</button>\u001b[22m\n\u001b[2m       - unexpected value \"\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:152:46",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                      "column": 46,
+                      "line": 152
+                    },
+                    "snippet": "  150 |   for (const route of ['/parent/dashboard', '/parent/results']) {\n  151 |     await page.goto(route); await expect(page.getByRole('combobox')).toBeVisible();\n> 152 |     await expect(page.getByRole('combobox')).toHaveAccessibleName(/öğrenci seç/i);\n      |                                              ^\n  153 |   }\n  154 | });\n  155 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                        "column": 46,
+                        "line": 152
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('combobox')\nExpected pattern: \u001b[32m/öğrenci seç/i\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveAccessibleName\" getByRole('combobox') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('combobox')\u001b[22m\n\u001b[2m    33 × locator resolved to <button dir=\"ltr\" type=\"button\" role=\"combobox\" data-state=\"closed\" aria-expanded=\"false\" aria-autocomplete=\"none\" class=\"flex h-9 items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm dark:shadow-none ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-full md:w-72\">…</button>\u001b[22m\n\u001b[2m       - unexpected value \"\"\u001b[22m\n\n\n  150 |   for (const route of ['/parent/dashboard', '/parent/results']) {\n  151 |     await page.goto(route); await expect(page.getByRole('combobox')).toBeVisible();\n> 152 |     await expect(page.getByRole('combobox')).toHaveAccessibleName(/öğrenci seç/i);\n      |                                              ^\n  153 |   }\n  154 | });\n  155 |\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:152:46"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T08:58:45.327Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-A01-b-c7ef8-tors-expose-a-purpose-label\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-A01-b-c7ef8-tors-expose-a-purpose-label\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                    "column": 46,
+                    "line": 152
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-ae983b68caa8258b163f",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 148,
+          "column": 5
+        },
+        {
+          "title": "P-F04 a question image is available in parent result detail",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 9,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 23694,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('main img')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('main img') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main img')\u001b[22m\n\u001b[2m    33 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('main img')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('main img') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main img')\u001b[22m\n\u001b[2m    33 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:165:85",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                      "column": 85,
+                      "line": 165
+                    },
+                    "snippet": "  163 |     const detail = await (await api(page, 'GET', '/parents/results/parent-audit-result')).json();\n  164 |     expect(detail.questions.find((q: any) => q.id === id).imageUrl).toBeTruthy();\n> 165 |     await shot(page, 'image-result-detail'); await expect(page.locator('main img')).toHaveCount(1);\n      |                                                                                     ^\n  166 |   } finally { await p.question.update({ where: { id }, data: { imageUrl: original.imageUrl } }); await p.$disconnect(); }\n  167 | });\n  168 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                        "column": 85,
+                        "line": 165
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('main img')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('main img') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('main img')\u001b[22m\n\u001b[2m    33 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n\n  163 |     const detail = await (await api(page, 'GET', '/parents/results/parent-audit-result')).json();\n  164 |     expect(detail.questions.find((q: any) => q.id === id).imageUrl).toBeTruthy();\n> 165 |     await shot(page, 'image-result-detail'); await expect(page.locator('main img')).toHaveCount(1);\n      |                                                                                     ^\n  166 |   } finally { await p.question.update({ where: { id }, data: { imageUrl: original.imageUrl } }); await p.$disconnect(); }\n  167 | });\n  168 |\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts:165:85"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T08:59:08.154Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-F04-a-15676-ble-in-parent-result-detail\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-panel-audit-P-F04-a-15676-ble-in-parent-result-detail\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-panel-audit.spec.ts",
+                    "column": 85,
+                    "line": 165
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cedb4db72fa8275d3def-4b78b7be368392fa097d",
+          "file": "parent-panel-audit.spec.ts",
+          "line": 156,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "parent-security-audit.spec.ts",
+      "file": "parent-security-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Parent real API access boundaries",
+          "file": "parent-security-audit.spec.ts",
+          "line": 37,
+          "column": 6,
+          "specs": [
+            {
+              "title": "anonymous reads return 401 and student sessions cannot enter parent routes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12656,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T08:59:34.594Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-d6f61ca3510393dc39d5",
+              "file": "parent-security-audit.spec.ts",
+              "line": 38,
+              "column": 7
+            },
+            {
+              "title": "linked students and completed answers are visible without authentication secrets or foreign results",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 17747,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T08:59:47.788Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-ce31fe5412792b2dee80",
+              "file": "parent-security-audit.spec.ts",
+              "line": 53,
+              "column": 7
+            },
+            {
+              "title": "parent cannot start exams, mutate child records, manage guardian links or archive data",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15297,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:00:05.570Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-35c66f780615278c6a0a",
+              "file": "parent-security-audit.spec.ts",
+              "line": 88,
+              "column": 7
+            },
+            {
+              "title": "parent cannot answer a legacy in-progress attempt owned by their former student identity",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 2766,
+                      "error": {
+                        "message": "Error: Parent role must be denied even when a retained attempt belongs to the same user ID\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: Parent role must be denied even when a retained attempt belongs to the same user ID\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts:132:120",
+                        "location": {
+                          "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                          "column": 120,
+                          "line": 132
+                        },
+                        "snippet": "  130 |         questionId: '66666666-6666-4666-8666-666666666661', selectedOption: 'A',\n  131 |       });\n> 132 |       expect(response.status(), 'Parent role must be denied even when a retained attempt belongs to the same user ID').toBe(403);\n      |                                                                                                                        ^\n  133 |       expect((await db.studentResult.findUniqueOrThrow({ where: { id } })).answers).toBe('{}');\n  134 |     } finally {\n  135 |       await db.studentResult.deleteMany({ where: { id, studentId: parentId, quizId: 'parent-audit-exam' } });"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                            "column": 120,
+                            "line": 132
+                          },
+                          "message": "Error: Parent role must be denied even when a retained attempt belongs to the same user ID\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n  130 |         questionId: '66666666-6666-4666-8666-666666666661', selectedOption: 'A',\n  131 |       });\n> 132 |       expect(response.status(), 'Parent role must be denied even when a retained attempt belongs to the same user ID').toBe(403);\n      |                                                                                                                        ^\n  133 |       expect((await db.studentResult.findUniqueOrThrow({ where: { id } })).answers).toBe('{}');\n  134 |     } finally {\n  135 |       await db.studentResult.deleteMany({ where: { id, studentId: parentId, quizId: 'parent-audit-exam' } });\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts:132:120"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:00:20.898Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-security-audit-Pare-0d903-eir-former-student-identity\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-security-audit-Pare-0d903-eir-former-student-identity\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                        "column": 120,
+                        "line": 132
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-85de66477dd4b3acd16b",
+              "file": "parent-security-audit.spec.ts",
+              "line": 122,
+              "column": 7
+            },
+            {
+              "title": "unfinished child results are absent from overview and cannot expose the answer key",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4147,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:00:25.479Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-64c014fbd108769111f4",
+              "file": "parent-security-audit.spec.ts",
+              "line": 140,
+              "column": 7
+            },
+            {
+              "title": "removing a guardian link revokes overview and result access in the existing session",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4432,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:00:30.023Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-ac2bd943f8d27031723d",
+              "file": "parent-security-audit.spec.ts",
+              "line": 157,
+              "column": 7
+            },
+            {
+              "title": "deactivating the linked student hides the child and denies previously authorized results",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3131,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:00:34.484Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-45ad3ea53b85e97ce109",
+              "file": "parent-security-audit.spec.ts",
+              "line": 176,
+              "column": 7
+            },
+            {
+              "title": "server-side parent session revocation returns 401 and protected page reload requires login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8965,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:00:37.650Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-7851c732a34808664c78",
+              "file": "parent-security-audit.spec.ts",
+              "line": 193,
+              "column": 7
+            },
+            {
+              "title": "classless child assigned exams match the exams visible in the child account",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 4348,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 3\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[32m- Array [\u001b[39m\n\u001b[32m-   \"parent-audit-unassigned-exam\",\u001b[39m\n\u001b[32m- ]\u001b[39m\n\u001b[31m+ Array []\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 3\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[32m- Array [\u001b[39m\n\u001b[32m-   \"parent-audit-unassigned-exam\",\u001b[39m\n\u001b[32m- ]\u001b[39m\n\u001b[31m+ Array []\u001b[39m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts:221:74",
+                        "location": {
+                          "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                          "column": 74,
+                          "line": 221
+                        },
+                        "snippet": "  219 |     const overview = await api(page, 'GET', '/parents/students/parent-audit-empty/overview');\n  220 |     expect(overview.status()).toBe(200);\n> 221 |     expect((await overview.json()).quizzes.map((q: any) => q.id).sort()).toEqual(childIds);\n      |                                                                          ^\n  222 |   });\n  223 |\n  224 |   test('class-targeted parent announcement creates a real notification for the linked parent', async ({ page }) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                            "column": 74,
+                            "line": 221
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 3\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[32m- Array [\u001b[39m\n\u001b[32m-   \"parent-audit-unassigned-exam\",\u001b[39m\n\u001b[32m- ]\u001b[39m\n\u001b[31m+ Array []\u001b[39m\n\n  219 |     const overview = await api(page, 'GET', '/parents/students/parent-audit-empty/overview');\n  220 |     expect(overview.status()).toBe(200);\n> 221 |     expect((await overview.json()).quizzes.map((q: any) => q.id).sort()).toEqual(childIds);\n      |                                                                          ^\n  222 |   });\n  223 |\n  224 |   test('class-targeted parent announcement creates a real notification for the linked parent', async ({ page }) => {\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts:221:74"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:00:46.642Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-security-audit-Pare-0d84d-isible-in-the-child-account\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-security-audit-Pare-0d84d-isible-in-the-child-account\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                        "column": 74,
+                        "line": 221
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-dacc22430c0a5cdedc2a",
+              "file": "parent-security-audit.spec.ts",
+              "line": 212,
+              "column": 7
+            },
+            {
+              "title": "class-targeted parent announcement creates a real notification for the linked parent",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7738,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m\"Parent audit class notice 0bc4cfb7-d3c1-405c-a1b5-2c6d062c30c3\"\u001b[39m\nReceived array: \u001b[31m[\"Parent Audit Notification 0\", \"Parent Audit Notification 1\", \"Parent Audit Notification 2\", \"Parent Audit Notification 3\", \"Parent Audit Notification 4\", \"Parent Audit Notification 5\", \"Parent Audit Notification 6\", \"Parent Audit Notification 7\", \"Parent Audit Notification 8\", \"Parent Audit Notification 9\", …]\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m\"Parent audit class notice 0bc4cfb7-d3c1-405c-a1b5-2c6d062c30c3\"\u001b[39m\nReceived array: \u001b[31m[\"Parent Audit Notification 0\", \"Parent Audit Notification 1\", \"Parent Audit Notification 2\", \"Parent Audit Notification 3\", \"Parent Audit Notification 4\", \"Parent Audit Notification 5\", \"Parent Audit Notification 6\", \"Parent Audit Notification 7\", \"Parent Audit Notification 8\", \"Parent Audit Notification 9\", …]\u001b[39m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts:239:83",
+                        "location": {
+                          "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                          "column": 83,
+                          "line": 239
+                        },
+                        "snippet": "  237 |       const notifications = await api(page, 'GET', '/notifications?limit=100');\n  238 |       expect(notifications.status()).toBe(200);\n> 239 |       expect((await notifications.json()).notifications.map((n: any) => n.title)).toContain(title);\n      |                                                                                   ^\n  240 |       expect(await db.notification.count({ where: { userId: parentId, title } })).toBe(1);\n  241 |       expect(await db.notification.count({ where: { userId: privateChildId, title } })).toBe(0);\n  242 |     } finally {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                            "column": 83,
+                            "line": 239
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected value: \u001b[32m\"Parent audit class notice 0bc4cfb7-d3c1-405c-a1b5-2c6d062c30c3\"\u001b[39m\nReceived array: \u001b[31m[\"Parent Audit Notification 0\", \"Parent Audit Notification 1\", \"Parent Audit Notification 2\", \"Parent Audit Notification 3\", \"Parent Audit Notification 4\", \"Parent Audit Notification 5\", \"Parent Audit Notification 6\", \"Parent Audit Notification 7\", \"Parent Audit Notification 8\", \"Parent Audit Notification 9\", …]\u001b[39m\n\n  237 |       const notifications = await api(page, 'GET', '/notifications?limit=100');\n  238 |       expect(notifications.status()).toBe(200);\n> 239 |       expect((await notifications.json()).notifications.map((n: any) => n.title)).toContain(title);\n      |                                                                                   ^\n  240 |       expect(await db.notification.count({ where: { userId: parentId, title } })).toBe(1);\n  241 |       expect(await db.notification.count({ where: { userId: privateChildId, title } })).toBe(0);\n  242 |     } finally {\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts:239:83"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:00:52.989Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-security-audit-Pare-f1740-ation-for-the-linked-parent\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\parent-audit\\test-results-latest\\parent-security-audit-Pare-f1740-ation-for-the-linked-parent\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\parent-security-audit.spec.ts",
+                        "column": 83,
+                        "line": 239
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a23149ff290453ad4608-8422cfe3df24e1cf3000",
+              "file": "parent-security-audit.spec.ts",
+              "line": 224,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "parent-shared-audit.spec.ts",
+      "file": "parent-shared-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Parent audit: shared settings and announcements",
+          "file": "parent-shared-audit.spec.ts",
+          "line": 17,
+          "column": 6,
+          "specs": [
+            {
+              "title": "P-S01 parent edits own profile through GUI and reload persists actual DB values",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9367,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:01:02.652Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-3855b201dbe9ba49f65a",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 20,
+              "column": 7
+            },
+            {
+              "title": "P-S02 notification GUI paginates, marks read, deletes own record and rejects foreign deletion",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 28556,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:01:12.383Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-89c491cf1fb05a5e3902",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 47,
+              "column": 7
+            },
+            {
+              "title": "P-S03 notification sound preference persists after reload and is restored",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10428,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:01:40.998Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-f2cdf4a6426be1027fb3",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 91,
+              "column": 7
+            },
+            {
+              "title": "P-S04 own operation history paginates and excludes old and foreign entries",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 32553,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:01:51.489Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-bdbbfbdaaeac938a3321",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 108,
+              "column": 7
+            },
+            {
+              "title": "P-S05 security form rejects mismatch and incorrect current password without changing password",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5257,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:02:24.078Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-b267cc28a8eba2ee897f",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 144,
+              "column": 7
+            },
+            {
+              "title": "P-S06 dedicated parent changes password, revokes other session and new login works",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 30451,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:02:29.364Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-d4f345bf4a7639534b09",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 167,
+              "column": 7
+            },
+            {
+              "title": "P-S07 parent sees intended announcements and cannot create or delete",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8842,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:02:59.849Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-1b081ec92c1f0778df09",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 198,
+              "column": 7
+            },
+            {
+              "title": "P-S08 announcement API error shows retry and recovers from the real server",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5110,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:03:08.728Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-37c20ce43495126f3972",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 228,
+              "column": 7
+            },
+            {
+              "title": "P-S09 mobile settings tabs work with keyboard and preserve query navigation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16925,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T09:03:13.868Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bdb4b69badf720d1ab99-e3c4819852e74523ed08",
+              "file": "parent-shared-audit.spec.ts",
+              "line": 241,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-04T08:54:24.123Z",
+    "duration": 547494.9600000001,
+    "expected": 19,
+    "skipped": 0,
+    "unexpected": 13,
+    "flaky": 0
+  }
+}

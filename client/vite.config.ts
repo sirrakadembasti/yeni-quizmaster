@@ -1,14 +1,31 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite'
+import { existsSync, readFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
+import { appShellPlugin } from './app-shell-manifest.mjs'
 
-export default defineConfig({
+export default defineConfig((_env) => {
+  // Read only the backend port into the proxy configuration. Server secrets stay
+  // in Node; the client env directory and VITE_ exposure prefix are unchanged.
+  const dotenv = createRequire(path.resolve(__dirname, '../server/package.json'))('dotenv')
+  const filePort = (file: string): string | undefined => existsSync(file) ? dotenv.parse(readFileSync(file)).PORT : undefined
+  // Match server/index.ts: process values, then server/.env, then root/.env.
+  // The backend does not load Vite's mode-specific or .env.local files.
+  const rawPort = process.env.PORT ?? filePort(path.resolve(__dirname, '../server/.env')) ?? filePort(path.resolve(__dirname, '../.env'))
+  const backendPort = rawPort === undefined ? 5000 : Number(rawPort)
+  if (!Number.isInteger(backendPort) || backendPort < 1024 || backendPort > 65535) {
+    throw new Error('PORT must be an integer between 1024 and 65535.')
+  }
+  const backendTarget = `http://127.0.0.1:${backendPort}`
+  return {
   base: process.env.VITE_BASE_PATH || '/',
   plugins: [
     react(),
     tailwindcss(),
+    appShellPlugin(),
   ],
   resolve: {
     alias: {
@@ -20,20 +37,20 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:5000',
+        target: backendTarget,
         changeOrigin: true,
         secure: false,
       },
       '/uploads': {
-        target: 'http://127.0.0.1:5000',
+        target: backendTarget,
         changeOrigin: true,
         secure: false,
       },
       // Socket.IO WebSocket proxy: Vite'ın 5173 portuna gelen /socket.io isteklerini
-      // backend'in 5000 portuna iletir. ws:true olmadan WebSocket handshake başarısız
+      // backend'in yapılandırılmış portuna iletir. ws:true olmadan WebSocket handshake başarısız
       // olur ve Socket.IO polling döngüsüne düşerek setTimeout ihlallerine yol açar.
       '/socket.io': {
-        target: 'http://127.0.0.1:5000',
+        target: backendTarget,
         changeOrigin: true,
         secure: false,
         ws: true,
@@ -45,4 +62,32 @@ export default defineConfig({
     globals: true,
     setupFiles: './src/test/setup.ts',
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined;
+          if (
+            id.includes('/react/') ||
+            id.includes('\\react\\') ||
+            id.includes('/react-dom/') ||
+            id.includes('\\react-dom\\') ||
+            id.includes('/scheduler/') ||
+            id.includes('\\scheduler\\')
+          ) {
+            return 'vendor-react';
+          }
+          if (
+            id.includes('@radix-ui') ||
+            id.includes('framer-motion') ||
+            id.includes('lucide-react')
+          ) {
+            return 'vendor-ui';
+          }
+          return undefined;
+        },
+      },
+    },
+  },
+  }
 })

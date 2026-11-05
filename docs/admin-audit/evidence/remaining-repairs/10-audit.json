@@ -1,0 +1,28 @@
+{
+  "route": "/management",
+  "labels": [
+    "Dersler",
+    "Sınıflar",
+    "Kullanıcılar",
+    "Loglar"
+  ],
+  "views": [
+    "Dersler",
+    "Sınıflar",
+    "Kullanıcılar",
+    "Kullanıcılar/Tümü",
+    "Kullanıcılar/Yöneticiler",
+    "Kullanıcılar/Öğretmenler",
+    "Kullanıcılar/Öğrenciler",
+    "Kullanıcılar/Veliler",
+    "Loglar"
+  ],
+  "errors": [],
+  "network": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 0,
+    "unlabeledInputs": []
+  }
+}

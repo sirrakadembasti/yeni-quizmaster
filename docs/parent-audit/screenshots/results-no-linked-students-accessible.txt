@@ -1,0 +1,7 @@
+- main:
+  - button "Bildirimleri aç"
+  - button "Karanlık Moda Geç"
+  - button "E Empty Audit Guardian Veli"
+  - heading "Sınav Sonuçları" [level=1]
+  - paragraph: Bağlı öğrencilerinizin sınav listesini ve cevap detaylarını görüntüleyin.
+  - status: Öğrenciler yükleniyor...

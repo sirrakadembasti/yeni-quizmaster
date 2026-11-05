@@ -1,0 +1,168 @@
+{
+  "date": "2026-10-01T16:09:04.784Z",
+  "entry": "terminal",
+  "fullApplyRequested": true,
+  "root": "C:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-terminal-ZKgkgH",
+  "copiedSourceFiles": 274,
+  "initialState": "source-only; no env/database/config/lock/node_modules",
+  "phases": [
+    "real entrypoint + token exchange + fresh/no-dependencies browser state",
+    "real package install finished; independent node_modules verified",
+    "real web wizard opened with fresh preflight"
+  ],
+  "status": "failed",
+  "ports": {
+    "bootstrapPort": 8268,
+    "wizardPort": 8269,
+    "appPort": 8270,
+    "uiPort": 8271
+  },
+  "ownedBrowserPid": 446052,
+  "lastProgress": {
+    "stage": "wizard-apply",
+    "message": "Sabit kurulum komutu başarısız oldu (1).\n\n> quiz-master-server@1.0.0 db:deploy C:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-terminal-ZKgkgH\\server\n> prisma migrate deploy\n\nPrisma schema loaded from prisma\\schema.prisma\nDatasource \"db\": SQLite database \"quiz.db\" at \"file:../data/quiz.db\"\n\nError: Schema engine error:\n\nC:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-terminal-ZKgkgH\\server:\r\n ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  quiz-master-server@1.0.0 db:deploy: `prisma migrate deploy`\nExit status 1\n",
+    "lastLogLines": [],
+    "steps": [
+      {
+        "id": "prepare",
+        "status": "done"
+      },
+      {
+        "id": "buildServer",
+        "status": "done"
+      },
+      {
+        "id": "buildClient",
+        "status": "done"
+      },
+      {
+        "id": "migrate",
+        "status": "error"
+      },
+      {
+        "id": "admin",
+        "status": "pending"
+      },
+      {
+        "id": "artifacts",
+        "status": "pending"
+      },
+      {
+        "id": "env",
+        "status": "pending"
+      },
+      {
+        "id": "finish",
+        "status": "pending"
+      }
+    ]
+  },
+  "navigationDiagnostics": [
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "dom-and-selector-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "fresh-state-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "wizard-entry",
+      "outcome": "dom-and-preflight-ready",
+      "file": "wizard-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-failure",
+      "outcome": "failed",
+      "file": "bootstrap-failure-navigation.json"
+    }
+  ],
+  "statusReadMisses": [
+    {
+      "at": "2026-10-01T16:11:47.857Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: read ECONNRESET\nCall log:\n  - → GET http://127.0.0.1:8268/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "dependencies",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 623, downloaded 0, added 92",
+          "Progress: resolved 623, reused 623, downloaded 0, added 105",
+          "Progress: resolved 623, reused 623, downloaded 0, added 106",
+          "Progress: resolved 623, reused 623, downloaded 0, added 107",
+          "Progress: resolved 623, reused 623, downloaded 0, added 108",
+          "Progress: resolved 623, reused 623, downloaded 0, added 109",
+          "Progress: resolved 623, reused 623, downloaded 0, added 110",
+          "Progress: resolved 623, reused 623, downloaded 0, added 111"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-01T16:12:20.489Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: socket hang up\nCall log:\n  - → GET http://127.0.0.1:8268/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "bootstrap",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 623, downloaded 0, added 114",
+          "Progress: resolved 623, reused 623, downloaded 0, added 115",
+          "Progress: resolved 623, reused 623, downloaded 0, added 116",
+          "Progress: resolved 623, reused 623, downloaded 0, added 117",
+          "Progress: resolved 623, reused 623, downloaded 0, added 118",
+          "Progress: resolved 623, reused 623, downloaded 0, added 119",
+          "Progress: resolved 623, reused 623, downloaded 0, added 120",
+          "Progress: resolved 623, reused 623, downloaded 0, added 121"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-01T16:15:11.153Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: read ECONNRESET\nCall log:\n  - → GET http://127.0.0.1:8268/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "dependencies",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 623, downloaded 0, added 237",
+          "Progress: resolved 623, reused 623, downloaded 0, added 244",
+          "Progress: resolved 623, reused 623, downloaded 0, added 245",
+          "Progress: resolved 623, reused 623, downloaded 0, added 249",
+          "Progress: resolved 623, reused 623, downloaded 0, added 264",
+          "Progress: resolved 623, reused 623, downloaded 0, added 268",
+          "Progress: resolved 623, reused 623, downloaded 0, added 279",
+          "Progress: resolved 623, reused 623, downloaded 0, added 280"
+        ]
+      }
+    }
+  ],
+  "error": "Real wizard apply failed: Sabit kurulum komutu başarısız oldu (1).\n\n> quiz-master-server@1.0.0 db:deploy C:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-terminal-ZKgkgH\\server\n> prisma migrate deploy\n\nPrisma schema loaded from prisma\\schema.prisma\nDatasource \"db\": SQLite database \"quiz.db\" at \"file:../data/quiz.db\"\n\nError: Schema engine error:\n\nC:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-terminal-ZKgkgH\\server:\r\n ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  quiz-master-server@1.0.0 db:deploy: `prisma migrate deploy`\nExit status 1\n",
+  "cleanup": [
+    {
+      "kind": "owned-process",
+      "pid": 446052,
+      "stopped": true,
+      "alreadyExited": true
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 441156,
+      "stopped": true,
+      "verifiedNaturalExit": false,
+      "exitCode": 0,
+      "signal": null
+    }
+  ],
+  "browserCloseErrors": [],
+  "cleanupSucceeded": true,
+  "sourceProtectedFilesUnchanged": true,
+  "finishedAt": "2026-10-01T16:20:35.208Z"
+}

@@ -1,0 +1,41 @@
+- main:
+  - button "Menüyü aç"
+  - button "Bildirimleri aç"
+  - button "Karanlık Moda Geç"
+  - button "P"
+  - heading "Yönetim Paneli" [level=1]
+  - paragraph: Okul kaynaklarını ve akademik yapıyı buradan koordine edin.
+  - button "Yazdır"
+  - button "Verileri Yenile"
+  - tablist:
+    - tab "Dersler" [selected]
+    - tab "Sınıflar"
+    - tab "Kullanıcılar"
+    - tab "Loglar"
+  - tabpanel "Dersler":
+    - heading "Ders Yönetimi" [level=2]
+    - button "Yeni Ders Ekle"
+    - table:
+      - rowgroup:
+        - row "Ders Adı Açıklama Oluşturulma İşlemler":
+          - columnheader "Ders Adı"
+          - columnheader "Açıklama"
+          - columnheader "Oluşturulma"
+          - columnheader "İşlemler"
+      - rowgroup:
+        - row "Audit Empty Subject Açıklama belirtilmemiş. 04.10.2026 Audit Empty Subject dersini düzenle Audit Empty Subject dersini sil":
+          - cell "Audit Empty Subject"
+          - cell "Açıklama belirtilmemiş.":
+            - paragraph: Açıklama belirtilmemiş.
+          - cell "04.10.2026"
+          - cell "Audit Empty Subject dersini düzenle Audit Empty Subject dersini sil":
+            - button "Audit Empty Subject dersini düzenle"
+            - button "Audit Empty Subject dersini sil"
+        - row "Audit Mathematics Açıklama belirtilmemiş. 04.10.2026 Audit Mathematics dersini düzenle Audit Mathematics dersini sil":
+          - cell "Audit Mathematics"
+          - cell "Açıklama belirtilmemiş.":
+            - paragraph: Açıklama belirtilmemiş.
+          - cell "04.10.2026"
+          - cell "Audit Mathematics dersini düzenle Audit Mathematics dersini sil":
+            - button "Audit Mathematics dersini düzenle"
+            - button "Audit Mathematics dersini sil"

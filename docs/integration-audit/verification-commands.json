@@ -1,0 +1,19 @@
+{
+  "checks": [
+    {
+      "exitCode": 0,
+      "command": "pnpm --filter quiz-master-server run type-check"
+    },
+    {
+      "exitCode": 0,
+      "command": "pnpm --filter quiz-master-client run type-check"
+    },
+    {
+      "exitCode": 0,
+      "command": "pnpm run build"
+    }
+  ],
+  "status": "passed",
+  "startedAt": "2026-10-04T16:41:04.8545992Z",
+  "finishedAt": "2026-10-04T16:44:31.7124016Z"
+}

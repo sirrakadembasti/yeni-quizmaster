@@ -6,7 +6,19 @@ import { logger } from "../utils/logger";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { hashResetToken, issuePasswordReset } from "../services/password-reset";
-import { getIO } from "../socket";
+import { sendRegistrationSuccessEmail } from "../utils/email";
+import { getIO, disconnectUserSockets, disconnectSessionSockets } from "../socket";
+import {
+  DEMO_READ_ONLY_CODE,
+  DEMO_READ_ONLY_MESSAGE,
+  DEMO_SHOWCASE_ACCOUNTS,
+  findDemoShowcaseAccount,
+  getSessionCookieName,
+  isDemoInstanceEnabled,
+  isDemoShowcaseEmail,
+} from "../utils/demo-mode";
+import { isRequestInDemoContext } from "../middleware/demo-guard";
+import { getEffectiveDeploymentConfig } from "../utils/deployment-config";
 
 const router: Router = Router();
 
@@ -46,7 +58,57 @@ const resetPasswordSchema = z.object({
   password: z.string().min(6, "Şifre en az 6 karakter olmalıdır."),
 });
 
+const demoLoginSchema = z.object({
+  roleKey: z.enum(["demo-admin", "demo-ogretmen", "demo-ogrenci", "demo-veli"]),
+});
+
 // ==================== AUTH ROUTES ====================
+
+router.get("/demo-info", (_req: Request, res: Response) => {
+  const deploymentConfig = getEffectiveDeploymentConfig();
+  res.json({
+    enabled: isDemoInstanceEnabled(),
+    basePath: deploymentConfig.basePath,
+    readOnlyMessage: DEMO_READ_ONLY_MESSAGE,
+    accounts: DEMO_SHOWCASE_ACCOUNTS,
+  });
+});
+
+router.post("/demo-login", async (req: Request, res: Response) => {
+  try {
+    const validation = demoLoginSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({ message: "Geçersiz demo rol seçimi." });
+    }
+
+    const account = findDemoShowcaseAccount(validation.data.roleKey);
+    if (!account) {
+      return res.status(404).json({ message: "Demo rolü bulunamadı." });
+    }
+
+    const user = await storage.getUserByEmail(account.email);
+    if (!user || (user as any).isActive === false) {
+      return res.status(404).json({
+        message: "Demo hesabı veritabanında henüz hazırlanmamış. Lütfen db:prepare-demo komutunu çalıştırın.",
+      });
+    }
+
+    await regenerateSession(req);
+    req.session.userId = user.id;
+    req.session.sessionVersion = user.sessionVersion ?? 0;
+    req.session.isDemoSession = true;
+    const { password: _, ...userWithoutPassword } = user;
+    res.json({
+      user: {
+        ...userWithoutPassword,
+        isDemoUser: true,
+      },
+    });
+  } catch (error) {
+    logger.error({ err: error }, "[Auth] Demo login error");
+    res.status(500).json({ message: "Demo girişi başarısız oldu." });
+  }
+});
 
 router.post("/register", async (req: Request, res: Response) => {
   try {
@@ -69,7 +131,13 @@ router.post("/register", async (req: Request, res: Response) => {
     });
     
     req.session.userId = user.id;
+    req.session.sessionVersion = user.sessionVersion ?? 0;
     await storage.createLog(user.id, "REGISTER", `User registered as student`);
+    try {
+      await sendRegistrationSuccessEmail(user.email, user.name);
+    } catch (emailError) {
+      logger.warn({ err: emailError, userId: user.id }, "[Auth] Kayıt bilgilendirme e-postası kuyruğa alınamadı.");
+    }
     try {
       const admins = (await storage.getAllUsers()).filter((candidate) => candidate.role === "admin");
       const notifications = await Promise.all(admins.map((admin) => storage.createNotification({
@@ -103,6 +171,14 @@ router.post("/login", async (req: Request, res: Response) => {
     }
 
     const { email, password } = validation.data;
+    const demoContext = isRequestInDemoContext(req);
+    if (demoContext && !isDemoShowcaseEmail(email.trim())) {
+      return res.status(403).json({
+        code: DEMO_READ_ONLY_CODE,
+        message: "Demo modunda yalnızca hazır demo hesaplarıyla (demo-admin, demo-ogretmen, demo-ogrenci, demo-veli) giriş yapılabilir.",
+      });
+    }
+
     const user = await storage.getUserByEmail(email.trim());
     if (!user || (user as any).isActive === false) {
       return res.status(401).json({ message: "Geçersiz e-posta veya şifre." });
@@ -115,9 +191,15 @@ router.post("/login", async (req: Request, res: Response) => {
     
     await regenerateSession(req);
     req.session.userId = user.id;
-    await storage.createLog(user.id, "LOGIN", `User logged in`);
+    req.session.sessionVersion = user.sessionVersion ?? 0;
+    const isDemoUser = demoContext || isDemoInstanceEnabled() || isDemoShowcaseEmail(user.email);
+    if (isDemoUser) {
+      req.session.isDemoSession = true;
+    } else {
+      await storage.createLog(user.id, "LOGIN", `User logged in`);
+    }
     const { password: _, ...userWithoutPassword } = user;
-    res.json({ user: userWithoutPassword });
+    res.json({ user: { ...userWithoutPassword, isDemoUser } });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Giriş işlemi başarısız oldu." });
@@ -125,17 +207,22 @@ router.post("/login", async (req: Request, res: Response) => {
 });
 
 router.post("/logout", requireAuth, async (req: AuthRequest, res: Response) => {
-  await storage.createLog(req.user!.id, "LOGOUT", `User logged out`);
+  const isDemoUser = isDemoInstanceEnabled() || isDemoShowcaseEmail(req.user!.email);
+  if (!isDemoUser) {
+    await storage.createLog(req.user!.id, "LOGOUT", `User logged out`);
+  }
+  const cookieOptions = { secure: Boolean(req.session.cookie.secure), sameSite: req.session.cookie.sameSite };
+  disconnectSessionSockets(req.sessionID);
   req.session.destroy((error) => {
     if (error) {
       return res.status(500).json({ message: "Oturum kapatılamadı." });
     }
 
-    res.clearCookie("quizmaster.sid", {
+    res.clearCookie(getSessionCookieName(), {
       path: "/",
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: cookieOptions.secure,
+      sameSite: cookieOptions.sameSite,
     });
     res.json({ message: "Oturum kapatıldı." });
   });
@@ -143,7 +230,12 @@ router.post("/logout", requireAuth, async (req: AuthRequest, res: Response) => {
 
 router.get("/me", requireAuth, (req: AuthRequest, res: Response) => {
   const { password, ...userWithoutPassword } = req.user!;
-  res.json({ user: userWithoutPassword });
+  const isDemoUser = Boolean(
+    req.session?.isDemoSession ||
+      isDemoInstanceEnabled() ||
+      isDemoShowcaseEmail(userWithoutPassword.email),
+  );
+  res.json({ user: { ...userWithoutPassword, isDemoUser } });
 });
 
 router.patch("/me", requireAuth, async (req: AuthRequest, res: Response) => {
@@ -216,7 +308,11 @@ router.post("/change-password", requireAuth, async (req: AuthRequest, res: Respo
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
     
     // Update the password
-    await storage.updateUser(user.id, { password: hashedNewPassword });
+    const updated = await storage.updateUser(user.id, { password: hashedNewPassword });
+    disconnectUserSockets(user.id);
+    await regenerateSession(req);
+    req.session.userId = user.id;
+    req.session.sessionVersion = updated.sessionVersion ?? 0;
     await storage.createLog(user.id, "PASSWORD_CHANGE", "User changed their password");
     
     res.json({ message: "Şifreniz başarıyla güncellendi." });
@@ -281,6 +377,7 @@ router.post("/reset-password", async (req: Request, res: Response) => {
       resetToken: null,
       resetTokenExpiry: null,
     });
+    disconnectUserSockets(user.id);
     if (resetRequest) await storage.updatePasswordResetRequest(resetRequest.id, { status: "completed", completedAt: new Date() });
 
     await storage.createLog(user.id, "RESET_PASSWORD", "Password reset successfully");

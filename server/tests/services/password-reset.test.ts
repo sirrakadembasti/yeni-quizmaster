@@ -1,12 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { storage } from '../../storage';
 import { sendResetPasswordEmail } from '../../utils/email';
-import { hashResetToken, issuePasswordReset } from '../../services/password-reset';
+import { hashResetToken, issuePasswordReset, issueOfflinePasswordReset } from '../../services/password-reset';
 
 vi.mock('../../storage', () => ({ storage: {
-  cancelPendingPasswordResetRequests: vi.fn(), updateUser: vi.fn(), createPasswordResetRequest: vi.fn(), updatePasswordResetRequest: vi.fn(),
+  cancelPendingPasswordResetRequests: vi.fn(), updateUser: vi.fn(), createPasswordResetRequest: vi.fn(), updatePasswordResetRequest: vi.fn(), createLog: vi.fn(),
 } }));
 vi.mock('../../utils/email', () => ({ sendResetPasswordEmail: vi.fn() }));
+vi.mock('../../utils/deployment-config', () => ({ getPublicAppUrl: vi.fn(() => 'http://127.0.0.1:5173') }));
 
 describe('Password reset request service', () => {
   beforeEach(() => vi.clearAllMocks());
@@ -24,5 +25,17 @@ describe('Password reset request service', () => {
     expect(hashResetToken(rawToken)).toBe(resetUpdate.resetToken);
     expect(rawToken).not.toBe(resetUpdate.resetToken);
     expect(storage.updatePasswordResetRequest).toHaveBeenCalledWith('request-1', { emailQueueId: 'email-1', status: 'pending' });
+  });
+
+  it('generates a direct offline reset URL without queueing an SMTP email', async () => {
+    const user = { id: 'admin-1', email: 'admin@example.com', role: 'admin' } as any;
+    vi.mocked(storage.createPasswordResetRequest).mockImplementation(async (data) => ({ id: 'request-offline-1', ...data }));
+    const result = await issueOfflinePasswordReset(user);
+    expect(storage.cancelPendingPasswordResetRequests).toHaveBeenCalledWith(user.id);
+    expect(sendResetPasswordEmail).not.toHaveBeenCalled();
+    expect(result.token).toMatch(/^[a-f0-9]{64}$/);
+    expect(result.resetUrl).toBe(`http://127.0.0.1:5173/reset-password?token=${result.token}`);
+    const resetUpdate = vi.mocked(storage.updateUser).mock.calls[0][1] as any;
+    expect(resetUpdate.resetToken).toBe(hashResetToken(result.token));
   });
 });

@@ -350,7 +350,7 @@
   .print\:hidden,
   .no-print,
   aside,
-  header,
+  [data-dashboard-main] > header,
   nav,
   [data-sidebar],
   .sidebar,
@@ -413,6 +413,24 @@
   .dashboard-page [role="tablist"],
   .dashboard-page [role="combobox"] {
     display: none !important;
+  }
+
+  /* Print every record on the current notification page without expanding
+     other dashboard scroll areas or changing normal screen pagination. */
+  .settings-notification-scroll,
+  .settings-notification-scroll [data-radix-scroll-area-viewport] {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .settings-notification-scroll > [data-orientation] {
+    display: none !important;
+  }
+
+  .settings-notification-scroll .settings-notification-row {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
 
   .print-masthead {
@@ -619,6 +637,8 @@
     page-break-inside: avoid !important;
   }
 
+  /* Set the document page too: page is not inherited by the shared masthead. */
+  body:has(.print-landscape),
   .print-landscape { page: landscape; }
 
   @page {

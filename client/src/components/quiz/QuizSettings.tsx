@@ -43,9 +43,9 @@ export function QuizSettings({
           </div>
           <div className="grid grid-cols-1 gap-4 border-t pt-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label>Ders / Kategori</Label>
+              <Label htmlFor="quiz-category">Ders / Kategori</Label>
               <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger><SelectValue placeholder="Kategori seçin" /></SelectTrigger>
+                <SelectTrigger id="quiz-category"><SelectValue placeholder="Kategori seçin" /></SelectTrigger>
                 <SelectContent>{dbCategories.map((item) => <SelectItem key={item.id} value={item.name}>{item.name}</SelectItem>)}</SelectContent>
               </Select>
             </div>
@@ -70,12 +70,12 @@ export function QuizSettings({
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between rounded-lg border bg-card p-3">
               <div><Label className="flex items-center gap-2 text-base font-medium"><Clock className="h-4 w-4 text-primary" />Süre Sınırı</Label><p className="text-sm text-muted-foreground">Sınav için maksimum süre belirleyin.</p></div>
-              <Switch checked={timeLimitEnabled} onCheckedChange={setTimeLimitEnabled} />
+              <Switch aria-label="Süre Sınırı" checked={timeLimitEnabled} onCheckedChange={setTimeLimitEnabled} />
             </div>
             {timeLimitEnabled && <div className="flex items-center gap-4 rounded-lg border bg-accent/20 p-3"><Label htmlFor="timeLimit">Süre (Dakika)</Label><Input id="timeLimit" type="number" min="1" className="w-24 text-center font-mono" value={timeLimit || ''} onChange={(event) => setTimeLimit(parseInt(event.target.value) || undefined)} /></div>}
             <div className="flex items-center justify-between rounded-lg border bg-card p-3">
               <div><Label className="text-base font-medium">Soruları Karıştır</Label><p className="text-sm text-muted-foreground">Her öğrenciye soruları farklı sırada gösterin.</p></div>
-              <Switch checked={shuffleQuestions} onCheckedChange={setShuffleQuestions} />
+              <Switch aria-label="Soruları Karıştır" checked={shuffleQuestions} onCheckedChange={setShuffleQuestions} />
             </div>
           </CardContent>
         </Card>

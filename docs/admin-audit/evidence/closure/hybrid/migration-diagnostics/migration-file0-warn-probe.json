@@ -1,0 +1,23 @@
+{
+  "nativeCreate": {
+    "status": 0,
+    "stderr": "",
+    "bytes": 0,
+    "header": ""
+  },
+  "nativeWarnMissing": {
+    "status": 1,
+    "stderr": "{\"timestamp\":\"2026-10-01T16:54:00.2566514Z\",\"level\":\"ERROR\",\"fields\":{\"is_panic\":false,\"error_code\":\"P1003\",\"message\":\"Database `diagnostic-warn-missing.db` does not exist at `C:/Users/ahmet/AppData/Local/Temp/quizmaster-fresh-terminal-ZKgkgH/server/data/diagnostic-warn-missing.db`.\"},\"target\":\"schema_engine::logger\"}\n",
+    "discardFirstLine": [
+      ""
+    ],
+    "dbCreated": false
+  },
+  "file0Migration": {
+    "status": 0,
+    "signal": null,
+    "stdout": "Prisma schema loaded from prisma\\schema.prisma\nDatasource \"db\": SQLite database \"diagnostic-file0.db\" at \"file:C:/Users/ahmet/AppData/Local/Temp/quizmaster-fresh-terminal-ZKgkgH/server/data/diagnostic-file0.db\"\n\n14 migrations found in prisma/migrations\n\nApplying migration `20260306111725_pnpm_db_seed`\nApplying migration `20260319065853_add_password_reset_fields`\nApplying migration `20260327072209_`\nApplying migration `20260327112801_`\nApplying migration `20260914150000_add_notification_preferences`\nApplying migration `20260921133500_add_survey_content`\nApplying migration `20260924131500_add_guardian_accounts`\nApplying migration `20260924135900_add_email_queue_and_announcements`\nApplying migration `20260924142000_add_password_reset_requests`\nApplying migration `20260924180000_add_retention_indexes`\nApplying migration `20260925120000_student_soft_delete_and_class_number`\nApplying migration `20260925130000_add_schema_drift_columns`\nApplying migration `20260930093000_session_version_result_indexes`\nApplying migration `20260930120000_nullable_survey_answers`\n\nThe following migration(s) have been applied:\n\nmigrations/\n  └─ 20260306111725_pnpm_db_seed/\n    └─ migration.sql\n  └─ 20260319065853_add_password_reset_fields/\n    └─ migration.sql\n  └─ 20260327072209_/\n    └─ migration.sql\n  └─ 20260327112801_/\n    └─ migration.sql\n  └─ 20260914150000_add_notification_preferences/\n    └─ migration.sql\n  └─ 20260921133500_add_survey_content/\n    └─ migration.sql\n  └─ 20260924131500_add_guardian_accounts/\n    └─ migration.sql\n  └─ 20260924135900_add_email_queue_and_announcements/\n    └─ migration.sql\n  └─ 20260924142000_add_password_reset_requests/\n    └─ migration.sql\n  └─ 20260924180000_add_retention_indexes/\n    └─ migration.sql\n  └─ 20260925120000_student_soft_delete_and_class_number/\n    └─ migration.sql\n  └─ 20260925130000_add_schema_drift_columns/\n    └─ migration.sql\n  └─ 20260930093000_session_version_result_indexes/\n    └─ migration.sql\n  └─ 20260930120000_nullable_survey_answers/\n    └─ migration.sql\n      \nAll migrations have been successfully applied.\n",
+    "stderr": "",
+    "afterBytes": 348160
+  }
+}

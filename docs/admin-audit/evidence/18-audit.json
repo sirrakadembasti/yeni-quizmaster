@@ -1,0 +1,18 @@
+{
+  "route": "/classes/audit-class",
+  "labels": [],
+  "views": [],
+  "errors": [],
+  "network": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 1,
+    "unlabeledInputs": [
+      {
+        "placeholder": "Öğrenci ismine göre filtrele...",
+        "type": null
+      }
+    ]
+  }
+}

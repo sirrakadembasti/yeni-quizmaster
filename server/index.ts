@@ -1,12 +1,14 @@
+import { createHash } from "node:crypto";
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./api-routes/routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import { configureHTTPTransport } from "./utils/http-transport";
 import session from "express-session";
-import connectSqlite3 from "connect-sqlite3";
+import { createSessionStore } from "./utils/session-store";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
-import helmet from "helmet";
+import { httpSecurity } from "./utils/http-security";
 import path from "path";
 import fs from "fs";
 import { getProjectRoot } from "./utils/project-paths";
@@ -21,6 +23,15 @@ import { startEmailWorker } from "./utils/email";
 import { uploadsDirectory } from "./utils/upload-paths";
 import { getEffectiveDeploymentConfig } from "./utils/deployment-config";
 import { startDataRetentionWorker } from "./services/data-retention";
+import { createArchiveWorker } from './services/archive-worker';
+import { archiveDb } from './services/archive-db';
+import { initializeStorage } from './storage';
+import { getArchiveBackupRoot } from './api-routes/archive';
+import { createAnnualCaptureGuard } from './middleware/annual-capture-guard';
+import { createAcademicContextGuard } from './middleware/academic-context';
+import { createDemoModeGuard } from './middleware/demo-guard';
+import { getSessionCookieName, isDemoInstanceEnabled } from './utils/demo-mode';
+import { captureTrustedRequestReceipt } from './utils/request-receipt';
 
 // DNS Fallback: Windows/MEB ağında getaddrinfo ENOTFOUND hatalarını önler
 setupDnsFallback();
@@ -33,6 +44,12 @@ dotenv.config({ path: path.resolve(serverDirectory, ".env") });
 dotenv.config({ path: path.resolve(projectRoot, ".env") });
 
 const deploymentConfig = getEffectiveDeploymentConfig();
+const frontendUrl = process.env.FRONTEND_URL || deploymentConfig.publicUrl || "";
+const isHttpsDeploy =
+  process.env.NODE_ENV === "production" &&
+  (String(frontendUrl).startsWith("https://") || process.env.FORCE_SECURE_COOKIES === "1");
+const archiveWorker = createArchiveWorker({ db: archiveDb, backupRoot: getArchiveBackupRoot(), onError: error => logger.error({ err: error }, '[Archive] Persistent job failed') });
+process.once('exit', () => archiveWorker.stop());
 
 export { logger };
 
@@ -70,24 +87,22 @@ if (!sessionSecret) {
   process.exit(1);
 }
 
-const SQLiteStore = connectSqlite3(session);
-
 const app = express();
 const httpServer = createServer(app);
+configureHTTPTransport(httpServer);
 
 // Prevent nested Prisma relations from serializing credentials or recovery
 // secrets if a route accidentally includes a complete User record.
 app.set("json replacer", secureJsonReplacer);
 
 // Security Headers
-app.use(helmet({
-  crossOriginResourcePolicy: false, // Allows cross-origin requests for resources (like images)
-}));
+app.use(httpSecurity(isHttpsDeploy));
 
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000, // limit each IP to 1000 requests per windowMs
+  keyGenerator: (req) => req.session?.userId || req.ip || "unknown",
+  max: 1000, // authenticated user; IP fallback before login
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: "Too many requests, please try again later." },
@@ -95,23 +110,39 @@ const limiter = rateLimit({
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // limit each IP to 20 auth requests per windowMs
+  keyGenerator: (req) => (req.ip || "unknown") + ":" + createHash("sha256").update(String(req.body?.email || req.body?.token || "").trim().toLowerCase()).digest("hex"),
+  max: 20, // per IP and login/reset identifier
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: "Too many login attempts, please try again later." },
 });
 
-app.use("/api/", limiter);
-app.use("/api/auth/", authLimiter);
+
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+if (deploymentConfig.basePath !== "/") {
+  const basePrefix = deploymentConfig.basePath;
+  app.use((req, _res, next) => {
+    if (
+      req.url.startsWith(`${basePrefix}/api/`) ||
+      req.url === `${basePrefix}/api` ||
+      req.url.startsWith(`${basePrefix}/uploads/`)
+    ) {
+      req.url = req.url.slice(basePrefix.length) || "/";
+    }
+    next();
+  });
+}
+app.use(captureTrustedRequestReceipt);
+app.use(["/api/auth/login", "/api/auth/demo-login", "/api/auth/register", "/api/auth/forgot-password", "/api/auth/reset-password"], authLimiter);
 
 // CORS configuration
 const allowedOrigins = deploymentConfig.allowedOrigins;
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin) || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
@@ -123,23 +154,31 @@ app.use(cors({
 // Session configuration
 // sessionMiddleware değişken olarak tanımlanıyor — Socket.IO ile paylaşmak için gerekli (bkz. socket.ts)
 app.set("trust proxy", deploymentConfig.trustProxyHops);
+
+// HTTP (pnpm dev / localhost) üzerinde Secure çerez yazılmaz → CSRF/login kırılır.
+// Yalnızca gerçek HTTPS üretiminde secure + sameSite=none kullan.
+
+const demoInstance = isDemoInstanceEnabled();
+const sessionDirectory = demoInstance
+  ? path.join(serverDirectory, "data", "demo-sessions")
+  : path.join(serverDirectory, "data");
+fs.mkdirSync(sessionDirectory, { recursive: true });
 const sessionMiddleware = session({
-  store: new SQLiteStore({
-    db: "sessions.db",
-    dir: "./data",
-  }) as any,
+  store: createSessionStore(sessionDirectory, { touchIntervalMs: 60000 }),
   secret: sessionSecret,
   resave: false,
+  rolling: false,
   saveUninitialized: false,
-  name: "quizmaster.sid", // Custom cookie name for better security
+  name: getSessionCookieName(), // Custom cookie name for better security & demo isolation
   cookie: {
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    secure: isHttpsDeploy,
+    sameSite: isHttpsDeploy ? "none" : "lax",
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
   },
 });
 app.use(sessionMiddleware);
+app.use("/api/", limiter);
 
 // Ensure uploads directory exists
 if (!fs.existsSync(uploadsDirectory)) {
@@ -154,6 +193,9 @@ app.use(httpLogger);
 (async () => {
   try {
     logger.info("Starting server...");
+    // Verify both patched database connections before accepting any request.
+    await initializeStorage();
+    await archiveDb.$connect();
 
     // Initialize Socket.io — sessionMiddleware paylaşılıyor, oda auth için gerekli
     setupSocket(httpServer, sessionMiddleware);
@@ -173,6 +215,9 @@ app.use(httpLogger);
     });
 
     // Initialize application routes
+    app.use(createAnnualCaptureGuard());
+    app.use(createAcademicContextGuard());
+    app.use(createDemoModeGuard());
     await registerRoutes(httpServer, app);
 
     // API 404 Handler - If it starts with /api and reaches here, it's a 404
@@ -212,9 +257,12 @@ app.use(httpLogger);
         host,
       },
       () => {
-        logger.info({ host, port, basePath: deploymentConfig.basePath }, "Server serving");
-        startEmailWorker();
-        startDataRetentionWorker();
+        logger.info({ host, port, basePath: deploymentConfig.basePath, demoMode: demoInstance }, "Server serving");
+        if (!demoInstance) {
+          startEmailWorker();
+          startDataRetentionWorker();
+          archiveWorker.start();
+        }
       },
     );
   } catch (error) {

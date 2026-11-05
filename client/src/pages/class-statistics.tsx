@@ -18,6 +18,15 @@ function dateInputValue(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
+function printClassLabel(name: string) {
+  const label = name.trim();
+  if (label.length <= 10) return [label];
+  const wordEnd = label.lastIndexOf(" ", 10);
+  const splitAt = wordEnd >= 4 ? wordEnd : 10;
+  const remainder = label.slice(splitAt).trim();
+  return [label.slice(0, splitAt), remainder.length > 10 ? `${remainder.slice(0, 9)}…` : remainder];
+}
+
 export default function ClassStatisticsPage() {
   const { user, role } = useAuth();
   useEffect(() => {
@@ -46,6 +55,7 @@ export default function ClassStatisticsPage() {
 
   const selectedClass = classesQuery.data?.classes.find((item) => item.id === classId)?.name;
   const data = analyticsQuery.data?.classes || [];
+  const printGroups = Array.from({ length: Math.ceil(data.length / 5) }, (_, index) => data.slice(index * 5, index * 5 + 5));
 
   // KPI Calculations
   const totals = useMemo(() => {
@@ -54,8 +64,9 @@ export default function ClassStatisticsPage() {
     }
     const totalStudents = data.reduce((acc, c) => acc + c.studentCount, 0);
     const totalParticipants = data.reduce((acc, c) => acc + c.participantCount, 0);
-    const avgParticipation = Math.round(data.reduce((acc, c) => acc + c.participationRate, 0) / data.length);
-    const avgScore = Math.round(data.reduce((acc, c) => acc + c.averageScore, 0) / data.length);
+    const avgParticipation = totalStudents ? Math.round(totalParticipants / totalStudents * 100) : 0;
+    const completedCount = data.reduce((acc, c) => acc + c.completedCount, 0);
+    const avgScore = completedCount ? Math.round(data.reduce((acc, c) => acc + c.averageScore * c.completedCount, 0) / completedCount) : 0;
     return { totalStudents, totalParticipants, avgParticipation, avgScore };
   }, [data]);
 
@@ -98,7 +109,7 @@ export default function ClassStatisticsPage() {
             <p className="text-sm text-muted-foreground">Yetkili sınıfların katılım ve başarı analizi.</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={exportCsv} disabled={!data.length}><Download className="mr-2 h-4 w-4" />Excel</Button>
+            <Button variant="outline" onClick={exportCsv} disabled={!data.length || analyticsQuery.isError}><Download className="mr-2 h-4 w-4" />Excel</Button>
             <PrintButton />
           </div>
         </div>
@@ -117,7 +128,7 @@ export default function ClassStatisticsPage() {
             <div className="section-stack">
               <Label className="text-xs font-semibold">Sınıf Seçimi</Label>
               <Select value={classId} onValueChange={setClassId}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger aria-label="Sınıf Seçimi"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Tüm Sınıflar</SelectItem>
                   {classesQuery.data?.classes.map((item) => <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>)}
@@ -127,8 +138,10 @@ export default function ClassStatisticsPage() {
           </CardContent>
         </Card>
 
+        {classesQuery.isError && <div role="alert" className="rounded-lg border p-3">Sınıflar yüklenemedi. {classesQuery.data && 'Son yüklenen sınıf seçenekleri gösteriliyor.'} <Button variant="outline" onClick={() => classesQuery.refetch()}>Sınıfları yeniden yükle</Button></div>}
+
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {!analyticsQuery.isLoading && !analyticsQuery.isError && <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Card>
             <CardContent className="p-3.5 flex items-center gap-3">
               <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400">
@@ -173,7 +186,7 @@ export default function ClassStatisticsPage() {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </div>}
 
         {/* Chart */}
         <Card>
@@ -182,14 +195,18 @@ export default function ClassStatisticsPage() {
               {selectedClass ? `${selectedClass} Sınıfı Analizi` : "Sınıf Analiz Grafiği"}
             </CardTitle>
           </CardHeader>
-          <CardContent className="h-[320px] p-2 sm:p-4">
+          <CardContent className="h-[320px] p-2 sm:p-4 print:h-auto">
             {analyticsQuery.isLoading ? (
               <div className="flex h-full items-center justify-center text-muted-foreground text-sm">Veriler yükleniyor...</div>
+            ) : analyticsQuery.isError ? (
+              <div role="alert" className="flex h-full flex-col items-center justify-center gap-3"><p>İstatistikler yüklenemedi.</p><Button variant="outline" onClick={() => analyticsQuery.refetch()}>Yeniden dene</Button></div>
             ) : data.length === 0 ? (
               <div className="flex h-full items-center justify-center rounded-xl border border-dashed text-center text-muted-foreground text-sm">
                 Seçilen kriterlerde gösterilecek veri bulunamadı.
               </div>
             ) : (
+              <>
+              <div className="h-full print:hidden">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data} barGap={6} barCategoryGap="20%" margin={{ top: 12, right: 16, left: -10, bottom: 8 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.4} />
@@ -200,16 +217,41 @@ export default function ClassStatisticsPage() {
                     contentStyle={{ borderRadius: '8px', fontSize: '12px' }}
                   />
                   <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '8px' }} />
-                  <Bar dataKey="participationRate" name="Katılım Oranı" fill="#6366f1" maxBarSize={38} radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="averageScore" name="Ortalama Başarı" fill="#10b981" maxBarSize={38} radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="participationRate" name="Katılım Oranı" fill="#6366f1" maxBarSize={38} radius={[4, 4, 0, 0]} isAnimationActive={false} />
+                  <Bar dataKey="averageScore" name="Ortalama Başarı" fill="#10b981" maxBarSize={38} radius={[4, 4, 0, 0]} isAnimationActive={false} />
                 </BarChart>
               </ResponsiveContainer>
+              </div>
+              {/* Always rendered at final geometry: printing needs no animation or resize callback. */}
+              {printGroups.map((group, groupIndex) => (
+              <svg key={groupIndex} className="hidden print:block w-full print:h-[280px] break-inside-avoid" role="img" aria-label={printGroups.length === 1 ? "Sınıfların katılım ve başarı grafiği" : `Sınıfların katılım ve başarı grafiği bölüm ${groupIndex + 1}/${printGroups.length}`} viewBox="0 0 600 240">
+                {[0, 25, 50, 75, 100].map(value => (
+                  <g key={value}>
+                    <line x1="42" x2="588" y1={180 - value * 1.6} y2={180 - value * 1.6} stroke="#cbd5e1" />
+                    <text x="36" y={184 - value * 1.6} textAnchor="end" fontSize="10" fill="#334155">{value}%</text>
+                  </g>
+                ))}
+                {group.map((item, index) => {
+                  const groupWidth = 540 / group.length;
+                  const x = 48 + index * groupWidth + groupWidth / 2;
+                  return <g key={item.classId}>
+                    <title>{item.className}</title>
+                    <rect data-series="participationRate" x={x - 28} y={180 - Math.max(0, Math.min(item.participationRate, 100)) * 1.6} width="24" height={Math.max(0, Math.min(item.participationRate, 100)) * 1.6} fill="#6366f1" />
+                    <rect data-series="averageScore" x={x + 4} y={180 - Math.max(0, Math.min(item.averageScore, 100)) * 1.6} width="24" height={Math.max(0, Math.min(item.averageScore, 100)) * 1.6} fill="#10b981" />
+                    <text data-class-label x={x} y="197" textAnchor="middle" fontSize="11" fill="#334155">{printClassLabel(item.className).map((line, lineIndex) => <tspan key={lineIndex} x={x} dy={lineIndex === 0 ? 0 : 12}>{line}</tspan>)}</text>
+                  </g>;
+                })}
+                <rect x="160" y="220" width="10" height="10" fill="#6366f1" /><text x="176" y="229" fontSize="11" fill="#334155">Katılım Oranı</text>
+                <rect x="300" y="220" width="10" height="10" fill="#10b981" /><text x="316" y="229" fontSize="11" fill="#334155">Ortalama Başarı</text>
+              </svg>
+              ))}
+              </>
             )}
           </CardContent>
         </Card>
 
         {/* Grafikle aynı veriyi sayısal olarak doğrulayan sınıf tablosu */}
-        {data.length > 0 && (
+        {!analyticsQuery.isError && data.length > 0 && (
           <Card className="overflow-hidden class-analysis-table">
             <CardHeader className="border-b bg-muted/20 py-3">
               <CardTitle className="text-base">Sınıf Bazında Ayrıntılı Sonuçlar</CardTitle>

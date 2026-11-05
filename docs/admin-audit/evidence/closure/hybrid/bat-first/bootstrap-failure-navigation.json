@@ -1,0 +1,717 @@
+{
+  "at": "2026-10-02T05:17:29.893Z",
+  "phase": "bootstrap-failure",
+  "outcome": "failed",
+  "url": "http://127.0.0.1:20423/setup",
+  "error": "page.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"http://127.0.0.1:20425/auth\", waiting until \"domcontentloaded\"\n",
+  "pending": [],
+  "events": [
+    {
+      "at": "2026-10-02T05:10:50.315Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:10:50.621Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:10:52.511Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:10:53.084Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:10:54.129Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:10:54.436Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:10:55.721Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:10:55.871Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:10:57.043Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:10:57.209Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:10:58.394Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:10:58.487Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:10:59.710Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:10:59.968Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:11:23.903Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:11:24.670Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:11:25.991Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:11:26.117Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:11:30.153Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:11:33.413Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:11:46.470Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:11:58.180Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:11:59.349Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:11:59.426Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:00.632Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:00.982Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:02.290Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:02.460Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:03.682Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:03.748Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:05.198Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:06.236Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:08.238Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:08.730Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:09.833Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:10.060Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:11.474Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:11.761Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:12.933Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:13.581Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:14.875Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:15.109Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:16.430Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:16.543Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:17.999Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:18.189Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:19.641Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:20.217Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:21.405Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:21.649Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:22.862Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:22.949Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:24.166Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:24.203Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:30.505Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:36.997Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:37.928Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:39.214Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:39.874Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:40.022Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:41.303Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:41.795Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:43.293Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:44.572Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:45.848Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:46.724Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:48.394Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:49.616Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:50.065Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:50.535Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:51.293Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:52.635Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:54.000Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:54.855Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:55.253Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:55.408Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:56.783Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:56.882Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:58.134Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:12:59.010Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:12:59.941Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:13:00.493Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:13:01.233Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:13:02.681Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:13:03.432Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:13:05.424Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:13:06.474Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:13:06.973Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:13:08.542Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:13:09.920Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:13:10.945Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:13:11.950Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:13:13.232Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:13:13.747Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:13:16.007Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:13:16.193Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:13:17.592Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:13:19.706Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:13:21.034Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20423/api/status",
+      "type": "fetch",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:13:21.815Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20423/api/status",
+      "status": 200
+    }
+  ],
+  "document": {
+    "readyState": "complete",
+    "title": "QuizMaster Kurulum Sihirbazı",
+    "installerPresent": false,
+    "wizardPresent": true,
+    "loginPresent": false
+  }
+}

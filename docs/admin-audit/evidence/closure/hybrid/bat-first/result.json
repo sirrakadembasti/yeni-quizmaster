@@ -1,0 +1,464 @@
+{
+  "date": "2026-10-02T04:42:25.184Z",
+  "entry": "bat",
+  "fullApplyRequested": true,
+  "root": "C:\\Users\\ahmet\\AppData\\Local\\Temp\\quizmaster-fresh-bat-2qANPK",
+  "copiedSourceFiles": 282,
+  "initialState": "source-only; no env/database/config/lock/node_modules",
+  "phases": [
+    "real entrypoint + token exchange + fresh/no-dependencies browser state",
+    "real package install finished; independent node_modules verified",
+    "real web wizard opened with fresh preflight",
+    "real browser apply: server/client builds, migration, first admin, config/env/lock",
+    "persisted form values + bootstrap reload installed/disabled + actual reentry rejection",
+    "actual built API startup + first-admin login/auth cookie"
+  ],
+  "status": "failed",
+  "ports": {
+    "bootstrapPort": 20422,
+    "wizardPort": 20423,
+    "appPort": 20424,
+    "uiPort": 20425
+  },
+  "ownershipSnapshotError": "Windows process ownership snapshot unavailable",
+  "ownedBrowserPid": 504160,
+  "lastProgress": {
+    "stage": "wizard-apply",
+    "message": "QuizMaster kurulumu tamamlandı. Birazdan giriş sayfasına yönlendirileceksiniz.",
+    "lastLogLines": [],
+    "steps": [
+      {
+        "id": "prepare",
+        "status": "done"
+      },
+      {
+        "id": "buildServer",
+        "status": "done"
+      },
+      {
+        "id": "buildClient",
+        "status": "done"
+      },
+      {
+        "id": "migrate",
+        "status": "done"
+      },
+      {
+        "id": "admin",
+        "status": "done"
+      },
+      {
+        "id": "artifacts",
+        "status": "done"
+      },
+      {
+        "id": "env",
+        "status": "done"
+      },
+      {
+        "id": "finish",
+        "status": "done"
+      }
+    ]
+  },
+  "navigationDiagnostics": [
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "dom-and-selector-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-entry",
+      "outcome": "fresh-state-ready",
+      "file": "bootstrap-entry-navigation.json"
+    },
+    {
+      "phase": "wizard-entry",
+      "outcome": "dom-and-preflight-ready",
+      "file": "wizard-entry-navigation.json"
+    },
+    {
+      "phase": "bootstrap-locked",
+      "outcome": "dom-and-selector-ready",
+      "file": "bootstrap-locked-navigation.json"
+    },
+    {
+      "phase": "fresh-login",
+      "outcome": "failed",
+      "file": "fresh-login-navigation.json"
+    },
+    {
+      "phase": "bootstrap-failure",
+      "outcome": "failed",
+      "file": "bootstrap-failure-navigation.json"
+    },
+    {
+      "phase": "fresh-login-failure",
+      "outcome": "failed",
+      "file": "fresh-login-failure-navigation.json"
+    }
+  ],
+  "statusReadMisses": [
+    {
+      "at": "2026-10-02T04:53:07.374Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: socket hang up\nCall log:\n  - → GET http://127.0.0.1:20422/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "bootstrap",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 623, downloaded 0, added 118",
+          "Progress: resolved 623, reused 623, downloaded 0, added 121",
+          "Progress: resolved 623, reused 623, downloaded 0, added 122",
+          "Progress: resolved 623, reused 623, downloaded 0, added 123",
+          "Progress: resolved 623, reused 623, downloaded 0, added 124",
+          "Progress: resolved 623, reused 623, downloaded 0, added 125",
+          "Progress: resolved 623, reused 623, downloaded 0, added 126",
+          "Progress: resolved 623, reused 623, downloaded 0, added 127"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-02T04:56:35.215Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: Timeout 20000ms exceeded.\nCall log:\n  - → GET http://127.0.0.1:20422/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "dependencies",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 623, downloaded 0, added 242",
+          "Progress: resolved 623, reused 623, downloaded 0, added 243",
+          "Progress: resolved 623, reused 623, downloaded 0, added 244",
+          "Progress: resolved 623, reused 623, downloaded 0, added 245",
+          "Progress: resolved 623, reused 623, downloaded 0, added 246",
+          "Progress: resolved 623, reused 623, downloaded 0, added 247",
+          "Progress: resolved 623, reused 623, downloaded 0, added 248",
+          "Progress: resolved 623, reused 623, downloaded 0, added 249"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-02T04:57:41.281Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: read ECONNRESET\nCall log:\n  - → GET http://127.0.0.1:20422/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "dependencies",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 623, downloaded 0, added 314",
+          "Progress: resolved 623, reused 623, downloaded 0, added 315",
+          "Progress: resolved 623, reused 623, downloaded 0, added 317",
+          "Progress: resolved 623, reused 623, downloaded 0, added 318",
+          "Progress: resolved 623, reused 623, downloaded 0, added 327",
+          "Progress: resolved 623, reused 623, downloaded 0, added 328",
+          "Progress: resolved 623, reused 623, downloaded 0, added 333",
+          "Progress: resolved 623, reused 623, downloaded 0, added 334"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-02T04:58:49.195Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: Timeout 20000ms exceeded.",
+      "lastProgress": {
+        "stage": "dependencies",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "Progress: resolved 623, reused 623, downloaded 0, added 568",
+          "Progress: resolved 623, reused 623, downloaded 0, added 575",
+          "Progress: resolved 623, reused 623, downloaded 0, added 583",
+          "Progress: resolved 623, reused 623, downloaded 0, added 596",
+          "Progress: resolved 623, reused 623, downloaded 0, added 601",
+          "Progress: resolved 623, reused 623, downloaded 0, added 604",
+          "Progress: resolved 623, reused 623, downloaded 0, added 608",
+          "Progress: resolved 623, reused 623, downloaded 0, added 611"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-02T05:01:36.558Z",
+      "attempt": 1,
+      "error": "Timed out: status response body",
+      "lastProgress": {
+        "stage": "dependencies",
+        "jobStatus": "running",
+        "jobExitCode": null,
+        "message": "Paketler ve kütüphaneler hazırlanıyor...",
+        "lastLogLines": [
+          "+ @playwright/test 1.63.0",
+          "+ concurrently 9.2.4",
+          "+ playwright 1.63.0",
+          "server postinstall$ prisma generate",
+          "server postinstall: Prisma schema loaded from prisma\\schema.prisma",
+          "server postinstall: ✔ Generated Prisma Client (v5.22.0) to .\\..\\node_modules\\.pnpm\\@prisma+client@5.22.0_prisma@5.22.0\\node_modules\\@prisma\\client in 5.81s",
+          "server postinstall: Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)",
+          "server postinstall: Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-02T05:05:18.474Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: read ECONNRESET\nCall log:\n  - → GET http://127.0.0.1:20423/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "wizard-apply",
+        "message": "Kurulum uygulanıyor; adımlar ekranda canlı izleniyor…",
+        "lastLogLines": [],
+        "steps": [
+          {
+            "id": "prepare",
+            "status": "done"
+          },
+          {
+            "id": "buildServer",
+            "status": "done"
+          },
+          {
+            "id": "buildClient",
+            "status": "running"
+          },
+          {
+            "id": "migrate",
+            "status": "pending"
+          },
+          {
+            "id": "admin",
+            "status": "pending"
+          },
+          {
+            "id": "artifacts",
+            "status": "pending"
+          },
+          {
+            "id": "env",
+            "status": "pending"
+          },
+          {
+            "id": "finish",
+            "status": "pending"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-02T05:08:09.869Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: Timeout 20000ms exceeded.\nCall log:\n  - → GET http://127.0.0.1:20423/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "wizard-apply",
+        "message": "Kurulum uygulanıyor; adımlar ekranda canlı izleniyor…",
+        "lastLogLines": [],
+        "steps": [
+          {
+            "id": "prepare",
+            "status": "done"
+          },
+          {
+            "id": "buildServer",
+            "status": "done"
+          },
+          {
+            "id": "buildClient",
+            "status": "running"
+          },
+          {
+            "id": "migrate",
+            "status": "pending"
+          },
+          {
+            "id": "admin",
+            "status": "pending"
+          },
+          {
+            "id": "artifacts",
+            "status": "pending"
+          },
+          {
+            "id": "env",
+            "status": "pending"
+          },
+          {
+            "id": "finish",
+            "status": "pending"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-02T05:10:22.221Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: Timeout 20000ms exceeded.",
+      "lastProgress": {
+        "stage": "wizard-apply",
+        "message": "Kurulum uygulanıyor; adımlar ekranda canlı izleniyor…",
+        "lastLogLines": [],
+        "steps": [
+          {
+            "id": "prepare",
+            "status": "done"
+          },
+          {
+            "id": "buildServer",
+            "status": "done"
+          },
+          {
+            "id": "buildClient",
+            "status": "running"
+          },
+          {
+            "id": "migrate",
+            "status": "pending"
+          },
+          {
+            "id": "admin",
+            "status": "pending"
+          },
+          {
+            "id": "artifacts",
+            "status": "pending"
+          },
+          {
+            "id": "env",
+            "status": "pending"
+          },
+          {
+            "id": "finish",
+            "status": "pending"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-02T05:10:32.043Z",
+      "attempt": 1,
+      "error": "apiRequestContext.get: read ECONNRESET\nCall log:\n  - → GET http://127.0.0.1:20423/api/status\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n[redacted credential header]\n",
+      "lastProgress": {
+        "stage": "wizard-apply",
+        "message": "Kurulum uygulanıyor; adımlar ekranda canlı izleniyor…",
+        "lastLogLines": [],
+        "steps": [
+          {
+            "id": "prepare",
+            "status": "done"
+          },
+          {
+            "id": "buildServer",
+            "status": "done"
+          },
+          {
+            "id": "buildClient",
+            "status": "running"
+          },
+          {
+            "id": "migrate",
+            "status": "pending"
+          },
+          {
+            "id": "admin",
+            "status": "pending"
+          },
+          {
+            "id": "artifacts",
+            "status": "pending"
+          },
+          {
+            "id": "env",
+            "status": "pending"
+          },
+          {
+            "id": "finish",
+            "status": "pending"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-02T05:11:23.150Z",
+      "attempt": 1,
+      "error": "Timed out: status response body",
+      "lastProgress": {
+        "stage": "wizard-apply",
+        "message": "Kurulum uygulanıyor; adımlar ekranda canlı izleniyor…",
+        "lastLogLines": [],
+        "steps": [
+          {
+            "id": "prepare",
+            "status": "done"
+          },
+          {
+            "id": "buildServer",
+            "status": "done"
+          },
+          {
+            "id": "buildClient",
+            "status": "running"
+          },
+          {
+            "id": "migrate",
+            "status": "pending"
+          },
+          {
+            "id": "admin",
+            "status": "pending"
+          },
+          {
+            "id": "artifacts",
+            "status": "pending"
+          },
+          {
+            "id": "env",
+            "status": "pending"
+          },
+          {
+            "id": "finish",
+            "status": "pending"
+          }
+        ]
+      }
+    }
+  ],
+  "statusResponseDisposalError": "Timed out: status response disposal",
+  "error": "page.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"http://127.0.0.1:20425/auth\", waiting until \"domcontentloaded\"\n",
+  "cleanup": [
+    {
+      "kind": "owned-process-tree",
+      "pid": 507564,
+      "stopped": false,
+      "error": "Cannot verify launch identity/known descendant absence; no unknown PID was killed"
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 495116,
+      "stopped": false,
+      "error": "Cannot verify launch identity/known descendant absence; no unknown PID was killed"
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 504160,
+      "stopped": false,
+      "error": "Cannot verify launch identity/known descendant absence; no unknown PID was killed"
+    },
+    {
+      "kind": "owned-process-tree",
+      "pid": 513640,
+      "stopped": false,
+      "error": "Cannot verify launch identity/known descendant absence; no unknown PID was killed"
+    }
+  ],
+  "browserCloseErrors": [
+    "Timed out: owned browser server close",
+    "Timed out: owned browser server kill"
+  ],
+  "cleanupSucceeded": false,
+  "productStatusBeforeCleanup": "failed",
+  "sourceProtectedFilesUnchanged": true,
+  "finishedAt": "2026-10-02T05:19:17.396Z"
+}

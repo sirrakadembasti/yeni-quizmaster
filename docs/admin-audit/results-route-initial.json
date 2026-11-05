@@ -1,0 +1,1571 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\playwright\\cli.js",
+      "test",
+      "--config",
+      "playwright.admin-audit.config.ts"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.admin-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/admin-audit/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "admin-audit.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "docs/admin-audit/playwright-report",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/admin-audit/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "admin-audit.spec.ts",
+      "file": "admin-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "admin route /",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 83389,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:21:48.776Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvIiwKICAibGFiZWxzIjogW10sCiAgInZpZXdzIjogW10sCiAgImVycm9ycyI6IFtdLAogICJuZXR3b3JrIjogWwogICAgewogICAgICAidXJsIjogImh0dHA6Ly8xMjcuMC4wLjE6NTUxMS9hcGkvYXV0aC9tZSIsCiAgICAgICJzdGF0dXMiOiA0MDEKICAgIH0KICBdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMSwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-186bbc01ebd9e01cdf59",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /admin-quizzes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 43214,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:23:17.903Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvYWRtaW4tcXVpenplcyIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMSwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbCiAgICAgIHsKICAgICAgICAicGxhY2Vob2xkZXIiOiAiU8SxbmF2IGJhxZ9sxLHEn8SxIHZleWEgZGVycyBpbGUgYXJhLi4uIiwKICAgICAgICAidHlwZSI6IG51bGwKICAgICAgfQogICAgXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-378b31b7579d23b64a18",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /quizzes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 21256,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:24:01.958Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvcXVpenplcyIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMSwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbCiAgICAgIHsKICAgICAgICAicGxhY2Vob2xkZXIiOiAiU8SxbmF2IGFkxLEgdmV5YSBhw6fEsWtsYW1hIGlsZSBhcmEuLi4iLAogICAgICAgICJ0eXBlIjogbnVsbAogICAgICB9CiAgICBdCiAgfQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-7042655a1509e1cb75d2",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /statistics",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 21556,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:24:23.261Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvc3RhdGlzdGljcyIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMSwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-fd10239a9a3ad9f41c38",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13661,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:24:44.850Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvcmVzdWx0cyIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMSwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-e7c3a4a550e113c138dd",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /survey-results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 34746,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:24:58.547Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvc3VydmV5LXJlc3VsdHMiLAogICJsYWJlbHMiOiBbCiAgICAiU29udcOnbGFyIiwKICAgICJBbmtldCBPbHXFn3R1ciIKICBdLAogICJ2aWV3cyI6IFsKICAgICJTb251w6dsYXIiLAogICAgIkFua2V0IE9sdcWfdHVyIgogIF0sCiAgImVycm9ycyI6IFtdLAogICJuZXR3b3JrIjogW10sCiAgInV4IjogewogICAgInZpZXdwb3J0IjogMzkwLAogICAgImRvY3VtZW50V2lkdGgiOiAzOTAsCiAgICAidW5uYW1lZEJ1dHRvbnMiOiAxLAogICAgInVubGFiZWxlZElucHV0cyI6IFsKICAgICAgewogICAgICAgICJwbGFjZWhvbGRlciI6IG51bGwsCiAgICAgICAgInR5cGUiOiAiZGF0ZSIKICAgICAgfSwKICAgICAgewogICAgICAgICJwbGFjZWhvbGRlciI6IG51bGwsCiAgICAgICAgInR5cGUiOiAiZGF0ZSIKICAgICAgfQogICAgXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-45d400e769d7af1da844",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /students",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13497,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:25:33.328Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvc3R1ZGVudHMiLAogICJsYWJlbHMiOiBbXSwKICAidmlld3MiOiBbXSwKICAiZXJyb3JzIjogW10sCiAgIm5ldHdvcmsiOiBbXSwKICAidXgiOiB7CiAgICAidmlld3BvcnQiOiAzOTAsCiAgICAiZG9jdW1lbnRXaWR0aCI6IDM5MCwKICAgICJ1bm5hbWVkQnV0dG9ucyI6IDEsCiAgICAidW5sYWJlbGVkSW5wdXRzIjogWwogICAgICB7CiAgICAgICAgInBsYWNlaG9sZGVyIjogIsOWxJ9yZW5jaSBhcmEuLi4iLAogICAgICAgICJ0eXBlIjogbnVsbAogICAgICB9CiAgICBdCiAgfQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-b52ee8ea74568eabe38c",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /teachers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 37863,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:25:46.862Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvdGVhY2hlcnMiLAogICJsYWJlbHMiOiBbXSwKICAidmlld3MiOiBbXSwKICAiZXJyb3JzIjogW10sCiAgIm5ldHdvcmsiOiBbXSwKICAidXgiOiB7CiAgICAidmlld3BvcnQiOiAzOTAsCiAgICAiZG9jdW1lbnRXaWR0aCI6IDM5MCwKICAgICJ1bm5hbWVkQnV0dG9ucyI6IDEsCiAgICAidW5sYWJlbGVkSW5wdXRzIjogWwogICAgICB7CiAgICAgICAgInBsYWNlaG9sZGVyIjogIsOWxJ9yZXRtZW4gYWTEsSB2ZXlhIGUtcG9zdGEgaWxlIGFyYS4uLiIsCiAgICAgICAgInR5cGUiOiBudWxsCiAgICAgIH0KICAgIF0KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-e7ad74434b5bcc555075",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /guardian-management",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14014,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:26:24.763Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvZ3VhcmRpYW4tbWFuYWdlbWVudCIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMSwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbCiAgICAgIHsKICAgICAgICAicGxhY2Vob2xkZXIiOiAiw5bEn3JlbmNpIGFkxLEsIGUtcG9zdGEsIHPEsW7EsWYgdmV5YSBubyBhcmEiLAogICAgICAgICJ0eXBlIjogbnVsbAogICAgICB9CiAgICBdCiAgfQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-bd4af15adfcba103c426",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /classlist",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13343,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:26:38.817Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvY2xhc3NsaXN0IiwKICAibGFiZWxzIjogW10sCiAgInZpZXdzIjogW10sCiAgImVycm9ycyI6IFtdLAogICJuZXR3b3JrIjogW10sCiAgInV4IjogewogICAgInZpZXdwb3J0IjogMzkwLAogICAgImRvY3VtZW50V2lkdGgiOiAzOTAsCiAgICAidW5uYW1lZEJ1dHRvbnMiOiAxLAogICAgInVubGFiZWxlZElucHV0cyI6IFsKICAgICAgewogICAgICAgICJwbGFjZWhvbGRlciI6ICJTxLFuxLFmIGFyYS4uLiIsCiAgICAgICAgInR5cGUiOiBudWxsCiAgICAgIH0KICAgIF0KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-7a8e9a47787fe642b7d9",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /management",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15028,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:26:52.195Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvbWFuYWdlbWVudCIsCiAgImxhYmVscyI6IFsKICAgICJEZXJzbGVyIiwKICAgICJTxLFuxLFmbGFyIiwKICAgICJLdWxsYW7EsWPEsWxhciIsCiAgICAiTG9nbGFyIgogIF0sCiAgInZpZXdzIjogWwogICAgIkRlcnNsZXIiLAogICAgIlPEsW7EsWZsYXIiLAogICAgIkt1bGxhbsSxY8SxbGFyIiwKICAgICJLdWxsYW7EsWPEsWxhci9Uw7xtw7wiLAogICAgIkt1bGxhbsSxY8SxbGFyL1nDtm5ldGljaWxlciIsCiAgICAiS3VsbGFuxLFjxLFsYXIvw5bEn3JldG1lbmxlciIsCiAgICAiS3VsbGFuxLFjxLFsYXIvw5bEn3JlbmNpbGVyIiwKICAgICJLdWxsYW7EsWPEsWxhci9WZWxpbGVyIiwKICAgICJMb2dsYXIiCiAgXSwKICAiZXJyb3JzIjogW10sCiAgIm5ldHdvcmsiOiBbXSwKICAidXgiOiB7CiAgICAidmlld3BvcnQiOiAzOTAsCiAgICAiZG9jdW1lbnRXaWR0aCI6IDM5MCwKICAgICJ1bm5hbWVkQnV0dG9ucyI6IDEsCiAgICAidW5sYWJlbGVkSW5wdXRzIjogW10KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-1dc7788a26aee994e96f",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /archive",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14054,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:27:07.260Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvYXJjaGl2ZSIsCiAgImxhYmVscyI6IFsKICAgICJTxLFuYXYgQXLFn2l2aSIsCiAgICAiU8SxbsSxZiBBdGxhdG1hIgogIF0sCiAgInZpZXdzIjogWwogICAgIlPEsW5hdiBBcsWfaXZpIiwKICAgICJTxLFuxLFmIEF0bGF0bWEiCiAgXSwKICAiZXJyb3JzIjogW10sCiAgIm5ldHdvcmsiOiBbXSwKICAidXgiOiB7CiAgICAidmlld3BvcnQiOiAzOTAsCiAgICAiZG9jdW1lbnRXaWR0aCI6IDM5MCwKICAgICJ1bm5hbWVkQnV0dG9ucyI6IDEsCiAgICAidW5sYWJlbGVkSW5wdXRzIjogWwogICAgICB7CiAgICAgICAgInBsYWNlaG9sZGVyIjogIsOWcm46IDIwMjUtMjAyNiBFxJ9pdGltIFnEsWzEsSIsCiAgICAgICAgInR5cGUiOiBudWxsCiAgICAgIH0KICAgIF0KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-caee6b5d50b891fb6d04",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /server-setup",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12601,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:27:21.355Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvc2VydmVyLXNldHVwIiwKICAibGFiZWxzIjogW10sCiAgInZpZXdzIjogW10sCiAgImVycm9ycyI6IFtdLAogICJuZXR3b3JrIjogW10sCiAgInV4IjogewogICAgInZpZXdwb3J0IjogMzkwLAogICAgImRvY3VtZW50V2lkdGgiOiAzOTAsCiAgICAidW5uYW1lZEJ1dHRvbnMiOiAyLAogICAgInVubGFiZWxlZElucHV0cyI6IFsKICAgICAgewogICAgICAgICJwbGFjZWhvbGRlciI6IG51bGwsCiAgICAgICAgInR5cGUiOiAibnVtYmVyIgogICAgICB9LAogICAgICB7CiAgICAgICAgInBsYWNlaG9sZGVyIjogImh0dHA6Ly8xMjcuMC4wLjE6NTE3MyIsCiAgICAgICAgInR5cGUiOiBudWxsCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAicGxhY2Vob2xkZXIiOiAiL3F1aXptYXN0ZXIiLAogICAgICAgICJ0eXBlIjogbnVsbAogICAgICB9LAogICAgICB7CiAgICAgICAgInBsYWNlaG9sZGVyIjogImh0dHA6Ly8xMjcuMC4wLjE6NTE3M1xuaHR0cDovL2xvY2FsaG9zdDo1MTczXG5odHRwOi8vMTI3LjAuMC4xOjUwMDAiLAogICAgICAgICJ0eXBlIjogbnVsbAogICAgICB9LAogICAgICB7CiAgICAgICAgInBsYWNlaG9sZGVyIjogbnVsbCwKICAgICAgICAidHlwZSI6ICJudW1iZXIiCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAicGxhY2Vob2xkZXIiOiBudWxsLAogICAgICAgICJ0eXBlIjogIm51bWJlciIKICAgICAgfSwKICAgICAgewogICAgICAgICJwbGFjZWhvbGRlciI6IG51bGwsCiAgICAgICAgInR5cGUiOiAibnVtYmVyIgogICAgICB9LAogICAgICB7CiAgICAgICAgInBsYWNlaG9sZGVyIjogbnVsbCwKICAgICAgICAidHlwZSI6ICJudW1iZXIiCiAgICAgIH0KICAgIF0KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-ee626ecb61e56e6e719f",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /announcements",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12341,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:27:33.990Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvYW5ub3VuY2VtZW50cyIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMSwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-4585729da177e561b4fe",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /settings",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18252,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:27:46.361Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvc2V0dGluZ3MiLAogICJsYWJlbHMiOiBbCiAgICAiIFByb2ZpbCBCaWxnaWxlcmkiLAogICAgIiBCaWxkaXJpbWxlciIsCiAgICAiIMSwxZ9sZW0gR2XDp21pxZ9pIiwKICAgICIgR8O8dmVubGlrIgogIF0sCiAgInZpZXdzIjogWwogICAgIlByb2ZpbCBCaWxnaWxlcmkiLAogICAgIkJpbGRpcmltbGVyIiwKICAgICLEsMWfbGVtIEdlw6dtacWfaSIsCiAgICAiR8O8dmVubGlrIgogIF0sCiAgImVycm9ycyI6IFtdLAogICJuZXR3b3JrIjogW10sCiAgInV4IjogewogICAgInZpZXdwb3J0IjogMzkwLAogICAgImRvY3VtZW50V2lkdGgiOiAzOTAsCiAgICAidW5uYW1lZEJ1dHRvbnMiOiAxLAogICAgInVubGFiZWxlZElucHV0cyI6IFsKICAgICAgewogICAgICAgICJwbGFjZWhvbGRlciI6ICJBZCBTb3lhZCIsCiAgICAgICAgInR5cGUiOiBudWxsCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAicGxhY2Vob2xkZXIiOiAiZW1haWxAZXhhbXBsZS5jb20iLAogICAgICAgICJ0eXBlIjogImVtYWlsIgogICAgICB9LAogICAgICB7CiAgICAgICAgInBsYWNlaG9sZGVyIjogIjA1eHggeHh4IHh4IHh4IiwKICAgICAgICAidHlwZSI6IG51bGwKICAgICAgfSwKICAgICAgewogICAgICAgICJwbGFjZWhvbGRlciI6ICLEsGxldGnFn2ltIGFkcmVzaSIsCiAgICAgICAgInR5cGUiOiBudWxsCiAgICAgIH0KICAgIF0KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-181fce1459e280cc9a6b",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /create-quiz",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13855,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:28:04.649Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvY3JlYXRlLXF1aXoiLAogICJsYWJlbHMiOiBbCiAgICAiU8SxbmF2IEF5YXJsYXLEsSIsCiAgICAiU29ydWxhciAoMSkiCiAgXSwKICAidmlld3MiOiBbCiAgICAiU8SxbmF2IEF5YXJsYXLEsSIsCiAgICAiU29ydWxhciAoMSkiCiAgXSwKICAiZXJyb3JzIjogW10sCiAgIm5ldHdvcmsiOiBbXSwKICAidXgiOiB7CiAgICAidmlld3BvcnQiOiAzOTAsCiAgICAiZG9jdW1lbnRXaWR0aCI6IDM5MCwKICAgICJ1bm5hbWVkQnV0dG9ucyI6IDMsCiAgICAidW5sYWJlbGVkSW5wdXRzIjogW10KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-e9a0e64b71b34c549708",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /quizzes/audit-exam",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12485,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:28:18.538Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvcXVpenplcy9hdWRpdC1leGFtIiwKICAibGFiZWxzIjogW10sCiAgInZpZXdzIjogW10sCiAgImVycm9ycyI6IFtdLAogICJuZXR3b3JrIjogW10sCiAgInV4IjogewogICAgInZpZXdwb3J0IjogMzkwLAogICAgImRvY3VtZW50V2lkdGgiOiAzOTAsCiAgICAidW5uYW1lZEJ1dHRvbnMiOiAxLAogICAgInVubGFiZWxlZElucHV0cyI6IFtdCiAgfQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-16b592472b929f428388",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /teachers/audit-teacher",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12395,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:28:31.060Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvdGVhY2hlcnMvYXVkaXQtdGVhY2hlciIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMSwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-0fb44b9c91cd202b44e2",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /classes/audit-class",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18546,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:28:43.486Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvY2xhc3Nlcy9hdWRpdC1jbGFzcyIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMSwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbCiAgICAgIHsKICAgICAgICAicGxhY2Vob2xkZXIiOiAiw5bEn3JlbmNpIGlzbWluZSBnw7ZyZSBmaWx0cmVsZS4uLiIsCiAgICAgICAgInR5cGUiOiBudWxsCiAgICAgIH0KICAgIF0KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-34ac5a2c72f180e19e10",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /admin/classes/audit-class",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 24314,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:29:02.066Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvYWRtaW4vY2xhc3Nlcy9hdWRpdC1jbGFzcyIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMiwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbCiAgICAgIHsKICAgICAgICAicGxhY2Vob2xkZXIiOiAiQXJhLi4uIiwKICAgICAgICAidHlwZSI6IG51bGwKICAgICAgfQogICAgXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-a5acb6174604fcc56843",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /student/result/audit-result",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22531,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:29:26.415Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvc3R1ZGVudC9yZXN1bHQvYXVkaXQtcmVzdWx0IiwKICAibGFiZWxzIjogW10sCiAgInZpZXdzIjogW10sCiAgImVycm9ycyI6IFtdLAogICJuZXR3b3JrIjogW10sCiAgInV4IjogewogICAgInZpZXdwb3J0IjogMzkwLAogICAgImRvY3VtZW50V2lkdGgiOiAzOTAsCiAgICAidW5uYW1lZEJ1dHRvbnMiOiAxLAogICAgInVubGFiZWxlZElucHV0cyI6IFtdCiAgfQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-2c902a82da7242ffad5d",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /student/quiz/audit-teacher-exam",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 30469,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:29:48.989Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvc3R1ZGVudC9xdWl6L2F1ZGl0LXRlYWNoZXItZXhhbSIsCiAgImxhYmVscyI6IFtdLAogICJ2aWV3cyI6IFtdLAogICJlcnJvcnMiOiBbXSwKICAibmV0d29yayI6IFtdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMCwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbXQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-581cfcb93a4c670c4a30",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "admin route /student/results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 31573,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:30:19.501Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "audit",
+                      "contentType": "application/json",
+                      "body": "ewogICJyb3V0ZSI6ICIvc3R1ZGVudC9yZXN1bHRzIiwKICAibGFiZWxzIjogW10sCiAgInZpZXdzIjogW10sCiAgImVycm9ycyI6IFtdLAogICJuZXR3b3JrIjogWwogICAgewogICAgICAidXJsIjogImh0dHBzOi8vZm9udHMuZ29vZ2xlYXBpcy5jb20vY3NzMj9mYW1pbHk9SW50ZXI6d2dodEA0MDA7NTAwOzYwMDs3MDAmZmFtaWx5PU91dGZpdDp3Z2h0QDUwMDs2MDA7NzAwJmRpc3BsYXk9c3dhcCIsCiAgICAgICJlcnJvciI6ICJuZXQ6OkVSUl9DT05ORUNUSU9OX0NMT1NFRCIKICAgIH0KICBdLAogICJ1eCI6IHsKICAgICJ2aWV3cG9ydCI6IDM5MCwKICAgICJkb2N1bWVudFdpZHRoIjogMzkwLAogICAgInVubmFtZWRCdXR0b25zIjogMSwKICAgICJ1bmxhYmVsZWRJbnB1dHMiOiBbCiAgICAgIHsKICAgICAgICAicGxhY2Vob2xkZXIiOiAiQmHFn2zEsWsgaWxlIGFyYS4uLiIsCiAgICAgICAgInR5cGUiOiBudWxsCiAgICAgIH0KICAgIF0KICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-ac493bcbbdd2dd8073bb",
+          "file": "admin-audit.spec.ts",
+          "line": 8,
+          "column": 45
+        },
+        {
+          "title": "profile state after save and navigation",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 27807,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Audit \u001b[7mAdmin Updat\u001b[27med\"\u001b[39m\nReceived: \u001b[31m\"Audit \u001b[7mCUA Sav\u001b[27med\"\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Audit \u001b[7mAdmin Updat\u001b[27med\"\u001b[39m\nReceived: \u001b[31m\"Audit \u001b[7mCUA Sav\u001b[27med\"\u001b[39m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:16:934",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                      "column": 934,
+                      "line": 16
+                    },
+                    "snippet": "  14 | const evidence=JSON.stringify({route,labels,views,errors,network,ux},null,2);writeFileSync(out+'/'+i+'-audit.json',evidence);await info.attach('audit',{body:evidence,contentType:'application/json'});expect(errors).toEqual([]);\n  15 | });\n> 16 | test('profile state after save and navigation',async({page},info)=>{await login(page);await page.goto('/settings');await page.getByPlaceholder('Ad Soyad',{exact:true}).fill('Audit Admin Updated');await page.getByRole('button',{name:'Değişiklikleri Kaydet'}).click();await expect.poll(async()=>(await api(page,'/auth/me')).body.user?.name).toBe('Audit Admin Updated');await page.getByRole('link',{name:'Dashboard',exact:true}).click();await page.getByRole('link',{name:'Ayarlar',exact:true}).click();const stale=await page.getByPlaceholder('Ad Soyad',{exact:true}).inputValue();await page.screenshot({path:out+'/profile-stale.png'});await page.reload({waitUntil:'domcontentloaded'});await expect(page.getByPlaceholder('Ad Soyad',{exact:true})).toHaveValue('Audit Admin Updated');await info.attach('profile',{body:JSON.stringify({afterNavigation:stale,afterReload:'Audit Admin Updated'}),contentType:'application/json'});expect(stale).toBe('Audit Admin Updated');});\n     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ^\n  17 | test('unauthorized and expired sessions',async({page})=>{await page.goto('/management');await expect(page).toHaveURL(/auth/);await login(page,'audit-teacher@example.test');await page.goto('/management');await expect(page).toHaveURL(/5511\\/$/);expect((await api(page,'/admin/users')).status).toBe(403);expect((await api(page,'/admin/deployment/status')).status).toBe(403);await page.context().clearCookies();await page.goto('/management');await expect(page).toHaveURL(/auth/);expect((await api(page,'/admin/users')).status).toBe(401);});\n  18 | test('results selector includes teacher exams',async({page})=>{await login(page);await page.goto('/results');await page.getByRole('combobox').nth(2).click();await page.screenshot({path:out+'/results-exam-selector.png'});await expect(page.getByRole('option',{name:'audit-teacher-exam',exact:false})).toBeVisible();});\n  19 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                        "column": 934,
+                        "line": 16
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Audit \u001b[7mAdmin Updat\u001b[27med\"\u001b[39m\nReceived: \u001b[31m\"Audit \u001b[7mCUA Sav\u001b[27med\"\u001b[39m\n\n  14 | const evidence=JSON.stringify({route,labels,views,errors,network,ux},null,2);writeFileSync(out+'/'+i+'-audit.json',evidence);await info.attach('audit',{body:evidence,contentType:'application/json'});expect(errors).toEqual([]);\n  15 | });\n> 16 | test('profile state after save and navigation',async({page},info)=>{await login(page);await page.goto('/settings');await page.getByPlaceholder('Ad Soyad',{exact:true}).fill('Audit Admin Updated');await page.getByRole('button',{name:'Değişiklikleri Kaydet'}).click();await expect.poll(async()=>(await api(page,'/auth/me')).body.user?.name).toBe('Audit Admin Updated');await page.getByRole('link',{name:'Dashboard',exact:true}).click();await page.getByRole('link',{name:'Ayarlar',exact:true}).click();const stale=await page.getByPlaceholder('Ad Soyad',{exact:true}).inputValue();await page.screenshot({path:out+'/profile-stale.png'});await page.reload({waitUntil:'domcontentloaded'});await expect(page.getByPlaceholder('Ad Soyad',{exact:true})).toHaveValue('Audit Admin Updated');await info.attach('profile',{body:JSON.stringify({afterNavigation:stale,afterReload:'Audit Admin Updated'}),contentType:'application/json'});expect(stale).toBe('Audit Admin Updated');});\n     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ^\n  17 | test('unauthorized and expired sessions',async({page})=>{await page.goto('/management');await expect(page).toHaveURL(/auth/);await login(page,'audit-teacher@example.test');await page.goto('/management');await expect(page).toHaveURL(/5511\\/$/);expect((await api(page,'/admin/users')).status).toBe(403);expect((await api(page,'/admin/deployment/status')).status).toBe(403);await page.context().clearCookies();await page.goto('/management');await expect(page).toHaveURL(/auth/);expect((await api(page,'/admin/users')).status).toBe(401);});\n  18 | test('results selector includes teacher exams',async({page})=>{await login(page);await page.goto('/results');await page.getByRole('combobox').nth(2).click();await page.screenshot({path:out+'/results-exam-selector.png'});await expect(page.getByRole('option',{name:'audit-teacher-exam',exact:false})).toBeVisible();});\n  19 |\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:16:934"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:30:51.111Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "profile",
+                      "contentType": "application/json",
+                      "body": "eyJhZnRlck5hdmlnYXRpb24iOiJBdWRpdCBDVUEgU2F2ZWQiLCJhZnRlclJlbG9hZCI6IkF1ZGl0IEFkbWluIFVwZGF0ZWQifQ=="
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-profile-state-after-save-and-navigation\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-profile-state-after-save-and-navigation\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-profile-state-after-save-and-navigation\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                    "column": 934,
+                    "line": 16
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-39a585da66ee26a7b298",
+          "file": "admin-audit.spec.ts",
+          "line": 16,
+          "column": 5
+        },
+        {
+          "title": "unauthorized and expired sessions",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 25800,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m404\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:17:292",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                      "column": 292,
+                      "line": 17
+                    },
+                    "snippet": "  15 | });\n  16 | test('profile state after save and navigation',async({page},info)=>{await login(page);await page.goto('/settings');await page.getByPlaceholder('Ad Soyad',{exact:true}).fill('Audit Admin Updated');await page.getByRole('button',{name:'Değişiklikleri Kaydet'}).click();await expect.poll(async()=>(await api(page,'/auth/me')).body.user?.name).toBe('Audit Admin Updated');await page.getByRole('link',{name:'Dashboard',exact:true}).click();await page.getByRole('link',{name:'Ayarlar',exact:true}).click();const stale=await page.getByPlaceholder('Ad Soyad',{exact:true}).inputValue();await page.screenshot({path:out+'/profile-stale.png'});await page.reload({waitUntil:'domcontentloaded'});await expect(page.getByPlaceholder('Ad Soyad',{exact:true})).toHaveValue('Audit Admin Updated');await info.attach('profile',{body:JSON.stringify({afterNavigation:stale,afterReload:'Audit Admin Updated'}),contentType:'application/json'});expect(stale).toBe('Audit Admin Updated');});\n> 17 | test('unauthorized and expired sessions',async({page})=>{await page.goto('/management');await expect(page).toHaveURL(/auth/);await login(page,'audit-teacher@example.test');await page.goto('/management');await expect(page).toHaveURL(/5511\\/$/);expect((await api(page,'/admin/users')).status).toBe(403);expect((await api(page,'/admin/deployment/status')).status).toBe(403);await page.context().clearCookies();await page.goto('/management');await expect(page).toHaveURL(/auth/);expect((await api(page,'/admin/users')).status).toBe(401);});\n     |                                                                                                                                                                                                                                                                                                    ^\n  18 | test('results selector includes teacher exams',async({page})=>{await login(page);await page.goto('/results');await page.getByRole('combobox').nth(2).click();await page.screenshot({path:out+'/results-exam-selector.png'});await expect(page.getByRole('option',{name:'audit-teacher-exam',exact:false})).toBeVisible();});\n  19 |\n  20 | test('management category create edit delete persists',async({page})=>{"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                        "column": 292,
+                        "line": 17
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m403\u001b[39m\nReceived: \u001b[31m404\u001b[39m\n\n  15 | });\n  16 | test('profile state after save and navigation',async({page},info)=>{await login(page);await page.goto('/settings');await page.getByPlaceholder('Ad Soyad',{exact:true}).fill('Audit Admin Updated');await page.getByRole('button',{name:'Değişiklikleri Kaydet'}).click();await expect.poll(async()=>(await api(page,'/auth/me')).body.user?.name).toBe('Audit Admin Updated');await page.getByRole('link',{name:'Dashboard',exact:true}).click();await page.getByRole('link',{name:'Ayarlar',exact:true}).click();const stale=await page.getByPlaceholder('Ad Soyad',{exact:true}).inputValue();await page.screenshot({path:out+'/profile-stale.png'});await page.reload({waitUntil:'domcontentloaded'});await expect(page.getByPlaceholder('Ad Soyad',{exact:true})).toHaveValue('Audit Admin Updated');await info.attach('profile',{body:JSON.stringify({afterNavigation:stale,afterReload:'Audit Admin Updated'}),contentType:'application/json'});expect(stale).toBe('Audit Admin Updated');});\n> 17 | test('unauthorized and expired sessions',async({page})=>{await page.goto('/management');await expect(page).toHaveURL(/auth/);await login(page,'audit-teacher@example.test');await page.goto('/management');await expect(page).toHaveURL(/5511\\/$/);expect((await api(page,'/admin/users')).status).toBe(403);expect((await api(page,'/admin/deployment/status')).status).toBe(403);await page.context().clearCookies();await page.goto('/management');await expect(page).toHaveURL(/auth/);expect((await api(page,'/admin/users')).status).toBe(401);});\n     |                                                                                                                                                                                                                                                                                                    ^\n  18 | test('results selector includes teacher exams',async({page})=>{await login(page);await page.goto('/results');await page.getByRole('combobox').nth(2).click();await page.screenshot({path:out+'/results-exam-selector.png'});await expect(page.getByRole('option',{name:'audit-teacher-exam',exact:false})).toBeVisible();});\n  19 |\n  20 | test('management category create edit delete persists',async({page})=>{\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:17:292"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:31:30.512Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-unauthorized-and-expired-sessions\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-unauthorized-and-expired-sessions\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-unauthorized-and-expired-sessions\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                    "column": 292,
+                    "line": 17
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-65ebffc49bab4d8474c8",
+          "file": "admin-audit.spec.ts",
+          "line": 17,
+          "column": 5
+        },
+        {
+          "title": "results selector includes teacher exams",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 55219,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('option', { name: 'audit-teacher-exam' })\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('option', { name: 'audit-teacher-exam' }) with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('option', { name: 'audit-teacher-exam' })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('option', { name: 'audit-teacher-exam' })\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('option', { name: 'audit-teacher-exam' }) with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('option', { name: 'audit-teacher-exam' })\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:18:300",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                      "column": 300,
+                      "line": 18
+                    },
+                    "snippet": "  16 | test('profile state after save and navigation',async({page},info)=>{await login(page);await page.goto('/settings');await page.getByPlaceholder('Ad Soyad',{exact:true}).fill('Audit Admin Updated');await page.getByRole('button',{name:'Değişiklikleri Kaydet'}).click();await expect.poll(async()=>(await api(page,'/auth/me')).body.user?.name).toBe('Audit Admin Updated');await page.getByRole('link',{name:'Dashboard',exact:true}).click();await page.getByRole('link',{name:'Ayarlar',exact:true}).click();const stale=await page.getByPlaceholder('Ad Soyad',{exact:true}).inputValue();await page.screenshot({path:out+'/profile-stale.png'});await page.reload({waitUntil:'domcontentloaded'});await expect(page.getByPlaceholder('Ad Soyad',{exact:true})).toHaveValue('Audit Admin Updated');await info.attach('profile',{body:JSON.stringify({afterNavigation:stale,afterReload:'Audit Admin Updated'}),contentType:'application/json'});expect(stale).toBe('Audit Admin Updated');});\n  17 | test('unauthorized and expired sessions',async({page})=>{await page.goto('/management');await expect(page).toHaveURL(/auth/);await login(page,'audit-teacher@example.test');await page.goto('/management');await expect(page).toHaveURL(/5511\\/$/);expect((await api(page,'/admin/users')).status).toBe(403);expect((await api(page,'/admin/deployment/status')).status).toBe(403);await page.context().clearCookies();await page.goto('/management');await expect(page).toHaveURL(/auth/);expect((await api(page,'/admin/users')).status).toBe(401);});\n> 18 | test('results selector includes teacher exams',async({page})=>{await login(page);await page.goto('/results');await page.getByRole('combobox').nth(2).click();await page.screenshot({path:out+'/results-exam-selector.png'});await expect(page.getByRole('option',{name:'audit-teacher-exam',exact:false})).toBeVisible();});\n     |                                                                                                                                                                                                                                                                                                            ^\n  19 |\n  20 | test('management category create edit delete persists',async({page})=>{\n  21 | await login(page);await page.goto('/management');await page.getByRole('button',{name:'Yeni Ders Ekle'}).click();const dialog=page.getByRole('dialog');await dialog.getByPlaceholder('Örn: GÖRSEL PROGRAMLAMA').fill('audit temporary course');await dialog.locator('textarea').fill('Isolated test');await dialog.getByRole('button',{name:'Dersi Kaydet'}).click();await expect(page.getByRole('dialog')).toHaveCount(0);let row=page.getByRole('row').filter({hasText:'AUDİT TEMPORARY COURSE'});await expect(row).toBeVisible();await page.reload({waitUntil:'domcontentloaded'});await expect(row).toBeVisible();await row.getByRole('button').nth(0).click();await dialog.getByPlaceholder('Örn: GÖRSEL PROGRAMLAMA').fill('audit edited course');await dialog.getByRole('button',{name:'Dersi Kaydet'}).click();row=page.getByRole('row').filter({hasText:'AUDİT EDİTED COURSE'});await expect(row).toBeVisible();await row.getByRole('button').nth(1).click();await page.getByRole('button',{name:'Vazgeç',exact:true}).click();await expect(row).toBeVisible();await row.getByRole('button').nth(1).click();await page.getByRole('button',{name:'Evet, Sil',exact:true}).click();await expect(row).toHaveCount(0);await page.reload({waitUntil:'domcontentloaded'});expect((await api(page,'/categories')).body.categories.some((c:any)=>c.name==='AUDİT EDİTED COURSE')).toBe(false);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                        "column": 300,
+                        "line": 18
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('option', { name: 'audit-teacher-exam' })\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('option', { name: 'audit-teacher-exam' }) with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('option', { name: 'audit-teacher-exam' })\u001b[22m\n\n\n  16 | test('profile state after save and navigation',async({page},info)=>{await login(page);await page.goto('/settings');await page.getByPlaceholder('Ad Soyad',{exact:true}).fill('Audit Admin Updated');await page.getByRole('button',{name:'Değişiklikleri Kaydet'}).click();await expect.poll(async()=>(await api(page,'/auth/me')).body.user?.name).toBe('Audit Admin Updated');await page.getByRole('link',{name:'Dashboard',exact:true}).click();await page.getByRole('link',{name:'Ayarlar',exact:true}).click();const stale=await page.getByPlaceholder('Ad Soyad',{exact:true}).inputValue();await page.screenshot({path:out+'/profile-stale.png'});await page.reload({waitUntil:'domcontentloaded'});await expect(page.getByPlaceholder('Ad Soyad',{exact:true})).toHaveValue('Audit Admin Updated');await info.attach('profile',{body:JSON.stringify({afterNavigation:stale,afterReload:'Audit Admin Updated'}),contentType:'application/json'});expect(stale).toBe('Audit Admin Updated');});\n  17 | test('unauthorized and expired sessions',async({page})=>{await page.goto('/management');await expect(page).toHaveURL(/auth/);await login(page,'audit-teacher@example.test');await page.goto('/management');await expect(page).toHaveURL(/5511\\/$/);expect((await api(page,'/admin/users')).status).toBe(403);expect((await api(page,'/admin/deployment/status')).status).toBe(403);await page.context().clearCookies();await page.goto('/management');await expect(page).toHaveURL(/auth/);expect((await api(page,'/admin/users')).status).toBe(401);});\n> 18 | test('results selector includes teacher exams',async({page})=>{await login(page);await page.goto('/results');await page.getByRole('combobox').nth(2).click();await page.screenshot({path:out+'/results-exam-selector.png'});await expect(page.getByRole('option',{name:'audit-teacher-exam',exact:false})).toBeVisible();});\n     |                                                                                                                                                                                                                                                                                                            ^\n  19 |\n  20 | test('management category create edit delete persists',async({page})=>{\n  21 | await login(page);await page.goto('/management');await page.getByRole('button',{name:'Yeni Ders Ekle'}).click();const dialog=page.getByRole('dialog');await dialog.getByPlaceholder('Örn: GÖRSEL PROGRAMLAMA').fill('audit temporary course');await dialog.locator('textarea').fill('Isolated test');await dialog.getByRole('button',{name:'Dersi Kaydet'}).click();await expect(page.getByRole('dialog')).toHaveCount(0);let row=page.getByRole('row').filter({hasText:'AUDİT TEMPORARY COURSE'});await expect(row).toBeVisible();await page.reload({waitUntil:'domcontentloaded'});await expect(row).toBeVisible();await row.getByRole('button').nth(0).click();await dialog.getByPlaceholder('Örn: GÖRSEL PROGRAMLAMA').fill('audit edited course');await dialog.getByRole('button',{name:'Dersi Kaydet'}).click();row=page.getByRole('row').filter({hasText:'AUDİT EDİTED COURSE'});await expect(row).toBeVisible();await row.getByRole('button').nth(1).click();await page.getByRole('button',{name:'Vazgeç',exact:true}).click();await expect(row).toBeVisible();await row.getByRole('button').nth(1).click();await page.getByRole('button',{name:'Evet, Sil',exact:true}).click();await expect(row).toHaveCount(0);await page.reload({waitUntil:'domcontentloaded'});expect((await api(page,'/categories')).body.categories.some((c:any)=>c.name==='AUDİT EDİTED COURSE')).toBe(false);\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:18:300"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:32:00.907Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-results-selector-includes-teacher-exams\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-results-selector-includes-teacher-exams\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-results-selector-includes-teacher-exams\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                    "column": 300,
+                    "line": 18
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-7c1ad7bf16078191ed2f",
+          "file": "admin-audit.spec.ts",
+          "line": 18,
+          "column": 5
+        },
+        {
+          "title": "management category create edit delete persists",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 46883,
+                  "error": {
+                    "message": "TypeError: Cannot read properties of undefined (reading 'some')",
+                    "stack": "TypeError: Cannot read properties of undefined (reading 'some')\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:21:1284",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                      "column": 1284,
+                      "line": 21
+                    },
+                    "snippet": "  19 |\n  20 | test('management category create edit delete persists',async({page})=>{\n> 21 | await login(page);await page.goto('/management');await page.getByRole('button',{name:'Yeni Ders Ekle'}).click();const dialog=page.getByRole('dialog');await dialog.getByPlaceholder('Örn: GÖRSEL PROGRAMLAMA').fill('audit temporary course');await dialog.locator('textarea').fill('Isolated test');await dialog.getByRole('button',{name:'Dersi Kaydet'}).click();await expect(page.getByRole('dialog')).toHaveCount(0);let row=page.getByRole('row').filter({hasText:'AUDİT TEMPORARY COURSE'});await expect(row).toBeVisible();await page.reload({waitUntil:'domcontentloaded'});await expect(row).toBeVisible();await row.getByRole('button').nth(0).click();await dialog.getByPlaceholder('Örn: GÖRSEL PROGRAMLAMA').fill('audit edited course');await dialog.getByRole('button',{name:'Dersi Kaydet'}).click();row=page.getByRole('row').filter({hasText:'AUDİT EDİTED COURSE'});await expect(row).toBeVisible();await row.getByRole('button').nth(1).click();await page.getByRole('button',{name:'Vazgeç',exact:true}).click();await expect(row).toBeVisible();await row.getByRole('button').nth(1).click();await page.getByRole('button',{name:'Evet, Sil',exact:true}).click();await expect(row).toHaveCount(0);await page.reload({waitUntil:'domcontentloaded'});expect((await api(page,'/categories')).body.categories.some((c:any)=>c.name==='AUDİT EDİTED COURSE')).toBe(false);\n     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ^\n  22 | });\n  23 | test('announcement create reload delete',async({page})=>{\n  24 | await login(page);await page.goto('/announcements');await page.getByRole('button',{name:/Yeni Duyuru/}).click();await page.getByPlaceholder('ÖRN: SINAV TAKVİMİ GÜNCELLEMESİ').fill('audit e2e announcement');await page.getByPlaceholder('Duyuru detaylarını buraya yazın...').fill('Isolated browser test announcement');await page.getByRole('button',{name:'Duyuruyu Yayınla'}).click();await expect(page.getByText('AUDİT E2E ANNOUNCEMENT',{exact:true})).toBeVisible();await page.reload({waitUntil:'domcontentloaded'});const card=page.locator('[data-slot=\"card\"]').filter({hasText:'AUDİT E2E ANNOUNCEMENT'});await expect(card).toBeVisible();await card.getByRole('button').click();await expect(page.getByText('AUDİT E2E ANNOUNCEMENT',{exact:true})).toHaveCount(0);await page.reload({waitUntil:'domcontentloaded'});await expect(page.getByText('AUDİT E2E ANNOUNCEMENT',{exact:true})).toHaveCount(0);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                        "column": 1284,
+                        "line": 21
+                      },
+                      "message": "TypeError: Cannot read properties of undefined (reading 'some')\n\n  19 |\n  20 | test('management category create edit delete persists',async({page})=>{\n> 21 | await login(page);await page.goto('/management');await page.getByRole('button',{name:'Yeni Ders Ekle'}).click();const dialog=page.getByRole('dialog');await dialog.getByPlaceholder('Örn: GÖRSEL PROGRAMLAMA').fill('audit temporary course');await dialog.locator('textarea').fill('Isolated test');await dialog.getByRole('button',{name:'Dersi Kaydet'}).click();await expect(page.getByRole('dialog')).toHaveCount(0);let row=page.getByRole('row').filter({hasText:'AUDİT TEMPORARY COURSE'});await expect(row).toBeVisible();await page.reload({waitUntil:'domcontentloaded'});await expect(row).toBeVisible();await row.getByRole('button').nth(0).click();await dialog.getByPlaceholder('Örn: GÖRSEL PROGRAMLAMA').fill('audit edited course');await dialog.getByRole('button',{name:'Dersi Kaydet'}).click();row=page.getByRole('row').filter({hasText:'AUDİT EDİTED COURSE'});await expect(row).toBeVisible();await row.getByRole('button').nth(1).click();await page.getByRole('button',{name:'Vazgeç',exact:true}).click();await expect(row).toBeVisible();await row.getByRole('button').nth(1).click();await page.getByRole('button',{name:'Evet, Sil',exact:true}).click();await expect(row).toHaveCount(0);await page.reload({waitUntil:'domcontentloaded'});expect((await api(page,'/categories')).body.categories.some((c:any)=>c.name==='AUDİT EDİTED COURSE')).toBe(false);\n     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ^\n  22 | });\n  23 | test('announcement create reload delete',async({page})=>{\n  24 | await login(page);await page.goto('/announcements');await page.getByRole('button',{name:/Yeni Duyuru/}).click();await page.getByPlaceholder('ÖRN: SINAV TAKVİMİ GÜNCELLEMESİ').fill('audit e2e announcement');await page.getByPlaceholder('Duyuru detaylarını buraya yazın...').fill('Isolated browser test announcement');await page.getByRole('button',{name:'Duyuruyu Yayınla'}).click();await expect(page.getByText('AUDİT E2E ANNOUNCEMENT',{exact:true})).toBeVisible();await page.reload({waitUntil:'domcontentloaded'});const card=page.locator('[data-slot=\"card\"]').filter({hasText:'AUDİT E2E ANNOUNCEMENT'});await expect(card).toBeVisible();await card.getByRole('button').click();await expect(page.getByText('AUDİT E2E ANNOUNCEMENT',{exact:true})).toHaveCount(0);await page.reload({waitUntil:'domcontentloaded'});await expect(page.getByText('AUDİT E2E ANNOUNCEMENT',{exact:true})).toHaveCount(0);\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:21:1284"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:33:09.309Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-management-category-create-edit-delete-persists\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-management-category-create-edit-delete-persists\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-management-category-create-edit-delete-persists\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                    "column": 1284,
+                    "line": 21
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-0ec3d1b9bf9f4589fa46",
+          "file": "admin-audit.spec.ts",
+          "line": 20,
+          "column": 5
+        },
+        {
+          "title": "announcement create reload delete",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 45631,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:34:00.950Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-bfa79e3f1ca50233ef6e",
+          "file": "admin-audit.spec.ts",
+          "line": 23,
+          "column": 5
+        },
+        {
+          "title": "announcement fetch error must differ from empty",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 59876,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText(/Henüz bir duyuru/)\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  20000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByText(/Henüz bir duyuru/) with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/Henüz bir duyuru/)\u001b[22m\n\u001b[2m    42 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText(/Henüz bir duyuru/)\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  20000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByText(/Henüz bir duyuru/) with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/Henüz bir duyuru/)\u001b[22m\n\u001b[2m    42 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:27:355",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                      "column": 355,
+                      "line": 27
+                    },
+                    "snippet": "  25 | });\n  26 | test('announcement fetch error must differ from empty',async({page})=>{\n> 27 | await login(page);await page.route('**/api/announcements',r=>r.fulfill({status:500,contentType:'application/json',body:JSON.stringify({message:'Injected audit failure'})}));await page.goto('/announcements');await page.waitForTimeout(8000);await page.screenshot({path:out+'/announcement-error-empty.png'});await expect(page.getByText(/Henüz bir duyuru/)).toHaveCount(0);\n     |                                                                                                                                                                                                                                                                                                                                                                   ^\n  28 | });\n  29 | test('settings unsupported tab falls back to profile',async({page})=>{\n  30 | await login(page);await page.goto('/settings?tab=unknown');await page.screenshot({path:out+'/settings-unknown-tab.png'});await expect(page.getByRole('tabpanel')).toBeVisible();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                        "column": 355,
+                        "line": 27
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText(/Henüz bir duyuru/)\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  20000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByText(/Henüz bir duyuru/) with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/Henüz bir duyuru/)\u001b[22m\n\u001b[2m    42 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n\n  25 | });\n  26 | test('announcement fetch error must differ from empty',async({page})=>{\n> 27 | await login(page);await page.route('**/api/announcements',r=>r.fulfill({status:500,contentType:'application/json',body:JSON.stringify({message:'Injected audit failure'})}));await page.goto('/announcements');await page.waitForTimeout(8000);await page.screenshot({path:out+'/announcement-error-empty.png'});await expect(page.getByText(/Henüz bir duyuru/)).toHaveCount(0);\n     |                                                                                                                                                                                                                                                                                                                                                                   ^\n  28 | });\n  29 | test('settings unsupported tab falls back to profile',async({page})=>{\n  30 | await login(page);await page.goto('/settings?tab=unknown');await page.screenshot({path:out+'/settings-unknown-tab.png'});await expect(page.getByRole('tabpanel')).toBeVisible();\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:27:355"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:34:47.227Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-announcement-fetch-error-must-differ-from-empty\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-announcement-fetch-error-must-differ-from-empty\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-announcement-fetch-error-must-differ-from-empty\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                    "column": 355,
+                    "line": 27
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-f9d3036143d498ab0a03",
+          "file": "admin-audit.spec.ts",
+          "line": 26,
+          "column": 5
+        },
+        {
+          "title": "settings unsupported tab falls back to profile",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 51178,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('tabpanel')\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('tabpanel') with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('tabpanel')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('tabpanel')\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('tabpanel') with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('tabpanel')\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:30:163",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                      "column": 163,
+                      "line": 30
+                    },
+                    "snippet": "  28 | });\n  29 | test('settings unsupported tab falls back to profile',async({page})=>{\n> 30 | await login(page);await page.goto('/settings?tab=unknown');await page.screenshot({path:out+'/settings-unknown-tab.png'});await expect(page.getByRole('tabpanel')).toBeVisible();\n     |                                                                                                                                                                   ^\n  31 | });\n  32 | test('mobile menu keyboard dismissal and dialog focus',async({page})=>{\n  33 | await login(page);await page.setViewportSize({width:390,height:844});await page.goto('/management');await page.getByRole('button',{name:'Menüyü aç',exact:true}).click();await page.keyboard.press('Escape');await expect(page.getByRole('button',{name:'Menüyü kapat',exact:true})).not.toBeVisible();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                        "column": 163,
+                        "line": 30
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('tabpanel')\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('tabpanel') with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('tabpanel')\u001b[22m\n\n\n  28 | });\n  29 | test('settings unsupported tab falls back to profile',async({page})=>{\n> 30 | await login(page);await page.goto('/settings?tab=unknown');await page.screenshot({path:out+'/settings-unknown-tab.png'});await expect(page.getByRole('tabpanel')).toBeVisible();\n     |                                                                                                                                                                   ^\n  31 | });\n  32 | test('mobile menu keyboard dismissal and dialog focus',async({page})=>{\n  33 | await login(page);await page.setViewportSize({width:390,height:844});await page.goto('/management');await page.getByRole('button',{name:'Menüyü aç',exact:true}).click();await page.keyboard.press('Escape');await expect(page.getByRole('button',{name:'Menüyü kapat',exact:true})).not.toBeVisible();\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:30:163"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:35:51.398Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-settings-unsupported-tab-falls-back-to-profile\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-settings-unsupported-tab-falls-back-to-profile\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-settings-unsupported-tab-falls-back-to-profile\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                    "column": 163,
+                    "line": 30
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-8d2167adbdb833c45f22",
+          "file": "admin-audit.spec.ts",
+          "line": 29,
+          "column": 5
+        },
+        {
+          "title": "mobile menu keyboard dismissal and dialog focus",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 39754,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Menüyü kapat', exact: true })\nExpected: not visible\nReceived: visible\nTimeout:  20000ms\n\nCall log:\n\u001b[2m  - Expect \"not toBeVisible\" getByRole('button', { name: 'Menüyü kapat', exact: true }) with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Menüyü kapat', exact: true })\u001b[22m\n\u001b[2m    43 × locator resolved to <button type=\"button\" aria-label=\"Menüyü kapat\" class=\"fixed inset-0 z-40 bg-slate-950/45 backdrop-blur-sm lg:hidden print:hidden\"></button>\u001b[22m\n\u001b[2m       - unexpected value \"visible\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Menüyü kapat', exact: true })\nExpected: not visible\nReceived: visible\nTimeout:  20000ms\n\nCall log:\n\u001b[2m  - Expect \"not toBeVisible\" getByRole('button', { name: 'Menüyü kapat', exact: true }) with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Menüyü kapat', exact: true })\u001b[22m\n\u001b[2m    43 × locator resolved to <button type=\"button\" aria-label=\"Menüyü kapat\" class=\"fixed inset-0 z-40 bg-slate-950/45 backdrop-blur-sm lg:hidden print:hidden\"></button>\u001b[22m\n\u001b[2m       - unexpected value \"visible\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:33:282",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                      "column": 282,
+                      "line": 33
+                    },
+                    "snippet": "  31 | });\n  32 | test('mobile menu keyboard dismissal and dialog focus',async({page})=>{\n> 33 | await login(page);await page.setViewportSize({width:390,height:844});await page.goto('/management');await page.getByRole('button',{name:'Menüyü aç',exact:true}).click();await page.keyboard.press('Escape');await expect(page.getByRole('button',{name:'Menüyü kapat',exact:true})).not.toBeVisible();\n     |                                                                                                                                                                                                                                                                                          ^\n  34 | });\n  35 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                        "column": 282,
+                        "line": 33
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('button', { name: 'Menüyü kapat', exact: true })\nExpected: not visible\nReceived: visible\nTimeout:  20000ms\n\nCall log:\n\u001b[2m  - Expect \"not toBeVisible\" getByRole('button', { name: 'Menüyü kapat', exact: true }) with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Menüyü kapat', exact: true })\u001b[22m\n\u001b[2m    43 × locator resolved to <button type=\"button\" aria-label=\"Menüyü kapat\" class=\"fixed inset-0 z-40 bg-slate-950/45 backdrop-blur-sm lg:hidden print:hidden\"></button>\u001b[22m\n\u001b[2m       - unexpected value \"visible\"\u001b[22m\n\n\n  31 | });\n  32 | test('mobile menu keyboard dismissal and dialog focus',async({page})=>{\n> 33 | await login(page);await page.setViewportSize({width:390,height:844});await page.goto('/management');await page.getByRole('button',{name:'Menüyü aç',exact:true}).click();await page.keyboard.press('Escape');await expect(page.getByRole('button',{name:'Menüyü kapat',exact:true})).not.toBeVisible();\n     |                                                                                                                                                                                                                                                                                          ^\n  34 | });\n  35 |\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts:33:282"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T13:36:47.937Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-mobile-menu-keyboard-dismissal-and-dialog-focus\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-mobile-menu-keyboard-dismissal-and-dialog-focus\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\admin-audit\\test-results\\admin-audit-mobile-menu-keyboard-dismissal-and-dialog-focus\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\admin-audit.spec.ts",
+                    "column": 282,
+                    "line": 33
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "1e4164cbcd7d7052b193-537358a32834b311ec63",
+          "file": "admin-audit.spec.ts",
+          "line": 32,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-30T13:21:46.516Z",
+    "duration": 943079.539,
+    "expected": 24,
+    "skipped": 0,
+    "unexpected": 7,
+    "flaky": 0
+  }
+}

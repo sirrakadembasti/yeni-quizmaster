@@ -1,3 +1,4 @@
+import { invalidateAdminRelations } from '@/lib/admin-cache';
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { userApi } from "@/lib/api";
@@ -15,8 +16,8 @@ export function useUserManagement(role: 'teacher' | 'student') {
 
   const createMutation = useMutation({
     mutationFn: (data: any) => userApi.createUser({ ...data, role }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       toast({ title: "Başarılı", description: `${role === 'teacher' ? 'Öğretmen' : 'Öğrenci'} başarıyla eklendi.` });
       setIsCreateOpen(false);
     },
@@ -27,8 +28,8 @@ export function useUserManagement(role: 'teacher' | 'student') {
 
   const updateMutation = useMutation({
     mutationFn: (data: any) => userApi.updateUser(selectedUser!.id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       toast({ title: "Başarılı", description: "Bilgiler güncellendi." });
       setIsEditOpen(false);
       setSelectedUser(null);
@@ -40,8 +41,8 @@ export function useUserManagement(role: 'teacher' | 'student') {
 
   const deleteMutation = useMutation({
     mutationFn: () => userApi.deleteUser(selectedUser!.id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+    onSuccess: async () => {
+      await invalidateAdminRelations(queryClient);
       toast({ title: "Başarılı", description: "Kullanıcı silindi." });
       setIsDeleteOpen(false);
       setSelectedUser(null);

@@ -17,6 +17,7 @@ model User {
   name        String
   email       String  @unique
   password    String
+  sessionVersion Int @default(0)
   role        String  @default("student") // admin, teacher, student, parent
   phoneNumber String?
   address     String?
@@ -24,6 +25,8 @@ model User {
   classNo     String? // Legacy/Optional student class code
   isActive    Boolean @default(true)
   deactivatedAt DateTime?
+  graduationYear String?
+  graduationDate DateTime?
 
   // Veli (Parent) Bilgileri
   parentName     String?
@@ -38,13 +41,14 @@ model User {
   resetToken       String?
   resetTokenExpiry DateTime?
 
-  // E-posta Doğrulama Alanları
-  // TODO: E-posta doğrulama akışı — bkz. Zafiyet 6
-  // Aktif akış henüz eklenmedi; altyapı hazır tutulmaktadır.
-  // Aktivasyon: kayıt sonrası token oluştur → e-posta gönder → /verify-email?token=... endpoint'i ekle
+  // E-posta Alanları
+  // Tasarım tercihi olarak kayıt sırasında ayrı bir e-posta doğrulama adımı zorunlu tutulmaz;
+  // kullanıcıya kayıt işleminin başarıyla gerçekleştirildiğini bildiren bilgilendirme e-postası gönderilir
+  // ve şifre unutulduğunda kayıtlı e-posta adresi üzerinden sıfırlama bağlantısı iletilir.
   emailVerified          Boolean @default(false)
   emailVerificationToken String?
   notificationMuted      Boolean @default(false)
+  notificationRevision   Int     @default(0)
 
   // Student relation: A student belongs to exactly one class
   classId String?
@@ -144,6 +148,8 @@ model Class {
 
   // Quizzes assigned to this class
   quizzes Quiz[] @relation("ClassQuizzes")
+  outgoingTransitionRules AcademicTransitionRule[] @relation("TransitionSourceClass")
+  incomingTransitionRules AcademicTransitionRule[] @relation("TransitionTargetClass")
 }
 
 model ClassTeacherCourse {
@@ -239,6 +245,9 @@ model StudentResult {
   startedAt           DateTime  @default(now())
   submittedAt         DateTime?
   completedAt         DateTime?
+  @@index([studentId, quizId])
+  @@index([quizId, status])
+
 }
 
 model SurveySubmission {
@@ -294,6 +303,7 @@ model Announcement {
 }
 
 model EmailQueue {
+  processingUntil DateTime?
   id           String    @id @default(uuid())
   to           String
   subject      String
@@ -334,4 +344,155 @@ model PasswordResetRequest {
   @@index([status, createdAt])
   @@index([status, updatedAt])
   @@index([email])
+}
+
+model AcademicYear {
+  id               String   @id @default(uuid())
+  label            String   @unique
+  status           String   @default("active") // active, closed; singleton enforced by SQLite partial index
+  opensAt          DateTime
+  scheduledCloseAt DateTime
+  closedAt         DateTime?
+  snapshotId       String? // completed annual snapshot identity, assigned atomically at rollover
+  snapshots        ArchiveSnapshot[]
+  transitionRules  AcademicTransitionRule[]
+}
+
+model ArchiveSnapshot {
+  id              String   @id @default(uuid())
+  academicYearId  String
+  academicYear    AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  label           String
+  mode            String   // manual, annual
+  annualKey       String?  @unique
+  initiatedBy     String?  // actor identity only, retained if the live account changes
+  status          String   @default("queued")
+  scopeJson       String
+  attempts        Int      @default(0)
+  nextAttemptAt   DateTime?
+  leaseOwner      String?
+  leaseExpiresAt  DateTime?
+  lastError       String?
+  artifactPath    String?
+  zipSha256       String?
+  sizeBytes       Int?
+  createdAt       DateTime @default(now())
+  capturedAt      DateTime?
+  completedAt     DateTime?
+  transitionSummaryJson String? // immutable annual outcome, committed with rollover even without an audit actor
+  rows            ArchiveSnapshotRow[]
+  historyProjections ArchiveHistoryProjection[]
+  historyReadiness ArchiveHistoryReady[]
+
+  @@index([status, nextAttemptAt])
+  @@index([academicYearId, createdAt])
+}
+
+model ArchiveSnapshotRow {
+  id         String @id @default(uuid())
+  snapshotId String
+  snapshot   ArchiveSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  entityType String
+  entityId   String
+  dataJson   String
+  historyProjections ArchiveHistoryProjection[]
+
+  @@unique([snapshotId, entityType, entityId])
+  @@index([entityType, entityId, snapshotId])
+}
+
+// Rebuildable versioned search membership, derived exclusively from immutable rows.
+model ArchiveHistoryProjection {
+  sourceRowId String
+  sourceRow ArchiveSnapshotRow @relation(fields: [sourceRowId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  version String
+  snapshotId String
+  snapshot ArchiveSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  sourceJson String
+  searchText String
+  @@id([sourceRowId, version])
+  @@index([snapshotId, version])
+}
+
+model ArchiveHistoryReady {
+  snapshotId String
+  snapshot ArchiveSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  version String
+  rowCount Int
+  inputSha256 String
+  @@id([snapshotId, version])
+}
+
+model AcademicTransitionRule {
+  id          String @id @default(uuid())
+  yearId      String
+  year        AcademicYear @relation(fields: [yearId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  fromClassId String
+  fromClass   Class @relation("TransitionSourceClass", fields: [fromClassId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  toClassId   String?
+  toClass     Class? @relation("TransitionTargetClass", fields: [toClassId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  graduate    Boolean @default(false)
+
+  @@unique([yearId, fromClassId])
+}
+
+model AIProfile {
+  id String @id @default(uuid())
+  name String
+  provider String
+  model String
+  baseURL String
+  encryptedApiKey String
+  enabled Boolean @default(false)
+  revision Int @default(1)
+  timeoutMs Int @default(120000)
+  maxOutputTokens Int @default(8192)
+  thinking String @default("auto")
+  lastTestsJson String @default("{}")
+}
+model AIConfiguration {
+  id String @id @default("singleton")
+  defaultProfileId String?
+  revision Int @default(0)
+}
+
+// Usage keeps immutable display snapshots; removing a profile does not erase
+// consumed tokens. Optional source IDs deliberately do not cascade to history.
+model AIUsage {
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  teacherId String
+  teacherName String
+  teacherEmail String
+  categoryId String?
+  courseName String
+  draftId String?
+  quizId String?
+  quizTitle String
+  contentType String
+  profileId String
+  profileName String
+  provider String
+  model String
+  profileRevision Int
+  thinking String
+  maxOutputTokens Int
+  timeoutMs Int
+  questionCount Int
+  validQuestionCount Int?
+  status String @default("pending")
+  errorCode String?
+  inputTokens Int?
+  outputTokens Int?
+  reasoningTokens Int?
+  cacheReadTokens Int?
+  cacheWriteTokens Int?
+  totalTokens Int?
+  durationMs Int?
+
+  @@index([createdAt, id])
+  @@index([teacherId, createdAt])
+  @@index([categoryId, createdAt])
+  @@index([draftId, teacherId])
+  @@index([model, thinking, questionCount, status])
 }

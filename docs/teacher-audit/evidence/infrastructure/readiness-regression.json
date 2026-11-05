@@ -1,0 +1,12 @@
+{
+  "recordedAt": "2026-10-03",
+  "cause": "Test runner called native Fetch Response.ok as a method. The API answered HTTP 200, but the caught TypeError made readiness loop until timeout.",
+  "observedHttp200CountInFailedReadinessLog": 358,
+  "failedRunReachedE2E": false,
+  "failedRunCleanupSucceeded": true,
+  "command": "node --test scripts/audit-server-readiness.test.mjs",
+  "red": { "exitCode": 1, "passed": 1, "failed": 2, "durationMs": 1067.7219 },
+  "green": { "exitCode": 0, "passed": 3, "failed": 0, "durationMs": 401.7204 },
+  "fix": "Read response.ok as a boolean and release the probe response body. Reject a signalled owned child. Keep runtime logs outside Playwright's cleaned output directory.",
+  "scope": "Audit tooling only; not a teacher product defect or a passed teacher acceptance run."
+}

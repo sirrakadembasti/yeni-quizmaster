@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import nodemailer, { type Transporter, type SendMailOptions } from "nodemailer";
 import { storage } from "../storage";
 import { logger } from "./logger";
 import { getPublicAppUrl } from "./deployment-config";
@@ -26,7 +26,7 @@ export function getEmailConfiguration() {
   };
 }
 
-let transporter: nodemailer.Transporter | null = null;
+let transporter: Transporter | null = null;
 let transporterKey = "";
 
 function getTransporter() {
@@ -69,7 +69,7 @@ export const verifyEmailTransport = async () => {
 };
 
 /** Direct email sender (underlying SMTP call). */
-export const sendDirectEmail = async (options: nodemailer.SendMailOptions) => {
+export const sendDirectEmail = async (options: SendMailOptions) => {
   const config = getEmailConfiguration();
   const from = options.from || `"${config.fromName.replace(/[\r\n"]/g, "")}" <${config.fromEmail}>`;
   return getTransporter().sendMail({ ...options, from });
@@ -104,8 +104,11 @@ export const processEmailQueue = async () => {
   isProcessing = true;
 
   try {
-    const pendingEmails = await storage.getPendingEmails(10);
-    for (const email of pendingEmails) {
+    const attemptedIds: string[] = [];
+    for (let dispatched = 0; dispatched < 10; dispatched++) {
+      const [email] = await storage.claimPendingEmails(1, attemptedIds);
+      if (!email) break;
+      attemptedIds.push(email.id);
       try {
         await sendDirectEmail({
           to: email.to,
@@ -113,14 +116,14 @@ export const processEmailQueue = async () => {
           html: email.body,
         });
 
-        await storage.updateEmailStatus(email.id, "sent", null);
+        await storage.updateEmailStatus(email.id, "sent", null, email.processingUntil || undefined);
         logger.info({ emailId: email.id, to: email.to }, "[EmailQueue] Successfully sent email");
       } catch (err: any) {
         const errorMsg = err?.message || String(err);
         const newAttempts = email.attempts + 1;
         const newStatus = newAttempts >= email.maxAttempts ? "failed" : "pending";
 
-        await storage.updateEmailStatus(email.id, newStatus, errorMsg);
+        await storage.updateEmailStatus(email.id, newStatus, errorMsg, email.processingUntil || undefined);
         logger.warn(
           { emailId: email.id, to: email.to, attempt: newAttempts, error: errorMsg },
           `[EmailQueue] Failed to send email (attempt ${newAttempts}/${email.maxAttempts})`
@@ -196,6 +199,52 @@ export const sendResetPasswordEmail = async (email: string, token: string) => {
     subject: "QuizMaster - Şifre Sıfırlama İsteği",
     body: html,
     type: "password_reset",
+  });
+};
+
+/**
+ * Send registration confirmation / welcome email via Outbox queue
+ */
+export const sendRegistrationSuccessEmail = async (email: string, name: string) => {
+  const loginUrl = `${getPublicAppUrl()}/auth`;
+  const safeName = String(name || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+
+  const html = `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 25px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; color: #1e293b;">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h1 style="color: #4f46e5; margin: 0; font-size: 24px; font-weight: 800;">QuizMaster</h1>
+        <p style="color: #64748b; font-size: 14px; margin-top: 4px;">Sınav ve Değerlendirme Sistemi</p>
+      </div>
+      <div style="padding: 20px; background-color: #f8fafc; border-radius: 12px; margin-bottom: 20px;">
+        <h2 style="color: #0f172a; margin-top: 0; font-size: 18px;">Kayıt İşleminiz Tamamlandı</h2>
+        <p style="font-size: 14px; line-height: 1.6; color: #334155;">
+          Sayın <strong>${safeName}</strong>, QuizMaster uygulamasına kayıt işleminiz başarıyla gerçekleştirilmiştir.
+        </p>
+        <p style="font-size: 14px; line-height: 1.6; color: #334155;">
+          Kayıtlı e-posta adresiniz (<strong>${email}</strong>) ile sisteme giriş yapabilir; şifrenizi unutmanız durumunda bu e-posta adresi üzerinden şifre sıfırlama talebinde bulunabilirsiniz.
+        </p>
+        <div style="text-align: center; margin: 28px 0;">
+          <a href="${loginUrl}" style="background-color: #4f46e5; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 14px; display: inline-block; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);">
+            Uygulamaya Giriş Yap
+          </a>
+        </div>
+      </div>
+      <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
+      <p style="font-size: 12px; color: #94a3b8; text-align: center; margin: 0;">
+        Uygulama adresi: <a href="${loginUrl}" style="color: #4f46e5; word-break: break-all;">${loginUrl}</a>
+      </p>
+    </div>
+  `;
+
+  return queueEmail({
+    to: email,
+    subject: "QuizMaster - Kayıt İşleminiz Başarıyla Gerçekleştirildi",
+    body: html,
+    type: "registration_welcome",
   });
 };
 

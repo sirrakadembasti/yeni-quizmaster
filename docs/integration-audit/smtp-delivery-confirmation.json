@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-04",
+  "source": "user-confirmed inbox receipt in this conversation",
+  "received": true,
+  "messageBodyConfirmed": "Bu e-posta, talep ettiğiniz QuizMaster Gmail SMTP testidir. Gerçek kullanıcı verisi içermez.",
+  "relatedTransportEvidence": "smtp-probe.json",
+  "scope": "Existing single authorized test email; no resend and no tool access to inbox"
+}

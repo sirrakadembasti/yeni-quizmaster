@@ -1,0 +1,10 @@
+- main:
+  - button "Menüyü aç"
+  - button "Bildirimleri aç": "1"
+  - button "Karanlık Moda Geç"
+  - button "S"
+  - heading "Anketlerim" [level=1]
+  - paragraph: Sınıfınıza atanmış güncel anketler.
+  - text: Student Audit Survey Bekliyor
+  - paragraph: Açıklama eklenmemiş.
+  - button "Anketi Yanıtla"

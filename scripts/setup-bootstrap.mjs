@@ -5,13 +5,16 @@ import os from "node:os";
 import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { pnpmInvocation } from './pnpm-invocation.mjs';
 import {
   CLEAN_INSTALL_CONFIRMATION,
+  describePortConflict,
   inspectInstallationState,
   isLocalPortOpen,
   readConfiguredPort,
   REQUIRED_PNPM_VERSION,
   resetInstallation,
+  stopPortProcess,
   validateRuntime,
 } from "./setup-bootstrap-lib.mjs";
 
@@ -19,6 +22,7 @@ const scriptRoot = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(scriptRoot, "..");
 const host = "127.0.0.1";
 const port = Math.min(65535, Math.max(1024, Number(process.env.SETUP_BOOTSTRAP_PORT) || 5049));
+const wizardPort = Math.min(65535, Math.max(1024, Number(process.env.SETUP_WIZARD_PORT) || 5050));
 const token = crypto.randomBytes(24).toString("base64url");
 const sessionValue = crypto.createHmac("sha256", token).update("quizmaster-bootstrap-session").digest("hex");
 const csrfValue = crypto.createHmac("sha256", token).update("quizmaster-bootstrap-csrf").digest("hex");
@@ -33,19 +37,11 @@ const job = {
   exitCode: null,
 };
 
+// Sihirbaza ancak bu oturumda paket kurulumu doğrulanınca geçilebilir.
+let packagesReady = false;
+
 let wizardChild = null;
 let server;
-
-function pnpmInvocation(args) {
-  const npmExecPath = process.env.npm_execpath;
-  if (npmExecPath && /pnpm(?:\.c?js)?$/i.test(npmExecPath)) {
-    return { command: process.execPath, args: [npmExecPath, ...args] };
-  }
-  if (process.platform === "win32") {
-    return { command: process.env.ComSpec || "cmd.exe", args: ["/d", "/s", "/c", "pnpm", ...args] };
-  }
-  return { command: "pnpm", args };
-}
 
 function getPnpmVersion() {
   const invocation = pnpmInvocation(["--version"]);
@@ -58,8 +54,12 @@ function getPnpmVersion() {
   return result.status === 0 ? String(result.stdout || "").trim() : "";
 }
 
+let runtimeSnapshot;
 function runtimeStatus() {
-  return validateRuntime(process.version, getPnpmVersion());
+  // Status polling must not start a synchronous pnpm process on every request.
+  // Runtime versions are fixed for this bootstrap session; installation/job
+  // state is still read afresh by publicStatus().
+  return runtimeSnapshot ??= validateRuntime(process.version, getPnpmVersion());
 }
 
 function appendLog(chunk) {
@@ -70,27 +70,44 @@ function appendLog(chunk) {
 
 function startPnpmJob(type, args, successMessage) {
   if (job.status === "running") throw new Error("Başka bir kurulum işlemi halen çalışıyor.");
-  const invocation = pnpmInvocation(args);
+  const invocation = type === 'upgrade'
+    ? {command:process.execPath,args:[path.join(scriptRoot,'upgrade.mjs'),'--project',projectRoot,'--parent-lease']}
+    : pnpmInvocation(args);
   job.type = type;
   job.status = "running";
-  job.message = type === "dependencies" ? "Paketler ve kütüphaneler hazırlanıyor..." : "Kurulum sihirbazı başlatılıyor...";
+  job.message = type === "dependencies" ? "Paketler ve kütüphaneler hazırlanıyor..." : type === "upgrade" ? "Mevcut kurulum yedeklenip güncelleniyor..." : "Kurulum sihirbazı başlatılıyor...";
   job.logs = [];
   job.exitCode = null;
   job.wizardUrl = null;
+  if (type === "wizard") {
+    console.log("");
+    console.log("Sihirbaz başlatılıyor. Terminal açık kalmalı; sihirbaz bu sürecin altındadır.");
+  }
+
+  // Sihirbaz SETUP_PORT okur; bootstrap portu ile karışmasın diye ayrı tut.
+  const childEnv = { ...process.env, FORCE_COLOR: "0" };
+  if (type === "dependencies") childEnv.CI = "true";
+  if (type === "wizard") {
+    if (wizardPort === port) {
+      throw new Error(`Kurulum sihirbazı portu (${wizardPort}) kurulum başlangıcı ile aynı olamaz. SETUP_WIZARD_PORT değerini değiştirin.`);
+    }
+    childEnv.SETUP_PORT = String(wizardPort);
+  }
 
   const child = spawn(invocation.command, invocation.args, {
     cwd: projectRoot,
-    env: { ...process.env, FORCE_COLOR: "0" },
+    env: childEnv,
     windowsHide: true,
     shell: false,
   });
+  child.stdin.on('error', () => {});
   child.stdout.on("data", (chunk) => {
     appendLog(chunk);
     if (type === "wizard") {
       const match = chunk.toString("utf8").match(/http:\/\/127\.0\.0\.1:\d+\/setup\?token=[A-Za-z0-9_-]+/);
       if (match) {
         job.wizardUrl = match[0];
-        job.message = "Ana kurulum sihirbazı hazır.";
+        job.message = "Ana kurulum sihirbazı hazır. Terminali açık tutun; sihirbaz bu süreçte çalışır.";
       }
     }
   });
@@ -104,10 +121,32 @@ function startPnpmJob(type, args, successMessage) {
     if (code === 0) {
       job.status = "success";
       job.message = successMessage;
-      if (type === "wizard") setTimeout(() => server?.close(), 1500);
+      if (type === "dependencies") {
+        const deps = inspectInstallationState(projectRoot).dependencies;
+        packagesReady = deps.ready;
+        if (!packagesReady) {
+          job.status = "error";
+          job.message = "Paket kurulumu bitti ancak doğrulama eksik. 'Paketleri Kur / Onar' ile tekrar deneyin.";
+        }
+      }
+      if (type === "wizard") {
+        console.log("");
+        console.log("Kurulum sihirbazı tamamlandı. Başlatıcı birkaç saniye içinde kapanacak.");
+        console.log("Bu terminal kapandıktan sonra kurulum betiğine yeniden gerek yoktur.");
+        setTimeout(() => {
+          server?.close();
+          setTimeout(() => process.exit(0), 200);
+        }, 1500);
+      }
     } else {
       job.status = "error";
       job.message = `İşlem ${code ?? "bilinmeyen"} çıkış koduyla başarısız oldu.`;
+      if (type === "dependencies") packagesReady = false;
+      if (type === "wizard") {
+        console.log("");
+        console.log("Sihirbaz kapandı. Başlatıcı açık kaldı; loglar yukarıda görünür.");
+        console.log("Gerekirse tekrar deneyin veya temiz kurulum yapın.");
+      }
     }
   });
   return child;
@@ -173,6 +212,9 @@ function publicStatus() {
     runtime: runtimeStatus(),
     installation: inspectInstallationState(projectRoot),
     job,
+    packagesReady,
+    bootstrapPort: port,
+    wizardPort,
     configuredPort: readConfiguredPort(projectRoot),
   };
 }
@@ -182,13 +224,37 @@ function renderClientScript() {
 const CSRF=document.querySelector('meta[name="setup-csrf"]').content;
 const REQUIRED_CONFIRMATION=document.querySelector("main").dataset.confirmation;
 const byId=id=>document.getElementById(id);
-async function api(url,options={}){options.headers={"Content-Type":"application/json","X-Setup-CSRF":CSRF,...options.headers};const r=await fetch(url,options);const data=await r.json();if(!r.ok)throw new Error(data.message||"İşlem başarısız");return data}
+async function api(url,options={}){options.headers={"Content-Type":"application/json","X-Setup-CSRF":CSRF,...options.headers};const r=await fetch(url,options);const data=await r.json();if(!r.ok){const err=new Error(data.message||"İşlem başarısız");err.data=data;throw err}return data}
 function evidenceLabel(e){return Object.entries(e).filter(([,v])=>v).map(([k])=>({installationLock:"Kurulum kilidi",environmentFile:"Ortam dosyası",applicationDatabase:"Uygulama veritabanı",sessionDatabase:"Oturum veritabanı",deploymentConfig:"Dağıtım profili",pendingInstallation:"Yarım işlem",uploadedFiles:"Yüklenen dosyalar",dependenciesInstalled:"Paketler"}[k]||k)).join(", ")||"Kurulum verisi yok"}
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
-function render(s){const i=s.installation,r=s.runtime,j=s.job;byId("summary").innerHTML='<div class="metric">Node.js<b>'+escapeHtml(r.nodeVersion||"Bulunamadı")+' '+(r.nodeSupported?"✓":"✕")+'</b></div><div class="metric">pnpm<b>'+escapeHtml(r.pnpmVersion||"Bulunamadı")+' '+(r.pnpmSupported?"✓":"✕")+'</b></div><div class="metric">Dizin<b>'+escapeHtml(s.directory)+'</b></div><div class="metric">Bulunanlar<b>'+escapeHtml(evidenceLabel(i.evidence))+'</b></div>';const names={fresh:"Yeni kurulum",partial:"Yarım/eski kurulum",installed:"Uygulama zaten kurulu"};byId("state").textContent=names[i.state];byId("state").className="state "+(i.state==="fresh"?"ok":"warn");byId("message").textContent=j.message;byId("logs").textContent=j.logs.length?j.logs.join("\n"):"Henüz işlem çıktısı yok.";byId("logs").scrollTop=byId("logs").scrollHeight;byId("danger").classList.toggle("hidden",i.state==="fresh");byId("wizard").disabled=i.state==="installed"||j.status==="running"||!i.evidence.dependenciesInstalled;byId("install").disabled=j.status==="running";if(j.wizardUrl)location.href=j.wizardUrl}
-async function refresh(){try{render(await api("/api/status"))}catch(e){byId("message").textContent=e.message;byId("message").className="error"}}
+function render(s){const i=s.installation,r=s.runtime,j=s.job,ready=!!s.packagesReady,installed=i.state==="installed",running=j.status==="running";byId("summary").innerHTML='<div class="metric">Node.js<b>'+escapeHtml(r.nodeVersion||"Bulunamadı")+' '+(r.nodeSupported?"✓":"✕")+'</b></div><div class="metric">pnpm<b>'+escapeHtml(r.pnpmVersion||"Bulunamadı")+' '+(r.pnpmSupported?"✓":"✕")+'</b></div><div class="metric">Dizin<b>'+escapeHtml(s.directory)+'</b></div><div class="metric">Bulunanlar<b>'+escapeHtml(evidenceLabel(i.evidence))+'</b></div><div class="metric">Paket adımı<b>'+(installed?'Güncelleme paket adımını içerir':ready?'Bu oturumda tamamlandı ✓':'Önce “Paketleri Kur / Onar” ✕')+'</b></div>';const names={fresh:"Yeni kurulum",partial:"Yarım/eski kurulum",installed:"Uygulama zaten kurulu"};byId("state").textContent=names[i.state];byId("state").className="state "+(i.state==="fresh"?"ok":"warn");let tip=j.message;if(installed){tip=j.type==="upgrade"?j.message:"Uygulama kurulu. Servisi durdurup “Mevcut Kurulumu Güncelle” ile verileri koruyarak güncelleyebilirsiniz."}else if(running){tip=j.message}else if(!ready){tip=i.evidence.dependenciesInstalled?"Paketler diskte var; sihirbaza geçmek için önce “Paketleri Kur / Onar” adımını çalıştırın.":"Önce “Paketleri Kur / Onar” ile paketleri kurun."}else{tip="Paket adımı tamam. Kurulum sihirbazına geçebilirsiniz."}byId("message").textContent=tip;byId("message").className=j.status==="error"?"error":j.status==="success"?"success":"muted";byId("logs").textContent=j.logs.length?j.logs.join("\n"):"Henüz işlem çıktısı yok.";byId("logs").scrollTop=byId("logs").scrollHeight;byId("danger").classList.toggle("hidden",i.state==="fresh");const wizard=byId("wizard");wizard.disabled=installed||running||!ready;if(installed){wizard.title="Uygulama zaten kurulu; sihirbaz kapalı. Temiz kurulum gerekir."}else if(!ready){wizard.title="Önce paket kurulum adımını tamamlayın."}else{wizard.title="Kurulum sihirbazını başlat"}byId("install").disabled=running;byId("upgrade").disabled=!installed||running;if(!installed&&j.wizardUrl)location.href=j.wizardUrl}
+let refreshPending=null;function refresh(){if(refreshPending)return refreshPending;refreshPending=(async()=>{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),30000);try{render(await api("/api/status",{signal:controller.signal}))}catch(e){byId("message").textContent=e.message;byId("message").className="error"}finally{clearTimeout(timer);refreshPending=null}})();return refreshPending}
+byId("upgrade").onclick=async()=>{try{await api("/api/upgrade",{method:"POST",body:"{}"});refresh()}catch(e){alert(e.message)}};
 byId("install").onclick=async()=>{try{await api("/api/install",{method:"POST",body:"{}"});refresh()}catch(e){alert(e.message)}};
-byId("wizard").onclick=async()=>{try{await api("/api/wizard",{method:"POST",body:"{}"});refresh()}catch(e){alert(e.message)}};
+byId("wizard").onclick=async()=>{
+  try{
+    await api("/api/wizard",{method:"POST",body:"{}"});
+    refresh();
+  }catch(e){
+    const data=e&&e.data;
+    if(data&&data.code==="WIZARD_PORT_BUSY"){
+      const pid=data.pid?("\n\nPortu tutan süreç: PID "+data.pid):"";
+      const detail=data.detail?("\n\n"+data.detail):"";
+      const ok=confirm("Sihirbaz portu ("+data.port+") kullanımda."+pid+detail+"\n\nBu süreç durdurulsun ve sihirbaz başlatılsın mı?");
+      if(ok){
+        try{
+          await api("/api/wizard",{method:"POST",body:JSON.stringify({killOccupant:true})});
+          refresh();
+        }catch(e2){alert(e2.message);refresh()}
+      }else{
+        alert("Sihirbaz başlatılmadı. Kalan süreci durdurup tekrar deneyin: node scripts\\find-port-holder.mjs "+data.port);
+      }
+      return;
+    }
+    alert(e.message);
+    refresh();
+  }
+};
 byId("refresh").onclick=refresh;
 byId("reset").onclick=async()=>{if(!byId("backupAck").checked||byId("confirmation").value!==REQUIRED_CONFIRMATION){alert("Yedek onayı ve doğrulama metni eksik.");return}if(!confirm("Bu işlem mevcut QuizMaster verilerini aktif kurulumdan kaldıracaktır. Devam edilsin mi?"))return;try{const data=await api("/api/reset",{method:"POST",body:JSON.stringify({backupAcknowledged:true,confirmation:byId("confirmation").value})});alert("Yedek oluşturuldu: "+data.backupRoot);byId("confirmation").value="";byId("backupAck").checked=false;refresh()}catch(e){alert(e.message)}};
 refresh();setInterval(refresh,1000);
@@ -204,7 +270,7 @@ function renderPage() {
 :root{color-scheme:dark;--bg:#0b1020;--panel:#141b2d;--line:#2b3650;--text:#f7f8fc;--muted:#aeb9ce;--brand:#7867ff;--ok:#2fd69f;--warn:#ffb84d;--danger:#ff5f68}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#1a2040,var(--bg) 45%);color:var(--text);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}.wrap{width:min(980px,calc(100% - 32px));margin:32px auto}.hero,.card{background:rgba(20,27,45,.96);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 18px 60px #0005}.hero h1{margin:0 0 8px;font-size:30px}.hero p,.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:18px 0}.metric{background:#0e1527;border:1px solid var(--line);border-radius:14px;padding:14px}.metric b{display:block;margin-top:4px}.card{margin-top:18px}.state{display:inline-flex;border-radius:999px;padding:6px 11px;font-weight:700;background:#2a3150}.state.ok{color:var(--ok)}.state.warn{color:var(--warn)}button{border:0;border-radius:12px;padding:12px 16px;background:var(--brand);color:white;font-weight:750;cursor:pointer}button.secondary{background:#27314a}button.danger{background:var(--danger)}button:disabled{opacity:.45;cursor:not-allowed}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}pre{min-height:160px;max-height:320px;overflow:auto;background:#080d19;border:1px solid var(--line);border-radius:12px;padding:14px;white-space:pre-wrap;color:#ced8ea}.danger-zone{border-color:#6d3238}.danger-zone input[type=text]{width:100%;background:#0b1120;border:1px solid #6d4248;color:white;border-radius:10px;padding:11px;margin:10px 0}.hidden{display:none}.error{color:#ff9da3}.success{color:var(--ok)}code{color:#d9d3ff}@media(max-width:600px){.wrap{width:min(100% - 18px,980px);margin:10px auto}.hero,.card{padding:17px}}
 </style></head><body><main class="wrap" data-confirmation="${CLEAN_INSTALL_CONFIRMATION}">
 <section class="hero"><h1>QuizMaster Kurulum Başlatıcısı</h1><p>Ön kontrol, paket kurulumu ve güvenli ilk yapılandırma tek akışta yürütülür.</p><div id="summary" class="grid"></div><span id="state" class="state">Denetleniyor</span></section>
-<section class="card"><h2>Kurulum işlemleri</h2><p id="message" class="muted">Durum okunuyor...</p><div class="actions"><button id="install">Paketleri Kur / Onar</button><button id="wizard" class="secondary">Kurulum Sihirbazına Geç</button><button id="refresh" class="secondary">Yeniden Denetle</button></div><pre id="logs">Henüz işlem çıktısı yok.</pre></section>
+<section class="card"><h2>Kurulum işlemleri</h2><p id="message" class="muted">Durum okunuyor...</p><div class="actions"><button id="install">Paketleri Kur / Onar</button><button id="wizard" class="secondary">Kurulum Sihirbazına Geç</button><button id="upgrade" class="secondary" disabled>Mevcut Kurulumu Güncelle</button><button id="refresh" class="secondary">Yeniden Denetle</button></div><pre id="logs">Henüz işlem çıktısı yok.</pre></section>
 <section id="danger" class="card danger-zone hidden"><h2>Temiz kurulum</h2><p class="error"><strong>Dikkat:</strong> Kullanıcılar, sınavlar, anketler, sonuçlar, oturumlar, yapılandırma ve yüklenen dosyalar aktif kurulumdan kaldırılır. Önce doğrulanmış, tarihli yedek alınır.</p><label><input id="backupAck" type="checkbox"> Zorunlu yedek alınacağını ve uygulamanın durdurulması gerektiğini anlıyorum.</label><p>Devam etmek için <code>${CLEAN_INSTALL_CONFIRMATION}</code> yazın:</p><input id="confirmation" type="text" autocomplete="off"><button id="reset" class="danger">Yedekle ve Temiz Kuruluma Geç</button></section>
 </main><script src="/bootstrap.js" defer></script></body></html>`;
 }
@@ -227,21 +293,62 @@ async function handler(req, res) {
     securityHeaders(res, "application/javascript; charset=utf-8");
     return res.end(renderClientScript());
   }
-  if (req.method === "GET" && requestUrl.pathname === "/api/status") return json(res, 200, publicStatus());
+  if (req.method === "GET" && requestUrl.pathname === "/api/status") {
+    // Active authorized polling keeps long install/build jobs observable.
+    // Unauthenticated requests were rejected above and never receive a cookie.
+    res.setHeader("Set-Cookie", `quizmaster.bootstrap=${encodeURIComponent(sessionValue)}; HttpOnly; SameSite=Strict; Path=/; Max-Age=1800`);
+    return json(res, 200, publicStatus());
+  }
   if (req.method !== "POST" || !authorizeMutation(req)) return json(res, 403, { message: "Kurulum isteği doğrulanamadı." });
 
   try {
     if (requestUrl.pathname === "/api/install") {
-      startPnpmJob("dependencies", ["install", "--frozen-lockfile"], "Paket ve kütüphane kurulumu tamamlandı.");
+      startPnpmJob("dependencies", ["install", "--frozen-lockfile", "--prod=false"], "Paket ve kütüphane kurulumu tamamlandı.");
       return json(res, 202, { message: "Paket kurulumu başlatıldı." });
+    }
+    if (requestUrl.pathname === "/api/upgrade") {
+      if (inspectInstallationState(projectRoot).state !== "installed") throw new Error("Güncelleme yalnız kurulu sistemde kullanılabilir.");
+      await readJson(req);
+      startPnpmJob("upgrade", ["run", "upgrade", "--project", projectRoot], "Yedek, derleme ve migration tamamlandı. Servisi yeniden başlatıp web arayüzündeki Sunucu Durumu ve girişi doğrulayın.");
+      return json(res, 202, { message: "Veriler korunarak güncelleme başlatıldı." });
     }
     if (requestUrl.pathname === "/api/wizard") {
       const current = inspectInstallationState(projectRoot);
-      if (current.state === "installed") throw new Error("Uygulama zaten kurulu. Sihirbaz yeniden başlatılamaz.");
-      if (!current.evidence.dependenciesInstalled) throw new Error("Önce paket kurulumunu tamamlayın.");
-      wizardChild = startPnpmJob("wizard", ["--filter", "quiz-master-server", "setup"], "QuizMaster kurulumu tamamlandı.");
+      if (current.state === "installed") throw new Error("Uygulama zaten kurulu (installation.lock var). Yeniden kurulum için önce 'Yedekle ve Temiz Kuruluma Geç' ile sıfırlayın.");
+      if (!current.evidence.dependenciesInstalled) throw new Error("Paketler eksik. Önce 'Paketleri Kur / Onar' adımını tamamlayın.");
+      if (!packagesReady) throw new Error("Sihirbaza geçmek için önce bu ekranda 'Paketleri Kur / Onar' adımını çalıştırıp bitirin.");
+      if (wizardPort === port) throw new Error("Sihirbaz portu kurulum başlatıcısı ile aynı olamaz. SETUP_WIZARD_PORT değerini değiştirin.");
+
+      const payload = await readJson(req);
+      const occupied = await isLocalPortOpen(wizardPort, 400);
+      if (occupied) {
+        const conflict = describePortConflict(wizardPort);
+        if (!payload?.killOccupant) {
+          return json(res, 409, {
+            code: "WIZARD_PORT_BUSY",
+            message: `Sihirbaz portu (127.0.0.1:${wizardPort}) zaten kullanımda. Önceki sihirbaz kalmış olabilir.`,
+            detail: conflict.message,
+            pid: conflict.holder?.pid ?? null,
+            port: wizardPort,
+            hint: "Portu tutan süreci durdurup sihirbazı yeniden başlatabilirsiniz.",
+          });
+        }
+        const stop = stopPortProcess(wizardPort);
+        if (!stop.stopped) {
+          return json(res, 409, {
+            code: "WIZARD_PORT_BUSY",
+            message: stop.message,
+            detail: conflict.message,
+            pid: stop.pid ?? conflict.holder?.pid ?? null,
+            port: wizardPort,
+          });
+        }
+        await new Promise((resolve) => setTimeout(resolve, 400));
+      }
+
+      wizardChild = startPnpmJob("wizard", ["--filter", "quiz-master-server", "run", "setup"], "QuizMaster kurulumu tamamlandı.");
       wizardChild.once("close", () => { wizardChild = null; });
-      return json(res, 202, { message: "Kurulum sihirbazı başlatılıyor." });
+      return json(res, 202, { message: "Kurulum sihirbazı başlatılıyor.", wizardPort });
     }
     if (requestUrl.pathname === "/api/reset") {
       if (job.status === "running" || wizardChild) throw new Error("Çalışan kurulum işlemi varken temiz kurulum başlatılamaz.");
@@ -287,14 +394,39 @@ if (!runtime.nodeSupported || !runtime.pnpmSupported) {
 }
 
 server = http.createServer((req, res) => handler(req, res).catch((error) => json(res, 500, { message: error.message })));
-server.listen(port, host, () => {
-  const url = `http://${host}:${port}/setup?token=${token}`;
-  console.log(`QuizMaster kurulum başlangıcı: ${url}`);
-  console.log("Bu bağlantıyı paylaşmayın. Kurulum ekranı yalnız bu bilgisayardan erişilebilir.");
-  openBrowser(url);
-});
 
-server.on("error", (error) => {
-  console.error(`Kurulum başlangıç sunucusu açılamadı: ${error.message}`);
+function reportListenFailure(error) {
+  if (error && (error.code === "EADDRINUSE" || /EADDRINUSE|address already in use/i.test(String(error.message || error)))) {
+    console.error(describePortConflict(port).message);
+  } else {
+    console.error(`Kurulum başlangıç sunucusu açılamadı: ${error?.message || error}`);
+    console.error("");
+    console.error("Yapılması gerekenler:");
+    console.error("  1. Aynı anda açık ikinci bir kurulum başlatıcısı olmadığından emin olun.");
+    console.error("  2. Antivirüs / güvenlik duvarının yerel 127.0.0.1 bağlantılarını engellemediğini doğrulayın.");
+    console.error("  3. kurulum.bat dosyasını yeniden çalıştırın.");
+    console.error("");
+    console.error("Not: Kurulum verileri bu hata nedeniyle değiştirilmez.");
+  }
   process.exitCode = 1;
+  setImmediate(() => process.exit(1));
+}
+
+server.on("error", reportListenFailure);
+
+isLocalPortOpen(port, 400).then((occupied) => {
+  if (occupied) {
+    reportListenFailure(Object.assign(new Error(`listen EADDRINUSE: address already in use 127.0.0.1:${port}`), { code: "EADDRINUSE" }));
+    return;
+  }
+  server.listen(port, host, () => {
+    const url = `http://${host}:${port}/setup?token=${token}`;
+    console.log(`QuizMaster kurulum başlangıcı: ${url}`);
+    console.log("Bu bağlantıyı paylaşmayın. Kurulum ekranı yalnız bu bilgisayardan erişilebilir.");
+    console.log("");
+    console.log("Önemli: Bu terminali sihirbaz bitene kadar KAPATMAYIN.");
+    console.log("Sihirbaz bu sürecin altında çalışır; terminal kapanırsa kurulum yarıda kalır.");
+    console.log("Sihirbaz başarıyla biterse başlatıcı otomatik kapanır.");
+    openBrowser(url);
+  });
 });

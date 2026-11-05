@@ -1,0 +1,528 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\.pnpm\\playwright@1.63.0\\node_modules\\playwright\\cli.js",
+      "test",
+      "-c",
+      "playwright.student-audit.config.ts",
+      "--grep",
+      "offline survives|S-N04|S-D01|S-D03|S-D06|S-D07"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.student-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/student-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "student-*-audit.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/student-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "student-exams-audit.spec.ts",
+      "file": "student-exams-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Student exam real-server audit",
+          "file": "student-exams-audit.spec.ts",
+          "line": 48,
+          "column": 6,
+          "specs": [
+            {
+              "title": "an answer saved offline survives reconnecting and reloading before submission",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 26825,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveClass\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'B) B', exact: true })\nExpected pattern: \u001b[32m/(?:^|\\s)border-primary(?:\\s|$)/\u001b[39m\nReceived string:  \u001b[31m\"w-full p-4 text-left rounded-lg border-2 transition-all border-border hover:border-primary/50\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveClass\" getByRole('button', { name: 'B) B', exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'B) B', exact: true })\u001b[22m\n\u001b[2m    33 × locator resolved to <button class=\"w-full p-4 text-left rounded-lg border-2 transition-all border-border hover:border-primary/50\">…</button>\u001b[22m\n\u001b[2m       - unexpected value \"w-full p-4 text-left rounded-lg border-2 transition-all border-border hover:border-primary/50\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveClass\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'B) B', exact: true })\nExpected pattern: \u001b[32m/(?:^|\\s)border-primary(?:\\s|$)/\u001b[39m\nReceived string:  \u001b[31m\"w-full p-4 text-left rounded-lg border-2 transition-all border-border hover:border-primary/50\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveClass\" getByRole('button', { name: 'B) B', exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'B) B', exact: true })\u001b[22m\n\u001b[2m    33 × locator resolved to <button class=\"w-full p-4 text-left rounded-lg border-2 transition-all border-border hover:border-primary/50\">…</button>\u001b[22m\n\u001b[2m       - unexpected value \"w-full p-4 text-left rounded-lg border-2 transition-all border-border hover:border-primary/50\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-exams-audit.spec.ts:203:75",
+                        "location": {
+                          "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-exams-audit.spec.ts",
+                          "column": 75,
+                          "line": 203
+                        },
+                        "snippet": "  201 |     await expect(page.getByText('Soru 1 / 2', { exact: true })).toBeVisible();\n  202 |     await shot(page, 'offline-answer-after-reload');\n> 203 |     await expect(page.getByRole('button', { name: 'B) B', exact: true })).toHaveClass(/(?:^|\\s)border-primary(?:\\s|$)/);\n      |                                                                           ^\n  204 |     await expect(page.getByText('1 cevaplandı', { exact: true })).toBeVisible();\n  205 |   });\n  206 | });"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-exams-audit.spec.ts",
+                            "column": 75,
+                            "line": 203
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveClass\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'B) B', exact: true })\nExpected pattern: \u001b[32m/(?:^|\\s)border-primary(?:\\s|$)/\u001b[39m\nReceived string:  \u001b[31m\"w-full p-4 text-left rounded-lg border-2 transition-all border-border hover:border-primary/50\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveClass\" getByRole('button', { name: 'B) B', exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'B) B', exact: true })\u001b[22m\n\u001b[2m    33 × locator resolved to <button class=\"w-full p-4 text-left rounded-lg border-2 transition-all border-border hover:border-primary/50\">…</button>\u001b[22m\n\u001b[2m       - unexpected value \"w-full p-4 text-left rounded-lg border-2 transition-all border-border hover:border-primary/50\"\u001b[22m\n\n\n  201 |     await expect(page.getByText('Soru 1 / 2', { exact: true })).toBeVisible();\n  202 |     await shot(page, 'offline-answer-after-reload');\n> 203 |     await expect(page.getByRole('button', { name: 'B) B', exact: true })).toHaveClass(/(?:^|\\s)border-primary(?:\\s|$)/);\n      |                                                                           ^\n  204 |     await expect(page.getByText('1 cevaplandı', { exact: true })).toBeVisible();\n  205 |   });\n  206 | });\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-exams-audit.spec.ts:203:75"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T07:16:47.907Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-exams-audit-Studen-25e98-reloading-before-submission\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-exams-audit-Studen-25e98-reloading-before-submission\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-exams-audit.spec.ts",
+                        "column": 75,
+                        "line": 203
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1c0f3e3e698de5c6cfac-e7d2ae22354edaa10633",
+              "file": "student-exams-audit.spec.ts",
+              "line": 190,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "student-navigation-audit.spec.ts",
+      "file": "student-navigation-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "S-N04 missing quiz back navigation stays in authorized student panel",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 21619,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/student\\/quizzes$/\u001b[39m\nReceived string:  \u001b[31m\"http://127.0.0.1:5541/\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    33 × locator resolved to <html lang=\"en\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"http://127.0.0.1:5541/\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/student\\/quizzes$/\u001b[39m\nReceived string:  \u001b[31m\"http://127.0.0.1:5541/\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    33 × locator resolved to <html lang=\"en\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"http://127.0.0.1:5541/\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-audit.spec.ts:82:22",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-audit.spec.ts",
+                      "column": 22,
+                      "line": 82
+                    },
+                    "snippet": "  80 |   await page.goto('/student/quiz/does-not-exist');\n  81 |   await page.getByRole('button', {name:/Geri|Dön/}).first().click();\n> 82 |   await expect(page).toHaveURL(/\\/student\\/quizzes$/);\n     |                      ^\n  83 | });\n  84 |\n  85 | test('S-N05 stats display category names from real relation objects', async ({page}) => {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-audit.spec.ts",
+                        "column": 22,
+                        "line": 82
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/student\\/quizzes$/\u001b[39m\nReceived string:  \u001b[31m\"http://127.0.0.1:5541/\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    33 × locator resolved to <html lang=\"en\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"http://127.0.0.1:5541/\"\u001b[22m\n\n\n  80 |   await page.goto('/student/quiz/does-not-exist');\n  81 |   await page.getByRole('button', {name:/Geri|Dön/}).first().click();\n> 82 |   await expect(page).toHaveURL(/\\/student\\/quizzes$/);\n     |                      ^\n  83 | });\n  84 |\n  85 | test('S-N05 stats display category names from real relation objects', async ({page}) => {\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-audit.spec.ts:82:22"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:17:17.375Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-audit-S-1a561-in-authorized-student-panel\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-audit-S-1a561-in-authorized-student-panel\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-audit.spec.ts",
+                    "column": 22,
+                    "line": 82
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cc98b7d896c265a978f3-b29250562dc94a218b98",
+          "file": "student-navigation-audit.spec.ts",
+          "line": 78,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "student-navigation-depth-audit.spec.ts",
+      "file": "student-navigation-depth-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "S-D01 dashboard all-results action with five own completed records opens authorized results",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 34565,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/student\\/results$/\u001b[39m\nReceived string:  \u001b[31m\"http://127.0.0.1:5541/student/statistics\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    33 × locator resolved to <html lang=\"en\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"http://127.0.0.1:5541/student/statistics\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/student\\/results$/\u001b[39m\nReceived string:  \u001b[31m\"http://127.0.0.1:5541/student/statistics\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    33 × locator resolved to <html lang=\"en\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"http://127.0.0.1:5541/student/statistics\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:57:24\n    at withResults (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:32:5)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:51:3",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                      "column": 24,
+                      "line": 57
+                    },
+                    "snippet": "  55 |     await expect(all).toBeVisible();\n  56 |     await all.click();\n> 57 |     await expect(page).toHaveURL(/\\/student\\/results$/);\n     |                        ^\n  58 |     await expect(page.getByRole('heading', { level: 1, name: 'Sınav Sonuçlarım' })).toBeVisible();\n  59 |   });\n  60 | });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                        "column": 24,
+                        "line": 57
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/student\\/results$/\u001b[39m\nReceived string:  \u001b[31m\"http://127.0.0.1:5541/student/statistics\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    33 × locator resolved to <html lang=\"en\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"http://127.0.0.1:5541/student/statistics\"\u001b[22m\n\n\n  55 |     await expect(all).toBeVisible();\n  56 |     await all.click();\n> 57 |     await expect(page).toHaveURL(/\\/student\\/results$/);\n     |                        ^\n  58 |     await expect(page.getByRole('heading', { level: 1, name: 'Sınav Sonuçlarım' })).toBeVisible();\n  59 |   });\n  60 | });\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:57:24\n    at withResults (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:32:5)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:51:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:17:41.617Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-8336d-ds-opens-authorized-results\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-8336d-ds-opens-authorized-results\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                    "column": 24,
+                    "line": 57
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-8a9aee50fd4ec95a6db9",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 50,
+          "column": 5
+        },
+        {
+          "title": "S-D03 choosing an actual category preserves its completed results",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 24525,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Student Audit Completed Exam', { exact: true })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Student Audit Completed Exam', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Student Audit Completed Exam', { exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Student Audit Completed Exam', { exact: true })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Student Audit Completed Exam', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Student Audit Completed Exam', { exact: true })\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:114:83",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                      "column": 83,
+                      "line": 114
+                    },
+                    "snippet": "  112 |     mkdirSync('docs/student-audit/screenshots', { recursive: true });\n  113 |     await page.screenshot({ path: 'docs/student-audit/screenshots/results-category-filter.png', fullPage: true });\n> 114 |     await expect(page.getByText('Student Audit Completed Exam', { exact: true })).toBeVisible();\n      |                                                                                   ^\n  115 | });\n  116 |\n  117 | test('S-D04 loaded student routes have specific content, reload correctly and fit mobile width', async ({ page }) => {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                        "column": 83,
+                        "line": 114
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Student Audit Completed Exam', { exact: true })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Student Audit Completed Exam', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Student Audit Completed Exam', { exact: true })\u001b[22m\n\n\n  112 |     mkdirSync('docs/student-audit/screenshots', { recursive: true });\n  113 |     await page.screenshot({ path: 'docs/student-audit/screenshots/results-category-filter.png', fullPage: true });\n> 114 |     await expect(page.getByText('Student Audit Completed Exam', { exact: true })).toBeVisible();\n      |                                                                                   ^\n  115 | });\n  116 |\n  117 | test('S-D04 loaded student routes have specific content, reload correctly and fit mobile width', async ({ page }) => {\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:114:83"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:18:18.444Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-54d8b-erves-its-completed-results\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-54d8b-erves-its-completed-results\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                    "column": 83,
+                    "line": 114
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-e2cb144728d3b19d962d",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 105,
+          "column": 5
+        },
+        {
+          "title": "S-D06 injected dashboard API failure must not claim all exams completed",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 21489,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Tüm Sınavları Tamamladın!', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByText('Tüm Sınavları Tamamladın!', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Tüm Sınavları Tamamladın!', { exact: true })\u001b[22m\n\u001b[2m    33 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Tüm Sınavları Tamamladın!', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByText('Tüm Sınavları Tamamladın!', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Tüm Sınavları Tamamladın!', { exact: true })\u001b[22m\n\u001b[2m    33 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:177:78",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                      "column": 78,
+                      "line": 177
+                    },
+                    "snippet": "  175 |   await page.goto('/student/dashboard');\n  176 |   await expect(page.locator('main')).toContainText('Depth controlled dashboard failure');\n> 177 |   await expect(page.getByText('Tüm Sınavları Tamamladın!', { exact: true })).toHaveCount(0);\n      |                                                                              ^\n  178 |   await expect(page.getByText('Ortalama Başarı', { exact: true })).toHaveCount(0);\n  179 |   const retry = page.getByRole('button', { name: /Tekrar dene|Yeniden dene/i });\n  180 |   await expect(retry).toBeVisible();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                        "column": 78,
+                        "line": 177
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Tüm Sınavları Tamamladın!', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByText('Tüm Sınavları Tamamladın!', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Tüm Sınavları Tamamladın!', { exact: true })\u001b[22m\n\u001b[2m    33 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n\n  175 |   await page.goto('/student/dashboard');\n  176 |   await expect(page.locator('main')).toContainText('Depth controlled dashboard failure');\n> 177 |   await expect(page.getByText('Tüm Sınavları Tamamladın!', { exact: true })).toHaveCount(0);\n      |                                                                              ^\n  178 |   await expect(page.getByText('Ortalama Başarı', { exact: true })).toHaveCount(0);\n  179 |   const retry = page.getByRole('button', { name: /Tekrar dene|Yeniden dene/i });\n  180 |   await expect(retry).toBeVisible();\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:177:78"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:18:45.272Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-01431-t-claim-all-exams-completed\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-01431-t-claim-all-exams-completed\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                    "column": 78,
+                    "line": 177
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-f30cfb4ce4e159e1d0fe",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 172,
+          "column": 5
+        },
+        {
+          "title": "S-D07 injected survey API failure must show error and retry instead of empty success",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 20840,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })\u001b[22m\n\u001b[2m    33 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })\u001b[22m\n\u001b[2m    33 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:198:91",
+                    "location": {
+                      "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                      "column": 91,
+                      "line": 198
+                    },
+                    "snippet": "  196 |   await failed;\n  197 |   await expect(page.getByText('Anketler yükleniyor...', { exact: true })).toHaveCount(0);\n> 198 |   await expect(page.getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })).toHaveCount(0);\n      |                                                                                           ^\n  199 |   await expect(page.locator('main')).toContainText(/yüklenemedi|hata|Depth controlled survey failure/i);\n  200 |   const retry = page.getByRole('button', { name: /Tekrar dene|Yeniden dene/i });\n  201 |   await expect(retry).toBeVisible();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                        "column": 91,
+                        "line": 198
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })\u001b[22m\n\u001b[2m    33 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n\n\n  196 |   await failed;\n  197 |   await expect(page.getByText('Anketler yükleniyor...', { exact: true })).toHaveCount(0);\n> 198 |   await expect(page.getByText('Yanıtlamanız gereken anket bulunmuyor.', { exact: true })).toHaveCount(0);\n      |                                                                                           ^\n  199 |   await expect(page.locator('main')).toContainText(/yüklenemedi|hata|Depth controlled survey failure/i);\n  200 |   const retry = page.getByRole('button', { name: /Tekrar dene|Yeniden dene/i });\n  201 |   await expect(retry).toBeVisible();\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts:198:91"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T07:19:09.337Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-95105-ry-instead-of-empty-success\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\student-audit\\test-results-latest\\student-navigation-depth-a-95105-ry-instead-of-empty-success\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\student-navigation-depth-audit.spec.ts",
+                    "column": 91,
+                    "line": 198
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "569510b3798cedfe5616-2258a9df04ea441e3bd8",
+          "file": "student-navigation-depth-audit.spec.ts",
+          "line": 191,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-04T07:16:42.749Z",
+    "duration": 168348.131,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 6,
+    "flaky": 0
+  }
+}

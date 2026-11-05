@@ -1,0 +1,78 @@
+{
+  "observations": [
+    {
+      "route": "/",
+      "text": "S\n\nDashboard yükleniyor...",
+      "overflow": false,
+      "unnamed": 1
+    },
+    {
+      "route": "/student/dashboard",
+      "text": "S\n\nDashboard yükleniyor...",
+      "overflow": false,
+      "unnamed": 1
+    },
+    {
+      "route": "/student/quizzes",
+      "text": "S\nSınavlarım\n\nSize atanan sınavları buradan görebilir ve çözebilirsiniz.\n\nÇözülecek Sınavlar\n0\n\nYapılması gereken sınavlar\n\nTamamlanan Sınavlar\n0\n\nBitirilen sınavlar\n\nTümü\n\nSınavlar yükleniyor...",
+      "overflow": false,
+      "unnamed": 2
+    },
+    {
+      "route": "/my-quizzes",
+      "text": "S\nSınavlarım\n\nSize atanan sınavları buradan görebilir ve çözebilirsiniz.\n\nÇözülecek Sınavlar\n0\n\nYapılması gereken sınavlar\n\nTamamlanan Sınavlar\n0\n\nBitirilen sınavlar\n\nTümü\n\nSınavlar yükleniyor...",
+      "overflow": false,
+      "unnamed": 2
+    },
+    {
+      "route": "/student/results",
+      "text": "S\nDashboard'a Dön\nSınav Sonuçlarım\n\nTamamladığınız tüm sınavların gelişmiş dökümü.\n\nExcel\nYazdır\nGELIŞMIŞ SORGULAMA PANELI\nFiltreleri Temizle\nSINAV ADI\nDERS / KATEGORI\nTüm Dersler\nBAŞARI DURUMU\nTüm Puanlar\nSIRALAMA ÖLÇÜTÜ\nEn Yeni Tarih\n\nVERILER IŞLENIYOR...",
+      "overflow": false,
+      "unnamed": 1
+    },
+    {
+      "route": "/my-results",
+      "text": "S\nDashboard'a Dön\nSınav Sonuçlarım\n\nTamamladığınız tüm sınavların gelişmiş dökümü.\n\nExcel\nYazdır\nGELIŞMIŞ SORGULAMA PANELI\nFiltreleri Temizle\nSINAV ADI\nDERS / KATEGORI\nTüm Dersler\nBAŞARI DURUMU\nTüm Puanlar\nSIRALAMA ÖLÇÜTÜ\nEn Yeni Tarih\n\nVERILER IŞLENIYOR...",
+      "overflow": false,
+      "unnamed": 1
+    },
+    {
+      "route": "/my-stats",
+      "text": "S\n\nİstatistikler yükleniyor...",
+      "overflow": false,
+      "unnamed": 1
+    },
+    {
+      "route": "/student/surveys",
+      "text": "S\nAnketlerim\n\nSınıfınıza atanmış güncel anketler.\n\nAnketler yükleniyor...",
+      "overflow": false,
+      "unnamed": 1
+    },
+    {
+      "route": "/student/survey/55555555-5555-4555-8555-555555555555",
+      "text": "S\nAnket yükleniyor...",
+      "overflow": false,
+      "unnamed": 1
+    },
+    {
+      "route": "/student/result/student-audit-result",
+      "text": "S\n\nSonuç yükleniyor...",
+      "overflow": false,
+      "unnamed": 1
+    },
+    {
+      "route": "/settings",
+      "text": "S\nHesap Ayarları\n\nProfilinizi, güvenliğinizi ve bildirimlerinizi buradan yönetin.\n\nYazdır\nProfil Bilgileri\nBildirimler\nİşlem Geçmişi\nGüvenlik\nKişisel Bilgiler\nAdınız ve iletişim bilgileriniz.\n\nBilgilendirme\n\nKişisel ve iletişim bilgilerinizde değişiklik yapmak istiyorsanız lütfen okul yönetimi ile iletişime geçiniz.\n\nAD SOYAD\nE-POSTA\nTELEFON\nADRES\nHesap Bilgileri\nStudent Audit Learner\nÖğrenci\nKatılma Tarihi\n4 Ekim 2026\nSınıf No\n1\nVeli Bilgileri\nKayıtlı veli ve iletişim bilgileriniz (Salt Okunur).\nDüzenlenemez\nVELI ADI SOYADI\nYAKINLIK DERECESI\nVELI TELEFONU\nVELI E-POSTASI\nVELI ADRESI",
+      "overflow": false,
+      "unnamed": 6
+    },
+    {
+      "route": "/announcements",
+      "text": "S\nDuyuru Merkezi\n\nÖnemli bilgilendirmeler ve güncel duyurular\n\nYazdır\nDUYURULAR YÜKLENİYOR...",
+      "overflow": false,
+      "unnamed": 1
+    }
+  ],
+  "errors": [],
+  "failed": []
+}

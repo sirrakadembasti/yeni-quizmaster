@@ -1,0 +1,38 @@
+{
+  "route": "/survey-results",
+  "viewport": "mobile",
+  "tabs": [
+    "Sonuçlar",
+    "Anket Oluştur",
+    "Anket Ayarları",
+    "Sorular (1)"
+  ],
+  "tabStates": [
+    {
+      "name": "Sonuçlar",
+      "visiblePanels": 0
+    },
+    {
+      "name": "Anket Oluştur",
+      "visiblePanels": 1
+    },
+    {
+      "name": "Anket Ayarları",
+      "visiblePanels": 1
+    },
+    {
+      "name": "Sorular (1)",
+      "visiblePanels": 1
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "apiHttpErrors": [],
+  "ux": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "unnamedButtons": 0,
+    "inputsWithoutLabel": []
+  }
+}

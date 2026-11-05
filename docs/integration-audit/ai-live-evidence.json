@@ -1,0 +1,15 @@
+{
+  "testKind": "real-official-Google-provider",
+  "configured": true,
+  "authorizedInvocation": true,
+  "status": "passed",
+  "providerRequests": 2,
+  "usesRealApplicationDatabase": false,
+  "probeHttpStatus": 200,
+  "probeSucceeded": true,
+  "providerErrorCategory": null,
+  "generationHttpStatus": 200,
+  "questionCount": 1,
+  "questionType": "multiple-choice",
+  "answerIndexValidated": true
+}

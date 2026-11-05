@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-04",
+  "method": "Assistant visual inspection of nine actual pypdfium2-rendered Chromium PDF sample pages; all PDF pages also checked for nonempty text",
+  "samples": [
+    {
+      "file": "ux-detail-A-U01.pdf",
+      "page": 1,
+      "observed": "Eight loaded fixture rows readable; action column absent"
+    },
+    {
+      "file": "ux-detail-T-U03.pdf",
+      "page": 1,
+      "observed": "Complete parent-audit-student code; zero score and0/2 retained; action column absent"
+    },
+    {
+      "file": "ux-detail-T-U04-fast.pdf",
+      "page": 1,
+      "observed": "Both participation bars reach100% axis; table agrees100% and score0%; labels readable"
+    },
+    {
+      "file": "ux-detail-T-U04-filter-fast.pdf",
+      "page": 1,
+      "observed": "Updated start date shown; both final100% bars and matching table visible immediately"
+    },
+    {
+      "file": "ux-extra-large-report.pdf",
+      "page": 1,
+      "observed": "Long titles wrap readably; END markers present; complete student code; zero score retained"
+    },
+    {
+      "file": "ux-extra-large-report.pdf",
+      "page": 7,
+      "observed": "Repeated table header; last records52-59 and END markers readable; no clipped final row"
+    },
+    {
+      "observed": "First fifteen classes in three readable fixed-size charts;100% participation and75% success, no clipped group",
+      "file": "ux-detail-T-U04-many.pdf",
+      "page": 1
+    },
+    {
+      "observed": "Remaining fifteen classes in three whole groups; readable labels, legend and first five full table names",
+      "file": "ux-detail-T-U04-many.pdf",
+      "page": 2
+    },
+    {
+      "observed": "Repeated table header, full class names05-29, complete final row and matching100%/75% values",
+      "file": "ux-detail-T-U04-many.pdf",
+      "page": 3
+    }
+  ],
+  "scope": "Nine visual sample pages from six PDFs; all30 class names verified across three pages and all60 records/60 title ends verified across seven pages. Physical printer and OS print dialog outside scope."
+}

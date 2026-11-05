@@ -12,12 +12,11 @@ import {
   ArrowRight,
   CheckCircle2,
   Play,
-  AlertCircle,
   Loader2,
   TrendingUp,
   Target,
 } from "lucide-react";
-import { quizApi, resultApi, authApi } from "@/lib/api";
+import { quizApi, resultApi, authApi, classApi } from "@/lib/api";
 
 export default function StudentDashboard() {
   const [, setLocation] = useLocation();
@@ -27,11 +26,13 @@ export default function StudentDashboard() {
   const [quizzes, setQuizzes] = useState<any[]>([]);
   const [results, setResults] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [loadAttempt, setLoadAttempt] = useState(0);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
+        setError(null);
         const [userData, quizzesData, resultsData] = await Promise.all([
           authApi.getCurrentUser(),
           quizApi.getStudentQuizzes(),
@@ -40,7 +41,7 @@ export default function StudentDashboard() {
         setUser(userData.user);
         if (userData.user?.classId) {
           try {
-            const classResp = await (await import('@/lib/api')).classApi.getClass(userData.user.classId);
+            const classResp = await classApi.getClass(userData.user.classId);
             setClassName(classResp.class?.name || null);
           } catch (e) {
             setClassName(null);
@@ -56,7 +57,7 @@ export default function StudentDashboard() {
     };
 
     fetchDashboardData();
-  }, []);
+  }, [loadAttempt]);
 
   const pendingQuizzes = quizzes.filter(q => 
     !results.find(r => r.quizId === q.id && r.status === 'completed')
@@ -73,6 +74,24 @@ export default function StudentDashboard() {
           <Loader2 className="h-10 w-10 animate-spin text-primary" />
           <p className="text-muted-foreground font-medium">Dashboard yükleniyor...</p>
         </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <Card role="alert" className="border-destructive/50 bg-destructive/10">
+          <CardHeader>
+            <CardTitle>Dashboard yüklenemedi</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-destructive">{error}</p>
+            <Button variant="outline" onClick={() => setLoadAttempt(attempt => attempt + 1)}>
+              Tekrar dene
+            </Button>
+          </CardContent>
+        </Card>
       </DashboardLayout>
     );
   }
@@ -121,15 +140,6 @@ export default function StudentDashboard() {
           <div className="absolute right-0 top-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
           <div className="absolute left-0 bottom-0 w-48 h-48 bg-blue-500/5 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
         </div>
-
-        {error && (
-          <Card className="border-destructive/50 bg-destructive/10">
-            <CardContent className="p-4 flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
-              <p className="text-sm font-medium text-destructive">{error}</p>
-            </CardContent>
-          </Card>
-        )}
 
         {/* Stats Grid - Modernized Cards */}
         <div className="grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -259,7 +269,7 @@ export default function StudentDashboard() {
               <div className="space-y-4">
                 {completedResults.slice(0, 4).map((result) => {
                   const score = result.score || 0;
-                  const isSuccess = score >= 50;
+                  const isSuccess = score >= 70;
                   
                   return (
                     <Card key={result.id} className="hover:border-primary/30 transition-all hover:shadow-md group bg-card">
@@ -286,7 +296,8 @@ export default function StudentDashboard() {
                           <Button 
                             variant="ghost" 
                             size="icon"
-                            className="rounded-full opacity-0 group-hover:opacity-100 transition-opacity bg-primary/5 hover:bg-primary/10 hover:text-primary h-8 w-8"
+                            aria-label={`${result.quiz?.title || result.quizTitle || 'İsimsiz Sınav'} sonuç detaylarını gör`}
+                            className="rounded-full bg-primary/5 hover:bg-primary/10 hover:text-primary h-10 w-10 focus-visible:ring-2 focus-visible:ring-primary"
                             onClick={() => setLocation(`/student/result/${result.id}`)}
                           >
                             <ArrowRight className="h-4 w-4" />
@@ -298,7 +309,7 @@ export default function StudentDashboard() {
                 })}
                 
                 {completedResults.length > 4 && (
-                  <Button variant="outline" className="w-full text-sm" onClick={() => setLocation('/student/statistics')}>
+                  <Button variant="outline" className="w-full text-sm" onClick={() => setLocation('/student/results')}>
                     Tüm Sonuçları Gör
                   </Button>
                 )}

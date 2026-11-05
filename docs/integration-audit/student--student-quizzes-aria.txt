@@ -1,0 +1,86 @@
+- main:
+  - button "Menüyü aç"
+  - button "Bildirimleri aç": "1"
+  - button "Karanlık Moda Geç"
+  - button "A"
+  - heading "Sınavlarım" [level=1]
+  - paragraph: Size atanan sınavları buradan görebilir ve çözebilirsiniz.
+  - text: Çözülecek Sınavlar 3
+  - paragraph: Yapılması gereken sınavlar
+  - text: Tamamlanan Sınavlar 1
+  - paragraph: Bitirilen sınavlar
+  - text: Sınav Ara
+  - textbox "Sınav Ara":
+    - /placeholder: Sınav adı veya konu ara...
+  - text: Sınav Durumu
+  - combobox "Sınav Durumu": Tümü
+  - table:
+    - rowgroup:
+      - row "Sınav Ders / Öğretmen Zorluk Soru Süre Durum / Puan İşlemler":
+        - columnheader "Sınav"
+        - columnheader "Ders / Öğretmen"
+        - columnheader "Zorluk"
+        - columnheader "Soru"
+        - columnheader "Süre"
+        - columnheader "Durum / Puan"
+        - columnheader "İşlemler"
+    - rowgroup:
+      - row "Parent Audit Offline Exam Açıklama yok. Audit Mathematics Parent Audit Teacher Orta 2 Süresiz Yapılacak Çevrimdışı Hazırla Başla":
+        - cell "Parent Audit Offline Exam Açıklama yok.":
+          - paragraph: Parent Audit Offline Exam
+          - paragraph: Açıklama yok.
+        - cell "Audit Mathematics Parent Audit Teacher":
+          - paragraph: Audit Mathematics
+          - paragraph: Parent Audit Teacher
+        - cell "Orta"
+        - cell "2"
+        - cell "Süresiz"
+        - cell "Yapılacak"
+        - cell "Çevrimdışı Hazırla Başla":
+          - button "Çevrimdışı Hazırla"
+          - button "Başla"
+      - row "Parent Audit Timed Exam Açıklama yok. Audit Mathematics Parent Audit Teacher Orta 2 1 dk Yapılacak Başla":
+        - cell "Parent Audit Timed Exam Açıklama yok.":
+          - paragraph: Parent Audit Timed Exam
+          - paragraph: Açıklama yok.
+        - cell "Audit Mathematics Parent Audit Teacher":
+          - paragraph: Audit Mathematics
+          - paragraph: Parent Audit Teacher
+        - cell "Orta"
+        - cell "2"
+        - cell "1 dk"
+        - cell "Yapılacak"
+        - cell "Başla":
+          - button "Başla"
+      - row "Parent Audit Completed Exam Açıklama yok. Audit Mathematics Parent Audit Teacher Orta 2 Süresiz Tamamlandı %0.0 Detayları Gör":
+        - cell "Parent Audit Completed Exam Açıklama yok.":
+          - paragraph: Parent Audit Completed Exam
+          - paragraph: Açıklama yok.
+        - cell "Audit Mathematics Parent Audit Teacher":
+          - paragraph: Audit Mathematics
+          - paragraph: Parent Audit Teacher
+        - cell "Orta"
+        - cell "2"
+        - cell "Süresiz"
+        - cell "Tamamlandı %0.0":
+          - text: Tamamlandı
+          - paragraph: "%0.0"
+        - cell "Detayları Gör":
+          - button "Detayları Gör"
+      - row "Parent Audit Exam Açıklama yok. Audit Mathematics Parent Audit Teacher Orta 2 Süresiz Yapılacak Çevrimdışı Hazırla Başla":
+        - cell "Parent Audit Exam Açıklama yok.":
+          - paragraph: Parent Audit Exam
+          - paragraph: Açıklama yok.
+        - cell "Audit Mathematics Parent Audit Teacher":
+          - paragraph: Audit Mathematics
+          - paragraph: Parent Audit Teacher
+        - cell "Orta"
+        - cell "2"
+        - cell "Süresiz"
+        - cell "Yapılacak"
+        - cell "Çevrimdışı Hazırla Başla":
+          - button "Çevrimdışı Hazırla"
+          - button "Başla"
+  - text: 4 kayıt · Sayfa 1/1
+  - button "Önceki" [disabled]
+  - button "Sonraki" [disabled]

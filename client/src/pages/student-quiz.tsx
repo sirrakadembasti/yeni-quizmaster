@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { isRetryableError } from '@/lib/http-error';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useLocation } from 'wouter';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,10 +10,14 @@ import { quizApi, refreshCsrfToken } from '@/lib/api';
 import { useAuth } from '@/context/auth-context';
 import { ChevronLeft, ChevronRight, AlertCircle, CheckCircle2, Eye, WifiOff, CloudUpload } from 'lucide-react';
 import {
+  acknowledgeOfflineAnswer,
+  cacheOfflineCompletion,
   getOfflineSession,
   getOfflineRemainingSeconds,
   markOfflineSubmit,
   normalizeOfflineQuestions,
+  reconcileOfflineSession,
+  orderQuizQuestions,
   removeOfflineSession,
   saveOfflineSession,
   updateOfflineAnswers,
@@ -33,6 +38,7 @@ interface Question {
   text: string;
   type: string;
   options?: string[];
+  imageUrl?: string | null;
 }
 
 export default function StudentQuiz() {
@@ -40,6 +46,7 @@ export default function StudentQuiz() {
   const { quizId } = useParams<{ quizId: string }>();
   const { role, user } = useAuth();
   const isPreviewMode = role === 'teacher' || role === 'admin';
+  const quizListPath = isPreviewMode ? '/quizzes' : '/student/quizzes';
 
   const [loading, setLoading] = useState(true);
   const [quiz, setQuiz] = useState<any>(null);
@@ -55,6 +62,12 @@ export default function StudentQuiz() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [offlineMode, setOfflineMode] = useState(false);
   const [submissionQueued, setSubmissionQueued] = useState(false);
+  const answerSaveQueue = useRef<Promise<unknown>>(Promise.resolve());
+  const saveAnswer = (attemptId: string, questionId: string, answer: string) => {
+    const request = answerSaveQueue.current.catch(() => {}).then(() => quizApi.submitAnswer(attemptId, questionId, answer));
+    answerSaveQueue.current = request;
+    return request;
+  };
 
   // Start quiz on mount
   useEffect(() => {
@@ -79,7 +92,7 @@ export default function StudentQuiz() {
         setOfflineMode(false);
 
         // Normalize questions - ensure options is always an array
-        const normalizedQuestions = normalizeOfflineQuestions(data.questions || []);
+        const normalizedQuestions = orderQuizQuestions(normalizeOfflineQuestions(data.questions || []), Boolean(data.quiz.shuffleQuestions) && !isPreviewMode, data.resultId);
 
         setQuestions(normalizedQuestions);
         setResultId(data.resultId);
@@ -91,7 +104,7 @@ export default function StudentQuiz() {
           : fallbackLimit);
         if (!isPreviewMode && user) {
           const capturedAt = new Date().toISOString();
-          saveOfflineSession({
+          const session = reconcileOfflineSession({
             version: 1,
             userId: user.id,
             quizId,
@@ -103,11 +116,32 @@ export default function StudentQuiz() {
             timerCapturedAt: capturedAt,
             cachedAt: capturedAt,
             pendingSubmit: false,
-          });
+            started: true,
+          }, getOfflineSession(user.id, quizId));
+          setAnswers(session.answers);
+          setSubmissionQueued(session.pendingSubmit);
+          saveOfflineSession(session);
+          if (!session.pendingSubmit) {
+            for (const [questionId, answer] of Object.entries(session.pendingAnswers || {})) {
+              try {
+                await saveAnswer(data.resultId, questionId, answer);
+                acknowledgeOfflineAnswer(user.id, quizId, data.resultId, questionId, answer, session.answerRevisions?.[questionId]);
+              } catch (saveError) {
+                setOfflineMode(isRetryableError(saveError));
+                setSaveStatus('error');
+                break; // Preserve unsent answers for retry or final submission.
+              }
+            }
+          }
         }
       } catch (err) {
         const cached = user ? getOfflineSession(user.id, quizId) : null;
-        if (!isPreviewMode && cached) {
+        if (!isPreviewMode && cached && isRetryableError(err)) {
+          if(cached.questions.some(question=>question.imageUrl&&!question.imageUrl.startsWith('data:image/'))) {
+            setError('Soru görselleri bu cihazda çevrimdışı kullanım için hazır değil. İnternet bağlantısıyla Sınavlarım sayfasından yeniden hazırlayın.');
+            return;
+          }
+          saveOfflineSession({ ...cached, started: true });
           setQuiz(cached.quiz);
           setQuestions(cached.questions);
           setResultId(cached.resultId);
@@ -158,7 +192,7 @@ export default function StudentQuiz() {
 
     // In preview mode, don't save answers to server
     if (isPreviewMode) return;
-    if (user) updateOfflineAnswers(user.id, quizId, nextAnswers);
+    const revision = user ? updateOfflineAnswers(user.id, quizId, nextAnswers)?.[questionId] : undefined;
     if (!navigator.onLine) {
       setOfflineMode(true);
       setSaveStatus('saved');
@@ -167,13 +201,14 @@ export default function StudentQuiz() {
 
     setSaveStatus('saving');
     try {
-      await quizApi.submitAnswer(resultId!, questionId, option);
+      await saveAnswer(resultId!, questionId, option);
+      if (user) acknowledgeOfflineAnswer(user.id, quizId, resultId!, questionId, option, revision);
       setOfflineMode(false);
       setSaveStatus('saved');
       // 2 sn sonra göstergeyi gizle
       setTimeout(() => setSaveStatus('idle'), 2000);
     } catch (err) {
-      setOfflineMode(true);
+      setOfflineMode(isRetryableError(err));
       setSaveStatus('error');
     }
   };
@@ -183,9 +218,11 @@ export default function StudentQuiz() {
     const currentQuestion = questions[currentQuestionIndex];
     const currentAnswer = answers[currentQuestion?.id];
     if (!currentQuestion || !currentAnswer || !resultId) return;
+    const revision = user ? getOfflineSession(user.id, quizId)?.answerRevisions?.[currentQuestion.id] : undefined;
     setSaveStatus('saving');
     try {
-      await quizApi.submitAnswer(resultId, currentQuestion.id, currentAnswer);
+      await saveAnswer(resultId, currentQuestion.id, currentAnswer);
+      if (user) acknowledgeOfflineAnswer(user.id, quizId, resultId, currentQuestion.id, currentAnswer, revision);
       setOfflineMode(false);
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
@@ -211,7 +248,7 @@ export default function StudentQuiz() {
       }
 
       await quizApi.submitQuiz(resultId!, answers);
-      if (user) removeOfflineSession(user.id, quizId);
+      if (user) { cacheOfflineCompletion(user.id, quizId, resultId!); removeOfflineSession(user.id, quizId); }
       setSubmitted(true);
       
       // Show result
@@ -219,6 +256,12 @@ export default function StudentQuiz() {
         setLocation(`/student/result/${resultId}`);
       }, 2000);
     } catch (err) {
+      if (!isRetryableError(err)) {
+        if (user) { markOfflineSubmit(user.id, quizId, false); removeOfflineSession(user.id, quizId); }
+        setSubmissionQueued(false);
+        setError(err instanceof Error ? err.message : 'Sınav teslim edilemedi.');
+        return;
+      }
       if (user) markOfflineSubmit(user.id, quizId, true);
       setOfflineMode(true);
       setSubmissionQueued(true);
@@ -234,12 +277,18 @@ export default function StudentQuiz() {
       const cached = getOfflineSession(user.id, quizId);
       try {
         await quizApi.submitQuiz(resultId, cached?.answers || answers);
+        cacheOfflineCompletion(user.id, quizId, resultId);
         removeOfflineSession(user.id, quizId);
         setSubmissionQueued(false);
         setSubmitted(true);
         setTimeout(() => setLocation(`/student/result/${resultId}`), 1000);
-      } catch {
-        setSubmissionQueued(true);
+      } catch (err) {
+        if (!isRetryableError(err)) {
+          markOfflineSubmit(user.id, quizId, false);
+          removeOfflineSession(user.id, quizId);
+          setSubmissionQueued(false);
+          setError(err instanceof Error ? err.message : 'Teslim reddedildi.');
+        } else setSubmissionQueued(true);
       }
     };
 
@@ -275,7 +324,7 @@ export default function StudentQuiz() {
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">{error}</p>
               <div className="flex gap-2">
-                <Button onClick={() => setLocation('/quizzes')}>
+                <Button onClick={() => setLocation(quizListPath)}>
                   Quizlere Dön
                 </Button>
                 <Button variant="outline" onClick={() => window.location.reload()}>
@@ -304,7 +353,7 @@ export default function StudentQuiz() {
                 : 'Sonucunuza yönlendiriliyorsunuz...'}
             </p>
             {isPreviewMode && (
-              <Button onClick={() => setLocation('/quizzes')} className="mt-4">
+              <Button onClick={() => setLocation(quizListPath)} className="mt-4">
                 Quizlere Dön
               </Button>
             )}
@@ -342,7 +391,7 @@ export default function StudentQuiz() {
               </div>
               <div className="flex gap-2">
                 <Button 
-                  onClick={() => setLocation('/quizzes')}
+                  onClick={() => setLocation(quizListPath)}
                   className={isNoQuestions ? "bg-blue-600 hover:bg-blue-700" : "bg-amber-600 hover:bg-amber-700"}
                 >
                   Quizlere Geri Dön
@@ -395,7 +444,7 @@ export default function StudentQuiz() {
             <Button 
               variant="outline" 
               size="sm"
-              onClick={() => setLocation('/quizzes')}
+              onClick={() => setLocation(quizListPath)}
             >
               Quizlere Dön
             </Button>
@@ -465,6 +514,8 @@ export default function StudentQuiz() {
         <Card className="border-2">
           <CardHeader>
             <CardTitle className="text-xl">{currentQuestion.text}</CardTitle>
+              {currentQuestion?.imageUrl && <img src={currentQuestion.imageUrl} alt="Soru görseli" className="my-4 max-h-96 max-w-full rounded-lg object-contain" />}
+
             {currentQuestion.type === 'multiple_choice' && (
               <CardDescription>Doğru seçeneği seçin</CardDescription>
             )}
@@ -475,6 +526,7 @@ export default function StudentQuiz() {
                 {currentQuestion.options.map((option, idx) => (
                   <button
                     key={idx}
+                    aria-pressed={answers[currentQuestion.id] === option}
                     disabled={submissionQueued}
                     onClick={() => handleAnswerChange(currentQuestion.id, option)}
                     className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
@@ -549,6 +601,8 @@ export default function StudentQuiz() {
               {questions.map((q, idx) => (
                 <button
                   key={q.id}
+                  aria-current={idx === currentQuestionIndex ? 'step' : undefined}
+                  aria-label={`Soru ${idx + 1}, ${answers[q.id] ? 'cevaplandı' : 'cevaplanmadı'}`}
                   onClick={() => setCurrentQuestionIndex(idx)}
                   className={`w-full aspect-square rounded-lg font-medium text-sm transition-all ${
                     idx === currentQuestionIndex
@@ -569,9 +623,9 @@ export default function StudentQuiz() {
         <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Sınavı Bitirmek İstiyor musunuz?</AlertDialogTitle>
+              <AlertDialogTitle>{isPreviewMode ? 'Önizlemeyi Bitirmek İstiyor musunuz?' : 'Sınavı Bitirmek İstiyor musunuz?'}</AlertDialogTitle>
               <AlertDialogDescription>
-                Sınavı bitirdiğinizde cevaplarınız kaydedilecek ve sonuç sayfasına yönlendirileceksiniz.
+                {isPreviewMode ? 'Önizleme tamamlanacak. Cevaplarınız ve sonuçlarınız kaydedilmeyecek.' : 'Sınavı bitirdiğinizde cevaplarınız kaydedilecek ve sonuç sayfasına yönlendirileceksiniz.'}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

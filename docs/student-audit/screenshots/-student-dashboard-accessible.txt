@@ -1,0 +1,33 @@
+- main:
+  - button "Menüyü aç"
+  - button "Bildirimleri aç": "1"
+  - button "Karanlık Moda Geç"
+  - button "S"
+  - text: Öğrenci Paneli
+  - heading "Hoş Geldin, Student 👋" [level=1]
+  - paragraph: Öğrenme yolculuğuna kaldığın yerden devam et. Yeni başarılar seni bekliyor.
+  - text: "Sınıf: Student Audit 7A Sınıf No: 1"
+  - button "Sınavlara Git"
+  - paragraph: Ortalama Başarı
+  - paragraph: 0%
+  - text: 2 sınav baz alındı
+  - paragraph: Tamamlanan
+  - paragraph: "2"
+  - text: Harika gidiyorsun! Toplam katılım
+  - paragraph: Bekleyen
+  - paragraph: "2"
+  - text: Çözülmeyi bekleyen sınavların var
+  - heading "Sıradaki Sınavlar" [level=2]
+  - text: Audit Mathematics Student Audit Offline Exam 2 Soru
+  - button "Sınava Başla"
+  - text: Audit Mathematics Student Audit Timed Exam 1 dk 2 Soru
+  - button "Sınava Başla"
+  - heading "Sonuçların" [level=2]
+  - paragraph: Student Audit Exam
+  - paragraph: 04.10.2026
+  - text: "0"
+  - button
+  - paragraph: Student Audit Completed Exam
+  - paragraph: 04.10.2026
+  - text: "0"
+  - button

@@ -1,0 +1,766 @@
+{
+  "at": "2026-10-02T05:17:11.684Z",
+  "phase": "fresh-login",
+  "outcome": "failed",
+  "url": "http://127.0.0.1:20425/auth",
+  "error": "page.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"http://127.0.0.1:20425/auth\", waiting until \"domcontentloaded\"\n",
+  "pending": [
+    {
+      "url": "http://127.0.0.1:20425/src/pages/students.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/settings.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/student-dashboard.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/student-stats.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/student-quizzes.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/student-results.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/student-quiz.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/quiz-result-detail.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/teachers.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/teacher-detail.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/auth.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/admin-management.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/classlist.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/class-detail.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/admin-class-detail.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/admin-quizzes.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/reset-password.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/admin/archive.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/announcements.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/student-surveys.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/take-survey.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/survey-results.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/parent-dashboard.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/parent-results.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/guardian-management.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/src/pages/server-setup.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/node_modules/.vite/deps/@radix-ui_react-slot.js?v=a7dc21ea",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/node_modules/.vite/deps/class-variance-authority.js?v=52f528af",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/node_modules/.vite/deps/clsx.js?v=547bdea9",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "url": "http://127.0.0.1:20425/node_modules/.vite/deps/tailwind-merge.js?v=cb619e4c",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-10-02T05:16:40.221Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/auth",
+      "type": "document",
+      "method": "GET",
+      "navigation": true
+    },
+    {
+      "at": "2026-10-02T05:16:44.242Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20425/auth",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:16:44.337Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/@vite/client",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:44.338Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/main.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:44.404Z",
+      "kind": "request",
+      "url": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap",
+      "type": "stylesheet",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:44.424Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/@react-refresh",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:44.922Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20425/@react-refresh",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:16:45.112Z",
+      "kind": "response",
+      "url": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:16:45.350Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20425/@vite/client",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:16:45.351Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/@fs/C:/Users/ahmet/AppData/Local/Temp/quizmaster-fresh-bat-2qANPK/node_modules/.pnpm/vite@7.3.6_@types+node@20.19.43_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.15/node_modules/vite/dist/client/env.mjs",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:45.471Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20425/@fs/C:/Users/ahmet/AppData/Local/Temp/quizmaster-fresh-bat-2qANPK/node_modules/.pnpm/vite@7.3.6_@types+node@20.19.43_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.15/node_modules/vite/dist/client/env.mjs",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:16:48.790Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20425/src/main.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:16:48.791Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=31f1d240",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:48.792Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/node_modules/.vite/deps/react-dom_client.js?v=d381494d",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:48.793Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/App.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:48.812Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/index.css",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:48.813Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/components/ErrorBoundary.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.357Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20425/src/components/ErrorBoundary.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:16:52.357Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/node_modules/.vite/deps/react.js?v=31f1d240",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.358Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/components/ui/card.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.359Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/components/ui/button.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.360Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/node_modules/.vite/deps/lucide-react.js?v=8bac9ea8",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.497Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20425/src/components/ui/card.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:16:52.498Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/lib/utils.ts",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.653Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20425/src/App.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:16:52.654Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/node_modules/.vite/deps/wouter.js?v=166322f8",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.655Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/lib/queryClient.ts",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.656Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/node_modules/.vite/deps/@tanstack_react-query.js?v=f5e68537",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.657Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/components/ui/toaster.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.660Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/components/ui/sonner.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.661Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/components/ui/tooltip.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.670Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/context/auth-context.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.671Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/components/NotificationListener.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.671Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/hooks/use-toast.ts",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.672Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/home.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.675Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/not-found.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.678Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/dashboard.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.679Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/quizzes.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.725Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/create-quiz.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.726Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/results.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.727Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/class-statistics.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.729Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/students.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.730Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/settings.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.731Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/student-dashboard.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.732Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/student-stats.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.734Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/student-quizzes.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.754Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/student-results.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.755Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/student-quiz.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.764Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/quiz-result-detail.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.765Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/teachers.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.765Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/teacher-detail.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.768Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/auth.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.770Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/admin-management.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.771Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/classlist.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.772Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/class-detail.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.780Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/admin-class-detail.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.781Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/admin-quizzes.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.781Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/reset-password.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.783Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/admin/archive.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.786Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/announcements.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.794Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/student-surveys.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.805Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/take-survey.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.806Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/survey-results.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.808Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/parent-dashboard.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.808Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/parent-results.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.810Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/guardian-management.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.811Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/src/pages/server-setup.tsx",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.813Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20425/src/components/ui/button.tsx",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:16:52.816Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/node_modules/.vite/deps/@radix-ui_react-slot.js?v=a7dc21ea",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.818Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/node_modules/.vite/deps/class-variance-authority.js?v=52f528af",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.821Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20425/src/index.css",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:16:52.889Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20425/src/lib/utils.ts",
+      "status": 200
+    },
+    {
+      "at": "2026-10-02T05:16:52.890Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/node_modules/.vite/deps/clsx.js?v=547bdea9",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:52.890Z",
+      "kind": "request",
+      "url": "http://127.0.0.1:20425/node_modules/.vite/deps/tailwind-merge.js?v=cb619e4c",
+      "type": "script",
+      "method": "GET",
+      "navigation": false
+    },
+    {
+      "at": "2026-10-02T05:16:53.175Z",
+      "kind": "response",
+      "url": "http://127.0.0.1:20425/src/lib/queryClient.ts",
+      "status": 200
+    }
+  ],
+  "documentError": "Timed out: navigation DOM diagnostic"
+}

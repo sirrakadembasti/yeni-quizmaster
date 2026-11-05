@@ -33,6 +33,46 @@ describe("setup wizard configuration", () => {
     expect(() => setupPayloadSchema.parse({ ...payload, admin: { ...payload.admin, password: "password123456" } })).toThrow();
     expect(() => setupPayloadSchema.parse({ ...payload, email: { enabled: true, user: "mail@kurum.test", password: "abcdefghijklmnop", fromEmail: "mail@kurum.test", fromName: "QuizMaster" } })).toThrow();
   });
+
+  it("accepts a local demo profile with localhost mode", () => {
+    const parsed = setupPayloadSchema.parse({
+      ...payload,
+      deployment: {
+        ...payload.deployment,
+        mode: "localhost",
+        publicUrl: "http://localhost:5000",
+        basePath: "/",
+        allowedOrigins: ["http://localhost:5000", "http://127.0.0.1:5000"],
+        trustProxyHops: 0,
+      },
+    });
+    expect(parsed.deployment.mode).toBe("localhost");
+  });
+
+  it("localhost env uses development NODE_ENV and vite origins", () => {
+    const parsed = setupPayloadSchema.parse({
+      ...payload,
+      deployment: {
+        ...payload.deployment,
+        mode: "localhost",
+        publicUrl: "http://localhost:5000",
+        basePath: "/",
+        allowedOrigins: ["http://localhost:5000", "http://127.0.0.1:5000"],
+        trustProxyHops: 0,
+      },
+    });
+    const env = buildServerEnv(parsed, "fixed-session-secret");
+    expect(env).toContain("NODE_ENV=development");
+    expect(env).toContain("http://127.0.0.1:5173");
+    expect(env).toContain("http://localhost:5173");
+    expect(env).toContain('FRONTEND_URL="http://127.0.0.1:5173"');
+  });
+
+  it("corporate env keeps production NODE_ENV", () => {
+    const parsed = setupPayloadSchema.parse(payload);
+    const env = buildServerEnv(parsed, "fixed-session-secret");
+    expect(env).toContain("NODE_ENV=production");
+  });
 });
 
 describe("setup wizard HTTP isolation", () => {

@@ -1,20 +1,22 @@
 import crypto, { timingSafeEqual } from "crypto";
 import fs from "fs";
+import net from "net";
 import os from "os";
 import path from "path";
 import { spawn } from "child_process";
-import type { Server } from "http";
+import { createServer, type Server } from "http";
 import { fileURLToPath } from "url";
 import express, { type Request } from "express";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import bcrypt from "bcryptjs";
-import { PrismaClient } from "@prisma/client";
+import { createRuntimePrismaClient } from "../utils/sqlite-runtime";
 import { ZodError } from "zod";
 import { getProjectRoot } from "../utils/project-paths";
 import { buildDeploymentArtifacts, saveDeploymentConfig } from "../utils/deployment-config";
 import { buildServerEnv, publicAppUrl, setupPayloadSchema, toDeploymentConfig, type SetupPayload } from "./config";
 import { renderSetupPage } from "./ui";
+import { deploySetupDatabase } from "./migration";
 
 const projectRoot = getProjectRoot();
 const serverRoot = path.join(projectRoot, "server");
@@ -79,7 +81,7 @@ async function fixedPnpm(args: string[], extraEnv: NodeJS.ProcessEnv) {
 
 async function createFirstAdmin(payload: SetupPayload, databaseUrl: string) {
   process.env.DATABASE_URL = databaseUrl;
-  const prisma = new PrismaClient();
+  const prisma = createRuntimePrismaClient({ databaseUrl });
   try {
     const existingAdmin = await prisma.user.findFirst({ where: { role: "admin" }, select: { id: true } });
     if (existingAdmin) throw new Error("Veritabanında zaten bir yönetici var. Mevcut kurulum sihirbazla devralınamaz.");
@@ -101,7 +103,83 @@ async function createFirstAdmin(payload: SetupPayload, databaseUrl: string) {
   }
 }
 
-async function applySetup(payload: SetupPayload) {
+const APPLY_STEPS = [
+  { id: "prepare", label: "Kurulum ortamı hazırlanıyor" },
+  { id: "buildServer", label: "Sunucu derlemesi" },
+  { id: "buildClient", label: "İstemci (web) derlemesi" },
+  { id: "migrate", label: "Veritabanı migration'ları" },
+  { id: "admin", label: "İlk yönetici hesabı" },
+  { id: "artifacts", label: "Dağıtım profili ve Nginx örneği" },
+  { id: "env", label: "Gizli ayarların yazılması (server/.env)" },
+  { id: "finish", label: "Kurulum kilidi ve kapanış" },
+] as const;
+
+type ApplyStepState = {
+  id: string;
+  label: string;
+  status: "pending" | "running" | "done" | "error" | "skipped";
+  detail?: string;
+};
+
+type ApplyJobState = {
+  status: "idle" | "running" | "success" | "error";
+  message: string;
+  steps: ApplyStepState[];
+  summary: string[];
+  loginUrl: string | null;
+  publicUrl: string | null;
+  appPort: number | null;
+  mode: string | null;
+  startedAt: string | null;
+  finishedAt: string | null;
+};
+
+function createApplyState(): ApplyJobState {
+  return {
+    status: "idle",
+    message: "Kurulum henüz uygulanmadı.",
+    steps: APPLY_STEPS.map((step) => ({ id: step.id, label: step.label, status: "pending" })),
+    summary: [],
+    loginUrl: null,
+    publicUrl: null,
+    appPort: null,
+    mode: null,
+    startedAt: null,
+    finishedAt: null,
+  };
+}
+
+function isPortOpen(port: number, timeoutMs = 700): Promise<boolean> {
+  return new Promise((resolve) => {
+    const socket = net.createConnection({ host: "127.0.0.1", port });
+    const done = (value: boolean) => {
+      socket.removeAllListeners();
+      socket.destroy();
+      resolve(value);
+    };
+    socket.setTimeout(timeoutMs);
+    socket.once("connect", () => done(true));
+    socket.once("timeout", () => done(false));
+    socket.once("error", () => done(false));
+  });
+}
+
+async function readJson(req: any): Promise<any> {
+  let body = "";
+  for await (const chunk of req) {
+    body += chunk;
+    if (body.length > 16_384) throw new Error("İstek gövdesi çok büyük.");
+  }
+  return body ? JSON.parse(body) : {};
+}
+
+function markStep(applyJob: ApplyJobState, id: string, status: ApplyStepState["status"], detail?: string) {
+  applyJob.steps = applyJob.steps.map((step) =>
+    step.id === id ? { ...step, status, detail: detail ?? step.detail } : step,
+  );
+}
+
+async function applySetup(payload: SetupPayload, applyJob: ApplyJobState) {
   fs.mkdirSync(dataRoot, { recursive: true });
   if (fs.existsSync(lockPath)) throw new Error("Kurulum daha önce tamamlanmış. Sihirbaz yeniden çalıştırılamaz.");
   if (fs.existsSync(envPath) && !payload.overwriteExistingEnv) throw new Error("server/.env zaten var. İçeriğini doğrulayın veya yedekleyerek değiştirme onayını seçin.");
@@ -116,26 +194,55 @@ async function applySetup(payload: SetupPayload) {
   const envText = buildServerEnv(payload);
   const temporaryEnv = `${envPath}.setup-${process.pid}`;
   const summary: string[] = [];
+  const appUrl = publicAppUrl(payload);
+  applyJob.publicUrl = appUrl;
+  applyJob.appPort = payload.server.port;
+  applyJob.mode = payload.deployment.mode;
+  // Yerelde pnpm dev arayüzü 5173'te; üretim/tek port 5000.
+  applyJob.loginUrl = payload.deployment.mode === "localhost"
+    ? "http://127.0.0.1:5173/auth"
+    : `${appUrl.replace(/\/$/, "")}/auth`;
+
   try {
+    markStep(applyJob, "prepare", "running");
     fs.writeFileSync(temporaryEnv, envText, { encoding: "utf8", mode: 0o600 });
+    markStep(applyJob, "prepare", "done", "Geçici ortam dosyası hazırlandı.");
+
     if (payload.buildClient) {
       const configuredBasePath = toDeploymentConfig(payload).basePath;
       const buildEnv = { VITE_BASE_PATH: configuredBasePath === "/" ? "/" : `${configuredBasePath}/` };
+      markStep(applyJob, "buildServer", "running");
       await fixedPnpm(["--filter", "quiz-master-server", "build"], buildEnv);
+      markStep(applyJob, "buildServer", "done");
+      markStep(applyJob, "buildClient", "running");
       await fixedPnpm(["--filter", "quiz-master-client", "build"], buildEnv);
+      markStep(applyJob, "buildClient", "done");
       summary.push("Üretim derlemesi tamamlandı.");
+    } else {
+      markStep(applyJob, "buildServer", "skipped", "Üretim derlemesi istenmedi.");
+      markStep(applyJob, "buildClient", "skipped", "Üretim derlemesi istenmedi.");
     }
-    await fixedPnpm(["--filter", "quiz-master-server", "db:deploy"], { DATABASE_URL: databaseUrl });
+
+    markStep(applyJob, "migrate", "running");
+    await deploySetupDatabase(databaseUrl, fixedPnpm);
+    markStep(applyJob, "migrate", "done");
     summary.push("Veritabanı migration'ları uygulandı.");
+
+    markStep(applyJob, "admin", "running");
     await createFirstAdmin(payload, databaseUrl);
+    markStep(applyJob, "admin", "done", payload.admin.email);
     summary.push("İlk yönetici hesabı oluşturuldu.");
 
+    markStep(applyJob, "artifacts", "running");
     const config = saveDeploymentConfig(toDeploymentConfig(payload), "setup-wizard");
     const artifacts = buildDeploymentArtifacts(config);
     fs.mkdirSync(artifactRoot, { recursive: true });
     fs.writeFileSync(path.join(artifactRoot, "nginx.conf.example"), `${artifacts.nginxText}\n`, "utf8");
     fs.writeFileSync(path.join(artifactRoot, "deployment.env.example"), `${artifacts.envText}\n`, "utf8");
+    markStep(applyJob, "artifacts", "done", "server/data/setup-artifacts");
+    summary.push("Nginx örneği server/data/setup-artifacts altında üretildi.");
 
+    markStep(applyJob, "env", "running");
     if (fs.existsSync(envPath)) {
       const backupRoot = path.join(serverRoot, "backups");
       fs.mkdirSync(backupRoot, { recursive: true });
@@ -145,9 +252,12 @@ async function applySetup(payload: SetupPayload) {
     }
     fs.renameSync(temporaryEnv, envPath);
     try { fs.chmodSync(envPath, 0o600); } catch { /* Windows ACL'leri işletim sistemi yönetir. */ }
-    fs.writeFileSync(lockPath, `${JSON.stringify({ installedAt: new Date().toISOString(), publicUrl: publicAppUrl(payload), nodeVersion: process.version }, null, 2)}\n`, { encoding: "utf8", mode: 0o600, flag: "wx" });
+    markStep(applyJob, "env", "done", "server/.env");
     summary.push("Gizli ayarlar server/.env dosyasına yazıldı.");
-    summary.push("Nginx örneği server/data/setup-artifacts altında üretildi.");
+
+    markStep(applyJob, "finish", "running");
+    fs.writeFileSync(lockPath, `${JSON.stringify({ installedAt: new Date().toISOString(), publicUrl: publicAppUrl(payload), nodeVersion: process.version }, null, 2)}\n`, { encoding: "utf8", mode: 0o600, flag: "wx" });
+    markStep(applyJob, "finish", "done", "installation.lock yazıldı");
     return summary;
   } finally {
     if (pendingHandle !== undefined) fs.closeSync(pendingHandle);
@@ -160,11 +270,19 @@ export function createSetupApp(token: string, onComplete?: () => void) {
   if (token.length < 24) throw new Error("SETUP_TOKEN en az 24 karakter olmalıdır.");
   const sessionValue = crypto.createHmac("sha256", token).update("quizmaster-setup-session").digest("hex");
   const csrfToken = crypto.createHmac("sha256", token).update("quizmaster-setup-csrf").digest("hex");
+  const applyJob = createApplyState();
   const app = express();
   app.disable("x-powered-by");
   app.use(helmet({ contentSecurityPolicy: { directives: { defaultSrc: ["'self'"], scriptSrc: ["'unsafe-inline'"], styleSrc: ["'unsafe-inline'"], imgSrc: ["'self'", "data:"], frameAncestors: ["'none'"] } } }));
   app.use((_req, res, next) => { res.set("Cache-Control", "no-store"); next(); });
-  app.use(rateLimit({ windowMs: 15 * 60_000, limit: 100, standardHeaders: true, legacyHeaders: false }));
+  // POST işlemleri sıkı limitte; GET /api/status kurulum sırasında canlı izleme için bol limitte.
+  const strictLimiter = rateLimit({ windowMs: 15 * 60_000, limit: 30, standardHeaders: true, legacyHeaders: false });
+  const statusLimiter = rateLimit({ windowMs: 60_000, limit: 240, standardHeaders: true, legacyHeaders: false });
+  app.use("/api/status", statusLimiter);
+  app.use("/api", (req, res, next) => {
+    if (req.path === "/status" || req.method === "GET") return next();
+    return strictLimiter(req, res, next);
+  });
   app.use(express.json({ limit: "64kb" }));
 
   app.get("/setup", (req, res) => {
@@ -190,18 +308,181 @@ export function createSetupApp(token: string, onComplete?: () => void) {
     res.json({
       detected: { hostname: os.hostname(), platform: `${process.platform}/${process.arch}`, node: process.version, cpus: os.cpus().length, memoryGb: Math.round(os.totalmem() / 1024 ** 3), addresses: networks },
       checks: { nodeSupported: [22, 24].includes(Number(process.versions.node.split(".")[0])), dataWritable: writable(dataRoot), uploadsWritable: writable(path.join(serverRoot, "uploads")), notInstalled: !fs.existsSync(lockPath), envAbsent: !fs.existsSync(envPath) },
+      apply: applyJob,
+    });
+  });
+
+  app.get("/api/app-health", async (_req, res) => {
+    const mode = applyJob.mode ?? "localhost";
+    const appPort = applyJob.appPort ?? 5000;
+    const devPort = 5173;
+    const isLocal = mode === "localhost";
+    // Yerel pnpm dev: arayüz 5173, API appPort. Üretim: her ikisi appPort.
+    const uiPort = isLocal ? devPort : appPort;
+    const apiReachable = await isPortOpen(appPort);
+    const uiReachable = isLocal ? await isPortOpen(uiPort) : apiReachable;
+    const reachable = isLocal ? uiReachable : apiReachable;
+    const loginUrl = isLocal && uiReachable
+      ? `http://127.0.0.1:${devPort}/auth`
+      : applyJob.loginUrl;
+    res.json({
+      reachable,
+      apiReachable,
+      uiReachable,
+      port: appPort,
+      uiPort,
+      mode,
+      loginUrl,
+      publicUrl: applyJob.publicUrl,
+      hint: reachable
+        ? "Uygulama ayakta görünüyor; giriş sayfasına gidebilirsiniz."
+        : isLocal
+          ? `Uygulama henüz ayakta değil (API: ${appPort}, arayüz: ${devPort}).`
+          : `Uygulama ${appPort} portunda dinlemiyor veya alan adı çözümlenmiyor. Nginx + DNS'i kontrol edin.`,
+    });
+  });
+
+  app.post("/api/start-app", async (req, res) => {
+    const body = await readJson(req).catch(() => ({}));
+    const mode = applyJob.mode ?? "localhost";
+    const isLocal = mode === "localhost";
+    const preferDev = isLocal && body?.mode !== "production";
+    const appPort = applyJob.appPort ?? 5000;
+    const projectRoot = path.join(serverRoot, "..");
+
+    const alreadyUp = await isPortOpen(appPort) || (preferDev && await isPortOpen(5173));
+    if (alreadyUp) {
+      const loginUrl = preferDev
+        ? `http://127.0.0.1:5173/auth`
+        : applyJob.loginUrl;
+      return res.json({
+        message: "Uygulama zaten ayakta.",
+        reachable: true,
+        loginUrl,
+        publicUrl: applyJob.publicUrl,
+      });
+    }
+
+    let command: string;
+    let args: string[];
+    let cwd = projectRoot;
+    if (preferDev) {
+      // Arka planda pnpm dev: görünür terminal açılmaz.
+      command = process.platform === "win32"
+        ? (process.env.ComSpec || "cmd.exe")
+        : "pnpm";
+      args = process.platform === "win32"
+        ? ["/d", "/s", "/c", "pnpm", "run", "dev"]
+        : ["run", "dev"];
+    } else {
+      const distEntry = path.join(projectRoot, "dist", "index.cjs");
+      if (!fs.existsSync(distEntry)) {
+        return res.status(409).json({
+          message: "Üretim derlemesi bulunamadı. 'Uygulamayı üretim için derle' seçeneğini kullanın veya pnpm build çalıştırın.",
+        });
+      }
+      command = process.execPath;
+      args = [distEntry];
+      cwd = projectRoot;
+    }
+
+    const child = spawn(command, args, {
+      cwd,
+      env: {
+        ...process.env,
+        NODE_ENV: preferDev ? "development" : "production",
+        FORCE_COLOR: "0",
+      },
+      detached: true,
+      stdio: "ignore",
+      windowsHide: true, // Terminal penceresi açma
+    });
+    child.unref();
+
+    const watchPort = preferDev ? 5173 : appPort;
+    let reachable = false;
+    for (let i = 0; i < 30; i += 1) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      if (await isPortOpen(watchPort)) {
+        reachable = true;
+        break;
+      }
+      if (preferDev && await isPortOpen(appPort) && i > 8) {
+        // API ayağa kalktı; arayüz biraz gecikebilir
+        if (await isPortOpen(5173)) {
+          reachable = true;
+          break;
+        }
+      }
+    }
+
+    const loginUrl = preferDev
+      ? `http://127.0.0.1:5173/auth`
+      : applyJob.loginUrl;
+
+    return res.status(reachable ? 200 : 202).json({
+      message: reachable
+        ? (preferDev ? "Geliştirme sunucusu (pnpm dev) arka planda başlatıldı." : "Uygulama başlatıldı.")
+        : "Başlatıldı ancak port henüz açılmadı. Birkaç saniye sonra tekrar denetleyin.",
+      reachable,
+      loginUrl,
+      publicUrl: applyJob.publicUrl,
     });
   });
 
   app.post("/api/apply", async (req, res) => {
+    if (applyJob.status === "running") {
+      return res.status(409).json({ message: "Kurulum zaten uygulanıyor; pencereyi kapatmayın." });
+    }
     try {
       const payload = setupPayloadSchema.parse(req.body);
-      const summary = await applySetup(payload);
-      res.json({ message: "QuizMaster kurulumu tamamlandı. Sihirbaz güvenlik için kapanacak.", summary });
-      setTimeout(() => onComplete?.(), 750);
+      applyJob.status = "running";
+      applyJob.message = "Kurulum uygulanıyor; adımlar ekranda canlı izleniyor…";
+      applyJob.summary = [];
+      applyJob.steps = createApplyState().steps;
+      applyJob.startedAt = new Date().toISOString();
+      applyJob.finishedAt = null;
+      applyJob.loginUrl = null;
+      applyJob.publicUrl = null;
+      applyJob.appPort = null;
+      applyJob.mode = null;
+      res.status(202).json({
+        message: "Kurulum başladı. Aşağıdaki adımlar tamamlandıkça güncellenir.",
+        steps: applyJob.steps,
+      });
+
+      void (async () => {
+        try {
+          const summary = await applySetup(payload, applyJob);
+          applyJob.summary = summary;
+          applyJob.status = "success";
+          applyJob.message = "QuizMaster kurulumu tamamlandı. Birazdan giriş sayfasına yönlendirileceksiniz.";
+          applyJob.finishedAt = new Date().toISOString();
+          // Kullanıcı bitiş ekranını görsün ve login'e gidebilsin diye sihirbazı geç kapat.
+          setTimeout(() => onComplete?.(), 20_000);
+        } catch (error) {
+          applyJob.status = "error";
+          applyJob.message = error instanceof Error ? error.message : "Kurulum tamamlanamadı.";
+          applyJob.finishedAt = new Date().toISOString();
+          applyJob.steps = applyJob.steps.map((step) =>
+            step.status === "running" ? { ...step, status: "error", detail: applyJob.message } : step,
+          );
+        }
+      })();
     } catch (error) {
+      applyJob.status = "idle";
       const status = error instanceof ZodError ? 400 : 409;
-      res.status(status).json({ message: error instanceof Error ? error.message : "Kurulum tamamlanamadı.", issues: error instanceof ZodError ? error.issues : undefined });
+      if (error instanceof ZodError) {
+        return res.status(status).json({
+          message: "Girilen bilgiler doğrulanamadı.",
+          issues: error.issues.map((issue) => ({
+            code: issue.code,
+            message: issue.message,
+            path: issue.path,
+          })),
+        });
+      }
+      res.status(status).json({ message: error instanceof Error ? error.message : "Kurulum tamamlanamadı." });
     }
   });
   return app;
@@ -217,7 +498,32 @@ export function startSetupWizard() {
   const port = Math.min(65535, Math.max(1024, Number(process.env.SETUP_PORT) || 5050));
   let server: Server;
   const app = createSetupApp(token, () => server.close());
-  server = app.listen(port, host, () => {
+
+  const onListenError = (error: NodeJS.ErrnoException) => {
+    if (error.code === "EADDRINUSE") {
+      console.error(`Kurulum sihirbazı açılamadı: 127.0.0.1:${port} portu zaten kullanımda.`);
+      console.error("");
+      console.error("Sihirbaz varsayılan olarak 5050, kurulum başlatıcısı 5049 portunu kullanır.");
+      console.error("Bu hata, sihirbaz portunun başlatıcıyla aynı olması veya önceki sihirbazın");
+      console.error("kalmış olmasından kaynaklanabilir.");
+      console.error("");
+      console.error("Yapılması gerekenler:");
+      console.error("  1. Önceki kurulum/sihirbaz sürecini durdurun.");
+      console.error(`  2. Portu tutan PID için: node scripts\\find-port-holder.mjs ${port}`);
+      console.error("  3. Kuruluma kurulum.bat üzerinden yeniden başlayın.");
+      console.error("");
+      console.error("Not: Kurulum verileri bu hata nedeniyle değiştirilmez.");
+    } else {
+      console.error(`Kurulum sihirbazı açılamadı: ${error.message}`);
+    }
+    process.exitCode = 1;
+    setImmediate(() => process.exit(1));
+  };
+
+  // Hata dinleyicisini listen'dan önce bağla; aksi halde EADDRINUSE yakalanmadan düşer.
+  server = createServer(app);
+  server.once("error", onListenError);
+  server.listen(port, host, () => {
     console.log(`QuizMaster kurulum sihirbazı: http://${host}:${port}/setup?token=${token}`);
     console.log("Bu bağlantıyı paylaşmayın. Kurulum tamamlandığında sihirbaz otomatik kapanır.");
   });

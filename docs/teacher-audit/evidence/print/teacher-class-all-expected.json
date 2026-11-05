@@ -1,0 +1,31 @@
+{
+  "title": "Sınıf Öğrenci Listesi",
+  "required": [
+    "Teacher Audit Student 00",
+    "Teacher Audit Student 01",
+    "Teacher Audit Student 02",
+    "Teacher Audit Student 03",
+    "Teacher Audit Student 04",
+    "Teacher Audit Student 05",
+    "Teacher Audit Student 06",
+    "Teacher Audit Student 07",
+    "Teacher Audit Student 08",
+    "Teacher Audit Student 09",
+    "Teacher Audit Student 10",
+    "Teacher Audit Student 11",
+    "Teacher Audit Student 12",
+    "Teacher Audit Student 13",
+    "Teacher Audit 7A",
+    "Sorumlu öğretmen",
+    "Öğrenci sayısı",
+    "14"
+  ],
+  "forbidden": [
+    "Private Other Student",
+    "Private Other Exam",
+    "Private Other 7B"
+  ],
+  "format": "A4",
+  "bytes": 221795,
+  "source": "Chromium page.pdf with production print CSS"
+}

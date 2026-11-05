@@ -4,7 +4,12 @@ import express from 'express';
 import session from 'express-session';
 import userRouter from '../../api-routes/user';
 import { storage } from '../../storage';
+import { sendRegistrationSuccessEmail } from '../../utils/email';
 import bcrypt from 'bcryptjs';
+
+vi.mock('../../utils/email', () => ({
+  sendRegistrationSuccessEmail: vi.fn(async () => ({ id: 'welcome-email-1' })),
+}));
 
 vi.mock('../../storage', () => ({
   storage: {
@@ -108,27 +113,13 @@ describe('Users API Integration Tests', () => {
       expect(storage.updateUser).toHaveBeenCalledWith('teacher-1', expect.objectContaining({ assignedCategoryIds: [], classIds: [] }));
     });
 
-    it('should allow student to update their own profile', async () => {
+    it('requires school management to update student profiles', async () => {
       const studentUser = { id: 'student-1', role: 'student' };
       const app = createTestApp(studentUser);
-      
-      vi.mocked(storage.getUser).mockImplementation(async (id) => {
-        if (id === 'student-1') return studentUser as any;
-        return null;
-      });
-      
-      vi.mocked(storage.updateUser).mockResolvedValue({ ...studentUser, name: 'New Name' } as any);
-
-      const res = await request(app)
-        .patch('/api/users/student-1')
-        .send({ name: 'New Name', role: 'admin' }); // trying to escalate role
-
-      expect(res.status).toBe(200);
-      expect(storage.updateUser).toHaveBeenCalled();
-      
-      const updateArg = vi.mocked(storage.updateUser).mock.calls[0][1];
-      expect(updateArg.name).toBe('New Name');
-      expect(updateArg.role).toBeUndefined(); // Escapation should be blocked
+      vi.mocked(storage.getUser).mockResolvedValue(studentUser as any);
+      const res = await request(app).patch('/api/users/student-1').send({ name: 'New Name', role: 'admin' });
+      expect(res.status).toBe(403);
+      expect(storage.updateUser).not.toHaveBeenCalled();
     });
 
     it('should block student from updating another user', async () => {
@@ -166,6 +157,7 @@ describe('Users API Integration Tests', () => {
 
       expect(response.status).toBe(201);
       expect(storage.createUser).toHaveBeenCalledWith(expect.objectContaining({ role: 'parent', classId: null, guardianStudentIds: [studentId] }));
+      expect(sendRegistrationSuccessEmail).toHaveBeenCalledWith('veli@example.com', 'Ayşe Veli');
       expect(response.body.user.password).toBeUndefined();
     });
   });

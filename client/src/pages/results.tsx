@@ -41,13 +41,28 @@ import {
   Users
 } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
-import { quizApi, resultApi, classApi, categoryApi, userApi } from "@/lib/api";
+import { flushSync } from "react-dom";
+import { quizApi, classApi, categoryApi, userApi, type StudentResult } from "@/lib/api";
+import { getStatisticsResults } from "@/lib/results-summary";
 import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import { PrintButton, PrintMeta } from "@/components/print/PrintTools";
 import { downloadCsv } from "@/lib/export";
+
+const RESULT_TABLE_PAGE_SIZE = 100;
+
+function ResultTablePagination({ kind, page, pages, onChange }: { kind: string; page: number; pages: number; onChange: (page: number) => void }) {
+  if (pages <= 1) return null;
+  return (
+    <nav aria-label={`${kind} sayfaları`} className="flex items-center justify-end gap-3 p-4 print:hidden">
+      <Button variant="outline" aria-label={`Önceki ${kind} sayfası`} disabled={page <= 1} onClick={() => onChange(page - 1)}>Önceki</Button>
+      <span className="text-sm">Sayfa {page} / {pages}</span>
+      <Button variant="outline" aria-label={`Sonraki ${kind} sayfası`} disabled={page >= pages} onClick={() => onChange(page + 1)}>Sonraki</Button>
+    </nav>
+  );
+}
 
 export default function StatisticsPage() {
   const { role, user: currentUser } = useAuth();
@@ -65,6 +80,27 @@ export default function StatisticsPage() {
   const [loading, setLoading] = useState(true);
   const [tableSearch, setTableSearch] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
+  const [reportPage, setReportPage] = useState(1);
+  const [examPage, setExamPage] = useState(1);
+  const [printing, setPrinting] = useState(false);
+
+  useEffect(() => {
+    const beforePrint = () => flushSync(() => setPrinting(true));
+    const afterPrint = () => setPrinting(false);
+    window.addEventListener('beforeprint', beforePrint);
+    window.addEventListener('afterprint', afterPrint);
+    return () => {
+      window.removeEventListener('beforeprint', beforePrint);
+      window.removeEventListener('afterprint', afterPrint);
+    };
+  }, []);
+
+  useEffect(() => {
+    setReportPage(1);
+    setExamPage(1);
+  }, [allResults, selectedClassId, selectedCategoryId, selectedQuizId, selectedTeacherId, selectedStudentId, role, currentUser?.id]);
+
+  useEffect(() => setExamPage(1), [tableSearch]);
 
   useEffect(() => {
     document.title = "Sınav Sonuçları | Quiz Master";
@@ -80,11 +116,11 @@ export default function StatisticsPage() {
     try {
       setLoading(true);
       const promises: any[] = [
-        quizApi.getAllQuizzes(),
+        role === 'admin' ? quizApi.getAllAdminQuizzes() : quizApi.getAllQuizzes(),
         role === 'teacher' ? classApi.getTeacherClasses() : classApi.getAllClasses(),
         categoryApi.getAllCategories(),
         userApi.getAllUsers(),
-        resultApi.getFilteredResults()
+        getStatisticsResults()
       ];
       
       const [quizzesResp, classesResp, categoriesResp, usersResp, resultsResp] = await Promise.all(promises);
@@ -145,6 +181,10 @@ export default function StatisticsPage() {
     return filtered;
   }, [allResults, selectedClassId, selectedCategoryId, selectedQuizId, selectedTeacherId, selectedStudentId, role, currentUser]);
 
+  const gradedResults = useMemo(() => filteredResults.filter(
+    r => r.status === 'completed' && typeof r.score === 'number' && Number.isFinite(r.score)
+  ), [filteredResults]);
+
   const mebStats = useMemo(() => {
     const grades = {
       pekiyi: { name: 'Pekiyi (85-100)', value: 0, color: '#10b981' },
@@ -154,8 +194,8 @@ export default function StatisticsPage() {
       gecmez: { name: 'Geçmez (0-44)', value: 0, color: '#ef4444' }
     };
 
-    filteredResults.forEach(r => {
-      const score = r.score || 0;
+    gradedResults.forEach(r => {
+      const score = r.score;
       if (score >= 85) grades.pekiyi.value++;
       else if (score >= 70) grades.iyi.value++;
       else if (score >= 55) grades.orta.value++;
@@ -164,7 +204,7 @@ export default function StatisticsPage() {
     });
 
     return Object.values(grades);
-  }, [filteredResults]);
+  }, [gradedResults]);
 
   const quizTableData = useMemo(() => {
     // Sadece mevcut filtrelere uygun quizi olan sonuçları grupla
@@ -178,17 +218,21 @@ export default function StatisticsPage() {
           title: r.quizTitle || quizObj?.title || 'Bilinmeyen Sınav',
           category: categories.find(c => c.id === r.categoryId)?.name || 'Genel',
           participants: 0,
+          graded: 0,
           totalScore: 0
         };
       }
       quizStats[r.quizId].participants++;
-      quizStats[r.quizId].totalScore += (r.score || 0);
+      if (r.status === 'completed' && typeof r.score === 'number' && Number.isFinite(r.score)) {
+        quizStats[r.quizId].graded++;
+        quizStats[r.quizId].totalScore += r.score;
+      }
     });
 
     return Object.values(quizStats)
       .map(q => ({
         ...q,
-        avgScore: Math.round(q.totalScore / q.participants)
+        avgScore: q.graded > 0 ? Math.round(q.totalScore / q.graded) : null
       }))
       .filter(q => 
         q.title.toLowerCase().includes(tableSearch.toLowerCase()) || 
@@ -196,6 +240,13 @@ export default function StatisticsPage() {
       )
       .sort((a, b) => b.participants - a.participants);
   }, [filteredResults, quizzes, categories, tableSearch]);
+
+  const reportPages = Math.max(1, Math.ceil(filteredResults.length / RESULT_TABLE_PAGE_SIZE));
+  const examPages = Math.max(1, Math.ceil(quizTableData.length / RESULT_TABLE_PAGE_SIZE));
+  const currentReportPage = Math.min(reportPage, reportPages);
+  const currentExamPage = Math.min(examPage, examPages);
+  const visibleReports = printing ? filteredResults : filteredResults.slice((currentReportPage - 1) * RESULT_TABLE_PAGE_SIZE, currentReportPage * RESULT_TABLE_PAGE_SIZE);
+  const visibleExams = printing ? quizTableData : quizTableData.slice((currentExamPage - 1) * RESULT_TABLE_PAGE_SIZE, currentExamPage * RESULT_TABLE_PAGE_SIZE);
 
   const handleExport = () => {
     const categoryName = categories.find((category: any) => category.id === selectedCategoryId)?.name || "Tüm Dersler";
@@ -208,13 +259,15 @@ export default function StatisticsPage() {
         { label: "Ders", value: categoryName },
         { label: "Sınav", value: quizName },
         { label: "Sınıf", value: className },
+        { label: "Öğretmen", value: teachers.find((teacher: any) => teacher.id === selectedTeacherId)?.name || "Tüm Öğretmenler" },
+        { label: "Öğrenci", value: students.find((student: any) => student.id === selectedStudentId)?.name || "Tüm Öğrenciler" },
         { label: "Kayıt Sayısı", value: filteredResults.length },
       ],
       columns: [
         { header: "Sınav Adı", value: (row: any) => row.quizTitle || row.quiz?.title },
         { header: "Ders", value: (row: any) => row.quiz?.category?.name || categories.find((c: any) => c.id === row.categoryId)?.name || "Genel" },
         { header: "Öğrenci", value: (row: any) => row.student?.name },
-        { header: "E-posta", value: (row: any) => row.student?.email },
+        { header: "E-posta", value: (row: any) => row.student?.email || students.find((student: any) => student.id === (row.studentId || row.student?.id))?.email || "" },
         { header: "Sınıf", value: (row: any) => row.student?.class?.name || row.student?.classNo },
         { header: "Durum", value: (row: any) => row.status === "completed" ? "Tamamlandı" : "Devam Ediyor" },
         { header: "Puan", value: (row: any) => row.score ?? "" },
@@ -247,6 +300,8 @@ export default function StatisticsPage() {
             { label: "Kategori", value: categories.find((c: any) => c.id === selectedCategoryId)?.name || "Tümü" },
             { label: "Sınıf", value: classes.find((c: any) => c.id === selectedClassId)?.name || "Tümü" },
             { label: "Sınav", value: quizzes.find((q: any) => q.id === selectedQuizId)?.title || "Tümü" },
+            { label: "Öğretmen", value: teachers.find((teacher: any) => teacher.id === selectedTeacherId)?.name || "Tüm Öğretmenler" },
+            { label: "Öğrenci", value: students.find((student: any) => student.id === selectedStudentId)?.name || "Tüm Öğrenciler" },
           ]}
         />
 
@@ -281,9 +336,9 @@ export default function StatisticsPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
                 <div className="space-y-1.5">
-                  <Label className="text-[10px] font-bold text-muted-foreground ml-1">Sınıf</Label>
+                  <Label htmlFor="results-class" className="text-[10px] font-bold text-muted-foreground ml-1">Sınıf</Label>
                   <Select value={selectedClassId} onValueChange={(val) => { setSelectedClassId(val); setSelectedStudentId("all"); }}>
-                    <SelectTrigger className="rounded-xl bg-muted/30 border-transparent">
+                    <SelectTrigger id="results-class" className="rounded-xl bg-muted/30 border-transparent">
                       <SelectValue placeholder="Sınıf Seçin" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
@@ -296,9 +351,9 @@ export default function StatisticsPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-[10px] font-bold text-muted-foreground ml-1">Ders/Kategori</Label>
+                  <Label htmlFor="results-category" className="text-[10px] font-bold text-muted-foreground ml-1">Ders/Kategori</Label>
                   <Select value={selectedCategoryId} onValueChange={(value) => { setSelectedCategoryId(value); setSelectedQuizId("all"); }}>
-                    <SelectTrigger className="rounded-xl bg-muted/30 border-transparent">
+                    <SelectTrigger id="results-category" className="rounded-xl bg-muted/30 border-transparent">
                       <SelectValue placeholder="Ders Seçin" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
@@ -311,9 +366,9 @@ export default function StatisticsPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-[10px] font-bold text-muted-foreground ml-1">Sınav Adı</Label>
+                  <Label htmlFor="results-quiz" className="text-[10px] font-bold text-muted-foreground ml-1">Sınav Adı</Label>
                   <Select value={selectedQuizId} onValueChange={setSelectedQuizId}>
-                    <SelectTrigger className="rounded-xl bg-muted/30 border-transparent">
+                    <SelectTrigger id="results-quiz" className="rounded-xl bg-muted/30 border-transparent">
                       <SelectValue placeholder="Sınav Seçin" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
@@ -330,9 +385,9 @@ export default function StatisticsPage() {
                 </div>
                 {role === 'admin' && (
                   <div className="space-y-1.5">
-                    <Label className="text-[10px] font-bold text-muted-foreground ml-1">Öğretmen</Label>
+                    <Label htmlFor="results-teacher" className="text-[10px] font-bold text-muted-foreground ml-1">Öğretmen</Label>
                     <Select value={selectedTeacherId} onValueChange={setSelectedTeacherId}>
-                      <SelectTrigger className="rounded-xl bg-muted/30 border-transparent">
+                      <SelectTrigger id="results-teacher" className="rounded-xl bg-muted/30 border-transparent">
                         <SelectValue placeholder="Öğretmen Seçin" />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl">
@@ -346,9 +401,9 @@ export default function StatisticsPage() {
                 )}
 
                 <div className="space-y-1.5">
-                  <Label className="text-[10px] font-bold text-muted-foreground ml-1">Öğrenci</Label>
+                  <Label htmlFor="results-student" className="text-[10px] font-bold text-muted-foreground ml-1">Öğrenci</Label>
                   <Select value={selectedStudentId} onValueChange={setSelectedStudentId}>
-                    <SelectTrigger className="rounded-xl bg-muted/30 border-transparent">
+                    <SelectTrigger id="results-student" className="rounded-xl bg-muted/30 border-transparent">
                       <SelectValue placeholder="Öğrenci Seçin" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
@@ -390,13 +445,18 @@ export default function StatisticsPage() {
               </div>
             ) : (
               <>
+                <p className="text-sm text-muted-foreground" role="status">
+                  Notlandırılan: {gradedResults.length} · Devam eden: {filteredResults.filter(r => r.status === 'in_progress').length} ·
+                  {' '}Diğer / puanı bulunmayan: {filteredResults.length - gradedResults.length - filteredResults.filter(r => r.status === 'in_progress').length}.
+                  {' '}Başarı dağılımı ve ortalamalar yalnız puanı bulunan tamamlanmış sınavlardan hesaplanır.
+                </p>
                 <div className="grid gap-6 md:grid-cols-2">
                   <Card className="rounded-3xl border-border/50 shadow-sm dark:shadow-none overflow-hidden">
                     <CardHeader className="bg-muted/20 border-b border-border/50">
                       <CardTitle className="text-lg font-bold flex items-center gap-2">
                         <Trophy className="h-5 w-5 text-amber-500" /> Başarı Dağılımı (MEB)
                       </CardTitle>
-                      <CardDescription>Puan aralıklarına göre öğrenci sayısı</CardDescription>
+                      <CardDescription>Tamamlanan ve notlandırılan sınavların puan dağılımı</CardDescription>
                     </CardHeader>
                     <CardContent className="pt-6">
                       <div className="h-[300px]">
@@ -430,7 +490,7 @@ export default function StatisticsPage() {
                     <CardContent className="pt-6">
                       <div className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
-                          <BarChart data={quizTableData.slice(0, 10)}>
+                          <BarChart data={quizTableData.filter(q => q.avgScore !== null).slice(0, 10)}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
                             <XAxis 
                               dataKey="title" 
@@ -469,8 +529,10 @@ export default function StatisticsPage() {
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                       <CardTitle className="text-xl font-black">Sınav Detayları</CardTitle>
                       <div className="relative w-full sm:w-72">
-                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Label htmlFor="result-table-search" className="mb-1 block">Sınav veya ders ara</Label>
+                        <Search className="absolute left-3 bottom-2.5 h-4 w-4 text-muted-foreground" />
                         <Input 
+                          id="result-table-search"
                           placeholder="Sınav veya ders ara..." 
                           className="pl-9 h-9 rounded-xl bg-background/50 border-transparent focus:border-primary/20"
                           value={tableSearch}
@@ -486,11 +548,12 @@ export default function StatisticsPage() {
                           <TableHead className="font-bold py-4 px-6">Sınav Adı</TableHead>
                           <TableHead className="font-bold">Ders</TableHead>
                           <TableHead className="text-center font-bold">Katılımcı</TableHead>
+                          <TableHead className="text-center font-bold">Notlandırılan</TableHead>
                           <TableHead className="text-right py-4 px-6 font-bold">Genel Ortalama</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {quizTableData.map((q) => (
+                        {visibleExams.map((q) => (
                           <TableRow key={q.id} className="hover:bg-primary/5 transition-colors border-border/30">
                             <TableCell className="font-bold py-4 px-6 text-foreground">{q.title}</TableCell>
                             <TableCell><Badge variant="secondary" className="bg-indigo-50 text-indigo-700 border-indigo-100">{q.category}</Badge></TableCell>
@@ -499,13 +562,15 @@ export default function StatisticsPage() {
                                 <Users className="h-3.5 w-3.5 opacity-40" /> {q.participants}
                               </span>
                             </TableCell>
+                            <TableCell className="text-center font-bold">{q.graded}</TableCell>
                             <TableCell className="text-right py-4 px-6 font-black text-indigo-600 text-lg">
-                              %{q.avgScore}
+                              {q.avgScore === null ? 'Henüz yok' : `%${q.avgScore}`}
                             </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
                     </Table>
+                    <ResultTablePagination kind="sınav" page={currentExamPage} pages={examPages} onChange={setExamPage} />
                   </CardContent>
                 </Card>
               </>
@@ -539,7 +604,7 @@ export default function StatisticsPage() {
                     </TableHeader>
                     <TableBody>
                       {filteredResults.length > 0 ? (
-                        filteredResults.map((res, i) => (
+                        visibleReports.map((res: StudentResult, i) => (
                           <TableRow key={i} className="hover:bg-muted/30 border-border/30">
                             <TableCell className="py-4 px-6">
                               <div className="flex flex-col">
@@ -550,7 +615,7 @@ export default function StatisticsPage() {
                             <TableCell className="text-sm font-medium">{res.quizTitle || 'Sınav'}</TableCell>
                             <TableCell className="text-center">
                               <Badge variant="outline" className="font-bold tabular-nums">
-                                {res.correctAnswers} / {res.totalQuestions}
+                                {res.correctAnswersCount ?? res.correctAnswers ?? '—'} / {res.totalQuestions}
                               </Badge>
                             </TableCell>
                             <TableCell className="text-right py-4 px-6">
@@ -571,6 +636,7 @@ export default function StatisticsPage() {
                       )}
                     </TableBody>
                   </Table>
+                  <ResultTablePagination kind="rapor" page={currentReportPage} pages={reportPages} onChange={setReportPage} />
                 </CardContent>
               </Card>
             </TabsContent>

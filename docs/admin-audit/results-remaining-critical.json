@@ -1,0 +1,476 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\playwright\\cli.js",
+      "test",
+      "--config",
+      "playwright.admin-audit.config.ts",
+      "admin-critical-repairs.spec.ts",
+      "admin-inventory-repairs.spec.ts",
+      "admin-quiz-repairs.spec.ts"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.admin-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/admin-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "admin-audit.spec.ts",
+          "admin-audit-people-flows.spec.ts",
+          "admin-audit-system-flows.spec.ts",
+          "admin-results-regression.spec.ts",
+          "admin-quiz-repairs.spec.ts",
+          "admin-inventory-repairs.spec.ts",
+          "admin-critical-repairs.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "docs/admin-audit/playwright-report-latest",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/admin-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "admin-critical-repairs.spec.ts",
+      "file": "admin-critical-repairs.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "responsible teacher removal revokes legacy access and preserves independent course access after reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 72860,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:14:14.267Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "access-false",
+                      "contentType": "application/json",
+                      "body": "eyJpZCI6IjFhOGY0OThhLTg4MmQtNDE1Yi05YTMzLTNlYWEzMjFjZjM5YiIsIm5hbWUiOiJBY2Nlc3MgcmVncmVzc2lvbiA1ZDZlNzMyMi0yM2IwLTQxODUtYTlkNS1iNGI0NzMzNTYzMmEiLCJkZXNjcmlwdGlvbiI6bnVsbCwibWF4U3R1ZGVudHMiOm51bGwsImNyZWF0ZWRBdCI6IjIwMjYtMTAtMDFUMDk6MTQ6MjEuNDY4WiIsImNsYXNzVGVhY2hlcklkIjpudWxsLCJ0ZWFjaGVycyI6W10sInRlYWNoZXJBc3NpZ25tZW50cyI6W119"
+                    },
+                    {
+                      "name": "access-true",
+                      "contentType": "application/json",
+                      "body": "eyJpZCI6IjdmOGFhNTBmLWQwMDQtNGExYS1hOTYwLTY1NDkxOTE5YTY0MCIsIm5hbWUiOiJBY2Nlc3MgcmVncmVzc2lvbiBkZjc0MzRjNS01OGY4LTQ4MzYtOWFkZC1jNWJmNWRlNWI3MzQiLCJkZXNjcmlwdGlvbiI6bnVsbCwibWF4U3R1ZGVudHMiOm51bGwsImNyZWF0ZWRBdCI6IjIwMjYtMTAtMDFUMDk6MTU6MDQuNzQzWiIsImNsYXNzVGVhY2hlcklkIjpudWxsLCJ0ZWFjaGVycyI6W10sInRlYWNoZXJBc3NpZ25tZW50cyI6W3siaWQiOiIyOTY3YTczMy1hNTk1LTQ0OWUtYjQ1NC1mZjAwNjljMzBiZGQiLCJjbGFzc0lkIjoiN2Y4YWE1MGYtZDAwNC00YTFhLWE5NjAtNjU0OTE5MTlhNjQwIiwidGVhY2hlcklkIjoiNmFmMzIzMjktNzM2OC00ZTM2LTlkYmEtZGM2MmZhMzFkNjdmIiwiY2F0ZWdvcnlJZCI6IjkxZGRhZDA4LTRhMWMtNGI1MS1hYTg2LTQ3ZjIyOWFjNTRjZiIsImFzc2lnbmVkQXQiOiIyMDI2LTEwLTAxVDA5OjE1OjA0Ljc0M1oifV19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05ea98e4337cd963e063-3806a7ec4eb8948cceec",
+          "file": "admin-critical-repairs.spec.ts",
+          "line": 17,
+          "column": 5
+        },
+        {
+          "title": "archive failure rolls back data; retry records one complete archive and survives reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 31562,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:15:27.742Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "archive-retry",
+                      "contentType": "application/json",
+                      "body": "eyJxdWl6SWQiOiJhYzM1Y2YzNi04YTFjLTQ0YTQtYThiMS1iZDYzY2YwMzNmYmYiLCJ5ZWFyIjoiRTJFLTQ5MjkxNTRiLTRjYzgtNDMwMS1iNDFhLWFhZTljZWEyMjgzMCJ9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05ea98e4337cd963e063-c407f995dfed24480c50",
+          "file": "admin-critical-repairs.spec.ts",
+          "line": 82,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "admin-inventory-repairs.spec.ts",
+      "file": "admin-inventory-repairs.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "settings unknown tab falls back; valid tab links preserve browser back history",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 45951,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:15:59.755Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0b4171b7072a1e5a1857-37109c19b5bb85a590b9",
+          "file": "admin-inventory-repairs.spec.ts",
+          "line": 29,
+          "column": 5
+        },
+        {
+          "title": "personal history renders persisted LOGIN records with real createdAt dates",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13541,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:16:46.026Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0b4171b7072a1e5a1857-c65536d7e8ef9b2e2593",
+          "file": "admin-inventory-repairs.spec.ts",
+          "line": 44,
+          "column": 5
+        },
+        {
+          "title": "saved profile updates the header and clean form immediately and survives navigation/reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19175,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:16:59.609Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0b4171b7072a1e5a1857-556fc6e3d0a8b658195d",
+          "file": "admin-inventory-repairs.spec.ts",
+          "line": 60,
+          "column": 5
+        },
+        {
+          "title": "announcement load failure retries; named delete cancel/failure/retry persist correctly",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 25782,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:17:18.826Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0b4171b7072a1e5a1857-be400183df7c732553e2",
+          "file": "admin-inventory-repairs.spec.ts",
+          "line": 80,
+          "column": 5
+        },
+        {
+          "title": "mobile drawer traps keyboard focus, Escape closes it and returns focus",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22702,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:17:44.649Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0b4171b7072a1e5a1857-d5e71f0c042c4639b64e",
+          "file": "admin-inventory-repairs.spec.ts",
+          "line": 124,
+          "column": 5
+        },
+        {
+          "title": "header mute request failure appears in the mounted Sonner renderer",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14707,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:18:07.387Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0b4171b7072a1e5a1857-e77b9b715bcce89efd3f",
+          "file": "admin-inventory-repairs.spec.ts",
+          "line": 144,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "admin-quiz-repairs.spec.ts",
+      "file": "admin-quiz-repairs.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "admin quizzes: a failed load retries; permanent deletion records reason and impact and survives reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 35448,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:18:22.218Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f2d1d107dfa33eb7529-855d5b19e56af39e819d",
+          "file": "admin-quiz-repairs.spec.ts",
+          "line": 27,
+          "column": 5
+        },
+        {
+          "title": "published exam and survey keep their questions when legacy endpoints reject empty or invalid replacements",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6929,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T09:18:58.584Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9f2d1d107dfa33eb7529-edea9fb32c118912aa06",
+          "file": "admin-quiz-repairs.spec.ts",
+          "line": 77,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-01T09:14:10.799Z",
+    "duration": 297829.36699999997,
+    "expected": 10,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

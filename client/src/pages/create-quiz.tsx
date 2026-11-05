@@ -20,6 +20,7 @@ import { QuizSettings } from "@/components/quiz/QuizSettings";
 import { QuestionItem, type QuestionForm } from "@/components/quiz/QuestionItem";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { quizApi, surveyApi, categoryApi, classApi } from "@/lib/api";
+import { contentSaveApi } from '@/lib/content-save';
 import { useLocation, useParams } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -65,7 +66,10 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
   const [timeLimitEnabled, setTimeLimitEnabled] = useState(false);
   const [shuffleQuestions, setShuffleQuestions] = useState(false);
   const [assignedClassIds, setAssignedClassIds] = useState<string[]>([]);
-  const [loadedStatus, setLoadedStatus] = useState<'draft' | 'published' | 'archived'>('draft');
+  const newContentId = useRef<string | null>(null);
+  const aiDraftId = useRef(crypto.randomUUID());
+  const [savedAIQuizId,setSavedAIQuizId] = useState<string|null>(null);
+  useEffect(() => { aiDraftId.current = crypto.randomUUID(); setSavedAIQuizId(null); }, [editId, contentType]);
 
   const [questions, setQuestions] = useState<QuestionForm[]>([
     { id: 1, type: contentTypeMode === 'survey' ? "single-choice" : "multiple-choice", text: "", options: ["", "", "", "", ""], correctAnswer: 0 }
@@ -97,7 +101,6 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
           if ((quiz.contentType || 'exam') !== contentTypeMode) {
             throw new Error('İçerik türü bu düzenleyiciyle uyumlu değil.');
           }
-          setLoadedStatus(quiz.status === 'published' || quiz.status === 'archived' ? quiz.status : 'draft');
           setTitle(quiz.title);
           setDescription(quiz.description || '');
           setCategory(quiz.category || '');
@@ -162,6 +165,10 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
           return false;
         }
       }
+      if (contentType === 'exam' && (q.correctAnswer < 0 || q.correctAnswer >= q.options.length)) {
+        toast({ title: "Hata", description: `Soru ${i + 1}: Doğru cevabı yeniden seçin.`, variant: "destructive" });
+        return false;
+      }
     }
     return true;
   };
@@ -174,38 +181,20 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
       
       const payload = {
         title,
-        description: description || undefined,
+        description: description || null,
         category: category || 'General',
         categoryId: selectedCat?.id, 
         difficulty: 'medium',
         contentType,
-        timeLimit: contentType === 'exam' && timeLimitEnabled ? timeLimit : undefined,
+        timeLimit: contentType === 'exam' && timeLimitEnabled ? timeLimit ?? null : null,
         shuffleQuestions: contentType === 'exam' ? shuffleQuestions : false,
         status,
         assignedClassIds
       };
 
-      let quizIdToUse = editId;
-      const currentStatus = editId ? loadedStatus : 'draft';
-      const settingsPayload = { ...payload, status: currentStatus };
-
-      if (editId) {
-        if (contentType === 'survey') await surveyApi.updateSurvey(editId, settingsPayload);
-        else await quizApi.updateQuiz(editId, settingsPayload);
-      } else {
-        if (contentType === 'survey') {
-          const { contentType: _contentType, timeLimit: _timeLimit, shuffleQuestions: _shuffle, ...surveyPayload } = settingsPayload;
-          const surveyResponse = await surveyApi.createSurvey(surveyPayload);
-          quizIdToUse = surveyResponse.survey.id;
-        } else {
-          const quizResponse = await quizApi.createQuiz(settingsPayload);
-          quizIdToUse = quizResponse.quiz.id;
-        }
-      }
-
       const validQuestions = questions.filter(q => q.text.trim() !== '');
-      if (validQuestions.length > 0) {
-        const questionsToAdd = validQuestions.map((q, index) => ({
+      const questionsToAdd = validQuestions.map((q, index) => ({
+          ...(typeof q.id === 'string' ? { id: q.id } : {}),
           text: q.text,
           type: q.type as any,
           options: q.options.filter(o => o.trim() !== ''),
@@ -213,19 +202,13 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
           config: q.config,
           imageUrl: q.imageUrl,
           order: index + 1,
-        }));
-        if (contentType === 'survey') await surveyApi.syncQuestions(quizIdToUse as string, questionsToAdd);
-        else await quizApi.addQuestions(quizIdToUse as string, questionsToAdd);
-      }
-
-      if (status !== currentStatus) {
-        if (contentType === 'survey') await surveyApi.updateSurvey(quizIdToUse as string, { status });
-        else await quizApi.updateQuiz(quizIdToUse as string, { status });
-      }
-
+      }));
+      const quizIdToUse = editId || (newContentId.current ??= crypto.randomUUID());
+      await contentSaveApi.save(contentType, quizIdToUse, { ...payload, questions: questionsToAdd, aiDraftId: aiDraftId.current });
       return quizIdToUse;
     },
     onSuccess: (_quizId, status) => {
+      setSavedAIQuizId(_quizId);
       queryClient.invalidateQueries({ queryKey: ['quizzes'] });
       toast({
         title: status === 'published'
@@ -284,23 +267,35 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
   };
 
   const removeQuestion = (id: number | string) => {
-    setQuestions(questions.filter(q => q.id !== id));
+    setQuestions(current => current.filter(q => q.id !== id));
   };
 
   const updateQuestion = (id: number | string, field: keyof QuestionForm, value: any) => {
-    setQuestions(questions.map(q => 
+    setQuestions(current => current.map(q =>
       q.id === id ? { ...q, [field]: value } : q
     ));
   };
 
   const updateOption = (questionId: number | string, optionIndex: number, value: string) => {
-    setQuestions(questions.map(q => {
+    setQuestions(current => current.map(q => {
       if (q.id === questionId) {
         const newOptions = [...q.options];
         newOptions[optionIndex] = value;
         return { ...q, options: newOptions };
       }
       return q;
+    }));
+  };
+
+  const removeOption = (questionId: number | string, optionIndex: number) => {
+    setQuestions(current => current.map(q => {
+      if (q.id !== questionId || q.options.length <= 2) return q;
+      return {
+        ...q,
+        options: q.options.filter((_, index) => index !== optionIndex),
+        correctAnswer: q.correctAnswer === optionIndex ? -1 :
+          q.correctAnswer > optionIndex ? q.correctAnswer - 1 : q.correctAnswer,
+      };
     }));
   };
 
@@ -393,6 +388,7 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
                   onUpdate={updateQuestion}
                   onRemove={removeQuestion}
                   onUpdateOption={updateOption}
+                  onRemoveOption={removeOption}
                 />
               ))}
 
@@ -421,6 +417,7 @@ export function QuizBuilder({ contentTypeMode = 'exam', embedded = false, onSave
                   onGenerate={handleAIGenerated} 
                   quizTitle={title}
                   quizDescription={description}
+                  usageContext={{draftId:aiDraftId.current,quizId:editId||savedAIQuizId||undefined,quizTitle:title,categoryId:dbCategories.find(c=>c.name===category)?.id||null}}
                 contentType={contentType}
                 />
               </CardContent>

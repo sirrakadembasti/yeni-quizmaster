@@ -1,0 +1,157 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\projeler\\yeni-quizmaster-main\\node_modules\\.pnpm\\playwright@1.63.0\\node_modules\\playwright\\cli.js",
+      "test",
+      "-c",
+      "playwright.teacher-audit.config.ts",
+      "teacher-defect-output-audit.spec.ts"
+    ],
+    "configFile": "F:\\projeler\\yeni-quizmaster-main\\playwright.teacher-audit.config.ts",
+    "rootDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/projeler/yeni-quizmaster-main/docs/teacher-audit/test-results-latest",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "F:/projeler/yeni-quizmaster-main/tests-e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "teacher-*-audit.spec.ts"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/teacher-audit/results-latest.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "teacher-defect-output-audit.spec.ts",
+      "file": "teacher-defect-output-audit.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "teacher correct-answer repair persists after reload and matches filtered Excel and PDF",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 90359,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\teacher-defect-output-audit.spec.ts",
+                        "column": 24,
+                        "line": 10
+                      },
+                      "message": "Error: page.waitForEvent: Test timeout of 90000ms exceeded.\n=========================== logs ===========================\nwaiting for event \"download\"\n============================================================\n\n   8 |\n   9 | async function excel(page: Page, name: string) {\n> 10 |   const pending = page.waitForEvent('download');\n     |                        ^\n  11 |   await page.getByRole('button', { name: 'Excel', exact: true }).click();\n  12 |   const download = await pending;\n  13 |   expect(await download.failure()).toBeNull();\n    at excel (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\teacher-defect-output-audit.spec.ts:10:24)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\teacher-defect-output-audit.spec.ts:63:22"
+                    },
+                    {
+                      "location": {
+                        "file": "F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\teacher-defect-output-audit.spec.ts",
+                        "column": 66,
+                        "line": 11
+                      },
+                      "message": "Error: locator.click: Test timeout of 90000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Excel', exact: true })\u001b[22m\n\n\n   9 | async function excel(page: Page, name: string) {\n  10 |   const pending = page.waitForEvent('download');\n> 11 |   await page.getByRole('button', { name: 'Excel', exact: true }).click();\n     |                                                                  ^\n  12 |   const download = await pending;\n  13 |   expect(await download.failure()).toBeNull();\n  14 |   expect(download.suggestedFilename()).toMatch(/\\.xlsx$/);\n    at excel (F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\teacher-defect-output-audit.spec.ts:11:66)\n    at F:\\projeler\\yeni-quizmaster-main\\tests-e2e\\teacher-defect-output-audit.spec.ts:63:22"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-03T21:32:14.968Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\teacher-audit\\test-results-latest\\teacher-defect-output-audi-fa859-ches-filtered-Excel-and-PDF\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "F:\\projeler\\yeni-quizmaster-main\\docs\\teacher-audit\\test-results-latest\\teacher-defect-output-audi-fa859-ches-filtered-Excel-and-PDF\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "26b1e5f58f68630c0495-90d0647377399e290823",
+          "file": "teacher-defect-output-audit.spec.ts",
+          "line": 52,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-03T21:32:11.470Z",
+    "duration": 96001.263,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

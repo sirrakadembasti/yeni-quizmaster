@@ -1,0 +1,18 @@
+{
+  "recordedAt": "2026-10-03",
+  "platform": "Ubuntu 22.04.5 LTS / WSL2 Linux 6.18.33.2-microsoft-standard-WSL2",
+  "runtime": { "node": "22.23.2", "arch": "x64", "downloadChecksumVerified": true },
+  "command": "node --test scripts/linux-owned-process-cleanup.test.mjs",
+  "initialRed": { "exitCode": 1, "tests": 9, "passed": 0, "failed": 9, "skipped": 0, "durationMs": 1110.462505 },
+  "initialGreen": { "exitCode": 0, "tests": 9, "passed": 9, "failed": 0, "skipped": 0, "durationMs": 1216.129367 },
+  "expandedNativeGreen": { "exitCode": 0, "tests": 13, "passed": 13, "failed": 0, "skipped": 0, "durationMs": 952.233091 },
+  "coverage": [
+    "Missing/invalid metadata and reused PID fail safely without signalling unknown processes",
+    "Live identity moving to another group is not falsely counted as absent",
+    "Real native parent and SIGTERM-resistant descendant cleanup",
+    "Real captured orphan cleanup after its parent exits",
+    "Released fixture port bind and probe close",
+    "Held external port fails and preserves its listener"
+  ],
+  "limits": ["These regressions do not prove the complete installer, wizard or browser login.", "WSL configuration warning about duplicate systemd keys was observed; host configuration was not edited."]
+}

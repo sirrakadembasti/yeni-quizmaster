@@ -1,0 +1,30 @@
+- main:
+  - button "Menüyü aç"
+  - button "Bildirimleri aç": "1"
+  - button "Karanlık Moda Geç"
+  - button "S"
+  - heading "Student Audit Survey" [level=1]
+  - paragraph: Tüm soruları yanıtlayıp anketi gönderin.
+  - text: 1. Audit open response
+  - textbox
+  - text: 2. Audit rating
+  - button "1"
+  - button "2"
+  - button "3"
+  - button "4"
+  - button "5"
+  - text: 3. Audit single choice
+  - button "A"
+  - button "B"
+  - button "C"
+  - text: 4. Audit multiple choice
+  - checkbox "A"
+  - text: A
+  - checkbox "B"
+  - text: B
+  - checkbox "C"
+  - text: C 5. Audit likert
+  - button "Katılmıyorum"
+  - button "Kararsızım"
+  - button "Katılıyorum"
+  - button "Anketi Gönder" [disabled]
