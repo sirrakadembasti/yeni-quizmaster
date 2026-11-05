@@ -12,7 +12,7 @@ Yönetici hesabı oluşturduktan sonra ayrı **Veli Eşleştirme** sayfasında a
 
 ## 2. Giriş ve şifre
 
-1. Yönetici tarafından verilen e-posta ve ilk şifreyle giriş yapın (demo/test ortamında her sınıf seviyesi için tanımlı 40 örnek veli hesabı `demo/demo-veli.md` dosyasında listelenir).
+1. Yönetici tarafından verilen e-posta ve ilk şifreyle giriş yapın (salt-okunur `/demo` vitrin modunda `demo-veli@quizmaster.com` / `demo123456` hesabıyla, tam demo/test ortamında ise her sınıf seviyesi için tanımlı 40 örnek veli hesabının yer aldığı [`demo/demo-veli.md`](../demo/demo-veli.md) dosyasıyla giriş yapılabilir).
 2. İlk fırsatta **Ayarlar** üzerinden şifrenizi değiştirin.
 3. Şifrenizi unutursanız **Şifremi Unuttum** ile Gmail bağlantısı isteyin veya okul yöneticisinden **Şifre Talepleri** ekranı üzerinden tek kullanımlık sıfırlama bağlantısı talep edin.
 4. Ortak cihazda **Güvenli Çıkış** yapın.

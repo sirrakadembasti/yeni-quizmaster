@@ -8,9 +8,9 @@ Güncel onarımların kabul kapsamı ve kanıtları: [Entegrasyon onarımları](
 
 ## 1. Kayıt ve giriş
 
-Yeni hesap oluştururken adınızı, geçerli e-posta adresinizi ve şifrenizi girin. Açık kayıt yalnız öğrenci hesabı oluşturur; sınıfınızı kendiniz seçemezsiniz. Sınıf atamasını okul yönetimi yapar.
+Yeni hesap oluştururken adınızı, geçerli e-posta adresinizi ve şifrenizi girin. Kayıt tamamlandığında kayıtlı e-posta adresinize otomatik olarak **Kayıt işleminiz başarıyla gerçekleştirilmiştir** bilgilendirme e-postası (`registration_welcome`) gönderilir. Açık kayıt yalnız öğrenci hesabı oluşturur; sınıfınızı kendiniz seçemezsiniz. Sınıf atamasını okul yönetimi yapar (salt-okunur `/demo` vitrin modunda kayıt kapalıdır; `demo-ogrenci@quizmaster.com` / `demo123456` vitrin hesabıyla veya tam demo ortamında [`demo/demo-ogrenci.md`](../demo/demo-ogrenci.md) listesindeki 160 öğrenci hesabıyla inceleme yapılabilir).
 
-Şifrenizi unuttuysanız **Şifremi Unuttum** seçeneğini kullanın. Gmail üzerinden gelen bağlantı tek kullanımlıktır ve bir saat geçerlidir.
+Şifrenizi unuttuysanız **Şifremi Unuttum** seçeneğini kullanın. Gmail üzerinden gelen bağlantı tek kullanımlıktır ve bir saat geçerlidir (SMTP yapılandırılmamışsa okul yönetiminden **Bağlantı Üret (SMTP'siz)** ile tek kullanımlık sıfırlama bağlantısı isteyebilirsiniz).
 
 ## 2. Öğrenci menüsü
 

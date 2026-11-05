@@ -8,8 +8,8 @@ Güncel onarımların kabul kapsamı ve kanıtları: [Entegrasyon onarımları](
 
 ## 1. Giriş ve güvenlik
 
-1. **Giriş Yap** ekranında yönetici e-postanızı ve şifrenizi kullanın.
-2. Şifrenizi bilmiyorsanız **Şifremi Unuttum** ile kayıtlı e-postanıza bağlantı isteyin.
+1. **Giriş Yap** ekranında yönetici e-postanızı ve şifrenizi kullanın (salt-okunur canlı vitrin modunda `/demo` sayfasından `demo-admin@quizmaster.com` / `demo123456` veya **Hemen İncele** düğmesiyle giriş yapılabilir; bkz. [`demo/demo-vitrin-hesaplari.md`](../demo/demo-vitrin-hesaplari.md)).
+2. Şifrenizi bilmiyorsanız **Şifremi Unuttum** ile kayıtlı e-postanıza bağlantı isteyin veya sunucu terminalinden `pnpm --filter quiz-master-server run db:reset-admin` komutuyla yerel kurtarma uygulayın.
 3. Ortak cihazda işiniz bittiğinde kullanıcı menüsünden **Güvenli Çıkış** yapın.
 
 Parola sıfırlama bağlantısı tek kullanımlıktır ve bir saat geçerlidir. Bağlantıyı başka biriyle paylaşmayın.

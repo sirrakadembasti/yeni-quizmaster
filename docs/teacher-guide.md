@@ -8,9 +8,9 @@ Güncel onarımların kabul kapsamı ve kanıtları: [Entegrasyon onarımları](
 
 ## 1. Giriş ve profil
 
-E-posta ve şifrenizle giriş yaptığınızda öğretmen dashboard'u açılır. Branşlarınız, sorumlu sınıflarınız ve dersine girdiğiniz sınıflar yetki kapsamınızı belirler.
+E-posta ve şifrenizle giriş yaptığınızda öğretmen dashboard'u açılır. Branşlarınız, sorumlu sınıflarınız ve dersine girdiğiniz sınıflar yetki kapsamınızı belirler (salt-okunur canlı vitrin modunda `/demo` sayfasından `demo-ogretmen@quizmaster.com` / `demo123456` ile, tam demo ortamında ise [`demo/demo-ogretmen.md`](../demo/demo-ogretmen.md) listesindeki 10 branş öğretmeni hesabıyla giriş yapılabilir).
 
-- **Şifremi Unuttum** bağlantısı Gmail üzerinden bir saat geçerli parola belirleme bağlantısı gönderir.
+- **Şifremi Unuttum** bağlantısı Gmail üzerinden bir saat geçerli parola belirleme bağlantısı gönderir (SMTP kapalıysa okul yöneticisi **Şifre Talepleri > Bağlantı Üret (SMTP'siz)** üzerinden tek kullanımlık bağlantı paylaşabilir).
 - **Ayarlar > Profil** alanından telefon, adres ve kişisel iletişim bilgilerinizi güncelleyebilirsiniz.
 - Ders, branş, rol ve sınıf atamalarını yalnız yönetici değiştirebilir.
 

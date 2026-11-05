@@ -1,5 +1,7 @@
 # Yerel bakım ve üretim provası
 
+5 Kasım 2026 güncel bakım notu: `domain/demo` salt-okunur ikinci kopya veritabanı (`server/data/demo.db`) `pnpm run db:prepare-demo` ile hazırlanır ve `pnpm run start:demo` (`PORT=5001`, `APP_DEMO_MODE=true`, `APP_BASE_PATH=/demo`) ile çalıştırılır. SMTP erişimi olmayan kurulumlarda yönetici şifresi `pnpm --filter quiz-master-server run db:reset-admin` komutuyla veya yönetici panelindeki **Şifre Talepleri > Bağlantı Üret (SMTP'siz)** seçeneğiyle sıfırlanabilir. İstemci üretim paketinde `manualChunks` (`vendor-react`, `vendor-ui`) ile 500 kB üzeri paket uyarısı giderilmiştir.
+
 16 Ekim 2026 güncel durum: kullanıcı onaylı iki aşamada yerel kurulum 14 → 24 → 25 migration'a yükseltildi; son eklemeli migration `20261015000200_ai_usage` oldu. Uygulama üretim kipinde 5000 portunda çalışır. [Öğretmen kullanım takibi, sekmeler ve son veri koruma kaydı](2026-10-15-ai-usage-results.md). Önceki tarihli aşağıdaki “canlı DB değiştirilmedi” ifadeleri kendi prova aşamalarına aittir. [Güncel yedek/veri doğrulama ve devreye alma kaydı](2026-10-15-ai-management-deployment.md).
 
 AI yönetimi için `20261015000100_ai_management`, öğretmen tüketim kaydı için `20261015000200_ai_usage` migration'ları eklenmiştir. Profil kayıtlarıyla `server/data/ai-encryption.key` dosyasını birlikte koruyun; native backup/restore anahtarın kayıtları çözebildiğini de doğrular. Eksik/yanlış anahtarla yeni anahtar üretip devam etmeyin. [Kurulum ve kullanım](ai-management.md).
