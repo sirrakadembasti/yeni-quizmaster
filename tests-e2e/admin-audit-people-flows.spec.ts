@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto';
 
 // Run only against the disposable admin audit backend, after the route suite.
 // Setup uses unique UUID records returned by the real API, never alters audit-* fixtures.
-const runtime = JSON.parse(readFileSync('docs/admin-audit/runtime.json', 'utf8'));
+const runtime = JSON.parse(readFileSync('tests/denetim-kanitlari/yonetici/runtime.json', 'utf8'));
 const isolatedRoot = resolve(runtime.root);
 const base = 'http://127.0.0.1:5511';
 if (dirname(isolatedRoot) !== resolve('server/data') || !basename(isolatedRoot).startsWith('quizmaster-test-admin-audit-') ||

@@ -75,35 +75,35 @@ tools/mailpit/*.exe
 /server/data/quizmaster-test-*/
 
 # Admin audit runtime and browser traces (may contain local paths/session data)
-/docs/admin-audit/runtime.json
-/docs/admin-audit/playwright-report*/
-/docs/admin-audit/test-results*/
-/docs/admin-audit/**/trace.zip
-/docs/teacher-audit/runtime.json
-/docs/teacher-audit/results-latest.json
-/docs/teacher-audit/runner-windows-port-guard.json
-/docs/teacher-audit/runtime-logs/
-/docs/teacher-audit/test-results*/
-/docs/teacher-audit/playwright-report*/
-/docs/teacher-audit/**/trace.zip
-/docs/student-audit/runtime.json
-/docs/student-audit/results-latest.json
-/docs/student-audit/runtime-logs/
-/docs/student-audit/test-results*/
-/docs/student-audit/playwright-report*/
-/docs/student-audit/**/trace.zip
-/docs/student-audit/results-fix.json
-/docs/student-audit/runner-fix.json
-/docs/student-audit/runner-windows-port-guard.json
-/docs/student-audit/student-results-export.csv
+/tests/denetim-kanitlari/yonetici/runtime.json
+/tests/denetim-kanitlari/yonetici/playwright-report*/
+/tests/denetim-kanitlari/yonetici/test-results*/
+/tests/denetim-kanitlari/yonetici/**/trace.zip
+/tests/denetim-kanitlari/ogretmen/runtime.json
+/tests/denetim-kanitlari/ogretmen/results-latest.json
+/tests/denetim-kanitlari/ogretmen/runner-windows-port-guard.json
+/tests/denetim-kanitlari/ogretmen/runtime-logs/
+/tests/denetim-kanitlari/ogretmen/test-results*/
+/tests/denetim-kanitlari/ogretmen/playwright-report*/
+/tests/denetim-kanitlari/ogretmen/**/trace.zip
+/tests/denetim-kanitlari/ogrenci/runtime.json
+/tests/denetim-kanitlari/ogrenci/results-latest.json
+/tests/denetim-kanitlari/ogrenci/runtime-logs/
+/tests/denetim-kanitlari/ogrenci/test-results*/
+/tests/denetim-kanitlari/ogrenci/playwright-report*/
+/tests/denetim-kanitlari/ogrenci/**/trace.zip
+/tests/denetim-kanitlari/ogrenci/results-fix.json
+/tests/denetim-kanitlari/ogrenci/runner-fix.json
+/tests/denetim-kanitlari/ogrenci/runner-windows-port-guard.json
+/tests/denetim-kanitlari/ogrenci/student-results-export.csv
 
 # Parent audit isolated runtime; durable sanitized evidence is versioned.
-/docs/parent-audit/runtime.json
-/docs/parent-audit/results-latest.json
-/docs/parent-audit/runtime-logs/
-/docs/parent-audit/test-results*/
-/docs/parent-audit/playwright-report*/
-/docs/parent-audit/**/trace.zip
+/tests/denetim-kanitlari/veli/runtime.json
+/tests/denetim-kanitlari/veli/results-latest.json
+/tests/denetim-kanitlari/veli/runtime-logs/
+/tests/denetim-kanitlari/veli/test-results*/
+/tests/denetim-kanitlari/veli/playwright-report*/
+/tests/denetim-kanitlari/veli/**/trace.zip
 
 # Isolated integration checks: raw server logs contain session metadata.
-/docs/integration-audit/runtime-logs/
+/tests/denetim-kanitlari/entegrasyon/runtime-logs/

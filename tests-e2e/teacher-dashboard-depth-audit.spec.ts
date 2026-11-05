@@ -5,12 +5,12 @@ import { login, api, assertIsolatedRuntime, teacherAuditIds as ids } from './tea
 test.beforeEach(async ({ page, baseURL }) => {
   assertIsolatedRuntime();
   expect(baseURL).toBe('http://127.0.0.1:5531');
-  mkdirSync('docs/teacher-audit/evidence/dashboard-depth', { recursive: true });
+  mkdirSync('tests/denetim-kanitlari/ogretmen/evidence/dashboard-depth', { recursive: true });
   await login(page);
 });
 test.afterEach(async ({ page }, info) => {
   const folder = info.title.includes('correct-answer')
-    ? 'docs/teacher-audit/evidence/defect-repairs' : 'docs/teacher-audit/evidence/dashboard-depth';
+    ? 'tests/denetim-kanitlari/ogretmen/evidence/defect-repairs' : 'tests/denetim-kanitlari/ogretmen/evidence/dashboard-depth';
   mkdirSync(folder, { recursive: true });
   await page.screenshot({ path: `${folder}/${info.title.replace(/[^a-zA-Z0-9-]+/g, '-')}.png`, fullPage: true });
 });
@@ -50,7 +50,7 @@ test('dashboard KPI and recent participation readbacks match the real teacher AP
     await expect(line).toContainText(`%${quiz.participationRate}`);
   }
   await expect(recent.getByText(/Private Other|Teacher Audit Survey|Teacher Audit Material/)).toHaveCount(0);
-  writeFileSync('docs/teacher-audit/evidence/dashboard-depth/kpi-readback.json', JSON.stringify({
+  writeFileSync('tests/denetim-kanitlari/ogretmen/evidence/dashboard-depth/kpi-readback.json', JSON.stringify({
     stats: stats.body.stats, recent: overview.body.recentQuizzes.map((quiz: any) => ({ title: quiz.title,
       participants: quiz.participants, audience: quiz.assignedStudents, rate: quiz.participationRate })),
   }, null, 2));

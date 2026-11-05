@@ -5,7 +5,7 @@ from pathlib import Path
 from pypdf import PdfReader
 import pymupdf
 
-output = Path(__file__).resolve().parents[1] / 'docs/teacher-audit/evidence/print'
+output = Path(__file__).resolve().parents[1] / 'tests/denetim-kanitlari/ogretmen/evidence/print'
 checks = []
 for manifest in sorted(output.glob('*-expected.json')):
     expected = json.loads(manifest.read_text(encoding='utf-8'))

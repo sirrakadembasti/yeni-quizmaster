@@ -5,7 +5,7 @@ import re
 from pypdf import PdfReader
 import pypdfium2 as pdfium
 
-root = Path(__file__).resolve().parents[1] / "docs/parent-audit/print"
+root = Path(__file__).resolve().parents[1] / "tests/denetim-kanitlari/veli/print"
 expected = {
     "announcements": "Parent Audit Parent Announcement",
     "profile": "Parent Audit Guardian",

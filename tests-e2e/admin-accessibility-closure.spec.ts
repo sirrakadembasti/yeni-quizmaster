@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { resolve, dirname, join, basename } from 'node:path';
 
 // This suite reads audit fixtures and opens/cancels forms. It never submits application data.
-const runtime = JSON.parse(readFileSync('docs/admin-audit/runtime.json', 'utf8'));
+const runtime = JSON.parse(readFileSync('tests/denetim-kanitlari/yonetici/runtime.json', 'utf8'));
 const root = resolve(runtime.root);
 if (dirname(root) !== resolve('server/data') || !/^quizmaster-test-admin-audit-/.test(basename(root)) ||
     resolve(runtime.database) !== join(root, 'server', 'data', 'audit.db') ||

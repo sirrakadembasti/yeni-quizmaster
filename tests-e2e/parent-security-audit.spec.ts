@@ -30,8 +30,8 @@ function noSecrets(value: unknown) {
 }
 
 async function screenshot(page: Page, name: string) {
-  mkdirSync('docs/parent-audit/screenshots', { recursive: true });
-  await page.screenshot({ path: `docs/parent-audit/screenshots/security-${name}.png`, fullPage: true });
+  mkdirSync('tests/denetim-kanitlari/veli/screenshots', { recursive: true });
+  await page.screenshot({ path: `tests/denetim-kanitlari/veli/screenshots/security-${name}.png`, fullPage: true });
 }
 
 test.describe('Parent real API access boundaries', () => {
@@ -129,9 +129,9 @@ test.describe('Parent real API access boundaries', () => {
       const response = await api(page, 'POST', `/student/quiz/${id}/answer`, {
         questionId: '66666666-6666-4666-8666-666666666661', selectedOption: 'A',
       });
-      mkdirSync('docs/parent-audit', { recursive: true });
+      mkdirSync('tests/denetim-kanitlari/veli', { recursive: true });
       const after = await db.studentResult.findUniqueOrThrow({ where: { id } });
-      writeFileSync('docs/parent-audit/legacy-answer-observation.json', JSON.stringify({ status: response.status(), role: 'parent', priorAnswers: {}, storedAnswers: JSON.parse(after.answers || '{}'), isolatedSyntheticAttempt: true }, null, 2));
+      writeFileSync('tests/denetim-kanitlari/veli/legacy-answer-observation.json', JSON.stringify({ status: response.status(), role: 'parent', priorAnswers: {}, storedAnswers: JSON.parse(after.answers || '{}'), isolatedSyntheticAttempt: true }, null, 2));
       expect(response.status(), 'Parent role must be denied even when a retained attempt belongs to the same user ID').toBe(403);
       expect((await db.studentResult.findUniqueOrThrow({ where: { id } })).answers).toBe('{}');
     } finally {
@@ -222,8 +222,8 @@ test.describe('Parent real API access boundaries', () => {
     const overview = await api(page, 'GET', '/parents/students/parent-audit-empty/overview');
     expect(overview.status()).toBe(200);
     const parentIds = (await overview.json()).quizzes.map((q: any) => q.id).sort();
-    mkdirSync('docs/parent-audit', { recursive: true });
-    writeFileSync('docs/parent-audit/classless-exams-observation.json', JSON.stringify({ childIds, parentIds, status: overview.status() }, null, 2));
+    mkdirSync('tests/denetim-kanitlari/veli', { recursive: true });
+    writeFileSync('tests/denetim-kanitlari/veli/classless-exams-observation.json', JSON.stringify({ childIds, parentIds, status: overview.status() }, null, 2));
     expect(parentIds).toEqual(childIds);
   });
 
@@ -242,8 +242,8 @@ test.describe('Parent real API access boundaries', () => {
       expect((await list.json()).announcements.map((a: any) => a.id)).toContain(announcementId);
       const notifications = await api(page, 'GET', '/notifications?limit=100');
       expect(notifications.status()).toBe(200);
-      mkdirSync('docs/parent-audit', { recursive: true });
-      writeFileSync('docs/parent-audit/class-announcement-observation.json', JSON.stringify({ createdStatus: created.status(), parentListIncludes: true, parentNotificationCount: await db.notification.count({ where: { userId: parentId, title } }), foreignNotificationCount: await db.notification.count({ where: { userId: privateChildId, title } }) }, null, 2));
+      mkdirSync('tests/denetim-kanitlari/veli', { recursive: true });
+      writeFileSync('tests/denetim-kanitlari/veli/class-announcement-observation.json', JSON.stringify({ createdStatus: created.status(), parentListIncludes: true, parentNotificationCount: await db.notification.count({ where: { userId: parentId, title } }), foreignNotificationCount: await db.notification.count({ where: { userId: privateChildId, title } }) }, null, 2));
       expect((await notifications.json()).notifications.map((n: any) => n.title)).toContain(title);
       expect(await db.notification.count({ where: { userId: parentId, title } })).toBe(1);
       expect(await db.notification.count({ where: { userId: privateChildId, title } })).toBe(0);

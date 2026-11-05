@@ -40,8 +40,8 @@ async function start(page: Page, id: string) {
 }
 
 async function screenshot(page: Page, name: string) {
-  mkdirSync('docs/student-audit/screenshots', { recursive: true });
-  await page.screenshot({ path: `docs/student-audit/screenshots/exams-depth-${name}.png`, fullPage: true });
+  mkdirSync('tests/denetim-kanitlari/ogrenci/screenshots', { recursive: true });
+  await page.screenshot({ path: `tests/denetim-kanitlari/ogrenci/screenshots/exams-depth-${name}.png`, fullPage: true });
 }
 
 test.describe('Student exam depth audit with isolated temporary records', () => {

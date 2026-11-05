@@ -27,8 +27,8 @@ async function guiLogout(page: Page, name: string) {
 }
 
 async function shot(page: Page, suffix: string) {
-  mkdirSync('docs/parent-audit/screenshots', { recursive: true });
-  await page.screenshot({ path: `docs/parent-audit/screenshots/boundaries-depth-${suffix}.png`, fullPage: true });
+  mkdirSync('tests/denetim-kanitlari/veli/screenshots', { recursive: true });
+  await page.screenshot({ path: `tests/denetim-kanitlari/veli/screenshots/boundaries-depth-${suffix}.png`, fullPage: true });
 }
 
 test('linked completed result permission and foreign overview/result rejection are checked independently of secret-field assertions', async ({ page }) => {

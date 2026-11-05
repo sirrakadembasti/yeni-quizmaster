@@ -10,7 +10,7 @@ import { chromium } from 'playwright';
 const sourceRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const graphRoot = path.join(sourceRoot, 'graphify-out');
 assert.equal(fs.realpathSync(graphRoot), graphRoot, 'Graph directory must not be a symlink');
-const outputRoot = path.join(sourceRoot, 'docs/student-audit/graphify');
+const outputRoot = path.join(sourceRoot, 'tests/denetim-kanitlari/ogrenci/graphify');
 fs.mkdirSync(outputRoot, { recursive: true });
 const report = {
   startedAt: new Date().toISOString(), status: 'running',

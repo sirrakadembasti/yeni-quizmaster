@@ -2,7 +2,7 @@ import {test,expect,Page} from '@playwright/test';
 import {writeFileSync,mkdirSync,readFileSync} from 'node:fs';
 import {resolve,join,dirname} from 'node:path';
 // Mutations are permitted only in the disposable audit runtime.
-const runtime=JSON.parse(readFileSync('docs/admin-audit/runtime.json','utf8'));
+const runtime=JSON.parse(readFileSync('tests/denetim-kanitlari/yonetici/runtime.json','utf8'));
 const isolatedRoot=resolve(runtime.root);
 if(dirname(isolatedRoot)!==resolve('server/data')||!/^quizmaster-test-admin-audit-/.test(isolatedRoot.split(/[\\/]/).at(-1)!)||
   resolve(runtime.database)!==join(isolatedRoot,'server','data','audit.db')||JSON.stringify(runtime.ports)!=='[5510,5511]'){
@@ -11,7 +11,7 @@ if(dirname(isolatedRoot)!==resolve('server/data')||!/^quizmaster-test-admin-audi
 test.beforeEach(async({baseURL})=>{
   if(baseURL!=='http://127.0.0.1:5511')throw new Error('Admin audit must target the disposable browser server on 127.0.0.1:5511.');
 });
-const out='docs/admin-audit/evidence/remaining-repairs';mkdirSync(out,{recursive:true});
+const out='tests/denetim-kanitlari/yonetici/evidence/remaining-repairs';mkdirSync(out,{recursive:true});
 let cookies:any[]=[];
 async function login(page:Page,email='audit-admin@example.test') {
   if(email==='audit-admin@example.test'&&cookies.length) await page.context().addCookies(cookies);

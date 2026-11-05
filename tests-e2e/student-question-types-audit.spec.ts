@@ -58,8 +58,8 @@ async function complete(page: Page, resultId: string) {
 }
 
 async function screenshot(page: Page, suffix: string) {
-  mkdirSync('docs/student-audit/screenshots', { recursive: true });
-  await page.screenshot({ path: `docs/student-audit/screenshots/question-types-${suffix}.png`, fullPage: true });
+  mkdirSync('tests/denetim-kanitlari/ogrenci/screenshots', { recursive: true });
+  await page.screenshot({ path: `tests/denetim-kanitlari/ogrenci/screenshots/question-types-${suffix}.png`, fullPage: true });
 }
 
 test.describe('Student storage/API question types and real image audit', () => {

@@ -72,8 +72,8 @@ test.describe('Student audit: surveys and shared functions', () => {
       await expect(page.getByText('Audit open response: Açık uçlu cevap 1-5000 karakter arasında olmalıdır.', { exact: true })).toBeVisible();
       expect(await db.surveySubmission.count({ where: { surveyId, studentId } })).toBe(0);
       await page.locator('textarea').fill(answers['survey-q1']);
-      mkdirSync('docs/student-audit/screenshots', { recursive: true });
-      await page.screenshot({ path: 'docs/student-audit/screenshots/survey-five-types-ready.png', fullPage: true });
+      mkdirSync('tests/denetim-kanitlari/ogrenci/screenshots', { recursive: true });
+      await page.screenshot({ path: 'tests/denetim-kanitlari/ogrenci/screenshots/survey-five-types-ready.png', fullPage: true });
       const pending = page.waitForResponse(r => r.request().method() === 'POST' && new URL(r.url()).pathname === `/api/surveys/${surveyId}/submit`);
       await submit.click();
       const submitted = await pending;
@@ -102,7 +102,7 @@ test.describe('Student audit: surveys and shared functions', () => {
       expect((await repeat.json()).message).toBe('Bu anketi daha önce yanıtladınız.');
       expect(await db.surveySubmission.count({ where: { surveyId, studentId } })).toBe(1);
       expect(await db.surveyAnswer.count({ where: { submissionId: result.submissionId } })).toBe(5);
-      await page.screenshot({ path: 'docs/student-audit/screenshots/survey-completed-repeat-blocked.png', fullPage: true });
+      await page.screenshot({ path: 'tests/denetim-kanitlari/ogrenci/screenshots/survey-completed-repeat-blocked.png', fullPage: true });
     } finally { await db.$disconnect(); }
   });
 

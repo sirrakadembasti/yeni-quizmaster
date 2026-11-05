@@ -4,7 +4,7 @@ import { login, api, assertIsolatedRuntime, teacherAuditIds as ids } from './tea
 
 // These are Chromium's real A4 PDF artifacts. They verify the rendered print
 // report, not a simulated window.print call or a physical printer installation.
-const output = 'docs/teacher-audit/evidence/print';
+const output = 'tests/denetim-kanitlari/ogretmen/evidence/print';
 const ownedNames = Array.from({ length: 14 }, (_, i) => `Teacher Audit Student ${String(i).padStart(2, '0')}`);
 
 test.beforeEach(async ({ page, baseURL }) => {

@@ -103,8 +103,8 @@ try {
   await new Promise<void>((done, reject) => store.db.close((error: any) => error ? reject(error) : done()));
   cleanupSucceeded = !server.listening && io.sockets.sockets.size === 0;
   const report = { generatedAt: new Date().toISOString(), fixture, port, tests: results, passed: results.filter(x => x.status === 'passed').length, failed: results.filter(x => x.status === 'failed').length, cleanupSucceeded, scope: 'Production setupSocket, auth/quiz/announcement/notification routes and storage; real loopback websocket/polling; real disposable Prisma SQLite and connect-sqlite3 sessions. Express test composition excludes full index middleware (CSRF, rate limiter, proxy/TLS) and browser UX. No SMTP/AI worker or external network.' };
-  mkdirSync(join(repo, 'docs/live-audit'), { recursive: true });
-  writeFileSync(join(repo, 'docs/live-audit/socket-results.json'), JSON.stringify(report, null, 2) + '\n');
+  mkdirSync(join(repo, 'tests/denetim-kanitlari/canli-soket'), { recursive: true });
+  writeFileSync(join(repo, 'tests/denetim-kanitlari/canli-soket/socket-results.json'), JSON.stringify(report, null, 2) + '\n');
   console.log(JSON.stringify({ passed: report.passed, failed: report.failed, cleanupSucceeded, port }));
   if (report.failed || !cleanupSucceeded) process.exitCode = 1;
 }

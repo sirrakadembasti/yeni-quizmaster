@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve, join, dirname } from 'node:path';
 
 // Opt-in audit suite: never aim these mutation checks at the production server.
-const runtime = JSON.parse(readFileSync('docs/admin-audit/runtime.json', 'utf8'));
+const runtime = JSON.parse(readFileSync('tests/denetim-kanitlari/yonetici/runtime.json', 'utf8'));
 const isolatedRoot = resolve(runtime.root);
 const expectedParent = resolve('server/data');
 if (dirname(isolatedRoot) !== expectedParent || !/^quizmaster-test-admin-audit-/.test(isolatedRoot.split(/[\\/]/).at(-1)!) ||
@@ -199,7 +199,7 @@ test('deployment invalid origin receives API 400 and visible error instead of si
   const response = await failed;
   expect.soft(response.status()).toBe(400);
   await info.attach('invalid-deployment-response', { body: await response.text(), contentType: 'application/json' });
-  await page.screenshot({ path: 'docs/admin-audit/evidence/remaining-repairs/deployment-invalid-profile.png', fullPage: true });
+  await page.screenshot({ path: 'tests/denetim-kanitlari/yonetici/evidence/remaining-repairs/deployment-invalid-profile.png', fullPage: true });
   const errorToast = page.locator('[data-sonner-toast]').filter({ hasText: 'Yapılandırma geçersiz' });
   await expect.soft(errorToast).toBeVisible();
   await expect.soft(errorToast).toContainText('publicUrl');

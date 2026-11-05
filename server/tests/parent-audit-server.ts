@@ -61,8 +61,8 @@ for(let i=0;i<55;i++) await p.actionLog.create({data:{userId:"parent-audit-paren
 await p.actionLog.create({data:{userId:"parent-audit-other-student",action:"PRIVATE_AUDIT",details:"Private foreign audit action"}});
 await p.actionLog.create({data:{userId:"parent-audit-parent",action:"OLD_AUDIT",details:"Old parent audit action",createdAt:new Date("2020-01-01")}});
 await p.$disconnect();
-mkdirSync(join(repo, 'docs/parent-audit'), { recursive: true });
-writeFileSync(join(repo, 'docs/parent-audit/runtime.json'), JSON.stringify({ root, database, ports: [5560,5561] }, null, 2));
+mkdirSync(join(repo, 'tests/denetim-kanitlari/veli'), { recursive: true });
+writeFileSync(join(repo, 'tests/denetim-kanitlari/veli/runtime.json'), JSON.stringify({ root, database, ports: [5560,5561] }, null, 2));
 process.chdir(root);
 console.log('Disposable student fixture ready');
 if (process.env.INTEGRATION_AUDIT_ID) {

@@ -20,7 +20,7 @@ test('occupied fixture port refuses startup without touching data or terminating
     });
     const exit = await new Promise((resolve, reject) => { child.once('error', reject); child.once('exit', resolve); });
     assert.equal(exit, 1);
-    const report = JSON.parse(fs.readFileSync(path.join(root, 'docs/parent-audit/runner-windows-port-guard.json')));
+    const report = JSON.parse(fs.readFileSync(path.join(root, 'tests/denetim-kanitlari/veli/runner-windows-port-guard.json')));
     assert.deepEqual(report.cleanup, []);
     assert.equal(report.cleanupSucceeded, false);
     assert.equal(report.status, 'cleanup-failed');

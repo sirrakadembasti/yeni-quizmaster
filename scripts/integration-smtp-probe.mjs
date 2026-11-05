@@ -34,7 +34,7 @@ try {
 }
 catch (error) { report.transportVerified = false; report.errorCode = error.code || 'SMTP_ERROR'; }
 finally { transport.close(); }
-fs.mkdirSync(path.join(root, 'docs/integration-audit'), { recursive: true });
-fs.writeFileSync(path.join(root, 'docs/integration-audit/smtp-probe.json'), JSON.stringify(report, null, 2) + '\n');
+fs.mkdirSync(path.join(root, 'tests/denetim-kanitlari/entegrasyon'), { recursive: true });
+fs.writeFileSync(path.join(root, 'tests/denetim-kanitlari/entegrasyon/smtp-probe.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify(report));
 if (!report.transportVerified || (recipient && (!configured || !report.sent || report.rejectedCount !== 0))) process.exitCode = 1;

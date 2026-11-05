@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
-const root = path.resolve(import.meta.dirname, '..'), out = path.join(root, 'docs/parent-audit');
+const root = path.resolve(import.meta.dirname, '..'), out = path.join(root, 'tests/denetim-kanitlari/veli');
 const require = createRequire(path.join(root, 'package.json'));
 const cli = path.join(path.dirname(require.resolve('playwright/package.json')), 'cli.js');
 const manifest = JSON.parse(execFileSync(process.execPath, [cli, 'test', '-c', 'playwright.parent-audit.config.ts', '--list', '--reporter=json'], { cwd: root, windowsHide: true, env: { ...process.env, FORCE_COLOR:'0' }, encoding: 'utf8', timeout: 60000 }));

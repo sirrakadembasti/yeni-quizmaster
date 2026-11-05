@@ -4,7 +4,7 @@ import { resolve, join, dirname, basename } from 'node:path';
 import { createRequire } from 'node:module';
 import { randomUUID } from 'node:crypto';
 
-const runtime = JSON.parse(readFileSync('docs/admin-audit/runtime.json', 'utf8'));
+const runtime = JSON.parse(readFileSync('tests/denetim-kanitlari/yonetici/runtime.json', 'utf8'));
 const root = resolve(runtime.root);
 if (dirname(root) !== resolve('server/data') || !basename(root).startsWith('quizmaster-test-admin-audit-') ||
     resolve(runtime.database) !== join(root, 'server', 'data', 'audit.db') || JSON.stringify(runtime.ports) !== '[5510,5511]') {

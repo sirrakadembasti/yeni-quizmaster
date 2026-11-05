@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { login, api, prisma } from './parent-audit-helpers';
 
-const out = 'docs/parent-audit';
+const out = 'tests/denetim-kanitlari/veli';
 test.beforeEach(() => mkdirSync(out + '/screenshots', { recursive: true }));
 async function selectChild(page: any, name: string) {
   await page.getByRole('combobox').click();

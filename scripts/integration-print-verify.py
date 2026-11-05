@@ -6,7 +6,7 @@ import unicodedata
 from pypdf import PdfReader
 import pypdfium2 as pdfium
 
-out = Path(__file__).resolve().parents[1] / "docs/integration-audit"
+out = Path(__file__).resolve().parents[1] / "tests/denetim-kanitlari/entegrasyon"
 results = []
 for name in ["ux-detail-A-U01", "ux-detail-T-U03", "ux-detail-T-U04-fast", "ux-detail-T-U04-filter-fast", "ux-detail-T-U04-many", "ux-extra-large-report"]:
     file = out / f"{name}.pdf"

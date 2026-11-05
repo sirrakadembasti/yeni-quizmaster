@@ -16,8 +16,8 @@ for (const [id, tab, pattern, ready] of [
     await login(page); await page.route(pattern, r => r.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ message: 'Controlled parent settings failure' }) }));
     await page.goto(`/settings?tab=${tab}`);
     await expect(page.getByRole('alert')).toContainText(/yüklenemedi/i, { timeout: 30000 });
-    mkdirSync('docs/parent-audit/screenshots', { recursive: true });
-    await page.screenshot({ path: `docs/parent-audit/screenshots/${id}-settings-failure.png`, fullPage: true });
+    mkdirSync('tests/denetim-kanitlari/veli/screenshots', { recursive: true });
+    await page.screenshot({ path: `tests/denetim-kanitlari/veli/screenshots/${id}-settings-failure.png`, fullPage: true });
     await page.unroute(pattern); await page.getByRole('button', { name: 'Tekrar dene', exact: true }).click();
     await expect(page.locator('main')).toContainText(ready, { timeout: 30000 });
     await expect(page.getByRole('alert')).toHaveCount(0);
@@ -31,8 +31,8 @@ test('P-A02 long valid child name and email remain inside mobile document', asyn
     await db.user.update({ where: { id }, data: { name: 'Ada ' + 'Uzun Öğrenci Adı '.repeat(5), email: 'a'.repeat(60) + '@' + 'd'.repeat(40) + '.example.test' } });
     await login(page); await page.setViewportSize({ width: 375, height: 812 }); await page.goto('/parent/dashboard');
     await expect(page.getByText('Parent Audit Completed Exam', { exact: true }).first()).toBeVisible();
-    mkdirSync('docs/parent-audit/screenshots', { recursive: true });
-    await page.screenshot({ path: 'docs/parent-audit/screenshots/long-child-mobile.png', fullPage: true });
+    mkdirSync('tests/denetim-kanitlari/veli/screenshots', { recursive: true });
+    await page.screenshot({ path: 'tests/denetim-kanitlari/veli/screenshots/long-child-mobile.png', fullPage: true });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   } finally { await db.user.update({ where: { id }, data: { name: saved.name, email: saved.email } }); await db.$disconnect(); }
 });

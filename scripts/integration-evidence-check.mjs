@@ -19,7 +19,7 @@ function walk(target) {
     if (item.isDirectory()) walk(name); else if (item.isFile()) files.push(name);
   }
 }
-walk(path.join(root, 'docs/integration-audit')); walk(path.join(root, 'docs/live-audit'));
+walk(path.join(root, 'tests/denetim-kanitlari/entegrasyon')); walk(path.join(root, 'tests/denetim-kanitlari/canli-soket'));
 for (const name of ['graph.json', 'graph.html', 'GRAPH_REPORT.md']) files.push(path.join(root, 'graphify-out', name));
 for (const name of files) {
   const data = fs.readFileSync(name);
@@ -28,13 +28,13 @@ for (const name of files) {
 }
 const hash = createHash('sha256').update(fs.readFileSync(path.join(root, 'server/data/quiz.db'))).digest('hex');
 assert.equal(hash, '8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158', 'Real database changed');
-const smtp = JSON.parse(fs.readFileSync(path.join(root, 'docs/integration-audit/smtp-probe.json')));
+const smtp = JSON.parse(fs.readFileSync(path.join(root, 'tests/denetim-kanitlari/entegrasyon/smtp-probe.json')));
 assert(smtp.sent && smtp.authConfigured && smtp.transportVerified);
-const socket = JSON.parse(fs.readFileSync(path.join(root, 'docs/live-audit/socket-results.json')));
+const socket = JSON.parse(fs.readFileSync(path.join(root, 'tests/denetim-kanitlari/canli-soket/socket-results.json')));
 assert(socket.passed === 18 && socket.failed === 0 && socket.cleanupSucceeded);
-const pdf = JSON.parse(fs.readFileSync(path.join(root, 'docs/integration-audit/pdf-verification.json')));
+const pdf = JSON.parse(fs.readFileSync(path.join(root, 'tests/denetim-kanitlari/entegrasyon/pdf-verification.json')));
 assert(pdf.files.find(x => x.file === 'ux-extra-large-report.pdf').completeRows);
-const read = name => JSON.parse(fs.readFileSync(path.join(root, 'docs/integration-audit', name)));
+const read = name => JSON.parse(fs.readFileSync(path.join(root, 'tests/denetim-kanitlari/entegrasyon', name)));
 const unit = (name, count) => {
   const report = read(name);
   assert(report.success && report.numTotalTests >= count && report.numFailedTests === 0 && report.numPendingTests === 0, 'Incomplete regression report: ' + name);

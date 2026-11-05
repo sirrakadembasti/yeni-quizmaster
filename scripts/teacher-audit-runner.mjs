@@ -9,7 +9,7 @@ import { waitForAuditServer } from './audit-server-readiness.mjs';
 import { sanitizeTeacherAuditReportFile } from './teacher-audit-report-sanitize.mjs';
 if (process.platform !== 'linux') throw new Error('Run this isolated runner with native Linux Node.');
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const out = path.join(root, 'docs/teacher-audit');
+const out = path.join(root, 'tests/denetim-kanitlari/ogretmen');
 const logs = path.join(out, 'runtime-logs');
 fs.mkdirSync(logs, { recursive: true });
 const report = { startedAt: new Date().toISOString(), platform: process.platform, node: process.version,

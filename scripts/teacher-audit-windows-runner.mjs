@@ -8,7 +8,7 @@ import { verifyFixturePortsReleased } from './linux-owned-process-cleanup.mjs';
 import { cleanupStartupChild } from './server-startup-child-cleanup.mjs';
 import { sanitizeTeacherAuditReportFile } from './teacher-audit-report-sanitize.mjs';
 if (process.platform !== 'win32') throw new Error('Use the native Linux runner on Linux.');
-const root = path.resolve(import.meta.dirname, '..'), out = path.join(root, 'docs/teacher-audit');
+const root = path.resolve(import.meta.dirname, '..'), out = path.join(root, 'tests/denetim-kanitlari/ogretmen');
 fs.mkdirSync(path.join(out, 'runtime-logs'), { recursive: true });
 const label = process.env.TEACHER_FIX_RUN || 'fix';
 if (!/^[a-z0-9-]+$/.test(label)) throw new Error('Invalid run label');

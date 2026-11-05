@@ -3,7 +3,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { inflateRawSync } from 'node:zlib';
 import { login, api, assertIsolatedRuntime } from './teacher-audit-helpers';
 
-const out = 'docs/teacher-audit/evidence/defect-repairs';
+const out = 'tests/denetim-kanitlari/ogretmen/evidence/defect-repairs';
 mkdirSync(out, { recursive: true });
 
 async function excel(page: Page, name: string) {

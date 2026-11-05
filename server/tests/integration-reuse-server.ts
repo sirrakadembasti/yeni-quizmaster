@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname, basename, join } from 'node:path';
 import assert from 'node:assert/strict';
 const repo = resolve(import.meta.dirname, '../..');
-const runtime = JSON.parse(readFileSync(join(repo, 'docs/parent-audit/runtime.json'), 'utf8'));
+const runtime = JSON.parse(readFileSync(join(repo, 'tests/denetim-kanitlari/veli/runtime.json'), 'utf8'));
 const root = resolve(runtime.root), database = resolve(runtime.database);
 assert.equal(dirname(root), join(repo, 'server/data'));
 assert(basename(root).startsWith('quizmaster-test-parent-audit-'));

@@ -18,8 +18,8 @@ async function resetAttempt() {
 }
 
 async function shot(page: Page, name: string) {
-  mkdirSync('docs/student-audit/screenshots', { recursive: true });
-  await page.screenshot({ path: `docs/student-audit/screenshots/exams-${name}.png`, fullPage: true });
+  mkdirSync('tests/denetim-kanitlari/ogrenci/screenshots', { recursive: true });
+  await page.screenshot({ path: `tests/denetim-kanitlari/ogrenci/screenshots/exams-${name}.png`, fullPage: true });
 }
 
 async function openExam(page: Page) {

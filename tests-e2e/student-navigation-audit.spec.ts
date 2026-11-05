@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { login, api, prisma } from './student-audit-helpers';
 
-const out = 'docs/student-audit';
+const out = 'tests/denetim-kanitlari/ogrenci';
 const routes = ['/', '/student/dashboard','/student/quizzes','/my-quizzes','/student/results','/my-results','/my-stats','/student/surveys','/student/survey/55555555-5555-4555-8555-555555555555','/student/result/student-audit-result','/settings','/announcements'];
 for (const [group, batch] of [routes.slice(0,6), routes.slice(6)].entries()) {
 test(`S-N01 group ${group+1}: loaded student routes, aliases, reload, mobile and console`, async ({ page }) => {

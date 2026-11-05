@@ -4,7 +4,7 @@ import { resolve, join, dirname } from 'node:path';
 import { createRequire } from 'node:module';
 export function assertIsolatedRuntime() {
   if (test.info().project.use.baseURL !== 'http://127.0.0.1:5541') throw new Error('Use playwright.student-audit.config.ts; student audit must not target another application.');
-  const runtime = JSON.parse(readFileSync('docs/student-audit/runtime.json', 'utf8'));
+  const runtime = JSON.parse(readFileSync('tests/denetim-kanitlari/ogrenci/runtime.json', 'utf8'));
   const root = resolve(runtime.root);
   if (dirname(root) !== resolve('server/data') || !/^quizmaster-test-student-audit-/.test(root.split(/[\\/]/).at(-1)!) || resolve(runtime.database) !== join(root, 'server/data/audit.db') || JSON.stringify(runtime.ports) !== '[5540,5541]') throw new Error('Student audit requires isolated fixture');
   return runtime;

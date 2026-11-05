@@ -2,7 +2,7 @@
 
 Bu belge e-posta servisinin yapılandırmasını, parola sıfırlama iş akışını, yönetici ekranlarını ve ağ sorunlarını tek yerde açıklar.
 
-4 Ekim 2026 gerçek bağlantı kontrolünde 587/STARTTLS, Gmail hesap doğrulaması ve kullanıcının izin verdiği adrese tek test gönderimi geçti; SMTP bir alıcıyı kabul etti. Kullanıcı bu konuşmada aynı test e-postasının ulaştığını ve mesaj içeriğini doğruladı. Bu teslim kanıtı kullanıcının beyanıdır; araçlarla gelen kutusu okunmadı ve yeni test e-postası gönderilmedi. Gerçek parola sıfırlama gönderimi bu koşuda doğrulanmadı. [Kullanıcı teslim doğrulaması](integration-audit/smtp-delivery-confirmation.json), [gizli değer içermeyen transport sonucu](integration-audit/smtp-probe.json), [güncel kabul kapsamı](integration-audit/defect-repairs.md).
+4 Ekim 2026 gerçek bağlantı kontrolünde 587/STARTTLS, Gmail hesap doğrulaması ve kullanıcının izin verdiği adrese tek test gönderimi geçti; SMTP bir alıcıyı kabul etti. Kullanıcı bu konuşmada aynı test e-postasının ulaştığını ve mesaj içeriğini doğruladı. Bu teslim kanıtı kullanıcının beyanıdır; araçlarla gelen kutusu okunmadı ve yeni test e-postası gönderilmedi. Gerçek parola sıfırlama gönderimi bu koşuda doğrulanmadı. [Kullanıcı teslim doğrulaması](../tests/denetim-kanitlari/entegrasyon/smtp-delivery-confirmation.json), [gizli değer içermeyen transport sonucu](../tests/denetim-kanitlari/entegrasyon/smtp-probe.json), [güncel kabul kapsamı](denetim-raporlari/entegrasyon-denetim-raporu.md).
 
 ## 1. Desteklenen servis
 

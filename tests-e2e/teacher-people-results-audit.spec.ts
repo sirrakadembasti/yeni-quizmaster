@@ -11,7 +11,7 @@ test.beforeEach(async ({ page, baseURL }) => {
   await login(page);
 });
 test.afterEach(async ({ page }, info) => {
-  const dir = 'docs/teacher-audit/evidence/people-results';
+  const dir = 'tests/denetim-kanitlari/ogretmen/evidence/people-results';
   mkdirSync(dir, { recursive: true });
   const filename = info.title.replace(/[^a-zA-Z0-9-]+/g, '-');
   await page.screenshot({ path: `${dir}/${filename}.png`, fullPage: true });

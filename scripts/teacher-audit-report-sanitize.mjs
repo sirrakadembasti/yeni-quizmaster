@@ -3,7 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
-const defaultDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../docs/teacher-audit');
+const defaultDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../tests/denetim-kanitlari/ogretmen');
 const mask = '[redacted]';
 const fixtureSecrets = [
   'TeacherAuditOnly2026!', 'TemporaryAuditPassword2026!', 'UnusedAuditPassword2026!',

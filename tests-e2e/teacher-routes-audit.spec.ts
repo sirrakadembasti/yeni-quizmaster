@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { login, api, assertIsolatedRuntime, teacherAuditIds } from './teacher-audit-helpers';
 assertIsolatedRuntime();
-const out = 'docs/teacher-audit/evidence/routes'; mkdirSync(out, { recursive: true });
+const out = 'tests/denetim-kanitlari/ogretmen/evidence/routes'; mkdirSync(out, { recursive: true });
 const routes = [ '/', '/quizzes', '/create-quiz', '/quizzes/teacher-audit-draft', '/results', '/statistics',
   '/survey-results', '/students', '/classlist', `/classes/${teacherAuditIds.class}`, '/settings', '/announcements',
   '/student/results?studentId=teacher-audit-student', '/student/results', '/student/result/teacher-audit-result',

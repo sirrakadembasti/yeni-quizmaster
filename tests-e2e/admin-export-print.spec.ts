@@ -7,7 +7,7 @@ import { inflateRawSync } from 'node:zlib';
 import { execFileSync } from 'node:child_process';
 
 // Never seed or clean up a user's database. These guards precede Prisma creation.
-const runtime = JSON.parse(readFileSync('docs/admin-audit/runtime.json', 'utf8'));
+const runtime = JSON.parse(readFileSync('tests/denetim-kanitlari/yonetici/runtime.json', 'utf8'));
 const isolatedRoot = resolve(runtime.root);
 if (dirname(isolatedRoot) !== resolve('server/data') || !basename(isolatedRoot).startsWith('quizmaster-test-admin-audit-') ||
     resolve(runtime.database) !== join(isolatedRoot, 'server', 'data', 'audit.db') || JSON.stringify(runtime.ports) !== '[5510,5511]') {

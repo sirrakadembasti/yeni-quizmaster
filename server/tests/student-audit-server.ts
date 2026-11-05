@@ -49,8 +49,8 @@ await p.announcement.create({ data: { id: 'student-audit-announcement', title: '
 await p.announcement.create({ data: { id: 'student-audit-private-announcement', title: 'Private Teacher Announcement', content: 'Teachers only', createdBy: 'student-audit-admin', targetRole: 'teacher' } });
 await p.notification.create({ data: { userId: 'student-audit-student', title: 'Student Audit Notification', message: 'Isolated notification' } });
 await p.$disconnect();
-mkdirSync(join(repo, 'docs/student-audit'), { recursive: true });
-writeFileSync(join(repo, 'docs/student-audit/runtime.json'), JSON.stringify({ root, database, ports: [5540,5541] }, null, 2));
+mkdirSync(join(repo, 'tests/denetim-kanitlari/ogrenci'), { recursive: true });
+writeFileSync(join(repo, 'tests/denetim-kanitlari/ogrenci/runtime.json'), JSON.stringify({ root, database, ports: [5540,5541] }, null, 2));
 process.chdir(root);
 console.log('Disposable student fixture ready');
 await import('../index');

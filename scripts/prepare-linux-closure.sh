@@ -19,7 +19,7 @@ npm install --prefix "$tool_root/pnpm" pnpm@9.15.1 --no-audit --no-fund
 PATH="$tool_root/pnpm/node_modules/.bin:$PATH"
 export PATH
 stage_root=$(mktemp -d "$closure_base/source-XXXXXX")
-tar -xf /mnt/f/projeler/yeni-quizmaster-main/docs/admin-audit/test-results-latest/linux-setup/source-head.tar -C "$stage_root"
+tar -xf /mnt/f/projeler/yeni-quizmaster-main/tests/denetim-kanitlari/yonetici/test-results-latest/linux-setup/source-head.tar -C "$stage_root"
 # Include the user's current reviewed localhost edits without committing them.
 cp /mnt/f/projeler/yeni-quizmaster-main/client/src/lib/api.ts "$stage_root/client/src/lib/api.ts"
 cp /mnt/f/projeler/yeni-quizmaster-main/client/src/pages/server-setup.tsx "$stage_root/client/src/pages/server-setup.tsx"

@@ -4,7 +4,7 @@ import { resolve, join, dirname } from 'node:path';
 import { createRequire } from 'node:module';
 export function assertIsolatedRuntime() {
   if (test.info().project.use.baseURL !== 'http://127.0.0.1:5561') throw new Error('Use playwright.parent-audit.config.ts; parent audit must not target another application.');
-  const runtime = JSON.parse(readFileSync('docs/parent-audit/runtime.json', 'utf8'));
+  const runtime = JSON.parse(readFileSync('tests/denetim-kanitlari/veli/runtime.json', 'utf8'));
   const root = resolve(runtime.root);
   if (dirname(root) !== resolve('server/data') || !/^quizmaster-test-parent-audit-/.test(root.split(/[\\/]/).at(-1)!) || resolve(runtime.database) !== join(root, 'server/data/audit.db') || JSON.stringify(runtime.ports) !== '[5560,5561]') throw new Error('Parent audit requires isolated fixture');
   return runtime;

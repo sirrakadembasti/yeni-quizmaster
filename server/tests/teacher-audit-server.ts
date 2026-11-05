@@ -83,8 +83,8 @@ await p.actionLog.create({ data: { userId: 'teacher-audit-other', action: 'LOGIN
 await p.questionBank.create({ data: { teacherId: 'teacher-audit-teacher', categoryId: '33333333-3333-4333-8333-333333333333',
   text: 'Teacher Audit Bank Question?', type: 'multiple-choice', options: JSON.stringify(['A', 'B', 'C', 'D']), correctAnswer: 'A' } });
 await p.$disconnect();
-mkdirSync(join(repo, 'docs/teacher-audit'), { recursive: true });
-writeFileSync(join(repo, 'docs/teacher-audit/runtime.json'), JSON.stringify({ root, database, ports: [5530, 5531] }, null, 2));
+mkdirSync(join(repo, 'tests/denetim-kanitlari/ogretmen'), { recursive: true });
+writeFileSync(join(repo, 'tests/denetim-kanitlari/ogretmen/runtime.json'), JSON.stringify({ root, database, ports: [5530, 5531] }, null, 2));
 process.chdir(root);
 console.log('ISOLATED TEACHER AUDIT ROOT ' + root);
 await import('../index');

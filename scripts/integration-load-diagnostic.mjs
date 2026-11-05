@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 const root = path.resolve(import.meta.dirname, '..');
-const runtime = JSON.parse(fs.readFileSync(path.join(root, 'docs/parent-audit/runtime.json')));
+const runtime = JSON.parse(fs.readFileSync(path.join(root, 'tests/denetim-kanitlari/veli/runtime.json')));
 assert.equal(path.dirname(path.resolve(runtime.root)), path.join(root, 'server/data'));
 assert(path.basename(runtime.root).startsWith('quizmaster-test-parent-audit-'));
 assert.deepEqual(runtime.ports, [5560, 5561]);
@@ -33,5 +33,5 @@ for (const concurrency of [2, 20]) {
   times.sort((a, b) => a - b);
   report.rounds.push({ concurrency, requests: times.length, statuses, errors, p50Ms: Math.round(times[19]), p95Ms: Math.round(times[37]), maxMs: Math.round(times.at(-1)) });
 }
-fs.writeFileSync(path.join(root, 'docs/integration-audit/load-diagnostic.json'), JSON.stringify(report, null, 2) + '\n');
+fs.writeFileSync(path.join(root, 'tests/denetim-kanitlari/entegrasyon/load-diagnostic.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify(report));

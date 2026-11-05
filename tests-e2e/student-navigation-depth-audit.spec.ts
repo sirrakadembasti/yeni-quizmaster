@@ -109,8 +109,8 @@ test('S-D03 choosing an actual category preserves its completed results', async 
     // Use the boot-time category: direct Prisma seeding does not invalidate the
     // application category cache and must not masquerade as a product defect.
     await select(page, 'Ders / Kategori', 'Audit Mathematics');
-    mkdirSync('docs/student-audit/screenshots', { recursive: true });
-    await page.screenshot({ path: 'docs/student-audit/screenshots/results-category-filter.png', fullPage: true });
+    mkdirSync('tests/denetim-kanitlari/ogrenci/screenshots', { recursive: true });
+    await page.screenshot({ path: 'tests/denetim-kanitlari/ogrenci/screenshots/results-category-filter.png', fullPage: true });
     await expect(page.getByText('Student Audit Completed Exam', { exact: true })).toBeVisible();
     await select(page, 'Ders / Kategori', 'Audit Empty Subject');
     await expect(page.getByText('Student Audit Completed Exam', { exact: true })).toHaveCount(0);

@@ -3,11 +3,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
-const root=path.resolve(import.meta.dirname,'..'),out=path.join(root,'docs/integration-audit');
+const root=path.resolve(import.meta.dirname,'..'),out=path.join(root,'tests/denetim-kanitlari/entegrasyon');
 const {chromium,request}=createRequire(path.join(root,'package.json'))('playwright');
 const report={startedAt:new Date().toISOString(),checks:[],unresolved:[]};
 let browser; const contexts=[];
-const runtime=JSON.parse(fs.readFileSync(path.join(root,'docs/parent-audit/runtime.json')));
+const runtime=JSON.parse(fs.readFileSync(path.join(root,'tests/denetim-kanitlari/veli/runtime.json')));
 assert.equal(path.dirname(path.resolve(runtime.root)),path.join(root,'server/data'));
 assert(path.basename(runtime.root).startsWith('quizmaster-test-parent-audit-'));
 async function ready(){const end=Date.now()+240000;while(Date.now()<end){try{if((await fetch('http://127.0.0.1:5561/auth')).ok)return;}catch{}await new Promise(r=>setTimeout(r,1000));}throw new Error('UI readiness timeout');}

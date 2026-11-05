@@ -35,7 +35,7 @@ await p.studentResult.create({data:{id:'audit-result',studentId:student.id,quizI
 await p.surveySubmission.create({data:{surveyId:'audit-survey',studentId:student.id,answers:{create:{questionId:'audit-survey-q',value:'Audit response'}}}});
 await p.announcement.create({data:{id:'audit-announcement',title:'Audit announcement',content:'Isolated audit content',createdBy:admin.id,targetRole:'all'}});
 await p.$disconnect();
-writeFileSync(join(repo,'docs/admin-audit/runtime.json'),JSON.stringify({root,database:db,ports:[5510,5511]},null,2));
+writeFileSync(join(repo,'tests/denetim-kanitlari/yonetici/runtime.json'),JSON.stringify({root,database:db,ports:[5510,5511]},null,2));
 process.chdir(root);
 console.log('ISOLATED AUDIT ROOT '+root);
 await import('../index');

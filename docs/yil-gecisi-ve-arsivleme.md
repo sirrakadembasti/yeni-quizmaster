@@ -14,7 +14,7 @@ Son kaynak ve belge kontrolü: 14 Ekim 2026. Bu kılavuz yöneticiye açık `/ar
 | Eğitim yılı | Açık kalır | Paket doğrulandıktan sonra kapanır, sonraki yıl aktif olur |
 | Öğretmen atamaları | Korunur | Ders, sınıf ve şube bağlantıları korunur |
 
-Manuel arşiv yalnız bir dosya kopyalama işlemi değildir: başarıyla tamamlanınca seçilen içerik arşiv statüsüne geçer ve düzenlemeye kapanır. Hesapları silmez veya öğrencileri taşımaz. Akademik paket, sunucunun tam geri yükleme yedeği değildir; oturum, parola ve gizli sunucu ayarlarını içermez. Tam yedek için [bakım kılavuzunu](production-maintenance.md) kullanın.
+Manuel arşiv yalnız bir dosya kopyalama işlemi değildir: başarıyla tamamlanınca seçilen içerik arşiv statüsüne geçer ve düzenlemeye kapanır. Hesapları silmez veya öğrencileri taşımaz. Akademik paket, sunucunun tam geri yükleme yedeği değildir; oturum, parola ve gizli sunucu ayarlarını içermez. Tam yedek için [bakım kılavuzunu](uretim-ve-bakim-kilavuzu.md) kullanın.
 
 ## Sayfaya erişim ve eğitim yılı seçimi
 
@@ -98,7 +98,7 @@ Tamamlanmış snapshot değişmezdir. Başarısız yıllık iş yönetici bildir
 
 Paket sunucuda `backup_root/{academicYear}/{snapshotId}/` altında tutulur. ZIP; dört CSV grubu, `records.json`, `meta.json`, `index.json`, PDF raporu/parçaları, desteklenen dondurulmuş yerel görseller ve manifest/checksum dosyaları içerir. Sınıf/şube → ders → sınav/anket erişimi indeksle eşlenir; her sınavın fiziksel olarak ayrı klasörde PDF'si bulunduğu varsayılmamalıdır. Dosya başına SHA-256 ve boyut, ZIP özeti ise DB'de tutulur.
 
-Görsel türleri, uzak görsel sınırlaması, PDF parçalama ve 64 MiB snapshot / 256 MiB paket sınırları [paket sözleşmesinde](academic-archive-review/artifacts.md) açıklanır. CSV/PDF'ler dönem iş verisidir; tam sunucu kurtarması için ayrıca [yedek/restore](production-maintenance.md) gerekir.
+Görsel türleri, uzak görsel sınırlaması, PDF parçalama ve 64 MiB snapshot / 256 MiB paket sınırları [paket sözleşmesinde](denetim-raporlari/akademik-arsiv-kabul-raporu.md) açıklanır. CSV/PDF'ler dönem iş verisidir; tam sunucu kurtarması için ayrıca [yedek/restore](uretim-ve-bakim-kilavuzu.md) gerekir.
 
 ## Yapılan geliştirmeler ve kabul kanıtı
 
@@ -113,8 +113,8 @@ Görsel türleri, uzak görsel sınırlaması, PDF parçalama ve 64 MiB snapshot
 | Paket, hacim ve son kabul | `48f88ba`, `df104eb` |
 | Belgeler ve mimari harita kapanışı | `f44824a`, `074acf9`; üretim provası kapanışı `0a3bc1f` |
 
-12 Ekim nihai akademik kabulü 74/74 gerçek DB/hacim, 27/27 dosya, 18/18 geçmiş ve 30/30 worker kontrolünü; beş ayrı manuel/geçmiş/sınır/kurtarma/geçiş Chromium senaryosunu kaydeder. [Nihai plan](superpowers/plans/2026-10-05-academic-archive-review-plan.md) ve [doğrulama raporu](academic-archive-review/verification.md) geçmiş başarısız denemeleri ve ölçüm sınırlarını da korur. Bu belge hazırlanırken ağır testler yeniden çalıştırılmadı; kaynak ve mevcut kayıtlar karşılaştırıldı.
+12 Ekim nihai akademik kabulü 74/74 gerçek DB/hacim, 27/27 dosya, 18/18 geçmiş ve 30/30 worker kontrolünü; beş ayrı manuel/geçmiş/sınır/kurtarma/geçiş Chromium senaryosunu kaydeder. [Nihai plan](denetim-raporlari/akademik-arsiv-kabul-raporu.md) ve [doğrulama raporu](denetim-raporlari/akademik-arsiv-kabul-raporu.md) geçmiş başarısız denemeleri ve ölçüm sınırlarını da korur. Bu belge hazırlanırken ağır testler yeniden çalıştırılmadı; kaynak ve mevcut kayıtlar karşılaştırıldı.
 
-14 Ekim genel performans ölçümündeki 20 aktör kapasite başarısızlığı ayrı açık konudur. Arşiv akışının kabulü, her yükte gecikmesiz çalışma veya canlı üretim SLA'sı garantisi değildir. [Performans sonucu](production-performance-results.md) ve [kapasite devam incelemesi](production-capacity-investigation-results.md) birlikte okunmalıdır.
+14 Ekim genel performans ölçümündeki 20 aktör kapasite başarısızlığı ayrı açık konudur. Arşiv akışının kabulü, her yükte gecikmesiz çalışma veya canlı üretim SLA'sı garantisi değildir. [Performans sonucu](performans-ve-kapasite-raporu.md) ve [kapasite devam incelemesi](performans-ve-kapasite-raporu.md) birlikte okunmalıdır.
 
 Kaynaklar: [sayfa](../client/src/pages/admin/archive.tsx), [API](../server/api-routes/archive.ts), [worker](../server/services/archive-worker.ts), [geçiş planlayıcı](../server/services/archive-transition.ts), [zaman hesabı](../server/services/academic-year.ts).

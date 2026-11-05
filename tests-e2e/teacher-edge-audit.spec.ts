@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { login, api, assertIsolatedRuntime } from './teacher-audit-helpers';
-const out = 'docs/teacher-audit/evidence/edge';
+const out = 'tests/denetim-kanitlari/ogretmen/evidence/edge';
 mkdirSync(out, { recursive: true });
 test.beforeEach(() => { assertIsolatedRuntime(); });
 
@@ -46,7 +46,7 @@ test('teacher results search and labelled assignment checkbox accessibility evid
 });
 
 test('password reset pending request disables duplicate submission', async ({ page }) => {
-  const pendingOut = 'docs/teacher-audit/evidence/defect-repairs';
+  const pendingOut = 'tests/denetim-kanitlari/ogretmen/evidence/defect-repairs';
   mkdirSync(pendingOut, { recursive: true });
   let release!: () => void; let observed!: () => void;
   let requestCount = 0;

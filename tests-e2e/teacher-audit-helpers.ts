@@ -2,7 +2,7 @@ import { expect, Page, BrowserContext } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { resolve, join, dirname } from 'node:path';
 export function assertIsolatedRuntime() {
-  const runtime = JSON.parse(readFileSync('docs/teacher-audit/runtime.json', 'utf8'));
+  const runtime = JSON.parse(readFileSync('tests/denetim-kanitlari/ogretmen/runtime.json', 'utf8'));
   const root = resolve(runtime.root);
   if (dirname(root) !== resolve('server/data') || !/^quizmaster-test-teacher-audit-/.test(root.split(/[\\/]/).at(-1)!)
     || resolve(runtime.database) !== join(root, 'server/data/audit.db') || JSON.stringify(runtime.ports) !== '[5530,5531]')
