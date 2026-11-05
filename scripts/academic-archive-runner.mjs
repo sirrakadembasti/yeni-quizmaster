@@ -141,7 +141,7 @@ trace('server-imported');
   const ui = await launch([viteEntry]);
   await waitForAuditServer(runtime.baseURL + '/auth', ui);
   if (!process.argv.includes('--smoke')&&!process.argv.includes('--restore-smoke')) {
-    const tests = await launch([path.join(path.dirname(rootReq.resolve('playwright/package.json')), 'cli.js'), 'test', '-c', path.join(repo, 'playwright.academic-archive.config.ts'), ...process.argv.slice(2)], repo);
+    const tests = await launch([path.join(path.dirname(rootReq.resolve('playwright/package.json')), 'cli.js'), 'test', '-c', path.join(repo, 'tests/yapilandirma/playwright.academic-archive.config.ts'), ...process.argv.slice(2)], repo);
     process.exitCode = await tests.finished;
   } else {
     const { chromium } = rootReq('playwright');

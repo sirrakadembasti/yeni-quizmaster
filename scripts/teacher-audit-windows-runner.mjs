@@ -34,7 +34,7 @@ try {
   const ui = launch([path.join(path.dirname(clientReq.resolve('vite/package.json')), 'bin/vite.js'), 'client', '--host', '127.0.0.1', '--port', '5531', '--strictPort'], 'ui', { PORT: '5530' });
   await waitForAuditServer('http://127.0.0.1:5531/auth', ui);
   console.log('Disposable teacher servers ready');
-  const tests = launch([path.join(path.dirname(req.resolve('playwright/package.json')), 'cli.js'), 'test', '-c', 'playwright.teacher-audit.config.ts', ...process.argv.slice(2)], 'playwright');
+  const tests = launch([path.join(path.dirname(req.resolve('playwright/package.json')), 'cli.js'), 'test', '-c', 'tests/yapilandirma/playwright.teacher-audit.config.ts', ...process.argv.slice(2)], 'playwright');
   const code = await new Promise(resolve => { tests.child.once('exit', resolve); tests.child.once('error', () => resolve(1)); });
   report.testExitCode = code;
   report.sanitation = sanitizeTeacherAuditReportFile(path.join(out, 'results-latest.json'));

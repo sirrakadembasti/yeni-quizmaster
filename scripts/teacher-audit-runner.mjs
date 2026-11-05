@@ -49,7 +49,7 @@ try {
     'ui', { PORT: '5530' });
   await ready('http://127.0.0.1:5531/auth', ui);
   console.log('Isolated teacher API and frontend ready on 5530/5531');
-  const tests = launch(['exec', 'playwright', 'test', '-c', 'playwright.teacher-audit.config.ts', ...process.argv.slice(2)], 'playwright');
+  const tests = launch(['exec', 'playwright', 'test', '-c', 'tests/yapilandirma/playwright.teacher-audit.config.ts', ...process.argv.slice(2)], 'playwright');
   const code = await new Promise(resolve => {
     tests.child.once('exit', resolve); tests.child.once('error', () => resolve(1));
   });

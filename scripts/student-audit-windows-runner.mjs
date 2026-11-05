@@ -37,7 +37,7 @@ try {
   const latestPath = path.join(out, 'results-latest.json');
   if (fs.existsSync(latestPath)) fs.unlinkSync(latestPath);
   const testStartedAt = Date.now();
-  const tests = launch([path.join(path.dirname(req.resolve('playwright/package.json')), 'cli.js'), 'test', '-c', 'playwright.student-audit.config.ts', ...process.argv.slice(2)], 'playwright');
+  const tests = launch([path.join(path.dirname(req.resolve('playwright/package.json')), 'cli.js'), 'test', '-c', 'tests/yapilandirma/playwright.student-audit.config.ts', ...process.argv.slice(2)], 'playwright');
   const code = await new Promise(resolve => { tests.child.once('exit', resolve); tests.child.once('error', () => resolve(1)); });
   report.testExitCode = code;
   const fresh = JSON.parse(fs.readFileSync(latestPath, 'utf8'));

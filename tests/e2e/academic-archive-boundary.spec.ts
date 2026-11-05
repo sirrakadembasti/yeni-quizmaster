@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { createHash, randomUUID } from 'node:crypto';
 import { assertIsolatedRuntime, prisma, login, api } from './academic-archive-helpers';
-import { captureArchive } from '../server/services/archive-capture';
+import { captureArchive } from '../../server/services/archive-capture';
 
 test('authenticated business writes freeze while login, logout, password reset and notification preferences remain usable', async ({ page }) => {
   test.setTimeout(120000);

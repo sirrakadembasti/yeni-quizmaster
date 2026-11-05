@@ -1,2 +1,0 @@
-import { defineConfig, devices } from '@playwright/test';
-export default defineConfig({ testDir: './tests-e2e', testMatch: ['student-*-audit.spec.ts'], workers: 1, retries: 0, timeout: 120000, expect: { timeout: 15000 }, reporter: [['list'], ['json', { outputFile: 'tests/denetim-kanitlari/ogrenci/results-latest.json' }]], outputDir: 'tests/denetim-kanitlari/ogrenci/test-results-latest', use: { ...devices['Desktop Chrome'], baseURL: 'http://127.0.0.1:5541', screenshot: 'only-on-failure', trace: 'off' } });

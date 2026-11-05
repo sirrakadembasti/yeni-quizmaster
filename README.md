@@ -43,7 +43,7 @@ Veli panelinin sayfa/sekme kapsamı, bağlı öğrenci erişimi, sınıf bildiri
 | [`docs/`](docs) | Ana kullanım ve işletim kılavuzları | Yönetici, öğretmen, öğrenci, veli, kurulum, bakım, e-posta, yapay zeka, arşiv, güvenlik, performans, PostgreSQL ve Graphify kılavuzları. |
 | [`docs/denetim-raporlari/`](docs/denetim-raporlari) | Rol ve sistem kabul/denetim raporları | Yönetici, öğretmen, öğrenci, veli, entegrasyon ve akademik arşiv kabul raporları. |
 | [`demo/`](demo) | Demo okul simülasyonu ve vitrin hesapları | 10 branş öğretmeni, 160 öğrenci, 40 veli, 40 sınav ve `domain/demo` 4 hazır vitrin rolü belgeleri. |
-| [`tests/denetim-kanitlari/`](tests/denetim-kanitlari) | Test ve doğrulama kanıt çıktıları | Denetim betiklerinin ürettiği JSON, ekran görüntüsü ve PDF doğrulama çıktıları (`yonetici`, `ogretmen`, `ogrenci`, `veli`, `entegrasyon`, `canli-soket`). |
+| [`tests/`](tests) | Test süiti, E2E ve denetim kanıtları | Uçtan uca Playwright testleri (`tests/e2e/`), denetim yapılandırmaları (`tests/yapilandirma/`) ve otomatik test/kanıt çıktıları (`tests/denetim-kanitlari/`). |
 
 ### Kurulum ve işletim
 
@@ -119,7 +119,14 @@ Quiz-Master/
 │   ├── prisma/                   # Şema, migrasyonlar ve seed
 │   ├── services/                 # Parola sıfırlama gibi iş servisleri
 │   └── utils/                    # E-posta, loglama ve yetki yardımcıları
+├── scripts/                      # Kurulum, derleme ve bakım betikleri
+├── tests/                        # Test süiti, E2E ve denetim kanıtları
+│   ├── e2e/                      # Uçtan uca Playwright testleri
+│   ├── denetim-kanitlari/        # Otomatik test ve ekran/PDF kanıt çıktıları
+│   └── yapilandirma/             # Rol ve denetim test yapılandırmaları
 ├── docs/                         # Kullanıcı ve işletim belgeleri
+│   └── denetim-raporlari/        # Rol ve sistem kabul raporları
+├── demo/                         # Demo okul simülasyonu ve vitrin hesapları
 ├── graphify-out/                 # Paylaşılan mimari harita, rapor ve sorgu grafiği
 └── package.json                  # pnpm workspace komutları
 ```

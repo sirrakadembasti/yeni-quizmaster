@@ -3,9 +3,9 @@ import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { assertIsolatedRuntime, prisma, login, api } from './academic-archive-helpers';
-import { captureArchive } from '../server/services/archive-capture';
-import { createArchiveWorker } from '../server/services/archive-worker';
-import { exportArchive } from '../server/services/archive-export';
+import { captureArchive } from '../../server/services/archive-capture';
+import { createArchiveWorker } from '../../server/services/archive-worker';
+import { exportArchive } from '../../server/services/archive-export';
 const diagnosticTimelines=new WeakMap<object,Record<string,unknown>[]>();
 
 test.afterEach(async({page},info)=>{

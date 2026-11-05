@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { assertIsolatedRuntime, prisma, login, api } from './academic-archive-helpers';
-import { captureArchive } from '../server/services/archive-capture';
+import { captureArchive } from '../../server/services/archive-capture';
 
 test('administrator recovers the same frozen manual archive and the real worker closes the blocked year once', async ({ page }) => {
   test.setTimeout(120000);
