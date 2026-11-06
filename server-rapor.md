@@ -96,3 +96,10 @@ Temizlik ve taşıma işlemlerinden sonra sırasıyla şu doğrulamalar yapılac
    ```
 6. [ ] **Git Kaydı ve Uzak Depoya Gönderim:**
    Değişikliklerin yerel `main` dalına commit edilip `git push origin main` ile GitHub'a aktarılması.
+
+---
+
+## 5. Uygulama Sonucu ve Bilinen Ortam Kısıtı
+
+- Silme ve 19 yapılandırmanın taşınması tamamlandı; derleme (3,1 MB), kurulum/bakım (14/14, 7/7) ve denetim port (3/3) testleri geçti, Markdown'da kırık link yok.
+- **Ortam kısıtı:** Geliştirme makinesinde .pdf dosyalarının silinmesi/yeniden adlandırılması ve dosya symlink oluşturulması işletim sistemi/güvenlik politikasıyla engellidir (EPERM). Bu nedenle server/tests/utils/archive-export.test.ts 28 testten 19'unda bu makinede başarısız olur. Sorun yapılandırma taşımasından önce de aynıdır (taşıma öncesi sürümle doğrulandı); kod hatası değildir. Bu test kısıtsız bir makinede veya CI'da çalıştırılmalıdır.
