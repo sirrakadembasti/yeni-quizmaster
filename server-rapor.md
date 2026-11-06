@@ -39,11 +39,11 @@ Aşağıdaki bileşenlerin tamamı aktiftir ve **kesinlikle değiştirilmeyecek/
 ## 3. Yarın Uygulanacak Temizlik ve Tasnif Adımları
 
 ### A. Atıl ve Kalıntı Dosyaların Silinmesi (2 Dosya)
-- [ ] **`server/check-users.ts` (312 bayt):** Geliştirme sürecinde konsola test çıktısı almak için oluşturulmuş 10 satırlık geçici deneme betiğidir. Hiçbir yerde import edilmez ve hiçbir betik tarafından çağrılmaz. Silinecek.
-- [ ] **`server/package-lock.json` (49.488 bayt):** Proje kökündeki `pnpm` (`pnpm-lock.yaml`) çalışma alanıyla yönetilmektedir. Eski npm kullanımından kalan bu kilit dosyası gereksizdir. Silinecek.
+- [x] **`server/check-users.ts` (312 bayt):** Geliştirme sürecinde konsola test çıktısı almak için oluşturulmuş 10 satırlık geçici deneme betiğidir. Hiçbir yerde import edilmez ve hiçbir betik tarafından çağrılmaz. Silinecek.
+- [x] **`server/package-lock.json` (49.488 bayt):** Proje kökündeki `pnpm` (`pnpm-lock.yaml`) çalışma alanıyla yönetilmektedir. Eski npm kullanımından kalan bu kilit dosyası gereksizdir. Silinecek.
 
 ### B. Kök Dizindeki 19 Parçalı Test Yapılandırmasının Tasnifi
-- [ ] Ana dizindeki Playwright denetim yapılandırmalarında (`tests/yapilandirma/`) yapıldığı gibi, `server/` kök dizinindeki aşağıdaki 19 adet parçalı yapılandırma dosyası **`server/tests/yapilandirma/`** klasörü altına taşınacaktır:
+- [x] Ana dizindeki Playwright denetim yapılandırmalarında (`tests/yapilandirma/`) yapıldığı gibi, `server/` kök dizinindeki aşağıdaki 19 adet parçalı yapılandırma dosyası **`server/tests/yapilandirma/`** klasörü altına taşınacaktır:
   1. `vitest.academic-context.config.ts`
   2. `vitest.ai-management.config.ts`
   3. `vitest.ai-routes.config.ts`
@@ -63,7 +63,7 @@ Aşağıdaki bileşenlerin tamamı aktiftir ve **kesinlikle değiştirilmeyecek/
   17. `vitest.rollover-db.config.ts`
   18. `vitest.sqlite-runtime.config.ts`
   19. `vitest.student-answer.config.ts`
-- [ ] Ana [server/vitest.config.ts](file:///D:/dnm/master/server/vitest.config.ts) dosyası `server/` kökünde kalacak; tüm genel testleri (`tests/**/*.test.ts`) çalıştırmaya devam edecektir.
+- [x] Ana [server/vitest.config.ts](file:///D:/dnm/master/server/vitest.config.ts) dosyası `server/` kökünde kalacak; tüm genel testleri (`tests/**/*.test.ts`) çalıştırmaya devam edecektir.
 
 ---
 

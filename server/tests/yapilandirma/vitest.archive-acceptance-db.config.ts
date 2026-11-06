@@ -1,5 +1,5 @@
 import {defineConfig} from 'vitest/config';
-import base from './vitest.config';
+import base from '../../vitest.config';
 
 // One guarded migration template for lifecycle, projection, assets and volume.
 // Volume lifecycle and first-version warm are separate 360s cases at each

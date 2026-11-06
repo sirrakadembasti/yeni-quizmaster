@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitest/config';
-import base from './vitest.config';
+import base from '../../vitest.config';
 
 // Reuse the guarded temporary datasource and migration/cleanup global setup.
 export default defineConfig({

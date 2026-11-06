@@ -1,5 +1,5 @@
 import {defineConfig} from 'vitest/config';
-import base from './vitest.config';
+import base from '../../vitest.config';
 
 // One guarded migration template; each scale owns a separate copied database.
 // The fixture includes seeding plus independent 120s capture/finalization phases.
