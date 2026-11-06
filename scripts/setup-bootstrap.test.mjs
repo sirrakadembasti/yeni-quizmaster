@@ -32,11 +32,25 @@ function fixture() {
   return { root, paths, cleanup: () => fs.rmSync(root, { recursive: true, force: true }) };
 }
 
-test("yalnız Node.js 22/24 ve pnpm 9.15.1 kabul edilir", () => {
+test("yalnız Node.js 22/24 ve pnpm 9.15.1 kabul edilir; Bun yedek olarak tanınır", () => {
   assert.equal(validateRuntime("v22.23.0", "9.15.1").nodeSupported, true);
   assert.equal(validateRuntime("24.21.0", "9.15.1").pnpmSupported, true);
   assert.equal(validateRuntime("20.20.0", "9.15.1").nodeSupported, false);
   assert.equal(validateRuntime("24.21.0", "11.19.0").pnpmSupported, false);
+  assert.equal(validateRuntime("24.21.0", null, "1.3.14").bunSupported, true);
+  assert.equal(validateRuntime("24.21.0", "9.15.1", "1.3.14").bunSupported, true);
+  assert.equal(validateRuntime("24.21.0", "9.15.1", null).bunSupported, false);
+});
+
+test("bun veya npm ile kurulmuş paketler (node_modules/.bin) dependenciesInstalled olarak tanınır", (t) => {
+  const item = fixture();
+  t.after(item.cleanup);
+  // .pnpm klasörünü silip yerine .bin bırakalım (Bun/npm tarzı kurulum)
+  fs.rmSync(item.paths.nodeModules, { recursive: true, force: true });
+  fs.mkdirSync(path.join(item.root, "node_modules", ".bin"), { recursive: true });
+  const state = inspectInstallationState(item.root);
+  assert.equal(state.dependencies.ready, true);
+  assert.equal(state.evidence.dependenciesInstalled, true);
 });
 
 test("boş dizin yeni kurulum olarak algılanır", (t) => {

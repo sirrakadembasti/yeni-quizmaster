@@ -40,6 +40,38 @@ else
   has_error=1
 fi
 
+case "$(uname -s 2>/dev/null || echo bilinmiyor)" in
+  Linux|Darwin) ;;
+  *) printf '[UYARI] Desteklenen sistemler Linux ve macOS; algılanan: %s\n' "$(uname -s 2>/dev/null || echo bilinmiyor)" ;;
+esac
+
+if [ "$(id -u 2>/dev/null || echo 1)" = "0" ]; then
+  printf '%s\n' '[UYARI] Kurulum root olarak çalışıyor. Uygulamayı ayrı, yetkisiz bir hizmet kullanıcısıyla kurmanız önerilir.'
+fi
+
+# Kurulum verilerine dokunulmaz: yalnız var olan dizinlerin yazılabilirliği denetlenir.
+for writable_dir in "$PROJECT_ROOT" "$PROJECT_ROOT/server/data"; do
+  if [ -d "$writable_dir" ] && [ ! -w "$writable_dir" ]; then
+    printf '[HATA] Yazma izni yok: %s\n' "$writable_dir"
+    has_error=1
+  fi
+done
+
+free_kb=$(df -Pk "$PROJECT_ROOT" 2>/dev/null | awk 'NR==2 {print $4}')
+case "$free_kb" in
+  ''|*[!0-9]*) ;;
+  *)
+    if [ "$free_kb" -lt 3145728 ]; then
+      printf '[UYARI] Boş disk alanı %s MB; paket kurulumu ve derleme için en az 3072 MB önerilir.\n' "$((free_kb / 1024))"
+    fi
+    ;;
+esac
+
+if ! command -v python3 >/dev/null 2>&1 || ! command -v make >/dev/null 2>&1 || { ! command -v g++ >/dev/null 2>&1 && ! command -v c++ >/dev/null 2>&1; }; then
+  printf '%s\n' '[UYARI] python3, make veya C++ derleyicisi bulunamadı. better-sqlite3 için hazır ikili indirilemezse'
+  printf '%s\n' '        yerel derleme başarısız olabilir (Debian/Ubuntu: apt install build-essential python3).'
+fi
+
 if [ "$has_error" -ne 0 ]; then
   cat <<'EOF'
 
@@ -47,7 +79,20 @@ Kurulması veya düzeltilmesi gereken bileşenler var.
 
 Node.js 24 LTS: https://nodejs.org/en/download
 pnpm belgesi:   https://pnpm.io/installation/
-Node.js kuruluysa: npm install --global pnpm@9.15.1
+pnpm 9.15.1 için (sistem PATH'i değiştirilmeden):
+EOF
+  if command -v npm >/dev/null 2>&1; then
+    printf '%s\n' '  npm install --global pnpm@9.15.1'
+    printf '%s\n' '  (yetki yoksa) npm install --prefix "$HOME/.local/pnpm" pnpm@9.15.1 ve $HOME/.local/pnpm/node_modules/.bin dizinini bu oturumun PATH değerine ekleyin'
+  fi
+  if command -v corepack >/dev/null 2>&1; then
+    printf '%s\n' '  corepack enable && corepack prepare pnpm@9.15.1 --activate'
+  fi
+  if ! command -v npm >/dev/null 2>&1 && ! command -v corepack >/dev/null 2>&1; then
+    printf '%s\n' '  Bu Node.js kurulumunda npm ve corepack yok. npm içeren tam Node.js 22/24 LTS kurun'
+    printf '%s\n' '  veya pnpm bağımsız kurulumunu kullanın: https://pnpm.io/installation'
+  fi
+  cat <<'EOF'
 
 Proxy, DNS veya sistem PATH ayarları bu betik tarafından değiştirilmez.
 Kurulumlardan sonra yeni bir terminal açıp ./kurulum.sh komutunu tekrar çalıştırın.

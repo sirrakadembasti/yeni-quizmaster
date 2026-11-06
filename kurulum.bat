@@ -164,8 +164,10 @@ echo.
 echo pnpm resmi kurulum belgesi:
 echo   https://pnpm.io/installation/
 echo.
-echo Node.js kuruluysa pnpm 9.15.1 için:
-echo   npm install --global pnpm@9.15.1
+echo pnpm 9.15.1 icin (sistem PATH'ini degistirmeden):
+where npm >nul 2>&1 && echo   npm install --global pnpm@9.15.1
+where corepack >nul 2>&1 && echo   corepack enable ^&^& corepack prepare pnpm@9.15.1 --activate
+where npm >nul 2>&1 || where corepack >nul 2>&1 || echo   Bu Node.js kurulumunda npm ve corepack yok. npm iceren tam Node.js 22/24 LTS kurun veya pnpm bagimsiz kurulumunu kullanin: https://pnpm.io/installation
 echo.
 echo Yönetici yetkiniz yoksa kurum bilgi iþlem biriminden kurulum isteyin.
 echo Proxy, DNS veya sistem PATH ayarlarý bu betik tarafýndan deðiþtirilmez.

@@ -9,7 +9,7 @@
     "setup": "tsx setup-wizard/server.ts",
     "build": "node ../scripts/build-server.mjs",
     "start": "cross-env NODE_ENV=production node ../dist/index.cjs",
-    "postinstall": "prisma generate && pnpm run archive:prepare",
+    "postinstall": "prisma generate && playwright install chromium",
     "archive:prepare": "playwright install chromium",
     "type-check": "tsc --noEmit",
     "db:migrate": "prisma migrate dev",

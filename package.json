@@ -13,7 +13,7 @@
     "setup:wizard": "pnpm --filter quiz-master-server run setup",
     "build": "pnpm --filter quiz-master-server build && pnpm --filter quiz-master-client build",
     "install-all": "pnpm install && cd client && pnpm install && cd ../server && pnpm install",
-    "test:setup": "node --test scripts/setup-bootstrap.test.mjs scripts/find-port-holder.test.mjs",
+    "test:setup": "node --test scripts/setup-bootstrap.test.mjs scripts/find-port-holder.test.mjs scripts/setup-launcher-preflight.test.mjs",
     "maintenance": "node scripts/maintenance.mjs",
     "upgrade": "node scripts/upgrade.mjs",
     "test:upgrade": "node --test scripts/upgrade.test.mjs scripts/upgrade-process.test.mjs scripts/pnpm-invocation.test.mjs scripts/setup-bootstrap-runtime.test.mjs",

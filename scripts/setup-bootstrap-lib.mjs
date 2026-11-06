@@ -65,7 +65,8 @@ function anyExists(...targets) {
 
 export function checkDependencies(projectRoot) {
   const paths = getSetupPaths(projectRoot);
-  const rootPackages = fs.existsSync(paths.nodeModules);
+  const rootModules = path.join(paths.projectRoot, "node_modules");
+  const rootPackages = fs.existsSync(paths.nodeModules) || (fs.existsSync(rootModules) && (fs.existsSync(path.join(rootModules, ".bin")) || fs.existsSync(path.join(rootModules, "playwright"))));
   const serverModules = fs.existsSync(path.join(paths.serverRoot, "node_modules"));
   const clientRoot = path.join(paths.projectRoot, "client");
   const clientModules = fs.existsSync(path.join(clientRoot, "node_modules"));
@@ -103,10 +104,11 @@ export function inspectInstallationState(projectRoot) {
   return { state, evidence, dependencies: deps };
 }
 
-export function validateRuntime(nodeVersion, pnpmVersion) {
+export function validateRuntime(nodeVersion, pnpmVersion, bunVersion = null) {
   const normalizedNode = String(nodeVersion || "").replace(/^v/i, "");
   const nodeMajor = Number(normalizedNode.split(".")[0]);
   const normalizedPnpm = String(pnpmVersion || "").trim();
+  const normalizedBun = bunVersion ? String(bunVersion).trim() : null;
   return {
     nodeVersion: normalizedNode || null,
     nodeSupported: SUPPORTED_NODE_MAJORS.includes(nodeMajor),
@@ -114,6 +116,8 @@ export function validateRuntime(nodeVersion, pnpmVersion) {
     pnpmVersion: normalizedPnpm || null,
     pnpmSupported: normalizedPnpm === REQUIRED_PNPM_VERSION,
     requiredPnpmVersion: REQUIRED_PNPM_VERSION,
+    bunVersion: normalizedBun || null,
+    bunSupported: Boolean(normalizedBun),
   };
 }
 
