@@ -101,7 +101,7 @@ Aynı bilgiyi birden fazla kılavuza kopyalamak yerine ana belgeye bağlantı ve
 | Kimlik ve güvenlik | `express-session`, SQLite oturum deposu, bcrypt, CSRF, Zod |
 | E-posta | Nodemailer, Gmail SMTP, veritabanı Outbox kuyruğu |
 | Test | Vitest, Supertest, Playwright |
-| Paket yönetimi | pnpm workspaces |
+| Paket yönetimi | pnpm workspaces (önerilen/varsayılan) / Bun (yedek) |
 
 ## Proje yapısı
 
@@ -170,7 +170,7 @@ chmod +x kurulum.sh
 ./kurulum.sh
 ```
 
-Başlatıcı, herhangi bir uygulama verisini değiştirmeden önce Node.js ve pnpm sürümlerini denetler. Eksik veya uyumsuz bileşen varsa gereken sürümü, resmî indirme bağlantılarını ve tekrar çalıştırma adımını gösterir; proxy, DNS veya sistem `PATH` ayarlarını değiştirmez.
+Başlatıcı, herhangi bir uygulama verisini değiştirmeden önce Node.js ve pnpm sürümlerini denetler. Eksik veya uyumsuz bileşen varsa gereken sürümü, resmî indirme bağlantılarını ve sistemde npm/corepack durumuna göre dinamik komut alternatiflerini gösterir; proxy, DNS veya sistem `PATH` ayarlarını değiştirmez. `kurulum.sh` ayrıca Linux/macOS ayrımı, root yetki uyarısı, yazma izinleri, disk alanı (>3 GB) ve native derleme araçları kontrollerini yürütür.
 
 Node.js 22/24 ve pnpm 9.15.1 zaten doğru kuruluysa başlatıcı yerine doğrudan şu komut da kullanılabilir:
 
@@ -182,9 +182,9 @@ pnpm run setup
 
 İlk ekran yalnız `127.0.0.1:5049` üzerinde açılır. Burada:
 
-- uygulamanın bulunduğu dizin ve çalışma ortamı gösterilir,
-- `pnpm install --frozen-lockfile --prod=false` **Paketleri Kur / Onar** ile etkileşimsiz çalıştırılır; production ortamında da sihirbaz/derleme araçları kurulur (sihirbaza geçiş bu adım bitmeden açılmaz),
-- gerçek pnpm çıktısı ve hata bilgisi ekranda izlenir,
+- uygulamanın bulunduğu dizin ve çalışma ortamı (Node.js, pnpm ve sistemde varsa Bun yedek desteği) gösterilir,
+- varsayılan olarak `pnpm install --frozen-lockfile --prod=false` (veya panelden Bun seçildiyse `bun install`) **Paketleri Kur / Onar** ile etkileşimsiz çalıştırılır; production ortamında da sihirbaz/derleme araçları kurulur (sihirbaza geçiş bu adım bitmeden açılmaz),
+- gerçek paket yöneticisi çıktısı ve hata bilgisi ekranda izlenir,
 - 5050 (sihirbaz) portu doluysa süreç PID ile gösterilir ve durdurulması istenir.
 
 Ana sihirbaz `127.0.0.1:5050` üzerinde açılır; kurulum biçimi, adres, SQLite, saklama politikası, ilk yönetici ve isteğe bağlı Gmail ayarlarını toplar. Alanların yanındaki **?** simgesi her seçeneği kısaca açıklar.

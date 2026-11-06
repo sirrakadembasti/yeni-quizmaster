@@ -107,7 +107,7 @@ chmod +x kurulum.sh
 ./kurulum.sh
 ```
 
-`kurulum.sh` Node.js 22/24 LTS ve pnpm 9.15.1 sürümlerini doğrular. Eksik veya uyumsuz bileşen varsa resmî bağlantıları ve uygulanacak komutu gösterip hiçbir dosyayı değiştirmeden durur. Gereksinimler tamamsa bağımlılıksız bootstrap arayüzünü açar; paket kurulumu kullanıcı onayından sonra bu arayüzden yürütülür.
+`kurulum.sh` Node.js 22/24 LTS ve pnpm 9.15.1 sürümlerini doğrular. Ayrıca Linux/macOS ortamını teyit eder, root yetkisiyle çalıştırmada uyarır, proje ve `server/data` dizinlerinin yazma izinlerini, en az 3 GB boş disk alanını ve `better-sqlite3` yerel derlemesi için `python3`, `make`, `g++/c++` varlığını denetler. Eksik veya uyumsuz bileşen varsa resmî bağlantıları ve kurumsal ağ kısıtlarına uygun komut seçeneklerini (npm, corepack veya bağımsız pnpm) gösterip hiçbir dosyayı değiştirmeden durur. Gereksinimler tamamsa bağımlılıksız bootstrap arayüzünü açar; paket kurulumu kullanıcı onayından sonra bu arayüzden yürütülür. Kurulum panelinde pnpm önerilen/varsayılan paket yöneticisidir; sistemde Bun kuruluysa **Bun (Yedek)** seçeneği de seçilebilir.
 
 Kurumsal ağ internete çıkmıyorsa bağımlılıkları onaylı bir build sunucusunda hedef işletim sistemi ve CPU mimarisiyle kurup artefact üretin. `node_modules` klasörünü farklı işletim sistemi veya CPU mimarisinden kopyalamayın; Prisma, Sharp ve SQLite native bileşenleri hedef ortamla aynı olmalıdır.
 
@@ -331,7 +331,7 @@ Windows'ta `kurulum.bat`, Linux/macOS'ta `./kurulum.sh` önerilir. Node.js ve pn
 pnpm run setup
 ```
 
-İlk aşama yalnız Node.js yerleşik modüllerini kullanır ve `127.0.0.1:5049` adresine bağlanır. Kurulum durumunu gösterir, `pnpm install --frozen-lockfile` işlemini başlatır ve gerçek işlem çıktısını ekranda sunar. Paketler hazır olduğunda mevcut ana sihirbaz `127.0.0.1:5050` üzerinde başlatılır. Sihirbaz portu doluysa başlatıcı PID ile uyarır ve süreci durdurmayı teklif eder. Terminal sihirbaz bitene kadar kapatılmamalıdır.
+İlk aşama yalnız Node.js yerleşik modüllerini kullanır ve `127.0.0.1:5049` adresine bağlanır. Kurulum durumunu gösterir, varsayılan olarak `pnpm install --frozen-lockfile` (veya panelden Bun seçildiyse `bun install`) işlemini başlatır ve gerçek işlem çıktısını ekranda sunar. Paketler hazır olduğunda mevcut ana sihirbaz `127.0.0.1:5050` üzerinde başlatılır. Sihirbaz portu doluysa başlatıcı PID ile uyarır ve süreci durdurmayı teklif eder. Terminal sihirbaz bitene kadar kapatılmamalıdır. Doğrudan konsoldan manuel kurulum tercih edilirse `pnpm install --frozen-lockfile && pnpm --filter quiz-master-server db:deploy && pnpm build` akışı aynen korunmaktadır.
 
 Sihirbazda **kurulum biçimi** seçenekleri:
 
