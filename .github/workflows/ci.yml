@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  kurulum-testleri:
+    name: Kurulum testleri (${{ matrix.os }}, Node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [22]
+        include:
+          - os: ubuntu-latest
+            node: 24
+    steps:
+      - uses: actions/checkout@v4
+
+      # pnpm sürümü package.json içindeki "packageManager" alanından okunur (9.15.1).
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+
+      - name: Bağımlılıkları kur
+        run: pnpm install --frozen-lockfile --prod=false
+
+      - name: Kurulum başlatıcı testleri
+        run: pnpm test:setup
+
+      - name: Yükseltme ve pnpm çağrı testleri
+        run: pnpm test:upgrade
+
+  tip-denetimi:
+    name: Tip denetimi
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Bağımlılıkları kur
+        run: pnpm install --frozen-lockfile --prod=false
+
+      - name: Sunucu tip denetimi
+        run: pnpm --filter quiz-master-server exec tsc --noEmit
+
+      - name: İstemci tip denetimi
+        run: pnpm --filter quiz-master-client run type-check
