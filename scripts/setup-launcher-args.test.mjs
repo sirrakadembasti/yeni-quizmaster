@@ -43,7 +43,7 @@ else fs.appendFileSync(process.env.LAUNCHER_TEST_ARGS,JSON.stringify(args)+'\\n'
     env.PATH = `${bin}${path.delimiter}${originalPath}`;
     for (const args of [[], ['--no-open', '--label', 'two words']]) {
       const result = entry === 'bat'
-        ? spawnSync(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', 'kurulum.bat', ...args], { cwd: fixture, env, windowsHide: true, timeout: 30000, encoding: 'utf8' })
+        ? spawnSync(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', '.\\kurulum.bat', ...args], { cwd: fixture, env, windowsHide: true, timeout: 30000, encoding: 'utf8' })
         : spawnSync(sh, ['kurulum.sh', ...args], { cwd: fixture, env, windowsHide: true, timeout: 30000, encoding: 'utf8' });
       assert.equal(result.error, undefined, 'Controlled actual wrapper process failed to run');
       assert.equal(result.status, 0, `Controlled ${entry} wrapper did not complete its preflight`);

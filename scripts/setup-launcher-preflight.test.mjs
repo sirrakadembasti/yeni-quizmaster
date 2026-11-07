@@ -46,7 +46,7 @@ function makeFixture(t, entry) {
 
 function run(entry, fixture, env) {
   return entry === 'bat'
-    ? spawnSync(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', 'kurulum.bat'], { cwd: fixture, env, windowsHide: true, timeout: 30000, input: 'H\r\n\r\n', encoding: 'latin1' })
+    ? spawnSync(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', '.\\kurulum.bat'], { cwd: fixture, env, windowsHide: true, timeout: 30000, input: 'H\r\n\r\n', encoding: 'latin1' })
     : spawnSync(sh, ['kurulum.sh'], { cwd: fixture, env, windowsHide: true, timeout: 30000, encoding: 'utf8' });
 }
 

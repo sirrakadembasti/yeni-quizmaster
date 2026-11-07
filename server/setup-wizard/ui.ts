@@ -128,7 +128,7 @@ export function renderSetupPage(csrfToken: string) {
 <section class="pane">
   <h2>Doğrula ve uygula <span class="help" tabindex="0" data-tip="Aşağıdaki onayla server/.env yazılır, veritabanı hazırlanır, ilk yönetici açılır ve istenirse üretim derlemesi alınır. Adımlar canlı izlenir.">?</span></h2>
   <p>Uygulama; <code>server/.env</code> dosyasını atomik olarak yazar, migration'ları uygular, ilk yöneticiyi oluşturur ve istenirse üretim derlemesini hazırlar.</p>
-  <div class="lbl-row"><label><input name="buildClient" type="checkbox" checked> Uygulamayı üretim için derle</label><span class="help" tabindex="0" data-tip="Üretimde açık tutun (Vite build). Hızlı yerel deneme için kapatabilirsiniz; sonra pnpm build ile alırsınız.">?</span></div>
+  <div class="lbl-row"><label><input name="buildClient" type="checkbox" checked> Uygulamayı üretim için derle</label><span class="help" tabindex="0" data-tip="Yerel kurulumda (pnpm dev) gerekmez, bu yüzden varsayılan kapalıdır. Alt alan adı ve alt yol kurulumlarında açık tutun (Vite build); sonradan pnpm build ile de alabilirsiniz.">?</span></div>
   <div class="lbl-row"><label><input name="overwrite" type="checkbox"> Var olan server/.env dosyasını yedekleyip değiştir</label><span class="help" tabindex="0" data-tip="Daha önce .env yazılmışsa bu onay olmadan kurulum durur. Eski dosya server/backups altına kopyalanır.">?</span></div>
   <div class="lbl-row"><label><input name="confirm" type="checkbox" required> Girilen bilgileri kontrol ettim ve kalıcı kurulumu onaylıyorum</label><span class="help" tabindex="0" data-tip="Bu onay olmadan kurulum uygulanmaz. Ayarlar kalıcıdır; sonra yönetici panelinden düzenlenebilir.">?</span></div>
   <div id="applyProgress" class="pwd-rules hidden" aria-live="polite"></div>
@@ -176,6 +176,9 @@ function applyModeDefaults(){
   const mode=wizard.elements.namedItem('mode').value;
   const note=document.getElementById('modeNote');
   const port=Number(wizard.elements.namedItem('port').value||5000);
+  // Yerelde uygulama pnpm dev ile açılır; üretim derlemesi gerekmez. Kullanıcı elle değiştirdiyse dokunma.
+  const buildBox=wizard.elements.namedItem('buildClient');
+  if(buildBox&&buildBox.dataset.auto!=='0')buildBox.checked=(mode!=='localhost');
   if(mode==='localhost'){
     setVal('basePath','/');
     setVal('host','127.0.0.1');
@@ -207,6 +210,7 @@ function applyModeDefaults(){
     if(note)note.textContent='Alt yol: https://okul.gov.tr/quizmaster gibi mevcut site altına eklenir.';
   }
 }
+(function(){const el=wizard.elements.namedItem('buildClient');if(el)el.addEventListener('change',()=>{el.dataset.auto='0'})})();
 ['publicUrl','origins','basePath','proxy','port'].forEach(name=>{
   const el=wizard.elements.namedItem(name);
   if(el)el.addEventListener('input',()=>{el.dataset.auto='0';if(name==='port')applyModeDefaults()});

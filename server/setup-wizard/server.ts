@@ -386,18 +386,35 @@ export function createSetupApp(token: string, onComplete?: () => void) {
       cwd = projectRoot;
     }
 
-    const child = spawn(command, args, {
-      cwd,
-      env: {
-        ...process.env,
-        NODE_ENV: preferDev ? "development" : "production",
-        FORCE_COLOR: "0",
-      },
-      detached: true,
-      stdio: "ignore",
-      windowsHide: true, // Terminal penceresi açma
-    });
+    // Çıktı bir log dosyasına yazılır; süreç hata verirse sebebi görülebilsin.
+    const logRoot = path.join(dataRoot, "logs");
+    fs.mkdirSync(logRoot, { recursive: true });
+    const logPath = path.join(logRoot, preferDev ? "app-dev.log" : "app-production.log");
+    const logFd = fs.openSync(logPath, "a", 0o600);
+    fs.writeSync(logFd, `\n--- ${new Date().toISOString()} başlatılıyor: ${command} ${args.join(" ")} ---\n`);
+    let child: ReturnType<typeof spawn>;
+    try {
+      child = spawn(command, args, {
+        cwd,
+        env: {
+          ...process.env,
+          NODE_ENV: preferDev ? "development" : "production",
+          FORCE_COLOR: "0",
+        },
+        detached: true,
+        stdio: ["ignore", logFd, logFd],
+        windowsHide: true, // Terminal penceresi açma
+      });
+    } finally {
+      fs.closeSync(logFd);
+    }
     child.unref();
+    // Süreç kimliği kaydedilir; durdurmak için elle başvurulabilir (kök süreç).
+    if (child.pid) {
+      try { fs.writeFileSync(path.join(dataRoot, "app.pid"), `${child.pid}\n`, { mode: 0o600 }); } catch { /* kritik değil */ }
+    }
+    let exitedEarly = false;
+    child.once("exit", () => { exitedEarly = true; });
 
     const watchPort = preferDev ? 5173 : appPort;
     let reachable = false;
@@ -420,13 +437,23 @@ export function createSetupApp(token: string, onComplete?: () => void) {
       ? `http://127.0.0.1:5173/auth`
       : applyJob.loginUrl;
 
+    let failureTail = "";
+    if (!reachable) {
+      try {
+        failureTail = fs.readFileSync(logPath, "utf8").slice(-1200).trim();
+      } catch { /* log okunamadı */ }
+    }
+    const logHint = `Ayrıntı için log dosyası: ${path.relative(projectRoot, logPath)}`;
     return res.status(reachable ? 200 : 202).json({
       message: reachable
         ? (preferDev ? "Geliştirme sunucusu (pnpm dev) arka planda başlatıldı." : "Uygulama başlatıldı.")
-        : "Başlatıldı ancak port henüz açılmadı. Birkaç saniye sonra tekrar denetleyin.",
+        : exitedEarly
+          ? `Uygulama başlatılamadı, süreç kapandı. ${logHint}${failureTail ? `\n\n${failureTail}` : ""}`
+          : `Başlatıldı ancak port henüz açılmadı. Birkaç saniye sonra tekrar denetleyin. ${logHint}`,
       reachable,
       loginUrl,
       publicUrl: applyJob.publicUrl,
+      logFile: path.relative(projectRoot, logPath),
     });
   });
 
