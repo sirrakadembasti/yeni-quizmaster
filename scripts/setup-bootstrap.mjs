@@ -317,7 +317,7 @@ byId("reset").onclick=async()=>{
     resetArmedUntil=Date.now()+10000;
     byId("reset").textContent="Emin misiniz? Onaylamak için tekrar tıklayın";
     notify("Bu işlem mevcut QuizMaster verilerini aktif kurulumdan kaldıracaktır. Devam etmek için 10 saniye içinde düğmeye tekrar tıklayın.","warn");
-    setTimeout(()=>{if(Date.now()>=resetArmedUntil)disarmReset()},10100);
+    setTimeout(()=>{if(resetArmedUntil&&Date.now()>=resetArmedUntil){disarmReset();notice=null}},10100);
     return;
   }
   disarmReset();

@@ -439,9 +439,12 @@ pnpm --filter quiz-master-client exec vitest run
 # Üretim derlemesi
 pnpm build
 
-# Uçtan uca testler
+# Uçtan uca testler (önce bir kez: Chromium artık pnpm install ile indirilmez)
+pnpm --filter quiz-master-server run archive:prepare
 pnpm test:e2e
 ```
+
+> Chromium yalnızca uçtan uca testler ve akademik arşiv PDF'i için gerekir; `pnpm install` sırasında indirilmez. PDF üretimi Chromium bulamazsa açıklayıcı bir hata verir.
 
 ## Önemli rotalar
 
