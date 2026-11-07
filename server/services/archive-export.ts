@@ -97,7 +97,15 @@ async function exists(directory: string) {
   try { await lstat(directory); return true; } catch (error: any) { if (error.code === 'ENOENT') return false; throw error; }
 }
 async function generatePdf(html: string, timeoutMs: number) {
-  const browser = await chromium.launch({ headless: true, timeout: timeoutMs });
+  let browser: Awaited<ReturnType<typeof chromium.launch>>;
+  try {
+    browser = await chromium.launch({ headless: true, timeout: timeoutMs });
+  } catch (error: any) {
+    if (/Executable doesn't exist|playwright install/i.test(String(error?.message))) {
+      throw new Error("PDF üretimi için Chromium kurulu değil. Sunucu hesabıyla şu komutu çalıştırın: pnpm --filter quiz-master-server run archive:prepare");
+    }
+    throw error;
+  }
   let timer: ReturnType<typeof setTimeout> | undefined;
   try {
     return await Promise.race([

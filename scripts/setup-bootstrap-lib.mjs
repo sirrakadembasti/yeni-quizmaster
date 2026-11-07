@@ -380,9 +380,22 @@ export function findListeningProcess(port) {
       const columns = csv.match(/"([^"]*)"/g)?.map((value) => value.slice(1, -1));
       if (columns?.[0]) name = columns[0];
     }
-    const wmic = runCapture("wmic", ["process", "where", `ProcessId=${pid}`, "get", "CommandLine", "/value"]);
-    const match = wmic.match(/CommandLine=(.+)/i);
-    if (match?.[1]) commandLine = match[1].trim();
+    // wmic yeni Windows 11 sürümlerinde kaldırıldı; CIM (PowerShell) kullanılır.
+    const cim = runCapture("powershell.exe", [
+      "-NoProfile",
+      "-NonInteractive",
+      "-Command",
+      `(Get-CimInstance Win32_Process -Filter 'ProcessId=${pid}' -ErrorAction SilentlyContinue).CommandLine`,
+    ]);
+    const cimLine = cim.split(/\r?\n/).map((value) => value.trim()).find(Boolean);
+    if (cimLine) {
+      commandLine = cimLine;
+    } else {
+      // Eski Windows sürümleri için yedek yol.
+      const wmic = runCapture("wmic", ["process", "where", `ProcessId=${pid}`, "get", "CommandLine", "/value"]);
+      const match = wmic.match(/CommandLine=(.+)/i);
+      if (match?.[1]) commandLine = match[1].trim();
+    }
   } else {
     const ps = runCapture("ps", ["-p", String(pid), "-o", "comm=,args="]);
     const line = ps.split(/\r?\n/).map((value) => value.trim()).find(Boolean);
