@@ -70,9 +70,15 @@ test('sh launcher: server/data yazılamıyorsa net hata verir ve veriye dokunmaz
   const dataDirectory = path.join(fixture, 'server', 'data');
   fs.mkdirSync(dataDirectory, { recursive: true });
   fs.chmodSync(dataDirectory, 0o555);
-  t.after(() => fs.chmodSync(dataDirectory, 0o755));
   fs.writeFileSync(path.join(bin, 'pnpm'), '#!/bin/sh\necho 9.15.1\n', { mode: 0o755 });
-  const result = run('sh', fixture, launcherEnv(bin));
+  let result;
+  try {
+    result = run('sh', fixture, launcherEnv(bin));
+  } finally {
+    // Fixture temizliği (makeFixture'ın t.after kancası) bu testin kancalarından önce
+    // çalışabildiği için izin burada, test gövdesinde geri alınır.
+    fs.chmodSync(dataDirectory, 0o755);
+  }
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}${result.stderr}`, /Yazma izni yok/);
 });
