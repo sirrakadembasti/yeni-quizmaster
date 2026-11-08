@@ -56,14 +56,15 @@ test('kabuk metakarakterli argümanlar olduğu gibi kalır (kabuk yok)', () => {
   }
 });
 
-test('npm giriş dosyası Node dizininden ve PATH’ten çözülür; yoksa Windows güvenle hata verir', () => {
-  const present = new Set([path.resolve('C:\\node\\node_modules\\npm\\bin\\npm-cli.js')]);
-  const exists = file => present.has(path.resolve(file));
-  const entry = resolveNpmEntry({ platform: 'win32', env: { PATH: '' }, execPath: 'C:\\node\\node.exe', exists });
-  assert.equal(entry, path.resolve('C:\\node\\node_modules\\npm\\bin\\npm-cli.js'));
-  const prefix = managerInvocation('npm', { platform: 'win32', env: { PATH: '' }, execPath: 'C:\\node\\node.exe', exists });
-  assert.deepEqual(prefix, { command: 'C:\\node\\node.exe', args: [entry] });
-  assert.throws(() => managerInvocation('npm', { platform: 'win32', env: { PATH: '' }, execPath: 'C:\\yok\\node.exe', exists: () => false }), /npm-cli\.js/);
+test('npm giriş dosyası Node dizininden çözülür; yoksa Windows güvenle hata verir', () => {
+  // Yollar ana makinenin path modülüyle kurulur: test her işletim sisteminde aynı davranır.
+  const nodeDir = path.resolve('/sahte/node');
+  const execPath = path.join(nodeDir, 'node.exe');
+  const npmEntry = path.join(nodeDir, 'node_modules', 'npm', 'bin', 'npm-cli.js');
+  const exists = file => path.resolve(file) === path.resolve(npmEntry);
+  assert.equal(resolveNpmEntry({ platform: 'win32', env: { PATH: '' }, execPath, exists }), path.resolve(npmEntry));
+  assert.deepEqual(managerInvocation('npm', { platform: 'win32', env: { PATH: '' }, execPath, exists }), { command: execPath, args: [path.resolve(npmEntry)] });
+  assert.throws(() => managerInvocation('npm', { platform: 'win32', env: { PATH: '' }, execPath: path.join(path.resolve('/yok'), 'node.exe'), exists: () => false }), /npm-cli.js/);
   assert.deepEqual(managerInvocation('npm', { platform: 'linux', env: { PATH: '' }, execPath: '/yok/node', exists: () => false }), { command: 'npm', args: [] });
 });
 
