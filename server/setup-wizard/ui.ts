@@ -38,7 +38,7 @@ export function renderSetupPage(csrfToken: string, apiBase = "") {
       </select>
     </div>
     <div class="full">
-      <div class="lbl-row"><label for="publicUrl">Herkese açık adres</label><span class="help" tabindex="0" data-tip="Kullanıcıların tarayıcıya yazacağı adrestir. Üretimde HTTPS zorunludur. Yerelde (pnpm dev) arayüz http://127.0.0.1:5173, API 5000'dir.">?</span></div>
+      <div class="lbl-row"><label for="publicUrl">Herkese açık adres</label><span class="help" tabindex="0" data-tip="Kullanıcıların tarayıcıya yazacağı adrestir. Üretimde HTTPS zorunludur. Yerelde (geliştirme sunucusu) arayüz http://127.0.0.1:5173, API 5000'dir.">?</span></div>
       <input name="publicUrl" id="publicUrl" type="url" required placeholder="http://127.0.0.1:5173">
     </div>
     <div>
@@ -130,7 +130,7 @@ export function renderSetupPage(csrfToken: string, apiBase = "") {
 <section class="pane">
   <h2>Doğrula ve uygula <span class="help" tabindex="0" data-tip="Aşağıdaki onayla server/.env yazılır, veritabanı hazırlanır, ilk yönetici açılır ve istenirse üretim derlemesi alınır. Adımlar canlı izlenir.">?</span></h2>
   <p>Uygulama; <code>server/.env</code> dosyasını atomik olarak yazar, migration'ları uygular, ilk yöneticiyi oluşturur ve istenirse üretim derlemesini hazırlar.</p>
-  <div class="lbl-row"><label><input name="buildClient" type="checkbox" checked> Uygulamayı üretim için derle</label><span class="help" tabindex="0" data-tip="Yerel kurulumda (pnpm dev) gerekmez, bu yüzden varsayılan kapalıdır. Alt alan adı ve alt yol kurulumlarında açık tutun (Vite build); sonradan pnpm build ile de alabilirsiniz.">?</span></div>
+  <div class="lbl-row"><label><input name="buildClient" type="checkbox" checked> Uygulamayı üretim için derle</label><span class="help" tabindex="0" data-tip="Yerel kurulumda (geliştirme sunucusu) gerekmez, bu yüzden varsayılan kapalıdır. Alt alan adı ve alt yol kurulumlarında açık tutun (Vite build); sonradan build betiğiyle de alabilirsiniz.">?</span></div>
   <div class="lbl-row"><label><input name="overwrite" type="checkbox"> Var olan server/.env dosyasını yedekleyip değiştir</label><span class="help" tabindex="0" data-tip="Daha önce .env yazılmışsa bu onay olmadan kurulum durur. Eski dosya server/backups altına kopyalanır.">?</span></div>
   <div class="lbl-row"><label><input name="confirm" type="checkbox" required> Girilen bilgileri kontrol ettim ve kalıcı kurulumu onaylıyorum</label><span class="help" tabindex="0" data-tip="Bu onay olmadan kurulum uygulanmaz. Ayarlar kalıcıdır; sonra yönetici panelinden düzenlenebilir.">?</span></div>
   <div id="applyProgress" class="pwd-rules hidden" aria-live="polite"></div>
@@ -178,14 +178,14 @@ function applyModeDefaults(){
   const mode=wizard.elements.namedItem('mode').value;
   const note=document.getElementById('modeNote');
   const port=Number(wizard.elements.namedItem('port').value||5000);
-  // Yerelde uygulama pnpm dev ile açılır; üretim derlemesi gerekmez. Kullanıcı elle değiştirdiyse dokunma.
+  // Yerelde uygulama geliştirme sunucusuyla açılır; üretim derlemesi gerekmez. Kullanıcı elle değiştirdiyse dokunma.
   const buildBox=wizard.elements.namedItem('buildClient');
   if(buildBox&&buildBox.dataset.auto!=='0')buildBox.checked=(mode!=='localhost');
   if(mode==='localhost'){
     setVal('basePath','/');
     setVal('host','127.0.0.1');
     setVal('proxy',0);
-    // pnpm dev: tarayıcı Vite (5173), API 5000. Adres/origin tarayıcı tarafını gösterir.
+    // Geliştirme sunucusu: tarayıcı Vite (5173), API 5000. Adres/origin tarayıcı tarafını gösterir.
     const uiPort=5173;
     if(!wizard.elements.namedItem('publicUrl').value||wizard.elements.namedItem('publicUrl').dataset.auto!=='0'){
       setVal('publicUrl','http://127.0.0.1:'+uiPort);
@@ -195,7 +195,7 @@ function applyModeDefaults(){
       setVal('origins','http://127.0.0.1:'+uiPort+', http://localhost:'+uiPort+', http://127.0.0.1:'+port+', http://localhost:'+port);
       wizard.elements.namedItem('origins').dataset.auto='1';
     }
-    if(note)note.textContent='Yerel kurulum (pnpm dev): arayüz http://127.0.0.1:'+uiPort+' · API http://127.0.0.1:'+port+' — reverse proxy/TLS gerekmez.';
+    if(note)note.textContent='Yerel kurulum (geliştirme sunucusu): arayüz http://127.0.0.1:'+uiPort+' · API http://127.0.0.1:'+port+' — reverse proxy/TLS gerekmez.';
   }else if(mode==='subdomain'){
     if(wizard.elements.namedItem('basePath').value==='/'||wizard.elements.namedItem('basePath').dataset.auto!=='0'){
       setVal('basePath','/');
@@ -345,7 +345,7 @@ function finishApplySuccess(applyJob){
   result.className='ok';
   list.innerHTML=[
     isLocal
-      ? 'Aşağıdaki <strong>Uygulamayı başlat</strong> ile <code>pnpm dev</code> arka planda açılır (terminal penceresi açılmaz).'
+      ? 'Aşağıdaki <strong>Uygulamayı başlat</strong> ile geliştirme sunucusu (<code>dev</code> betiği) arka planda açılır (terminal penceresi açılmaz).'
       : 'Aşağıdaki <strong>Uygulamayı başlat</strong> ile uygulama servisi ayağa kaldırılır.',
     isLocal
       ? 'Tarayıcıdan giriş: <a href="'+loginUrl+'" id="loginLink">'+loginUrl+'</a>'
@@ -367,12 +367,12 @@ function finishApplySuccess(applyJob){
     startBtn.hidden=false;
     startBtn.classList.remove('hidden');
     startBtn.disabled=false;
-    startBtn.textContent=isLocal?'Uygulamayı başlat (pnpm dev)':'Uygulamayı başlat';
+    startBtn.textContent=isLocal?'Uygulamayı başlat (geliştirme sunucusu)':'Uygulamayı başlat';
     startBtn.onclick=async()=>{
       startBtn.disabled=true;
       startBtn.textContent='Başlatılıyor…';
       note.textContent=isLocal
-        ? 'pnpm dev arka planda başlatılıyor; terminal penceresi açılmaz…'
+        ? 'Geliştirme sunucusu arka planda başlatılıyor; terminal penceresi açılmaz…'
         : 'Uygulama servisi başlatılıyor…';
       try{
         const {data}=await fetchJson(window.__SETUP__.apiBase+'/api/start-app',{
@@ -391,7 +391,7 @@ function finishApplySuccess(applyJob){
       }catch(err){
         note.textContent=err.message||'Uygulama başlatılamadı.';
         startBtn.disabled=false;
-        startBtn.textContent=isLocal?'Uygulamayı başlat (pnpm dev)':'Uygulamayı başlat';
+        startBtn.textContent=isLocal?'Uygulamayı başlat (geliştirme sunucusu)':'Uygulamayı başlat';
       }
     };
   }
@@ -419,7 +419,7 @@ function finishApplySuccess(applyJob){
     location.href=isLocal?(loginUrl.replace(/\\/auth$/,'')):(publicUrl||loginUrl);
   };
   note.textContent=isLocal
-    ? 'Kurulum tamam. “Uygulamayı başlat (pnpm dev)” ile uygulamayı arka planda açın; ardından giriş yapılabilir.'
+    ? 'Kurulum tamam. “Uygulamayı başlat (geliştirme sunucusu)” ile uygulamayı arka planda açın; ardından giriş yapılabilir.'
     : 'Kurulum tamam. Nginx/DNS hazır değilse “sayfaya ulaşılamıyor” alırsınız. Önce servisi başlatın, sonra domain’i açın.';
 }
 async function watchAppHealth(loginUrl,note,isLocal){

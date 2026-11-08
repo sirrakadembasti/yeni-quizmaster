@@ -145,7 +145,7 @@ export default function ServerSetupPage() {
         {!changesAllowed && (
           <Card className="border-sky-200 bg-sky-50/60 dark:border-sky-900 dark:bg-sky-950/20">
             <CardContent className="p-4 text-sm text-sky-900 dark:text-sky-200">
-              Bu ekran salt okunur durumdadır. İlk kurulum ayrı ve tek kullanımlık <code>pnpm setup</code> sihirbazıyla yapılır. Çalışan sistemde profil yazma ve kalıcı temizlik yalnız sunucu yöneticisi <code>ALLOW_RUNTIME_DEPLOYMENT_CHANGES=true</code> değerini bilinçli olarak etkinleştirirse açılır.
+              Bu ekran salt okunur durumdadır. İlk kurulum ayrı ve tek kullanımlık <code>kurulum.bat</code> / <code>kurulum.sh</code> sihirbazıyla yapılır. Çalışan sistemde profil yazma ve kalıcı temizlik yalnız sunucu yöneticisi <code>ALLOW_RUNTIME_DEPLOYMENT_CHANGES=true</code> değerini bilinçli olarak etkinleştirirse açılır.
             </CardContent>
           </Card>
         )}

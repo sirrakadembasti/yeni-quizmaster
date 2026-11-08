@@ -102,7 +102,7 @@ async function generatePdf(html: string, timeoutMs: number) {
     browser = await chromium.launch({ headless: true, timeout: timeoutMs });
   } catch (error: any) {
     if (/Executable doesn't exist|playwright install/i.test(String(error?.message))) {
-      throw new Error("PDF üretimi için Chromium kurulu değil. Sunucu hesabıyla şu komutu çalıştırın: pnpm --filter quiz-master-server run archive:prepare");
+      throw new Error("PDF üretimi için Chromium kurulu değil. Sunucu hesabıyla şu komutu çalıştırın: node scripts/pm.mjs run -w server archive:prepare");
     }
     throw error;
   }

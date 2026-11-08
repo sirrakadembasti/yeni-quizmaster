@@ -205,8 +205,8 @@ export function buildDeploymentArtifacts(config: DeploymentConfig) {
     envText,
     nginxText,
     buildCommand: basePath === "/"
-      ? "pnpm build"
-      : `$env:VITE_BASE_PATH=\"${basePathWithSlash}\"; pnpm build`,
+      ? "node scripts/pm.mjs run build"
+      : `$env:VITE_BASE_PATH=\"${basePathWithSlash}\"; node scripts/pm.mjs run build`,
     restartRequired: true,
   };
 }

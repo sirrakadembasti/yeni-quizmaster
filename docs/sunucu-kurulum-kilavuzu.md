@@ -10,7 +10,7 @@ Başlatıcı çalışma zamanı sürümlerini süreç başında doğrular ve sta
 
 3 Ekim 2026'da Windows terminali, BAT ve Git SH için ayrı temiz kurulumların üçü de geçti: gerçek paket kurulumu, sihirbaz, migration/ilk admin, ayarların kalıcılığı, API ve tarayıcı girişi ile test süreçlerinin temizliği doğrulandı. Daha sonra Ubuntu 22.04.5 LTS / WSL2 üzerinde native Linux Node.js 22.23.2, pnpm 9.15.1 ve Chromium ile gerçek SH temiz kurulumu **1/1 geçti**; iki build, 14 migration, ilk admin, kalıcı ayarlar, üretim API/Vite girişi ve dört fixture portunun bırakılması ayrıca doğrulandı. [Native Linux/WSL sonucu](../tests/denetim-kanitlari/yonetici/evidence/closure/hybrid/linux-wsl-first-passed/result.json). Windows 3/3 tarihsel kanıttır; yeni Linux cleanup desteğiyle Windows tekrar edilmediğinden aynı kodla 4/4 kabul iddiası yoktur. WSL dışı Linux, başlatıcının otomatik işletim sistemi tarayıcı açması, sihirbazın geliştirme başlatma düğmesi ve gerçek SMTP/DNS/Nginx/TLS bu izole kabulün dışındadır.
 
-Başlatıcı aynı anda yalnız bir durum sorgusu gönderir; 30 saniyede yanıt gelmeyen durum okuması sonlandırılır ve sonraki yenilemeye izin verilir. Paket kurulumu ve sihirbazı uygulama işlemleri bu timeout ile kesilmez. Otomatik tarayıcı açılışını istemiyorsanız `pnpm run setup --no-open`, `kurulum.bat --no-open` veya `sh kurulum.sh --no-open` kullanın ve terminaldeki yerel adresi açın; seçenek verilmezse mevcut otomatik açılış davranışı sürer.
+Başlatıcı aynı anda yalnız bir durum sorgusu gönderir; 30 saniyede yanıt gelmeyen durum okuması sonlandırılır ve sonraki yenilemeye izin verilir. Paket kurulumu ve sihirbazı uygulama işlemleri bu timeout ile kesilmez. Otomatik tarayıcı açılışını istemiyorsanız `npm run setup --no-open`, `kurulum.bat --no-open` veya `sh kurulum.sh --no-open` kullanın ve terminaldeki yerel adresi açın; seçenek verilmezse mevcut otomatik açılış davranışı sürer.
 
 Sihirbaz yalnız migration alt sürecinde `RUST_LOG=info` kullanır. Prisma 5.22'nin eksik SQLite dosyasını otomatik oluşturması, dış ortamdan gelen `warn/error` seviyesinde bozulabildiği için bu işlem ayrıştırıcının beklediği başlangıç logunu korur. Uygulamanın genel log tercihi değiştirilmez. Paket indirme veya Prisma postinstall ağ hatası migration başarısı sayılmaz; hata giderilince paket kurulumunu yeniden deneyin.
 
@@ -37,7 +37,7 @@ QuizMaster Node.js (Express + Socket.IO)
 - Uygulama, API, yüklemeler ve Socket.IO aynı origin altında kalır.
 - CORS, cookie, TLS ve reverse proxy ayarları daha basittir.
 - Kurumun ana sitesindeki `/api` veya `/socket.io` yollarıyla çakışmaz.
-- `APP_BASE_PATH=/` ve standart `pnpm build` kullanılır.
+- `APP_BASE_PATH=/` ve standart `npm run build` kullanılır.
 
 ### Seçenek B — kurum sitesi altında alt yol
 
@@ -52,7 +52,7 @@ QuizMaster Node.js (Express + Socket.IO)
 
 Örnek: `https://sinav.kurum.gov.tr/demo/`
 
-- Ana üretim uygulaması `127.0.0.1:5000` (`server/data/quiz.db`) üzerinde çalışırken, salt-okunur vitrin kopyası `127.0.0.1:5001` (`server/data/demo.db`, `APP_DEMO_MODE=true`, `APP_BASE_PATH=/demo`) üzerinde ikinci bir süreç olarak çalıştırılır (`pnpm run db:prepare-demo` ve `pnpm run start:demo`).
+- Ana üretim uygulaması `127.0.0.1:5000` (`server/data/quiz.db`) üzerinde çalışırken, salt-okunur vitrin kopyası `127.0.0.1:5001` (`server/data/demo.db`, `APP_DEMO_MODE=true`, `APP_BASE_PATH=/demo`) üzerinde ikinci bir süreç olarak çalıştırılır (`npm run db:prepare-demo` ve `npm run start:demo`).
 - Bu modda istemci tüm API (`/demo/api/...`), görsel (`/demo/uploads/...`), Socket.IO (`/demo/socket.io/...`) ve oturum çerezi (`quizmaster.demo.sid`) isteklerini `/demo` önekiyle gönderir; ana uygulamanın veritabanı veya oturumlarıyla çakışmaz.
 - Ziyaretçiler `demo-admin`, `demo-ogretmen`, `demo-ogrenci` ve `demo-veli` hesaplarıyla tek tıkla giriş yapıp tüm ekranları inceleyebilir; veri değiştiren istekler `DEMO_MODE_READ_ONLY` ile engellenir. Ayrıntılar [`demo/demo-vitrin-hesaplari.md`](../demo/demo-vitrin-hesaplari.md) belgesindedir.
 
@@ -61,13 +61,13 @@ QuizMaster Node.js (Express + Socket.IO)
 - Kurum DNS yöneticisi tarafından açılmış A/AAAA kaydı,
 - Kuruma ait geçerli TLS sertifikası ve yenileme süreci,
 - Node.js 22 veya 24 LTS,
-- Projenin sabitlediği pnpm `9.15.1`,
+- npm 11 veya üstü (varsayılan; pnpm `9.15.1` veya deneysel Bun alternatiftir),
 - Nginx, Apache veya IIS reverse proxy,
 - Yalnız sunucu yönetici hesabının erişebildiği uygulama kullanıcısı/dizini,
 - SMTP için Gmail uygulama parolası kullanılacaksa dışarı doğru TCP 587 veya 465 izni,
 - Düzenli ve sunucu dışına alınan veritabanı/yükleme yedeği.
 
-Node.js ve pnpm'i yalnız resmî dağıtımlardan kurun. Proje `packageManager` alanında pnpm sürümünü sabitler; üretimde rastgele `latest` sürüme geçmeyin.
+Node.js ve paket yöneticisini yalnız resmî dağıtımlardan kurun. Üretimde bağımlılık sürümleri `package-lock.json` ile sabittir (`npm ci`); rastgele `latest` sürüme geçmeyin. Node.js 22 ile gelen npm 10 desteklenmez: `npm install -g npm@11`.
 
 ## 3. DNS ve güvenlik duvarı
 
@@ -107,7 +107,7 @@ chmod +x kurulum.sh
 ./kurulum.sh
 ```
 
-`kurulum.sh` Node.js 22/24 LTS ve pnpm 9.15.1 sürümlerini doğrular. Ayrıca Linux/macOS ortamını teyit eder, root yetkisiyle çalıştırmada uyarır, proje ve `server/data` dizinlerinin yazma izinlerini, en az 3 GB boş disk alanını ve `better-sqlite3` yerel derlemesi için `python3`, `make`, `g++/c++` varlığını denetler. Eksik veya uyumsuz bileşen varsa resmî bağlantıları ve kurumsal ağ kısıtlarına uygun komut seçeneklerini (npm, corepack veya bağımsız pnpm) gösterip hiçbir dosyayı değiştirmeden durur. Gereksinimler tamamsa bağımlılıksız bootstrap arayüzünü açar; paket kurulumu kullanıcı onayından sonra bu arayüzden yürütülür. Kurulum panelinde pnpm önerilen/varsayılan paket yöneticisidir; sistemde Bun kuruluysa **Bun (Deneysel)** seçeneği de seçilebilir; bu yolda paket kurulumu ve migration CLI ile (`QUIZMASTER_PM=bun`) doğrulanmıştır; tarayıcı arayüzü, derleme ve yükseltme pnpm kadar sınanmamıştır. Üretim için pnpm kullanın.
+`kurulum.sh` Node.js 22/24 LTS ile desteklenen bir paket yöneticisini (npm 11+, pnpm 9.15.1 veya Bun) doğrular. Ayrıca Linux/macOS ortamını teyit eder, root yetkisiyle çalıştırmada uyarır, proje ve `server/data` dizinlerinin yazma izinlerini, en az 3 GB boş disk alanını ve `better-sqlite3` yerel derlemesi için `python3`, `make`, `g++/c++` varlığını denetler. Eksik veya uyumsuz bileşen varsa resmî bağlantıları ve kurumsal ağ kısıtlarına uygun komut seçeneklerini (npm, corepack veya bağımsız pnpm) gösterip hiçbir dosyayı değiştirmeden durur. Gereksinimler tamamsa bağımlılıksız bootstrap arayüzünü açar; paket kurulumu kullanıcı onayından sonra bu arayüzden yürütülür. Kurulum panelinde pnpm önerilen/varsayılan paket yöneticisidir; sistemde Bun kuruluysa **Bun (Deneysel)** seçeneği de seçilebilir; bu yolda paket kurulumu ve migration CLI ile (`QUIZMASTER_PM=bun`) doğrulanmıştır; tarayıcı arayüzü, derleme ve yükseltme pnpm kadar sınanmamıştır. Üretim için pnpm kullanın.
 
 Kurumsal ağ internete çıkmıyorsa bağımlılıkları onaylı bir build sunucusunda hedef işletim sistemi ve CPU mimarisiyle kurup artefact üretin. `node_modules` klasörünü farklı işletim sistemi veya CPU mimarisinden kopyalamayın; Prisma, Sharp ve SQLite native bileşenleri hedef ortamla aynı olmalıdır.
 
@@ -149,10 +149,10 @@ Kurallar:
 Üretimde `migrate dev` veya `migrate reset` çalıştırmayın:
 
 ```bash
-pnpm --filter quiz-master-server db:validate
-pnpm --filter quiz-master-server db:status
-pnpm --filter quiz-master-server db:deploy
-pnpm --filter quiz-master-server db:generate
+npm run db:validate --workspace=server
+npm run db:status --workspace=server
+npm run db:deploy --workspace=server
+npm run db:generate --workspace=server
 ```
 
 `db:seed` mevcut kayıtları temizleyen demo seed akışıdır ve üretimde kullanılmamalıdır.
@@ -163,7 +163,7 @@ pnpm --filter quiz-master-server db:generate
 export BOOTSTRAP_ADMIN_NAME="Kurum Sistem Yöneticisi"
 export BOOTSTRAP_ADMIN_EMAIL="yonetici@kurum.gov.tr"
 export BOOTSTRAP_ADMIN_PASSWORD="UZUN_RASTGELE_GECICI_PAROLA"
-pnpm --filter quiz-master-server db:create-admin
+npm run db:create-admin --workspace=server
 unset BOOTSTRAP_ADMIN_PASSWORD
 ```
 
@@ -174,25 +174,25 @@ Komut yalnız hiç yönetici yoksa çalışır, zayıf/bilinen parola kalıplar�
 Subdomain/kök kurulum:
 
 ```bash
-pnpm build
+npm run build
 ```
 
 Linux alt yol kurulumu:
 
 ```bash
-VITE_BASE_PATH=/quizmaster/ pnpm build
+VITE_BASE_PATH=/quizmaster/ npm run build
 ```
 
 PowerShell alt yol kurulumu:
 
 ```powershell
 $env:VITE_BASE_PATH="/quizmaster/"
-pnpm build
+npm run build
 ```
 
-Derleme sonunda `client/dist` ve kökte `dist/index.cjs` bulunmalıdır. Derleme yapılan Node ana sürümü ile üretimdeki Node ana sürümü aynı tutulmalıdır. Sunucuyu workspace kökünden `pnpm --filter quiz-master-server start` ile çalıştırın; paket komutu pnpm'in native bağımlılık çözümlemesini de sağlar. SQLite3 ve Sharp build dışında bırakılır, kurulu `node_modules` gerektirir; yalnız `dist/index.cjs` dosyasını başka bir yere taşımak bağımsız dağıtım oluşturmaz.
+Derleme sonunda `client/dist` ve kökte `dist/index.cjs` bulunmalıdır. Derleme yapılan Node ana sürümü ile üretimdeki Node ana sürümü aynı tutulmalıdır. Sunucuyu workspace kökünden `npm run start --workspace=server` ile çalıştırın; paket betiği `cross-env` ile `NODE_ENV=production` ayarlar ve kurulu `node_modules` içindeki native bağımlılıkları kullanır. SQLite3 ve Sharp build dışında bırakılır, kurulu `node_modules` gerektirir; yalnız `dist/index.cjs` dosyasını başka bir yere taşımak bağımsız dağıtım oluşturmaz.
 
-Kurulu sürüm yükseltmesinde app/worker süreçlerini durdurup onaylı kaynakları veri/ayar dizinlerini ezmeden yerleştirin. `pnpm run upgrade --project <kurulum>` veya terminal/BAT/SH başlangıç ekranındaki **Mevcut Kurulumu Güncelle**, doğrulanmış private yedek ardından frozen install/build/migration/status çalıştırır. İlk kurulum sihirbazını tekrar çalıştırmayın. Sonuç sonrası yukarıdaki resmi start komutuyla giriş ve Sunucu Durumu doğrulanmalıdır. [Bakım/yükseltme belgesi](uretim-ve-bakim-kilavuzu.md#veri-koruyan-sürüm-yükseltme) kesilme, kilit ve sürüm+veri geri dönüş sınırlarını açıklar; 13 Ekim terminal/BAT/web ve native SH/web kabulü [yükseltme raporunda](uretim-ve-bakim-kilavuzu.md) tamamlandı; ortam ve cache sınırları korundu.
+Kurulu sürüm yükseltmesinde app/worker süreçlerini durdurup onaylı kaynakları veri/ayar dizinlerini ezmeden yerleştirin. `npm run upgrade -- --project <kurulum>` veya terminal/BAT/SH başlangıç ekranındaki **Mevcut Kurulumu Güncelle**, doğrulanmış private yedek ardından frozen install/build/migration/status çalıştırır. İlk kurulum sihirbazını tekrar çalıştırmayın. Sonuç sonrası yukarıdaki resmi start komutuyla giriş ve Sunucu Durumu doğrulanmalıdır. [Bakım/yükseltme belgesi](uretim-ve-bakim-kilavuzu.md#veri-koruyan-sürüm-yükseltme) kesilme, kilit ve sürüm+veri geri dönüş sınırlarını açıklar; 13 Ekim terminal/BAT/web ve native SH/web kabulü [yükseltme raporunda](uretim-ve-bakim-kilavuzu.md) tamamlandı; ortam ve cache sınırları korundu.
 
 ## 9. systemd servisi
 
@@ -209,7 +209,7 @@ User=quizmaster
 Group=quizmaster
 WorkingDirectory=/opt/quizmaster/app
 Environment=NODE_ENV=production
-ExecStart=/usr/bin/pnpm --filter quiz-master-server start
+ExecStart=/usr/bin/npm run start --workspace=server
 Restart=on-failure
 RestartSec=5
 NoNewPrivileges=true
@@ -228,7 +228,7 @@ sudo systemctl status quizmaster
 journalctl -u quizmaster -n 100 --no-pager
 ```
 
-Gerçek `node`/`pnpm` yolu `command -v pnpm` ile doğrulanmalıdır. NVM gibi yalnız interaktif shell'de çalışan PATH ayarlarına servis içinde güvenmeyin.
+Gerçek `node`/`npm` yolu `command -v npm` ile doğrulanmalıdır. NVM gibi yalnız interaktif shell'de çalışan PATH ayarlarına servis içinde güvenmeyin.
 
 Windows Server'da NSSM veya kurumun onaylı servis yöneticisiyle aynı çalışma dizini, `.env` ve servis hesabı kullanılabilir. Uygulamayı açık PowerShell penceresine bağlı bırakmayın.
 
@@ -325,21 +325,21 @@ Kurulumdan sonra **Sunucu Durumu** ekranında HTTPS, forwarded header ve algıla
 
 ## 13. Bootstrap ve tek kullanımlık web kurulum sihirbazı
 
-Windows'ta `kurulum.bat`, Linux/macOS'ta `./kurulum.sh` önerilir. Node.js ve pnpm zaten doğru sürümdeyse eşdeğer doğrudan komut:
+Windows'ta `kurulum.bat`, Linux/macOS'ta `./kurulum.sh` önerilir. Node.js ve paket yöneticiniz zaten doğru sürümdeyse eşdeğer doğrudan komut:
 
 ```bash
-pnpm run setup
+npm run setup
 ```
 
-İlk aşama yalnız Node.js yerleşik modüllerini kullanır ve `127.0.0.1:5049` adresine bağlanır. Kurulum durumunu gösterir, varsayılan olarak `pnpm install --frozen-lockfile` (veya panelden deneysel Bun seçildiyse `bun install`) işlemini başlatır ve gerçek işlem çıktısını ekranda sunar. Paketler hazır olduğunda mevcut ana sihirbaz arka planda boş bir yerel portta başlatılır ve aynı adrestan (`127.0.0.1:5049/wizard`) sunulur; başlatıcı yalnız kimliği doğrulanmış, beyaz listedeki sihirbaz isteklerini aktarır. Başlatıcı portu (5049) doluysa başlatıcı PID ile uyarır ve süreci durdurmayı teklif eder. Terminal sihirbaz bitene kadar kapatılmamalıdır. Doğrudan konsoldan manuel kurulum tercih edilirse `pnpm install --frozen-lockfile && pnpm --filter quiz-master-server db:deploy && pnpm build` akışı aynen korunmaktadır.
+İlk aşama yalnız Node.js yerleşik modüllerini kullanır ve `127.0.0.1:5049` adresine bağlanır. Kurulum durumunu gösterir, varsayılan olarak `npm ci` (veya panelden deneysel Bun seçildiyse `bun install`) işlemini başlatır ve gerçek işlem çıktısını ekranda sunar. Paketler hazır olduğunda mevcut ana sihirbaz arka planda boş bir yerel portta başlatılır ve aynı adrestan (`127.0.0.1:5049/wizard`) sunulur; başlatıcı yalnız kimliği doğrulanmış, beyaz listedeki sihirbaz isteklerini aktarır. Başlatıcı portu (5049) doluysa başlatıcı PID ile uyarır ve süreci durdurmayı teklif eder. Terminal sihirbaz bitene kadar kapatılmamalıdır. Doğrudan konsoldan manuel kurulum tercih edilirse `npm ci && npm run db:deploy --workspace=server && npm run build` akışı aynen korunmaktadır.
 
 Sihirbazda **kurulum biçimi** seçenekleri:
 
-- **Yerel / localhost** — deneme (`pnpm dev`: arayüz `http://127.0.0.1:5173`, API `:5000`); reverse proxy/TLS gerekmez
+- **Yerel / localhost** — deneme (`npm run dev`: arayüz `http://127.0.0.1:5173`, API `:5000`); reverse proxy/TLS gerekmez
 - **Subdomain** — üretim önerilen (bu kılavuzun ana senaryosu)
 - **Subpath** — kurum sitesi alt yol
 
-Kurulum uygulandıktan sonra sihirbaz **kör yönlendirme yapmaz**. Bitişteki **Uygulamayı başlat** düğmesi yerelde `pnpm dev` (arka plan, terminal penceresiz), kurum kurulumunda üretim servisini başlatır. Yerel giriş: `http://127.0.0.1:5173/auth`. Kurum (subdomain/alt yol) adresi ancak Nginx + DNS + TLS hazır ve uygulama ayaktaysa açılır. Aksi halde “sayfaya ulaşılamıyor” görünür; bu bir kurulum hatası değildir.
+Kurulum uygulandıktan sonra sihirbaz **kör yönlendirme yapmaz**. Bitişteki **Uygulamayı başlat** düğmesi yerelde `npm run dev` (arka plan, terminal penceresiz), kurum kurulumunda üretim servisini başlatır. Yerel giriş: `http://127.0.0.1:5173/auth`. Kurum (subdomain/alt yol) adresi ancak Nginx + DNS + TLS hazır ve uygulama ayaktaysa açılır. Aksi halde “sayfaya ulaşılamıyor” görünür; bu bir kurulum hatası değildir.
 
 VPS üzerinde bu portu internete veya yerel ağa açmayın. Yönetici bilgisayarından SSH tüneli kurun:
 
@@ -451,10 +451,10 @@ Her gün en az şunları yedekleyin:
 ```bash
 git fetch origin
 git checkout <onayli-surum>
-pnpm install --frozen-lockfile
-pnpm --filter quiz-master-server db:status
-pnpm --filter quiz-master-server db:deploy
-pnpm build
+npm ci
+npm run db:status --workspace=server
+npm run db:deploy --workspace=server
+npm run build
 sudo systemctl restart quizmaster
 ```
 
@@ -463,7 +463,8 @@ Güncellemeden önce veritabanı ve uploads yedeği alın. Migration uygulanmı�
 ## 18. Resmî başvuru kaynakları
 
 - [Node.js indirme ve LTS sürümleri](https://nodejs.org/en/download)
-- [pnpm kurulumu ve Node uyumluluk tablosu](https://pnpm.io/installation)
+- [npm kurulumu](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+- [pnpm kurulumu ve Node uyumluluk tablosu](https://pnpm.io/installation) (alternatif yönetici)
 - [Nginx HTTP proxy modülü](https://nginx.org/en/docs/http/ngx_http_proxy_module.html)
 - [Nginx WebSocket proxy](https://nginx.org/en/docs/http/websocket.html)
 - [Prisma geliştirme ve üretim migration akışı](https://www.prisma.io/docs/orm/v6/prisma-migrate/workflows/development-and-production)
@@ -471,8 +472,8 @@ Güncellemeden önce veritabanı ve uploads yedeği alın. Migration uygulanmı�
 ## Mevcut kurulumda güvenlik bakımı
 
 1. Bakım penceresinde sunucuyu durdurun. SQLite backup API/tutarlı snapshot ile veritabanını ve session verisini yedekleyin; WAL açıkken yalnız ana db dosyasını kopyalamayın.
-2. `pnpm install` ve `pnpm --filter quiz-master-server db:deploy` çalıştırın. Migration `sessionVersion`, `processingUntil` ve sonuç indeksleri ekler; kayıtları silmez.
-3. `pnpm build` ardından sunucuyu yeniden başlatın. Session store çalışma dizininden bağımsız olarak `server/data` altındadır. Eski kök `data/sessions.db` varsa bakım sırasında taşıyın veya yeniden giriş sağlayın.
+2. `npm ci` ve `npm run db:deploy --workspace=server` çalıştırın. Migration `sessionVersion`, `processingUntil` ve sonuç indeksleri ekler; kayıtları silmez.
+3. `npm run build` ardından sunucuyu yeniden başlatın. Session store çalışma dizininden bağımsız olarak `server/data` altındadır. Eski kök `data/sessions.db` varsa bakım sırasında taşıyın veya yeniden giriş sağlayın.
 4. HTTP/Socket.IO gerçek arayüz origin'lerini izin listesine ekleyin. Üretimde localhost istisnası yoktur.
 5. Giriş, rol ekranları, görsel, teslim ve parola sıfırlamayı kontrol edin.
 
@@ -484,7 +485,7 @@ Anket şeması uyumu: 20260930120000_nullable_survey_answers migration'ı Questi
 
 12 Ekim güncel kaynak kabulü tamamlandı: backend 412/412, frontend 272/272, ayrı gerçek DB/hacim 74/74, setup 14/14, tip kontrolleri ve üretim build geçti. Beş tarayıcı senaryosu doğrulanmış boş migration şablonu ve izole kaynak bundle'ı kullandı. Bu opt-in, varsayılan geliştirme açılışını veya taze hibrit kurulumu doğrulamaz; önceki 3 Ekim kurulum sonuçları yeni 22-migration sürümü için başarı diye kullanılmaz. Yeni sürüm yedek/geri yükleme ve terminal/BAT/SH yükseltme/geri dönüşü ayrı üretim provasında doğrulanacaktır.
 
-Terminal, BAT/SH ve web yapılandırma adımları birlikte kullanılan hibrit kurulum akışı korunur. Akademik arşiv için Chromium'un sunucu hesabında çalışabildiğini ayrıca doğrulayın; Chromium artık `pnpm install` sırasında otomatik indirilmez; akademik arşiv PDF'i kullanılacaksa aynı hesapla `pnpm --filter quiz-master-server run archive:prepare` komutunu çalıştırın (Playwright e2e testleri için de aynı komut gerekir). Bağımlılık kurmak veya derlemeyi geçirmek PDF üretimini tek başına doğrulamaz.
+Terminal, BAT/SH ve web yapılandırma adımları birlikte kullanılan hibrit kurulum akışı korunur. Akademik arşiv için Chromium'un sunucu hesabında çalışabildiğini ayrıca doğrulayın; Chromium artık `npm ci` sırasında otomatik indirilmez; akademik arşiv PDF'i kullanılacaksa aynı hesapla `npm run archive:prepare --workspace=server` komutunu çalıştırın (Playwright e2e testleri için de aynı komut gerekir). Bağımlılık kurmak veya derlemeyi geçirmek PDF üretimini tek başına doğrulamaz.
 
 `ARCHIVE_BACKUP_ROOT`, kalıcı akademik paket dizinini belirler. Varsayılan dizin `server/data/backups` altındadır. Bu dizinin (özellikle dışarıda yapılandırılmışsa) veritabanıyla birlikte tam uygulama yedeğine dahil edildiğini ayrıca kontrol edin. Akademik ZIP parolaları/oturumları/SMTP ayarlarını içermez ve sunucu geri yükleme yedeği yerine kullanılamaz. Yedekleme ve yükseltme provası [ayrı planda](uretim-ve-bakim-kilavuzu.md) yer alır; henüz doğrulanmamış prova tamamlanmış sayılmaz.
 
