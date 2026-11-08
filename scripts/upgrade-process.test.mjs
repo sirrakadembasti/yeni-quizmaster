@@ -16,7 +16,7 @@ test('unexpected supervisor termination reports uncertain cleanup to retain the 
 
 test('parent-only termination stops an active upgrade descendant',{timeout:20000},async t=>{
   const root=await fs.mkdtemp(path.join(os.tmpdir(),'quizmaster-upgrade-stop-'));
-  t.after(async()=>{assert.equal(path.dirname(root),os.tmpdir());assert.match(path.basename(root),/^quizmaster-upgrade-stop-/);await fs.rm(root,{recursive:true,force:true});});
+  t.after(async()=>{assert.equal(path.dirname(root),os.tmpdir());assert.match(path.basename(root),/^quizmaster-upgrade-stop-/);await fs.rm(root,{recursive:true,force:true,maxRetries:10,retryDelay:200});});
   const proof=path.join(root,'port.txt'),payload=path.join(root,'payload.cjs');
   await fs.writeFile(payload,`const {spawn}=require('node:child_process');spawn(process.execPath,['-e',"const s=require('node:net').createServer();s.listen(0,'127.0.0.1',()=>require('node:fs').writeFileSync(process.argv[1],String(s.address().port)))",process.argv[2]],{stdio:'inherit'});setInterval(()=>{},1000);`);
   const helper=new URL('./upgrade-process.mjs',import.meta.url).href;

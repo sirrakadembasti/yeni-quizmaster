@@ -85,9 +85,12 @@ async function createFirstAdmin(payload: SetupPayload, databaseUrl: string) {
   process.env.DATABASE_URL = databaseUrl;
   const prisma = createRuntimePrismaClient({ databaseUrl });
   try {
-    const existingAdmin = await prisma.user.findFirst({ where: { role: "admin" }, select: { id: true } });
-    if (existingAdmin) throw new Error("Veritabanında zaten bir yönetici var. Mevcut kurulum sihirbazla devralınamaz.");
     const email = payload.admin.email.toLowerCase();
+    const existingAdmin = await prisma.user.findFirst({ where: { role: "admin" }, select: { id: true, email: true } });
+    // Önceki deneme yönetici adımından sonra kesildiyse (kilit yok) aynı hesap yeniden oluşturulmaz;
+    // parola da değiştirilmez. Başka bir yönetici varsa mevcut kurulum devralınamaz.
+    if (existingAdmin?.email.toLowerCase() === email) return;
+    if (existingAdmin) throw new Error("Veritabanında zaten bir yönetici var. Mevcut kurulum sihirbazla devralınamaz.");
     if (await prisma.user.findUnique({ where: { email }, select: { id: true } })) {
       throw new Error("Yönetici e-postası veritabanında zaten kullanılıyor.");
     }
@@ -123,7 +126,7 @@ type ApplyStepState = {
   detail?: string;
 };
 
-type ApplyJobState = {
+export type ApplyJobState = {
   status: "idle" | "running" | "success" | "error";
   message: string;
   steps: ApplyStepState[];
@@ -136,7 +139,7 @@ type ApplyJobState = {
   finishedAt: string | null;
 };
 
-function createApplyState(): ApplyJobState {
+export function createApplyState(): ApplyJobState {
   return {
     status: "idle",
     message: "Kurulum henüz uygulanmadı.",
@@ -187,7 +190,7 @@ function markStep(applyJob: ApplyJobState, id: string, status: ApplyStepState["s
   }
 }
 
-async function applySetup(payload: SetupPayload, applyJob: ApplyJobState) {
+export async function applySetup(payload: SetupPayload, applyJob: ApplyJobState) {
   fs.mkdirSync(dataRoot, { recursive: true });
   if (fs.existsSync(lockPath)) throw new Error("Kurulum daha önce tamamlanmış. Sihirbaz yeniden çalıştırılamaz.");
   if (fs.existsSync(envPath) && !payload.overwriteExistingEnv) throw new Error("server/.env zaten var. İçeriğini doğrulayın veya yedekleyerek değiştirme onayını seçin.");
@@ -269,6 +272,10 @@ async function applySetup(payload: SetupPayload, applyJob: ApplyJobState) {
     fs.writeFileSync(lockPath, `${JSON.stringify({ installedAt: new Date().toISOString(), publicUrl: publicAppUrl(payload), nodeVersion: process.version }, null, 2)}\n`, { encoding: "utf8", mode: 0o600, flag: "wx" });
     markStep(applyJob, "finish", "done", "installation.lock yazıldı");
     return summary;
+  } catch (error) {
+    const running = applyJob.steps.find((step) => step.status === "running");
+    if (running) markStep(applyJob, running.id, "error", error instanceof Error ? error.message : "Adım başarısız oldu.");
+    throw error;
   } finally {
     if (pendingHandle !== undefined) fs.closeSync(pendingHandle);
     if (fs.existsSync(pendingPath)) fs.unlinkSync(pendingPath);
