@@ -20,8 +20,18 @@ export const WORKSPACES = {
   client: { name: 'quiz-master-client', dir: 'client' },
 };
 
+/**
+ * npm, pnpm ve bun betik çalıştırırken npm_config_user_agent ayarlar ("pnpm/9.15.1 npm/? node/…").
+ * Betiği hangi yöneticinin başlattığını söyleyen en güvenilir işarettir (npm_execpath tahmininden farklı).
+ */
+export function detectInvokingManager(env = process.env) {
+  const name = String(env.npm_config_user_agent || '').split(' ')[0].split('/')[0].toLowerCase();
+  return MANAGERS.includes(name) ? name : null;
+}
+
+// Öncelik: açık istek > QUIZMASTER_PM > betiği başlatan yönetici > varsayılan.
 export function selectManager({ requested, env = process.env } = {}) {
-  const value = String(requested || env.QUIZMASTER_PM || DEFAULT_MANAGER).toLowerCase();
+  const value = String(requested || env.QUIZMASTER_PM || detectInvokingManager(env) || DEFAULT_MANAGER).toLowerCase();
   if (!MANAGERS.includes(value)) throw new Error(`Desteklenmeyen paket yöneticisi: ${value}. Geçerli: ${MANAGERS.join(', ')}.`);
   return value;
 }
