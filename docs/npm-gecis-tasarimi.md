@@ -21,7 +21,18 @@ Tasarımdan sapmalar ve çıkan bulgular:
 - Eski pnpm kurulumları: `node_modules/.pnpm` "legacy" sayılır, npm'e geçilir (`npm ci` node_modules'ü yeniden kurar); README'de geçiş notu var.
 - CI'da koşmayan kabul/prova betikleri npm'e uyarlandı ama **tam çalıştırılmadı**.
 
-Açık kalanlar: Bun kararı; kalan 5 yüksek açık (`prisma`/`deepmerge-ts`, `zod`); Prisma `package.json#prisma` uyarısı; prova betiklerinin çalıştırılması.
+Açık kalanlar: Bun kararı; prova betiklerinin çalıştırılması. (Prisma `package.json#prisma` uyarısı `prisma.config.ts` ile giderildi.)
+
+### Güvenlik değerlendirmesi: kalan 5 yüksek açık (`npm audit --omit=dev`)
+
+Hepsinin tek çözümü **büyük sürüm yükseltmesidir** (`npm audit fix --force`); kritik açık yoktur ve CI kapısı kritik seviyede kırar.
+
+| Paket | Bildirim | Çözüm | Bu projedeki etki |
+|---|---|---|---|
+| `zod` ≥3 (ve `zod-validation-error`) | GHSA-mrhx-c7xc-m3w5: sınırsız diziyi doğrularken bellek tüketimi (CVSS 7.5) | zod 4.6.6+ / zod-validation-error 5 | Sunucu girdi doğrulamasında kullanılır. **Hafifletici:** `express.json()` varsayılan **100 KB** gövde sınırında (hiçbir yerde artırılmamış); bu boyutta bir dizi, bellek tükenmesi için yetersizdir. Bildirimin anlattığı kod yolu Zod 4 çekirdeğine (`$ZodArray`) aittir; bu projedeki `zod` v3 API'sinin etkilenme derecesi kesin ölçülmedi. |
+| `deepmerge-ts` → `@prisma/config` → `prisma` | GHSA-ggr8-5vv4-36mx: döngüsel nesne grafiğinde yığın taşması | prisma 7.x (büyük sürüm) | Yalnızca Prisma **CLI**'nın yapılandırma birleştirmesinde; kullanıcı girdisi buraya ulaşmaz, çalışan sunucuda yoktur. |
+
+Karar (8 Kasım 2026): bu iki büyük yükseltme (Zod 3→4: ~23 dosya, ~200 kullanım; Prisma 6→7: sürücü bağdaştırıcısı/üretici mimarisi değişikliği) **bu geçişin kapsamı dışında bırakıldı**; risk yukarıdaki hafifleticilerle kabul edildi. Zod 4 geçişi ayrı, planlı bir iş olarak önerilir (backend 655 testi güvenlik ağıdır). Gövde sınırı gevşetilirse bu değerlendirme yeniden yapılmalıdır.
 
 ## 0. Verilen kararlar (8 Kasım 2026)
 
