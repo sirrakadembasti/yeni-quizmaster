@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+# LEGACY (pnpm): bu kabul/prova betiği pnpm'e bağlıdır; pnpm kaldırıldı (docs/npm-gecis-tasarimi.md). CI'da koşmaz, npm'e uyarlanana kadar çalışması beklenmemelidir.
 # Disposable native tooling only; no system PATH or application data changes.
 set -eu
 closure_base="${XDG_CACHE_HOME:-$HOME/.cache}/quizmaster-closure"

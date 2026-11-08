@@ -61,7 +61,7 @@ QuizMaster Node.js (Express + Socket.IO)
 - Kurum DNS yöneticisi tarafından açılmış A/AAAA kaydı,
 - Kuruma ait geçerli TLS sertifikası ve yenileme süreci,
 - Node.js 22 veya 24 LTS,
-- npm 11 veya üstü (varsayılan; pnpm `9.15.1` veya deneysel Bun alternatiftir),
+- npm 11 veya üstü (deneysel Bun alternatiftir; pnpm artık desteklenmez),
 - Nginx, Apache veya IIS reverse proxy,
 - Yalnız sunucu yönetici hesabının erişebildiği uygulama kullanıcısı/dizini,
 - SMTP için Gmail uygulama parolası kullanılacaksa dışarı doğru TCP 587 veya 465 izni,
@@ -107,7 +107,7 @@ chmod +x kurulum.sh
 ./kurulum.sh
 ```
 
-`kurulum.sh` Node.js 22/24 LTS ile desteklenen bir paket yöneticisini (npm 11+, pnpm 9.15.1 veya Bun) doğrular. Ayrıca Linux/macOS ortamını teyit eder, root yetkisiyle çalıştırmada uyarır, proje ve `server/data` dizinlerinin yazma izinlerini, en az 3 GB boş disk alanını ve `better-sqlite3` yerel derlemesi için `python3`, `make`, `g++/c++` varlığını denetler. Eksik veya uyumsuz bileşen varsa resmî bağlantıları ve kurumsal ağ kısıtlarına uygun komut seçeneklerini (npm, corepack veya bağımsız pnpm) gösterip hiçbir dosyayı değiştirmeden durur. Gereksinimler tamamsa bağımlılıksız bootstrap arayüzünü açar; paket kurulumu kullanıcı onayından sonra bu arayüzden yürütülür. Kurulum panelinde pnpm önerilen/varsayılan paket yöneticisidir; sistemde Bun kuruluysa **Bun (Deneysel)** seçeneği de seçilebilir; bu yolda paket kurulumu ve migration CLI ile (`QUIZMASTER_PM=bun`) doğrulanmıştır; tarayıcı arayüzü, derleme ve yükseltme pnpm kadar sınanmamıştır. Üretim için pnpm kullanın.
+`kurulum.sh` Node.js 22/24 LTS ile desteklenen bir paket yöneticisini (npm 11+ veya Bun) doğrular. Ayrıca Linux/macOS ortamını teyit eder, root yetkisiyle çalıştırmada uyarır, proje ve `server/data` dizinlerinin yazma izinlerini, en az 3 GB boş disk alanını ve `better-sqlite3` yerel derlemesi için `python3`, `make`, `g++/c++` varlığını denetler. Eksik veya uyumsuz bileşen varsa resmî bağlantıları ve kurumsal ağ kısıtlarına uygun komut seçeneklerini (npm 11 yükseltmesi, Node.js 24) gösterip hiçbir dosyayı değiştirmeden durur. Gereksinimler tamamsa bağımlılıksız bootstrap arayüzünü açar; paket kurulumu kullanıcı onayından sonra bu arayüzden yürütülür. Kurulum panelinde npm (11+) varsayılan paket yöneticisidir; sistemde Bun kuruluysa **Bun (Deneysel)** seçeneği de seçilebilir; bu yolda paket kurulumu ve migration CLI ile (`QUIZMASTER_PM=bun`) doğrulanmıştır; tarayıcı arayüzü, derleme ve yükseltme npm kadar sınanmamıştır. Üretim için npm kullanın.
 
 Kurumsal ağ internete çıkmıyorsa bağımlılıkları onaylı bir build sunucusunda hedef işletim sistemi ve CPU mimarisiyle kurup artefact üretin. `node_modules` klasörünü farklı işletim sistemi veya CPU mimarisinden kopyalamayın; Prisma, Sharp ve SQLite native bileşenleri hedef ortamla aynı olmalıdır.
 
@@ -464,7 +464,6 @@ Güncellemeden önce veritabanı ve uploads yedeği alın. Migration uygulanmı�
 
 - [Node.js indirme ve LTS sürümleri](https://nodejs.org/en/download)
 - [npm kurulumu](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
-- [pnpm kurulumu ve Node uyumluluk tablosu](https://pnpm.io/installation) (alternatif yönetici)
 - [Nginx HTTP proxy modülü](https://nginx.org/en/docs/http/ngx_http_proxy_module.html)
 - [Nginx WebSocket proxy](https://nginx.org/en/docs/http/websocket.html)
 - [Prisma geliştirme ve üretim migration akışı](https://www.prisma.io/docs/orm/v6/prisma-migrate/workflows/development-and-production)

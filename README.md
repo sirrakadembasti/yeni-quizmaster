@@ -101,7 +101,7 @@ Aynı bilgiyi birden fazla kılavuza kopyalamak yerine ana belgeye bağlantı ve
 | Kimlik ve güvenlik | `express-session`, SQLite oturum deposu, bcrypt, CSRF, Zod |
 | E-posta | Nodemailer, Gmail SMTP, veritabanı Outbox kuyruğu |
 | Test | Vitest, Supertest, Playwright |
-| Paket yönetimi | npm workspaces (varsayılan, npm 11+) / pnpm 9.15.1 / Bun (deneysel) |
+| Paket yönetimi | npm workspaces (npm 11+, `package-lock.json`) / Bun (deneysel) |
 
 ## Proje yapısı
 
@@ -134,9 +134,9 @@ Quiz-Master/
 ## Gereksinimler
 
 - Node.js 22 veya 24 LTS uyumlu çalışma ortamı
-- npm `11` veya üstü (Node.js 24 ile gelir; Node.js 22'de önce `npm install -g npm@11`). pnpm `9.15.1` veya Bun (deneysel) alternatiftir.
+- npm `11` veya üstü (Node.js 24 ile gelir; Node.js 22'de önce `npm install -g npm@11`). Bun (deneysel) alternatiftir. pnpm artık desteklenmez; eski pnpm kurulumları için bkz. [pnpm'den npm'e geçiş](#pnpmden-npme-geçiş).
 
-Kurumsal bilgisayarda global PATH kullanmak istemiyorsanız proje için hazırlanmış yerel Node başlatıcısını kullanabilirsiniz. Normal bir Node kurulumu olan ortamda aşağıdaki standart npm komutları yeterlidir. pnpm veya Bun kullanıyorsanız aynı betikler `node scripts/pm.mjs --pm pnpm run <betik>` biçiminde de çalışır.
+Kurumsal bilgisayarda global PATH kullanmak istemiyorsanız proje için hazırlanmış yerel Node başlatıcısını kullanabilirsiniz. Normal bir Node kurulumu olan ortamda aşağıdaki standart npm komutları yeterlidir. Bun kullanıyorsanız aynı betikler `node scripts/pm.mjs --pm bun run <betik>` biçiminde de çalışır.
 
 ## Kurulum
 
@@ -170,7 +170,7 @@ chmod +x kurulum.sh
 ./kurulum.sh
 ```
 
-Başlatıcı, herhangi bir uygulama verisini değiştirmeden önce Node.js ve paket yöneticisi (npm 11+, pnpm 9.15.1 veya Bun) sürümlerini denetler. Eksik veya uyumsuz bileşen varsa gereken sürümü, resmî indirme bağlantılarını ve sistemde npm/corepack durumuna göre dinamik komut alternatiflerini gösterir; proxy, DNS veya sistem `PATH` ayarlarını değiştirmez. `kurulum.sh` ayrıca Linux/macOS ayrımı, root yetki uyarısı, yazma izinleri, disk alanı (>3 GB) ve native derleme araçları kontrollerini yürütür.
+Başlatıcı, herhangi bir uygulama verisini değiştirmeden önce Node.js ve paket yöneticisi (npm 11+ veya Bun) sürümlerini denetler. Eksik veya uyumsuz bileşen varsa gereken sürümü, resmî indirme bağlantılarını ve sistemde npm/corepack durumuna göre dinamik komut alternatiflerini gösterir; proxy, DNS veya sistem `PATH` ayarlarını değiştirmez. `kurulum.sh` ayrıca Linux/macOS ayrımı, root yetki uyarısı, yazma izinleri, disk alanı (>3 GB) ve native derleme araçları kontrollerini yürütür.
 
 Node.js 22/24 ve paket yöneticiniz zaten doğru kuruluysa başlatıcı yerine doğrudan şu komut da kullanılabilir:
 
@@ -182,8 +182,8 @@ npm run setup
 
 İlk ekran yalnız `127.0.0.1:5049` üzerinde açılır. Burada:
 
-- uygulamanın bulunduğu dizin ve çalışma ortamı (Node.js, npm, pnpm ve sistemde varsa deneysel Bun seçeneği) gösterilir,
-- varsayılan olarak `npm ci` (panelden pnpm seçilirse `pnpm install --frozen-lockfile`; var olan bir kurulum kendi yöneticisini korur; deneysel Bun seçilirse `bun install`; Bun yolunda paket kurulumu ve migration CLI ile doğrulanmıştır; tarayıcı arayüzü, derleme ve yükseltme pnpm kadar sınanmamıştır, üretim için npm kullanın) **Paketleri Kur / Onar** ile etkileşimsiz çalıştırılır; production ortamında da sihirbaz/derleme araçları kurulur (sihirbaza geçiş bu adım bitmeden açılmaz),
+- uygulamanın bulunduğu dizin ve çalışma ortamı (Node.js, npm ve sistemde varsa deneysel Bun seçeneği) gösterilir,
+- varsayılan olarak `npm ci` (deneysel Bun seçilirse `bun install`; Bun yolunda paket kurulumu ve migration CLI ile doğrulanmıştır; tarayıcı arayüzü, derleme ve yükseltme npm kadar sınanmamıştır, üretim için npm kullanın) **Paketleri Kur / Onar** ile etkileşimsiz çalıştırılır; production ortamında da sihirbaz/derleme araçları kurulur (sihirbaza geçiş bu adım bitmeden açılmaz),
 - gerçek paket yöneticisi çıktısı ve hata bilgisi ekranda izlenir,
 - 5049 portu doluysa süreç PID ile gösterilir ve durdurulması istenir.
 
@@ -285,7 +285,7 @@ chmod +x kurulum.sh
 ./kurulum.sh
 ```
 
-Başlatıcı Node.js 22/24 LTS ve bir paket yöneticisi (npm 11+, pnpm `9.15.1` veya Bun) denetimini yapar. Eksikse yalnız resmî bağlantı ve komutları göstererek durur. Gereksinimler tamamsa bağımlılıksız bootstrap ekranı açılır ve paketler kullanıcı onayından sonra kurulur.
+Başlatıcı Node.js 22/24 LTS ve bir paket yöneticisi (npm 11+ veya Bun) denetimini yapar. Eksikse yalnız resmî bağlantı ve komutları göstererek durur. Gereksinimler tamamsa bağımlılıksız bootstrap ekranı açılır ve paketler kullanıcı onayından sonra kurulur.
 
 Uzak Linux/VPS kurulumu için başlatıcı portunu (sihirbaz da aynı adrestedir) SSH tüneline alın; bu portu internete açmayın:
 
@@ -513,6 +513,17 @@ Ancak geçiş **yalnızca** `provider = "postgresql"` ve `DATABASE_URL` değişi
 
 Komutlar, veri doğrulama sorguları, oturum deposu kararı, geri dönüş planı ve ayrıntılı kontrol listesi için [PostgreSQL geçiş kılavuzuna](docs/postgresql-gecis-rehberi.md) bakın.
  PostgreSQL'e geçildikten sonra geliştirme, test ve üretimde aynı veritabanı sağlayıcısının kullanılması önerilir; SQLite ve PostgreSQL için aynı migration klasörü paylaşılmamalıdır.
+
+## pnpm'den npm'e geçiş
+
+Proje artık yalnız npm (11+) ve deneysel Bun'u destekler; `pnpm-lock.yaml`, `pnpm-workspace.yaml` ve `packageManager` alanı kaldırıldı. Eskiden pnpm ile kurulmuş bir sistemde:
+
+1. App/worker süreçlerini durdurun ve `server/data`, `server/.env`, `server/uploads` için doğrulanmış bir yedek alın (veriler pnpm'e bağlı değildir, değişmez).
+2. Yeni kodu yerleştirin ve kök dizinde `npm ci` çalıştırın. `npm ci` mevcut `node_modules` klasörünü (pnpm düzenini) silip `package-lock.json`'a göre yeniden kurar; bağımlılık ağacı pnpm ağacından farklı sürümler içerebilir.
+3. `npm run db:status --workspace=server` ile migration durumunu kontrol edin; `npm run build` ile yeniden derleyip servisi başlatın.
+4. systemd/servis tanımında `pnpm --filter quiz-master-server start` yerine `npm run start --workspace=server` kullanın.
+
+Başlatıcı arayüzündeki **Mevcut Kurulumu Güncelle** düğmesi aynı işlemi yedek alarak ve npm ile yapar; eski bir pnpm ağacı algılanırsa ekranda uyarı gösterilir.
 
 ## Sorun giderme
 

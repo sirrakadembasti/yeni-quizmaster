@@ -1,3 +1,4 @@
+// LEGACY (pnpm): bu kabul/prova betiği pnpm'e bağlıdır; pnpm kaldırıldı (docs/npm-gecis-tasarimi.md). CI'da koşmaz, npm'e uyarlanana kadar çalışması beklenmemelidir.
 // Real installer/browser runner. No dependency junctions, storage mocks or source resets.
 // Run from the reviewed checkout; each entrypoint receives its own fresh source copy.
 import assert from 'node:assert/strict';

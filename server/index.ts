@@ -155,7 +155,7 @@ app.use(cors({
 // sessionMiddleware değişken olarak tanımlanıyor — Socket.IO ile paylaşmak için gerekli (bkz. socket.ts)
 app.set("trust proxy", deploymentConfig.trustProxyHops);
 
-// HTTP (pnpm dev / localhost) üzerinde Secure çerez yazılmaz → CSRF/login kırılır.
+// HTTP (geliştirme sunucusu / localhost) üzerinde Secure çerez yazılmaz → CSRF/login kırılır.
 // Yalnızca gerçek HTTPS üretiminde secure + sameSite=none kullan.
 
 const demoInstance = isDemoInstanceEnabled();

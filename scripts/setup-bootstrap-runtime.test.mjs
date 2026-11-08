@@ -1,4 +1,4 @@
-// Unit/HTTP regression only: pnpm --version is controlled here. This does not
+// Unit/HTTP regression only: npm --version is controlled here. This does not
 // provide fresh dependency-install, migration, build or browser evidence.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -19,25 +19,29 @@ async function port() {
   return value;
 }
 
-test('bootstrap caches runtime and installed renderer rejects retained wizard handoff (controlled pnpm unit regression)', { timeout: 45000 }, async t => {
+test('bootstrap caches runtime and installed renderer rejects retained wizard handoff (controlled npm unit regression)', { timeout: 45000 }, async t => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'quizmaster-bootstrap-runtime-'));
   const scripts = path.join(root, 'scripts');
   fs.mkdirSync(scripts);
   fs.writeFileSync(path.join(root, 'package.json'), '{"name":"quiz-master","type":"module"}\n');
-  for (const file of ['setup-bootstrap.mjs', 'setup-bootstrap-lib.mjs', 'pnpm-invocation.mjs', 'upgrade-process-supervisor.mjs', 'setup-proxy.mjs', 'package-manager.mjs'])
+  for (const file of ['setup-bootstrap.mjs', 'setup-bootstrap-lib.mjs', 'upgrade-process-supervisor.mjs', 'setup-proxy.mjs', 'package-manager.mjs'])
     fs.copyFileSync(path.join(scriptRoot, file), path.join(scripts, file));
   const calls = path.join(root, 'version-calls.txt');
-  const mockPnpm = path.join(root, 'pnpm.cjs');
+  // Sahte npm: npm_execpath 'npm-cli.js' adıyla gösterilir, katman bunu doğrudan Node ile çalıştırır.
+  // Kök package.json "type":"module" olduğu için sahte npm CommonJS bir alt dizinde durur.
+  const mockNpm = path.join(root, 'npm-bin', 'npm-cli.js');
+  fs.mkdirSync(path.dirname(mockNpm));
+  fs.writeFileSync(path.join(path.dirname(mockNpm), 'package.json'), '{"type":"commonjs"}');
   fs.writeFileSync(path.join(scripts,'upgrade.mjs'),"import fs from 'node:fs';fs.writeFileSync('upgrade-args.json',JSON.stringify(process.argv.slice(2)));\n");
-  fs.writeFileSync(mockPnpm, `
+  fs.writeFileSync(mockNpm, `
 const fs = require('node:fs');
 const path = require('node:path');
 const args = process.argv.slice(2);
 if (args.length === 1 && args[0] === '--version') {
   fs.appendFileSync(process.env.RUNTIME_TEST_CALLS, '--version\\n');
-  console.log('9.15.1');
-} else if (args[0] === 'install' && args.includes('--frozen-lockfile')) {
-  if (process.env.NODE_ENV === 'production' && !args.includes('--prod=false')) {
+  console.log('11.0.0');
+} else if (args[0] === 'ci') {
+  if (process.env.NODE_ENV === 'production' && !args.includes('--include=dev')) {
     console.error('Controlled install excluded the wizard/build tools');
     process.exit(91);
   }
@@ -50,7 +54,7 @@ if (args.length === 1 && args[0] === '--version') {
     fs.mkdirSync(path.join(process.cwd(), relative), { recursive: true });
   for (const relative of ['server/package.json', 'client/package.json'])
     fs.writeFileSync(path.join(process.cwd(), relative), '{}');
-} else if (args.join(' ') === '--filter quiz-master-server run setup') {
+} else if (args.join(' ') === 'run setup --workspace=server') {
   console.log('http://127.0.0.1:' + process.env.SETUP_PORT + '/setup?token=controlled-unit-wizard');
   // Nonzero exit retains the handoff URL without closing the HTTP bootstrap.
   process.exitCode = 90;
@@ -59,7 +63,7 @@ if (args.length === 1 && args[0] === '--version') {
 } else process.exit(90);
 `);
   const bootstrapPort = await port();
-  const env = { ...process.env, NODE_ENV: 'production', CI: 'false', npm_execpath: mockPnpm, QUIZMASTER_PM: 'pnpm', RUNTIME_TEST_CALLS: calls,
+  const env = { ...process.env, NODE_ENV: 'production', CI: 'false', npm_execpath: mockNpm, QUIZMASTER_PM: 'npm', RUNTIME_TEST_CALLS: calls,
     SETUP_BOOTSTRAP_PORT: String(bootstrapPort) };
   delete env.SETUP_TOKEN;
   const child = spawn(process.execPath, [path.join(scripts, 'setup-bootstrap.mjs'), '--no-open'], {
@@ -112,8 +116,8 @@ if (args.length === 1 && args[0] === '--version') {
     return response.json();
   };
   const fresh = await status();
-  assert.equal(fresh.runtime.pnpmVersion, '9.15.1');
-  assert.equal(fresh.runtime.pnpmSupported, true);
+  assert.equal(fresh.runtime.npmVersion, '11.0.0');
+  assert.equal(fresh.runtime.npmSupported, true);
   assert.equal(fresh.installation.state, 'fresh');
   const page = await fetch(`http://127.0.0.1:${bootstrapPort}/setup`, {
     headers: { Cookie: cookie }, signal: AbortSignal.timeout(5000),
@@ -216,7 +220,7 @@ if (args.length === 1 && args[0] === '--version') {
   assert.deepEqual(JSON.parse(fs.readFileSync(path.join(root,'upgrade-args.json'),'utf8')),['--project',root,'--parent-lease']);
   assert.equal(fs.readFileSync(path.join(root,'server/data/installation.lock'),'utf8'),'{}\n');
   const actualCalls = fs.readFileSync(calls, 'utf8').trim().split(/\r?\n/);
-  assert.equal(actualCalls.length, 1, 'Polling must not repeatedly spawn pnpm --version and block bootstrap HTTP');
+  assert.equal(actualCalls.length, 1, 'Polling must not repeatedly spawn npm --version and block bootstrap HTTP');
   const harnessSource = fs.readFileSync(path.join(scriptRoot, 'admin-hybrid-setup-closure.mjs'), 'utf8');
   const survivorHelper = harnessSource.match(/function knownSurvivors\(known, snapshot\) \{[\s\S]*?\n\}/)?.[0];
   assert.ok(survivorHelper, 'Actual cleanup identity helper missing');

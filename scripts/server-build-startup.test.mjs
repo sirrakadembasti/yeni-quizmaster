@@ -9,6 +9,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { cleanupStartupChild } from './server-startup-child-cleanup.mjs';
+import { managerInvocation } from './package-manager.mjs';
 
 const repository = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const requireServer = createRequire(path.join(repository, 'server/package.json'));
@@ -21,12 +22,9 @@ async function freePort() {
   return port;
 }
 
-test('canonical pnpm production start boots with native Sharp and serves CSRF using only isolated paths', { timeout: 180000 }, async t => {
-  const pnpm = [process.env.npm_execpath, ...(process.env.PATH || '').split(path.delimiter).flatMap(directory => [
-    path.join(directory, 'node_modules/pnpm/bin/pnpm.cjs'),
-    path.resolve(directory, '../lib/node_modules/pnpm/bin/pnpm.cjs'),
-  ])].find(candidate => candidate && /pnpm\.c?js$/i.test(candidate) && fs.existsSync(candidate));
-  assert.ok(pnpm, 'Installed pnpm JavaScript entrypoint must be available');
+test('canonical npm production start boots with native Sharp and serves CSRF using only isolated paths', { timeout: 180000 }, async t => {
+  // npm, Node ile çalışan giriş dosyasıyla (cmd.exe/kabuk olmadan) çağrılır.
+  const npm = managerInvocation('npm');
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'quizmaster-server-startup-'));
   const guard = () => {
     assert.equal(path.dirname(path.resolve(root)), path.resolve(os.tmpdir()));
@@ -39,7 +37,7 @@ test('canonical pnpm production start boots with native Sharp and serves CSRF us
     if (child) {
       const cleanup = await cleanupStartupChild(child, lifecycle, async () => {
         if (process.platform === 'win32') {
-        // Canonical pnpm start owns cross-env and API descendants; stop that
+        // Canonical npm start owns cross-env and API descendants; stop that
         // exact spawned process tree, never a port-derived or unrelated PID.
         assert.ok(Number.isInteger(child.pid) && child.pid > 0);
         execFileSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], { windowsHide: true, timeout: 10000, stdio: 'pipe' });
@@ -63,7 +61,7 @@ test('canonical pnpm production start boots with native Sharp and serves CSRF us
   });
   for (const directory of ['server/data', 'client/dist', 'dist'])
     fs.mkdirSync(path.join(root, directory), { recursive: true });
-  for (const file of ['package.json', 'pnpm-workspace.yaml', 'server/package.json', 'client/package.json'])
+  for (const file of ['package.json', 'server/package.json', 'client/package.json'])
     fs.copyFileSync(path.join(repository, file), path.join(root, file));
   fs.writeFileSync(path.join(root, 'client/dist/index.html'), '<!doctype html><title>Isolated startup</title>');
   // Full installed workspace dependency layout, including the actual cross-env
@@ -80,7 +78,7 @@ test('canonical pnpm production start boots with native Sharp and serves CSRF us
     'FRONTEND_URL', 'ALLOWED_ORIGINS', 'TRUST_PROXY_HOPS', 'EMAIL_USER', 'EMAIL_PASS', 'EMAIL_FROM',
     'DEPLOYMENT_CONFIG_PATH', 'QUIZMASTER_PROJECT_ROOT', 'FORCE_SECURE_COOKIES', 'NODE_PATH']) delete env[name];
   // esbuild accepts the appended outfile override; verify the regular output is untouched.
-  execFileSync(process.execPath, [pnpm, '--filter', 'quiz-master-server', 'run', 'build', `--outfile=${output}`], {
+  execFileSync(npm.command, [...npm.args, 'run', 'build', '--workspace=server', '--', `--outfile=${output}`], {
     cwd: repository, env, shell: false, windowsHide: true, timeout: 120000, stdio: 'pipe',
   });
   assert.ok(fs.existsSync(output), 'Actual build must honor the isolated outfile');
@@ -104,12 +102,19 @@ test('canonical pnpm production start boots with native Sharp and serves CSRF us
   const secret = randomBytes(32).toString('hex');
   const database = path.join(root, 'server/data/isolated.db');
   assert.equal(path.dirname(path.resolve(database)), path.join(root, 'server/data'));
+  // Sunucu artık var olan bir SQLite dosyası ister (yalnız oturum deposu kendini oluşturur):
+  // yalıtılmış veritabanı önce gerçek migration'larla hazırlanır.
+  execFileSync(npm.command, [...npm.args, 'run', 'db:deploy', '--workspace=server'], {
+    cwd: repository, shell: false, windowsHide: true, timeout: 120000, stdio: 'pipe',
+    env: { ...env, DATABASE_URL: `file:${database.replaceAll('\\', '/')}`, RUST_LOG: 'info' },
+  });
+  assert.ok(fs.existsSync(database), 'Migration yalıtılmış veritabanını oluşturmalı');
   const startupEnv = { ...env, NODE_ENV: 'production', HOST: '127.0.0.1', PORT: String(port),
     SESSION_SECRET: secret, DATABASE_URL: `file:${database.replaceAll('\\', '/')}`,
     PRISMA_QUERY_ENGINE_LIBRARY: fixtureEngine,
     FRONTEND_URL: `http://127.0.0.1:${port}`, ALLOWED_ORIGINS: `http://127.0.0.1:${port}` };
   assert.equal(startupEnv.NODE_PATH, undefined);
-  child = spawn(process.execPath, [pnpm, '--filter', 'quiz-master-server', 'start'], {
+  child = spawn(npm.command, [...npm.args, 'run', 'start', '--workspace=server'], {
     cwd: root, env: startupEnv, shell: false, windowsHide: true,
     detached: process.platform !== 'win32', stdio: ['ignore', 'pipe', 'pipe'],
   });
@@ -121,7 +126,7 @@ test('canonical pnpm production start boots with native Sharp and serves CSRF us
   child.on('error', error => { spawnError = error; lifecycle.errorCode = error.code || 'spawn-error'; });
   child.on('exit', (code, signal) => { lifecycle.exited = true; lifecycle.exitCode = code; lifecycle.signal = signal; });
   child.on('close', (code, signal) => { lifecycle.closed = true; lifecycle.closeCode = code; lifecycle.closeSignal = signal; });
-  // Cold canonical pnpm startup exceeded the former 30 s window on this host.
+  // Cold canonical npm startup exceeded the former 30 s window on this host.
   // Match the fresh-install harness's bounded API budget; keep readiness assertions.
   const deadline = Date.now() + 120000;
   let ready = false;

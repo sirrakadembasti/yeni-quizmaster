@@ -39,7 +39,7 @@ Karar yalnız dosya boyutuna göre verilmemelidir. P95 API süresi, eşzamanlı 
 ## 3. Geçiş öncesi hazırlık
 
 1. Geçişi ayrı bir Git dalında ve üretim verisinin kopyası üzerinde prova edin.
-2. Kullanılan commit'i, Node.js sürümünü, paket yöneticisi (npm/pnpm) sürümünü ve Prisma sürümünü kaydedin.
+2. Kullanılan commit'i, Node.js sürümünü, npm sürümünü ve Prisma sürümünü kaydedin.
 3. Uygulamayı bakım moduna alma veya kısa süreli yazma dondurma planı oluşturun.
 4. Aşağıdaki varlıkları yedekleyin:
    - Ana SQLite veritabanı (`server/data/quiz.db` veya gerçek `DATABASE_URL` hedefi),

@@ -12,11 +12,13 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Paket yöneticisi npm'dir (package-lock.json). Node 22 ile gelen npm 10 desteklenmez;
+# Node 22 işlerinde npm 11'e yükseltilir (Node 24 zaten npm 11 ile gelir).
 jobs:
   kurulum-testleri:
     name: Kurulum testleri (${{ matrix.os }}, Node ${{ matrix.node }})
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -28,84 +30,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # pnpm sürümü package.json içindeki "packageManager" alanından okunur (9.15.1).
-      - uses: pnpm/action-setup@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-          cache: pnpm
-
-      - name: Bağımlılıkları kur
-        run: pnpm install --frozen-lockfile --prod=false
-
-      - name: Kurulum başlatıcı testleri
-        run: pnpm test:setup
-
-      - name: Yükseltme ve pnpm çağrı testleri
-        run: pnpm test:upgrade
-
-      # Boş dizinde arayüzsüz (CLI) kurulum: migration, yönetici, .env, kilit ve durum dosyası.
-      - name: Arayüzsüz kurulum duman testi
-        env:
-          QUIZMASTER_ADMIN_EMAIL: ci@okul.test
-          QUIZMASTER_ADMIN_PASSWORD: Ci-Test-Parola-2026x
-        run: pnpm run setup:cli -- --yes
-
-      - name: Kurulum çıktılarını doğrula
-        shell: bash
-        run: |
-          for f in server/.env server/data/installation.lock server/data/installation.state.json server/data/quiz.db; do
-            test -s "$f" || { echo "Eksik: $f"; exit 1; }
-          done
-          node -e "const s=JSON.parse(require('fs').readFileSync('server/data/installation.state.json','utf8'));const bad=Object.entries(s.steps).filter(([,v])=>!['done','skipped'].includes(v.status));if(bad.length){console.error('Bitmemiş adım:',bad);process.exit(1)}"
-
-      - name: İkinci çalıştırma kurulu sistemi bozmadan reddedilmeli
-        shell: bash
-        env:
-          QUIZMASTER_ADMIN_EMAIL: ci@okul.test
-          QUIZMASTER_ADMIN_PASSWORD: Ci-Test-Parola-2026x
-        run: |
-          if pnpm run setup:cli -- --yes; then echo "Kurulu sistemde ikinci kurulum başarılı olmamalıydı"; exit 1; fi
-          test -s server/.env
-
-  tip-denetimi:
-    name: Tip denetimi
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - name: Bağımlılıkları kur
-        run: pnpm install --frozen-lockfile --prod=false
-
-      - name: Sunucu tip denetimi
-        run: pnpm --filter quiz-master-server exec tsc --noEmit
-
-      - name: İstemci tip denetimi
-        run: pnpm --filter quiz-master-client run type-check
-
-  # npm yolu (aşama 2): ayrı iş; yavaşlık/hata pnpm işlerini bloklamasın diye ayrı tutulur.
-  # Node 22 ile gelen npm 10 desteklenmez; npm 11'e yükseltilir.
-  npm-kurulum-testi:
-    name: npm kurulum testi (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 45
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
           cache: npm
 
       - name: npm 11'e yükselt
@@ -114,17 +41,21 @@ jobs:
           npm install -g npm@11
           npm --version
 
-      - name: npm ci (süre ölçümü için)
+      - name: Bağımlılıkları kur (npm ci)
         shell: bash
         run: |
           start=$(date +%s)
           npm ci
           echo "npm ci süresi: $(( $(date +%s) - start )) sn"
 
-      - name: Paket yöneticisi katmanı testleri
-        run: node --test scripts/package-manager.test.mjs scripts/pm.test.mjs
+      - name: Kurulum başlatıcı ve paket yöneticisi testleri
+        run: npm run test:setup
 
-      - name: npm ile arayüzsüz kurulum duman testi
+      - name: Yükseltme testleri
+        run: npm run test:upgrade
+
+      # Boş dizinde arayüzsüz (CLI) kurulum: migration, yönetici, .env, kilit ve durum dosyası.
+      - name: Arayüzsüz kurulum duman testi
         env:
           QUIZMASTER_ADMIN_EMAIL: ci@okul.test
           QUIZMASTER_ADMIN_PASSWORD: Ci-Test-Parola-2026x
@@ -147,35 +78,47 @@ jobs:
           if npm run setup:cli -- --yes; then echo "Kurulu sistemde ikinci kurulum başarılı olmamalıydı"; exit 1; fi
           test -s server/.env
 
-  # Backend + frontend birim testleri, aynı komutlarla pnpm ve npm ağaçlarında (aşama 3).
-  # Amaç: npm ağacının pnpm kadar geçtiğini kanıtlamak. Komutlar scripts/pm.mjs üzerinden gider.
-  birim-testleri:
-    name: Birim testleri (${{ matrix.pm }})
+  tip-denetimi:
+    name: Tip denetimi
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-    strategy:
-      fail-fast: false
-      matrix:
-        pm: [pnpm, npm]
-    env:
-      QUIZMASTER_PM: ${{ matrix.pm }}
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
 
-      - uses: pnpm/action-setup@v4
-        if: matrix.pm == 'pnpm'
+      - name: npm 11'e yükselt
+        run: npm install -g npm@11
+
+      - name: Bağımlılıkları kur (npm ci)
+        run: npm ci
+
+      - name: Sunucu tip denetimi
+        run: npm run type-check --workspace=server
+
+      - name: İstemci tip denetimi
+        run: npm run type-check --workspace=client
+
+  # Backend + frontend birim testleri (Chromium: arşiv PDF testleri için).
+  birim-testleri:
+    name: Birim testleri
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: ${{ matrix.pm }}
+          cache: npm
 
       - name: npm 11'e yükselt
-        if: matrix.pm == 'npm'
         run: npm install -g npm@11
 
-      - name: Bağımlılıkları kur
-        run: node scripts/pm.mjs install
+      - name: Bağımlılıkları kur (npm ci)
+        run: npm ci
 
       # Arşiv/PDF testleri Chromium ister; kurulum sırasında indirilmez (isteğe bağlı bileşen).
       - name: Chromium (arşiv testleri için)
@@ -184,12 +127,15 @@ jobs:
           node node_modules/playwright/cli.js install chromium
 
       - name: Backend testleri
-        run: node scripts/pm.mjs run -w server test
+        run: npm run test --workspace=server
 
       - name: Frontend testleri
-        run: node scripts/pm.mjs run -w client test -- --run
+        run: npm run test --workspace=client -- --run
 
-      # Kapı: npm ağacında kritik (critical) açık olmamalı. (Yüksek açıklar bilinen durumdur, kapıyı kırmaz.)
+      # Yalıtılmış dizinde üretim derlemesi + gerçek migration + yerel Sharp ile başlatma + CSRF.
+      - name: Üretim derleme ve başlatma testi
+        run: npm run test:build-startup
+
+      # Kapı: kritik (critical) açık olmamalı. Yüksek açıklar bilinen durumdur, kapıyı kırmaz.
       - name: Güvenlik denetimi (kritik açık olmamalı)
-        if: matrix.pm == 'npm'
         run: npm audit --omit=dev --audit-level=critical

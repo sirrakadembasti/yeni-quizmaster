@@ -1,3 +1,4 @@
+// LEGACY (pnpm): bu kabul/prova betiği pnpm'e bağlıdır; pnpm kaldırıldı (docs/npm-gecis-tasarimi.md). CI'da koşmaz, npm'e uyarlanana kadar çalışması beklenmemelidir.
 // Production API rehearsal. All SQL and processes are restricted to a fresh owned fixture.
 import fs from 'node:fs';
 import path from 'node:path';

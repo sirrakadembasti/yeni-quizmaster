@@ -7,7 +7,9 @@ import {spawnSync} from 'node:child_process';
 import {createRequire} from 'node:module';
 import {createApplicationBackup,restoreApplicationBackup} from './maintenance-lib.mjs';
 import {upgradeApplication} from './upgrade-lib.mjs';
-import {pnpmInvocation} from './pnpm-invocation.mjs';
+// LEGACY (pnpm): bu kabul/prova betiği pnpm'e bağlıdır; pnpm kaldırıldı (docs/npm-gecis-tasarimi.md). CI'da koşmaz, npm'e uyarlanana kadar çalışması beklenmemelidir.
+// pnpm-invocation.mjs kaldırıldı; içe aktarma kırılmasın, kullanımda açık hata versin diye yer tutucu:
+const pnpmInvocation=()=>{throw Error('Bu prova pnpm gerektirir; pnpm kaldırıldı (docs/npm-gecis-tasarimi.md). npm\'e uyarlanana kadar çalışmaz.');};
 import {launchOwned,cleanupOwned} from './academic-owned-process.mjs';
 import {waitForAuditServer} from './audit-server-readiness.mjs';
 import {verifyFixturePortsReleased} from './linux-owned-process-cleanup.mjs';

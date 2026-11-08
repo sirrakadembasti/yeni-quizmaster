@@ -32,19 +32,18 @@ function fixture() {
   return { root, paths, cleanup: () => fs.rmSync(root, { recursive: true, force: true }) };
 }
 
-test("yalnız Node.js 22/24 ve pnpm 9.15.1 kabul edilir; Bun yedek olarak tanınır", () => {
-  assert.equal(validateRuntime("v22.23.0", "9.15.1").nodeSupported, true);
-  assert.equal(validateRuntime("24.21.0", "9.15.1").pnpmSupported, true);
-  assert.equal(validateRuntime("20.20.0", "9.15.1").nodeSupported, false);
-  assert.equal(validateRuntime("24.21.0", "11.19.0").pnpmSupported, false);
-  assert.equal(validateRuntime("24.21.0", null, "1.3.14").bunSupported, true);
-  assert.equal(validateRuntime("24.21.0", "9.15.1", "1.3.14").bunSupported, true);
-  assert.equal(validateRuntime("24.21.0", "9.15.1", null).bunSupported, false);
+test("yalnız Node.js 22/24, npm 11+ ve Bun kabul edilir; pnpm artık yok", () => {
+  assert.equal(validateRuntime("v22.23.0").nodeSupported, true);
+  assert.equal(validateRuntime("24.21.0").nodeSupported, true);
+  assert.equal(validateRuntime("20.20.0").nodeSupported, false);
   // npm yalnız 11 ve üstünde desteklenir (Node 22 ile gelen npm 10 desteklenmez)
-  assert.equal(validateRuntime("22.23.0", null, null, "11.11.1").npmSupported, true);
-  assert.equal(validateRuntime("22.23.0", null, null, "10.9.2").npmSupported, false);
-  assert.equal(validateRuntime("22.23.0", null, null, null).npmSupported, false);
-  assert.equal(validateRuntime("22.23.0", null, null, "11.11.1").npmVersion, "11.11.1");
+  assert.equal(validateRuntime("22.23.0", "11.11.1").npmSupported, true);
+  assert.equal(validateRuntime("22.23.0", "10.9.2").npmSupported, false);
+  assert.equal(validateRuntime("22.23.0", null).npmSupported, false);
+  assert.equal(validateRuntime("22.23.0", "11.11.1").npmVersion, "11.11.1");
+  assert.equal(validateRuntime("24.21.0", null, "1.3.14").bunSupported, true);
+  assert.equal(validateRuntime("24.21.0", "11.0.0", null).bunSupported, false);
+  assert.equal("pnpmSupported" in validateRuntime("24.21.0", "11.0.0", "1.3.14"), false, "pnpm alanı kalkmış olmalı");
 });
 
 test("bun veya npm ile kurulmuş paketler (node_modules/.bin) dependenciesInstalled olarak tanınır", (t) => {

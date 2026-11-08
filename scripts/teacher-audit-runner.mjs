@@ -1,3 +1,4 @@
+// LEGACY (pnpm): bu kabul/prova betiği pnpm'e bağlıdır; pnpm kaldırıldı (docs/npm-gecis-tasarimi.md). CI'da koşmaz, npm'e uyarlanana kadar çalışması beklenmemelidir.
 // Native Linux runner; disposable DB created by teacher-audit-server.ts.
 import fs from 'node:fs';
 import path from 'node:path';

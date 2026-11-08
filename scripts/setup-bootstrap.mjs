@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { DEFAULT_MANAGER, createInvocation, detectInstalledManager, detectVersion } from './package-manager.mjs';
+import { DEFAULT_MANAGER, createInvocation, detectInstalledManager, detectVersion, hasLegacyPnpmTree } from './package-manager.mjs';
 import { createWizardProxy, PROXY_PREFIX } from './setup-proxy.mjs';
 import {
   CLEAN_INSTALL_CONFIRMATION,
@@ -13,7 +13,6 @@ import {
   inspectInstallationState,
   isLocalPortOpen,
   readConfiguredPort,
-  REQUIRED_PNPM_VERSION,
   resetInstallation,
   validateRuntime,
 } from "./setup-bootstrap-lib.mjs";
@@ -44,16 +43,15 @@ let wizardChild = null;
 let wizardTarget = null;
 let server;
 
-// Arayüzde sunulan yöneticiler (varsayılan pnpm; npm 11+ package-lock.json ile).
-const UI_MANAGERS = ["pnpm", "npm", "bun"];
-// Önerilen yönetici: bu dizinde kurulu olan > npm 11+ > pnpm > Bun > npm (hiçbiri yoksa).
-// Var olan bir kurulum yükseltmede sessizce başka yöneticiye geçmez.
+// Arayüzde sunulan yöneticiler: npm 11+ (varsayılan, package-lock.json ile) ve Bun (deneysel).
+const UI_MANAGERS = ["npm", "bun"];
+// Önerilen yönetici: bu dizinde kurulu olan > npm 11+ > Bun > npm (hiçbiri yoksa).
+// (Eski pnpm kurulumları npm'e geçer; npm ci node_modules'ü yeniden kurar.)
 function preferredManager() {
   const installed = detectInstalledManager(projectRoot);
   if (installed) return installed;
   const runtime = runtimeStatus();
   if (runtime.npmSupported) return "npm";
-  if (runtime.pnpmSupported) return "pnpm";
   if (runtime.bunSupported) return "bun";
   return DEFAULT_MANAGER;
 }
@@ -76,10 +74,10 @@ function assertManagerUsable(manager) {
 
 let runtimeSnapshot;
 function runtimeStatus() {
-  // Status polling must not start a synchronous pnpm process on every request.
+  // Status polling must not start synchronous package-manager processes on every request.
   // Runtime versions are fixed for this bootstrap session; installation/job
   // state is still read afresh by publicStatus().
-  return runtimeSnapshot ??= validateRuntime(process.version, detectVersion("pnpm") ?? "", detectVersion("bun") ?? "", detectVersion("npm") ?? "");
+  return runtimeSnapshot ??= validateRuntime(process.version, detectVersion("npm") ?? "", detectVersion("bun") ?? "");
 }
 
 function appendLog(chunk) {
@@ -88,7 +86,7 @@ function appendLog(chunk) {
   job.logs = job.logs.slice(-250);
 }
 
-function startPackageJob(type, op, successMessage, manager = "pnpm") {
+function startPackageJob(type, op, successMessage, manager = "npm") {
   if (job.status === "running") throw new Error("Başka bir kurulum işlemi halen çalışıyor.");
   let invocation;
   if (type === 'upgrade') {
@@ -245,6 +243,8 @@ function publicStatus() {
     job,
     packagesReady,
     bootstrapPort: port,
+    // pnpm kaldırıldı: eski pnpm ağacı varsa npm ci node_modules'ü silip yeniden kurar.
+    legacyPnpm: hasLegacyPnpmTree(projectRoot),
     configuredPort: readConfiguredPort(projectRoot),
   };
 }
@@ -260,7 +260,7 @@ let notice=null;
 function notify(text,kind){notice={text:String(text),kind:kind||"error",until:Date.now()+15000};applyNotice()}
 function applyNotice(){if(notice&&Date.now()<notice.until){byId("message").textContent=notice.text;byId("message").className=notice.kind}else{notice=null}}
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
-function render(s){const i=s.installation,r=s.runtime,j=s.job,ready=!!s.packagesReady,installed=i.state==="installed",running=j.status==="running";byId("summary").innerHTML='<div class="metric">Node.js<b>'+escapeHtml(r.nodeVersion||"Bulunamadı")+' '+(r.nodeSupported?"✓":"✕")+'</b></div><div class="metric">pnpm (9.15.1)<b>'+escapeHtml(r.pnpmVersion||"Bulunamadı")+' '+(r.pnpmSupported?"✓":"✕")+'</b></div><div class="metric">npm (11+)<b>'+escapeHtml(r.npmVersion||"Bulunamadı")+' '+(r.npmSupported?"✓":"✕")+'</b></div><div class="metric">Bun (Deneysel)<b>'+escapeHtml(r.bunVersion?(r.bunVersion+" (Hazır)"):"Kurulu değil")+' '+(r.bunSupported?"✓":"—")+'</b></div><div class="metric">Dizin<b>'+escapeHtml(s.directory)+'</b></div><div class="metric">Bulunanlar<b>'+escapeHtml(evidenceLabel(i.evidence))+'</b></div><div class="metric">Paket adımı<b>'+(installed?'Güncelleme paket adımını içerir':ready?'Bu oturumda tamamlandı ✓':'Önce “Paketleri Kur / Onar” ✕')+'</b></div>';const names={fresh:"Yeni kurulum",partial:"Yarım/eski kurulum",installed:"Uygulama zaten kurulu"};byId("state").textContent=names[i.state];byId("state").className="state "+(i.state==="fresh"?"ok":"warn");let tip=j.message;if(installed){tip=j.type==="upgrade"?j.message:"Uygulama kurulu. Servisi durdurup “Mevcut Kurulumu Güncelle” ile verileri koruyarak güncelleyebilirsiniz."}else if(running){tip=j.message}else if(!ready){tip=i.evidence.dependenciesInstalled?"Paketler diskte var; sihirbaza geçmek için önce “Paketleri Kur / Onar” adımını çalıştırın.":"Önce “Paketleri Kur / Onar” ile paketleri kurun."}else{tip="Paket adımı tamam. Kurulum sihirbazına geçebilirsiniz."}byId("message").textContent=tip;byId("message").className=j.status==="error"?"error":j.status==="success"?"success":"muted";applyNotice();byId("logs").textContent=j.logs.length?j.logs.join("\n"):"Henüz işlem çıktısı yok.";byId("logs").scrollTop=byId("logs").scrollHeight;byId("danger").classList.toggle("hidden",i.state==="fresh");const wizard=byId("wizard");wizard.disabled=installed||running||!ready;if(installed){wizard.title="Uygulama zaten kurulu; sihirbaz kapalı. Temiz kurulum gerekir."}else if(!ready){wizard.title="Önce paket kurulum adımını tamamlayın."}else{wizard.title="Kurulum sihirbazını başlat"}byId("install").disabled=running;byId("upgrade").disabled=!installed||running;if(!installed&&j.wizardUrl)location.href=j.wizardUrl}
+function render(s){const i=s.installation,r=s.runtime,j=s.job,ready=!!s.packagesReady,installed=i.state==="installed",running=j.status==="running";byId("summary").innerHTML='<div class="metric">Node.js<b>'+escapeHtml(r.nodeVersion||"Bulunamadı")+' '+(r.nodeSupported?"✓":"✕")+'</b></div><div class="metric">npm (11+)<b>'+escapeHtml(r.npmVersion||"Bulunamadı")+' '+(r.npmSupported?"✓":"✕")+'</b></div><div class="metric">Bun (Deneysel)<b>'+escapeHtml(r.bunVersion?(r.bunVersion+" (Hazır)"):"Kurulu değil")+' '+(r.bunSupported?"✓":"—")+'</b></div><div class="metric">Dizin<b>'+escapeHtml(s.directory)+'</b></div><div class="metric">Bulunanlar<b>'+escapeHtml(evidenceLabel(i.evidence))+'</b></div><div class="metric">Paket adımı<b>'+(installed?'Güncelleme paket adımını içerir':ready?'Bu oturumda tamamlandı ✓':'Önce “Paketleri Kur / Onar” ✕')+'</b></div>';const names={fresh:"Yeni kurulum",partial:"Yarım/eski kurulum",installed:"Uygulama zaten kurulu"};byId("state").textContent=names[i.state];byId("state").className="state "+(i.state==="fresh"?"ok":"warn");let tip=j.message;if(installed){tip=j.type==="upgrade"?j.message:"Uygulama kurulu. Servisi durdurup “Mevcut Kurulumu Güncelle” ile verileri koruyarak güncelleyebilirsiniz."}else if(running){tip=j.message}else if(!ready){tip=i.evidence.dependenciesInstalled?"Paketler diskte var; sihirbaza geçmek için önce “Paketleri Kur / Onar” adımını çalıştırın.":"Önce “Paketleri Kur / Onar” ile paketleri kurun."}else{tip="Paket adımı tamam. Kurulum sihirbazına geçebilirsiniz."}if(s.legacyPnpm&&!running&&!ready){tip+=" Not: Eski pnpm kurulumu bulundu; pnpm artık desteklenmiyor, paket adımı node_modules klasörünü silip npm ile yeniden kurar."}byId("message").textContent=tip;byId("message").className=j.status==="error"?"error":j.status==="success"?"success":"muted";applyNotice();byId("logs").textContent=j.logs.length?j.logs.join("\n"):"Henüz işlem çıktısı yok.";byId("logs").scrollTop=byId("logs").scrollHeight;byId("danger").classList.toggle("hidden",i.state==="fresh");const wizard=byId("wizard");wizard.disabled=installed||running||!ready;if(installed){wizard.title="Uygulama zaten kurulu; sihirbaz kapalı. Temiz kurulum gerekir."}else if(!ready){wizard.title="Önce paket kurulum adımını tamamlayın."}else{wizard.title="Kurulum sihirbazını başlat"}byId("install").disabled=running;byId("upgrade").disabled=!installed||running;if(!installed&&j.wizardUrl)location.href=j.wizardUrl}
 let refreshPending=null;function refresh(){if(refreshPending)return refreshPending;refreshPending=(async()=>{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),30000);try{render(await api("/api/status",{signal:controller.signal}))}catch(e){byId("message").textContent=e.message;byId("message").className="error"}finally{clearTimeout(timer);refreshPending=null}})();return refreshPending}
 byId("upgrade").onclick=async()=>{try{await api("/api/upgrade",{method:"POST",body:"{}"});refresh()}catch(e){notify(e.message)}};
 byId("install").onclick=async()=>{try{const sel=byId("pkgManager");const manager=sel?sel.value:"npm";await api("/api/install",{method:"POST",body:JSON.stringify({packageManager:manager})});refresh()}catch(e){notify(e.message)}};
@@ -302,8 +302,8 @@ refresh();setInterval(refresh,1000);
 
 function managerOptions() {
   const preferred = preferredManager();
-  const labels = { npm: "npm (11 ve üstü — varsayılan)", pnpm: "pnpm (9.15.1)", bun: "Bun (Deneysel — CLI kurulumu doğrulandı)" };
-  return ["npm", "pnpm", "bun"].map((name) => `<option value="${name}"${name === preferred ? " selected" : ""}>${labels[name]}</option>`).join("");
+  const labels = { npm: "npm (11 ve üstü — varsayılan)", bun: "Bun (Deneysel — CLI kurulumu doğrulandı)" };
+  return ["npm", "bun"].map((name) => `<option value="${name}"${name === preferred ? " selected" : ""}>${labels[name]}</option>`).join("");
 }
 
 function renderPage() {
@@ -359,7 +359,7 @@ async function handler(req, res) {
       const manager = chooseManager(payload?.packageManager);
       assertManagerUsable(manager);
       const successMessage = manager === "bun" ? "Bun ile paket ve kütüphane kurulumu tamamlandı." : "Paket ve kütüphane kurulumu tamamlandı.";
-      // Bun için kilit dosyası depoda tutulmaz (bun.lock yok sayılır); donmuş kurulum yalnız pnpm/npm içindir.
+      // Bun için kilit dosyası depoda tutulmaz (bun.lock yok sayılır); donmuş kurulum yalnız npm içindir.
       startPackageJob("dependencies", { type: "install", frozen: manager !== "bun" }, successMessage, manager);
       return json(res, 202, { message: `Paket kurulumu (${manager}) başlatıldı.` });
     }
@@ -419,9 +419,9 @@ if (process.argv.includes("--check-only")) {
 }
 
 const runtime = runtimeStatus();
-if (!runtime.nodeSupported || (!runtime.pnpmSupported && !runtime.npmSupported && !runtime.bunSupported)) {
-  console.error(`Desteklenmeyen çalışma ortamı. Node.js: ${runtime.nodeVersion}; pnpm: ${runtime.pnpmVersion || "bulunamadı"}; npm: ${runtime.npmVersion || "bulunamadı"}; bun: ${runtime.bunVersion || "bulunamadı"}.`);
-  console.error(`Node.js 22/24 LTS ve pnpm ${REQUIRED_PNPM_VERSION} (veya yedek olarak Bun) gereklidir. Windows'ta kurulum.bat, Linux/macOS'ta ./kurulum.sh çalıştırın.`);
+if (!runtime.nodeSupported || (!runtime.npmSupported && !runtime.bunSupported)) {
+  console.error(`Desteklenmeyen çalışma ortamı. Node.js: ${runtime.nodeVersion}; npm: ${runtime.npmVersion || "bulunamadı"}; bun: ${runtime.bunVersion || "bulunamadı"}.`);
+  console.error(`Node.js 22/24 LTS ve npm 11 veya üstü (ya da deneysel Bun) gereklidir; Node.js 22 ile gelen npm 10 için: npm install -g npm@11. Windows'ta kurulum.bat, Linux/macOS'ta ./kurulum.sh çalıştırın.`);
   process.exit(1);
 }
 

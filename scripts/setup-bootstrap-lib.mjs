@@ -5,7 +5,6 @@ import net from "node:net";
 import path from "node:path";
 
 export const SUPPORTED_NODE_MAJORS = Object.freeze([22, 24]);
-export const REQUIRED_PNPM_VERSION = "9.15.1";
 export const CLEAN_INSTALL_CONFIRMATION = "QUIZMASTER VERİLERİNİ SİL";
 
 function isInside(parent, target) {
@@ -46,6 +45,7 @@ export function getSetupPaths(projectRoot) {
     deploymentConfig: path.join(dataRoot, "deployment-config.json"),
     deploymentConfigTemp: path.join(dataRoot, "deployment-config.json.tmp"),
     setupArtifacts: path.join(dataRoot, "setup-artifacts"),
+    // Eski pnpm kurulumundan kalan düzen de "paketler kurulu" kanıtı sayılır (npm ci yeniden kurar).
     nodeModules: path.join(root, "node_modules", ".pnpm"),
   };
   for (const target of Object.values(values).filter((value) => typeof value === "string")) {
@@ -106,19 +106,15 @@ export function inspectInstallationState(projectRoot) {
 
 export const MIN_NPM_MAJOR = 11;
 
-export function validateRuntime(nodeVersion, pnpmVersion, bunVersion = null, npmVersion = null) {
+export function validateRuntime(nodeVersion, npmVersion = null, bunVersion = null) {
   const normalizedNode = String(nodeVersion || "").replace(/^v/i, "");
   const nodeMajor = Number(normalizedNode.split(".")[0]);
-  const normalizedPnpm = String(pnpmVersion || "").trim();
   const normalizedBun = bunVersion ? String(bunVersion).trim() : null;
   const normalizedNpm = npmVersion ? String(npmVersion).trim() : null;
   return {
     nodeVersion: normalizedNode || null,
     nodeSupported: SUPPORTED_NODE_MAJORS.includes(nodeMajor),
     supportedNodeMajors: [...SUPPORTED_NODE_MAJORS],
-    pnpmVersion: normalizedPnpm || null,
-    pnpmSupported: normalizedPnpm === REQUIRED_PNPM_VERSION,
-    requiredPnpmVersion: REQUIRED_PNPM_VERSION,
     bunVersion: normalizedBun || null,
     bunSupported: Boolean(normalizedBun),
     npmVersion: normalizedNpm || null,

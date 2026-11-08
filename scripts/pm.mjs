@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Paket yöneticisinden bağımsız çalıştırıcı: node scripts/pm.mjs [--pm npm|pnpm|bun] <komut>
+// Paket yöneticisinden bağımsız çalıştırıcı: node scripts/pm.mjs [--pm npm|bun] <komut>
 //   install [--no-frozen] [--no-dev]
 //   run [--workspace server|client] <betik> [-- argümanlar…]
 //   exec [--workspace server|client] <bin> [-- argümanlar…]   (npm için desteklenmez)

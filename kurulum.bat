@@ -49,7 +49,7 @@ if errorlevel 1 (
   )
 )
 
-rem Paket yoneticisi: npm 11+ (varsayilan), pnpm 9.15.1 veya Bun (deneysel). Biri yeterlidir.
+rem Paket yoneticisi: npm 11+ (varsayilan) veya Bun (deneysel). Biri yeterlidir.
 set "PM_OK=0"
 set "NPM_VERSION="
 where npm >nul 2>&1
@@ -67,18 +67,6 @@ if errorlevel 1 (
   )
 )
 
-where pnpm >nul 2>&1
-if not errorlevel 1 (
-  set "PNPM_VERSION="
-  for /f "delims=" %%V in ('pnpm --version 2^>nul') do set "PNPM_VERSION=%%V"
-  if "!PNPM_VERSION!"=="9.15.1" (
-    echo [TAMAM] pnpm !PNPM_VERSION!
-    set "PM_OK=1"
-  ) else (
-    echo [BÝLGÝ] pnpm !PNPM_VERSION! bulundu; yalnýz 9.15.1 desteklenir, bu pnpm yok sayýldý.
-  )
-)
-
 where bun >nul 2>&1
 if not errorlevel 1 (
   set "BUN_VERSION="
@@ -88,7 +76,7 @@ if not errorlevel 1 (
 )
 
 if "!PM_OK!"=="0" (
-  echo [EKSÝK] Desteklenen paket yöneticisi bulunamadý ^(npm 11+, pnpm 9.15.1 veya Bun^).
+  echo [EKSÝK] Desteklenen paket yöneticisi bulunamadý ^(npm 11+ veya Bun^).
   set "HAS_ERROR=1"
 )
 
@@ -174,8 +162,7 @@ echo   https://nodejs.org/en/download
 echo.
 echo Node.js 22 ile gelen npm 10 desteklenmez. npm 11 icin:
 where npm >nul 2>&1 && echo   npm install --global npm@11
-where corepack >nul 2>&1 && echo   Alternatif ^(pnpm 9.15.1^): corepack enable ^&^& corepack prepare pnpm@9.15.1 --activate
-where npm >nul 2>&1 || where corepack >nul 2>&1 || echo   Bu Node.js kurulumunda npm ve corepack yok. npm iceren tam Node.js 22/24 LTS kurun veya pnpm bagimsiz kurulumunu kullanin: https://pnpm.io/installation
+where npm >nul 2>&1 || echo   Bu Node.js kurulumunda npm yok. npm iceren tam Node.js 22/24 LTS kurun ^(Node.js 24 npm 11 ile gelir^).
 echo.
 echo Yönetici yetkiniz yoksa kurum bilgi iþlem biriminden kurulum isteyin.
 echo Proxy, DNS veya sistem PATH ayarlarý bu betik tarafýndan deðiþtirilmez.
