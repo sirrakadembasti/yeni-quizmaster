@@ -28,6 +28,8 @@ client/.env
 /server/data/deployment-config.json
 /server/data/deployment-config.json.tmp
 /server/data/installation.lock
+/server/data/installation.state.json
+/server/data/installation.state.json.*.tmp
 /server/data/setup-artifacts/
 /server/data/demo-sessions/
 /server/backups/*
