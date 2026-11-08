@@ -37,7 +37,7 @@ else fs.appendFileSync(process.env.LAUNCHER_TEST_ARGS,JSON.stringify(args)+'\\n'
     fs.writeFileSync(path.join(bin, 'pnpm'), '#!/bin/sh\nexec "$LAUNCHER_TEST_NODE" "$LAUNCHER_TEST_RECORDER" "$@"\n', { mode: 0o755 });
     const env = { ...process.env, LAUNCHER_TEST_NODE: process.execPath.replaceAll('\\', '/'),
       LAUNCHER_TEST_RECORDER: recorder.replaceAll('\\', '/'), LAUNCHER_TEST_ARGS: recorded,
-      SETUP_BOOTSTRAP_PORT: '5849', SETUP_WIZARD_PORT: '5850' };
+      SETUP_BOOTSTRAP_PORT: '5849' };
     const originalPath = Object.entries(process.env).find(([key]) => key.toUpperCase() === 'PATH')?.[1] || '';
     for (const key of Object.keys(env)) if (key.toUpperCase() === 'PATH') delete env[key];
     env.PATH = `${bin}${path.delimiter}${originalPath}`;

@@ -327,7 +327,7 @@ try {
     : entry === 'bat' ? [process.env.ComSpec || 'cmd.exe', ['/d', '/c', 'kurulum.bat', '--no-open']]
       : [process.env.HYBRID_SH || (process.platform === 'win32' ? 'C:\\Program Files\\Git\\bin\\sh.exe' : 'sh'), ['kurulum.sh', '--no-open']];
   const startup = launch(...invocation, root, { ...cleanEnv, SETUP_BOOTSTRAP_PORT: String(bootstrapPort),
-    SETUP_WIZARD_PORT: String(wizardPort) }, 'bootstrap.log');
+  }, 'bootstrap.log');
   const tokenUrl = await until(() => {
     if (startup.error) throw startup.error;
     if (startup.exit !== null) throw new Error(`Entrypoint exited (${startup.exit}); see redacted bootstrap.log`);
@@ -412,7 +412,7 @@ try {
   completedPhase('real package install finished; independent node_modules verified');
   await page.locator('#wizard').click();
   try {
-    await bounded(() => page.waitForURL(`http://127.0.0.1:${wizardPort}/setup`, { waitUntil: 'domcontentloaded', timeout: 120000 }),
+    await bounded(() => page.waitForURL(`http://127.0.0.1:${bootstrapPort}/wizard`, { waitUntil: 'domcontentloaded', timeout: 120000 }),
       125000, 'real wizard DOM navigation');
   } catch (error) { await navigationDiagnostic(page, 'wizard-entry', 'failed', error); throw error; }
   await page.locator('#checks .check').first().waitFor();

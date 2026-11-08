@@ -101,7 +101,6 @@ EOF
 fi
 
 CHECK_PORT="${SETUP_BOOTSTRAP_PORT:-5049}"
-WIZARD_PORT="${SETUP_WIZARD_PORT:-5050}"
 HOLDER_PID=""
 if HOLDER_PID=$(node "scripts/find-port-holder.mjs" "$CHECK_PORT" 2>/dev/null); then
   :
@@ -142,42 +141,9 @@ EOF
   esac
 fi
 
-WIZARD_HOLDER=""
-if WIZARD_HOLDER=$(node "scripts/find-port-holder.mjs" "$WIZARD_PORT" 2>/dev/null); then
-  :
-else
-  WIZARD_HOLDER=""
-fi
-
-if [ -n "$WIZARD_HOLDER" ]; then
-  cat <<EOF
-
-[UYARI] Sihirbaz portu zaten kullanımda: 127.0.0.1:$WIZARD_PORT
-
-Önceki kurulum sihirbazı kalmış olabilir (2. aşama). Devam ederseniz
-sihirbaz açılmadan "port zaten kullanımda" hatası alabilirsiniz.
-
-Portu tutan süreç: PID $WIZARD_HOLDER
-Durdurmak için: kill $WIZARD_HOLDER
-
-Not: Kurulum verileri bu uyarı nedeniyle değiştirilmez.
-EOF
-  printf '%s' "Sihirbaz portunu tutan süreç şimdi durdurulsun mu? [E/H]: "
-  read -r answer || answer="H"
-  case "$answer" in
-    [EeYy]*)
-      kill "$WIZARD_HOLDER" 2>/dev/null || true
-      sleep 1
-      ;;
-    *)
-      echo "Devam edildi; sihirbaza geçince yeniden uyarılırsınız."
-      ;;
-  esac
-fi
-
 printf '\n%s\n\n' '[TAMAM] Gerekli çalışma ortamı hazır. Grafik kurulum başlangıcı açılıyor...'
 printf '%s\n' 'Bu terminali sihirbaz bitene kadar KAPATMAYIN; sihirbaz bu sürecin altındadır.'
-printf '%s\n' 'Portlar: başlatıcı '"$CHECK_PORT"' · sihirbaz '"$WIZARD_PORT"
+printf '%s\n' 'Adres: http://127.0.0.1:'"$CHECK_PORT"' (sihirbaz da aynı adreste açılır)'
 printf '%s\n' 'Bitişte "Uygulamayı başlat" → yerelde pnpm dev (arka plan), kurumda üretim servisi.'
 printf '%s\n' 'Yerel giriş: http://127.0.0.1:5173/auth'
 printf '\n'
@@ -201,7 +167,7 @@ Yapılması gerekenler:
 
 Kurulum verileri bu hata nedeniyle değiştirilmez.
 
-Not: Sihirbaz 5050, kurulum başlatıcısı $CHECK_PORT portunu kullanır.
+Not: Başlatıcı ve sihirbaz tek adreste, $CHECK_PORT portunda çalışır.
 Uygulama zaten kuruluysa (installation.lock) sihirbaz kapalı kalır;
 temiz kurulum için başlatıcıdaki "Yedekle ve Temiz Kuruluma Geç" adımını kullanın.
 EOF

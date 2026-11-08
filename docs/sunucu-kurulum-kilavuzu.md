@@ -331,7 +331,7 @@ Windows'ta `kurulum.bat`, Linux/macOS'ta `./kurulum.sh` önerilir. Node.js ve pn
 pnpm run setup
 ```
 
-İlk aşama yalnız Node.js yerleşik modüllerini kullanır ve `127.0.0.1:5049` adresine bağlanır. Kurulum durumunu gösterir, varsayılan olarak `pnpm install --frozen-lockfile` (veya panelden deneysel Bun seçildiyse `bun install`) işlemini başlatır ve gerçek işlem çıktısını ekranda sunar. Paketler hazır olduğunda mevcut ana sihirbaz `127.0.0.1:5050` üzerinde başlatılır. Sihirbaz portu doluysa başlatıcı PID ile uyarır ve süreci durdurmayı teklif eder. Terminal sihirbaz bitene kadar kapatılmamalıdır. Doğrudan konsoldan manuel kurulum tercih edilirse `pnpm install --frozen-lockfile && pnpm --filter quiz-master-server db:deploy && pnpm build` akışı aynen korunmaktadır.
+İlk aşama yalnız Node.js yerleşik modüllerini kullanır ve `127.0.0.1:5049` adresine bağlanır. Kurulum durumunu gösterir, varsayılan olarak `pnpm install --frozen-lockfile` (veya panelden deneysel Bun seçildiyse `bun install`) işlemini başlatır ve gerçek işlem çıktısını ekranda sunar. Paketler hazır olduğunda mevcut ana sihirbaz arka planda boş bir yerel portta başlatılır ve aynı adrestan (`127.0.0.1:5049/wizard`) sunulur; başlatıcı yalnız kimliği doğrulanmış, beyaz listedeki sihirbaz isteklerini aktarır. Başlatıcı portu (5049) doluysa başlatıcı PID ile uyarır ve süreci durdurmayı teklif eder. Terminal sihirbaz bitene kadar kapatılmamalıdır. Doğrudan konsoldan manuel kurulum tercih edilirse `pnpm install --frozen-lockfile && pnpm --filter quiz-master-server db:deploy && pnpm build` akışı aynen korunmaktadır.
 
 Sihirbazda **kurulum biçimi** seçenekleri:
 
@@ -341,13 +341,13 @@ Sihirbazda **kurulum biçimi** seçenekleri:
 
 Kurulum uygulandıktan sonra sihirbaz **kör yönlendirme yapmaz**. Bitişteki **Uygulamayı başlat** düğmesi yerelde `pnpm dev` (arka plan, terminal penceresiz), kurum kurulumunda üretim servisini başlatır. Yerel giriş: `http://127.0.0.1:5173/auth`. Kurum (subdomain/alt yol) adresi ancak Nginx + DNS + TLS hazır ve uygulama ayaktaysa açılır. Aksi halde “sayfaya ulaşılamıyor” görünür; bu bir kurulum hatası değildir.
 
-VPS üzerinde iki portu da internete veya yerel ağa açmayın. Yönetici bilgisayarından SSH tüneli kurun:
+VPS üzerinde bu portu internete veya yerel ağa açmayın. Yönetici bilgisayarından SSH tüneli kurun:
 
 ```bash
-ssh -L 5049:127.0.0.1:5049 -L 5050:127.0.0.1:5050 kullanici@sunucu
+ssh -L 5049:127.0.0.1:5049 kullanici@sunucu
 ```
 
-Önce terminalde gösterilen `http://127.0.0.1:5049/setup?token=...` adresini açın. Bootstrap tamamlanınca tarayıcı ana sihirbazın `5050` adresine yönlendirilir. Her iki URL anahtarı da HttpOnly/SameSite oturum çerezine çevrilir ve paylaşılmamalıdır.
+Önce terminalde gösterilen `http://127.0.0.1:5049/setup?token=...` adresini açın. Bootstrap tamamlanınca aynı sekmede ve aynı portta `/wizard` sayfasına geçilir. URL anahtarı HttpOnly/SameSite oturum çerezine çevrilir ve paylaşılmamalıdır.
 
 Sihirbazın beş adımı:
 

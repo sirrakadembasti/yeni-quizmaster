@@ -24,7 +24,7 @@ test('bootstrap caches runtime and installed renderer rejects retained wizard ha
   const scripts = path.join(root, 'scripts');
   fs.mkdirSync(scripts);
   fs.writeFileSync(path.join(root, 'package.json'), '{"name":"quiz-master","type":"module"}\n');
-  for (const file of ['setup-bootstrap.mjs', 'setup-bootstrap-lib.mjs', 'pnpm-invocation.mjs', 'upgrade-process-supervisor.mjs'])
+  for (const file of ['setup-bootstrap.mjs', 'setup-bootstrap-lib.mjs', 'pnpm-invocation.mjs', 'upgrade-process-supervisor.mjs', 'setup-proxy.mjs'])
     fs.copyFileSync(path.join(scriptRoot, file), path.join(scripts, file));
   const calls = path.join(root, 'version-calls.txt');
   const mockPnpm = path.join(root, 'pnpm.cjs');
@@ -60,7 +60,7 @@ if (args.length === 1 && args[0] === '--version') {
 `);
   const bootstrapPort = await port();
   const env = { ...process.env, NODE_ENV: 'production', CI: 'false', npm_execpath: mockPnpm, RUNTIME_TEST_CALLS: calls,
-    SETUP_BOOTSTRAP_PORT: String(bootstrapPort), SETUP_WIZARD_PORT: String(await port()) };
+    SETUP_BOOTSTRAP_PORT: String(bootstrapPort) };
   delete env.SETUP_TOKEN;
   const child = spawn(process.execPath, [path.join(scripts, 'setup-bootstrap.mjs'), '--no-open'], {
     cwd: root, env, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'],

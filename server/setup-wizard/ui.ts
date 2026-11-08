@@ -1,5 +1,7 @@
-export function renderSetupPage(csrfToken: string) {
-  const boot = JSON.stringify({ csrfToken }).replace(/</g, "\\u003c");
+export function renderSetupPage(csrfToken: string, apiBase = "") {
+  // apiBase yalnız "" veya "/kucuk-harf" olabilir (başlatıcı aktarıcısı için "/wizard").
+  const safeBase = /^(\/[a-z]+)?$/.test(apiBase) ? apiBase : "";
+  const boot = JSON.stringify({ csrfToken, apiBase: safeBase }).replace(/</g, "\\u003c");
   return `<!doctype html>
 <html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>QuizMaster Kurulum Sihirbazı</title>
@@ -267,7 +269,7 @@ async function fetchJson(url,options){
 async function loadStatus(){
   checks.textContent='Kontrol ediliyor…';
   try{
-    const {ok,status,data:s}=await fetchJson('/api/status');
+    const {ok,status,data:s}=await fetchJson(window.__SETUP__.apiBase+'/api/status');
     if(!ok)throw new Error(s&&s.message?s.message:('Sunucu ön kontrolü başarısız ('+status+')'));
     const rows=Object.entries(s.checks).map(([k,v])=>{
       const label=CHECK_LABELS[k]||k;
@@ -306,7 +308,7 @@ wizard.onsubmit=async e=>{
   const enabled=f.has('emailEnabled');
   const payload={deployment:{mode:f.get('mode'),publicUrl:f.get('publicUrl'),basePath:f.get('basePath'),allowedOrigins:String(f.get('origins')).split(',').map(x=>x.trim()).filter(Boolean),trustProxyHops:Number(f.get('proxy')),retention:{enabled:f.has('retention'),actionLogDays:Number(f.get('actionDays')),readNotificationDays:Number(f.get('notificationDays')),emailLogDays:Number(f.get('emailDays')),passwordResetDays:Number(f.get('passwordDays'))}},server:{host:f.get('host'),port:Number(f.get('port'))},admin:{name:f.get('adminName'),email:f.get('adminEmail'),password:f.get('adminPassword')},email:enabled?{enabled:true,user:f.get('emailUser'),password:f.get('emailPassword'),fromEmail:f.get('fromEmail'),fromName:f.get('fromName')}:{enabled:false},buildClient:f.has('buildClient'),overwriteExistingEnv:f.has('overwrite')};
   try{
-    const start=await fetchJson('/api/apply',{method:'POST',headers:{'content-type':'application/json','x-setup-csrf':window.__SETUP__.csrfToken},body:JSON.stringify(payload)});
+    const start=await fetchJson(window.__SETUP__.apiBase+'/api/apply',{method:'POST',headers:{'content-type':'application/json','x-setup-csrf':window.__SETUP__.csrfToken},body:JSON.stringify(payload)});
     const startData=start.data||{};
     if(start.status===400&&startData.issues){
       const issueText='\\n'+startData.issues.map(i=>'• '+((i.message)||i.code)+((i.path&&i.path.length)?' ('+i.path.join('.')+')':'')).join('\\n');
@@ -373,7 +375,7 @@ function finishApplySuccess(applyJob){
         ? 'pnpm dev arka planda başlatılıyor; terminal penceresi açılmaz…'
         : 'Uygulama servisi başlatılıyor…';
       try{
-        const {data}=await fetchJson('/api/start-app',{
+        const {data}=await fetchJson(window.__SETUP__.apiBase+'/api/start-app',{
           method:'POST',
           headers:{'content-type':'application/json','x-setup-csrf':window.__SETUP__.csrfToken},
           body:JSON.stringify(isLocal?{mode:'dev'}:{mode:'production'}),
@@ -397,7 +399,7 @@ function finishApplySuccess(applyJob){
     goLogin.disabled=true;
     note.textContent='Uygulama denetleniyor…';
     try{
-      const {data}=await fetchJson('/api/app-health');
+      const {data}=await fetchJson(window.__SETUP__.apiBase+'/api/app-health');
       if(data&&data.reachable){
         openLogin(data.loginUrl||loginUrl);
         return;
@@ -423,7 +425,7 @@ function finishApplySuccess(applyJob){
 async function watchAppHealth(loginUrl,note,isLocal){
   for(let i=0;i<30;i++){
     try{
-      const {data}=await fetchJson('/api/app-health');
+      const {data}=await fetchJson(window.__SETUP__.apiBase+'/api/app-health');
       if(data&&data.reachable){
         note.textContent='Uygulama ayakta. Giriş sayfasına yönlendiriliyorsunuz…';
         setTimeout(()=>{location.href=loginUrl},1200);
@@ -437,7 +439,7 @@ async function pollApplyProgress(){
   let failures=0;
   for(let i=0;i<240;i++){
     try{
-      const {ok,status,data:s}=await fetchJson('/api/status');
+      const {ok,status,data:s}=await fetchJson(window.__SETUP__.apiBase+'/api/status');
       if(!ok&&status===429){
         failures+=1;
         if(failures>8)throw new Error('Sunucu istek limiti aşıldı. Birkaç dakika sonra tekrar deneyin.');

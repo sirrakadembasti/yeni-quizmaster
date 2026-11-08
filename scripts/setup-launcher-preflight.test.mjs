@@ -18,7 +18,7 @@ function launcherEnv(bin) {
   // pnpm/npm/corepack/bun içeren dizinleri çıkar; gerçek bir paket yöneticisi sızmasın.
   const kept = original.split(path.delimiter).filter(Boolean)
     .filter(directory => !PACKAGE_MANAGERS.some(name => fs.existsSync(path.join(directory, name))));
-  const env = { ...process.env, SETUP_BOOTSTRAP_PORT: '5849', SETUP_WIZARD_PORT: '5850' };
+  const env = { ...process.env, SETUP_BOOTSTRAP_PORT: '5849' };
   for (const key of Object.keys(env)) if (key.toUpperCase() === 'PATH') delete env[key];
   env.PATH = [bin, ...kept].join(path.delimiter);
   env.LAUNCHER_TEST_NODE = process.execPath.replaceAll('\\', '/');
