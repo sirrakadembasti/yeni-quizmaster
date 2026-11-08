@@ -6,10 +6,15 @@ import {runSupervisedCommand} from './upgrade-process.mjs';
 import {createApplicationBackup} from './maintenance-lib.mjs';
 import {createInvocation,selectManager} from './package-manager.mjs';
 
+/** Yükseltme komutunun {command,args,cwd} çağrısı. Yönetici açık seçimden (QUIZMASTER_PM, kurulu yönetici, varsayılan npm) gelir; kabuksuzdur.
+ * cwd önemlidir: Bun çalışma alanı betiğini ilgili dizinde (ör. server/) çalıştırır; npm --workspace ile kökte çalışır. */
+export function upgradeInvocation(projectRoot,op,env=process.env){
+  return createInvocation(selectManager({env,root:projectRoot}),op,{root:projectRoot,env});
+}
+
 export function runUpgradeCommand(projectRoot,op,onProgress=()=>{},signal){
-  // Yönetici açık seçimden (QUIZMASTER_PM, kurulu yönetici, varsayılan npm); komut kabuksuz üretilir.
-  const {command,args:argv}=createInvocation(selectManager({env:process.env,root:projectRoot}),op,{root:projectRoot,env:process.env});
-  return runSupervisedCommand(command,argv,{cwd:projectRoot,env:{...process.env,DATABASE_URL:'file:'+path.join(projectRoot,'server/data/quiz.db').replaceAll('\\','/'),RUST_LOG:'info',FORCE_COLOR:'0',CI:'true'},onProgress,signal});
+  const {command,args:argv,cwd}=upgradeInvocation(projectRoot,op);
+  return runSupervisedCommand(command,argv,{cwd,env:{...process.env,DATABASE_URL:'file:'+path.join(projectRoot,'server/data/quiz.db').replaceAll('\\','/'),RUST_LOG:'info',FORCE_COLOR:'0',CI:'true'},onProgress,signal});
 }
 
 /** Code is supplied by the operator; no Git/network source selection or data reset. */
