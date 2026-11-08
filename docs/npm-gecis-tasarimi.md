@@ -1,6 +1,18 @@
 # npm'i Gerçek Paket Yöneticisi Yapma Tasarımı (Taslak)
 
-Durum: **taslak, onay bekliyor**. Kod değişikliği yok. [Kurulum yenileme tasarımı](kurulum-yenileme-tasarimi.md) belgesinin devamıdır.
+Durum: **kararlar verildi (8 Kasım 2026), uygulama bekliyor**. Kod değişikliği yok. [Kurulum yenileme tasarımı](kurulum-yenileme-tasarimi.md) belgesinin devamıdır.
+
+## 0. Verilen kararlar (8 Kasım 2026)
+
+| # | Soru | Karar |
+|---|------|-------|
+| 1 | Kilit stratejisi | **Tek kilit: `package-lock.json` (npm).** |
+| 2 | pnpm | **Kaldırılacak.** Çift kilit yalnızca geçiş süresince; sonunda `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `packageManager` alanı ve `pnpm.overrides` silinir. |
+| 3 | En düşük npm | **11** (Node 22 ile gelen npm 10 desteklenmez; `engines` ve başlatıcı denetimi buna göre). |
+| 4 | Ayrı güvenlik PR'ı | **Açılmayacak.** Desteklenen yöneticiler **npm ve Bun**. Mevcut `pnpm audit` bulguları pnpm ile birlikte kalkar; npm ağacının `npm audit` sonucu geçiş kapısında denetlenir. |
+| 5 | Sıra | **Önce** tek süreç / tek port arayüz işi, **sonra** npm aşamaları. |
+
+Plana etkisi: pnpm bırakıldığı için aşama 3'teki "iki ağaçta tüm testler" kapısı yalnızca geçiş süresince pnpm ile karşılaştırma yapar; aşama 5'teki "pnpm'i sürdür/bırak" kararı **bırak** olarak kapanmıştır. Bun, paket yöneticisi katmanında npm ile birlikte birinci sınıf seçenek olarak düzeltilecektir (bkz. bölüm 4).
 
 ## 1. İstek ve bugünkü durum
 
@@ -90,7 +102,7 @@ Her aşama ayrı PR'dır ve tek başına geri alınabilir. 4. aşamaya kadar bug
 - **Windows yolu/kabuk farkları:** `npm.cmd` çağrısı `cmd.exe` gerektirir; bugünkü `pnpmInvocation` bunu bilerek önlüyor (yol verisi güvenliği). Katman aynı disiplini koruyacak (kabuksuz, doğrudan Node girişi).
 - **`kurulum.bat` kodlaması (CP1254)** ve mevcut başlatıcı testleri yeniden yazılacak.
 
-## 8. Açık sorular (karar gerekiyor)
+## 8. Açık sorular (bölüm 0'da yanıtlandı)
 
 1. **Kilit stratejisi:** önerilen "geçici çift kilit → hedef tek kilit (npm)" kabul mü? Yoksa kalıcı çift kilit mi?
 2. **pnpm'in sonu:** 5. aşamada pnpm tamamen bırakılsın mı, yoksa desteklenen seçenek mi kalsın?
