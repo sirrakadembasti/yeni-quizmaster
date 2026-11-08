@@ -7,7 +7,7 @@ import {createRequire} from 'node:module';
 import {spawn} from 'node:child_process';
 import net from 'node:net';
 import {fileURLToPath} from 'node:url';
-import {runUpgradeCommand,upgradeApplication} from './upgrade-lib.mjs';
+import {runUpgradeCommand,upgradeApplication,upgradeInvocation} from './upgrade-lib.mjs';
 const require=createRequire(new URL('../server/package.json',import.meta.url));
 const sqlite=require(createRequire(require.resolve('connect-sqlite3')).resolve('sqlite3'));
 async function fixture(t){
@@ -87,4 +87,19 @@ for(const hardStop of [false,true])test(hardStop?'hard parent stop preserves rec
   // In this Windows host a hard parent stop can hard-kill its CLI too. Its
   // finally cannot run; retain any lock as conservative operator evidence.
   assert.equal((await fs.readdir(path.join(root,'server/backups'))).length,1,'Verified pre-upgrade recovery backup was lost');
+});
+
+test('upgrade invocation: Bun çalışma alanı komutları ilgili dizinde, npm ise kökte (--workspace) çalışır',async t=>{
+  const root=await fixture(t),bin=path.join(root,'fake-bin');await fs.mkdir(bin);
+  // Yalnız varlığı denetlenir (çalıştırılmaz): PATH'teki bun/bun.exe.
+  await fs.writeFile(path.join(bin,process.platform==='win32'?'bun.exe':'bun'),'');
+  const op={type:'run',workspace:'server',script:'db:deploy'};
+  const bun=upgradeInvocation(root,op,{PATH:bin,QUIZMASTER_PM:'bun'});
+  assert.equal(bun.cwd,path.join(root,'server'),'Bun betiği server/ dizininde çalışmalı (aksi hâlde "Script not found")');
+  assert.deepEqual(bun.args,['run','db:deploy']);
+  const npm=upgradeInvocation(root,op,{PATH:'',QUIZMASTER_PM:'npm'});
+  assert.equal(npm.cwd,root);
+  assert.ok(npm.args.includes('--workspace=server'));
+  const rootBun=upgradeInvocation(root,{type:'run',script:'build'},{PATH:bin,QUIZMASTER_PM:'bun'});
+  assert.equal(rootBun.cwd,root,'çalışma alanı olmayan komut kökte çalışır');
 });
