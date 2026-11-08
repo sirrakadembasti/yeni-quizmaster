@@ -5,6 +5,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { createRequire } from 'node:module';
 import { spawnSync } from 'node:child_process';
 
 export const MANAGERS = ['npm', 'bun'];
@@ -206,4 +207,17 @@ export function detectAll(options = {}) {
     const version = detectVersion(manager, options);
     return [manager, { version, supported: isSupportedVersion(manager, version) }];
   }));
+}
+
+/**
+ * Bir paketin bin dosyasını (JS) mutlak yol olarak bulur: `npm exec` kullanmadan, kayıt defterine gitmeden.
+ * Çağıran `process.execPath` ile bu dosyayı çalıştırır. workspace verilirse o çalışma alanından çözülür.
+ */
+export function resolveLocalBin(root, workspace, packageName, binName = packageName.split('/').pop()) {
+  const base = workspace ? path.join(root, WORKSPACES[workspace].dir) : root;
+  const packageJsonPath = createRequire(path.join(base, 'package.json')).resolve(`${packageName}/package.json`);
+  const manifest = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  const bin = typeof manifest.bin === 'string' ? manifest.bin : manifest.bin?.[binName];
+  if (!bin) throw new Error(`${packageName} paketinde '${binName}' bin dosyası yok.`);
+  return path.resolve(path.dirname(packageJsonPath), bin);
 }

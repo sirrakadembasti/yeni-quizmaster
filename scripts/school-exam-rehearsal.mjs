@@ -1,4 +1,3 @@
-// LEGACY (pnpm): bu kabul/prova betiği pnpm'e bağlıdır; pnpm kaldırıldı (docs/npm-gecis-tasarimi.md). CI'da koşmaz, npm'e uyarlanana kadar çalışması beklenmemelidir.
 // Production API rehearsal. All SQL and processes are restricted to a fresh owned fixture.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -35,8 +34,6 @@ exclusiveJson(root, 'runtime.json', runtime);
 readPerformanceRuntime(repo, path.join(root, 'runtime.json'), { runId: runtime.runId, requireDatabase: false });
 const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => /^(PATH|SYSTEMROOT|WINDIR|TMP|TEMP|LOCALAPPDATA|USERPROFILE)$/i.test(key)));
 Object.assign(env, { DATABASE_URL: 'file:' + runtime.database.replaceAll('\\', '/'), ACADEMIC_ARCHIVE_RUNTIME: path.join(root, 'runtime.json'), SESSION_SECRET: 'school-rehearsal-only-random-2026', HOST: '127.0.0.1', NODE_ENV: 'production', CI: 'true', CHECKPOINT_DISABLE: '1', ARCHIVE_BACKUP_ROOT: path.join(root, 'artifacts'), PRISMA_HIDE_UPDATE_MESSAGE: '1' });
-// pnpm's cross-env launcher adds this virtual-store search path in the real start command.
-env.NODE_PATH = path.join(repo, 'node_modules', '.pnpm', 'node_modules');
 const jobs = [], proof = { runId: runtime.runId, workload: { students: 80, classes: 4, questions: 20, timeLimitMinutes: 30, mode: 'accelerated synchronized bursts, not a 30-minute soak', network: 'loopback; not school Wi-Fi' }, phases: [] };
 let db, isolation, port;
 const httpActors = [];

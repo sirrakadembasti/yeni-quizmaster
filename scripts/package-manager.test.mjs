@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import {
   DEFAULT_MANAGER, buildCommand, detectInvokingManager, createInvocation, detectVersion, isSupportedVersion, managerInvocation, resolveBunExecutable,
-  resolveNpmEntry, selectManager, detectInstalledManager, hasLegacyPnpmTree,
+  resolveNpmEntry, selectManager, detectInstalledManager, hasLegacyPnpmTree, resolveLocalBin,
 } from './package-manager.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -160,4 +160,18 @@ test('kurulu yönetici node_modules düzeninden tanınır; var olan kurulum sess
   assert.equal(selectManager({ requested: 'npm', env: {}, root, exists: has('node_modules/.pnpm') }), 'npm');
   assert.equal(selectManager({ env: { QUIZMASTER_PM: 'bun' }, root, exists: has('node_modules/.pnpm') }), 'bun');
   assert.equal(selectManager({ env: { npm_config_user_agent: 'npm/11.0.0 node/v22' }, root, exists: has('node_modules/.pnpm') }), 'npm', 'betiği başlatan yönetici kurulu yöneticiden önce gelir');
+});
+
+const depsReady = fs.existsSync(path.join(root, 'server', 'node_modules', '.bin'));
+test('resolveLocalBin: çalışma alanı bin dosyasını npm exec olmadan, mutlak JS yolu olarak bulur', { skip: depsReady ? false : 'bağımlılıklar yok' }, () => {
+  for (const [workspace, name, bin] of [['server', 'tsx'], ['client', 'vite'], [null, '@playwright/test', 'playwright']]) {
+    const file = resolveLocalBin(root, workspace, name, bin);
+    assert.ok(path.isAbsolute(file) && fs.existsSync(file), `${name}: bin bulunamadı (${file})`);
+    assert.match(file, /.(c|m)?js$/, `${name}: JS dosyası olmalı`);
+  }
+});
+test('resolveLocalBin: olmayan paket ve olmayan bin açık hata verir', { skip: depsReady ? false : 'bağımlılıklar yok' }, () => {
+  assert.throws(() => resolveLocalBin(root, 'server', 'yok-boyle-bir-paket-xyz'));
+  // tsx'in bin alanı düz dizgedir (ad aranmaz); vite'inki nesnedir, olmayan ad hata verir.
+  assert.throws(() => resolveLocalBin(root, 'client', 'vite', 'olmayan-bin'), /bin dosyası yok/);
 });

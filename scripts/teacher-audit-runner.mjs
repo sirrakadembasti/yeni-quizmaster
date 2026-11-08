@@ -1,9 +1,9 @@
-// LEGACY (pnpm): bu kabul/prova betiği pnpm'e bağlıdır; pnpm kaldırıldı (docs/npm-gecis-tasarimi.md). CI'da koşmaz, npm'e uyarlanana kadar çalışması beklenmemelidir.
 // Native Linux runner; disposable DB created by teacher-audit-server.ts.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
+import { resolveLocalBin } from './package-manager.mjs';
 import { captureOwnedLinuxProcesses, cleanupOwnedLinuxProcesses, verifyFixturePortsReleased } from './linux-owned-process-cleanup.mjs';
 import { releaseOwnedChildHandles } from './server-startup-child-cleanup.mjs';
 import { waitForAuditServer } from './audit-server-readiness.mjs';
@@ -17,8 +17,9 @@ const report = { startedAt: new Date().toISOString(), platform: process.platform
   status: 'running', ports: [5530, 5531], cleanup: [] };
 const save = () => fs.writeFileSync(path.join(out, 'runner-result.json'), JSON.stringify(report, null, 2) + '\n');
 const states = [];
-function launch(args, name, env = {}) {
-  const child = spawn('pnpm', args, { cwd: root, env: { ...process.env, FORCE_COLOR: '0', ...env }, detached: true,
+// Yerel bin dosyaları doğrudan Node ile çalıştırılır (npm exec kayıt defterinden paket indirebilir).
+function launch(args, name, env = {}, cwd = root) {
+  const child = spawn(process.execPath, args, { cwd, env: { ...process.env, FORCE_COLOR: '0', ...env }, detached: true,
     stdio: ['ignore', 'pipe', 'pipe'] });
   const state = { child, knownProcesses: new Map(), errorCode: null };
   child.on('error', error => { state.errorCode = error.code || 'SPAWN_FAILED'; });
@@ -44,13 +45,13 @@ inventory.unref(); save();
 try {
   const ports = await verifyFixturePortsReleased(report.ports);
   if (!ports.every(item => item.stopped)) throw new Error('Audit ports are occupied; no holder was stopped');
-  const api = launch(['--filter', 'quiz-master-server', 'exec', 'tsx', 'tests/teacher-audit-server.ts'], 'api');
+  const api = launch([resolveLocalBin(root, 'server', 'tsx'), 'tests/teacher-audit-server.ts'], 'api', {}, path.join(root, 'server'));
   await ready('http://127.0.0.1:5530/api/csrf-token', api);
-  const ui = launch(['--filter', 'quiz-master-client', 'exec', 'vite', '--host', '127.0.0.1', '--port', '5531', '--strictPort'],
-    'ui', { PORT: '5530' });
+  const ui = launch([resolveLocalBin(root, 'client', 'vite'), '--host', '127.0.0.1', '--port', '5531', '--strictPort'],
+    'ui', { PORT: '5530' }, path.join(root, 'client'));
   await ready('http://127.0.0.1:5531/auth', ui);
   console.log('Isolated teacher API and frontend ready on 5530/5531');
-  const tests = launch(['exec', 'playwright', 'test', '-c', 'tests/yapilandirma/playwright.teacher-audit.config.ts', ...process.argv.slice(2)], 'playwright');
+  const tests = launch([resolveLocalBin(root, null, '@playwright/test', 'playwright'), 'test', '-c', 'tests/yapilandirma/playwright.teacher-audit.config.ts', ...process.argv.slice(2)], 'playwright');
   const code = await new Promise(resolve => {
     tests.child.once('exit', resolve); tests.child.once('error', () => resolve(1));
   });

@@ -7,9 +7,10 @@ import {spawnSync} from 'node:child_process';
 import {createRequire} from 'node:module';
 import {createApplicationBackup,restoreApplicationBackup} from './maintenance-lib.mjs';
 import {upgradeApplication} from './upgrade-lib.mjs';
-// LEGACY (pnpm): bu kabul/prova betiği pnpm'e bağlıdır; pnpm kaldırıldı (docs/npm-gecis-tasarimi.md). CI'da koşmaz, npm'e uyarlanana kadar çalışması beklenmemelidir.
-// pnpm-invocation.mjs kaldırıldı; içe aktarma kırılmasın, kullanımda açık hata versin diye yer tutucu:
-const pnpmInvocation=()=>{throw Error('Bu prova pnpm gerektirir; pnpm kaldırıldı (docs/npm-gecis-tasarimi.md). npm\'e uyarlanana kadar çalışmaz.');};
+import {createInvocation} from './package-manager.mjs';
+// npm komutları mantıksal işlemlerden (install/run) kabuksuz üretilir; ownedLaunch yalnız argümanları alır (komut process.execPath).
+const npmInvocation=op=>createInvocation('npm',op);
+const stepLabel=op=>(op.script||op.type).replace(/[^\w.-]/g,'_');
 import {launchOwned,cleanupOwned} from './academic-owned-process.mjs';
 import {waitForAuditServer} from './audit-server-readiness.mjs';
 import {verifyFixturePortsReleased} from './linux-owned-process-cleanup.mjs';
@@ -55,7 +56,7 @@ function fixture(label,ref){const root=guard(fs.mkdtempSync(path.join(repo,'serv
 async function freePort(){const s=net.createServer();await new Promise((r,j)=>{s.once('error',j);s.listen(0,'127.0.0.1',r);});const p=s.address().port;await new Promise(r=>s.close(r));return p;}
 function env(root,port){storage(root);const dotenv=createRequire(path.join(repo,'server/package.json'))('dotenv'),parse=relative=>{const file=regular(root,relative,false);return fs.existsSync(file)?dotenv.parse(fs.readFileSync(file)):{};};const sessionSecret={...parse('.env'),...parse('server/.env')}.SESSION_SECRET;if(!sessionSecret)throw Error('Stored synthetic service session secret required');const origin='http://127.0.0.1:'+port;return {...environment,DATABASE_URL:'file:'+path.join(root,'server/data/quiz.db').replaceAll('\\','/'),HOST:'127.0.0.1',PORT:String(port),FRONTEND_URL:origin,ALLOWED_ORIGINS:origin,NODE_ENV:'production',SESSION_SECRET:sessionSecret,CHECKPOINT_DISABLE:'1'};}
 async function command(root,args,label,port=1){
- const invocation=pnpmInvocation(args);if(invocation.command!==process.execPath)throw Error('Resolve pnpm JavaScript entry first');
+ const invocation=npmInvocation(args);if(invocation.command!==process.execPath)throw Error('Resolve npm JavaScript entry first');
  const {file,stream:log}=privateLog(label+'-'+crypto.randomUUID()+'.private.log');commandLogs.set(label,file);
  let state,timer,code=null,cleanup;const started=Date.now();
  try{
@@ -75,7 +76,7 @@ function allowedCacheAliases(source){
   const file=path.join(directory,entry.name);
   if(entry.isSymbolicLink()){
    const actual=fs.realpathSync(file),relative=path.relative(source,file);
-   const workspace=['client','server'].some(kind=>actual===path.join(source,kind)&&[path.join('node_modules','quiz-master-'+kind),path.join('node_modules','.pnpm','node_modules','quiz-master-'+kind)].includes(relative));
+   const workspace=['client','server'].some(kind=>actual===path.join(source,kind)&&[path.join('node_modules','quiz-master-'+kind)].includes(relative));
    if(!workspace&&!trees.some(tree=>actual===tree||actual.startsWith(tree+path.sep)))throw Error('Private or external cache alias rejected');
    aliases.push({relative,target:path.relative(source,actual),directory:fs.statSync(actual).isDirectory(),workspace});
   }
@@ -85,7 +86,7 @@ function allowedCacheAliases(source){
 }
 async function warmDependencies(root,source,label,port){
  source=guard(path.resolve(source));storage(root);
- for(const file of ['pnpm-lock.yaml','server/prisma/schema.prisma'])if(hash(regular(root,file))!==hash(regular(source,file)))throw Error('Same-version dependency cache required');
+ for(const file of ['package-lock.json','server/prisma/schema.prisma'])if(hash(regular(root,file))!==hash(regular(source,file)))throw Error('Same-version dependency cache required');
  for(const relative of ['node_modules','server/node_modules','client/node_modules']){const dir=path.join(source,relative);noLinks(dir);if(!fs.lstatSync(dir).isDirectory()||fs.existsSync(path.join(root,relative)))throw Error('Independent cache destination required');}
  const preflight=allowedCacheAliases(source);
  if(process.platform!=='win32')throw Error('Native Linux cache warming not implemented; use real frozen installation');
@@ -137,7 +138,7 @@ async function verify(root,label){
  if(tokenize(fs.readFileSync(schema,'utf8'))!==tokenize(fs.readFileSync(path.join(root,'server/prisma/schema.prisma'),'utf8')))throw Error('Generated old schema mismatch');
 }
 async function browser(root,label,port){
- const invocation=pnpmInvocation(['--filter','quiz-master-server','start']);const {stream:log}=privateLog(label+'-server.private.log');let state,b;
+ const invocation=npmInvocation({type:'run',workspace:'server',script:'start'});const {stream:log}=privateLog(label+'-server.private.log');let state,b;
  try{
   state=await ownedLaunch(invocation.args,{cwd:root,env:env(root,port),onState:s=>state=s,onOutput:t=>log.write(t)});
   const base='http://127.0.0.1:'+port;await waitForAuditServer(base+'/api/csrf-token',state);
@@ -176,19 +177,19 @@ try{
   if(name==='install'){const file=path.join(root,'package.json'),p=JSON.parse(fs.readFileSync(file));p.devDependencies.concurrently='0.0.1';fs.writeFileSync(file,JSON.stringify(p));}
   if(name==='build')fs.appendFileSync(path.join(root,'client/src/App.tsx'),'\nconst controlled syntax failure = ;\n');
   if(name==='migrate'){const d=path.join(root,'server/prisma/migrations/99999999999999_controlled_failure');fs.mkdirSync(d);fs.writeFileSync(path.join(d,'migration.sql'),'THIS IS CONTROLLED INVALID SQL;');}
-  let backup,step='completed';try{const u=await upgradeApplication(root,{run:async args=>{const r=await command(root,args,name+'-'+args[0],port);if(r.code!==0)throw Error('Actual command rejected '+r.code);}});backup=u.backupRoot;}catch(e){backup=e.backupRoot;step=e.step;}
+  let backup,step='completed';try{const u=await upgradeApplication(root,{run:async args=>{const r=await command(root,args,name+'-'+stepLabel(args),port);if(r.code!==0)throw Error('Actual command rejected '+r.code);}});backup=u.backupRoot;}catch(e){backup=e.backupRoot;step=e.step;}
   if(step!==(name==='start'?'completed':name))throw Error('Unexpected upgrade failure step '+step);
-  if(name==='install'&&!/ERR_PNPM_OUTDATED_LOCKFILE/.test(diagnostic('install-install')))throw Error('Frozen lock mismatch not proved');
+  if(name==='install'&&!/can only install packages when your package\.json and package-lock\.json/.test(diagnostic('install-install')))throw Error('Frozen lock mismatch not proved');
   if(name==='build'){const text=diagnostic('build-build');if(!text.includes('App.tsx')||!text.includes('controlled syntax failure'))throw Error('Injected App.tsx diagnostic not proved');}
-  const failureSchema=await databaseProof(root);if(failureSchema.finished!==(name==='migrate'||name==='start'?22:17))throw Error('Unexpected schema after failure');if(name==='migrate'){const text=diagnostic(name+'---filter');if(failureSchema.failed!==1||!text.includes('99999999999999_controlled_failure')||!/syntax error/i.test(text))throw Error('Controlled SQL failure not proved');}
-  if(name==='start'){fs.writeFileSync(path.join(root,'dist/index.cjs'),'throw new Error("controlled startup failure");');const r=await command(root,['--filter','quiz-master-server','start'],name+'-rejected-start',port);if(r.code===0||!diagnostic(name+'-rejected-start').includes('controlled startup failure'))throw Error('Corrupt start rejection not proved');}
+  const failureSchema=await databaseProof(root);if(failureSchema.finished!==(name==='migrate'||name==='start'?22:17))throw Error('Unexpected schema after failure');if(name==='migrate'){const text=diagnostic(name+'-db_deploy');if(failureSchema.failed!==1||!text.includes('99999999999999_controlled_failure')||!/syntax error/i.test(text))throw Error('Controlled SQL failure not proved');}
+  if(name==='start'){fs.writeFileSync(path.join(root,'dist/index.cjs'),'throw new Error("controlled startup failure");');const r=await command(root,{type:'run',workspace:'server',script:'start'},name+'-rejected-start',port);if(r.code===0||!diagnostic(name+'-rejected-start').includes('controlled startup failure'))throw Error('Corrupt start rejection not proved');}
   const recovery=fixture(name+'-old',old);
   if(name==='install'){
    const corrupt=guard(fs.mkdtempSync(path.join(repo,'server/data/quizmaster-test-rollback-corrupt-')));roots.push(corrupt);fs.cpSync(backup,corrupt,{recursive:true});fs.appendFileSync(path.join(corrupt,'server/data/quiz.db'),'controlled corruption');let rejected=false;try{await restoreApplicationBackup(corrupt,recovery);}catch(error){rejected=/Backup hash integrity mismatch/.test(error.message);}if(!rejected||['server/data','server/uploads','server/.env','.env'].some(x=>fs.existsSync(path.join(recovery,x))))throw Error('Corrupt backup published data');
   }
   await restoreApplicationBackup(backup,recovery);verifyFiles(backup,recovery);let existingRejected=false;try{await restoreApplicationBackup(backup,recovery);}catch(error){existingRejected=/existing files are preserved/.test(error.message);}if(!existingRejected)throw Error('Existing data overwritten');verifyFiles(backup,recovery);const recoveryPort=await freePort();await configure(recovery,recoveryPort);
   if(options['--cache-old']){console.log('case '+name+' old dependency warm copy');await warmDependencies(recovery,options['--cache-old'],name+'-old',recoveryPort);}
-  for(const args of [['install','--frozen-lockfile','--prod=false'],['build'],['--filter','quiz-master-server','db:generate'],['--filter','quiz-master-server','db:status']]){console.log('case '+name+' recovery '+args[0]);if((await command(recovery,args,name+'-old-'+args[0],recoveryPort)).code!==0)throw Error('Old recovery command rejected');}
+  for(const args of [{type:'install'},{type:'run',script:'build'},{type:'run',workspace:'server',script:'db:generate'},{type:'run',workspace:'server',script:'db:status'}]){console.log('case '+name+' recovery '+stepLabel(args));if((await command(recovery,args,name+'-old-'+stepLabel(args),recoveryPort)).code!==0)throw Error('Old recovery command rejected');}
   await verify(recovery,name);const ui=await browser(recovery,name,recoveryPort);results.push({name,step,backupRoot:backup,recoveryRoot:recovery,failureSchema,recoveredSchema:{finished:17,failed:0},manifestSha256:hash(path.join(backup,'manifest.json')),ui,status:'passed'});writeJson('case-'+name+'.json',results.at(-1));console.log('case '+name+' passed');
  }
 }catch(e){writeJson('failure.private.json',{message:e.message,stack:e.stack,roots,results});console.error('Rehearsal stopped; inspect private diagnostic.');process.exitCode=1;}

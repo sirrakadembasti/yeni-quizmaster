@@ -1,6 +1,6 @@
-// LEGACY (pnpm): bu kabul/prova betiği pnpm'e bağlıdır; pnpm kaldırıldı (docs/npm-gecis-tasarimi.md). CI'da koşmaz, npm'e uyarlanana kadar çalışması beklenmemelidir.
 // Real installer/browser runner. No dependency junctions, storage mocks or source resets.
 // Run from the reviewed checkout; each entrypoint receives its own fresh source copy.
+import { createInvocation, resolveLocalBin } from './package-manager.mjs';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -33,7 +33,7 @@ const markerInventory = spawnSync('git', ['ls-files', '--cached', '--', 'server/
   cwd: source, encoding: 'utf8', windowsHide: true, timeout: 10000 });
 assert.equal(markerInventory.status, 0, 'Tracked directory marker inventory failed');
 const trackedDataMarker = markerInventory.stdout.trim() === 'server/data/README.md';
-const rootFiles = new Set(['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'kurulum.bat', 'kurulum.sh', 'start-local.ps1']);
+const rootFiles = new Set(['package.json', 'package-lock.json', 'kurulum.bat', 'kurulum.sh', 'start-local.ps1']);
 const excluded = new Set(['node_modules', 'data', 'uploads', 'backups', 'dist', 'coverage', '.git', '.agents', '.codex', 'test-results', 'playwright-report']);
 let copied = 0;
 for (const file of files.stdout.split('\0').filter(Boolean)) {
@@ -176,9 +176,8 @@ async function availablePort() {
 const bootstrapPort = await availablePort(), wizardPort = await availablePort(), appPort = await availablePort(), uiPort = await availablePort();
 assert(new Set([bootstrapPort, wizardPort, appPort, uiPort]).size === 4, 'Retry after ephemeral port collision');
 report.ports = { bootstrapPort, wizardPort, appPort, uiPort };
-const pnpm = args => process.platform === 'win32'
-  ? [process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', 'pnpm', ...args]]
-  : ['pnpm', args];
+// npm, Node ile çalışan giriş dosyasıyla (cmd.exe/kabuk olmadan) çağrılır: [komut, argümanlar].
+const npm = op => { const { command, args } = createInvocation('npm', op); return [command, args]; };
 const navigationStates = new WeakMap();
 const observedPages = [];
 function observeNavigation(page, label) {
@@ -324,7 +323,7 @@ function captureOwnedProcesses() {
 }
 let browser, browserServer, browserProcess;
 try {
-  const invocation = entry === 'terminal' ? pnpm(['run', 'setup', '--no-open'])
+  const invocation = entry === 'terminal' ? npm({ type: 'run', script: 'setup', args: ['--no-open'] })
     : entry === 'bat' ? [process.env.ComSpec || 'cmd.exe', ['/d', '/c', 'kurulum.bat', '--no-open']]
       : [process.env.HYBRID_SH || (process.platform === 'win32' ? 'C:\\Program Files\\Git\\bin\\sh.exe' : 'sh'), ['kurulum.sh', '--no-open']];
   const startup = launch(...invocation, root, { ...cleanEnv, SETUP_BOOTSTRAP_PORT: String(bootstrapPort),
@@ -408,7 +407,7 @@ try {
     const state = await getState(signal);
     if (state.job.status === 'error') throw new Error(`Real dependency install failed: ${state.job.message}`);
     return state.packagesReady && state.job.status === 'success' ? state : null;
-  }, 1800000, 'real pnpm install --frozen-lockfile', 90000);
+  }, 1800000, 'real npm ci', 90000);
   assert.equal(packages.installation.dependencies.ready, true);
   completedPhase('real package install finished; independent node_modules verified');
   await page.locator('#wizard').click();
@@ -484,7 +483,7 @@ try {
     await lockedPage.close();
       // Use the documented production command and its workspace module resolution.
     // Do not use wizard local-start button: it starts Vite on shared fixed 5173.
-      const [startCommand, startArgs] = pnpm(['--filter', 'quiz-master-server', 'start']);
+      const [startCommand, startArgs] = npm({ type: 'run', workspace: 'server', script: 'start' });
       launch(startCommand, startArgs, root, cleanEnv, 'fresh-app.log');
     await until(async () => {
       try { return (await context.request.get(`http://127.0.0.1:${appPort}/api/csrf-token`, { timeout: 10000 })).ok(); }
@@ -504,7 +503,8 @@ try {
     const viteSource = fs.readFileSync(path.join(root, 'client/vite.config.ts'), 'utf8');
     if (/target:\s*['"]http:\/\/127\.0\.0\.1:5000['"]/.test(viteSource))
       throw new Error('FRESH_CUSTOM_PORT_PROXY: shipped Vite proxy still targets 5000, so isolated fresh UI login would reach the wrong API. Real UI login not attempted; fix the production proxy before rerun.');
-    const vite = pnpm(['--filter', 'quiz-master-client', 'exec', 'vite', '--host', '127.0.0.1', '--port', String(uiPort), '--strictPort']);
+    // Vite, istemci dizininden doğrudan Node ile (npm exec yok): kök argümanı 'client'.
+    const vite = [process.execPath, [resolveLocalBin(root, 'client', 'vite'), 'client', '--host', '127.0.0.1', '--port', String(uiPort), '--strictPort']];
     launch(...vite, root, cleanEnv, 'fresh-ui.log');
     await until(async () => {
       try { return (await context.request.get(`http://127.0.0.1:${uiPort}/auth`, { timeout: 10000 })).ok(); }
