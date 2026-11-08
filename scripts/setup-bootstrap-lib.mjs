@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
+import { createRequire } from "node:module";
 import net from "node:net";
 import path from "node:path";
 
@@ -63,13 +64,26 @@ function anyExists(...targets) {
   return targets.some((target) => fs.existsSync(target));
 }
 
+// Hoisted düzenlerde (npm, Bun) çalışma alanı kendi node_modules klasörünü oluşturmayabilir; paketler kökte durur.
+// Bu yüzden klasör yoksa, çalışma alanının temel paketi proje içinden çözülebiliyorsa "kurulu" sayılır.
+function resolvesInsideProject(projectRoot, workspaceRoot, packageName) {
+  try {
+    const resolved = createRequire(path.join(workspaceRoot, "package.json")).resolve(`${packageName}/package.json`);
+    const relative = path.relative(projectRoot, resolved);
+    return Boolean(relative) && !relative.startsWith("..") && !path.isAbsolute(relative);
+  } catch {
+    return false;
+  }
+}
+
 export function checkDependencies(projectRoot) {
   const paths = getSetupPaths(projectRoot);
   const rootModules = path.join(paths.projectRoot, "node_modules");
   const rootPackages = fs.existsSync(paths.nodeModules) || (fs.existsSync(rootModules) && (fs.existsSync(path.join(rootModules, ".bin")) || fs.existsSync(path.join(rootModules, "playwright"))));
-  const serverModules = fs.existsSync(path.join(paths.serverRoot, "node_modules"));
+  // sunucu: tsx (kurulum sihirbazını çalıştırır); istemci: vite. Klasör varsa (pnpm/eski düzen) doğrudan kabul edilir.
+  const serverModules = fs.existsSync(path.join(paths.serverRoot, "node_modules")) || resolvesInsideProject(paths.projectRoot, paths.serverRoot, "tsx");
   const clientRoot = path.join(paths.projectRoot, "client");
-  const clientModules = fs.existsSync(path.join(clientRoot, "node_modules"));
+  const clientModules = fs.existsSync(path.join(clientRoot, "node_modules")) || resolvesInsideProject(paths.projectRoot, clientRoot, "vite");
   const serverEntry = fs.existsSync(path.join(paths.serverRoot, "package.json"));
   const clientEntry = fs.existsSync(path.join(clientRoot, "package.json"));
   const ready = rootPackages && serverModules && clientModules && serverEntry && clientEntry;

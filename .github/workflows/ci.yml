@@ -48,6 +48,11 @@ jobs:
           npm ci
           echo "npm ci süresi: $(( $(date +%s) - start )) sn"
 
+      # Gerçek npm ağacı hoisted'dır (client/node_modules oluşmaz); başlatıcının "paketler kurulu" algısı bunu tanımalı.
+      # (Eskiden arayüzdeki 'Paketleri Kur' adımı npm ile 'doğrulama eksik' diye bitiyordu.)
+      - name: Başlatıcı bağımlılık algısı (gerçek npm ağacı)
+        run: node --input-type=module -e "import('./scripts/setup-bootstrap-lib.mjs').then(m=>{const r=m.checkDependencies(process.cwd());console.log(JSON.stringify(r));if(!r.ready){process.exit(1)}})"
+
       - name: Kurulum başlatıcı ve paket yöneticisi testleri
         run: npm run test:setup
 

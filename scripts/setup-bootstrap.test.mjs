@@ -14,6 +14,7 @@ import {
   resetInstallation,
   stopPortProcess,
   validateRuntime,
+  checkDependencies,
 } from "./setup-bootstrap-lib.mjs";
 
 function fixture() {
@@ -55,6 +56,53 @@ test("bun veya npm ile kurulmuş paketler (node_modules/.bin) dependenciesInstal
   const state = inspectInstallationState(item.root);
   assert.equal(state.dependencies.ready, true);
   assert.equal(state.evidence.dependenciesInstalled, true);
+});
+
+// Gerçek npm/Bun kurulumları "hoisted"dır: client/node_modules çoğu zaman hiç oluşmaz, paketler kökte durur.
+// (Önceki fixture her zaman çalışma alanı klasörlerini oluşturduğu için bu durum test edilmiyordu.)
+function hoistedFixture(parent = os.tmpdir()) {
+  const root = fs.mkdtempSync(path.join(parent, "quizmaster-hoisted-"));
+  fs.mkdirSync(path.join(root, "server"), { recursive: true });
+  fs.mkdirSync(path.join(root, "client"), { recursive: true });
+  fs.writeFileSync(path.join(root, "server", "package.json"), "{}\n", "utf8");
+  fs.writeFileSync(path.join(root, "client", "package.json"), "{}\n", "utf8");
+  fs.mkdirSync(path.join(root, "node_modules", ".bin"), { recursive: true });
+  return root;
+}
+const fakePackage = (nodeModules, name) => {
+  fs.mkdirSync(path.join(nodeModules, name), { recursive: true });
+  fs.writeFileSync(path.join(nodeModules, name, "package.json"), JSON.stringify({ name, version: "1.0.0" }), "utf8");
+};
+
+test("hoisted (npm/Bun) düzende çalışma alanı node_modules klasörleri olmasa da kökteki tsx ve vite ile hazır sayılır", (t) => {
+  const root = hoistedFixture();
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  fakePackage(path.join(root, "node_modules"), "tsx");
+  fakePackage(path.join(root, "node_modules"), "vite");
+  assert.equal(fs.existsSync(path.join(root, "client", "node_modules")), false);
+  assert.equal(fs.existsSync(path.join(root, "server", "node_modules")), false);
+  const result = checkDependencies(root);
+  assert.equal(result.ready, true, JSON.stringify(result));
+  assert.equal(inspectInstallationState(root).evidence.dependenciesInstalled, true);
+});
+
+test("hoisted düzende yalnız .bin varsa (tsx/vite yok) hazır sayılmaz", (t) => {
+  const root = hoistedFixture();
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const result = checkDependencies(root);
+  assert.equal(result.ready, false);
+  assert.equal(result.serverModules, false);
+  assert.equal(result.clientModules, false);
+});
+
+test("proje dışındaki (üst dizindeki) tsx/vite hazır sayılmaz", (t) => {
+  const outer = fs.mkdtempSync(path.join(os.tmpdir(), "quizmaster-outer-"));
+  t.after(() => fs.rmSync(outer, { recursive: true, force: true }));
+  fakePackage(path.join(outer, "node_modules"), "tsx");
+  fakePackage(path.join(outer, "node_modules"), "vite");
+  const root = hoistedFixture(outer);
+  const result = checkDependencies(root);
+  assert.equal(result.ready, false, "Üst dizindeki paketler bu projenin kurulumu sayılmamalı");
 });
 
 test("boş dizin yeni kurulum olarak algılanır", (t) => {
