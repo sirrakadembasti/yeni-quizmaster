@@ -39,7 +39,7 @@ export function parsePmArgs(argv) {
 
 export function runPm(argv, { env = process.env, stdio = 'inherit' } = {}) {
   const { pm, op } = parsePmArgs(argv);
-  const manager = selectManager({ requested: pm, env });
+  const manager = selectManager({ requested: pm, env, root });
   const invocation = createInvocation(manager, op, { root, env });
   return new Promise((resolve, reject) => {
     const child = spawn(invocation.command, invocation.args, { cwd: invocation.cwd, env: invocation.env, stdio, shell: false, windowsHide: true });

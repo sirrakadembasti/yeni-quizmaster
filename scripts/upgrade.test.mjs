@@ -52,9 +52,9 @@ test('uncertain process cleanup retains the operation lock and recovery backup',
 test('migration subprocess cannot inherit a foreign database or Prisma log level',async t=>{
   const root=await fixture(t),shim=path.join(root,'pnpm.cjs');
   await fs.writeFile(shim,"require('node:fs').writeFileSync('child-env-proof.json',JSON.stringify({database:process.env.DATABASE_URL,rust:process.env.RUST_LOG}));");
-  const keys=['npm_execpath','DATABASE_URL','RUST_LOG'],before=Object.fromEntries(keys.map(key=>[key,process.env[key]]));
+  const keys=['npm_execpath','QUIZMASTER_PM','DATABASE_URL','RUST_LOG'],before=Object.fromEntries(keys.map(key=>[key,process.env[key]]));
   try{
-    Object.assign(process.env,{npm_execpath:shim,DATABASE_URL:'file:/foreign-database-must-never-be-used.db',RUST_LOG:'warn'});
+    Object.assign(process.env,{npm_execpath:shim,QUIZMASTER_PM:'pnpm',DATABASE_URL:'file:/foreign-database-must-never-be-used.db',RUST_LOG:'warn'});
     await runUpgradeCommand(root,{type:'run',workspace:'server',script:'db:deploy'});
     assert.deepEqual(JSON.parse(await fs.readFile(path.join(root,'child-env-proof.json'),'utf8')),{database:'file:'+path.join(root,'server/data/quiz.db').replaceAll('\\','/'),rust:'info'});
   }finally{for(const key of keys){if(before[key]===undefined)delete process.env[key];else process.env[key]=before[key];}}
@@ -62,8 +62,8 @@ test('migration subprocess cannot inherit a foreign database or Prisma log level
 test('frozen install is noninteractive even when the caller disables CI',async t=>{
  const root=await fixture(t),shim=path.join(root,'pnpm.cjs');
  await fs.writeFile(shim,"if(process.env.CI!=='true'){console.error('Controlled modules replacement requires confirmation');process.exit(43)}require('node:fs').writeFileSync('noninteractive-install-proof.json',JSON.stringify(process.argv.slice(2)));");
- const keys=['npm_execpath','CI'],before=Object.fromEntries(keys.map(key=>[key,process.env[key]]));
- try{Object.assign(process.env,{npm_execpath:shim,CI:'false'});await runUpgradeCommand(root,{type:'install'});assert.deepEqual(JSON.parse(await fs.readFile(path.join(root,'noninteractive-install-proof.json'),'utf8')),['install','--frozen-lockfile','--prod=false']);}
+ const keys=['npm_execpath','QUIZMASTER_PM','CI'],before=Object.fromEntries(keys.map(key=>[key,process.env[key]]));
+ try{Object.assign(process.env,{npm_execpath:shim,QUIZMASTER_PM:'pnpm',CI:'false'});await runUpgradeCommand(root,{type:'install'});assert.deepEqual(JSON.parse(await fs.readFile(path.join(root,'noninteractive-install-proof.json'),'utf8')),['install','--frozen-lockfile','--prod=false']);}
  finally{for(const key of keys){if(before[key]===undefined)delete process.env[key];else process.env[key]=before[key];}}
 });
 for(const hardStop of [false,true])test(hardStop?'hard parent stop preserves recovery evidence and stops the upgrade descendant':'graceful bootstrap lease cancellation stops a TERM-resistant descendant and releases the CLI lock',{timeout:20000},async t=>{
@@ -71,7 +71,7 @@ for(const hardStop of [false,true])test(hardStop?'hard parent stop preserves rec
   await fs.writeFile(shim,`const {spawn}=require('node:child_process');spawn(process.execPath,['-e',"process.on('SIGTERM',()=>{});const s=require('node:net').createServer();s.listen(0,'127.0.0.1',()=>require('node:fs').writeFileSync(process.argv[1],String(s.address().port)))",${JSON.stringify(proof)}],{stdio:'inherit'});setInterval(()=>{},1000);`);
   const cli=fileURLToPath(new URL('./upgrade.mjs',import.meta.url));
   const capture=path.join(root,'lease-diagnostic.txt');
-  const parent=spawn(process.execPath,['-e',`const fs=require('node:fs');const output=fs.openSync(${JSON.stringify(capture)},'a');const child=require('node:child_process').spawn(process.execPath,${JSON.stringify([cli,'--project',root,'--parent-lease'])},{env:{...process.env,npm_execpath:${JSON.stringify(shim)}},stdio:['pipe',output,output]});process.stdin.on('data',()=>child.stdin.end('cancel\\n'));setInterval(()=>{},1000);`],{windowsHide:true,stdio:['pipe','ignore','ignore']});
+  const parent=spawn(process.execPath,['-e',`const fs=require('node:fs');const output=fs.openSync(${JSON.stringify(capture)},'a');const child=require('node:child_process').spawn(process.execPath,${JSON.stringify([cli,'--project',root,'--parent-lease'])},{env:{...process.env,QUIZMASTER_PM:'pnpm',npm_execpath:${JSON.stringify(shim)}},stdio:['pipe',output,output]});process.stdin.on('data',()=>child.stdin.end('cancel\\n'));setInterval(()=>{},1000);`],{windowsHide:true,stdio:['pipe','ignore','ignore']});
   t.after(()=>{if(parent.exitCode===null&&parent.signalCode===null)parent.kill('SIGTERM');});
   const deadline=Date.now()+15000;
   while(Date.now()<deadline){try{await fs.stat(proof);break;}catch{}await new Promise(resolve=>setTimeout(resolve,50));}

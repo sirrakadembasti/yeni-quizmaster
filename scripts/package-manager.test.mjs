@@ -6,15 +6,15 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import {
   DEFAULT_MANAGER, buildCommand, detectInvokingManager, createInvocation, detectVersion, isSupportedVersion, managerInvocation, resolveBunExecutable,
-  resolveNpmEntry, selectManager,
+  resolveNpmEntry, selectManager, detectInstalledManager,
 } from './package-manager.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 test('yönetici seçimi: açık istek > QUIZMASTER_PM > varsayılan; geçersiz değer reddedilir', () => {
-  assert.equal(DEFAULT_MANAGER, 'pnpm');
-  assert.equal(selectManager({ env: {} }), 'pnpm');
-  assert.equal(selectManager({ env: { QUIZMASTER_PM: 'npm' } }), 'npm');
+  assert.equal(DEFAULT_MANAGER, 'npm');
+  assert.equal(selectManager({ env: {} }), 'npm');
+  assert.equal(selectManager({ env: { QUIZMASTER_PM: 'pnpm' } }), 'pnpm');
   assert.equal(selectManager({ requested: 'BUN', env: { QUIZMASTER_PM: 'npm' } }), 'bun');
   assert.throws(() => selectManager({ requested: 'yarn' }), /Desteklenmeyen/);
 });
@@ -145,4 +145,20 @@ test('genel önekte (npm install -g npm@11) kurulu npm, Node ile gelen paketli n
   const prefix = path.resolve('/sahte/prefix');
   const posixUpgraded = path.join(prefix, 'lib', 'node_modules', 'npm', 'bin', 'npm-cli.js');
   assert.equal(resolveNpmEntry({ platform: 'linux', env: { PATH: '', npm_config_prefix: prefix }, execPath: '/yok/node', exists: file => path.resolve(file) === path.resolve(posixUpgraded) }), path.resolve(posixUpgraded));
+});
+
+test('kurulu yönetici node_modules düzeninden tanınır; var olan kurulum sessizce yönetici değiştirmez', () => {
+  const root = path.resolve('/proje');
+  const has = (...files) => file => files.some(item => path.resolve(file) === path.resolve(root, item));
+  assert.equal(detectInstalledManager(root, { exists: has('node_modules/.pnpm') }), 'pnpm');
+  assert.equal(detectInstalledManager(root, { exists: has('node_modules/.package-lock.json') }), 'npm');
+  assert.equal(detectInstalledManager(root, { exists: has('bun.lock') }), 'bun');
+  assert.equal(detectInstalledManager(root, { exists: () => false }), null);
+  assert.equal(detectInstalledManager(undefined), null);
+  // Öncelik: açık istek ve QUIZMASTER_PM, kurulu yöneticiden önce gelir; kurulu yönetici varsayılandan önce gelir.
+  assert.equal(selectManager({ env: {}, root, exists: has('node_modules/.pnpm') }), 'pnpm', 'pnpm ağacı olan dizin npm varsayılanına geçmemeli');
+  assert.equal(selectManager({ env: {}, root, exists: () => false }), 'npm');
+  assert.equal(selectManager({ requested: 'npm', env: {}, root, exists: has('node_modules/.pnpm') }), 'npm');
+  assert.equal(selectManager({ env: { QUIZMASTER_PM: 'bun' }, root, exists: has('node_modules/.pnpm') }), 'bun');
+  assert.equal(selectManager({ env: { npm_config_user_agent: 'npm/11.0.0 node/v22' }, root, exists: has('node_modules/.pnpm') }), 'npm', 'betiği başlatan yönetici kurulu yöneticiden önce gelir');
 });

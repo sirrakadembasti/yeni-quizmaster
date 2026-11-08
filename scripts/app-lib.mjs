@@ -77,7 +77,7 @@ export function commandFor(mode, root, env = process.env) {
     return { command: process.execPath, args: [paths(root).distEntry] };
   }
   // Geliştirme: kök "dev" betiği, seçili paket yöneticisiyle (kabuksuz, cmd.exe yok).
-  const { command, args } = createInvocation(selectManager({ env }), { type: 'run', script: 'dev' }, { root, env });
+  const { command, args } = createInvocation(selectManager({ env, root }), { type: 'run', script: 'dev' }, { root, env });
   return { command, args };
 }
 
