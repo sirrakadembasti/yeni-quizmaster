@@ -16,7 +16,7 @@ import { getProjectRoot } from "../utils/project-paths";
 import { buildDeploymentArtifacts, saveDeploymentConfig } from "../utils/deployment-config";
 import { buildServerEnv, publicAppUrl, setupPayloadSchema, toDeploymentConfig, type SetupPayload } from "./config";
 import { renderSetupPage } from "./ui";
-import { deploySetupDatabase } from "./migration";
+import { deploySetupDatabase, type SetupOp } from "./migration";
 import { discardStagedDatabase, needsStaging, planStagedDatabase, promoteStagedDatabase } from "./db-staging";
 import { STATE_FILE_NAME, createInstallState, recordStep, writeInstallState, type InstallState } from "./install-state";
 
@@ -63,11 +63,11 @@ function sameOrigin(req: Request) {
   }
 }
 
-async function fixedPnpm(args: string[], extraEnv: NodeJS.ProcessEnv) {
-  const pnpmScript = process.env.npm_execpath;
-  if (!pnpmScript) throw new Error("pnpm çalıştırma yolu bulunamadı. Sihirbazı yalnız `pnpm setup` ile başlatın.");
+async function runSetupCommand(op: SetupOp, extraEnv: NodeJS.ProcessEnv) {
+  // Komutu scripts/pm.mjs üretir ve çalıştırır; yönetici QUIZMASTER_PM ile (başlatıcıdan) gelir, yoksa pnpm.
+  const argv = [path.join(projectRoot, "scripts", "pm.mjs"), op.type, ...(op.workspace ? ["--workspace", op.workspace] : []), op.script, ...(op.args?.length ? ["--", ...op.args] : [])];
   return new Promise<string>((resolve, reject) => {
-    const child = spawn(process.execPath, [pnpmScript, ...args], {
+    const child = spawn(process.execPath, argv, {
       cwd: projectRoot,
       env: { ...process.env, ...extraEnv },
       shell: false,
@@ -231,10 +231,10 @@ export async function applySetup(payload: SetupPayload, applyJob: ApplyJobState)
       const configuredBasePath = toDeploymentConfig(payload).basePath;
       const buildEnv = { VITE_BASE_PATH: configuredBasePath === "/" ? "/" : `${configuredBasePath}/` };
       markStep(applyJob, "buildServer", "running");
-      await fixedPnpm(["--filter", "quiz-master-server", "build"], buildEnv);
+      await runSetupCommand({ type: "run", workspace: "server", script: "build" }, buildEnv);
       markStep(applyJob, "buildServer", "done");
       markStep(applyJob, "buildClient", "running");
-      await fixedPnpm(["--filter", "quiz-master-client", "build"], buildEnv);
+      await runSetupCommand({ type: "run", workspace: "client", script: "build" }, buildEnv);
       markStep(applyJob, "buildClient", "done");
       summary.push("Üretim derlemesi tamamlandı.");
     } else {
@@ -243,7 +243,7 @@ export async function applySetup(payload: SetupPayload, applyJob: ApplyJobState)
     }
 
     markStep(applyJob, "migrate", "running");
-    await deploySetupDatabase(databaseUrl, fixedPnpm);
+    await deploySetupDatabase(databaseUrl, runSetupCommand);
     markStep(applyJob, "migrate", "done");
     summary.push("Veritabanı migration'ları uygulandı.");
 

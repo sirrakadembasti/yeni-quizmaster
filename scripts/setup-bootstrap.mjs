@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { pnpmInvocation } from './pnpm-invocation.mjs';
+import { createInvocation, detectVersion } from './package-manager.mjs';
 import { createWizardProxy, PROXY_PREFIX } from './setup-proxy.mjs';
 import {
   CLEAN_INSTALL_CONFIRMATION,
@@ -44,52 +44,10 @@ let wizardChild = null;
 let wizardTarget = null;
 let server;
 
-function resolveBunCommand() {
-  const envPath = Object.entries(process.env).find(([k]) => k.toUpperCase() === "PATH")?.[1] || "";
-  const sep = process.platform === "win32" ? ";" : ":";
-  for (const dir of envPath.split(sep).filter(Boolean)) {
-    const exe = path.join(dir, process.platform === "win32" ? "bun.exe" : "bun");
-    if (fs.existsSync(exe)) return exe;
-  }
-  if (process.platform === "win32" && process.env.USERPROFILE) {
-    const defaultUserBun = path.join(process.env.USERPROFILE, ".bun", "bin", "bun.exe");
-    if (fs.existsSync(defaultUserBun)) return defaultUserBun;
-  } else if (process.env.HOME) {
-    const defaultHomeBun = path.join(process.env.HOME, ".bun", "bin", "bun");
-    if (fs.existsSync(defaultHomeBun)) return defaultHomeBun;
-  }
-  return null;
-}
-
-function getBunVersion() {
-  const bunCmd = resolveBunCommand();
-  if (!bunCmd) return "";
-  try {
-    const result = spawnSync(bunCmd, ["--version"], {
-      cwd: projectRoot,
-      encoding: "utf8",
-      windowsHide: true,
-      shell: false,
-    });
-    return result.status === 0 ? String(result.stdout || "").trim() : "";
-  } catch {
-    return "";
-  }
-}
-
-function getPnpmVersion() {
-  try {
-    const invocation = pnpmInvocation(["--version"]);
-    const result = spawnSync(invocation.command, invocation.args, {
-      cwd: projectRoot,
-      encoding: "utf8",
-      windowsHide: true,
-      shell: false,
-    });
-    return result.status === 0 ? String(result.stdout || "").trim() : "";
-  } catch {
-    return "";
-  }
+// Arayüzde sunulan yöneticiler. npm, package-lock.json depoya girince (npm geçişi aşama 2) eklenir.
+const UI_MANAGERS = ["pnpm", "bun"];
+function chooseManager(requested) {
+  return UI_MANAGERS.includes(requested) ? requested : "pnpm";
 }
 
 let runtimeSnapshot;
@@ -97,7 +55,7 @@ function runtimeStatus() {
   // Status polling must not start a synchronous pnpm process on every request.
   // Runtime versions are fixed for this bootstrap session; installation/job
   // state is still read afresh by publicStatus().
-  return runtimeSnapshot ??= validateRuntime(process.version, getPnpmVersion(), getBunVersion());
+  return runtimeSnapshot ??= validateRuntime(process.version, detectVersion("pnpm") ?? "", detectVersion("bun") ?? "");
 }
 
 function appendLog(chunk) {
@@ -106,22 +64,14 @@ function appendLog(chunk) {
   job.logs = job.logs.slice(-250);
 }
 
-function startPackageJob(type, args, successMessage, manager = "pnpm") {
+function startPackageJob(type, op, successMessage, manager = "pnpm") {
   if (job.status === "running") throw new Error("Başka bir kurulum işlemi halen çalışıyor.");
   let invocation;
   if (type === 'upgrade') {
     invocation = {command:process.execPath,args:[path.join(scriptRoot,'upgrade.mjs'),'--project',projectRoot,'--parent-lease']};
-  } else if (manager === "bun") {
-    const bunCmd = resolveBunCommand() || "bun";
-    if (type === "dependencies") {
-      invocation = { command: bunCmd, args: ["install"] };
-    } else if (type === "wizard") {
-      invocation = { command: bunCmd, args: ["run", "--cwd", "server", "setup"] };
-    } else {
-      invocation = { command: bunCmd, args };
-    }
   } else {
-    invocation = pnpmInvocation(args);
+    // Yönetici açık seçimden gelir; alt süreçler de QUIZMASTER_PM ile aynı seçimi görür.
+    invocation = createInvocation(manager, op, { root: projectRoot, env: process.env });
   }
   job.type = type;
   job.status = "running";
@@ -134,7 +84,7 @@ function startPackageJob(type, args, successMessage, manager = "pnpm") {
     console.log("Sihirbaz başlatılıyor. Terminal açık kalmalı; sihirbaz bu sürecin altındadır.");
   }
 
-  const childEnv = { ...process.env, FORCE_COLOR: "0" };
+  const childEnv = { ...process.env, FORCE_COLOR: "0", QUIZMASTER_PM: manager };
   if (type === "dependencies") childEnv.CI = "true";
   let wizardSession = null;
   if (type === "wizard") {
@@ -148,7 +98,7 @@ function startPackageJob(type, args, successMessage, manager = "pnpm") {
   }
 
   const child = spawn(invocation.command, invocation.args, {
-    cwd: projectRoot,
+    cwd: invocation.cwd ?? projectRoot,
     env: childEnv,
     windowsHide: true,
     shell: false,
@@ -207,7 +157,7 @@ function startPackageJob(type, args, successMessage, manager = "pnpm") {
   return child;
 }
 
-const startPnpmJob = (type, args, successMessage) => startPackageJob(type, args, successMessage, "pnpm");
+const startPnpmJob = (type, op, successMessage) => startPackageJob(type, op, successMessage, "pnpm");
 
 function cookies(req) {
   return Object.fromEntries(String(req.headers.cookie || "").split(";").map((part) => part.trim()).filter(Boolean).map((part) => {
@@ -335,7 +285,7 @@ function renderPage() {
 :root{color-scheme:dark;--bg:#0b1020;--panel:#141b2d;--line:#2b3650;--text:#f7f8fc;--muted:#aeb9ce;--brand:#7867ff;--ok:#2fd69f;--warn:#ffb84d;--danger:#ff5f68}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#1a2040,var(--bg) 45%);color:var(--text);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}.wrap{width:min(980px,calc(100% - 32px));margin:32px auto}.hero,.card{background:rgba(20,27,45,.96);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 18px 60px #0005}.hero h1{margin:0 0 8px;font-size:30px}.hero p,.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:18px 0}.metric{background:#0e1527;border:1px solid var(--line);border-radius:14px;padding:14px}.metric b{display:block;margin-top:4px}.card{margin-top:18px}.state{display:inline-flex;border-radius:999px;padding:6px 11px;font-weight:700;background:#2a3150}.state.ok{color:var(--ok)}.state.warn{color:var(--warn)}button{border:0;border-radius:12px;padding:12px 16px;background:var(--brand);color:white;font-weight:750;cursor:pointer}button.secondary{background:#27314a}button.danger{background:var(--danger)}button:disabled{opacity:.45;cursor:not-allowed}.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}pre{min-height:160px;max-height:320px;overflow:auto;background:#080d19;border:1px solid var(--line);border-radius:12px;padding:14px;white-space:pre-wrap;color:#ced8ea}.danger-zone{border-color:#6d3238}.danger-zone input[type=text]{width:100%;background:#0b1120;border:1px solid #6d4248;color:white;border-radius:10px;padding:11px;margin:10px 0}.hidden{display:none}.error{color:#ff9da3}.success{color:var(--ok)}.warn{color:var(--warn)}code{color:#d9d3ff}@media(max-width:600px){.wrap{width:min(100% - 18px,980px);margin:10px auto}.hero,.card{padding:17px}}
 </style></head><body><main class="wrap" data-confirmation="${CLEAN_INSTALL_CONFIRMATION}">
 <section class="hero"><h1>QuizMaster Kurulum Başlatıcısı</h1><p>Ön kontrol, paket kurulumu ve güvenli ilk yapılandırma tek akışta yürütülür.</p><div id="summary" class="grid"></div><span id="state" class="state">Denetleniyor</span></section>
-<section class="card"><h2>Kurulum işlemleri</h2><p id="message" class="muted">Durum okunuyor...</p><div class="actions"><label id="pkgManagerWrap" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:8px 12px;background:#0e1527;border:1px solid var(--line);border-radius:12px;">Paket Yöneticisi: <select id="pkgManager" style="background:#141b2d;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:4px 8px;font:inherit;"><option value="pnpm" selected>pnpm (Önerilen / Varsayılan)</option><option value="bun">Bun (Deneysel — yalnız paket kurulumu doğrulandı)</option></select></label><button id="install">Paketleri Kur / Onar</button><button id="wizard" class="secondary">Kurulum Sihirbazına Geç</button><button id="upgrade" class="secondary" disabled>Mevcut Kurulumu Güncelle</button><button id="refresh" class="secondary">Yeniden Denetle</button></div><pre id="logs">Henüz işlem çıktısı yok.</pre></section>
+<section class="card"><h2>Kurulum işlemleri</h2><p id="message" class="muted">Durum okunuyor...</p><div class="actions"><label id="pkgManagerWrap" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:8px 12px;background:#0e1527;border:1px solid var(--line);border-radius:12px;">Paket Yöneticisi: <select id="pkgManager" style="background:#141b2d;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:4px 8px;font:inherit;"><option value="pnpm" selected>pnpm (Önerilen / Varsayılan)</option><option value="bun">Bun (Deneysel — CLI kurulumu doğrulandı)</option></select></label><button id="install">Paketleri Kur / Onar</button><button id="wizard" class="secondary">Kurulum Sihirbazına Geç</button><button id="upgrade" class="secondary" disabled>Mevcut Kurulumu Güncelle</button><button id="refresh" class="secondary">Yeniden Denetle</button></div><pre id="logs">Henüz işlem çıktısı yok.</pre></section>
 <section id="danger" class="card danger-zone hidden"><h2>Temiz kurulum</h2><p class="error"><strong>Dikkat:</strong> Kullanıcılar, sınavlar, anketler, sonuçlar, oturumlar, yapılandırma ve yüklenen dosyalar aktif kurulumdan kaldırılır. Önce doğrulanmış, tarihli yedek alınır.</p><label><input id="backupAck" type="checkbox"> Zorunlu yedek alınacağını ve uygulamanın durdurulması gerektiğini anlıyorum.</label><p>Devam etmek için <code>${CLEAN_INSTALL_CONFIRMATION}</code> yazın:</p><input id="confirmation" type="text" autocomplete="off"><button id="reset" class="danger">Yedekle ve Temiz Kuruluma Geç</button></section>
 </main><script src="/bootstrap.js" defer></script></body></html>`;
 }
@@ -376,15 +326,16 @@ async function handler(req, res) {
   try {
     if (requestUrl.pathname === "/api/install") {
       const payload = await readJson(req).catch(() => ({}));
-      const manager = payload?.packageManager === "bun" ? "bun" : "pnpm";
+      const manager = chooseManager(payload?.packageManager);
       const successMessage = manager === "bun" ? "Bun ile paket ve kütüphane kurulumu tamamlandı." : "Paket ve kütüphane kurulumu tamamlandı.";
-      startPackageJob("dependencies", ["install", "--frozen-lockfile", "--prod=false"], successMessage, manager);
+      // Bun için kilit dosyası depoda tutulmaz (bun.lock yok sayılır); donmuş kurulum yalnız pnpm/npm içindir.
+      startPackageJob("dependencies", { type: "install", frozen: manager !== "bun" }, successMessage, manager);
       return json(res, 202, { message: `Paket kurulumu (${manager}) başlatıldı.` });
     }
     if (requestUrl.pathname === "/api/upgrade") {
       if (inspectInstallationState(projectRoot).state !== "installed") throw new Error("Güncelleme yalnız kurulu sistemde kullanılabilir.");
       await readJson(req);
-      startPnpmJob("upgrade", ["run", "upgrade", "--project", projectRoot], "Yedek, derleme ve migration tamamlandı. Servisi yeniden başlatıp web arayüzündeki Sunucu Durumu ve girişi doğrulayın.");
+      startPnpmJob("upgrade", null, "Yedek, derleme ve migration tamamlandı. Servisi yeniden başlatıp web arayüzündeki Sunucu Durumu ve girişi doğrulayın.");
       return json(res, 202, { message: "Veriler korunarak güncelleme başlatıldı." });
     }
     if (requestUrl.pathname === "/api/wizard") {
@@ -394,8 +345,8 @@ async function handler(req, res) {
       if (!packagesReady) throw new Error("Sihirbaza geçmek için önce bu ekranda 'Paketleri Kur / Onar' adımını çalıştırıp bitirin.");
       const payload = await readJson(req);
       if (wizardChild) throw new Error("Kurulum sihirbazı zaten çalışıyor.");
-      const manager = payload?.packageManager === "bun" ? "bun" : "pnpm";
-      wizardChild = startPackageJob("wizard", ["--filter", "quiz-master-server", "run", "setup"], "QuizMaster kurulumu tamamlandı.", manager);
+      const manager = chooseManager(payload?.packageManager);
+      wizardChild = startPackageJob("wizard", { type: "run", workspace: "server", script: "setup" }, "QuizMaster kurulumu tamamlandı.", manager);
       wizardChild.once("close", () => { wizardChild = null; });
       return json(res, 202, { message: "Kurulum sihirbazı başlatılıyor." });
     }

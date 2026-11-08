@@ -19,8 +19,10 @@ it('deploys all migrations into an absent SQLite DB under inherited warn logging
   const database = join(fixture, 'fresh.db');
   const databaseUrl = 'file:' + database.replaceAll('\\', '/');
   const inherited = { ...process.env, RUST_LOG: 'warn', CHECKPOINT_DISABLE: '1' };
-  const execute: SetupCommand = async (args, extraEnv) => {
+  const execute: SetupCommand = async (op, extraEnv) => {
     const started = Date.now();
+    // Mantıksal komut → pnpm argümanları (scripts/package-manager.mjs ile aynı eşleme).
+    const args = ['--filter', 'quiz-master-server', 'run', op.script, ...(op.args ?? [])];
     try {
       return execFileSync(process.execPath, [pnpmScript, ...args], {
         cwd: dirname(serverRoot), shell: false, windowsHide: true, timeout: 240000,
