@@ -17,6 +17,7 @@ import { buildDeploymentArtifacts, saveDeploymentConfig } from "../utils/deploym
 import { buildServerEnv, publicAppUrl, setupPayloadSchema, toDeploymentConfig, type SetupPayload } from "./config";
 import { renderSetupPage } from "./ui";
 import { deploySetupDatabase } from "./migration";
+import { STATE_FILE_NAME, createInstallState, recordStep, writeInstallState, type InstallState } from "./install-state";
 
 const projectRoot = getProjectRoot();
 const serverRoot = path.join(projectRoot, "server");
@@ -24,6 +25,7 @@ const dataRoot = path.join(serverRoot, "data");
 const envPath = path.join(serverRoot, ".env");
 const lockPath = path.join(dataRoot, "installation.lock");
 const pendingPath = path.join(dataRoot, "installation.pending");
+const statePath = path.join(dataRoot, STATE_FILE_NAME);
 const artifactRoot = path.join(dataRoot, "setup-artifacts");
 
 function digest(value: string) {
@@ -173,10 +175,16 @@ async function readJson(req: any): Promise<any> {
   return body ? JSON.parse(body) : {};
 }
 
+let installState: InstallState | null = null;
+
 function markStep(applyJob: ApplyJobState, id: string, status: ApplyStepState["status"], detail?: string) {
   applyJob.steps = applyJob.steps.map((step) =>
     step.id === id ? { ...step, status, detail: detail ?? step.detail } : step,
   );
+  // Durum dosyası yazılamazsa kurulum durmamalı; yalnızca izleme kaybolur.
+  if (installState) {
+    try { recordStep(statePath, installState, id, status, detail); } catch { /* izleme en iyi çabayla */ }
+  }
 }
 
 async function applySetup(payload: SetupPayload, applyJob: ApplyJobState) {
@@ -190,6 +198,8 @@ async function applySetup(payload: SetupPayload, applyJob: ApplyJobState) {
     throw new Error("Başka bir kurulum işlemi çalışıyor veya önceki işlem yarım kaldı.");
   }
 
+  installState = createInstallState(APPLY_STEPS.map((step) => step.id));
+  try { writeInstallState(statePath, installState); } catch { installState = null; }
   const databaseUrl = "file:../data/quiz.db";
   const envText = buildServerEnv(payload);
   const temporaryEnv = `${envPath}.setup-${process.pid}`;
@@ -491,9 +501,13 @@ export function createSetupApp(token: string, onComplete?: () => void) {
           applyJob.status = "error";
           applyJob.message = error instanceof Error ? error.message : "Kurulum tamamlanamadı.";
           applyJob.finishedAt = new Date().toISOString();
+          const failedStep = applyJob.steps.find((step) => step.status === "running");
           applyJob.steps = applyJob.steps.map((step) =>
             step.status === "running" ? { ...step, status: "error", detail: applyJob.message } : step,
           );
+          if (installState && failedStep) {
+            try { recordStep(statePath, installState, failedStep.id, "error", applyJob.message); } catch { /* izleme en iyi çabayla */ }
+          }
         }
       })();
     } catch (error) {
