@@ -1,6 +1,24 @@
-# Kurulum Akışı Yenileme Tasarımı (Taslak)
+# Kurulum Akışı Yenileme Tasarımı
 
-Durum: **taslak, onay bekliyor**. Kod değişikliği yok. Bu belge, `kurulum.bat` / `kurulum.sh` → `setup-bootstrap` → kurulum sihirbazı zincirinin yeniden tasarımını önerir.
+Durum: **uygulandı (8 Kasım 2026)**; sapmalar ve açık kalanlar aşağıdaki "Uygulama durumu" bölümündedir. Aşağıdaki 1–6. bölümler özgün tasarım metnidir (tarihsel). Bu belge, `kurulum.bat` / `kurulum.sh` → `setup-bootstrap` → kurulum sihirbazı zincirinin yeniden tasarımını önerir.
+
+## Uygulama durumu
+
+| Tasarım adımı | Sonuç | PR |
+|---|---|---|
+| 1 Adım durumu (`installation.state.json`) | Uygulandı | #4 |
+| 2 Arayüzsüz CLI (`setup:cli --yes`) + CI duman testi | Uygulandı; `--resume` ayrı bayrak olarak **yapılmadı** (adımlar tekrar çalıştırılabilir, aynı komut yeniden çalıştırılınca devam eder) | #5 |
+| 3 İşlemsel yazım (veritabanı geçici dosyada) | Uygulandı; `.env` zaten geçici dosya + `rename` ile yazılıyordu | #6 |
+| 4 Yaşam döngüsü (`app.mjs start/stop/status/logs`) | Uygulandı | #7 |
+| 5 Tek port arayüz | Uygulandı **ters vekil** olarak (Ek A): tek süreç mümkün değil, tek port/URL/oturum sağlandı | #10 (tasarım: #11) |
+| 6 Bun kararı ve küçük kusurlar | Bun "deneysel" işaretlendi (kaldırılmadı); UTC yedek adı yerel saate çevrildi; yanıltıcı yönlendirme metni düzeltildi | #8 |
+
+Sonradan eklenenler ve sapmalar:
+- Paket yöneticisi katmanı ve npm geçişi ([npm geçiş tasarımı](npm-gecis-tasarimi.md)): #12–#21. **pnpm kaldırıldı**; desteklenenler npm 11+ ve deneysel Bun.
+- Kurulum başlatıcıları (`kurulum.bat/sh`) artık `node scripts/setup-bootstrap.mjs` ile doğrudan açılır.
+- Bölüm 3.6'daki "Corepack ile pnpm sabitleme" artık geçersizdir (pnpm yok).
+
+Açık kalanlar: Bun'un tarayıcı arayüzü/derleme/yükseltme yolları, kalan 5 yüksek `npm audit` açığı, Prisma `package.json#prisma` uyarısı, kabul/prova betiklerinin tam çalıştırılması ([npm geçiş tasarımı, uygulama durumu](npm-gecis-tasarimi.md)).
 
 ## 1. Sorun özeti (bugünkü durum)
 
