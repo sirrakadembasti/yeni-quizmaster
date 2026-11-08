@@ -3,7 +3,7 @@ import fs from "fs";
 import net from "net";
 import os from "os";
 import path from "path";
-import { spawn } from "child_process";
+import { spawn, spawnSync } from "child_process";
 import { createServer, type Server } from "http";
 import { fileURLToPath } from "url";
 import express, { type Request } from "express";
@@ -392,58 +392,28 @@ export function createSetupApp(token: string, onComplete?: () => void) {
       });
     }
 
-    let command: string;
-    let args: string[];
-    let cwd = projectRoot;
-    if (preferDev) {
-      // Arka planda pnpm dev: görünür terminal açılmaz.
-      command = process.platform === "win32"
-        ? (process.env.ComSpec || "cmd.exe")
-        : "pnpm";
-      args = process.platform === "win32"
-        ? ["/d", "/s", "/c", "pnpm", "run", "dev"]
-        : ["run", "dev"];
-    } else {
-      const distEntry = path.join(projectRoot, "dist", "index.cjs");
-      if (!fs.existsSync(distEntry)) {
-        return res.status(409).json({
-          message: "Üretim derlemesi bulunamadı. 'Uygulamayı üretim için derle' seçeneğini kullanın veya pnpm build çalıştırın.",
-        });
-      }
-      command = process.execPath;
-      args = [distEntry];
-      cwd = projectRoot;
+    if (!preferDev && !fs.existsSync(path.join(projectRoot, "dist", "index.cjs"))) {
+      return res.status(409).json({
+        message: "Üretim derlemesi bulunamadı. 'Uygulamayı üretim için derle' seçeneğini kullanın veya pnpm build çalıştırın.",
+      });
     }
 
-    // Çıktı bir log dosyasına yazılır; süreç hata verirse sebebi görülebilsin.
-    const logRoot = path.join(dataRoot, "logs");
-    fs.mkdirSync(logRoot, { recursive: true });
-    const logPath = path.join(logRoot, preferDev ? "app-dev.log" : "app-production.log");
-    const logFd = fs.openSync(logPath, "a", 0o600);
-    fs.writeSync(logFd, `\n--- ${new Date().toISOString()} başlatılıyor: ${command} ${args.join(" ")} ---\n`);
-    let child: ReturnType<typeof spawn>;
-    try {
-      child = spawn(command, args, {
-        cwd,
-        env: {
-          ...process.env,
-          NODE_ENV: preferDev ? "development" : "production",
-          FORCE_COLOR: "0",
-        },
-        detached: true,
-        stdio: ["ignore", logFd, logFd],
-        windowsHide: true, // Terminal penceresi açma
-      });
-    } finally {
-      fs.closeSync(logFd);
+    // Başlatma, PID kaydı ve log yönlendirmesi scripts/app.mjs tarafından yapılır
+    // (aynı betik terminalden de kullanılır: node scripts/app.mjs start|stop|status|logs).
+    const started = spawnSync(process.execPath, [path.join(projectRoot, "scripts", "app.mjs"), "start", "--mode", preferDev ? "dev" : "production", "--json"], {
+      cwd: projectRoot,
+      encoding: "utf8",
+      windowsHide: true,
+      timeout: 15_000,
+    });
+    let startInfo: { started?: boolean; pid?: number; logFile?: string; message?: string } = {};
+    try { startInfo = JSON.parse(String(started.stdout).trim().split("\n").pop()?.trim() || "{}"); } catch { /* aşağıda ele alınır */ }
+    if (!startInfo.started || !startInfo.pid) {
+      return res.status(409).json({ message: startInfo.message || `Uygulama başlatılamadı. ${String(started.stderr || "").trim()}`.trim() });
     }
-    child.unref();
-    // Süreç kimliği kaydedilir; durdurmak için elle başvurulabilir (kök süreç).
-    if (child.pid) {
-      try { fs.writeFileSync(path.join(dataRoot, "app.pid"), `${child.pid}\n`, { mode: 0o600 }); } catch { /* kritik değil */ }
-    }
-    let exitedEarly = false;
-    child.once("exit", () => { exitedEarly = true; });
+    const logPath = startInfo.logFile || path.join(dataRoot, "logs", preferDev ? "app-dev.log" : "app-production.log");
+    const startedPid = startInfo.pid;
+    const processAlive = () => { try { process.kill(startedPid, 0); return true; } catch { return false; } };
 
     const watchPort = preferDev ? 5173 : appPort;
     let reachable = false;
@@ -476,7 +446,7 @@ export function createSetupApp(token: string, onComplete?: () => void) {
     return res.status(reachable ? 200 : 202).json({
       message: reachable
         ? (preferDev ? "Geliştirme sunucusu (pnpm dev) arka planda başlatıldı." : "Uygulama başlatıldı.")
-        : exitedEarly
+        : !processAlive()
           ? `Uygulama başlatılamadı, süreç kapandı. ${logHint}${failureTail ? `\n\n${failureTail}` : ""}`
           : `Başlatıldı ancak port henüz açılmadı. Birkaç saniye sonra tekrar denetleyin. ${logHint}`,
       reachable,
