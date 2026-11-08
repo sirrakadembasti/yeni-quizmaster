@@ -40,6 +40,11 @@ test("yalnız Node.js 22/24 ve pnpm 9.15.1 kabul edilir; Bun yedek olarak tanın
   assert.equal(validateRuntime("24.21.0", null, "1.3.14").bunSupported, true);
   assert.equal(validateRuntime("24.21.0", "9.15.1", "1.3.14").bunSupported, true);
   assert.equal(validateRuntime("24.21.0", "9.15.1", null).bunSupported, false);
+  // npm yalnız 11 ve üstünde desteklenir (Node 22 ile gelen npm 10 desteklenmez)
+  assert.equal(validateRuntime("22.23.0", null, null, "11.11.1").npmSupported, true);
+  assert.equal(validateRuntime("22.23.0", null, null, "10.9.2").npmSupported, false);
+  assert.equal(validateRuntime("22.23.0", null, null, null).npmSupported, false);
+  assert.equal(validateRuntime("22.23.0", null, null, "11.11.1").npmVersion, "11.11.1");
 });
 
 test("bun veya npm ile kurulmuş paketler (node_modules/.bin) dependenciesInstalled olarak tanınır", (t) => {

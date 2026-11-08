@@ -89,3 +89,60 @@ jobs:
 
       - name: İstemci tip denetimi
         run: pnpm --filter quiz-master-client run type-check
+
+  # npm yolu (aşama 2): ayrı iş; yavaşlık/hata pnpm işlerini bloklamasın diye ayrı tutulur.
+  # Node 22 ile gelen npm 10 desteklenmez; npm 11'e yükseltilir.
+  npm-kurulum-testi:
+    name: npm kurulum testi (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: npm 11'e yükselt
+        shell: bash
+        run: |
+          npm install -g npm@11
+          npm --version
+
+      - name: npm ci (süre ölçümü için)
+        shell: bash
+        run: |
+          start=$(date +%s)
+          npm ci
+          echo "npm ci süresi: $(( $(date +%s) - start )) sn"
+
+      - name: Paket yöneticisi katmanı testleri
+        run: node --test scripts/package-manager.test.mjs scripts/pm.test.mjs
+
+      - name: npm ile arayüzsüz kurulum duman testi
+        env:
+          QUIZMASTER_ADMIN_EMAIL: ci@okul.test
+          QUIZMASTER_ADMIN_PASSWORD: Ci-Test-Parola-2026x
+        run: npm run setup:cli -- --yes
+
+      - name: Kurulum çıktılarını doğrula
+        shell: bash
+        run: |
+          for f in server/.env server/data/installation.lock server/data/installation.state.json server/data/quiz.db; do
+            test -s "$f" || { echo "Eksik: $f"; exit 1; }
+          done
+          node -e "const s=JSON.parse(require('fs').readFileSync('server/data/installation.state.json','utf8'));const bad=Object.entries(s.steps).filter(([,v])=>!['done','skipped'].includes(v.status));if(bad.length){console.error('Bitmemiş adım:',bad);process.exit(1)}"
+
+      - name: İkinci çalıştırma kurulu sistemi bozmadan reddedilmeli
+        shell: bash
+        env:
+          QUIZMASTER_ADMIN_EMAIL: ci@okul.test
+          QUIZMASTER_ADMIN_PASSWORD: Ci-Test-Parola-2026x
+        run: |
+          if npm run setup:cli -- --yes; then echo "Kurulu sistemde ikinci kurulum başarılı olmamalıydı"; exit 1; fi
+          test -s server/.env
