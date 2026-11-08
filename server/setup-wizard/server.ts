@@ -17,6 +17,7 @@ import { buildDeploymentArtifacts, saveDeploymentConfig } from "../utils/deploym
 import { buildServerEnv, publicAppUrl, setupPayloadSchema, toDeploymentConfig, type SetupPayload } from "./config";
 import { renderSetupPage } from "./ui";
 import { deploySetupDatabase } from "./migration";
+import { discardStagedDatabase, needsStaging, planStagedDatabase, promoteStagedDatabase } from "./db-staging";
 import { STATE_FILE_NAME, createInstallState, recordStep, writeInstallState, type InstallState } from "./install-state";
 
 const projectRoot = getProjectRoot();
@@ -203,7 +204,12 @@ export async function applySetup(payload: SetupPayload, applyJob: ApplyJobState)
 
   installState = createInstallState(APPLY_STEPS.map((step) => step.id));
   try { writeInstallState(statePath, installState); } catch { installState = null; }
-  const databaseUrl = "file:../data/quiz.db";
+  // İlk kurulumda veritabanı geçici dosyada hazırlanır, en sonda quiz.db olur.
+  // Mevcut bir quiz.db varsa (ör. env adımında kesilen kurulum) yerinde kullanılır.
+  const dbPlan = planStagedDatabase(dataRoot);
+  const staged = needsStaging(dbPlan);
+  if (staged) discardStagedDatabase(dbPlan);
+  const databaseUrl = staged ? dbPlan.stagingUrl : "file:../data/quiz.db";
   const envText = buildServerEnv(payload);
   const temporaryEnv = `${envPath}.setup-${process.pid}`;
   const summary: string[] = [];
@@ -256,6 +262,10 @@ export async function applySetup(payload: SetupPayload, applyJob: ApplyJobState)
     summary.push("Nginx örneği server/data/setup-artifacts altında üretildi.");
 
     markStep(applyJob, "env", "running");
+    if (staged) {
+      promoteStagedDatabase(dbPlan);
+      summary.push("Veritabanı hazırlandı ve server/data/quiz.db olarak yerine alındı.");
+    }
     if (fs.existsSync(envPath)) {
       const backupRoot = path.join(serverRoot, "backups");
       fs.mkdirSync(backupRoot, { recursive: true });
@@ -280,6 +290,8 @@ export async function applySetup(payload: SetupPayload, applyJob: ApplyJobState)
     if (pendingHandle !== undefined) fs.closeSync(pendingHandle);
     if (fs.existsSync(pendingPath)) fs.unlinkSync(pendingPath);
     if (fs.existsSync(temporaryEnv)) fs.unlinkSync(temporaryEnv);
+    // Terfi edilmediyse (hata) kalan geçici veritabanı dosyalarını temizle; quiz.db'ye dokunmaz.
+    if (staged) discardStagedDatabase(dbPlan);
   }
 }
 

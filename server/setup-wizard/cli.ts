@@ -126,6 +126,9 @@ export async function runCli(argv: string[], env: NodeJS.ProcessEnv = process.en
     return 0;
   } catch (error) {
     clearInterval(report);
+    for (const step of job.steps.slice(printed)) {
+      if (step.status !== "pending") console.log(`[${step.status}] ${step.label}${step.detail ? ` — ${step.detail}` : ""}`);
+    }
     console.error(`Kurulum başarısız: ${error instanceof Error ? error.message : String(error)}`);
     console.error("Ayrıntı: server/data/installation.state.json. Sorunu giderip komutu yeniden çalıştırabilirsiniz.");
     return 1;
