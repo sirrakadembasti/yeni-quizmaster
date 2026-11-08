@@ -59,7 +59,7 @@ if (args.length === 1 && args[0] === '--version') {
 } else process.exit(90);
 `);
   const bootstrapPort = await port();
-  const env = { ...process.env, NODE_ENV: 'production', CI: 'false', npm_execpath: mockPnpm, RUNTIME_TEST_CALLS: calls,
+  const env = { ...process.env, NODE_ENV: 'production', CI: 'false', npm_execpath: mockPnpm, QUIZMASTER_PM: 'pnpm', RUNTIME_TEST_CALLS: calls,
     SETUP_BOOTSTRAP_PORT: String(bootstrapPort) };
   delete env.SETUP_TOKEN;
   const child = spawn(process.execPath, [path.join(scripts, 'setup-bootstrap.mjs'), '--no-open'], {

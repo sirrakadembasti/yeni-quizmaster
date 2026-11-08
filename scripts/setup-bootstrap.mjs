@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { createInvocation, detectVersion } from './package-manager.mjs';
+import { DEFAULT_MANAGER, createInvocation, detectInstalledManager, detectVersion } from './package-manager.mjs';
 import { createWizardProxy, PROXY_PREFIX } from './setup-proxy.mjs';
 import {
   CLEAN_INSTALL_CONFIRMATION,
@@ -46,8 +46,23 @@ let server;
 
 // Arayüzde sunulan yöneticiler (varsayılan pnpm; npm 11+ package-lock.json ile).
 const UI_MANAGERS = ["pnpm", "npm", "bun"];
+// Önerilen yönetici: bu dizinde kurulu olan > npm 11+ > pnpm > Bun > npm (hiçbiri yoksa).
+// Var olan bir kurulum yükseltmede sessizce başka yöneticiye geçmez.
+function preferredManager() {
+  const installed = detectInstalledManager(projectRoot);
+  if (installed) return installed;
+  const runtime = runtimeStatus();
+  if (runtime.npmSupported) return "npm";
+  if (runtime.pnpmSupported) return "pnpm";
+  if (runtime.bunSupported) return "bun";
+  return DEFAULT_MANAGER;
+}
+
+// Öncelik: arayüz seçimi > QUIZMASTER_PM > önerilen.
 function chooseManager(requested) {
-  return UI_MANAGERS.includes(requested) ? requested : "pnpm";
+  if (UI_MANAGERS.includes(requested)) return requested;
+  if (UI_MANAGERS.includes(process.env.QUIZMASTER_PM)) return process.env.QUIZMASTER_PM;
+  return preferredManager();
 }
 
 // npm yalnız 11 ve üstünde desteklenir (Node 22 ile gelen npm 10 desteklenmez).
@@ -166,7 +181,7 @@ function startPackageJob(type, op, successMessage, manager = "pnpm") {
   return child;
 }
 
-const startPnpmJob = (type, op, successMessage) => startPackageJob(type, op, successMessage, "pnpm");
+const startUpgradeJob = (successMessage) => startPackageJob("upgrade", null, successMessage, chooseManager());
 
 function cookies(req) {
   return Object.fromEntries(String(req.headers.cookie || "").split(";").map((part) => part.trim()).filter(Boolean).map((part) => {
@@ -245,13 +260,13 @@ let notice=null;
 function notify(text,kind){notice={text:String(text),kind:kind||"error",until:Date.now()+15000};applyNotice()}
 function applyNotice(){if(notice&&Date.now()<notice.until){byId("message").textContent=notice.text;byId("message").className=notice.kind}else{notice=null}}
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
-function render(s){const i=s.installation,r=s.runtime,j=s.job,ready=!!s.packagesReady,installed=i.state==="installed",running=j.status==="running";byId("summary").innerHTML='<div class="metric">Node.js<b>'+escapeHtml(r.nodeVersion||"Bulunamadı")+' '+(r.nodeSupported?"✓":"✕")+'</b></div><div class="metric">pnpm (Önerilen)<b>'+escapeHtml(r.pnpmVersion||"Bulunamadı")+' '+(r.pnpmSupported?"✓":"✕")+'</b></div><div class="metric">npm (11+)<b>'+escapeHtml(r.npmVersion||"Bulunamadı")+' '+(r.npmSupported?"✓":"✕")+'</b></div><div class="metric">Bun (Deneysel)<b>'+escapeHtml(r.bunVersion?(r.bunVersion+" (Hazır)"):"Kurulu değil")+' '+(r.bunSupported?"✓":"—")+'</b></div><div class="metric">Dizin<b>'+escapeHtml(s.directory)+'</b></div><div class="metric">Bulunanlar<b>'+escapeHtml(evidenceLabel(i.evidence))+'</b></div><div class="metric">Paket adımı<b>'+(installed?'Güncelleme paket adımını içerir':ready?'Bu oturumda tamamlandı ✓':'Önce “Paketleri Kur / Onar” ✕')+'</b></div>';const names={fresh:"Yeni kurulum",partial:"Yarım/eski kurulum",installed:"Uygulama zaten kurulu"};byId("state").textContent=names[i.state];byId("state").className="state "+(i.state==="fresh"?"ok":"warn");let tip=j.message;if(installed){tip=j.type==="upgrade"?j.message:"Uygulama kurulu. Servisi durdurup “Mevcut Kurulumu Güncelle” ile verileri koruyarak güncelleyebilirsiniz."}else if(running){tip=j.message}else if(!ready){tip=i.evidence.dependenciesInstalled?"Paketler diskte var; sihirbaza geçmek için önce “Paketleri Kur / Onar” adımını çalıştırın.":"Önce “Paketleri Kur / Onar” ile paketleri kurun."}else{tip="Paket adımı tamam. Kurulum sihirbazına geçebilirsiniz."}byId("message").textContent=tip;byId("message").className=j.status==="error"?"error":j.status==="success"?"success":"muted";applyNotice();byId("logs").textContent=j.logs.length?j.logs.join("\n"):"Henüz işlem çıktısı yok.";byId("logs").scrollTop=byId("logs").scrollHeight;byId("danger").classList.toggle("hidden",i.state==="fresh");const wizard=byId("wizard");wizard.disabled=installed||running||!ready;if(installed){wizard.title="Uygulama zaten kurulu; sihirbaz kapalı. Temiz kurulum gerekir."}else if(!ready){wizard.title="Önce paket kurulum adımını tamamlayın."}else{wizard.title="Kurulum sihirbazını başlat"}byId("install").disabled=running;byId("upgrade").disabled=!installed||running;if(!installed&&j.wizardUrl)location.href=j.wizardUrl}
+function render(s){const i=s.installation,r=s.runtime,j=s.job,ready=!!s.packagesReady,installed=i.state==="installed",running=j.status==="running";byId("summary").innerHTML='<div class="metric">Node.js<b>'+escapeHtml(r.nodeVersion||"Bulunamadı")+' '+(r.nodeSupported?"✓":"✕")+'</b></div><div class="metric">pnpm (9.15.1)<b>'+escapeHtml(r.pnpmVersion||"Bulunamadı")+' '+(r.pnpmSupported?"✓":"✕")+'</b></div><div class="metric">npm (11+)<b>'+escapeHtml(r.npmVersion||"Bulunamadı")+' '+(r.npmSupported?"✓":"✕")+'</b></div><div class="metric">Bun (Deneysel)<b>'+escapeHtml(r.bunVersion?(r.bunVersion+" (Hazır)"):"Kurulu değil")+' '+(r.bunSupported?"✓":"—")+'</b></div><div class="metric">Dizin<b>'+escapeHtml(s.directory)+'</b></div><div class="metric">Bulunanlar<b>'+escapeHtml(evidenceLabel(i.evidence))+'</b></div><div class="metric">Paket adımı<b>'+(installed?'Güncelleme paket adımını içerir':ready?'Bu oturumda tamamlandı ✓':'Önce “Paketleri Kur / Onar” ✕')+'</b></div>';const names={fresh:"Yeni kurulum",partial:"Yarım/eski kurulum",installed:"Uygulama zaten kurulu"};byId("state").textContent=names[i.state];byId("state").className="state "+(i.state==="fresh"?"ok":"warn");let tip=j.message;if(installed){tip=j.type==="upgrade"?j.message:"Uygulama kurulu. Servisi durdurup “Mevcut Kurulumu Güncelle” ile verileri koruyarak güncelleyebilirsiniz."}else if(running){tip=j.message}else if(!ready){tip=i.evidence.dependenciesInstalled?"Paketler diskte var; sihirbaza geçmek için önce “Paketleri Kur / Onar” adımını çalıştırın.":"Önce “Paketleri Kur / Onar” ile paketleri kurun."}else{tip="Paket adımı tamam. Kurulum sihirbazına geçebilirsiniz."}byId("message").textContent=tip;byId("message").className=j.status==="error"?"error":j.status==="success"?"success":"muted";applyNotice();byId("logs").textContent=j.logs.length?j.logs.join("\n"):"Henüz işlem çıktısı yok.";byId("logs").scrollTop=byId("logs").scrollHeight;byId("danger").classList.toggle("hidden",i.state==="fresh");const wizard=byId("wizard");wizard.disabled=installed||running||!ready;if(installed){wizard.title="Uygulama zaten kurulu; sihirbaz kapalı. Temiz kurulum gerekir."}else if(!ready){wizard.title="Önce paket kurulum adımını tamamlayın."}else{wizard.title="Kurulum sihirbazını başlat"}byId("install").disabled=running;byId("upgrade").disabled=!installed||running;if(!installed&&j.wizardUrl)location.href=j.wizardUrl}
 let refreshPending=null;function refresh(){if(refreshPending)return refreshPending;refreshPending=(async()=>{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),30000);try{render(await api("/api/status",{signal:controller.signal}))}catch(e){byId("message").textContent=e.message;byId("message").className="error"}finally{clearTimeout(timer);refreshPending=null}})();return refreshPending}
 byId("upgrade").onclick=async()=>{try{await api("/api/upgrade",{method:"POST",body:"{}"});refresh()}catch(e){notify(e.message)}};
-byId("install").onclick=async()=>{try{const sel=byId("pkgManager");const manager=sel?sel.value:"pnpm";await api("/api/install",{method:"POST",body:JSON.stringify({packageManager:manager})});refresh()}catch(e){notify(e.message)}};
+byId("install").onclick=async()=>{try{const sel=byId("pkgManager");const manager=sel?sel.value:"npm";await api("/api/install",{method:"POST",body:JSON.stringify({packageManager:manager})});refresh()}catch(e){notify(e.message)}};
 byId("wizard").onclick=async()=>{
   const sel=byId("pkgManager");
-  const manager=sel?sel.value:"pnpm";
+  const manager=sel?sel.value:"npm";
   try{
     await api("/api/wizard",{method:"POST",body:JSON.stringify({packageManager:manager})});
     refresh();
@@ -285,6 +300,12 @@ refresh();setInterval(refresh,1000);
 `;
 }
 
+function managerOptions() {
+  const preferred = preferredManager();
+  const labels = { npm: "npm (11 ve üstü — varsayılan)", pnpm: "pnpm (9.15.1)", bun: "Bun (Deneysel — CLI kurulumu doğrulandı)" };
+  return ["npm", "pnpm", "bun"].map((name) => `<option value="${name}"${name === preferred ? " selected" : ""}>${labels[name]}</option>`).join("");
+}
+
 function renderPage() {
   return `<!doctype html>
 <html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -294,7 +315,7 @@ function renderPage() {
 :root{color-scheme:dark;--bg:#0b1020;--panel:#141b2d;--line:#2b3650;--text:#f7f8fc;--muted:#aeb9ce;--brand:#7867ff;--ok:#2fd69f;--warn:#ffb84d;--danger:#ff5f68}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#1a2040,var(--bg) 45%);color:var(--text);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}.wrap{width:min(980px,calc(100% - 32px));margin:32px auto}.hero,.card{background:rgba(20,27,45,.96);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 18px 60px #0005}.hero h1{margin:0 0 8px;font-size:30px}.hero p,.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:18px 0}.metric{background:#0e1527;border:1px solid var(--line);border-radius:14px;padding:14px}.metric b{display:block;margin-top:4px}.card{margin-top:18px}.state{display:inline-flex;border-radius:999px;padding:6px 11px;font-weight:700;background:#2a3150}.state.ok{color:var(--ok)}.state.warn{color:var(--warn)}button{border:0;border-radius:12px;padding:12px 16px;background:var(--brand);color:white;font-weight:750;cursor:pointer}button.secondary{background:#27314a}button.danger{background:var(--danger)}button:disabled{opacity:.45;cursor:not-allowed}.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}pre{min-height:160px;max-height:320px;overflow:auto;background:#080d19;border:1px solid var(--line);border-radius:12px;padding:14px;white-space:pre-wrap;color:#ced8ea}.danger-zone{border-color:#6d3238}.danger-zone input[type=text]{width:100%;background:#0b1120;border:1px solid #6d4248;color:white;border-radius:10px;padding:11px;margin:10px 0}.hidden{display:none}.error{color:#ff9da3}.success{color:var(--ok)}.warn{color:var(--warn)}code{color:#d9d3ff}@media(max-width:600px){.wrap{width:min(100% - 18px,980px);margin:10px auto}.hero,.card{padding:17px}}
 </style></head><body><main class="wrap" data-confirmation="${CLEAN_INSTALL_CONFIRMATION}">
 <section class="hero"><h1>QuizMaster Kurulum Başlatıcısı</h1><p>Ön kontrol, paket kurulumu ve güvenli ilk yapılandırma tek akışta yürütülür.</p><div id="summary" class="grid"></div><span id="state" class="state">Denetleniyor</span></section>
-<section class="card"><h2>Kurulum işlemleri</h2><p id="message" class="muted">Durum okunuyor...</p><div class="actions"><label id="pkgManagerWrap" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:8px 12px;background:#0e1527;border:1px solid var(--line);border-radius:12px;">Paket Yöneticisi: <select id="pkgManager" style="background:#141b2d;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:4px 8px;font:inherit;"><option value="pnpm" selected>pnpm (Önerilen / Varsayılan)</option><option value="npm">npm (11 ve üstü)</option><option value="bun">Bun (Deneysel — CLI kurulumu doğrulandı)</option></select></label><button id="install">Paketleri Kur / Onar</button><button id="wizard" class="secondary">Kurulum Sihirbazına Geç</button><button id="upgrade" class="secondary" disabled>Mevcut Kurulumu Güncelle</button><button id="refresh" class="secondary">Yeniden Denetle</button></div><pre id="logs">Henüz işlem çıktısı yok.</pre></section>
+<section class="card"><h2>Kurulum işlemleri</h2><p id="message" class="muted">Durum okunuyor...</p><div class="actions"><label id="pkgManagerWrap" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:8px 12px;background:#0e1527;border:1px solid var(--line);border-radius:12px;">Paket Yöneticisi: <select id="pkgManager" style="background:#141b2d;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:4px 8px;font:inherit;">${managerOptions()}</select></label><button id="install">Paketleri Kur / Onar</button><button id="wizard" class="secondary">Kurulum Sihirbazına Geç</button><button id="upgrade" class="secondary" disabled>Mevcut Kurulumu Güncelle</button><button id="refresh" class="secondary">Yeniden Denetle</button></div><pre id="logs">Henüz işlem çıktısı yok.</pre></section>
 <section id="danger" class="card danger-zone hidden"><h2>Temiz kurulum</h2><p class="error"><strong>Dikkat:</strong> Kullanıcılar, sınavlar, anketler, sonuçlar, oturumlar, yapılandırma ve yüklenen dosyalar aktif kurulumdan kaldırılır. Önce doğrulanmış, tarihli yedek alınır.</p><label><input id="backupAck" type="checkbox"> Zorunlu yedek alınacağını ve uygulamanın durdurulması gerektiğini anlıyorum.</label><p>Devam etmek için <code>${CLEAN_INSTALL_CONFIRMATION}</code> yazın:</p><input id="confirmation" type="text" autocomplete="off"><button id="reset" class="danger">Yedekle ve Temiz Kuruluma Geç</button></section>
 </main><script src="/bootstrap.js" defer></script></body></html>`;
 }
@@ -345,7 +366,7 @@ async function handler(req, res) {
     if (requestUrl.pathname === "/api/upgrade") {
       if (inspectInstallationState(projectRoot).state !== "installed") throw new Error("Güncelleme yalnız kurulu sistemde kullanılabilir.");
       await readJson(req);
-      startPnpmJob("upgrade", null, "Yedek, derleme ve migration tamamlandı. Servisi yeniden başlatıp web arayüzündeki Sunucu Durumu ve girişi doğrulayın.");
+      startUpgradeJob("Yedek, derleme ve migration tamamlandı. Servisi yeniden başlatıp web arayüzündeki Sunucu Durumu ve girişi doğrulayın.");
       return json(res, 202, { message: "Veriler korunarak güncelleme başlatıldı." });
     }
     if (requestUrl.pathname === "/api/wizard") {

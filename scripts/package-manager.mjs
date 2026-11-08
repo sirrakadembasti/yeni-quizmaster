@@ -9,8 +9,8 @@ import { spawnSync } from 'node:child_process';
 import { pnpmInvocation } from './pnpm-invocation.mjs';
 
 export const MANAGERS = ['npm', 'pnpm', 'bun'];
-// Bu aşamada varsayılan pnpm'dir; npm aşama 4'te yalnızca bu satır değiştirilerek varsayılan yapılır.
-export const DEFAULT_MANAGER = 'pnpm';
+// Yeni kurulumların varsayılanı npm'dir. Var olan bir kurulum kendi yöneticisini korur (bkz. detectInstalledManager).
+export const DEFAULT_MANAGER = 'npm';
 export const REQUIRED_PNPM_VERSION = '9.15.1';
 export const MIN_NPM_MAJOR = 11;
 
@@ -29,9 +29,21 @@ export function detectInvokingManager(env = process.env) {
   return MANAGERS.includes(name) ? name : null;
 }
 
-// Öncelik: açık istek > QUIZMASTER_PM > betiği başlatan yönetici > varsayılan.
-export function selectManager({ requested, env = process.env } = {}) {
-  const value = String(requested || env.QUIZMASTER_PM || detectInvokingManager(env) || DEFAULT_MANAGER).toLowerCase();
+/**
+ * node_modules düzeninden, bu dizindeki kurulumun hangi yöneticiyle yapıldığını söyler; yoksa null.
+ * Var olan bir kurulumun (ör. pnpm ağacı) yükseltmede sessizce başka yöneticiye geçmemesi için kullanılır.
+ */
+export function detectInstalledManager(root, { exists = fs.existsSync } = {}) {
+  if (!root) return null;
+  if (exists(path.join(root, 'node_modules', '.pnpm'))) return 'pnpm';
+  if (exists(path.join(root, 'bun.lock')) || exists(path.join(root, 'bun.lockb'))) return 'bun';
+  if (exists(path.join(root, 'node_modules', '.package-lock.json'))) return 'npm';
+  return null;
+}
+
+// Öncelik: açık istek > QUIZMASTER_PM > betiği başlatan yönetici > kurulu yönetici (root verilirse) > varsayılan (npm).
+export function selectManager({ requested, env = process.env, root, exists } = {}) {
+  const value = String(requested || env.QUIZMASTER_PM || detectInvokingManager(env) || detectInstalledManager(root, { exists }) || DEFAULT_MANAGER).toLowerCase();
   if (!MANAGERS.includes(value)) throw new Error(`Desteklenmeyen paket yöneticisi: ${value}. Geçerli: ${MANAGERS.join(', ')}.`);
   return value;
 }

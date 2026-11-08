@@ -8,7 +8,7 @@ import {createInvocation,selectManager} from './package-manager.mjs';
 
 export function runUpgradeCommand(projectRoot,op,onProgress=()=>{},signal){
   // Yönetici açık seçimden (QUIZMASTER_PM, varsayılan pnpm); komut kabuksuz üretilir.
-  const {command,args:argv}=createInvocation(selectManager({env:process.env}),op,{root:projectRoot,env:process.env});
+  const {command,args:argv}=createInvocation(selectManager({env:process.env,root:projectRoot}),op,{root:projectRoot,env:process.env});
   return runSupervisedCommand(command,argv,{cwd:projectRoot,env:{...process.env,DATABASE_URL:'file:'+path.join(projectRoot,'server/data/quiz.db').replaceAll('\\','/'),RUST_LOG:'info',FORCE_COLOR:'0',CI:'true'},onProgress,signal});
 }
 
@@ -34,7 +34,7 @@ export async function upgradeApplication(projectRoot,{run,onProgress=()=>{},sign
     // Compilation tools are needed even when a production service launches
     // maintenance. pnpm otherwise omits/removes devDependencies before build.
     // Bun için kilit dosyası depoda tutulmaz; donmuş kurulum yalnız pnpm/npm içindir.
-    const frozen=selectManager({env:process.env})!=='bun';
+    const frozen=selectManager({env:process.env,root})!=='bun';
     for(const [name,args]of [['install',{type:'install',frozen}],['build',{type:'run',script:'build'}],['migrate',{type:'run',workspace:'server',script:'db:deploy'}],['status',{type:'run',workspace:'server',script:'db:status'}]]){
       if(signal?.aborted)throw new Error('Upgrade cancelled');
       step=name;onProgress('Upgrade step: '+step+'\n');await runner(args);
