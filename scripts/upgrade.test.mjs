@@ -24,7 +24,7 @@ async function fixture(t){
 test('upgrade saves a verified backup before commands and preserves configuration and installation identity',async t=>{
   const root=await fixture(t),env=await fs.readFile(path.join(root,'server/.env')),calls=[];
   const result=await upgradeApplication(root,{run:async args=>{assert.equal((await fs.readdir(path.join(root,'server/backups'))).length,1);calls.push(args);}});
-  assert.deepEqual(calls,[['install','--frozen-lockfile','--prod=false'],['build'],['--filter','quiz-master-server','db:deploy'],['--filter','quiz-master-server','db:status']]);
+  assert.deepEqual(calls,[{type:'install',frozen:true},{type:'run',script:'build'},{type:'run',workspace:'server',script:'db:deploy'},{type:'run',workspace:'server',script:'db:status'}]);
   assert.deepEqual(await fs.readFile(path.join(root,'server/.env')),env);
   assert.equal(await fs.readFile(path.join(root,'server/data/installation.lock'),'utf8'),'synthetic-installation');
   assert.ok(JSON.parse(await fs.readFile(path.join(result.backupRoot,'manifest.json'),'utf8')).files.some(file=>file.backup==='server/data/quiz.db'));
@@ -32,7 +32,7 @@ test('upgrade saves a verified backup before commands and preserves configuratio
 });
 test('failed build never applies migration and keeps the recovery backup and original data',async t=>{
   const root=await fixture(t),before=await fs.readFile(path.join(root,'server/data/quiz.db')),calls=[];
-  await assert.rejects(upgradeApplication(root,{run:async args=>{calls.push(args);if(args[0]==='build')throw new Error('Injected build failure');}}),/build/);
+  await assert.rejects(upgradeApplication(root,{run:async args=>{calls.push(args);if(args.script==='build')throw new Error('Injected build failure');}}),/build/);
   assert.equal(calls.length,2);assert.deepEqual(await fs.readFile(path.join(root,'server/data/quiz.db')),before);
   assert.equal((await fs.readdir(path.join(root,'server/backups'))).length,1);
   await assert.rejects(fs.stat(path.join(root,'server/data/upgrade.lock')),error=>error.code==='ENOENT');
@@ -55,7 +55,7 @@ test('migration subprocess cannot inherit a foreign database or Prisma log level
   const keys=['npm_execpath','DATABASE_URL','RUST_LOG'],before=Object.fromEntries(keys.map(key=>[key,process.env[key]]));
   try{
     Object.assign(process.env,{npm_execpath:shim,DATABASE_URL:'file:/foreign-database-must-never-be-used.db',RUST_LOG:'warn'});
-    await runUpgradeCommand(root,['--filter','quiz-master-server','db:deploy']);
+    await runUpgradeCommand(root,{type:'run',workspace:'server',script:'db:deploy'});
     assert.deepEqual(JSON.parse(await fs.readFile(path.join(root,'child-env-proof.json'),'utf8')),{database:'file:'+path.join(root,'server/data/quiz.db').replaceAll('\\','/'),rust:'info'});
   }finally{for(const key of keys){if(before[key]===undefined)delete process.env[key];else process.env[key]=before[key];}}
 });
@@ -63,7 +63,7 @@ test('frozen install is noninteractive even when the caller disables CI',async t
  const root=await fixture(t),shim=path.join(root,'pnpm.cjs');
  await fs.writeFile(shim,"if(process.env.CI!=='true'){console.error('Controlled modules replacement requires confirmation');process.exit(43)}require('node:fs').writeFileSync('noninteractive-install-proof.json',JSON.stringify(process.argv.slice(2)));");
  const keys=['npm_execpath','CI'],before=Object.fromEntries(keys.map(key=>[key,process.env[key]]));
- try{Object.assign(process.env,{npm_execpath:shim,CI:'false'});await runUpgradeCommand(root,['install','--frozen-lockfile']);assert.deepEqual(JSON.parse(await fs.readFile(path.join(root,'noninteractive-install-proof.json'),'utf8')),['install','--frozen-lockfile']);}
+ try{Object.assign(process.env,{npm_execpath:shim,CI:'false'});await runUpgradeCommand(root,{type:'install'});assert.deepEqual(JSON.parse(await fs.readFile(path.join(root,'noninteractive-install-proof.json'),'utf8')),['install','--frozen-lockfile','--prod=false']);}
  finally{for(const key of keys){if(before[key]===undefined)delete process.env[key];else process.env[key]=before[key];}}
 });
 for(const hardStop of [false,true])test(hardStop?'hard parent stop preserves recovery evidence and stops the upgrade descendant':'graceful bootstrap lease cancellation stops a TERM-resistant descendant and releases the CLI lock',{timeout:20000},async t=>{

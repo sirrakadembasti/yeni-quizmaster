@@ -4,10 +4,11 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {runSupervisedCommand} from './upgrade-process.mjs';
 import {createApplicationBackup} from './maintenance-lib.mjs';
-import {pnpmInvocation} from './pnpm-invocation.mjs';
+import {createInvocation,selectManager} from './package-manager.mjs';
 
-export function runUpgradeCommand(projectRoot,args,onProgress=()=>{},signal){
-  const {command,args:argv}=pnpmInvocation(args);
+export function runUpgradeCommand(projectRoot,op,onProgress=()=>{},signal){
+  // Yönetici açık seçimden (QUIZMASTER_PM, varsayılan pnpm); komut kabuksuz üretilir.
+  const {command,args:argv}=createInvocation(selectManager({env:process.env}),op,{root:projectRoot,env:process.env});
   return runSupervisedCommand(command,argv,{cwd:projectRoot,env:{...process.env,DATABASE_URL:'file:'+path.join(projectRoot,'server/data/quiz.db').replaceAll('\\','/'),RUST_LOG:'info',FORCE_COLOR:'0',CI:'true'},onProgress,signal});
 }
 
@@ -32,7 +33,9 @@ export async function upgradeApplication(projectRoot,{run,onProgress=()=>{},sign
     const runner=run??(args=>runUpgradeCommand(root,args,onProgress,signal));
     // Compilation tools are needed even when a production service launches
     // maintenance. pnpm otherwise omits/removes devDependencies before build.
-    for(const [name,args]of [['install',['install','--frozen-lockfile','--prod=false']],['build',['build']],['migrate',['--filter','quiz-master-server','db:deploy']],['status',['--filter','quiz-master-server','db:status']]]){
+    // Bun için kilit dosyası depoda tutulmaz; donmuş kurulum yalnız pnpm/npm içindir.
+    const frozen=selectManager({env:process.env})!=='bun';
+    for(const [name,args]of [['install',{type:'install',frozen}],['build',{type:'run',script:'build'}],['migrate',{type:'run',workspace:'server',script:'db:deploy'}],['status',{type:'run',workspace:'server',script:'db:status'}]]){
       if(signal?.aborted)throw new Error('Upgrade cancelled');
       step=name;onProgress('Upgrade step: '+step+'\n');await runner(args);
     }

@@ -183,7 +183,7 @@ pnpm run setup
 İlk ekran yalnız `127.0.0.1:5049` üzerinde açılır. Burada:
 
 - uygulamanın bulunduğu dizin ve çalışma ortamı (Node.js, pnpm ve sistemde varsa deneysel Bun seçeneği) gösterilir,
-- varsayılan olarak `pnpm install --frozen-lockfile --prod=false` (veya panelden deneysel Bun seçildiyse `bun install`; Bun yolunda migration/derleme adımları henüz doğrulanmamıştır, üretim için pnpm kullanın) **Paketleri Kur / Onar** ile etkileşimsiz çalıştırılır; production ortamında da sihirbaz/derleme araçları kurulur (sihirbaza geçiş bu adım bitmeden açılmaz),
+- varsayılan olarak `pnpm install --frozen-lockfile --prod=false` (veya panelden deneysel Bun seçildiyse `bun install`; Bun yolunda paket kurulumu ve migration CLI ile doğrulanmıştır; tarayıcı arayüzü, derleme ve yükseltme pnpm kadar sınanmamıştır, üretim için pnpm kullanın) **Paketleri Kur / Onar** ile etkileşimsiz çalıştırılır; production ortamında da sihirbaz/derleme araçları kurulur (sihirbaza geçiş bu adım bitmeden açılmaz),
 - gerçek paket yöneticisi çıktısı ve hata bilgisi ekranda izlenir,
 - 5049 portu doluysa süreç PID ile gösterilir ve durdurulması istenir.
 
