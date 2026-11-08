@@ -321,7 +321,7 @@ export function createSetupApp(token: string, onComplete?: () => void) {
       return res.redirect(303, "/setup");
     }
     if (!equalSecret(cookieValue(req, "quizmaster.setup"), sessionValue)) return res.status(401).send("Geçersiz veya eksik kurulum anahtarı.");
-    res.type("html").send(renderSetupPage(csrfToken));
+    res.type("html").send(renderSetupPage(csrfToken, process.env.SETUP_API_BASE || ""));
   });
 
   app.use("/api", (req, res, next) => {
@@ -525,7 +525,10 @@ export function startSetupWizard() {
   // The installer is intentionally loopback-only. Reach a remote VPS through an SSH tunnel;
   // exposing the one-time installer directly to the internet is not supported.
   const host = "127.0.0.1";
-  const port = Math.min(65535, Math.max(1024, Number(process.env.SETUP_PORT) || 5050));
+  // SETUP_PORT=0: boş bir port seç (kurulum başlatıcısı bunu kullanır). Aksi hâlde 1024–65535, varsayılan 5050.
+  const port = process.env.SETUP_PORT === "0"
+    ? 0
+    : Math.min(65535, Math.max(1024, Number(process.env.SETUP_PORT) || 5050));
   let server: Server;
   const app = createSetupApp(token, () => server.close());
 
@@ -554,7 +557,9 @@ export function startSetupWizard() {
   server = createServer(app);
   server.once("error", onListenError);
   server.listen(port, host, () => {
-    console.log(`QuizMaster kurulum sihirbazı: http://${host}:${port}/setup?token=${token}`);
+    // SETUP_PORT=0 ise işletim sistemi boş bir port seçer; gerçek port buradan okunur.
+    const actualPort = (server.address() as net.AddressInfo | null)?.port ?? port;
+    console.log(`QuizMaster kurulum sihirbazı: http://${host}:${actualPort}/setup?token=${token}`);
     console.log("Bu bağlantıyı paylaşmayın. Kurulum tamamlandığında sihirbaz otomatik kapanır.");
   });
 }

@@ -104,24 +104,6 @@ if defined PORT_HOLDER_PID (
   ping -n 2 127.0.0.1 >nul
 )
 
-set "WIZARD_PORT=5050"
-if defined SETUP_WIZARD_PORT set "WIZARD_PORT=%SETUP_WIZARD_PORT%"
-set "WIZARD_PID="
-for /f "delims=" %%P in ('node "scripts\find-port-holder.mjs" !WIZARD_PORT! 2^>nul') do set "WIZARD_PID=%%P"
-if defined WIZARD_PID (
-  echo.
-  echo [UYARI] Sihirbaz portu zaten kullanilda: 127.0.0.1:!WIZARD_PORT!
-  echo Onceki sihirbaz kalmis olabilir. Devam ederseniz 2. asamada
-  echo "port zaten kullanilda" hatasi alabilirsiniz.
-  echo Portu tutan surec: PID !WIZARD_PID!
-  echo.
-  choice /C DK /N /M "Sihirbaz portu simdi durdurulsun mu? [D=durdur ve devam / K=gec ve devam]: "
-  if not errorlevel 2 (
-    taskkill /PID !WIZARD_PID! /F >nul 2>&1
-    ping -n 2 127.0.0.1 >nul
-  )
-)
-
 echo.
 echo [TAMAM] Gerekli çalýþma ortamý hazýr.
 echo Grafik kurulum baþlangýcý açýlýyor...

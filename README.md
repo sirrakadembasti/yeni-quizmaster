@@ -185,9 +185,11 @@ pnpm run setup
 - uygulamanın bulunduğu dizin ve çalışma ortamı (Node.js, pnpm ve sistemde varsa deneysel Bun seçeneği) gösterilir,
 - varsayılan olarak `pnpm install --frozen-lockfile --prod=false` (veya panelden deneysel Bun seçildiyse `bun install`; Bun yolunda migration/derleme adımları henüz doğrulanmamıştır, üretim için pnpm kullanın) **Paketleri Kur / Onar** ile etkileşimsiz çalıştırılır; production ortamında da sihirbaz/derleme araçları kurulur (sihirbaza geçiş bu adım bitmeden açılmaz),
 - gerçek paket yöneticisi çıktısı ve hata bilgisi ekranda izlenir,
-- 5050 (sihirbaz) portu doluysa süreç PID ile gösterilir ve durdurulması istenir.
+- 5049 portu doluysa süreç PID ile gösterilir ve durdurulması istenir.
 
-Ana sihirbaz `127.0.0.1:5050` üzerinde açılır; kurulum biçimi, adres, SQLite, saklama politikası, ilk yönetici ve isteğe bağlı Gmail ayarlarını toplar. Alanların yanındaki **?** simgesi her seçeneği kısaca açıklar.
+Ana sihirbaz aynı adreste (`127.0.0.1:5049/wizard`) açılır; arka planda boş bir yerel portta çalışır ve başlatıcı yalnız beyaz listedeki isteklerini aktarır. Tarayıcı port değiştirmez.
+
+Sihirbaz; kurulum biçimi, adres, SQLite, saklama politikası, ilk yönetici ve isteğe bağlı Gmail ayarlarını toplar. Alanların yanındaki **?** simgesi her seçeneği kısaca açıklar.
 
 **Kurulum biçimleri:**
 
@@ -285,10 +287,10 @@ chmod +x kurulum.sh
 
 Başlatıcı Node.js 22/24 LTS ve pnpm `9.15.1` denetimini yapar. Eksikse yalnız resmî bağlantı ve komutları göstererek durur. Gereksinimler tamamsa bağımlılıksız bootstrap ekranı açılır ve paketler kullanıcı onayından sonra kurulur.
 
-Uzak Linux/VPS kurulumu için hem bootstrap hem ana sihirbaz portunu SSH tüneline alın; bu portları internete açmayın:
+Uzak Linux/VPS kurulumu için başlatıcı portunu (sihirbaz da aynı adrestedir) SSH tüneline alın; bu portu internete açmayın:
 
 ```bash
-ssh -L 5049:127.0.0.1:5049 -L 5050:127.0.0.1:5050 kullanici@sunucu
+ssh -L 5049:127.0.0.1:5049 kullanici@sunucu
 ```
 
 Terminalde gösterilen `http://127.0.0.1:5049/setup?token=...` adresini kendi bilgisayarınızdaki tarayıcıda açın. Paketler tamamlandığında ekran ana sihirbaza yönlendirir.
@@ -336,26 +338,21 @@ Başlatıcı `installation.lock`, `.env`, SQLite dosyaları, dağıtım profili 
 
 ### Kurulum yeniden açıldığında port çakışması (EADDRINUSE)
 
-Önceki kurulum penceresi veya `kurulum.bat` / `kurulum.sh` düzgün kapatılmazsa arka planda kalan süreç `127.0.0.1:5049` (başlatıcı) veya `127.0.0.1:5050` (sihirbaz) portunu tutmaya devam eder:
+Önceki kurulum penceresi veya `kurulum.bat` / `kurulum.sh` düzgün kapatılmazsa arka planda kalan süreç `127.0.0.1:5049` portunu tutmaya devam eder:
 
 ```
 Kurulum başlangıç sunucusu açılamadı: listen EADDRINUSE: address already in use 127.0.0.1:5049
-```
-veya sihirbaza geçerken:
-```
-Kurulum sihirbazı açılamadı: 127.0.0.1:5050 portu zaten kullanımda.
 ```
 
 Bu hata kurulum verilerine zarar vermez. `kurulum.bat`, `kurulum.sh` ve başlatıcı artık:
 
 1. portu tutan süreci (PID) gösterir,
 2. hatanın nedenini açıklar,
-3. süreci durdurmayı teklif eder (`taskkill` / `kill`),
-4. sihirbaz butonunda da 5050 için onay sorar.
+3. süreci durdurmayı teklif eder (`taskkill` / `kill`).
 
 Hâlâ açık bir kurulum sekmesi varsa önce onu kullanın veya kapatın; ardından kalan süreci durdurup kurulum betiğini yeniden çalıştırın.
 
-Sihirbaz 5050, kurulum başlatıcısı 5049 portunu kullanır. `SETUP_PORT` ortam değişkeni sihirbaza aittir; betikler bunu ezmez (`CHECK_PORT` kullanır).
+Başlatıcı ve sihirbaz tek adreste, 5049 portunda çalışır (`SETUP_BOOTSTRAP_PORT` ile değiştirilebilir). Sihirbaz kendi iç portunu işletim sisteminden alır; ayrı bir sihirbaz portu ayarı yoktur. Eski `SETUP_WIZARD_PORT` değişkeni artık kullanılmaz.
 
 ## Temel kullanım akışları
 

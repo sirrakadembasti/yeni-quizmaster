@@ -6,6 +6,7 @@ import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { pnpmInvocation } from './pnpm-invocation.mjs';
+import { createWizardProxy, PROXY_PREFIX } from './setup-proxy.mjs';
 import {
   CLEAN_INSTALL_CONFIRMATION,
   describePortConflict,
@@ -14,7 +15,6 @@ import {
   readConfiguredPort,
   REQUIRED_PNPM_VERSION,
   resetInstallation,
-  stopPortProcess,
   validateRuntime,
 } from "./setup-bootstrap-lib.mjs";
 
@@ -22,7 +22,6 @@ const scriptRoot = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(scriptRoot, "..");
 const host = "127.0.0.1";
 const port = Math.min(65535, Math.max(1024, Number(process.env.SETUP_BOOTSTRAP_PORT) || 5049));
-const wizardPort = Math.min(65535, Math.max(1024, Number(process.env.SETUP_WIZARD_PORT) || 5050));
 const token = crypto.randomBytes(24).toString("base64url");
 const sessionValue = crypto.createHmac("sha256", token).update("quizmaster-bootstrap-session").digest("hex");
 const csrfValue = crypto.createHmac("sha256", token).update("quizmaster-bootstrap-csrf").digest("hex");
@@ -41,6 +40,8 @@ const job = {
 let packagesReady = false;
 
 let wizardChild = null;
+// Sihirbaz rastgele bir loopback portta çalışır; tarayıcı yalnız bu başlatıcının portunu görür.
+let wizardTarget = null;
 let server;
 
 function resolveBunCommand() {
@@ -133,14 +134,17 @@ function startPackageJob(type, args, successMessage, manager = "pnpm") {
     console.log("Sihirbaz başlatılıyor. Terminal açık kalmalı; sihirbaz bu sürecin altındadır.");
   }
 
-  // Sihirbaz SETUP_PORT okur; bootstrap portu ile karışmasın diye ayrı tut.
   const childEnv = { ...process.env, FORCE_COLOR: "0" };
   if (type === "dependencies") childEnv.CI = "true";
+  let wizardSession = null;
   if (type === "wizard") {
-    if (wizardPort === port) {
-      throw new Error(`Kurulum sihirbazı portu (${wizardPort}) kurulum başlangıcı ile aynı olamaz. SETUP_WIZARD_PORT değerini değiştirin.`);
-    }
-    childEnv.SETUP_PORT = String(wizardPort);
+    // Sihirbaz boş bir portta açılır (SETUP_PORT=0) ve kendi anahtarını bu süreçten alır;
+    // tarayıcı çerezi sunucu tarafında bu anahtardan türetilir (bkz. createWizardProxy).
+    const wizardToken = crypto.randomBytes(24).toString("base64url");
+    wizardSession = crypto.createHmac("sha256", wizardToken).update("quizmaster-setup-session").digest("hex");
+    childEnv.SETUP_PORT = "0";
+    childEnv.SETUP_TOKEN = wizardToken;
+    childEnv.SETUP_API_BASE = PROXY_PREFIX;
   }
 
   const child = spawn(invocation.command, invocation.args, {
@@ -153,9 +157,10 @@ function startPackageJob(type, args, successMessage, manager = "pnpm") {
   child.stdout.on("data", (chunk) => {
     appendLog(chunk);
     if (type === "wizard") {
-      const match = chunk.toString("utf8").match(/http:\/\/127\.0\.0\.1:\d+\/setup\?token=[A-Za-z0-9_-]+/);
+      const match = chunk.toString("utf8").match(/http:\/\/127\.0\.0\.1:(\d+)\/setup\?token=[A-Za-z0-9_-]+/);
       if (match) {
-        job.wizardUrl = match[0];
+        wizardTarget = { port: Number(match[1]), cookie: `quizmaster.setup=${wizardSession}` };
+        job.wizardUrl = PROXY_PREFIX;
         job.message = "Ana kurulum sihirbazı hazır. Terminali açık tutun; sihirbaz bu süreçte çalışır.";
       }
     }
@@ -166,6 +171,7 @@ function startPackageJob(type, args, successMessage, manager = "pnpm") {
     job.message = `İşlem başlatılamadı: ${error.message}`;
   });
   child.once("close", (code) => {
+    if (type === "wizard") wizardTarget = null;
     job.exitCode = code;
     if (code === 0) {
       job.status = "success";
@@ -265,7 +271,6 @@ function publicStatus() {
     job,
     packagesReady,
     bootstrapPort: port,
-    wizardPort,
     configuredPort: readConfiguredPort(projectRoot),
   };
 }
@@ -285,26 +290,15 @@ function render(s){const i=s.installation,r=s.runtime,j=s.job,ready=!!s.packages
 let refreshPending=null;function refresh(){if(refreshPending)return refreshPending;refreshPending=(async()=>{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),30000);try{render(await api("/api/status",{signal:controller.signal}))}catch(e){byId("message").textContent=e.message;byId("message").className="error"}finally{clearTimeout(timer);refreshPending=null}})();return refreshPending}
 byId("upgrade").onclick=async()=>{try{await api("/api/upgrade",{method:"POST",body:"{}"});refresh()}catch(e){notify(e.message)}};
 byId("install").onclick=async()=>{try{const sel=byId("pkgManager");const manager=sel?sel.value:"pnpm";await api("/api/install",{method:"POST",body:JSON.stringify({packageManager:manager})});refresh()}catch(e){notify(e.message)}};
-let killUntil=0;
 byId("wizard").onclick=async()=>{
   const sel=byId("pkgManager");
   const manager=sel?sel.value:"pnpm";
-  const kill=Date.now()<killUntil;
   try{
-    await api("/api/wizard",{method:"POST",body:JSON.stringify({killOccupant:kill,packageManager:manager})});
-    killUntil=0;
+    await api("/api/wizard",{method:"POST",body:JSON.stringify({packageManager:manager})});
     refresh();
   }catch(e){
-    const data=e&&e.data;
-    if(data&&data.code==="WIZARD_PORT_BUSY"&&!kill){
-      killUntil=Date.now()+15000;
-      const pid=data.pid?(" Portu tutan süreç: PID "+data.pid+"."):"";
-      notify("Sihirbaz portu ("+data.port+") kullanımda."+pid+" Bu süreci durdurup sihirbazı başlatmak için 15 saniye içinde “Kurulum Sihirbazına Geç” düğmesine tekrar tıklayın.","warn");
-    }else{
-      killUntil=0;
-      notify(e.message);
-      refresh();
-    }
+    notify(e.message);
+    refresh();
   }
 };
 byId("refresh").onclick=refresh;
@@ -346,6 +340,8 @@ function renderPage() {
 </main><script src="/bootstrap.js" defer></script></body></html>`;
 }
 
+const wizardProxy = createWizardProxy({ getTarget: () => wizardTarget });
+
 async function handler(req, res) {
   const requestUrl = new URL(req.url || "/", `http://${host}:${port}`);
   if (requestUrl.pathname === "/setup" && requestUrl.searchParams.get("token") === token) {
@@ -356,6 +352,11 @@ async function handler(req, res) {
     return res.end("Yönlendiriliyor...");
   }
   if (!authenticated(req)) return json(res, 403, { message: "Geçersiz veya süresi dolmuş kurulum oturumu." });
+  // Sihirbaz yolları (/wizard…): kimlik doğrulandı; değiştirici istekler ayrıca aynı origin olmalıdır.
+  if (requestUrl.pathname === PROXY_PREFIX || requestUrl.pathname.startsWith(`${PROXY_PREFIX}/`)) {
+    if (req.method !== "GET" && !sameOrigin(req)) return json(res, 403, { message: "Kurulum isteği doğrulanamadı." });
+    if (await wizardProxy(req, res, requestUrl.pathname)) return;
+  }
   if (req.method === "GET" && requestUrl.pathname === "/setup") {
     securityHeaders(res, "text/html; charset=utf-8");
     return res.end(renderPage());
@@ -391,39 +392,12 @@ async function handler(req, res) {
       if (current.state === "installed") throw new Error("Uygulama zaten kurulu (installation.lock var). Yeniden kurulum için önce 'Yedekle ve Temiz Kuruluma Geç' ile sıfırlayın.");
       if (!current.evidence.dependenciesInstalled) throw new Error("Paketler eksik. Önce 'Paketleri Kur / Onar' adımını tamamlayın.");
       if (!packagesReady) throw new Error("Sihirbaza geçmek için önce bu ekranda 'Paketleri Kur / Onar' adımını çalıştırıp bitirin.");
-      if (wizardPort === port) throw new Error("Sihirbaz portu kurulum başlatıcısı ile aynı olamaz. SETUP_WIZARD_PORT değerini değiştirin.");
-
       const payload = await readJson(req);
-      const occupied = await isLocalPortOpen(wizardPort, 400);
-      if (occupied) {
-        const conflict = describePortConflict(wizardPort);
-        if (!payload?.killOccupant) {
-          return json(res, 409, {
-            code: "WIZARD_PORT_BUSY",
-            message: `Sihirbaz portu (127.0.0.1:${wizardPort}) zaten kullanımda. Önceki sihirbaz kalmış olabilir.`,
-            detail: conflict.message,
-            pid: conflict.holder?.pid ?? null,
-            port: wizardPort,
-            hint: "Portu tutan süreci durdurup sihirbazı yeniden başlatabilirsiniz.",
-          });
-        }
-        const stop = stopPortProcess(wizardPort);
-        if (!stop.stopped) {
-          return json(res, 409, {
-            code: "WIZARD_PORT_BUSY",
-            message: stop.message,
-            detail: conflict.message,
-            pid: stop.pid ?? conflict.holder?.pid ?? null,
-            port: wizardPort,
-          });
-        }
-        await new Promise((resolve) => setTimeout(resolve, 400));
-      }
-
+      if (wizardChild) throw new Error("Kurulum sihirbazı zaten çalışıyor.");
       const manager = payload?.packageManager === "bun" ? "bun" : "pnpm";
       wizardChild = startPackageJob("wizard", ["--filter", "quiz-master-server", "run", "setup"], "QuizMaster kurulumu tamamlandı.", manager);
       wizardChild.once("close", () => { wizardChild = null; });
-      return json(res, 202, { message: "Kurulum sihirbazı başlatılıyor.", wizardPort });
+      return json(res, 202, { message: "Kurulum sihirbazı başlatılıyor." });
     }
     if (requestUrl.pathname === "/api/reset") {
       if (job.status === "running" || wizardChild) throw new Error("Çalışan kurulum işlemi varken temiz kurulum başlatılamaz.");

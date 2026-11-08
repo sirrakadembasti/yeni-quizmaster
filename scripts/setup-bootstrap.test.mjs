@@ -178,7 +178,7 @@ test("boş portta süreç bulunamaz ve yine de yol gösterilir", () => {
 test("kurulum betikleri sihirbaz portu olan SETUP_PORT'u ezmez", () => {
   const bat = fs.readFileSync(path.join(process.cwd(), "kurulum.bat"), "utf8");
   const sh = fs.readFileSync(path.join(process.cwd(), "kurulum.sh"), "utf8");
-  // Port kontrolü için CHECK_PORT kullanılmalı; SETUP_PORT sihirbazın dinlediği porttur (5050).
+  // Port kontrolü için CHECK_PORT kullanılmalı; SETUP_PORT sihirbazın iç portudur (başlatıcı rastgele atar).
   assert.equal(/set\s+"SETUP_PORT=/.test(bat), false, "kurulum.bat SETUP_PORT atamamalı");
   assert.match(bat, /CHECK_PORT=/);
   assert.equal(/SETUP_PORT=/.test(sh), false, "kurulum.sh SETUP_PORT atamamalı");
