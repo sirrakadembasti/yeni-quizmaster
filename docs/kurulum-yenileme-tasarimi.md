@@ -111,3 +111,40 @@ Her PR kendi başına birleştirilebilir ve geri alınabilir; 5. PR'a kadar bug�
 3. **Sunucu süreç yönetimi**: yalnızca PID/log mu, yoksa systemd/pm2 birim dosyası üretimi de kapsamda mı?
 4. **Geriye dönük uyumluluk**: mevcut kurulu sistemler `lock` dosyasından durum dosyasına otomatik taşınsın mı? (Öneri: evet.)
 5. Başlatma noktası: önce hangi PR (öneri: 1 → 2).
+
+## Ek A. Tek port arayüz — ayrıntılı tasarım (8 Kasım 2026)
+
+Karar: bu iş npm geçişinden **önce** yapılır ([npm tasarımı, bölüm 0](npm-gecis-tasarimi.md)).
+
+### A.1 Koddan çıkan kısıt
+`setup-bootstrap.mjs` bağımlılıksızdır, çünkü paketler (express, zod, tsx …) henüz kurulu değildir; paketleri o kurar. Sihirbaz (`server/setup-wizard`) ise bu paketlere bağlıdır. Bu yüzden **tek süreç mümkün değildir**: bootstrap her zaman önce çalışır, sihirbaz paketler kurulduktan sonra ayrı süreç olarak başlar. Hedef bu nedenle **tek port, tek URL, tek oturum**dur.
+
+Bugünkü sürtünme: sihirbaz 5050'ye bağlanır, tarayıcı `location.href` ile başka porta atlar; ikinci token/cookie; 5050 doluysa `WIZARD_PORT_BUSY` ve "süreci sonlandır" akışı; güvenlik duvarı/dokümantasyonda iki port.
+
+### A.2 Seçenekler
+
+| Seçenek | Anlatım | Artı | Eksi |
+|---------|---------|------|------|
+| **1. Port devri** | Bootstrap dinlemeyi bırakır, sihirbaz aynı portu (5049) alır | Araya katman girmez | Bırak–al arasında yarış; sihirbaz bağlanamazsa bootstrap geri dönmeli; Windows'ta port serbest kalma süresi |
+| **2. Ters vekil (öneri)** | Bootstrap 5049'da kalır, sihirbazı **rastgele boş loopback portta** (`port 0`) başlatır ve `/setup` ile `/api/*` isteklerini ona aktarır | Port yarışı yok; 5050 ve "süreci sonlandır" akışı tamamen kalkar; sihirbaz çökerse bootstrap ayakta; tek token | Küçük bir HTTP aktarıcı (yalnız düz HTTP, WebSocket yok) |
+
+**Öneri: 2.** Sihirbaz yalnızca düz HTTP kullandığı için aktarıcı basittir ve en az hareketli parçayı bırakır.
+
+### A.3 Tasarım (seçenek 2)
+- Bootstrap, sihirbazı `SETUP_PORT=0` ve kendi ürettiği `SETUP_TOKEN` ile başlatır; sihirbazın yazdığı gerçek porttan hedefi öğrenir (bugünkü `/setup?token=` ayrıştırması zaten var).
+- `/setup`, `/api/apply`, `/api/start-app` vb. sihirbaz yolları bootstrap'ta **kimlik doğrulandıktan sonra** (`quizmaster.bootstrap` cookie) sihirbaza aktarılır. Sihirbaz kimliği, bootstrap tarafından sunucu tarafında eklenir (`quizmaster.setup` cookie değeri aynı HMAC ile hesaplanır); tarayıcı yalnız tek cookie görür.
+- `Host`/`Origin` başlıkları **değiştirilmeden** iletilir; sihirbazın `sameOrigin` ve CSRF denetimi 5049 üzerinden aynen geçer.
+- Aktarıcı yalnız `127.0.0.1` hedefine, yalnız beyaz listedeki yollara, sınırlı gövde boyutuyla (16 KB) çalışır; yönlendirme (redirect) izlemez.
+- Tarayıcı artık port değiştirmez: bootstrap sayfası sihirbaz hazır olunca aynı origin'de `/setup`'a geçer.
+- Kalkanlar: `SETUP_WIZARD_PORT`, `WIZARD_PORT_BUSY`, "sihirbaz portunu boşalt" iki tıklı akışı, 5050 ile ilgili belge/uyarı metinleri. Yalnız **5049** (veya `SETUP_BOOTSTRAP_PORT`) kalır.
+- `server/setup-wizard/server.ts` bağımsız çalışmaya devam eder (`pnpm run setup:wizard`, `setup:cli` etkilenmez).
+
+### A.4 Test
+- Aktarıcı birim testi: kimliksiz istek 401, beyaz liste dışı yol 404, gövde sınırı, Host/Origin korunması.
+- Sahte sihirbaz betiğiyle bootstrap entegrasyon testi (gerçek paket kurulumu olmadan): başlat → aktar → sihirbaz kapanınca bootstrap ayakta.
+- Mevcut `setup-bootstrap*.test.mjs` ve `setup-launcher-*.test.mjs` güncellenir (5050 beklentileri kalkar).
+- Elle doğrulama: tarayıcıda uçtan uca kurulum (yalıtılmış kopyada).
+
+### A.5 Riskler
+- Aktarıcı yeni saldırı yüzeyidir → beyaz liste + kimlik doğrulama sonrası + yalnız loopback + boyut sınırı; güvenlik testleri zorunlu.
+- `setup-bootstrap.mjs` 507 satır ve istemci kodu `String.raw` içinde (yedek tırnak/`${` yasağı) → değişiklikler dikkatli ve tarayıcıda doğrulanarak yapılır.
