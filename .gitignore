@@ -24,6 +24,7 @@ client/.env
 /server/data/*.db-journal
 /server/data/*.db-wal
 /server/data/*.db-shm
+/server/data/*.setup-tmp*
 /server/data/ai-encryption.key
 /server/data/deployment-config.json
 /server/data/deployment-config.json.tmp
