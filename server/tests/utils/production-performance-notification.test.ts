@@ -6,6 +6,8 @@ vi.mock('../../utils/sqlite-runtime',()=>({createRuntimePrismaClient:()=>new cla
     updateMany:async({where,data}:any)=>{state.updates++;if(state.failures-->0)throw Object.assign(new Error('synthetic lock timeout'),{code:state.code});if(where.notificationRevision!==state.revision)return {count:0};state.value=data.notificationMuted;state.revision++;return {count:1};}
   };
   $transaction=async(fn:any)=>{state.transactions++;return fn(this);};
+  // storage.ts modül yüklenirken $disconnect'i bind eder; sahte istemcide de bulunmalıdır.
+  $disconnect=async()=>{};
 }}));
 import {storage} from '../../storage';
 beforeEach(()=>{state.failures=0;state.code='P1008';state.updates=0;state.value=false;state.revision=0;state.transactions=0;});

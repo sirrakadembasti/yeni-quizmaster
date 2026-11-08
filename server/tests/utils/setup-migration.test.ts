@@ -8,8 +8,8 @@ import { deploySetupDatabase, type SetupCommand } from '../../setup-wizard/migra
 
 it('deploys all migrations into an absent SQLite DB under inherited warn logging and preserves existing data on rerun', async () => {
   const serverRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-  const pnpmScript = process.env.npm_execpath;
-  if (!pnpmScript) throw new Error('Run this integration regression through pnpm run test');
+  // Komutu scripts/pm.mjs üretir: test npm, pnpm ve Bun altında aynı çalışır (yönetici user agent'tan seçilir).
+  const pmScript = join(dirname(serverRoot), 'scripts', 'pm.mjs');
   const dataRoot = join(serverRoot, 'data');
   const fixture = mkdtempSync(join(dataRoot, 'quizmaster-test-migration-'));
   const child = relative(dataRoot, fixture);
@@ -21,10 +21,9 @@ it('deploys all migrations into an absent SQLite DB under inherited warn logging
   const inherited = { ...process.env, RUST_LOG: 'warn', CHECKPOINT_DISABLE: '1' };
   const execute: SetupCommand = async (op, extraEnv) => {
     const started = Date.now();
-    // Mantıksal komut → pnpm argümanları (scripts/package-manager.mjs ile aynı eşleme).
-    const args = ['--filter', 'quiz-master-server', 'run', op.script, ...(op.args ?? [])];
+    const args = ['run', '--workspace', op.workspace ?? 'server', op.script, ...(op.args?.length ? ['--', ...op.args] : [])];
     try {
-      return execFileSync(process.execPath, [pnpmScript, ...args], {
+      return execFileSync(process.execPath, [pmScript, ...args], {
         cwd: dirname(serverRoot), shell: false, windowsHide: true, timeout: 240000,
         env: { ...inherited, ...extraEnv }, encoding: 'utf8',
       });

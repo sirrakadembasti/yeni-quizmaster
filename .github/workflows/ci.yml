@@ -146,3 +146,50 @@ jobs:
         run: |
           if npm run setup:cli -- --yes; then echo "Kurulu sistemde ikinci kurulum başarılı olmamalıydı"; exit 1; fi
           test -s server/.env
+
+  # Backend + frontend birim testleri, aynı komutlarla pnpm ve npm ağaçlarında (aşama 3).
+  # Amaç: npm ağacının pnpm kadar geçtiğini kanıtlamak. Komutlar scripts/pm.mjs üzerinden gider.
+  birim-testleri:
+    name: Birim testleri (${{ matrix.pm }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        pm: [pnpm, npm]
+    env:
+      QUIZMASTER_PM: ${{ matrix.pm }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        if: matrix.pm == 'pnpm'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: ${{ matrix.pm }}
+
+      - name: npm 11'e yükselt
+        if: matrix.pm == 'npm'
+        run: npm install -g npm@11
+
+      - name: Bağımlılıkları kur
+        run: node scripts/pm.mjs install
+
+      # Arşiv/PDF testleri Chromium ister; kurulum sırasında indirilmez (isteğe bağlı bileşen).
+      - name: Chromium (arşiv testleri için)
+        run: |
+          sudo env "PATH=$PATH" node node_modules/playwright/cli.js install-deps chromium
+          node node_modules/playwright/cli.js install chromium
+
+      - name: Backend testleri
+        run: node scripts/pm.mjs run -w server test
+
+      - name: Frontend testleri
+        run: node scripts/pm.mjs run -w client test -- --run
+
+      # Kapı: npm ağacında kritik (critical) açık olmamalı. (Yüksek açıklar bilinen durumdur, kapıyı kırmaz.)
+      - name: Güvenlik denetimi (kritik açık olmamalı)
+        if: matrix.pm == 'npm'
+        run: npm audit --omit=dev --audit-level=critical
