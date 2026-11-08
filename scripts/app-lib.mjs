@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import net from 'node:net';
 import path from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
+import { createInvocation, selectManager } from './package-manager.mjs';
 
 export function paths(root) {
   const data = path.join(root, 'server', 'data');
@@ -71,13 +72,13 @@ export function tailText(text, lines) {
   return all.slice(-Math.max(1, lines)).join('\n');
 }
 
-export function commandFor(mode, root) {
+export function commandFor(mode, root, env = process.env) {
   if (mode === 'production') {
     return { command: process.execPath, args: [paths(root).distEntry] };
   }
-  return process.platform === 'win32'
-    ? { command: process.env.ComSpec || 'cmd.exe', args: ['/d', '/s', '/c', 'pnpm', 'run', 'dev'] }
-    : { command: 'pnpm', args: ['run', 'dev'] };
+  // Geliştirme: kök "dev" betiği, seçili paket yöneticisiyle (kabuksuz, cmd.exe yok).
+  const { command, args } = createInvocation(selectManager({ env }), { type: 'run', script: 'dev' }, { root, env });
+  return { command, args };
 }
 
 /** Süreci ayrık (detached) başlatır, çıktısını log dosyasına yönlendirir ve PID kaydı yazar. */

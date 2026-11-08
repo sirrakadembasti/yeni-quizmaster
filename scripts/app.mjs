@@ -17,7 +17,7 @@ const HELP = `Kullanım: node scripts/app.mjs <komut> [seçenekler]
   status [--json]                           Çalışıyor mu? (çıkış kodu 0: çalışıyor, 3: durmuş)
   logs [--lines N] [--follow]               Son log satırlarını gösterir
 
---mode verilmezse server/.env içindeki NODE_ENV kullanılır (production → derlenmiş sürüm, aksi hâlde pnpm dev).
+--mode verilmezse server/.env içindeki NODE_ENV kullanılır (production → derlenmiş sürüm, aksi hâlde kök "dev" betiği).
 `;
 
 function parse(argv) {
@@ -50,7 +50,7 @@ function print(options, data, text) {
 async function start(options) {
   const mode = resolveMode(options.mode, p.envFile);
   if (mode === 'production' && !fs.existsSync(p.distEntry)) {
-    console.error('Üretim derlemesi bulunamadı (dist/index.cjs). Önce: pnpm build');
+    console.error('Üretim derlemesi bulunamadı (dist/index.cjs). Önce: node scripts/pm.mjs run build');
     return 1;
   }
   const { command, args } = commandFor(mode, root);

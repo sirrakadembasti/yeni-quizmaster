@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import {
-  isAlive, parsePidFile, readEnvValue, resolveMode, startProcess, stopProcess, tailText,
+  commandFor, isAlive, parsePidFile, readEnvValue, resolveMode, startProcess, stopProcess, tailText,
 } from './app-lib.mjs';
 
 function tempDir(t) {
@@ -70,4 +70,15 @@ test('stop: kayıt yoksa veya süreç ölmüşse zararsızdır ve ölü kaydı t
   fs.writeFileSync(pidFile, '{"pid":2147483000}\n');
   assert.equal((await stopProcess(pidFile)).reason, 'not-running');
   assert.equal(fs.existsSync(pidFile), false);
+});
+
+test('dev komutu seçili yöneticiyle kabuksuz üretilir; üretim derlenmiş girişi çalıştırır', () => {
+  const root = path.resolve('/proje');
+  const production = commandFor('production', root, {});
+  assert.equal(production.command, process.execPath);
+  assert.deepEqual(production.args, [path.join(root, 'dist', 'index.cjs')]);
+  // npm her Node kurulumuyla gelir; test pnpm/bun kurulu olmasına bağlı kalmaz.
+  const dev = commandFor('dev', root, { ...process.env, QUIZMASTER_PM: 'npm' });
+  assert.deepEqual(dev.args.slice(-2), ['run', 'dev'], 'kök dev betiği çalıştırılmalı');
+  assert.ok(!/cmd\.exe$/i.test(dev.command), 'cmd.exe üzerinden çalıştırılmamalı');
 });

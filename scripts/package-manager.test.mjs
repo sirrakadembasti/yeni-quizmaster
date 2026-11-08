@@ -5,7 +5,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import {
-  DEFAULT_MANAGER, buildCommand, createInvocation, detectVersion, isSupportedVersion, managerInvocation, resolveBunExecutable,
+  DEFAULT_MANAGER, buildCommand, detectInvokingManager, createInvocation, detectVersion, isSupportedVersion, managerInvocation, resolveBunExecutable,
   resolveNpmEntry, selectManager,
 } from './package-manager.mjs';
 
@@ -121,3 +121,14 @@ for (const manager of ['npm', 'pnpm', 'bun']) {
     assert.match(`${result.stdout}`, /Version 5./);
   });
 }
+
+test('betiği başlatan yönetici npm_config_user_agent ile tanınır ve seçimde varsayılandan önce gelir', () => {
+  assert.equal(detectInvokingManager({ npm_config_user_agent: 'pnpm/9.15.1 npm/? node/v22.0.0 win32 x64' }), 'pnpm');
+  assert.equal(detectInvokingManager({ npm_config_user_agent: 'npm/11.11.1 node/v22.0.0 win32 x64 workspaces/false' }), 'npm');
+  assert.equal(detectInvokingManager({ npm_config_user_agent: 'bun/1.3.14 npm/? node/v24.3.0 win32 x64' }), 'bun');
+  assert.equal(detectInvokingManager({ npm_config_user_agent: 'yarn/1.22.0 npm/? node/v22.0.0' }), null);
+  assert.equal(detectInvokingManager({}), null);
+  assert.equal(selectManager({ env: { npm_config_user_agent: 'npm/11.11.1 node/v22' } }), 'npm');
+  assert.equal(selectManager({ env: { npm_config_user_agent: 'npm/11.11.1 node/v22', QUIZMASTER_PM: 'bun' } }), 'bun', 'açık QUIZMASTER_PM user agent\'tan önce gelir');
+  assert.equal(selectManager({ requested: 'pnpm', env: { npm_config_user_agent: 'npm/11.11.1 node/v22' } }), 'pnpm');
+});
