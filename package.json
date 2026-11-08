@@ -11,6 +11,7 @@
     "start:demo": "pnpm --filter quiz-master-server run start:demo",
     "setup": "node scripts/setup-bootstrap.mjs",
     "setup:wizard": "pnpm --filter quiz-master-server run setup",
+    "setup:cli": "pnpm --filter quiz-master-server run setup:cli",
     "build": "pnpm --filter quiz-master-server build && pnpm --filter quiz-master-client build",
     "install-all": "pnpm install && cd client && pnpm install && cd ../server && pnpm install",
     "test:setup": "node --test scripts/setup-bootstrap.test.mjs scripts/find-port-holder.test.mjs scripts/setup-launcher-preflight.test.mjs",

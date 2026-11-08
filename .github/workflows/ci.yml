@@ -45,6 +45,30 @@ jobs:
       - name: Yükseltme ve pnpm çağrı testleri
         run: pnpm test:upgrade
 
+      # Boş dizinde arayüzsüz (CLI) kurulum: migration, yönetici, .env, kilit ve durum dosyası.
+      - name: Arayüzsüz kurulum duman testi
+        env:
+          QUIZMASTER_ADMIN_EMAIL: ci@okul.test
+          QUIZMASTER_ADMIN_PASSWORD: Ci-Test-Parola-2026x
+        run: pnpm run setup:cli -- --yes
+
+      - name: Kurulum çıktılarını doğrula
+        shell: bash
+        run: |
+          for f in server/.env server/data/installation.lock server/data/installation.state.json server/data/quiz.db; do
+            test -s "$f" || { echo "Eksik: $f"; exit 1; }
+          done
+          node -e "const s=JSON.parse(require('fs').readFileSync('server/data/installation.state.json','utf8'));const bad=Object.entries(s.steps).filter(([,v])=>!['done','skipped'].includes(v.status));if(bad.length){console.error('Bitmemiş adım:',bad);process.exit(1)}"
+
+      - name: İkinci çalıştırma kurulu sistemi bozmadan reddedilmeli
+        shell: bash
+        env:
+          QUIZMASTER_ADMIN_EMAIL: ci@okul.test
+          QUIZMASTER_ADMIN_PASSWORD: Ci-Test-Parola-2026x
+        run: |
+          if pnpm run setup:cli -- --yes; then echo "Kurulu sistemde ikinci kurulum başarılı olmamalıydı"; exit 1; fi
+          test -s server/.env
+
   tip-denetimi:
     name: Tip denetimi
     runs-on: ubuntu-latest
