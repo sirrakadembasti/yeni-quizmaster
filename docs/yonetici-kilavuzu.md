@@ -9,7 +9,7 @@ Güncel onarımların kabul kapsamı ve kanıtları: [Entegrasyon onarımları](
 ## 1. Giriş ve güvenlik
 
 1. **Giriş Yap** ekranında yönetici e-postanızı ve şifrenizi kullanın (salt-okunur canlı vitrin modunda `/demo` sayfasından `demo-admin@quizmaster.com` / `demo123456` veya **Hemen İncele** düğmesiyle giriş yapılabilir; bkz. [`demo/demo-vitrin-hesaplari.md`](../demo/demo-vitrin-hesaplari.md)).
-2. Şifrenizi bilmiyorsanız **Şifremi Unuttum** ile kayıtlı e-postanıza bağlantı isteyin veya sunucu terminalinden `pnpm --filter quiz-master-server run db:reset-admin` komutuyla yerel kurtarma uygulayın.
+2. Şifrenizi bilmiyorsanız **Şifremi Unuttum** ile kayıtlı e-postanıza bağlantı isteyin veya sunucu terminalinden `npm run db:reset-admin --workspace=server` komutuyla yerel kurtarma uygulayın.
 3. Ortak cihazda işiniz bittiğinde kullanıcı menüsünden **Güvenli Çıkış** yapın.
 
 Parola sıfırlama bağlantısı tek kullanımlıktır ve bir saat geçerlidir. Bağlantıyı başka biriyle paylaşmayın.
@@ -147,7 +147,7 @@ Yönetici okul geneline, role veya sınıfa duyuru gönderebilir. Duyuruda gönd
 3. **Şifre Talepleri:** Kullanıcı adına e-posta ile talep oluşturma, **Bağlantı Üret (SMTP'siz)** ile doğrudan tek kullanımlık sıfırlama bağlantısı üretip kopyalama, durum/arama filtresi, yeni bağlantı gönderme (**Yenile**), satır bazında **Bağlantı Üret** ve bekleyen talebi iptal etme (**İptal**).
 4. **Sistem Hata & İşlemleri:** Arşivleme, sınıf atlatma, tasfiye ve sistem operasyonları.
 
-Yeni kullanıcı kaydında (`POST /api/auth/register` veya yönetici tarafından kullanıcı ekleme) e-posta doğrulama zorunluluğu uygulanmaz; kayıtlı adrese `registration_welcome` tipinde kayıt başarı bilgilendirme e-postası Outbox kuyruğuna eklenir. Şifre talebi oluşturulduğunda eski bekleyen bağlantı iptal edilir ve yeni bağlantı Gmail Outbox kuyruğuna alınır. Kurum ağında SMTP erişimi yoksa veya Gmail yapılandırılmamışsa **Bağlantı Üret (SMTP'siz)** ya da tablodaki **Bağlantı Üret** düğmesiyle e-posta kuyruğuna girmeden 60 dakikalık tek kullanımlık sıfırlama bağlantısı üretilir ve **Bağlantıyı Kopyala** ile kullanıcıya güvenli kanaldan iletilir. Yönetici kendi şifresini unuttuğunda sunucu terminalinden `pnpm --filter quiz-master-server run db:reset-admin` komutuyla yeni şifre atayabilir veya tek kullanımlık sıfırlama bağlantısı üretebilir. Ayrıntılı kurulum için [Gmail e-posta belgesine](e-posta-yapilandirma.md) bakın.
+Yeni kullanıcı kaydında (`POST /api/auth/register` veya yönetici tarafından kullanıcı ekleme) e-posta doğrulama zorunluluğu uygulanmaz; kayıtlı adrese `registration_welcome` tipinde kayıt başarı bilgilendirme e-postası Outbox kuyruğuna eklenir. Şifre talebi oluşturulduğunda eski bekleyen bağlantı iptal edilir ve yeni bağlantı Gmail Outbox kuyruğuna alınır. Kurum ağında SMTP erişimi yoksa veya Gmail yapılandırılmamışsa **Bağlantı Üret (SMTP'siz)** ya da tablodaki **Bağlantı Üret** düğmesiyle e-posta kuyruğuna girmeden 60 dakikalık tek kullanımlık sıfırlama bağlantısı üretilir ve **Bağlantıyı Kopyala** ile kullanıcıya güvenli kanaldan iletilir. Yönetici kendi şifresini unuttuğunda sunucu terminalinden `npm run db:reset-admin --workspace=server` komutuyla yeni şifre atayabilir veya tek kullanımlık sıfırlama bağlantısı üretebilir. Ayrıntılı kurulum için [Gmail e-posta belgesine](e-posta-yapilandirma.md) bakın.
 
 Dört log bölümünde toplam kayıt ve sayfa bilgisi gösterilir; **Önceki / Sonraki** ile geçmiş kayıtlara ulaşılır. Filtre değişiminde ilk sayfaya dönülür. Şifre taleplerinin tarih filtresi yoktur; durum ve arama filtreleri uygulanır. **Ayarlar > İşlem Geçmişi** son altı aylık kişisel kayıtları sunucu üzerinden sayfalar.
 
@@ -172,11 +172,11 @@ Tarayıcı verilerini temizlemek veya cihaz değiştirmek bekleyen yerel cevapla
 
 ### Sunucu durumu ve ilk kurulum
 
-İlk sunucu kurulumu yönetici panelinden yapılmaz. Yeni ve temiz bir sunucuda, ana uygulama başlatılmadan önce sunucu yöneticisi `pnpm run setup` (veya Windows `kurulum.bat` / Linux `./kurulum.sh`) komutuyla tek kullanımlık kurulum sihirbazını çalıştırır. Sihirbaz yalnız `127.0.0.1` üzerinde açılır; uzak VPS için internete port açmak yerine SSH tüneli kullanılmalıdır.
+İlk sunucu kurulumu yönetici panelinden yapılmaz. Yeni ve temiz bir sunucuda, ana uygulama başlatılmadan önce sunucu yöneticisi `npm run setup` (veya Windows `kurulum.bat` / Linux `./kurulum.sh`) komutuyla tek kullanımlık kurulum sihirbazını çalıştırır. Sihirbaz yalnız `127.0.0.1` üzerinde açılır; uzak VPS için internete port açmak yerine SSH tüneli kullanılmalıdır.
 
 Kurulum sihirbazı son adımda **Uygulamayı başlat** düğmesi sunar:
 
-- **Yerel / localhost:** `pnpm dev` arka planda başlar (terminal penceresi açılmaz); giriş `http://127.0.0.1:5173/auth`
+- **Yerel / localhost:** `npm run dev` arka planda başlar (terminal penceresi açılmaz); giriş `http://127.0.0.1:5173/auth`
 - **Kurum (subdomain/alt yol):** üretim servisi başlatılır; Nginx + DNS sonrası `https://.../auth`
 
 Kör yönlendirme yoktur; uygulama ayakta değilse “sayfaya ulaşılamıyor” yerine düğme ve açıklama gösterilir. Ayrıntılar için [Sunucu Kurulum Kılavuzu](sunucu-kurulum-kilavuzu.md) izlenmelidir.

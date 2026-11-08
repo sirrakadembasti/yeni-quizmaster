@@ -39,7 +39,7 @@ Karar yalnız dosya boyutuna göre verilmemelidir. P95 API süresi, eşzamanlı 
 ## 3. Geçiş öncesi hazırlık
 
 1. Geçişi ayrı bir Git dalında ve üretim verisinin kopyası üzerinde prova edin.
-2. Kullanılan commit'i, Node.js sürümünü, pnpm sürümünü ve Prisma sürümünü kaydedin.
+2. Kullanılan commit'i, Node.js sürümünü, paket yöneticisi (npm/pnpm) sürümünü ve Prisma sürümünü kaydedin.
 3. Uygulamayı bakım moduna alma veya kısa süreli yazma dondurma planı oluşturun.
 4. Aşağıdaki varlıkları yedekleyin:
    - Ana SQLite veritabanı (`server/data/quiz.db` veya gerçek `DATABASE_URL` hedefi),
@@ -75,9 +75,9 @@ datasource db {
 4. Şemayı doğrulayın ve yeni başlangıç migration'ını üretin:
 
 ```bash
-pnpm --filter quiz-master-server db:validate
-pnpm --filter quiz-master-server exec prisma migrate dev --name init_postgresql
-pnpm --filter quiz-master-server db:generate
+npm run db:validate --workspace=server
+npm run db:migrate --workspace=server -- --name init_postgresql
+npm run db:generate --workspace=server
 ```
 
 5. Üretilen PostgreSQL SQL'ini inceleyin. Tablo, yabancı anahtar, silme davranışı, benzersiz kısıt ve indekslerin Prisma şemasıyla aynı olduğunu doğrulayın.
@@ -86,7 +86,7 @@ pnpm --filter quiz-master-server db:generate
 Üretim ve staging ortamlarında yalnız aşağıdaki komut kullanılmalıdır:
 
 ```bash
-pnpm --filter quiz-master-server db:deploy
+npm run db:deploy --workspace=server
 ```
 
 `prisma migrate dev` geliştirme içindir; üretimde kullanılmamalıdır. `prisma db push`, izlenebilir production migration geçmişinin yerine kullanılmamalıdır.
@@ -164,12 +164,12 @@ Bu alanlarda veritabanı taraflı JSON sorgusu veya indeksleme gerektiğinde ayr
 Geçiş provasından sonra çalıştırın:
 
 ```bash
-pnpm --filter quiz-master-server db:status
-pnpm --filter quiz-master-server db:validate
-pnpm --filter quiz-master-server test
-pnpm --filter quiz-master-client test
-pnpm build
-pnpm test:e2e
+npm run db:status --workspace=server
+npm run db:validate --workspace=server
+npm run test --workspace=server
+npm run test --workspace=client
+npm run build
+npm run test:e2e
 ```
 
 Manuel olarak tüm rollerde şu akışları doğrulayın:

@@ -54,7 +54,7 @@ export function buildServerEnv(payload: SetupPayload, sessionSecret = createSess
   const basePath = normalizeBasePath(deployment.basePath);
   const publicAppUrl = `${deployment.publicUrl}${basePath === "/" ? "" : basePath}`;
   const isLocal = deployment.mode === "localhost";
-  // Yerelde pnpm dev: arayüz 5173, API 5000. Cookie secure olmamalı → NODE_ENV=development.
+  // Yerelde geliştirme sunucusu: arayüz 5173, API 5000. Cookie secure olmamalı → NODE_ENV=development.
   const origins = isLocal
     ? Array.from(new Set([
         ...deployment.allowedOrigins,

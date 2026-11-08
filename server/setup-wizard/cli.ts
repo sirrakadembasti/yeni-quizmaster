@@ -1,6 +1,6 @@
 // Arayüzsüz kurulum: SSH, CI ve otomatik testler için.
-//   pnpm run setup:cli -- --yes                  (yerel kurulum, varsayılanlar)
-//   pnpm run setup:cli -- --config kurulum.json  (tam SetupPayload JSON'u)
+//   npm run setup:cli -- --yes                  (yerel kurulum, varsayılanlar)
+//   npm run setup:cli -- --config kurulum.json  (tam SetupPayload JSON'u)
 // Yönetici parolası komut satırına yazılmaz: QUIZMASTER_ADMIN_PASSWORD ortam değişkeni
 // kullanılır; verilmezse rastgele üretilip bir kez ekrana yazılır.
 import crypto from "node:crypto";
@@ -63,7 +63,7 @@ export function buildLocalPayload(env: NodeJS.ProcessEnv): { payload: SetupPaylo
 
 const HELP = `QuizMaster arayüzsüz kurulum
 
-Kullanım: pnpm run setup:cli -- --yes [--mode local] | --config dosya.json
+Kullanım: npm run setup:cli -- --yes [--mode local] | --config dosya.json
 
   --yes, -y        Soru sormadan kur (zorunlu; yanlışlıkla çalıştırmayı önler)
   --mode local     Varsayılan. Yerel geliştirme kurulumu, derleme yok.

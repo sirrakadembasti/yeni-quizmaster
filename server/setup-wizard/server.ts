@@ -64,7 +64,7 @@ function sameOrigin(req: Request) {
 }
 
 async function runSetupCommand(op: SetupOp, extraEnv: NodeJS.ProcessEnv) {
-  // Komutu scripts/pm.mjs üretir ve çalıştırır; yönetici QUIZMASTER_PM ile (başlatıcıdan) gelir, yoksa pnpm.
+  // Komutu scripts/pm.mjs üretir ve çalıştırır; yönetici QUIZMASTER_PM ile (başlatıcıdan) gelir, yoksa kurulu yönetici/varsayılan (bkz. scripts/package-manager.mjs).
   const argv = [path.join(projectRoot, "scripts", "pm.mjs"), op.type, ...(op.workspace ? ["--workspace", op.workspace] : []), op.script, ...(op.args?.length ? ["--", ...op.args] : [])];
   return new Promise<string>((resolve, reject) => {
     const child = spawn(process.execPath, argv, {
@@ -217,7 +217,7 @@ export async function applySetup(payload: SetupPayload, applyJob: ApplyJobState)
   applyJob.publicUrl = appUrl;
   applyJob.appPort = payload.server.port;
   applyJob.mode = payload.deployment.mode;
-  // Yerelde pnpm dev arayüzü 5173'te; üretim/tek port 5000.
+  // Yerelde geliştirme sunucusunun arayüzü 5173'te; üretim/tek port 5000.
   applyJob.loginUrl = payload.deployment.mode === "localhost"
     ? "http://127.0.0.1:5173/auth"
     : `${appUrl.replace(/\/$/, "")}/auth`;
@@ -346,7 +346,7 @@ export function createSetupApp(token: string, onComplete?: () => void) {
     const appPort = applyJob.appPort ?? 5000;
     const devPort = 5173;
     const isLocal = mode === "localhost";
-    // Yerel pnpm dev: arayüz 5173, API appPort. Üretim: her ikisi appPort.
+    // Yerel geliştirme sunucusu: arayüz 5173, API appPort. Üretim: her ikisi appPort.
     const uiPort = isLocal ? devPort : appPort;
     const apiReachable = await isPortOpen(appPort);
     const uiReachable = isLocal ? await isPortOpen(uiPort) : apiReachable;
@@ -394,7 +394,7 @@ export function createSetupApp(token: string, onComplete?: () => void) {
 
     if (!preferDev && !fs.existsSync(path.join(projectRoot, "dist", "index.cjs"))) {
       return res.status(409).json({
-        message: "Üretim derlemesi bulunamadı. 'Uygulamayı üretim için derle' seçeneğini kullanın veya pnpm build çalıştırın.",
+        message: "Üretim derlemesi bulunamadı. 'Uygulamayı üretim için derle' seçeneğini kullanın veya build betiğini çalıştırın (node scripts/pm.mjs run build).",
       });
     }
 
@@ -445,7 +445,7 @@ export function createSetupApp(token: string, onComplete?: () => void) {
     const logHint = `Ayrıntı için log dosyası: ${path.relative(projectRoot, logPath)}`;
     return res.status(reachable ? 200 : 202).json({
       message: reachable
-        ? (preferDev ? "Geliştirme sunucusu (pnpm dev) arka planda başlatıldı." : "Uygulama başlatıldı.")
+        ? (preferDev ? "Geliştirme sunucusu arka planda başlatıldı." : "Uygulama başlatıldı.")
         : !processAlive()
           ? `Uygulama başlatılamadı, süreç kapandı. ${logHint}${failureTail ? `\n\n${failureTail}` : ""}`
           : `Başlatıldı ancak port henüz açılmadı. Birkaç saniye sonra tekrar denetleyin. ${logHint}`,

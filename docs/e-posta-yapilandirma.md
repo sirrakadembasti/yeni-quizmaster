@@ -26,7 +26,7 @@ Kurumsal Google Workspace hesabında Uygulama Parolası seçeneği görünmüyor
 
 ## 3. Ortam değişkenleri
 
-Yeni ve temiz bir sunucuda `pnpm run setup` kurulum sihirbazı Gmail alanlarını güvenli form üzerinden alıp `server/.env` dosyasına yazabilir. Sihirbaz yalnız Gmail adresi ve Google Uygulama Parolası kabul eder; parolayı kurulum profiline, kilit dosyasına veya üretilen Nginx örneğine eklemez. Mevcut kurulumlarda veya elle yapılandırmada aşağıdaki alanları kullanın.
+Yeni ve temiz bir sunucuda `npm run setup` kurulum sihirbazı Gmail alanlarını güvenli form üzerinden alıp `server/.env` dosyasına yazabilir. Sihirbaz yalnız Gmail adresi ve Google Uygulama Parolası kabul eder; parolayı kurulum profiline, kilit dosyasına veya üretilen Nginx örneğine eklemez. Mevcut kurulumlarda veya elle yapılandırmada aşağıdaki alanları kullanın.
 
 `server/.env` dosyasına aşağıdaki alanları ekleyin:
 
@@ -96,7 +96,7 @@ Başlıca durumlar:
 - **Bağlantı Üret:** SMTP çıkışının engelli olduğu yerel/kurumsal ağlarda ilgili talep için tek kullanımlık sıfırlama bağlantısını yeniden üretir ve kopyalanabilir kutuda gösterir
 - **Yenile:** Yeni token ve yeni e-posta üretir; eski bekleyen talebi geçersizleştirir
 - **İptal:** Yalnız bekleyen talebi ve kullanıcıdaki eşleşen tokeni geçersiz kılar
-- **Terminal / CLI kurtarma:** Yönetici paneline erişilemediği durumlarda `pnpm --filter quiz-master-server run db:reset-admin` komutuyla tek kullanımlık sıfırlama bağlantısı üretilebilir veya `--password` ile parola doğrudan güncellenebilir.
+- **Terminal / CLI kurtarma:** Yönetici paneline erişilemediği durumlarda `npm run db:reset-admin --workspace=server` komutuyla tek kullanımlık sıfırlama bağlantısı üretilebilir veya `--password` ile parola doğrudan güncellenebilir.
 
 ### Kayıt Bilgilendirme E-postası
 
