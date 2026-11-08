@@ -37,5 +37,16 @@
       "tar@<7.5.21": "^7.5.21",
       "@tootallnate/once@<2.0.1": "^2.0.1"
     }
+  },
+  "overrides": {
+    "@prisma/adapter-better-sqlite3": {
+      "better-sqlite3": "12.8.0"
+    },
+    "tar": "^7.5.21",
+    "@tootallnate/once": "^2.0.1"
+  },
+  "engines": {
+    "node": ">=22 <25",
+    "npm": ">=11"
   }
 }
