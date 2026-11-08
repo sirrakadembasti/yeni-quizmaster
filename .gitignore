@@ -110,3 +110,7 @@ tools/mailpit/*.exe
 
 # Isolated integration checks: raw server logs contain session metadata.
 /tests/denetim-kanitlari/entegrasyon/runtime-logs/
+
+# Bun yedek yolu ikinci bir kilit dosyası üretir; depoda yalnız pnpm-lock.yaml tutulur.
+/bun.lock
+/bun.lockb

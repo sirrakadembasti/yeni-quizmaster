@@ -101,7 +101,7 @@ Aynı bilgiyi birden fazla kılavuza kopyalamak yerine ana belgeye bağlantı ve
 | Kimlik ve güvenlik | `express-session`, SQLite oturum deposu, bcrypt, CSRF, Zod |
 | E-posta | Nodemailer, Gmail SMTP, veritabanı Outbox kuyruğu |
 | Test | Vitest, Supertest, Playwright |
-| Paket yönetimi | pnpm workspaces (önerilen/varsayılan) / Bun (yedek) |
+| Paket yönetimi | pnpm workspaces (önerilen/varsayılan) / Bun (deneysel) |
 
 ## Proje yapısı
 
@@ -182,8 +182,8 @@ pnpm run setup
 
 İlk ekran yalnız `127.0.0.1:5049` üzerinde açılır. Burada:
 
-- uygulamanın bulunduğu dizin ve çalışma ortamı (Node.js, pnpm ve sistemde varsa Bun yedek desteği) gösterilir,
-- varsayılan olarak `pnpm install --frozen-lockfile --prod=false` (veya panelden Bun seçildiyse `bun install`) **Paketleri Kur / Onar** ile etkileşimsiz çalıştırılır; production ortamında da sihirbaz/derleme araçları kurulur (sihirbaza geçiş bu adım bitmeden açılmaz),
+- uygulamanın bulunduğu dizin ve çalışma ortamı (Node.js, pnpm ve sistemde varsa deneysel Bun seçeneği) gösterilir,
+- varsayılan olarak `pnpm install --frozen-lockfile --prod=false` (veya panelden deneysel Bun seçildiyse `bun install`; Bun yolunda migration/derleme adımları henüz doğrulanmamıştır, üretim için pnpm kullanın) **Paketleri Kur / Onar** ile etkileşimsiz çalıştırılır; production ortamında da sihirbaz/derleme araçları kurulur (sihirbaza geçiş bu adım bitmeden açılmaz),
 - gerçek paket yöneticisi çıktısı ve hata bilgisi ekranda izlenir,
 - 5050 (sihirbaz) portu doluysa süreç PID ile gösterilir ve durdurulması istenir.
 
