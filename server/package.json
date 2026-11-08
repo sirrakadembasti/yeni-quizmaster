@@ -26,9 +26,6 @@
     "start:demo": "cross-env NODE_ENV=production APP_DEMO_MODE=true APP_BASE_PATH=/demo DATABASE_URL=file:../data/demo.db PORT=5001 node ../dist/index.cjs",
     "test": "vitest run"
   },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
-  },
   "dependencies": {
     "@prisma/client": "6.19.3",
     "@prisma/adapter-better-sqlite3": "6.19.3",
