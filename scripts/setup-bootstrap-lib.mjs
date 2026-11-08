@@ -104,11 +104,14 @@ export function inspectInstallationState(projectRoot) {
   return { state, evidence, dependencies: deps };
 }
 
-export function validateRuntime(nodeVersion, pnpmVersion, bunVersion = null) {
+export const MIN_NPM_MAJOR = 11;
+
+export function validateRuntime(nodeVersion, pnpmVersion, bunVersion = null, npmVersion = null) {
   const normalizedNode = String(nodeVersion || "").replace(/^v/i, "");
   const nodeMajor = Number(normalizedNode.split(".")[0]);
   const normalizedPnpm = String(pnpmVersion || "").trim();
   const normalizedBun = bunVersion ? String(bunVersion).trim() : null;
+  const normalizedNpm = npmVersion ? String(npmVersion).trim() : null;
   return {
     nodeVersion: normalizedNode || null,
     nodeSupported: SUPPORTED_NODE_MAJORS.includes(nodeMajor),
@@ -118,6 +121,9 @@ export function validateRuntime(nodeVersion, pnpmVersion, bunVersion = null) {
     requiredPnpmVersion: REQUIRED_PNPM_VERSION,
     bunVersion: normalizedBun || null,
     bunSupported: Boolean(normalizedBun),
+    npmVersion: normalizedNpm || null,
+    npmSupported: Boolean(normalizedNpm) && Number(normalizedNpm.split(".")[0]) >= MIN_NPM_MAJOR,
+    minNpmMajor: MIN_NPM_MAJOR,
   };
 }
 

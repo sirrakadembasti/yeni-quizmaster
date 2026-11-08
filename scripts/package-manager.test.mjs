@@ -132,3 +132,17 @@ test('betiği başlatan yönetici npm_config_user_agent ile tanınır ve seçimd
   assert.equal(selectManager({ env: { npm_config_user_agent: 'npm/11.11.1 node/v22', QUIZMASTER_PM: 'bun' } }), 'bun', 'açık QUIZMASTER_PM user agent\'tan önce gelir');
   assert.equal(selectManager({ requested: 'pnpm', env: { npm_config_user_agent: 'npm/11.11.1 node/v22' } }), 'pnpm');
 });
+
+test('genel önekte (npm install -g npm@11) kurulu npm, Node ile gelen paketli npm\'den önce seçilir', () => {
+  const nodeDir = path.resolve('/sahte/node');
+  const execPath = path.join(nodeDir, 'node.exe');
+  const bundled = path.join(nodeDir, 'node_modules', 'npm', 'bin', 'npm-cli.js');
+  const appdata = path.resolve('/sahte/appdata');
+  const upgraded = path.join(appdata, 'npm', 'node_modules', 'npm', 'bin', 'npm-cli.js');
+  const exists = file => [bundled, upgraded].some(item => path.resolve(item) === path.resolve(file));
+  assert.equal(resolveNpmEntry({ platform: 'win32', env: { PATH: '', APPDATA: appdata }, execPath, exists }), path.resolve(upgraded));
+  assert.equal(resolveNpmEntry({ platform: 'win32', env: { PATH: '' }, execPath, exists }), path.resolve(bundled), 'APPDATA yoksa paketli npm');
+  const prefix = path.resolve('/sahte/prefix');
+  const posixUpgraded = path.join(prefix, 'lib', 'node_modules', 'npm', 'bin', 'npm-cli.js');
+  assert.equal(resolveNpmEntry({ platform: 'linux', env: { PATH: '', npm_config_prefix: prefix }, execPath: '/yok/node', exists: file => path.resolve(file) === path.resolve(posixUpgraded) }), path.resolve(posixUpgraded));
+});

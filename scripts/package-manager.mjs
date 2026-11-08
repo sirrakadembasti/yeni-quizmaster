@@ -45,11 +45,14 @@ function pathEntries(env, platform) {
 export function resolveNpmEntry({ platform = process.platform, env = process.env, execPath = process.execPath, exists = fs.existsSync, realpath = fs.realpathSync } = {}) {
   const inherited = env.npm_execpath;
   if (inherited && path.basename(inherited) === 'npm-cli.js' && exists(inherited)) return inherited;
-  const nodeDir = path.dirname(execPath);
-  const candidates = [
-    path.join(nodeDir, 'node_modules', 'npm', 'bin', 'npm-cli.js'), // Windows, nvm-windows
-    path.join(nodeDir, '..', 'lib', 'node_modules', 'npm', 'bin', 'npm-cli.js'), // macOS/Linux resmi paket
-  ];
+  // Sıra, Node'un kendi npm kabuk betiğiyle aynıdır: `npm install -g npm@11` ile kurulan (genel önek)
+  // npm, Node'la gelen paketli npm'den ÖNCE kullanılır; aksi hâlde güncel npm yanlışlıkla eski sanılır.
+  const candidates = [];
+  const prefixes = [env.npm_config_prefix, platform === 'win32' && env.APPDATA ? path.join(env.APPDATA, 'npm') : null].filter(Boolean);
+  for (const prefix of prefixes) {
+    candidates.push(path.join(prefix, 'node_modules', 'npm', 'bin', 'npm-cli.js')); // Windows
+    candidates.push(path.join(prefix, 'lib', 'node_modules', 'npm', 'bin', 'npm-cli.js')); // POSIX
+  }
   for (const directory of pathEntries(env, platform)) {
     candidates.push(path.join(directory, 'node_modules', 'npm', 'bin', 'npm-cli.js'));
     // POSIX: `npm` bir simgesel bağdır → npm-cli.js
@@ -61,6 +64,9 @@ export function resolveNpmEntry({ platform = process.platform, env = process.env
       }
     } catch { /* bağ çözülemedi */ }
   }
+  const nodeDir = path.dirname(execPath);
+  candidates.push(path.join(nodeDir, 'node_modules', 'npm', 'bin', 'npm-cli.js')); // Windows, nvm-windows
+  candidates.push(path.join(nodeDir, '..', 'lib', 'node_modules', 'npm', 'bin', 'npm-cli.js')); // macOS/Linux resmi paket
   return candidates.map(entry => path.resolve(entry)).find(entry => exists(entry)) || null;
 }
 
