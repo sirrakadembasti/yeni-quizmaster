@@ -482,7 +482,7 @@ export function createSetupApp(token: string, onComplete?: () => void) {
           const summary = await applySetup(payload, applyJob);
           applyJob.summary = summary;
           applyJob.status = "success";
-          applyJob.message = "QuizMaster kurulumu tamamlandı. Birazdan giriş sayfasına yönlendirileceksiniz.";
+          applyJob.message = "QuizMaster kurulumu tamamlandı. Aşağıdaki bağlantıdan giriş sayfasına geçebilirsiniz.";
           applyJob.finishedAt = new Date().toISOString();
           // Kullanıcı bitiş ekranını görsün ve login'e gidebilsin diye sihirbazı geç kapat.
           setTimeout(() => onComplete?.(), 20_000);

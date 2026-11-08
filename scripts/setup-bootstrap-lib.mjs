@@ -161,8 +161,10 @@ function backupItems(paths) {
   ];
 }
 
-function timestamp() {
-  return new Date().toISOString().replace(/[:.]/g, "-");
+// Klasör adında yerel saat kullanılır (kullanıcının saatiyle eşleşir); kesin an manifest.createdAt içinde UTC olarak durur.
+function timestamp(date = new Date()) {
+  const p = (n, w = 2) => String(n).padStart(w, "0");
+  return `${date.getFullYear()}-${p(date.getMonth() + 1)}-${p(date.getDate())}_${p(date.getHours())}-${p(date.getMinutes())}-${p(date.getSeconds())}-${p(date.getMilliseconds(), 3)}`;
 }
 
 export function createVerifiedBackup(projectRoot, backupName = `reinstall-${timestamp()}`) {
