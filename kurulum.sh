@@ -27,16 +27,40 @@ else
   has_error=1
 fi
 
+# Paket yöneticisi: npm 11+ (varsayılan), pnpm 9.15.1 veya Bun (deneysel). Biri yeterlidir.
+pm_ok=0
+if command -v npm >/dev/null 2>&1; then
+  npm_version=$(npm --version 2>/dev/null || true)
+  npm_major=${npm_version%%.*}
+  case "$npm_major" in
+    ''|*[!0-9]*) printf '%s\n' '[UYARI] npm sürümü okunamadı.' ;;
+    *)
+      if [ "$npm_major" -ge 11 ]; then
+        printf '[TAMAM] npm %s\n' "$npm_version"
+        pm_ok=1
+      else
+        printf '[UYUMSUZ] npm %s bulundu. npm 11 veya üstü gereklidir (Node.js 22 ile gelen npm 10 desteklenmez).\n' "$npm_version"
+      fi
+      ;;
+  esac
+else
+  printf '%s\n' '[EKSİK] npm bulunamadı. npm 11 veya üstü önerilir.'
+fi
 if command -v pnpm >/dev/null 2>&1; then
   pnpm_version=$(pnpm --version 2>/dev/null || true)
   if [ "$pnpm_version" = "9.15.1" ]; then
     printf '[TAMAM] pnpm %s\n' "$pnpm_version"
+    pm_ok=1
   else
-    printf '[UYUMSUZ] pnpm %s bulundu. Gerekli sürüm: 9.15.1\n' "$pnpm_version"
-    has_error=1
+    printf '[BİLGİ] pnpm %s bulundu; yalnız 9.15.1 desteklenir, bu pnpm yok sayıldı.\n' "$pnpm_version"
   fi
-else
-  printf '%s\n' '[EKSİK] pnpm bulunamadı. Gerekli sürüm: 9.15.1'
+fi
+if command -v bun >/dev/null 2>&1; then
+  printf '[TAMAM] Bun %s (deneysel)\n' "$(bun --version 2>/dev/null || true)"
+  pm_ok=1
+fi
+if [ "$pm_ok" -eq 0 ]; then
+  printf '%s\n' '[EKSİK] Desteklenen paket yöneticisi bulunamadı (npm 11+, pnpm 9.15.1 veya Bun).'
   has_error=1
 fi
 
@@ -77,16 +101,16 @@ if [ "$has_error" -ne 0 ]; then
 
 Kurulması veya düzeltilmesi gereken bileşenler var.
 
-Node.js 24 LTS: https://nodejs.org/en/download
-pnpm belgesi:   https://pnpm.io/installation/
-pnpm 9.15.1 için (sistem PATH'i değiştirilmeden):
+Node.js 24 LTS (npm 11 ile gelir): https://nodejs.org/en/download
+npm belgesi: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+Node.js 22 ile gelen npm 10 desteklenmez; npm 11'e yükseltmek için:
 EOF
   if command -v npm >/dev/null 2>&1; then
-    printf '%s\n' '  npm install --global pnpm@9.15.1'
-    printf '%s\n' '  (yetki yoksa) npm install --prefix "$HOME/.local/pnpm" pnpm@9.15.1 ve $HOME/.local/pnpm/node_modules/.bin dizinini bu oturumun PATH değerine ekleyin'
+    printf '%s\n' '  npm install --global npm@11'
+    printf '%s\n' '  (yetki yoksa) npm install --prefix "$HOME/.local/npm" npm@11 ve $HOME/.local/npm/node_modules/.bin dizinini bu oturumun PATH değerine ekleyin'
   fi
   if command -v corepack >/dev/null 2>&1; then
-    printf '%s\n' '  corepack enable && corepack prepare pnpm@9.15.1 --activate'
+    printf '%s\n' 'Alternatif (pnpm 9.15.1): corepack enable && corepack prepare pnpm@9.15.1 --activate'
   fi
   if ! command -v npm >/dev/null 2>&1 && ! command -v corepack >/dev/null 2>&1; then
     printf '%s\n' '  Bu Node.js kurulumunda npm ve corepack yok. npm içeren tam Node.js 22/24 LTS kurun'
@@ -144,10 +168,11 @@ fi
 printf '\n%s\n\n' '[TAMAM] Gerekli çalışma ortamı hazır. Grafik kurulum başlangıcı açılıyor...'
 printf '%s\n' 'Bu terminali sihirbaz bitene kadar KAPATMAYIN; sihirbaz bu sürecin altındadır.'
 printf '%s\n' 'Adres: http://127.0.0.1:'"$CHECK_PORT"' (sihirbaz da aynı adreste açılır)'
-printf '%s\n' 'Bitişte "Uygulamayı başlat" → yerelde pnpm dev (arka plan), kurumda üretim servisi.'
+printf '%s\n' 'Bitişte "Uygulamayı başlat" → yerelde geliştirme sunucusu (arka plan), kurumda üretim servisi.'
 printf '%s\n' 'Yerel giriş: http://127.0.0.1:5173/auth'
 printf '\n'
-pnpm run setup "$@"
+# Bağımlılıksız başlatıcı doğrudan Node ile açılır; paket yöneticisi paketleri kurarken seçilir.
+node scripts/setup-bootstrap.mjs "$@"
 setup_exit=$?
 if [ "$setup_exit" -ne 0 ]; then
   cat <<EOF

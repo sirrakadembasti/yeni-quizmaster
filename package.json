@@ -18,7 +18,7 @@
     "app:logs": "node scripts/app.mjs logs",
     "build": "node scripts/pm.mjs run -w server build && node scripts/pm.mjs run -w client build",
     "install-all": "node scripts/pm.mjs install --no-frozen",
-    "test:setup": "node --test scripts/setup-bootstrap.test.mjs scripts/find-port-holder.test.mjs scripts/setup-launcher-preflight.test.mjs scripts/app-lib.test.mjs scripts/setup-proxy.test.mjs scripts/package-manager.test.mjs scripts/pm.test.mjs",
+    "test:setup": "node --test scripts/setup-bootstrap.test.mjs scripts/find-port-holder.test.mjs scripts/setup-launcher-preflight.test.mjs scripts/setup-launcher-args.test.mjs scripts/app-lib.test.mjs scripts/setup-proxy.test.mjs scripts/package-manager.test.mjs scripts/pm.test.mjs",
     "maintenance": "node scripts/maintenance.mjs",
     "upgrade": "node scripts/upgrade.mjs",
     "test:upgrade": "node --test scripts/upgrade.test.mjs scripts/upgrade-process.test.mjs scripts/pnpm-invocation.test.mjs scripts/setup-bootstrap-runtime.test.mjs",
