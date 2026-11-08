@@ -27,7 +27,7 @@ else
   has_error=1
 fi
 
-# Paket yöneticisi: npm 11+ (varsayılan), pnpm 9.15.1 veya Bun (deneysel). Biri yeterlidir.
+# Paket yöneticisi: npm 11+ (varsayılan) veya Bun (deneysel). Biri yeterlidir.
 pm_ok=0
 if command -v npm >/dev/null 2>&1; then
   npm_version=$(npm --version 2>/dev/null || true)
@@ -46,21 +46,12 @@ if command -v npm >/dev/null 2>&1; then
 else
   printf '%s\n' '[EKSİK] npm bulunamadı. npm 11 veya üstü önerilir.'
 fi
-if command -v pnpm >/dev/null 2>&1; then
-  pnpm_version=$(pnpm --version 2>/dev/null || true)
-  if [ "$pnpm_version" = "9.15.1" ]; then
-    printf '[TAMAM] pnpm %s\n' "$pnpm_version"
-    pm_ok=1
-  else
-    printf '[BİLGİ] pnpm %s bulundu; yalnız 9.15.1 desteklenir, bu pnpm yok sayıldı.\n' "$pnpm_version"
-  fi
-fi
 if command -v bun >/dev/null 2>&1; then
   printf '[TAMAM] Bun %s (deneysel)\n' "$(bun --version 2>/dev/null || true)"
   pm_ok=1
 fi
 if [ "$pm_ok" -eq 0 ]; then
-  printf '%s\n' '[EKSİK] Desteklenen paket yöneticisi bulunamadı (npm 11+, pnpm 9.15.1 veya Bun).'
+  printf '%s\n' '[EKSİK] Desteklenen paket yöneticisi bulunamadı (npm 11+ veya Bun).'
   has_error=1
 fi
 
@@ -109,12 +100,8 @@ EOF
     printf '%s\n' '  npm install --global npm@11'
     printf '%s\n' '  (yetki yoksa) npm install --prefix "$HOME/.local/npm" npm@11 ve $HOME/.local/npm/node_modules/.bin dizinini bu oturumun PATH değerine ekleyin'
   fi
-  if command -v corepack >/dev/null 2>&1; then
-    printf '%s\n' 'Alternatif (pnpm 9.15.1): corepack enable && corepack prepare pnpm@9.15.1 --activate'
-  fi
-  if ! command -v npm >/dev/null 2>&1 && ! command -v corepack >/dev/null 2>&1; then
-    printf '%s\n' '  Bu Node.js kurulumunda npm ve corepack yok. npm içeren tam Node.js 22/24 LTS kurun'
-    printf '%s\n' '  veya pnpm bağımsız kurulumunu kullanın: https://pnpm.io/installation'
+  if ! command -v npm >/dev/null 2>&1; then
+    printf '%s\n' '  Bu Node.js kurulumunda npm yok. npm içeren tam Node.js 22/24 LTS kurun (Node.js 24 npm 11 ile gelir).'
   fi
   cat <<'EOF'
 

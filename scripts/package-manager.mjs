@@ -5,13 +5,12 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { createRequire } from 'node:module';
 import { spawnSync } from 'node:child_process';
-import { pnpmInvocation } from './pnpm-invocation.mjs';
 
-export const MANAGERS = ['npm', 'pnpm', 'bun'];
+export const MANAGERS = ['npm', 'bun'];
 // Yeni kurulumların varsayılanı npm'dir. Var olan bir kurulum kendi yöneticisini korur (bkz. detectInstalledManager).
 export const DEFAULT_MANAGER = 'npm';
-export const REQUIRED_PNPM_VERSION = '9.15.1';
 export const MIN_NPM_MAJOR = 11;
 
 // Mantıksal çalışma alanı → paket adı / dizin
@@ -21,7 +20,7 @@ export const WORKSPACES = {
 };
 
 /**
- * npm, pnpm ve bun betik çalıştırırken npm_config_user_agent ayarlar ("pnpm/9.15.1 npm/? node/…").
+ * npm ve bun betik çalıştırırken npm_config_user_agent ayarlar ("npm/11.x node/…").
  * Betiği hangi yöneticinin başlattığını söyleyen en güvenilir işarettir (npm_execpath tahmininden farklı).
  */
 export function detectInvokingManager(env = process.env) {
@@ -31,19 +30,25 @@ export function detectInvokingManager(env = process.env) {
 
 /**
  * node_modules düzeninden, bu dizindeki kurulumun hangi yöneticiyle yapıldığını söyler; yoksa null.
- * Var olan bir kurulumun (ör. pnpm ağacı) yükseltmede sessizce başka yöneticiye geçmemesi için kullanılır.
+ * pnpm artık desteklenmez: pnpm ağacı (node_modules/.pnpm) "legacy" sayılır, null döner ve npm'e geçilir
+ * (bkz. hasLegacyPnpmTree; `npm ci` node_modules'ü silip yeniden kurar).
  */
 export function detectInstalledManager(root, { exists = fs.existsSync } = {}) {
   if (!root) return null;
-  if (exists(path.join(root, 'node_modules', '.pnpm'))) return 'pnpm';
   if (exists(path.join(root, 'bun.lock')) || exists(path.join(root, 'bun.lockb'))) return 'bun';
   if (exists(path.join(root, 'node_modules', '.package-lock.json'))) return 'npm';
   return null;
 }
 
+/** Eski pnpm kurulumundan kalan node_modules düzeni var mı? (pnpm kaldırıldı; npm ci yeniden kurar) */
+export function hasLegacyPnpmTree(root, { exists = fs.existsSync } = {}) {
+  return Boolean(root) && exists(path.join(root, 'node_modules', '.pnpm'));
+}
+
 // Öncelik: açık istek > QUIZMASTER_PM > betiği başlatan yönetici > kurulu yönetici (root verilirse) > varsayılan (npm).
 export function selectManager({ requested, env = process.env, root, exists } = {}) {
   const value = String(requested || env.QUIZMASTER_PM || detectInvokingManager(env) || detectInstalledManager(root, { exists }) || DEFAULT_MANAGER).toLowerCase();
+  if (value === 'pnpm') throw new Error('pnpm artık desteklenmiyor. npm 11 veya üstünü (ya da deneysel Bun) kullanın.');
   if (!MANAGERS.includes(value)) throw new Error(`Desteklenmeyen paket yöneticisi: ${value}. Geçerli: ${MANAGERS.join(', ')}.`);
   return value;
 }
@@ -100,7 +105,6 @@ export function resolveBunExecutable({ platform = process.platform, env = proces
 export function managerInvocation(manager, options = {}) {
   const platform = options.platform || process.platform;
   const env = options.env || process.env;
-  if (manager === 'pnpm') return pnpmInvocation([], { platform, env });
   if (manager === 'npm') {
     const entry = resolveNpmEntry({ ...options, platform, env });
     if (entry) return { command: options.execPath || process.execPath, args: [entry] };
@@ -136,7 +140,6 @@ export function buildCommand(manager, op) {
       const frozen = op.frozen !== false;
       const dev = op.dev !== false;
       if (manager === 'npm') return { args: [frozen ? 'ci' : 'install', ...(dev ? ['--include=dev'] : ['--omit=dev'])] };
-      if (manager === 'pnpm') return { args: ['install', ...(frozen ? ['--frozen-lockfile'] : []), ...(dev ? ['--prod=false'] : ['--prod'])] };
       if (manager === 'bun') return { args: ['install', ...(frozen ? ['--frozen-lockfile'] : []), ...(dev ? [] : ['--production'])] };
       break;
     }
@@ -144,7 +147,6 @@ export function buildCommand(manager, op) {
       if (!op.script) throw new Error('run için script gerekli.');
       const workspace = op.workspace ? workspaceOf(op.workspace) : null;
       if (manager === 'npm') return { args: ['run', op.script, ...(workspace ? [`--workspace=${workspace.dir}`] : []), ...(args.length ? ['--', ...args] : [])] };
-      if (manager === 'pnpm') return { args: [...(workspace ? ['--filter', workspace.name] : []), 'run', op.script, ...args] };
       if (manager === 'bun') return { args: ['run', op.script, ...args], ...(workspace ? { cwd: workspace.dir } : {}) };
       break;
     }
@@ -155,7 +157,6 @@ export function buildCommand(manager, op) {
       // (ölçüldü: `npm exec -- tsc` alakasız "tsc" paketini çalıştırdı; `--no` bunu engellemez).
       // Bu yüzden npm için exec yoktur: package.json betiği tanımlayıp 'run' kullanın.
       if (manager === 'npm') throw new Error('npm için exec güvenli değildir (kayıt defterinden paket indirebilir); package.json betiği tanımlayıp run kullanın.');
-      if (manager === 'pnpm') return { args: [...(workspace ? ['--filter', workspace.name] : []), 'exec', op.bin, ...args] };
       // --no-install: yerel bin yoksa indirmek yerine durur.
       if (manager === 'bun') return { args: ['x', '--no-install', op.bin, ...args], ...(workspace ? { cwd: workspace.dir } : {}) };
       break;
@@ -196,7 +197,6 @@ export function isSupportedVersion(manager, version) {
   if (!version) return false;
   const major = Number(version.split('.')[0]);
   if (manager === 'npm') return major >= MIN_NPM_MAJOR;
-  if (manager === 'pnpm') return version === REQUIRED_PNPM_VERSION;
   if (manager === 'bun') return major >= 1;
   return false;
 }
@@ -207,4 +207,17 @@ export function detectAll(options = {}) {
     const version = detectVersion(manager, options);
     return [manager, { version, supported: isSupportedVersion(manager, version) }];
   }));
+}
+
+/**
+ * Bir paketin bin dosyasını (JS) mutlak yol olarak bulur: `npm exec` kullanmadan, kayıt defterine gitmeden.
+ * Çağıran `process.execPath` ile bu dosyayı çalıştırır. workspace verilirse o çalışma alanından çözülür.
+ */
+export function resolveLocalBin(root, workspace, packageName, binName = packageName.split('/').pop()) {
+  const base = workspace ? path.join(root, WORKSPACES[workspace].dir) : root;
+  const packageJsonPath = createRequire(path.join(base, 'package.json')).resolve(`${packageName}/package.json`);
+  const manifest = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  const bin = typeof manifest.bin === 'string' ? manifest.bin : manifest.bin?.[binName];
+  if (!bin) throw new Error(`${packageName} paketinde '${binName}' bin dosyası yok.`);
+  return path.resolve(path.dirname(packageJsonPath), bin);
 }

@@ -1,6 +1,6 @@
 // Kurulum başlatıcılarının (kurulum.bat / kurulum.sh) ön kontrol davranışı.
 // Kontrollü fixture kullanır: gerçek paket kurulumu, gerçek port taraması veya ağ yoktur.
-// Kabul kuralı: Node 22/24 + (npm >= 11 veya pnpm 9.15.1 veya Bun) — biri yeterlidir.
+// Kabul kuralı: Node 22/24 + (npm >= 11 veya Bun) — biri yeterlidir. pnpm artık desteklenmez.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -67,14 +67,14 @@ for (const entry of isWindows ? ['bat', 'sh'] : ['sh']) {
   const outputOf = result => `${result.stdout}${result.stderr}`;
   const bootstrapRan = fixture => fs.existsSync(path.join(fixture, 'bootstrap-ran.txt'));
 
-  test(`${entry} launcher: hiç paket yöneticisi yoksa kurulum başlamaz ve npm/corepack olmayan sistem için çıkmaz yol göstermez`, { timeout: 60000 }, t => {
+  test(`${entry} launcher: hiç paket yöneticisi yoksa kurulum başlamaz ve npm olmayan sistem için çıkmaz yol göstermez`, { timeout: 60000 }, t => {
     const { fixture, bin } = prepare(t);
     const result = run(entry, fixture, launcherEnv(bin));
     assert.equal(result.error, undefined, 'Başlatıcı çalıştırılamadı');
     assert.notEqual(result.status, 0, 'Paket yöneticisi yokken başlatıcı başarıyla bitmemeli');
     const output = outputOf(result);
     assert.match(output, /Desteklenen paket y.neticisi bulunamad/, 'Eksik paket yöneticisi bildirilmedi');
-    assert.match(output, /npm ve corepack yok/, 'npm/corepack olmayan Node için yönlendirme yok');
+    assert.match(output, /Bu Node\.js kurulumunda npm yok/, 'npm olmayan Node için yönlendirme yok');
     assert.doesNotMatch(output, /npm install --global npm@11/, 'npm yokken npm komutu önerilmemeli');
     assert.equal(bootstrapRan(fixture), false, 'Ön kontrol başarısızken bootstrap açılmamalı');
     assert.equal(fs.existsSync(path.join(fixture, 'server')), false, 'Ön kontrol kurulum verisi/dizini oluşturmamalı');
@@ -100,28 +100,29 @@ for (const entry of isWindows ? ['bat', 'sh'] : ['sh']) {
     assert.equal(bootstrapRan(fixture), true, 'Bootstrap çalışmadı');
   });
 
-  test(`${entry} launcher: yalnız pnpm 9.15.1 de yeterlidir (npm yok)`, { timeout: 60000 }, t => {
+  test(`${entry} launcher: yalnız Bun (deneysel) yeterlidir (npm yok)`, { timeout: 60000 }, t => {
     const { fixture, bin } = prepare(t);
-    addManager(bin, 'pnpm', '9.15.1');
+    addManager(bin, 'bun', '1.3.14');
     const result = run(entry, fixture, launcherEnv(bin));
     assert.equal(result.status, 0, outputOf(result));
-    assert.match(outputOf(result), /\[TAMAM\] pnpm 9\.15\.1/);
+    assert.match(outputOf(result), /\[TAMAM\] Bun 1\.3\.14/);
     assert.equal(bootstrapRan(fixture), true);
   });
 
-  test(`${entry} launcher: desteklenmeyen pnpm sürümü tek başına yetmez ama yok sayıldığı bildirilir`, { timeout: 60000 }, t => {
+  test(`${entry} launcher: pnpm artık desteklenmez; tek başına yetmez ve bilgi verilir`, { timeout: 60000 }, t => {
     const { fixture, bin } = prepare(t);
-    addManager(bin, 'pnpm', '9.14.0');
+    addManager(bin, 'pnpm', '9.15.1');
     const result = run(entry, fixture, launcherEnv(bin));
     assert.notEqual(result.status, 0);
-    assert.match(outputOf(result), /pnpm 9\.14\.0 bulundu/);
+    assert.match(outputOf(result), /Desteklenen paket y.neticisi bulunamad/);
+    assert.doesNotMatch(outputOf(result), /\[TAMAM\] pnpm/, 'pnpm kabul edilmemeli');
     assert.equal(bootstrapRan(fixture), false);
   });
 
-  test(`${entry} launcher: desteklenmeyen pnpm, destekli npm 11 varken engel olmaz`, { timeout: 60000 }, t => {
+  test(`${entry} launcher: pnpm varlığı destekli npm 11 varken engel olmaz`, { timeout: 60000 }, t => {
     const { fixture, bin } = prepare(t);
     addManager(bin, 'npm', '11.2.0');
-    addManager(bin, 'pnpm', '8.0.0');
+    addManager(bin, 'pnpm', '9.15.1');
     const result = run(entry, fixture, launcherEnv(bin));
     assert.equal(result.status, 0, outputOf(result));
     assert.equal(bootstrapRan(fixture), true);

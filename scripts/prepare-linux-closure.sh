@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+# Not: kaynak yolları (/mnt/f/...) bu makineye özgü tek seferlik kabul kurulumudur; yalnız pnpm kısmı npm'e çevrildi.
 # Disposable native tooling only; no system PATH or application data changes.
 set -eu
 closure_base="${XDG_CACHE_HOME:-$HOME/.cache}/quizmaster-closure"
@@ -15,8 +16,9 @@ sha256sum --check selected-shasum.txt
 tar -xf "$archive"
 PATH="$tool_root/node-v${node_version}-linux-x64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 export PATH
-npm install --prefix "$tool_root/pnpm" pnpm@9.15.1 --no-audit --no-fund
-PATH="$tool_root/pnpm/node_modules/.bin:$PATH"
+# npm 11 gerekli (Node 22 ile gelen npm 10 desteklenmez):
+npm install --prefix "$tool_root/npm" npm@11 --no-audit --no-fund
+PATH="$tool_root/npm/node_modules/.bin:$PATH"
 export PATH
 stage_root=$(mktemp -d "$closure_base/source-XXXXXX")
 tar -xf /mnt/f/projeler/yeni-quizmaster-main/tests/denetim-kanitlari/yonetici/test-results-latest/linux-setup/source-head.tar -C "$stage_root"
@@ -29,8 +31,8 @@ done
 cd "$stage_root"
 git init -q
 git add .
-pnpm install --frozen-lockfile
-pnpm exec playwright install chromium
+npm ci
+node node_modules/playwright/cli.js install chromium
 printf '\nLINUX_TOOL_ROOT=%s\nLINUX_STAGE_ROOT=%s\n' "$tool_root" "$stage_root"
 node -p 'JSON.stringify({platform:process.platform,node:process.version,arch:process.arch})'
-pnpm --version
+npm --version
