@@ -27,7 +27,7 @@ else
   has_error=1
 fi
 
-# Paket yöneticisi: npm 11+ (varsayılan) veya Bun (deneysel). Biri yeterlidir.
+# Paket yöneticisi: npm 11+ (varsayılan) veya Bun. Biri yeterlidir.
 pm_ok=0
 if command -v npm >/dev/null 2>&1; then
   npm_version=$(npm --version 2>/dev/null || true)
@@ -47,7 +47,7 @@ else
   printf '%s\n' '[EKSİK] npm bulunamadı. npm 11 veya üstü önerilir.'
 fi
 if command -v bun >/dev/null 2>&1; then
-  printf '[TAMAM] Bun %s (deneysel)\n' "$(bun --version 2>/dev/null || true)"
+  printf '[TAMAM] Bun %s (kilit dosyasız)\n' "$(bun --version 2>/dev/null || true)"
   pm_ok=1
 fi
 if [ "$pm_ok" -eq 0 ]; then

@@ -61,7 +61,7 @@ QuizMaster Node.js (Express + Socket.IO)
 - Kurum DNS yöneticisi tarafından açılmış A/AAAA kaydı,
 - Kuruma ait geçerli TLS sertifikası ve yenileme süreci,
 - Node.js 22 veya 24 LTS,
-- npm 11 veya üstü (deneysel Bun alternatiftir; pnpm artık desteklenmez),
+- npm 11 veya üstü (Bun alternatiftir; pnpm artık desteklenmez),
 - Nginx, Apache veya IIS reverse proxy,
 - Yalnız sunucu yönetici hesabının erişebildiği uygulama kullanıcısı/dizini,
 - SMTP için Gmail uygulama parolası kullanılacaksa dışarı doğru TCP 587 veya 465 izni,
@@ -107,7 +107,7 @@ chmod +x kurulum.sh
 ./kurulum.sh
 ```
 
-`kurulum.sh` Node.js 22/24 LTS ile desteklenen bir paket yöneticisini (npm 11+ veya Bun) doğrular. Ayrıca Linux/macOS ortamını teyit eder, root yetkisiyle çalıştırmada uyarır, proje ve `server/data` dizinlerinin yazma izinlerini, en az 3 GB boş disk alanını ve `better-sqlite3` yerel derlemesi için `python3`, `make`, `g++/c++` varlığını denetler. Eksik veya uyumsuz bileşen varsa resmî bağlantıları ve kurumsal ağ kısıtlarına uygun komut seçeneklerini (npm 11 yükseltmesi, Node.js 24) gösterip hiçbir dosyayı değiştirmeden durur. Gereksinimler tamamsa bağımlılıksız bootstrap arayüzünü açar; paket kurulumu kullanıcı onayından sonra bu arayüzden yürütülür. Kurulum panelinde npm (11+) varsayılan paket yöneticisidir; sistemde Bun kuruluysa **Bun (Deneysel)** seçeneği de seçilebilir; bu yolda paket kurulumu ve migration CLI ile (`QUIZMASTER_PM=bun`) doğrulanmıştır; tarayıcı arayüzü, derleme ve yükseltme npm kadar sınanmamıştır. Üretim için npm kullanın.
+`kurulum.sh` Node.js 22/24 LTS ile desteklenen bir paket yöneticisini (npm 11+ veya Bun) doğrular. Ayrıca Linux/macOS ortamını teyit eder, root yetkisiyle çalıştırmada uyarır, proje ve `server/data` dizinlerinin yazma izinlerini, en az 3 GB boş disk alanını ve `better-sqlite3` yerel derlemesi için `python3`, `make`, `g++/c++` varlığını denetler. Eksik veya uyumsuz bileşen varsa resmî bağlantıları ve kurumsal ağ kısıtlarına uygun komut seçeneklerini (npm 11 yükseltmesi, Node.js 24) gösterip hiçbir dosyayı değiştirmeden durur. Gereksinimler tamamsa bağımlılıksız bootstrap arayüzünü açar; paket kurulumu kullanıcı onayından sonra bu arayüzden yürütülür. Kurulum panelinde npm (11+) varsayılan paket yöneticisidir; sistemde Bun kuruluysa **Bun** seçeneği de seçilebilir; CLI (`QUIZMASTER_PM=bun`), arayüz, derleme, yükseltme ve geliştirme sunucusu uçtan uca doğrulanmıştır. Bun kilit dosyasıyla gelmez: `bun.lock` depoda tutulmaz, sürümler her kurulumda çözülür (npm gibi tekrarlanabilir değildir); bu yüzden üretimde npm önerilir.
 
 Kurumsal ağ internete çıkmıyorsa bağımlılıkları onaylı bir build sunucusunda hedef işletim sistemi ve CPU mimarisiyle kurup artefact üretin. `node_modules` klasörünü farklı işletim sistemi veya CPU mimarisinden kopyalamayın; Prisma, Sharp ve SQLite native bileşenleri hedef ortamla aynı olmalıdır.
 
@@ -331,7 +331,7 @@ Windows'ta `kurulum.bat`, Linux/macOS'ta `./kurulum.sh` önerilir. Node.js ve pa
 npm run setup
 ```
 
-İlk aşama yalnız Node.js yerleşik modüllerini kullanır ve `127.0.0.1:5049` adresine bağlanır. Kurulum durumunu gösterir, varsayılan olarak `npm ci` (veya panelden deneysel Bun seçildiyse `bun install`) işlemini başlatır ve gerçek işlem çıktısını ekranda sunar. Paketler hazır olduğunda mevcut ana sihirbaz arka planda boş bir yerel portta başlatılır ve aynı adrestan (`127.0.0.1:5049/wizard`) sunulur; başlatıcı yalnız kimliği doğrulanmış, beyaz listedeki sihirbaz isteklerini aktarır. Başlatıcı portu (5049) doluysa başlatıcı PID ile uyarır ve süreci durdurmayı teklif eder. Terminal sihirbaz bitene kadar kapatılmamalıdır. Doğrudan konsoldan manuel kurulum tercih edilirse `npm ci && npm run db:deploy --workspace=server && npm run build` akışı aynen korunmaktadır.
+İlk aşama yalnız Node.js yerleşik modüllerini kullanır ve `127.0.0.1:5049` adresine bağlanır. Kurulum durumunu gösterir, varsayılan olarak `npm ci` (veya panelden Bun seçildiyse `bun install`; kilit dosyası yoktur) işlemini başlatır ve gerçek işlem çıktısını ekranda sunar. Paketler hazır olduğunda mevcut ana sihirbaz arka planda boş bir yerel portta başlatılır ve aynı adrestan (`127.0.0.1:5049/wizard`) sunulur; başlatıcı yalnız kimliği doğrulanmış, beyaz listedeki sihirbaz isteklerini aktarır. Başlatıcı portu (5049) doluysa başlatıcı PID ile uyarır ve süreci durdurmayı teklif eder. Terminal sihirbaz bitene kadar kapatılmamalıdır. Doğrudan konsoldan manuel kurulum tercih edilirse `npm ci && npm run db:deploy --workspace=server && npm run build` akışı aynen korunmaktadır.
 
 Sihirbazda **kurulum biçimi** seçenekleri:
 

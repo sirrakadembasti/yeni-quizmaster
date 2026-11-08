@@ -49,7 +49,7 @@ if errorlevel 1 (
   )
 )
 
-rem Paket yoneticisi: npm 11+ (varsayilan) veya Bun (deneysel). Biri yeterlidir.
+rem Paket yoneticisi: npm 11+ (varsayilan) veya Bun. Biri yeterlidir.
 set "PM_OK=0"
 set "NPM_VERSION="
 where npm >nul 2>&1
@@ -71,7 +71,7 @@ where bun >nul 2>&1
 if not errorlevel 1 (
   set "BUN_VERSION="
   for /f "delims=" %%V in ('bun --version 2^>nul') do set "BUN_VERSION=%%V"
-  echo [TAMAM] Bun !BUN_VERSION! ^(deneysel^)
+  echo [TAMAM] Bun !BUN_VERSION! ^(kilit dosyasiz^)
   set "PM_OK=1"
 )
 
