@@ -23,6 +23,10 @@ Tasarımdan sapmalar ve çıkan bulgular:
 
 Açık kalanlar: Bun kararı; prova betiklerinin çalıştırılması. (Prisma `package.json#prisma` uyarısı `prisma.config.ts` ile giderildi.)
 
+### Doğrulama istisnası: GitHub Actions kotası (9 Kasım 2026)
+
+Ücretsiz Actions kotası (özel depo, 18 $ / 18 $) tükendi; CI işleri başlamıyor ve kota yaklaşık 22 gün sonra (≈ 1 Aralık 2026) yenileniyor. Bu aralıkta birleştirilen değişiklikler **CI'sız, yerelde doğrulanmıştır** (`npm run test:setup`, `npm run test:upgrade`, `npm run type-check --workspace=server`, `npm run type-check --workspace=client`, `npm run test:build-startup`, `npm run test --workspace=server`, `npm run test --workspace=client -- --run`); birleştirme commit'leri `[skip ci]` taşır. İlk örnek: PR #27 (`admin-hybrid-setup-closure` provasının `/wizard/api/status` düzeltmesi; betik CI'da zaten koşmaz ve düzeltmenin kendisi ağ kaynaklı `ECONNRESET` nedeniyle uçtan uca sınanamadı). Kota yenilenince `main` üzerinde CI bir kez koşturulmalı; provanın başarılı bir koşusu ağ düzelince alınmalıdır.
+
 ### Güvenlik değerlendirmesi: kalan 5 yüksek açık (`npm audit --omit=dev`)
 
 Hepsinin tek çözümü **büyük sürüm yükseltmesidir** (`npm audit fix --force`); kritik açık yoktur ve CI kapısı kritik seviyede kırar.

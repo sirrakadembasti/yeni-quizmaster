@@ -443,7 +443,16 @@ npm run test:e2e
 
 > Chromium yalnızca uçtan uca testler ve akademik arşiv PDF'i için gerekir; `npm ci` sırasında indirilmez. PDF üretimi Chromium bulamazsa açıklayıcı bir hata verir.
 
-## Önemli rotalar
+### Geçici istisna: CI'sız birleştirme (9 Kasım 2026)
+
+GitHub Actions ücretsiz kotası (18 $ / 18 $, özel depo) **tükendi**; CI işleri başlamıyor (`The job was not started because recent account payments have failed or your spending limit needs to be increased`). Kota yaklaşık 22 gün sonra, **1 Aralık 2026 civarında** yenilenir. O güne kadar değişiklikler CI'sız, **yerelde doğrulanarak** birleştirilir; PR #27 ilk örnektir.
+
+- Birleştirmeden önce yerelde geçmesi zorunlu set: `npm run test:setup`, `npm run test:upgrade`, `npm run type-check --workspace=server`, `npm run type-check --workspace=client`, `npm run test:build-startup`, `npm run test --workspace=server`, `npm run test --workspace=client -- --run`.
+- Birleştirme commit'i `[skip ci]` taşır; böylece `main`'de faturalama kaynaklı kırmızı çarpı oluşmaz. Bu, CI'ın "geçtiği" anlamına gelmez, yalnızca koşmadığını belirtir.
+- Yerelde doğrulanamayanlar: Ubuntu/Node 24 ve Windows karşılaştırması (yerel makine yalnızca Windows/Node 22), `admin-hybrid-setup-closure` provası (ağ kaynaklı Prisma motor indirmesi `ECONNRESET` ile iki kez düştü).
+- **Kaldırma koşulu:** kota yenilenince `main` üzerinde CI bir kez koşturulur (Actions → Re-run) ve sonuç bu bölüme işlenir; `admin-hybrid-setup-closure` provası ağ düzelince koşulur.
+
+
 
 | Rota | Roller | Açıklama |
 |---|---|---|
