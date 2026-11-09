@@ -372,7 +372,9 @@ try {
       try {
         // Read-only HTTP polling uses the actual browser session cookies while
         // remaining independent of a busy page renderer. Never retry mutations.
-        response = await context.request.get(new URL('/api/status', page.url()).href,
+        // Tek port: sihirbaz /wizard altında sunulur; durumu /wizard/api/status'tadır (başlatıcının /api/status'unda 'apply' yoktur).
+        const statusPath = new URL(page.url()).pathname.startsWith('/wizard') ? '/wizard/api/status' : '/api/status';
+        response = await context.request.get(new URL(statusPath, page.url()).href,
           { timeout: Math.min(20000, Math.max(1, deadline - Date.now())) });
         if (response.status() !== 200) throw new Error(`Status HTTP ${response.status()}`);
         const state = await bounded(() => response.json(), 5000, 'status response body');
