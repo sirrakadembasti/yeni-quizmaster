@@ -324,7 +324,7 @@ function captureOwnedProcesses() {
 let browser, browserServer, browserProcess;
 try {
   const invocation = entry === 'terminal' ? npm({ type: 'run', script: 'setup', args: ['--no-open'] })
-    : entry === 'bat' ? [process.env.ComSpec || 'cmd.exe', ['/d', '/c', 'kurulum.bat', '--no-open']]
+    : entry === 'bat' ? [process.env.ComSpec || 'cmd.exe', ['/d', '/c', '.\\kurulum.bat', '--no-open']]
       : [process.env.HYBRID_SH || (process.platform === 'win32' ? 'C:\\Program Files\\Git\\bin\\sh.exe' : 'sh'), ['kurulum.sh', '--no-open']];
   const startup = launch(...invocation, root, { ...cleanEnv, SETUP_BOOTSTRAP_PORT: String(bootstrapPort),
   }, 'bootstrap.log');
