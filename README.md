@@ -449,6 +449,7 @@ GitHub Actions ücretsiz kotası (18 $ / 18 $, özel depo) **tükendi**; CI işl
 
 - Birleştirmeden önce yerelde geçmesi zorunlu set: `npm run test:setup`, `npm run test:upgrade`, `npm run type-check --workspace=server`, `npm run type-check --workspace=client`, `npm run test:build-startup`, `npm run test --workspace=server`, `npm run test --workspace=client -- --run`.
 - Birleştirme commit'i `[skip ci]` taşır; böylece `main`'de faturalama kaynaklı kırmızı çarpı oluşmaz. Bu, CI'ın "geçtiği" anlamına gelmez, yalnızca koşmadığını belirtir.
+- Yerel sonuçlar (PR #27): backend 655/655; frontend 334/334 **`--testTimeout=30000` ile** (bu makinede varsayılan 5 sn sınırında ağır render testleri takılıyor: ilk iki koşuda 2 ve 4 test zaman aşımına düştü, düşenler her koşuda değişti, tek başına koşunca geçti; mantık hatası yok); `test:setup` 69/70 (1 atlandı), `test:upgrade` 12/12, tip denetimleri temiz, `test:build-startup` geçti.
 - Yerelde doğrulanamayanlar: Ubuntu/Node 24 ve Windows karşılaştırması (yerel makine yalnızca Windows/Node 22), `admin-hybrid-setup-closure` provası (ağ kaynaklı Prisma motor indirmesi `ECONNRESET` ile iki kez düştü).
 - **Kaldırma koşulu:** kota yenilenince `main` üzerinde CI bir kez koşturulur (Actions → Re-run) ve sonuç bu bölüme işlenir; `admin-hybrid-setup-closure` provası ağ düzelince koşulur.
 
