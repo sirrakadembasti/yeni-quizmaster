@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Elle tetikleme: CI atlanarak birleştirilen commit'leri veya main'in güncel hâlini sonradan doğrulamak için
+  # (Actions sekmesi → CI → Run workflow, ya da: gh workflow run CI --ref main).
+  workflow_dispatch:
 
 permissions:
   contents: read
