@@ -101,7 +101,7 @@ Aynı bilgiyi birden fazla kılavuza kopyalamak yerine ana belgeye bağlantı ve
 | Kimlik ve güvenlik | `express-session`, SQLite oturum deposu, bcrypt, CSRF, Zod |
 | E-posta | Nodemailer, Gmail SMTP, veritabanı Outbox kuyruğu |
 | Test | Vitest, Supertest, Playwright |
-| Paket yönetimi | npm workspaces (npm 11+, `package-lock.json`) / Bun (deneysel) |
+| Paket yönetimi | npm workspaces (npm 11+, `package-lock.json`) / Bun (kilit dosyasız) |
 
 ## Proje yapısı
 
@@ -134,7 +134,7 @@ Quiz-Master/
 ## Gereksinimler
 
 - Node.js 22 veya 24 LTS uyumlu çalışma ortamı
-- npm `11` veya üstü (Node.js 24 ile gelir; Node.js 22'de önce `npm install -g npm@11`). Bun (deneysel) alternatiftir. pnpm artık desteklenmez; eski pnpm kurulumları için bkz. [pnpm'den npm'e geçiş](#pnpmden-npme-geçiş).
+- npm `11` veya üstü (Node.js 24 ile gelir; Node.js 22'de önce `npm install -g npm@11`). Bun alternatiftir (kilit dosyası yok, sürümler her kurulumda çözülür). pnpm artık desteklenmez; eski pnpm kurulumları için bkz. [pnpm'den npm'e geçiş](#pnpmden-npme-geçiş).
 
 Kurumsal bilgisayarda global PATH kullanmak istemiyorsanız proje için hazırlanmış yerel Node başlatıcısını kullanabilirsiniz. Normal bir Node kurulumu olan ortamda aşağıdaki standart npm komutları yeterlidir. Bun kullanıyorsanız aynı betikler `node scripts/pm.mjs --pm bun run <betik>` biçiminde de çalışır.
 
@@ -182,8 +182,8 @@ npm run setup
 
 İlk ekran yalnız `127.0.0.1:5049` üzerinde açılır. Burada:
 
-- uygulamanın bulunduğu dizin ve çalışma ortamı (Node.js, npm ve sistemde varsa deneysel Bun seçeneği) gösterilir,
-- varsayılan olarak `npm ci` (deneysel Bun seçilirse `bun install`; Bun yolunda paket kurulumu ve migration CLI ile doğrulanmıştır; tarayıcı arayüzü, derleme ve yükseltme npm kadar sınanmamıştır, üretim için npm kullanın) **Paketleri Kur / Onar** ile etkileşimsiz çalıştırılır; production ortamında da sihirbaz/derleme araçları kurulur (sihirbaza geçiş bu adım bitmeden açılmaz),
+- uygulamanın bulunduğu dizin ve çalışma ortamı (Node.js, npm ve sistemde varsa Bun) gösterilir,
+- varsayılan olarak `npm ci` (Bun seçilirse `bun install`; `bun.lock` depoda tutulmaz, sürümler her kurulumda çözülür ve tekrarlanabilir değildir — üretim için npm önerilir. Bun yolu CLI, arayüz, derleme, yükseltme ve geliştirme sunucusu için uçtan uca doğrulanmıştır) **Paketleri Kur / Onar** ile etkileşimsiz çalıştırılır; production ortamında da sihirbaz/derleme araçları kurulur (sihirbaza geçiş bu adım bitmeden açılmaz),
 - gerçek paket yöneticisi çıktısı ve hata bilgisi ekranda izlenir,
 - 5049 portu doluysa süreç PID ile gösterilir ve durdurulması istenir.
 
@@ -516,7 +516,7 @@ Komutlar, veri doğrulama sorguları, oturum deposu kararı, geri dönüş plan�
 
 ## pnpm'den npm'e geçiş
 
-Proje artık yalnız npm (11+) ve deneysel Bun'u destekler; `pnpm-lock.yaml`, `pnpm-workspace.yaml` ve `packageManager` alanı kaldırıldı. Eskiden pnpm ile kurulmuş bir sistemde:
+Proje artık yalnız npm (11+) ve Bun'u destekler; `pnpm-lock.yaml`, `pnpm-workspace.yaml` ve `packageManager` alanı kaldırıldı. Eskiden pnpm ile kurulmuş bir sistemde:
 
 1. App/worker süreçlerini durdurun ve `server/data`, `server/.env`, `server/uploads` için doğrulanmış bir yedek alın (veriler pnpm'e bağlı değildir, değişmez).
 2. Yeni kodu yerleştirin ve kök dizinde `npm ci` çalıştırın. `npm ci` mevcut `node_modules` klasörünü (pnpm düzenini) silip `package-lock.json`'a göre yeniden kurar; bağımlılık ağacı pnpm ağacından farklı sürümler içerebilir.

@@ -48,7 +48,7 @@ export function hasLegacyPnpmTree(root, { exists = fs.existsSync } = {}) {
 // Öncelik: açık istek > QUIZMASTER_PM > betiği başlatan yönetici > kurulu yönetici (root verilirse) > varsayılan (npm).
 export function selectManager({ requested, env = process.env, root, exists } = {}) {
   const value = String(requested || env.QUIZMASTER_PM || detectInvokingManager(env) || detectInstalledManager(root, { exists }) || DEFAULT_MANAGER).toLowerCase();
-  if (value === 'pnpm') throw new Error('pnpm artık desteklenmiyor. npm 11 veya üstünü (ya da deneysel Bun) kullanın.');
+  if (value === 'pnpm') throw new Error('pnpm artık desteklenmiyor. npm 11 veya üstünü (ya da Bun) kullanın.');
   if (!MANAGERS.includes(value)) throw new Error(`Desteklenmeyen paket yöneticisi: ${value}. Geçerli: ${MANAGERS.join(', ')}.`);
   return value;
 }

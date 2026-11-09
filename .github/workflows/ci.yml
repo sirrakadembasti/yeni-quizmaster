@@ -144,3 +144,45 @@ jobs:
       # Kapı: kritik (critical) açık olmamalı. Yüksek açıklar bilinen durumdur, kapıyı kırmaz.
       - name: Güvenlik denetimi (kritik açık olmamalı)
         run: npm audit --omit=dev --audit-level=critical
+
+  # Bun yolu (kilit dosyasız): CLI kurulum + hoisted ağaçta bağımlılık algısı + yükseltme (cwd) regresyonları.
+  # Bu iki hata (algı ve yükseltme cwd'si) yalnız gerçek Bun ağacında görünüyordu.
+  bun-kurulum-testi:
+    name: Bun kurulum testi
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+
+      - name: Bağımlılıkları kur (bun install)
+        run: bun install
+
+      - name: Başlatıcı bağımlılık algısı (gerçek Bun ağacı)
+        run: node --input-type=module -e "import('./scripts/setup-bootstrap-lib.mjs').then(m=>{const r=m.checkDependencies(process.cwd());console.log(JSON.stringify(r));if(!r.ready){process.exit(1)}})"
+
+      - name: Bun ile arayüzsüz kurulum duman testi
+        env:
+          QUIZMASTER_PM: bun
+          QUIZMASTER_ADMIN_EMAIL: ci@okul.test
+          QUIZMASTER_ADMIN_PASSWORD: Ci-Test-Parola-2026x
+        run: bun run setup:cli --yes
+
+      - name: Kurulum çıktılarını doğrula
+        run: |
+          for f in server/.env server/data/installation.lock server/data/installation.state.json server/data/quiz.db; do
+            test -s "$f" || { echo "Eksik: $f"; exit 1; }
+          done
+
+      # Kurulu sistemde yükseltme: install + build + migrate + status adımları Bun ile (çalışma alanı cwd'si).
+      - name: Bun ile yükseltme (yedek, install, build, migrate, status)
+        env:
+          QUIZMASTER_PM: bun
+        run: node scripts/upgrade.mjs --project .
