@@ -45,7 +45,9 @@ afterEach(() => { cleanup(); client.clear(); localStorage.clear(); });
 
 function ContextStatus() {
   const context = useAcademicYear();
-  return <p role="status">{context?.pending ? 'Validating year' : `Selected year ${context?.year?.label}`}</p>;
+  // Arşiv sayfası zamanlamaya göre kendi role="status" öğelerini de üretir; bu testin öğesi rol yerine
+  // benzersiz kimlikle aranır (aksi hâlde "Found multiple elements with the role status" kararsızlığı oluşur).
+  return <p role="status" data-testid="context-status">{context?.pending ? 'Validating year' : `Selected year ${context?.year?.label}`}</p>;
 }
 function mount() {
   render(<QueryClientProvider client={client}><AcademicYearProvider><ContextStatus /><AcademicRouteBoundary><ArchivePage /></AcademicRouteBoundary></AcademicYearProvider></QueryClientProvider>);
@@ -56,7 +58,7 @@ it('keeps the archive route mounted when an older annual completion is already r
   await vi.waitFor(() => expect(mocks.jobs).toHaveBeenCalled());
   await act(async () => {});
   expect(mocks.historyLoads).toBe(1);
-  expect(screen.getByRole('status')).toHaveTextContent('Selected year 2026-2027');
+  await vi.waitFor(() => expect(screen.getByTestId('context-status')).toHaveTextContent('Selected year 2026-2027'));
   await userEvent.click(screen.getByRole('tab', { name: 'Sınıf Geçişi' }));
   expect(screen.getByRole('region', { name: 'Tamamlanan sınıf geçişi' })).toHaveTextContent('2025-2026');
 });
@@ -75,7 +77,7 @@ it('reloads the selected active year once when its annual job completes and keep
   await vi.waitFor(() => expect(mocks.historyLoads).toBeGreaterThanOrEqual(2));
   await act(async () => {});
   expect(mocks.historyLoads).toBe(2);
-  expect(screen.getByRole('status')).toHaveTextContent('Selected year 2026-2027');
+  await vi.waitFor(() => expect(screen.getByTestId('context-status')).toHaveTextContent('Selected year 2026-2027'));
   await userEvent.click(screen.getByRole('tab', { name: 'Sınıf Geçişi' }));
   expect(screen.getByRole('region', { name: 'Tamamlanan sınıf geçişi' })).toHaveTextContent('2025-2026');
 });
