@@ -18,7 +18,7 @@ const schema = z.object({
   status: z.enum(['draft','published','archived']).default('draft'), assignedClassIds: z.array(z.string().uuid()).default([]),
   questions: z.array(z.object({ id: z.string().min(1).max(100).optional(), text: z.string().trim().min(1),
     type: z.string().default('multiple-choice'), options: z.array(z.string()).default([]),
-    correctAnswer: z.string().nullable().optional(), config: z.record(z.any()).nullable().optional(),
+    correctAnswer: z.string().nullable().optional(), config: z.record(z.string(), z.any()).nullable().optional(),
     imageUrl: questionImageUrlSchema.nullable().optional(), order: z.number().int().default(0),
   })),
   aiDraftId: z.string().uuid().optional(),

@@ -27,16 +27,17 @@ Açık kalanlar: Bun kararı; prova betiklerinin çalıştırılması. (Prisma `
 
 Ücretsiz Actions kotası (özel depo, 18 $ / 18 $) tükendi; CI işleri başlamıyor ve kota yaklaşık 22 gün sonra (≈ 1 Aralık 2026) yenileniyor. Bu aralıkta birleştirilen değişiklikler **CI'sız, yerelde doğrulanmıştır** (`npm run test:setup`, `npm run test:upgrade`, `npm run type-check --workspace=server`, `npm run type-check --workspace=client`, `npm run test:build-startup`, `npm run test --workspace=server`, `npm run test --workspace=client -- --run`); birleştirme commit'leri `[skip ci]` taşır. İlk örnek: PR #27 (`admin-hybrid-setup-closure` provasının `/wizard/api/status` düzeltmesi; betik CI'da zaten koşmaz ve düzeltmenin kendisi ağ kaynaklı `ECONNRESET` nedeniyle uçtan uca sınanamadı). Yerel sonuçlar: backend 655/655; frontend 334/334 (`--testTimeout=30000` ile: bu makinede varsayılan 5 sn sınırında ağır render testleri yük altında takıldı, düşenler her koşuda değişti, mantık hatası yok); `test:setup` 69/70 (1 atlandı), `test:upgrade` 12/12, tip denetimleri temiz, `test:build-startup` geçti. Kota yenilenince `main` üzerinde CI bir kez koşturulmalı; provanın başarılı bir koşusu ağ düzelince alınmalıdır.
 
-### Güvenlik değerlendirmesi: kalan 5 yüksek açık (`npm audit --omit=dev`)
+### Güvenlik değerlendirmesi: kalan 3 yüksek açık (`npm audit --omit=dev`)
 
-Hepsinin tek çözümü **büyük sürüm yükseltmesidir** (`npm audit fix --force`); kritik açık yoktur ve CI kapısı kritik seviyede kırar.
+Zod bulgusu (GHSA-mrhx-c7xc-m3w5) **kapatıldı**: `zod` 4.6.7 ve `zod-validation-error` 5.0.0'a geçildi (16 Kasım 2026). Geriye yalnızca Prisma zinciri kalır; kritik açık yoktur ve CI kapısı kritik seviyede kırar.
 
 | Paket | Bildirim | Çözüm | Bu projedeki etki |
 |---|---|---|---|
-| `zod` ≥3 (ve `zod-validation-error`) | GHSA-mrhx-c7xc-m3w5: sınırsız diziyi doğrularken bellek tüketimi (CVSS 7.5) | zod 4.6.6+ / zod-validation-error 5 | Sunucu girdi doğrulamasında kullanılır. **Hafifletici:** `express.json()` varsayılan **100 KB** gövde sınırında (hiçbir yerde artırılmamış); bu boyutta bir dizi, bellek tükenmesi için yetersizdir. Bildirimin anlattığı kod yolu Zod 4 çekirdeğine (`$ZodArray`) aittir; bu projedeki `zod` v3 API'sinin etkilenme derecesi kesin ölçülmedi. |
 | `deepmerge-ts` → `@prisma/config` → `prisma` | GHSA-ggr8-5vv4-36mx: döngüsel nesne grafiğinde yığın taşması | prisma 7.x (büyük sürüm) | Yalnızca Prisma **CLI**'nın yapılandırma birleştirmesinde; kullanıcı girdisi buraya ulaşmaz, çalışan sunucuda yoktur. |
 
-Karar (8 Kasım 2026): bu iki büyük yükseltme (Zod 3→4: ~23 dosya, ~200 kullanım; Prisma 6→7: sürücü bağdaştırıcısı/üretici mimarisi değişikliği) **bu geçişin kapsamı dışında bırakıldı**; risk yukarıdaki hafifleticilerle kabul edildi. Zod 4 geçişi ayrı, planlı bir iş olarak önerilir (backend 655 testi güvenlik ağıdır). Gövde sınırı gevşetilirse bu değerlendirme yeniden yapılmalıdır.
+Karar: Prisma 6→7 (sürücü bağdaştırıcısı/üretici mimarisi değişikliği) bu geçişin kapsamı dışında bırakıldı; risk yukarıdaki hafifleticiyle kabul edildi.
+
+**Zod 4 geçişinde bilinmesi gereken davranış değişikliği:** Zod 4, `.partial()` ile isteğe bağlı yapılan alanlarda da `.default()` değerlerini uygular (Zod 3'te uygulamazdı). PATCH işleyicileri (`quiz.ts`, `survey.ts`) bu yüzden doğrulanmış veriyi `onlySentKeys` (`server/utils/patch-body.ts`) ile süzer; aksi hâlde gönderilmeyen alanlar (durum, zorluk, sınıf atamaları, tür) sessizce varsayılana sıfırlanırdı. Yeni bir `.partial()` + `.default()` birleşimi eklenirse aynı süzgeç kullanılmalıdır.
 
 ## 0. Verilen kararlar (8 Kasım 2026)
 

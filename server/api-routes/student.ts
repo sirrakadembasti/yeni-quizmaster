@@ -39,7 +39,7 @@ const answerSchema = z.object({
 });
 
 const submitSchema = z.object({
-  answers: z.record(z.string().min(1)).optional(),
+  answers: z.record(z.string(), z.string().min(1)).optional(),
 });
 
 // ==================== STUDENT ROUTES ====================

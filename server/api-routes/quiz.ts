@@ -8,6 +8,7 @@ import { getIO } from "../socket";
 import { logger } from "../utils/logger";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
+import { onlySentKeys } from "../utils/patch-body";
 import { canAssignClasses } from "../utils/class-authorization";
 import { shouldNotifyAdminAboutQuiz } from "../utils/notification-policy";
 import { hasInvalidQuestions } from "../utils/question-validation";
@@ -73,7 +74,7 @@ const questionSchema = z.object({
   type: z.string().default("multiple-choice"),
   options: z.array(z.string()).default([]),
   correctAnswer: z.string().optional().nullable(),
-  config: z.record(z.any()).optional().nullable(),
+  config: z.record(z.string(), z.any()).optional().nullable(),
   imageUrl: questionImageUrlSchema.optional().nullable(),
   order: z.number().int().default(0),
 });
@@ -183,6 +184,7 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
   try {
     const validation = quizSchema.partial().safeParse(req.body);
     if (!validation.success) return res.status(400).json({ message: fromZodError(validation.error).message });
+    const patch = onlySentKeys(validation.data, req.body);
 
     const existingQuiz = await storage.getQuiz(req.params.id);
     if (!existingQuiz || existingQuiz.contentType === "survey") return res.status(404).json({ message: "Sınav bulunamadı." });
@@ -190,7 +192,7 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
       return res.status(403).json({ message: "Bu icerigi duzenleme yetkiniz yok." });
     }
 
-    if (validation.data.contentType && validation.data.contentType !== existingQuiz.contentType) {
+    if (patch.contentType && patch.contentType !== existingQuiz.contentType) {
       const [examResults, surveySubmissions] = await Promise.all([
         storage.getResultsByQuiz(existingQuiz.id),
         storage.getSurveySubmissions(existingQuiz.id),
@@ -202,18 +204,18 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
       }
     }
 
-    const assignedClassIds = validation.data.assignedClassIds;
+    const assignedClassIds = patch.assignedClassIds;
     if (assignedClassIds && !await canAssignClasses(req.user!.role, req.user!.id, assignedClassIds)) {
       return res.status(403).json({ message: "Yalnizca yetkili oldugunuz siniflara atama yapabilirsiniz." });
     }
 
-    if ((validation.data.status ?? existingQuiz.status) === "published") {
+    if ((patch.status ?? existingQuiz.status) === "published") {
       const questions = await storage.getQuestionsByQuiz(req.params.id);
       if (questions.length === 0 || hasInvalidQuestions('exam', questions)) return res.status(400).json({ message: "Yayınlamak için geçerli sınav soruları gereklidir." });
     }
 
     const publicationFields: { publishedAt?: Date; audienceSize?: number } = {};
-    if (validation.data.status === "published" && existingQuiz.status !== "published") {
+    if (patch.status === "published" && existingQuiz.status !== "published") {
       const effectiveClassIds = assignedClassIds || ((existingQuiz as any).assignedClasses || []).map((item: any) => item.id);
       const audienceIds = new Set<string>();
       for (const classId of effectiveClassIds) {
@@ -225,7 +227,7 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
     }
 
     const quiz = await storage.updateQuiz(req.params.id, {
-      ...validation.data,
+      ...patch,
       ...publicationFields,
       assignedClassIds,
     });
