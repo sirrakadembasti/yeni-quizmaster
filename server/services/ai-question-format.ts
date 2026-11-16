@@ -37,7 +37,7 @@ const examQuestion = z.object({
 const surveyQuestion = z.object({
   text: z.string().trim().min(1), type: z.enum(['single-choice', 'multiple-choice', 'open-text', 'rating', 'likert']),
   options: z.array(z.string().trim().min(1)).default([]), correctAnswer: z.null().optional(),
-  config: z.record(z.any()).optional().nullable(),
+  config: z.record(z.string(), z.any()).optional().nullable(),
 });
 export interface GeneratedQuestion { text: string; type: string; options: string[]; correctAnswer?: string | number | null; correctAnswerIndex?: number; config?: Record<string, unknown> | null }
 

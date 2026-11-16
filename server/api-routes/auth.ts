@@ -114,7 +114,7 @@ router.post("/register", async (req: Request, res: Response) => {
   try {
     const validation = registerSchema.safeParse(req.body);
     if (!validation.success) {
-      return res.status(400).json({ message: validation.error.errors[0].message });
+      return res.status(400).json({ message: validation.error.issues[0].message });
     }
 
     const { name, password, email } = validation.data;
