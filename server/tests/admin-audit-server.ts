@@ -1,4 +1,5 @@
 import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
+import { createRuntimePrismaClient } from '../utils/sqlite-runtime';
 import { resolve, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
@@ -20,7 +21,7 @@ process.env.NODE_ENV='development';
 process.env.ALLOW_RUNTIME_DEPLOYMENT_CHANGES='true';
 for (const key of ['EMAIL_USER','EMAIL_PASS','EMAIL_FROM','GEMINI_API_KEY','OPENAI_API_KEY','APP_BASE_PATH','FORCE_SECURE_COOKIES']) delete process.env[key];
 execFileSync(process.execPath,[require.resolve('prisma/build/index.js'),'migrate','deploy','--schema',join(repo,'server/prisma/schema.prisma')],{env:process.env,stdio:'pipe'});
-const p=new PrismaClient();
+const p=createRuntimePrismaClient();
 const password=await bcrypt.hash('AuditOnly2026!',10);
 const admin=await p.user.create({data:{id:'audit-admin',name:'Audit Admin',email:'audit-admin@example.test',password,role:'admin'}});
 const teacher=await p.user.create({data:{id:'audit-teacher',name:'Audit Teacher',email:'audit-teacher@example.test',password,role:'teacher'}});

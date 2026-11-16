@@ -6,6 +6,8 @@ import net from "node:net";
 import path from "node:path";
 
 export const SUPPORTED_NODE_MAJORS = Object.freeze([22, 24]);
+// Prisma 7 motoru: node ^22.18.0 || ^24.11.0 (her ana sürüm için en düşük alt sürüm).
+export const MIN_NODE_MINOR = Object.freeze({ 22: 18, 24: 11 });
 export const CLEAN_INSTALL_CONFIRMATION = "QUIZMASTER VERİLERİNİ SİL";
 
 function isInside(parent, target) {
@@ -122,12 +124,12 @@ export const MIN_NPM_MAJOR = 11;
 
 export function validateRuntime(nodeVersion, npmVersion = null, bunVersion = null) {
   const normalizedNode = String(nodeVersion || "").replace(/^v/i, "");
-  const nodeMajor = Number(normalizedNode.split(".")[0]);
+  const [nodeMajor, nodeMinor] = normalizedNode.split(".").map(Number);
   const normalizedBun = bunVersion ? String(bunVersion).trim() : null;
   const normalizedNpm = npmVersion ? String(npmVersion).trim() : null;
   return {
     nodeVersion: normalizedNode || null,
-    nodeSupported: SUPPORTED_NODE_MAJORS.includes(nodeMajor),
+    nodeSupported: SUPPORTED_NODE_MAJORS.includes(nodeMajor) && nodeMinor >= MIN_NODE_MINOR[nodeMajor],
     supportedNodeMajors: [...SUPPORTED_NODE_MAJORS],
     bunVersion: normalizedBun || null,
     bunSupported: Boolean(normalizedBun),

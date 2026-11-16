@@ -1,4 +1,5 @@
 import express from 'express';
+import { createRuntimePrismaClient } from '../../utils/sqlite-runtime';
 import session from 'express-session';
 import request from 'supertest';
 import { afterAll, beforeAll, expect, it, vi } from 'vitest';
@@ -23,7 +24,7 @@ beforeAll(async()=>{
   const copy=path.join(path.dirname(template),'history-'+randomUUID()+'.db');
   databasePath=copy;
   await copyFile(template,copy);
-  db=new PrismaClient({datasources:{db:{url:'file:'+copy.split('\\').join('/')}}});
+  db=createRuntimePrismaClient({ databaseUrl: 'file:'+copy.split('\\').join('/') });
 });
 afterAll(async()=>{await db.$disconnect();for(const root of maintenanceRoots){if(path.dirname(root)!==tmpdir()||!path.basename(root).startsWith('quizmaster-history-restore-'))throw new Error('Unsafe fixture cleanup');await rm(root,{recursive:true,force:true});}});
 it('captures real contentType values and serves separated, frozen exam/survey history',async()=>{
@@ -84,7 +85,7 @@ it('captures real contentType values and serves separated, frozen exam/survey hi
   await writeFile(path.join(source,'server/.env'),`DATABASE_URL=file:../data/quiz.db\nPORT=64239\nHOST=127.0.0.1\nARCHIVE_BACKUP_ROOT=${sourceArchives.replaceAll('\\','/')}\nSESSION_SECRET=synthetic-restoration-only\n`);
   await db.$disconnect();await copyFile(databasePath,path.join(source,'server/data/quiz.db'));
   const backup=await createApplicationBackup(source,{name:'application-schema'});await restoreApplicationBackup(backup.backupRoot,target);
-  const restored=new PrismaClient({datasources:{db:{url:'file:'+path.join(target,'server/data/quiz.db').replaceAll('\\','/')}}});
+  const restored=createRuntimePrismaClient({ databaseUrl: 'file:'+path.join(target,'server/data/quiz.db').replaceAll('\\','/') });
   try{
     expect(await restored.archiveSnapshot.findUniqueOrThrow({where:{id:snapshot.id}})).toEqual(frozen);
     await expect(restored.archiveSnapshot.update({where:{id:snapshot.id},data:{artifactPath:'changed'}})).rejects.toThrow();

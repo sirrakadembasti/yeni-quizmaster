@@ -203,7 +203,7 @@ it('rolls back a deferred constraint commit failure before admitting later mutat
   } finally { await db.$disconnect(); }
 });
 
-it('keeps a queued start pending despite upstream maxWait and safely admits it after settlement', async () => {
+it('rejects a queued start with P2028 at its maxWait without running it, and leaves the connection usable', async () => {
   const { file } = fixture(); await existingDatabase(file);
   const db = createRuntimePrismaClient({ databaseUrl: 'file:' + file.replaceAll('\\', '/') });
   let release!: () => void, entered!: () => void;
@@ -227,17 +227,40 @@ it('keeps a queued start pending despite upstream maxWait and safely admits it a
       secondCallbackRan = true;
       return tx.$executeRawUnsafe('UPDATE runtime_probe SET createdAt=3');
     }, { maxWait: 30, timeout: 1000 }).finally(() => { secondSettled = true; });
-    await new Promise(resolve => setTimeout(resolve, 100));
+    // Prisma 7 istemcisi maxWait'i kendisi uygular: sıradaki başlangıç düşer, callback hiç çalışmaz.
+    await expect(second).rejects.toMatchObject({ code: 'P2028' });
     expect(secondCallbackRan).toBe(false);
-    expect(secondSettled).toBe(false);
+    expect(secondSettled).toBe(true);
     release(); await first;
-    await within(second);
-    expect(secondCallbackRan).toBe(true);
     await within(db.$executeRawUnsafe('UPDATE runtime_probe SET createdAt=4'));
     await within(db.$transaction(tx => tx.$executeRawUnsafe('UPDATE runtime_probe SET createdAt=5')));
     expect(await within(db.$queryRawUnsafe('SELECT CAST(createdAt AS TEXT) AS value FROM runtime_probe'))).toEqual([{ value: '5' }]);
   } finally {
     release(); await first?.catch(() => undefined); await second?.catch(() => undefined); await db.$disconnect();
+  }
+});
+
+it('queues a transaction beyond the stock 2s maxWait by default', async () => {
+  const { file } = fixture(); await existingDatabase(file);
+  const db = createRuntimePrismaClient({ databaseUrl: 'file:' + file.replaceAll('\\', '/') });
+  let release!: () => void, entered!: () => void;
+  const pause = new Promise<void>(resolve => { release = resolve; });
+  const changed = new Promise<void>(resolve => { entered = resolve; });
+  let first: Promise<unknown> | undefined;
+  try {
+    await db.$executeRawUnsafe('INSERT INTO runtime_probe VALUES(1,1)');
+    first = db.$transaction(async tx => {
+      await tx.$executeRawUnsafe('UPDATE runtime_probe SET createdAt=2');
+      entered(); await pause;
+    }, { timeout: 10000 });
+    await changed;
+    const second = db.$transaction(tx => tx.$executeRawUnsafe('UPDATE runtime_probe SET createdAt=3'));
+    await new Promise(resolve => setTimeout(resolve, 2300));
+    release(); await first;
+    await second;
+    expect(await db.$queryRawUnsafe('SELECT CAST(createdAt AS TEXT) AS value FROM runtime_probe')).toEqual([{ value: '3' }]);
+  } finally {
+    release(); await first?.catch(() => undefined); await db.$disconnect();
   }
 });
 

@@ -83,17 +83,6 @@ test('canonical npm production start boots with native Sharp and serves CSRF usi
   });
   assert.ok(fs.existsSync(output), 'Actual build must honor the isolated outfile');
   assert.deepEqual(fingerprint(), before, 'Regression must not overwrite the normal production bundle');
-  // Relocating the bundle breaks Prisma's generated relative engine lookup.
-  // Provide the real installed native engine inside the fixture explicitly;
-  // this is a build/start integration regression, not a fresh-install proof.
-  const generatedClient = createRequire(requireServer.resolve('@prisma/client'));
-  const generatedDirectory = path.dirname(generatedClient.resolve('.prisma/client/default'));
-  const engineName = fs.readdirSync(generatedDirectory).find(name => process.platform === 'win32'
-    ? name === 'query_engine-windows.dll.node' : /^libquery_engine.*\.node$/.test(name));
-  assert.ok(engineName, 'Real generated Prisma native engine must exist');
-  const fixtureEngine = path.join(root, 'dist', engineName);
-  fs.copyFileSync(path.join(generatedDirectory, engineName), fixtureEngine);
-
   // Exercise the installed native addon too; no replacement or mock of Sharp.
   execFileSync(process.execPath, ['-e', "require('sharp')({create:{width:2,height:2,channels:3,background:'#123456'}}).png().toBuffer().then(buffer=>{if(buffer.length<8||buffer.subarray(1,4).toString()!=='PNG')process.exitCode=1}).catch(()=>{process.exitCode=1})"], {
     cwd: path.join(root, 'server'), env, shell: false, windowsHide: true, timeout: 45000, stdio: 'pipe',
@@ -111,7 +100,6 @@ test('canonical npm production start boots with native Sharp and serves CSRF usi
   assert.ok(fs.existsSync(database), 'Migration yalıtılmış veritabanını oluşturmalı');
   const startupEnv = { ...env, NODE_ENV: 'production', HOST: '127.0.0.1', PORT: String(port),
     SESSION_SECRET: secret, DATABASE_URL: `file:${database.replaceAll('\\', '/')}`,
-    PRISMA_QUERY_ENGINE_LIBRARY: fixtureEngine,
     FRONTEND_URL: `http://127.0.0.1:${port}`, ALLOWED_ORIGINS: `http://127.0.0.1:${port}` };
   assert.equal(startupEnv.NODE_PATH, undefined);
   child = spawn(npm.command, [...npm.args, 'run', 'start', '--workspace=server'], {

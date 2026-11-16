@@ -97,7 +97,7 @@ Aynı bilgiyi birden fazla kılavuza kopyalamak yerine ana belgeye bağlantı ve
 |---|---|
 | Frontend | React, TypeScript, Vite, TanStack Query, Wouter, Tailwind CSS, shadcn/ui |
 | Backend | Node.js, Express, TypeScript, Socket.IO, Pino |
-| Veri | Prisma 6.19.3, better-sqlite3 12.8.0 / SQLite 3.51.3, WAL |
+| Veri | Prisma 7.10.1, better-sqlite3 12.8.0 / SQLite 3.51.3, WAL |
 | Kimlik ve güvenlik | `express-session`, SQLite oturum deposu, bcrypt, CSRF, Zod |
 | E-posta | Nodemailer, Gmail SMTP, veritabanı Outbox kuyruğu |
 | Test | Vitest, Supertest, Playwright |
@@ -133,7 +133,7 @@ Quiz-Master/
 
 ## Gereksinimler
 
-- Node.js 22 veya 24 LTS uyumlu çalışma ortamı
+- Node.js 22.18+ veya 24.11+ LTS uyumlu çalışma ortamı (Prisma 7 gereksinimi)
 - npm `11` veya üstü (Node.js 24 ile gelir; Node.js 22'de önce `npm install -g npm@11`). Bun alternatiftir (kilit dosyası yok, sürümler her kurulumda çözülür). pnpm artık desteklenmez; eski pnpm kurulumları için bkz. [pnpm'den npm'e geçiş](#pnpmden-npme-geçiş).
 
 Kurumsal bilgisayarda global PATH kullanmak istemiyorsanız proje için hazırlanmış yerel Node başlatıcısını kullanabilirsiniz. Normal bir Node kurulumu olan ortamda aşağıdaki standart npm komutları yeterlidir. Bun kullanıyorsanız aynı betikler `node scripts/pm.mjs --pm bun run <betik>` biçiminde de çalışır.

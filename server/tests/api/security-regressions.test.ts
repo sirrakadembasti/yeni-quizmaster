@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import { createRuntimePrismaClient } from '../../utils/sqlite-runtime';
 import { PrismaClient } from '@prisma/client';
 import express from 'express';
 import session from 'express-session';
@@ -12,7 +13,7 @@ import classRouter from '../../api-routes/class';
 import userRouter from '../../api-routes/user';
 import announcementRouter from '../../api-routes/announcement';
 vi.mock('../../socket',()=>({getIO:()=>({to:()=>({emit:()=>undefined})}),disconnectUserSockets:()=>undefined}));
-const db = new PrismaClient();
+const db = createRuntimePrismaClient();
 let teacher: any, parent: any, student: any, other: any, cls: any, foreign: any, quiz: any, questions: any[], result: any;
 function app(user: any) {
  const app = express(); app.use(express.json());

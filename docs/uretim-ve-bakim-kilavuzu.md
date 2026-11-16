@@ -9,7 +9,7 @@
 
 ## 2. Veritabanı ve Sürücü Yapısı
 
-Uygulama Prisma 6.19.3 ve `better-sqlite3` 12.8.0 (SQLite 3.51.3) kullanır; uygulama, oturum, arşiv ve yedek bağlantıları aynı sürücüdedir. WAL ve `synchronous=FULL` dayanıklılığı korunur. Güncellemeden önce bütün uygulama ve işçi (worker) süreçlerini durdurun, doğrulanmış yedek alın ve ayrı kurulumda yükseltmeyi prova edin.
+Uygulama Prisma 7.10.1 ve `better-sqlite3` 12.8.0 (SQLite 3.51.3) kullanır; uygulama, oturum, arşiv ve yedek bağlantıları aynı sürücüdedir. WAL ve `synchronous=FULL` dayanıklılığı korunur. Güncellemeden önce bütün uygulama ve işçi (worker) süreçlerini durdurun, doğrulanmış yedek alın ve ayrı kurulumda yükseltmeyi prova edin.
 
 ## 3. Tam Yedekleme (`backup`) ve Geri Yükleme (`restore`)
 

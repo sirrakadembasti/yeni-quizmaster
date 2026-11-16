@@ -37,6 +37,11 @@ test("yalnız Node.js 22/24, npm 11+ ve Bun kabul edilir; pnpm artık yok", () =
   assert.equal(validateRuntime("v22.23.0").nodeSupported, true);
   assert.equal(validateRuntime("24.21.0").nodeSupported, true);
   assert.equal(validateRuntime("20.20.0").nodeSupported, false);
+  // Prisma 7: node ^22.18 || ^24.11.
+  assert.equal(validateRuntime("22.18.0").nodeSupported, true);
+  assert.equal(validateRuntime("22.17.9").nodeSupported, false);
+  assert.equal(validateRuntime("24.11.0").nodeSupported, true);
+  assert.equal(validateRuntime("24.10.0").nodeSupported, false);
   // npm yalnız 11 ve üstünde desteklenir (Node 22 ile gelen npm 10 desteklenmez)
   assert.equal(validateRuntime("22.23.0", "11.11.1").npmSupported, true);
   assert.equal(validateRuntime("22.23.0", "10.9.2").npmSupported, false);

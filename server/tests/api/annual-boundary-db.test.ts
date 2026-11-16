@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+import { createRuntimePrismaClient } from '../../utils/sqlite-runtime';
 import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 import { copyFile } from 'node:fs/promises';
@@ -16,7 +17,7 @@ let db: PrismaClient, actorId: string, ids: Record<string, string>, jobId: strin
 beforeEach(async () => {
   const file = path.join(path.dirname(template), randomUUID() + '.db');
   await copyFile(template, file);
-  db = new PrismaClient({ datasources: { db: { url: 'file:' + file.split('\\').join('/') } } });
+  db = createRuntimePrismaClient({ databaseUrl: 'file:' + file.split('\\').join('/') });
   const user = await db.user.create({ data: { name: 'Frozen teacher', email: randomUUID() + '@example.test', password: 'synthetic', role: 'teacher' } }); actorId = user.id;
   const cls = await db.class.create({ data: { name: 'Frozen class', teachers: { connect: { id: user.id } } } });
   const student = await db.user.create({ data: { name: 'Frozen student', email: randomUUID() + '@example.test', password: 'synthetic', classId: cls.id, studentNo: 1 } });

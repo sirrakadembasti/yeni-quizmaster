@@ -1,9 +1,10 @@
 import { afterAll, expect, it } from 'vitest';
+import { createRuntimePrismaClient } from '../../utils/sqlite-runtime';
 import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 import { storage, closeStorage } from '../../storage';
 
-const db = new PrismaClient();
+const db = createRuntimePrismaClient();
 const account = (name: string, data: any = {}) => storage.createUser({name,email:`${randomUUID()}@example.test`,password:'isolated-capacity-fixture',role:'student',...data});
 const classroom = (capacity: number | null) => storage.createClass({name:`Capacity ${randomUUID()}`,maxStudents:capacity});
 afterAll(async () => {await db.$disconnect(); await closeStorage();});

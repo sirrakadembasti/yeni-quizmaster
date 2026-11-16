@@ -1,10 +1,11 @@
 import { afterAll, expect, it, vi } from 'vitest';
+import { createRuntimePrismaClient } from '../../utils/sqlite-runtime';
 import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 import { getOrCreateActiveYear } from '../../services/academic-year';
 import { captureArchive } from '../../services/archive-capture';
 
-const db = new PrismaClient();
+const db = createRuntimePrismaClient();
 vi.setConfig({ testTimeout: 120000 });
 afterAll(async () => { await db.$disconnect(); });
 async function fixture() {

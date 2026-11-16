@@ -1,4 +1,5 @@
 import express from 'express';
+import { createRuntimePrismaClient } from '../../utils/sqlite-runtime';
 import request from 'supertest';
 import { afterAll, beforeAll, expect, it, vi } from 'vitest';
 import { PrismaClient } from '@prisma/client';
@@ -19,7 +20,7 @@ beforeAll(async () => {
   if (!path.basename(path.dirname(template)).startsWith('quizmaster-test-')) throw new Error('Disposable readonly database required');
   const file = path.join(path.dirname(template), 'readonly-' + randomUUID() + '.db');
   await copyFile(template, file);
-  db = new PrismaClient({ datasources: { db: { url: 'file:' + file.split('\\').join('/') } } });
+  db = createRuntimePrismaClient({ databaseUrl: 'file:' + file.split('\\').join('/') });
   actorId = randomUUID(); quizId = randomUUID(); questionId = randomUUID(); resultId = randomUUID();
   await db.user.create({ data: { id: actorId, name: 'Archive guard actor', email: actorId+'@example.test', password: 'isolated', role: 'admin' } });
   await db.quiz.create({ data: { id: quizId, title: 'Frozen content', createdBy: actorId, status: 'published' } });

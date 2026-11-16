@@ -1,4 +1,5 @@
 import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
+import { createRuntimePrismaClient } from '../utils/sqlite-runtime';
 import { resolve, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
@@ -23,7 +24,7 @@ for (const key of ['EMAIL_USER', 'EMAIL_PASS', 'EMAIL_FROM', 'GEMINI_API_KEY', '
 execFileSync(process.execPath, [require.resolve('prisma/build/index.js'), 'migrate', 'deploy',
   '--schema', join(repo, 'server/prisma/schema.prisma')], { env: process.env, stdio: 'pipe' });
 console.log('TEACHER FIXTURE: migrations deployed');
-const p = new PrismaClient();
+const p = createRuntimePrismaClient();
 const password = await bcrypt.hash('TeacherAuditOnly2026!', 10);
 await p.user.createMany({ data: [
   { id: 'teacher-audit-admin', name: 'Teacher Audit Admin', email: 'teacher-audit-admin@example.test', password, role: 'admin' },

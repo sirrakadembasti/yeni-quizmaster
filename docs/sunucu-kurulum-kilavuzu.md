@@ -1,6 +1,6 @@
 # QuizMaster Sunucu Kurulum Kılavuzu
 
-15 Ekim kapasite sürümü Prisma 6.19.3 ve native better-sqlite3 12.8.0 / SQLite 3.51.3 gerektirir. Mevcut kurulumda önce uygulama/worker süreçlerini durdurup doğrulanmış yedek alın; frozen install, Prisma generate ve `20261014090000_notification_revision` dahil production migration'larını ayrı kurulumda prova edin. [Bakım adımları](uretim-ve-bakim-kilavuzu.md) ve [80 öğrencilik ölçüm/saha sınırları](performans-ve-kapasite-raporu.md). Bu geliştirme sırasında canlı kurulum yükseltilmedi.
+15 Ekim kapasite sürümü Prisma 7.10.1 ve native better-sqlite3 12.8.0 / SQLite 3.51.3 gerektirir. Mevcut kurulumda önce uygulama/worker süreçlerini durdurup doğrulanmış yedek alın; frozen install, Prisma generate ve `20261014090000_notification_revision` dahil production migration'larını ayrı kurulumda prova edin. [Bakım adımları](uretim-ve-bakim-kilavuzu.md) ve [80 öğrencilik ölçüm/saha sınırları](performans-ve-kapasite-raporu.md). Bu geliştirme sırasında canlı kurulum yükseltilmedi.
 
 Bu kılavuz QuizMaster'ın başka bir kurumun domain altyapısında subdomain veya alt yol altında üretime alınmasını kapsar. Önerilen model ayrı bir subdomain ve HTTPS reverse proxy'dir.
 

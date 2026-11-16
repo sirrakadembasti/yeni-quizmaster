@@ -9,7 +9,6 @@ datasource db {
   // Mevcut çalışma sağlayıcısı SQLite'tır. PostgreSQL'e geçerken yalnız bu alanı
   // değiştirmek yeterli değildir; docs/postgresql-gecis-rehberi.md dosyasını izleyin.
   provider = "sqlite"
-  url      = env("DATABASE_URL")
 }
 
 model User {

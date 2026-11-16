@@ -1,4 +1,5 @@
 import { beforeAll, afterAll, expect, it } from 'vitest';
+import { createRuntimePrismaClient } from '../../utils/sqlite-runtime';
 import express from 'express';
 import request from 'supertest';
 import { PrismaClient } from '@prisma/client';
@@ -6,7 +7,7 @@ import { randomUUID } from 'node:crypto';
 import adminRouter from '../../api-routes/admin';
 import { storage, closeStorage } from '../../storage';
 
-const db = new PrismaClient();
+const db = createRuntimePrismaClient();
 let actor: any, student: any;
 const app = express();
 app.use(express.json());

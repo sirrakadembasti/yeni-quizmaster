@@ -27,15 +27,17 @@ Açık kalanlar: Bun kararı; prova betiklerinin çalıştırılması. (Prisma `
 
 Ücretsiz Actions kotası (özel depo, 18 $ / 18 $) tükendi; CI işleri başlamıyor ve kota yaklaşık 22 gün sonra (≈ 1 Aralık 2026) yenileniyor. Bu aralıkta birleştirilen değişiklikler **CI'sız, yerelde doğrulanmıştır** (`npm run test:setup`, `npm run test:upgrade`, `npm run type-check --workspace=server`, `npm run type-check --workspace=client`, `npm run test:build-startup`, `npm run test --workspace=server`, `npm run test --workspace=client -- --run`); birleştirme commit'leri `[skip ci]` taşır. İlk örnek: PR #27 (`admin-hybrid-setup-closure` provasının `/wizard/api/status` düzeltmesi; betik CI'da zaten koşmaz ve düzeltmenin kendisi ağ kaynaklı `ECONNRESET` nedeniyle uçtan uca sınanamadı). Yerel sonuçlar: backend 655/655; frontend 334/334 (`--testTimeout=30000` ile: bu makinede varsayılan 5 sn sınırında ağır render testleri yük altında takıldı, düşenler her koşuda değişti, mantık hatası yok); `test:setup` 69/70 (1 atlandı), `test:upgrade` 12/12, tip denetimleri temiz, `test:build-startup` geçti. Kota yenilenince `main` üzerinde CI bir kez koşturulmalı; provanın başarılı bir koşusu ağ düzelince alınmalıdır.
 
-### Güvenlik değerlendirmesi: kalan 3 yüksek açık (`npm audit --omit=dev`)
+### Güvenlik değerlendirmesi: açık kalan yüksek bulgu yok
 
-Zod bulgusu (GHSA-mrhx-c7xc-m3w5) **kapatıldı**: `zod` 4.6.7 ve `zod-validation-error` 5.0.0'a geçildi (16 Kasım 2026). Geriye yalnızca Prisma zinciri kalır; kritik açık yoktur ve CI kapısı kritik seviyede kırar.
+Zod bulgusu `zod` 4.6.7 / `zod-validation-error` 5.0.0 ile, Prisma zincirindeki bulgu (GHSA-ggr8-5vv4-36mx, `deepmerge-ts` → `@prisma/config` → `prisma`) Prisma 7.10.1 ile kapatıldı (16 Kasım 2026). `npm audit --omit=dev`: 0 açık. CI kapısı kritik seviyede kırmaya devam eder.
 
-| Paket | Bildirim | Çözüm | Bu projedeki etki |
-|---|---|---|---|
-| `deepmerge-ts` → `@prisma/config` → `prisma` | GHSA-ggr8-5vv4-36mx: döngüsel nesne grafiğinde yığın taşması | prisma 7.x (büyük sürüm) | Yalnızca Prisma **CLI**'nın yapılandırma birleştirmesinde; kullanıcı girdisi buraya ulaşmaz, çalışan sunucuda yoktur. |
-
-Karar: Prisma 6→7 (sürücü bağdaştırıcısı/üretici mimarisi değişikliği) bu geçişin kapsamı dışında bırakıldı; risk yukarıdaki hafifleticiyle kabul edildi.
+**Prisma 7 geçişinde bilinmesi gerekenler:**
+- `schema.prisma` içindeki `datasource.url` kalktı; bağlantı adresi `server/prisma.config.ts` içindedir. İstemci çalışma zamanında zaten `utils/sqlite-runtime.ts` içindeki bağdaştırıcıyla bağlanır.
+- **Göreli SQLite yolu:** Prisma 6, `file:../data/quiz.db` gibi yolları `schema.prisma` dizinine (`server/prisma`) göreli çözerdi; Prisma 7 yapılandırma dosyasının dizinine (`server`) göreli çözer. Düzeltilmeseydi `db:deploy`, mevcut kurulumlarda yanlış bir dosyayı (`<kök>/data/quiz.db`) migrate ederdi. `prisma.config.ts` yolu eski kurala göre mutlak hâle getirir; çalışma zamanı çözümleyicisi (`utils/sqlite-runtime-config.ts`) ile aynı kuraldır.
+- `DATABASE_URL` yoksa `generate` (temiz kurulumdaki postinstall) çalışır; `migrate`/`db` komutları açık bir hatayla durur (sessizce varsayılan dosya yaratmaz).
+- İstemci artık yerel sorgu motoru indirmez (WASM sorgu derleyicisi); `@prisma/engines` postinstall indirmesi ve `PRISMA_QUERY_ENGINE_LIBRARY` gerekmez.
+- İstemci `$transaction` için `maxWait` değerini kendisi uygular (varsayılan 2 sn, aşılırsa P2028). Tek yazıcılı SQLite bağlantısında uzun arşiv işlemleri bunu aşabileceğinden varsayılan `maxWait` 130 sn'ye çıkarıldı (önceki "sırada bekle" davranışı); çağrı başına verilen `maxWait` geçerlidir ve süresi dolan başlangıç güvenle düşer (callback çalışmaz, bağlantı kullanılabilir kalır).
+- Eski provalama betiklerinden bazıları (`academic-archive-runner.mjs`, `production-performance-*.mjs`, `academic-fixture-email.integration.mjs`) hâlâ `new PrismaClient({ datasources })` kullanır; bu çağrı Prisma 7'de geçersizdir. CI'da koşmazlar; bu betikler yeniden kullanılacaksa `createRuntimePrismaClient` ile güncellenmelidir.
 
 **Zod 4 geçişinde bilinmesi gereken davranış değişikliği:** Zod 4, `.partial()` ile isteğe bağlı yapılan alanlarda da `.default()` değerlerini uygular (Zod 3'te uygulamazdı). PATCH işleyicileri (`quiz.ts`, `survey.ts`) bu yüzden doğrulanmış veriyi `onlySentKeys` (`server/utils/patch-body.ts`) ile süzer; aksi hâlde gönderilmeyen alanlar (durum, zorluk, sınıf atamaları, tür) sessizce varsayılana sıfırlanırdı. Yeni bir `.partial()` + `.default()` birleşimi eklenirse aynı süzgeç kullanılmalıdır.
 

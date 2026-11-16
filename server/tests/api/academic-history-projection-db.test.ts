@@ -1,4 +1,5 @@
 import express from 'express';
+import { createRuntimePrismaClient } from '../../utils/sqlite-runtime';
 import request from 'supertest';
 import { afterEach,beforeEach,expect,it,vi } from 'vitest';
 import { PrismaClient } from '@prisma/client';
@@ -15,7 +16,7 @@ import { HISTORY_PROJECTION_VERSION,historyProjectionReady,warmHistoryProjection
 const template=process.env.DATABASE_URL!.slice(5);
 if(!path.basename(path.dirname(template)).startsWith('quizmaster-test-'))throw new Error('Disposable history projection database required');
 let db:PrismaClient;
-beforeEach(async()=>{const filename=path.join(path.dirname(template),'projection-'+randomUUID()+'.db');await copyFile(template,filename);db=new PrismaClient({datasources:{db:{url:'file:'+filename.split('\\').join('/')}}});});
+beforeEach(async()=>{const filename=path.join(path.dirname(template),'projection-'+randomUUID()+'.db');await copyFile(template,filename);db=createRuntimePrismaClient({ databaseUrl: 'file:'+filename.split('\\').join('/') });});
 afterEach(async()=>{expect(await db.$queryRawUnsafe('SELECT * FROM ArchiveFinalizationPermit')).toEqual([]);await db.$disconnect();});
 async function fixture(){
   const teacher=await db.user.create({data:{name:'Frozen Teacher',email:randomUUID()+'@example.test',password:'synthetic-not-exported',role:'teacher'}});
