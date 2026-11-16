@@ -1,4 +1,6 @@
 import { it, expect, beforeEach, afterEach } from 'vitest';
+import Database from 'better-sqlite3';
+import { createRuntimePrismaClient } from '../../utils/sqlite-runtime';
 import { PrismaClient } from '@prisma/client';
 import { mkdtemp, rm, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -10,7 +12,7 @@ import { createManagedAIStore } from '../../services/ai-management-instance';
 import { writeFile } from 'node:fs/promises';
 let db: PrismaClient, store: AIProfileStore, dir: string;
 const input = { name: 'Test', provider: 'openai', model: 'test', baseURL: 'https://api.example.com/v1', apiKey: 'fixture-secret' };
-beforeEach(async () => { dir = await mkdtemp(join(tmpdir(), 'qm-ai-')); db = new PrismaClient({ datasources: { db: { url: 'file:' + join(dir, 'test.db').replaceAll('\\', '/') } } }); const sql = await readFile(new URL('../../prisma/migrations/20261015000100_ai_management/migration.sql', import.meta.url), 'utf8'); for (const statement of sql.split(';').filter(s => s.trim()))
+beforeEach(async () => { dir = await mkdtemp(join(tmpdir(), 'qm-ai-')); { const raw = new Database(join(dir, 'test.db')); raw.exec('CREATE TABLE _bootstrap(x); DROP TABLE _bootstrap'); raw.close(); } db = createRuntimePrismaClient({ databaseUrl: 'file:' + join(dir, 'test.db').replaceAll('\\', '/') }); const sql = await readFile(new URL('../../prisma/migrations/20261015000100_ai_management/migration.sql', import.meta.url), 'utf8'); for (const statement of sql.split(';').filter(s => s.trim()))
     await db.$executeRawUnsafe(statement); const key = randomBytes(32); store = new AIProfileStore(db, () => key); });
 afterEach(async () => { await db?.$disconnect(); await rm(dir, { recursive: true, force: true }); });
 it('requires current successful quick test and supports multiple enabled profiles', async () => { const a = await store.save(input), b = await store.save({ ...input, name: 'B' }); await expect(store.setEnabled(a.id, a.revision, true)).rejects.toMatchObject({ code: 'AI_TEST_REQUIRED' }); for (const p of [a, b]) {
@@ -23,7 +25,7 @@ it('never creates a replacement key for existing ciphertext', async () => { cons
 
 it('rejects malformed save input with safe errors and skips keys for disabled profiles',async()=>{for(const bad of [null,{}, {name:12}, {...input,apiKey:123}])await expect(store.save(bad as any)).rejects.toMatchObject({status:400,code:'AI_INVALID_PROFILE'});const p=await store.save(input);const inaccessible=new AIProfileStore(db,()=>{throw new Error('missing key');});expect(await inaccessible.getEnabled(p.id)).toBeNull();});
 
-it('fences stale edits from a second Prisma client sharing the same database',async()=>{const p=await store.save(input);const peer=new PrismaClient({datasources:{db:{url:'file:'+join(dir,'test.db').replaceAll('\\','/')}}});try{const peerStore=new AIProfileStore(peer,()=>randomBytes(32));const old=(await peerStore.list()).profiles[0];await store.save({...input,name:'New',revision:p.revision},p.id);await expect(peerStore.save({...input,name:'Stale',revision:old.revision},p.id)).rejects.toMatchObject({status:409});expect((await store.list()).profiles[0].name).toBe('New');}finally{await peer.$disconnect();}});
+it('fences stale edits from a second Prisma client sharing the same database',async()=>{const p=await store.save(input);const peer=createRuntimePrismaClient({ databaseUrl: 'file:'+join(dir,'test.db').replaceAll('\\','/') });try{const peerStore=new AIProfileStore(peer,()=>randomBytes(32));const old=(await peerStore.list()).profiles[0];await store.save({...input,name:'New',revision:p.revision},p.id);await expect(peerStore.save({...input,name:'Stale',revision:old.revision},p.id)).rejects.toMatchObject({status:409});expect((await store.list()).profiles[0].name).toBe('New');}finally{await peer.$disconnect();}});
 
 it('rejects a changed encryption key before creating mixed-key ciphertext', async () => {
   const keyPath = join(dir, 'managed.key');

@@ -2,13 +2,18 @@ import fs from 'node:fs';
 import path from 'node:path';
 import Database from 'better-sqlite3';
 import { PrismaClient, type Prisma } from '@prisma/client';
-import type { PrismaClientOptions as RuntimePrismaClientOptions } from '@prisma/client/runtime/library';
-import { PrismaBetterSQLite3 } from '@prisma/adapter-better-sqlite3';
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 import { resolveRuntimeSQLitePath } from './sqlite-runtime-config';
 export { resolveSQLiteDatabasePath } from './sqlite-runtime-config';
 
 // This native driver waits synchronously. Bound lock waits for HTTP/socket liveness.
 const busyTimeout = 50;
+const sqliteMaxBindValues = 32766;
+
+// Prisma 7 istemcisi sıradaki bir transaction başlangıcını varsayılan 2 sn'de P2028 ile düşürür.
+// Tek yazıcılı SQLite bağlantısında arşiv gibi uzun işlemler (bütçe 120 sn) bunu aşabilir; önceki
+// davranış (sırada beklemek) korunur. Çağrı başına verilen maxWait yine geçerlidir.
+const defaultTransactionMaxWaitMs = 130_000;
 
 export function assertPatchedSQLite(version: string): void {
   const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(version);
@@ -51,7 +56,7 @@ export function openSQLite(filename: string, options: { fileMustExist?: boolean;
   } catch (error) { db.close(); throw error; }
 }
 
-type SQLiteConnection = Awaited<ReturnType<PrismaBetterSQLite3['connect']>>;
+type SQLiteConnection = Awaited<ReturnType<PrismaBetterSqlite3['connect']>>;
 
 async function compatibleSQLiteOperation<T>(operation: () => Promise<T>): Promise<T> {
   try { return await operation(); }
@@ -101,7 +106,10 @@ function gateSQLiteConnection(connection: SQLiteConnection): SQLiteConnection {
   return {
     provider: connection.provider,
     adapterName: connection.adapterName,
-    ...(connection.getConnectionInfo ? { getConnectionInfo: connection.getConnectionInfo.bind(connection) } : {}),
+    // Prisma 7 istemcisi, bağdaştırıcı bildirmezse SQLite için 999 bağlı değer varsayar ve sıralı (orderBy) büyük
+    // IN sorgularını bölemediğinden P2029 verir. Gerçek sınır 32766'dır (SQLITE_MAX_VARIABLE_NUMBER; Prisma 6'da da
+    // böyleydi); arşiv yakalama binlerce kimlikle sorgular.
+    getConnectionInfo: () => ({ ...connection.getConnectionInfo?.(), maxBindValues: sqliteMaxBindValues, supportsRelationJoins: connection.getConnectionInfo?.().supportsRelationJoins ?? false }),
     queryRaw: query => run(() => connection.queryRaw(query)),
     executeRaw: query => run(() => connection.executeRaw(query)),
     executeScript: script => run(() => connection.executeScript(script)),
@@ -152,7 +160,7 @@ function gateSQLiteConnection(connection: SQLiteConnection): SQLiteConnection {
   };
 }
 
-class ConfiguredSQLiteAdapter extends PrismaBetterSQLite3 {
+class ConfiguredSQLiteAdapter extends PrismaBetterSqlite3 {
   constructor(private readonly filename: string, private readonly readonlyConnection = false) {
     super({ url: 'file:' + filename, fileMustExist: true, readonly: readonlyConnection, timeout: busyTimeout }, { timestampFormat: 'unixepoch-ms' });
   }
@@ -183,15 +191,8 @@ export function createRuntimePrismaClient(options: {
   const filename = resolveRuntimeSQLitePath(options);
   const clientOptions: Prisma.PrismaClientOptions = {
     adapter: new ConfiguredSQLiteAdapter(filename, options.readonly),
+    transactionOptions: { maxWait: defaultTransactionMaxWaitMs },
     ...(options.log ? { log: options.log } : {}),
   };
-  const internalOptions: NonNullable<RuntimePrismaClientOptions['__internal']> = {
-    // The adapter owns URL resolution. Avoid Prisma's generated constructor
-    // independently loading ambient .env files, especially for owned fixtures.
-    configOverride: config => ({ ...config, relativeEnvPaths: { rootEnvPath: null, schemaEnvPath: null } }),
-  };
-  // The generated public options deliberately hide this supported runtime hook.
-  // Check that hook independently without comparing schema-wide option types.
-  Object.assign(clientOptions, { __internal: internalOptions });
-  return new PrismaClient<Prisma.PrismaClientOptions>(clientOptions);
+  return new PrismaClient(clientOptions);
 }

@@ -1,5 +1,6 @@
 /** Real loopback Socket.IO audit: disposable Prisma + SQLite sessions, production routes/socket. */
 import assert from 'node:assert/strict';
+import { createRuntimePrismaClient } from '../utils/sqlite-runtime';
 import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { createRequire } from 'node:module';
@@ -24,7 +25,7 @@ Object.assign(process.env, { DATABASE_URL: `file:${database.replaceAll('\\', '/'
 for (const key of ['EMAIL_USER', 'EMAIL_PASS', 'EMAIL_FROM', 'GEMINI_API_KEY', 'OPENAI_API_KEY', 'APP_BASE_PATH']) delete process.env[key];
 process.chdir(fixture);
 execFileSync(process.execPath, [req.resolve('prisma/build/index.js'), 'migrate', 'deploy', '--schema', join(repo, 'server/prisma/schema.prisma')], { env: process.env, stdio: 'pipe' });
-const db = new PrismaClient();
+const db = createRuntimePrismaClient();
 const password = 'SocketAudit2026!';
 const hash = await bcrypt.hash(password, 10);
 const classId = '11111111-2222-4333-8444-555555555555';

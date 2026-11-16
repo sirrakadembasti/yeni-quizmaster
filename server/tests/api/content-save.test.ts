@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { createRuntimePrismaClient } from '../../utils/sqlite-runtime';
 import { beforeAll, afterAll, describe, it, expect, vi } from 'vitest';
 import express from 'express';
 import request from 'supertest';
@@ -8,7 +9,7 @@ import surveyRouter from '../../api-routes/survey';
 import { getAIUsageService } from '../../services/ai-usage';
 import { storage, closeStorage } from '../../storage';
 
-const db = new PrismaClient();
+const db = createRuntimePrismaClient();
 let actor: any;
 let admin: any;
 let teacher: any;

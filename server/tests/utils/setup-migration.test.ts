@@ -1,4 +1,5 @@
 import { expect, it } from 'vitest';
+import { createRuntimePrismaClient } from '../../utils/sqlite-runtime';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, existsSync, readdirSync, rmSync } from 'node:fs';
 import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path';
@@ -32,11 +33,13 @@ it('deploys all migrations into an absent SQLite DB under inherited warn logging
       throw new Error(`Isolated migration command failed after ${Date.now() - started}ms (status=${error.status}, signal=${error.signal})\n${error.message}\nstdout:\n${error.stdout ?? ''}\nstderr:\n${error.stderr ?? ''}`, { cause: error });
     }
   };
-  const prisma = new PrismaClient({ datasources: { db: { url: databaseUrl } } });
+  // Çalışma zamanı istemcisi var olan bir SQLite dosyası ister: ilk migration'dan sonra açılır.
+  let prisma!: ReturnType<typeof createRuntimePrismaClient>;
   try {
     expect(existsSync(database), 'A fresh install has no database file to precreate').toBe(false);
     await deploySetupDatabase(databaseUrl, execute);
     expect(existsSync(database)).toBe(true);
+    prisma = createRuntimePrismaClient({ databaseUrl });
     const expected = readdirSync(join(serverRoot, 'prisma/migrations')).filter(name => /^\d/.test(name)).sort();
     const applied = await prisma.$queryRawUnsafe<Array<{ migration_name: string; finished_at: unknown; rolled_back_at: unknown }>>(
       'SELECT migration_name, finished_at, rolled_back_at FROM _prisma_migrations ORDER BY migration_name',
@@ -45,14 +48,18 @@ it('deploys all migrations into an absent SQLite DB under inherited warn logging
     expect(applied.every(row => row.finished_at != null && row.rolled_back_at == null)).toBe(true);
     const marker = await prisma.user.create({ data: { name: 'Migration marker', email: 'migration-marker@example.test', password: 'unused-test-marker', role: 'student' } });
     const before = await prisma.user.findUnique({ where: { id: marker.id } });
+    // Prisma 7 şema motoru, WAL modunda açık bir bağlantı varken migrate deploy çalıştıramaz ('database is locked');
+    // gerçek yükseltme akışı da uygulamayı önce durdurur. Bu yüzden yeniden çalıştırmadan önce istemci kapatılır.
+    await prisma.$disconnect();
     await deploySetupDatabase(databaseUrl, execute);
+    prisma = createRuntimePrismaClient({ databaseUrl });
     expect(await prisma.user.findUnique({ where: { id: marker.id } })).toEqual(before);
     expect(await prisma.$queryRawUnsafe<Array<{ migration_name: string; finished_at: unknown; rolled_back_at: unknown }>>(
       'SELECT migration_name, finished_at, rolled_back_at FROM _prisma_migrations ORDER BY migration_name',
     )).toEqual(applied);
     expect(inherited.RUST_LOG).toBe('warn');
   } finally {
-    await prisma.$disconnect();
-    rmSync(fixture, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
+    await prisma?.$disconnect();
+    rmSync(fixture, { recursive: true, force: true, maxRetries: 30, retryDelay: 100 });
   }
 }, 510000);

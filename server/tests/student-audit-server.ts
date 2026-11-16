@@ -1,4 +1,5 @@
 import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
+import { createRuntimePrismaClient } from '../utils/sqlite-runtime';
 import { resolve, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
@@ -13,7 +14,7 @@ writeFileSync(database, '');
 Object.assign(process.env, { DATABASE_URL: 'file:' + database.replaceAll('\\', '/'), SESSION_SECRET: 'isolated-student-audit-only-secret', PORT: '5540', HOST: '127.0.0.1', FRONTEND_URL: 'http://127.0.0.1:5541', ALLOWED_ORIGINS: 'http://127.0.0.1:5541', NODE_ENV: 'development' });
 for (const key of ['EMAIL_USER','EMAIL_PASS','EMAIL_FROM','GEMINI_API_KEY','OPENAI_API_KEY','APP_BASE_PATH','FORCE_SECURE_COOKIES','DEPLOYMENT_CONFIG_PATH']) delete process.env[key];
 execFileSync(process.execPath, [require.resolve('prisma/build/index.js'), 'migrate', 'deploy', '--schema', join(repo, 'server/prisma/schema.prisma')], { env: process.env, stdio: 'pipe' });
-const p = new PrismaClient(), password = await bcrypt.hash('StudentAuditOnly2026!', 10);
+const p = createRuntimePrismaClient(), password = await bcrypt.hash('StudentAuditOnly2026!', 10);
 const ownClass = '11111111-1111-4111-8111-111111111111', otherClass = '22222222-2222-4222-8222-222222222222', category = '33333333-3333-4333-8333-333333333333';
 await p.user.createMany({ data: [
   { id: 'student-audit-admin', name: 'Student Audit Admin', email: 'student-audit-admin@example.test', password, role: 'admin' },

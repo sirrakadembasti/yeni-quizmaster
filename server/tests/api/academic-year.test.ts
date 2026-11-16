@@ -1,4 +1,5 @@
 import { afterAll, expect, it } from 'vitest';
+import { createRuntimePrismaClient } from '../../utils/sqlite-runtime';
 import { PrismaClient } from '@prisma/client';
 import { createRequire } from 'node:module';
 import { mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
@@ -6,7 +7,7 @@ import { dirname, join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 
 const require = createRequire(import.meta.url);
-const db = new PrismaClient();
+const db = createRuntimePrismaClient();
 afterAll(() => db.$disconnect());
 
 it('schedules July 15 at 00:05 in Istanbul regardless of the host timezone', async () => {
