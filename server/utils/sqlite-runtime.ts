@@ -8,6 +8,7 @@ export { resolveSQLiteDatabasePath } from './sqlite-runtime-config';
 
 // This native driver waits synchronously. Bound lock waits for HTTP/socket liveness.
 const busyTimeout = 50;
+const sqliteMaxBindValues = 32766;
 
 // Prisma 7 istemcisi sıradaki bir transaction başlangıcını varsayılan 2 sn'de P2028 ile düşürür.
 // Tek yazıcılı SQLite bağlantısında arşiv gibi uzun işlemler (bütçe 120 sn) bunu aşabilir; önceki
@@ -105,7 +106,10 @@ function gateSQLiteConnection(connection: SQLiteConnection): SQLiteConnection {
   return {
     provider: connection.provider,
     adapterName: connection.adapterName,
-    ...(connection.getConnectionInfo ? { getConnectionInfo: connection.getConnectionInfo.bind(connection) } : {}),
+    // Prisma 7 istemcisi, bağdaştırıcı bildirmezse SQLite için 999 bağlı değer varsayar ve sıralı (orderBy) büyük
+    // IN sorgularını bölemediğinden P2029 verir. Gerçek sınır 32766'dır (SQLITE_MAX_VARIABLE_NUMBER; Prisma 6'da da
+    // böyleydi); arşiv yakalama binlerce kimlikle sorgular.
+    getConnectionInfo: () => ({ ...connection.getConnectionInfo?.(), maxBindValues: sqliteMaxBindValues, supportsRelationJoins: connection.getConnectionInfo?.().supportsRelationJoins ?? false }),
     queryRaw: query => run(() => connection.queryRaw(query)),
     executeRaw: query => run(() => connection.executeRaw(query)),
     executeScript: script => run(() => connection.executeScript(script)),

@@ -311,3 +311,15 @@ it('uses patched SQLite through the default Prisma library engine with milliseco
     finally { native.close(); }
   } finally { await db.$disconnect(); }
 });
+
+it('allows ordered IN queries up to SQLite\'s real bind limit instead of Prisma 7\'s 999 default', async () => {
+  // Migrated per-file copy prepared by tests/file-db-setup.ts.
+  const db = createRuntimePrismaClient();
+  try {
+    const ids = Array.from({ length: 5000 }, (_, index) => `missing-${index}`);
+    // Ordered queries cannot be chunked, so the client needs the adapter's true limit (Arşiv yakalama bunu kullanır).
+    expect(await db.studentResult.findMany({ where: { quizId: { in: ids } }, orderBy: { id: 'asc' } })).toEqual([]);
+    const tooMany = Array.from({ length: 33000 }, (_, index) => `missing-${index}`);
+    await expect(db.studentResult.findMany({ where: { quizId: { in: tooMany } }, orderBy: { id: 'asc' } })).rejects.toMatchObject({ code: 'P2029' });
+  } finally { await db.$disconnect(); }
+});
