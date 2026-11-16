@@ -13,7 +13,7 @@ const hash=x=>crypto.createHash('sha256').update(JSON.stringify(x,(_k,v)=>typeof
 const beforeDb=new SQLite(filename,{readonly:true});
 const tables=beforeDb.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").all().map(r=>r.name);
 const before=new Map(tables.map(name=>[name,beforeDb.prepare('SELECT * FROM '+q(name)).all().map(hash).sort()]));beforeDb.close();
-execFileSync(process.execPath,[require.resolve('prisma/build/index.js'),'migrate','deploy','--schema',path.join(repo,'server/prisma/schema.prisma')],{cwd:path.join(repo,'server'),env:{...process.env,DATABASE_URL:'file:'+filename.replaceAll('\\','/')},stdio:'pipe',timeout:120000});
+execFileSync(process.execPath,[require.resolve('prisma/build/index.js'),'migrate','deploy','--schema',path.join(repo,'server/prisma/schema.prisma'),'--config',path.join(repo,'server/prisma.config.ts')],{cwd:path.join(repo,'server'),env:{...process.env,DATABASE_URL:'file:'+filename.replaceAll('\\','/')},stdio:'pipe',timeout:120000});
 const after=new SQLite(filename,{readonly:true});
 try{
  for(const [name,old] of before){const now=after.prepare('SELECT * FROM '+q(name)).all().map(hash).sort();if(name==='_prisma_migrations')for(const row of old)assert.ok(now.includes(row));else assert.deepEqual(now,old,'Rows changed: '+name);}

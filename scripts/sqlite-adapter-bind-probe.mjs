@@ -2,6 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { createRequire } from 'node:module';
+// Tarihsel Prisma 6 araştırması: Prisma 7 geçişinde (16 Kasım 2026) güncellenmedi; açık bir hatayla durur.
+// 6.19 bağdaştırıcısının bağlama/ConnectionInfo davranışını `PrismaBetterSQLite3` alt sınıfı ve `__internal` kancasıyla inceler; ikisi de Prisma 7'de yoktur. Güncel eşdeğeri server/tests/utils/sqlite-runtime.test.ts içindeki bind sınırı testidir.
+throw new Error('Bu betik Prisma 6 araştırmasıdır ve Prisma 7 ile çalışmaz. Ayrıntı için betiğin üstündeki açıklamaya bakın.');
 const req = createRequire(new URL('../server/package.json', import.meta.url));
 const Native = req('better-sqlite3');
 const { PrismaClient } = req('@prisma/client');

@@ -9,6 +9,9 @@ import {ownedFile,noLinks,exclusiveJson,readPerformanceRuntime} from './producti
 import {verifyFixturePortsReleased} from './linux-owned-process-cleanup.mjs';
 import {isolateAcademicFixture} from './academic-fixture-email.mjs';
 import {summarize} from './production-performance-http.mjs';
+// Tarihsel Prisma 6 araştırması: Prisma 7 geçişinde (16 Kasım 2026) güncellenmedi; açık bir hatayla durur.
+// Prisma 6 sorgu motorunun `connection_limit` havuz ve `datasources` davranışını inceler; Prisma 7'de motor havuzu ve bu seçenekler yoktur (bağlantı tek yazıcılı bağdaştırıcıdır).
+throw new Error('Bu betik Prisma 6 araştırmasıdır ve Prisma 7 ile çalışmaz. Ayrıntı için betiğin üstündeki açıklamaya bakın.');
 const repo=noLinks(path.resolve(import.meta.dirname,'..')),req=createRequire(path.join(repo,'server/package.json'));
 const templateFile=process.argv[2]||path.join(repo,'server/data/quizmaster-test-academic-performance-pJnUx3/runtime.json');
 const template=readPerformanceRuntime(repo,templateFile);

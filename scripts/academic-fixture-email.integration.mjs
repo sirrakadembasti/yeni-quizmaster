@@ -5,6 +5,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { disableAcademicFixtureEmailDelivery, isolateAcademicFixture } from './academic-fixture-email.mjs';
+import { createScriptPrismaClient } from './prisma-script-client.mjs';
 const repo = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const data = path.join(repo, 'server/data');
 const root = fs.mkdtempSync(path.join(data, 'quizmaster-test-academic-email-integration-'));
@@ -28,8 +29,7 @@ try {
   assert.notEqual(cjs, esm, 'Conditional nodemailer export identity must be represented by this probe');
   disableAcademicFixtureEmailDelivery(cjs);
   if (!process.argv.includes('--cjs-only')) disableAcademicFixtureEmailDelivery(esm);
-  const { PrismaClient } = requireServer('@prisma/client');
-  db = new PrismaClient({ datasources: { db: { url: process.env.DATABASE_URL } } });
+  db = createScriptPrismaClient(requireServer, process.env.DATABASE_URL);
   assert.ok(Object.entries(sentinels).every(([key, value]) => process.env[key] === value), 'Prisma constructor changed fixture credential sentinels');
   const email = await import(pathToFileURL(path.join(repo, 'server/utils/email.ts')).href);
   ({ closeStorage } = await import(pathToFileURL(path.join(repo, 'server/storage.ts')).href));

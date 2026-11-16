@@ -14,6 +14,9 @@ import {verifyFixturePortsReleased} from './linux-owned-process-cleanup.mjs';
 import {waitForAuditServer} from './audit-server-readiness.mjs';
 import {seedPerformance} from './production-performance-seed.mjs';
 import {summarize} from './production-performance-http.mjs';
+// Tarihsel Prisma 6 araştırması: Prisma 7 geçişinde (16 Kasım 2026) güncellenmedi; açık bir hatayla durur.
+// Prisma 6 sorgu motorunun `connection_limit` havuzunu, storage.ts/archive-db.ts içindeki `new PrismaClient()` metnini değiştirerek inceler; Prisma 7'de ikisi de geçerli değildir (istemci createRuntimePrismaClient ile oluşturulur).
+throw new Error('Bu betik Prisma 6 araştırmasıdır ve Prisma 7 ile çalışmaz. Ayrıntı için betiğin üstündeki açıklamaya bakın.');
 
 const repo=noLinks(path.resolve(import.meta.dirname,'..'));
 const req=createRequire(path.join(repo,'server/package.json'));
