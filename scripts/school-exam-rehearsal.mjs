@@ -66,7 +66,7 @@ async function phase(name, tasks, afterResponse) {
 try {
   const guardFile = ownedFile(root, 'migration-guard.mjs');
   fs.writeFileSync(guardFile, `const g=await import(${JSON.stringify(pathToFileURL(path.join(repo, 'scripts/academic-fixture-email.mjs')).href)});g.isolateAcademicFixture();`, { flag: 'wx' });
-  const migration = await launch(['--import', pathToFileURL(guardFile).href, req.resolve('prisma/build/index.js'), 'migrate', 'deploy', '--schema', path.join(root, 'server/prisma/schema.prisma')], 'migration');
+  const migration = await launch(['--import', pathToFileURL(guardFile).href, req.resolve('prisma/build/index.js'), 'migrate', 'deploy', '--schema', path.join(root, 'server/prisma/schema.prisma'), '--config', path.join(repo, 'server/prisma.config.ts')], 'migration');
   assert.equal(await migration.finished, 0); await cleanupOwned(migration);
   Object.assign(process.env, { DATABASE_URL: env.DATABASE_URL, ACADEMIC_ARCHIVE_RUNTIME: env.ACADEMIC_ARCHIVE_RUNTIME });
   const guard = await import('./academic-fixture-email.mjs'); isolation = guard.isolateAcademicFixture();

@@ -9,6 +9,7 @@ import { spawnSync } from 'node:child_process';
 import { waitForAuditServer } from './audit-server-readiness.mjs';
 import { verifyFixturePortsReleased } from './linux-owned-process-cleanup.mjs';
 import { launchOwned, cleanupOwned } from './academic-owned-process.mjs';
+import { createScriptPrismaClient } from './prisma-script-client.mjs';
 const repo = path.resolve(import.meta.dirname, '..');
 const req = createRequire(path.join(repo, 'server/package.json'));
 const clientReq = createRequire(path.join(repo, 'client/package.json'));
@@ -75,7 +76,7 @@ try {
   const template = process.env.ACADEMIC_MIGRATION_TEMPLATE;
   const migration = template
     ? spawnSync('python', [path.join(repo, 'scripts/academic-migration-template.py'), template, database], { cwd: repo, env, windowsHide: true, encoding: 'utf8', timeout: 30000 })
-    : spawnSync(process.execPath, [req.resolve('prisma/build/index.js'), 'migrate', 'deploy', '--schema', path.join(root, 'server/prisma/schema.prisma')], { cwd: root, env, windowsHide: true, encoding: 'utf8', timeout: 240000 });
+    : spawnSync(process.execPath, [req.resolve('prisma/build/index.js'), 'migrate', 'deploy', '--schema', path.join(root, 'server/prisma/schema.prisma'), '--config', path.join(repo, 'server/prisma.config.ts')], { cwd: root, env, windowsHide: true, encoding: 'utf8', timeout: 240000 });
   if (migration.status !== 0) throw new Error(`Disposable migration failed: ${migration.error?.message ?? ''}\n${migration.stdout}\n${migration.stderr}`);
   console.log(`${template ? 'Verified empty migration template copied' : 'Disposable migrations completed'} in ${Date.now() - migrationStart}ms`);
   // Diagnostic opt-in: same current server sources, bundled inside the owned
@@ -99,9 +100,9 @@ isolateAcademicFixture(); trace('isolation');
 const require = createRequire(${JSON.stringify(path.join(repo, 'server/package.json'))});
 disableAcademicFixtureEmailDelivery(require('nodemailer'));
 disableAcademicFixtureEmailDelivery((await import(${JSON.stringify(pathToFileURL(nodemailerEsm).href)})).default);
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require('@prisma/client'); const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3');
 const bcrypt = require('bcryptjs');
-const db = new PrismaClient(); trace('database-client');
+const db = new PrismaClient({ adapter: new PrismaBetterSqlite3({ url: process.env.DATABASE_URL, fileMustExist: true }, { timestampFormat: 'unixepoch-ms' }) }); trace('database-client');
 try { await db.user.upsert({ where:{id:'academic-admin'}, update:{}, create: { id: 'academic-admin', name: 'Synthetic Academic Admin', email: 'academic-admin@example.test', role: 'admin', password: await bcrypt.hash('AcademicFixtureOnly2026!', 10) } }); trace('admin-seeded'); } finally { await db.$disconnect(); }
 trace('server-import');
 await import(${JSON.stringify(pathToFileURL(serverEntry).href)});
@@ -112,7 +113,7 @@ trace('server-imported');
     const seed=path.join(root,'seed.mjs');
     const entrySource=fs.readFileSync(entry,'utf8');fs.writeFileSync(seed,entrySource.split("trace('server-import');")[0]);
     const seedJob=await launch([seed]);if(await seedJob.finished!==0)throw new Error('Restoration source seeding failed');await cleanupOwned(seedJob);
-    const sourceDb=new (req('@prisma/client').PrismaClient)({datasources:{db:{url:env.DATABASE_URL}}});
+    const sourceDb=createScriptPrismaClient(req,env.DATABASE_URL);
     let expectedAdmin;
     try{expectedAdmin=await sourceDb.user.findUniqueOrThrow({where:{id:'academic-admin'},select:{id:true,email:true,role:true,password:true,sessionVersion:true}});}finally{await sourceDb.$disconnect();}
     fs.copyFileSync(database,path.join(root,'server/data/quiz.db'));

@@ -44,7 +44,7 @@ const logs = [];
 for (const args of [['migrate', 'deploy'], ['migrate', 'status']]) {
   const log = path.join(root, args[1] + '.log');
   const output = fs.openSync(log, 'wx', 0o600);
-  const child = spawn(process.execPath, [require.resolve('prisma/build/index.js'), ...args, '--schema', path.join(server, 'prisma/schema.prisma')], { cwd: server, env, windowsHide: true, stdio: ['ignore', output, output] });
+  const child = spawn(process.execPath, [require.resolve('prisma/build/index.js'), ...args, '--schema', path.join(server, 'prisma/schema.prisma'), '--config', path.join(repo, 'server/prisma.config.ts')], { cwd: server, env, windowsHide: true, stdio: ['ignore', output, output] });
   const code = await new Promise((resolve, reject) => { child.once('error', reject); child.once('exit', resolve); });
   fs.closeSync(output); assert.equal(code, 0, `Prisma ${args[1]} failed; private log ${log}`); logs.push(log);
 }

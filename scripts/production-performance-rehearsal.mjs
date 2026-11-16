@@ -15,6 +15,7 @@ import {seedPerformance} from './production-performance-seed.mjs';
 import {bundleMetrics} from './production-performance-bundle.mjs';
 import {actorClient,summarize} from './production-performance-http.mjs';
 import {browserApi} from './production-performance-browser-api.mjs';
+import { createScriptPrismaClient } from './prisma-script-client.mjs';
 const repo=path.resolve(import.meta.dirname,'..'),req=createRequire(path.join(repo,'server/package.json')),rootReq=createRequire(path.join(repo,'package.json'));
 const phase=process.argv[2];if(!['baseline','baseline-resume','after','ui','ui-offline','base','archive','roles'].includes(phase))throw Error('Select baseline/after/ui/base/archive/roles');
 const main=path.resolve(process.argv[3]);noLinks(main);
@@ -87,14 +88,14 @@ try {
    readPerformanceRuntime(repo,path.join(root,'runtime.json'),{runId:runtime.runId,requireDatabase:false});
    Object.assign(process.env,{DATABASE_URL:env.DATABASE_URL,ACADEMIC_ARCHIVE_RUNTIME:env.ACADEMIC_ARCHIVE_RUNTIME});
    const guard=await import('./academic-fixture-email.mjs');isolation=guard.isolateAcademicFixture();guard.disableAcademicFixtureEmailDelivery(req('nodemailer'));
-   await command([req.resolve('prisma/build/index.js'),'migrate','deploy','--schema',path.join(root,'server/prisma/schema.prisma')],'migrations');
+   await command([req.resolve('prisma/build/index.js'),'migrate','deploy','--schema',path.join(root,'server/prisma/schema.prisma'),'--config',path.join(repo,'server/prisma.config.ts')],'migrations');
    // Only the freshly migrated owned DB is queried; no live source is copied.
-   db=new (req('@prisma/client').PrismaClient)({datasources:{db:{url:env.DATABASE_URL}}});
+   db=createScriptPrismaClient(req,env.DATABASE_URL);
    runtime.fixture=await seedPerformance(db,repo);fs.writeFileSync(ownedFile(root,'runtime.json',true),JSON.stringify(runtime),{mode:0o600});
    fs.writeFileSync(ownedFile(root,'server/uploads/performance-diagram.png'),diagram(),{flag:'wx',mode:0o600});
    const migrations=await db.$queryRawUnsafe('SELECT count(*) AS n FROM _prisma_migrations WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL');assert.equal(Number(migrations[0].n),22);
    write('fixture',{counts:runtime.fixture.counts,roles:runtime.fixture.roles,businessRows:runtime.fixture.businessRows,migrations:22,relationsAndScoresVerified:true});
- } else {fs.writeFileSync(ownedFile(root,'runtime.json',true),JSON.stringify(runtime),{mode:0o600});readPerformanceRuntime(repo,path.join(root,'runtime.json'),{runId:runtime.runId});Object.assign(process.env,{DATABASE_URL:env.DATABASE_URL,ACADEMIC_ARCHIVE_RUNTIME:env.ACADEMIC_ARCHIVE_RUNTIME});const guard=await import('./academic-fixture-email.mjs');isolation=guard.isolateAcademicFixture();guard.disableAcademicFixtureEmailDelivery(req('nodemailer'));db=new (req('@prisma/client').PrismaClient)({datasources:{db:{url:env.DATABASE_URL}}});}
+ } else {fs.writeFileSync(ownedFile(root,'runtime.json',true),JSON.stringify(runtime),{mode:0o600});readPerformanceRuntime(repo,path.join(root,'runtime.json'),{runId:runtime.runId});Object.assign(process.env,{DATABASE_URL:env.DATABASE_URL,ACADEMIC_ARCHIVE_RUNTIME:env.ACADEMIC_ARCHIVE_RUNTIME});const guard=await import('./academic-fixture-email.mjs');isolation=guard.isolateAcademicFixture();guard.disableAcademicFixtureEmailDelivery(req('nodemailer'));db=createScriptPrismaClient(req,env.DATABASE_URL);}
  for(const file of ['server/data/academic.db','server/.env','.env','runtime.json'])ownedFile(root,file,true);
  if(fs.existsSync(path.join(root,'client/dist'))){noLinks(path.join(root,'client/dist'));fs.rmSync(path.join(root,'client/dist'),{recursive:true});}
  fs.cpSync(path.join(repo,'client/dist'),path.join(root,'client/dist'),{recursive:true,errorOnExist:true,force:false});
