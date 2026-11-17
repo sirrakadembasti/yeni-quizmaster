@@ -11,21 +11,22 @@ Durum: **uygulandı (8 Kasım 2026)**; aşağıdaki "Uygulama durumu" bölümün
 | 2 npm desteği | Uygulandı: `package-lock.json`, `overrides`, `engines`, arayüzde npm, CI'da npm işi | #15, #16 |
 | 3 Tüm testler npm ağacında | Uygulandı: backend **655/655**, frontend **334/334**, `npm audit` kritik kapısı; CI'a ilk kez backend/frontend testleri girdi | #17 |
 | 4 Varsayılanı npm yap | Uygulandı: varsayılan npm, var olan kurulumlar kendi yöneticisini korurdu (pnpm kalkana kadar), `kurulum.bat/sh` npm 11+ ister, belgeler ve üretilen metinler | #18, #19, #20 |
-| 5 pnpm'i bırak, Bun'u düzelt | **pnpm kaldırıldı** (#21). Bun: **karar bekliyor** (bkz. aşağı) | #21 |
+| 5 pnpm'i bırak, Bun'u düzelt | **pnpm kaldırıldı** (#21). Bun **doğrulandı** (#24–#26): bağımlılık algısı, yükseltme `cwd`'si ve CI'da Bun işi; etiketler güncellendi | #21, #24–#26 |
+| 6 Sonradan çıkan düzeltmeler ve yükseltmeler | Kapanış provası düzeltmeleri (#27, #29), kararsız frontend testi (#30), **Zod 4** (#31), **Prisma 7** (#32), provalama betiklerinin Prisma 7'ye uyarlanması ve gerçek koşuları (#33, #34) | #27–#34 |
 
-Ölçümler: npm ağacı sıfırdan çözümlemede 12 açık (1 kritik) veriyordu; `overrides` ile **5 yüksek, 0 kritik**. Eski pnpm kilidi 18 açık (1 kritik, 6 yüksek) gösteriyordu. `npm ci` CI'da ≈ 30 sn (bir geliştirici makinesinde 12–14 dk).
+Ölçümler: npm ağacı sıfırdan çözümlemede 12 açık (1 kritik) veriyordu; `overrides` ile **5 yüksek, 0 kritik**; Zod 4 (#31) ve Prisma 7 (#32) sonrası **0 açık**. Eski pnpm kilidi 18 açık (1 kritik, 6 yüksek) gösteriyordu. `npm ci` CI'da ≈ 30 sn (bir geliştirici makinesinde 12–14 dk).
 
 Tasarımdan sapmalar ve çıkan bulgular:
 - `npm exec` **desteklenmez**: yerel bin yoksa kayıt defterinden aynı adlı alakasız bir paketi (`tsc`) indirip çalıştırabildiği ölçüldü. Yerine `resolveLocalBin` (bin dosyasını bulup Node ile çalıştırır) ve `package.json` betikleri kullanılır.
 - Çift kilit dönemi yaşanmadı: `package-lock.json` eklendikten sonra pnpm yalnızca varsayılan olmaktan çıktı, sonra kaldırıldı.
 - Eski pnpm kurulumları: `node_modules/.pnpm` "legacy" sayılır, npm'e geçilir (`npm ci` node_modules'ü yeniden kurar); README'de geçiş notu var.
-- CI'da koşmayan kabul/prova betikleri npm'e uyarlandı ama **tam çalıştırılmadı**.
+- CI'da koşmayan kabul/prova betikleri npm'e ve Prisma 7'ye uyarlandı; çoğu gerçekten çalıştırıldı (`school-exam-rehearsal`, `academic-archive-runner` `--smoke`/`--restore-smoke`/`--startup-failure-smoke`, `ai-upgrade-rehearsal`, Prisma ortam testi). Ekim 2026'daki tek seferlik ortama bağlı iki prova (`production-performance-rehearsal`, `production-rollback-rehearsal`) önkoşulları depoda olmadığından uçtan uca çalıştırılamadı.
 
-Açık kalanlar: Bun kararı; prova betiklerinin çalıştırılması. (Prisma `package.json#prisma` uyarısı `prisma.config.ts` ile giderildi.)
+Açık kalanlar: yalnız ortama bağlı iki tek seferlik prova betiğinin uçtan uca çalıştırılması. Bun kararı verildi ve doğrulandı; Prisma `package.json#prisma` uyarısı `prisma.config.ts` ile giderildi; güvenlik bulguları kapandı.
 
-### Doğrulama istisnası: GitHub Actions kotası (9 Kasım 2026)
+### Doğrulama istisnası: GitHub Actions kotası (9 Kasım 2026): sona erdi
 
-Ücretsiz Actions kotası (özel depo, 18 $ / 18 $) tükendi; CI işleri başlamıyor ve kota yaklaşık 22 gün sonra (≈ 1 Aralık 2026) yenileniyor. Bu aralıkta birleştirilen değişiklikler **CI'sız, yerelde doğrulanmıştır** (`npm run test:setup`, `npm run test:upgrade`, `npm run type-check --workspace=server`, `npm run type-check --workspace=client`, `npm run test:build-startup`, `npm run test --workspace=server`, `npm run test --workspace=client -- --run`); birleştirme commit'leri `[skip ci]` taşır. İlk örnek: PR #27 (`admin-hybrid-setup-closure` provasının `/wizard/api/status` düzeltmesi; betik CI'da zaten koşmaz ve düzeltmenin kendisi ağ kaynaklı `ECONNRESET` nedeniyle uçtan uca sınanamadı). Yerel sonuçlar: backend 655/655; frontend 334/334 (`--testTimeout=30000` ile: bu makinede varsayılan 5 sn sınırında ağır render testleri yük altında takıldı, düşenler her koşuda değişti, mantık hatası yok); `test:setup` 69/70 (1 atlandı), `test:upgrade` 12/12, tip denetimleri temiz, `test:build-startup` geçti. Kota yenilenince `main` üzerinde CI bir kez koşturulmalı; provanın başarılı bir koşusu ağ düzelince alınmalıdır.
+Depo özel olduğu sırada ücretsiz Actions kotası tükenmiş ve birleştirmeler (ilk örnek PR #27) CI'sız, yerelde doğrulanarak ve `[skip ci]` ile yapılmıştı. Depo herkese açık yapılınca Actions yeniden çalıştı: `main` üzerinde CI elle koşturuldu ve altı kontrol geçti; sonraki PR'lar (#29 ve sonrası) CI'dan geçerek birleştirildi (#28'in kendisinin CI'ı, commit gövdesindeki `[skip ci]` metni yüzünden başlamadı ve yeni bir commit ile yeniden tetiklendi). Geçici istisna kalktı; birleştirme commit'lerine `[skip ci]` yazılmaz (bu ifade squash gövdesinde bile CI'yı atlatır, PR #28'de yaşandı). Kota döneminde birleştirilen PR #27'nin `/wizard/api/status` düzeltmesi sonradan gerçek provada doğrulandı.
 
 ### Güvenlik değerlendirmesi: açık kalan yüksek bulgu yok
 

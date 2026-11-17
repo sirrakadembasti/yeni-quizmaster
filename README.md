@@ -98,7 +98,7 @@ Aynı bilgiyi birden fazla kılavuza kopyalamak yerine ana belgeye bağlantı ve
 | Frontend | React, TypeScript, Vite, TanStack Query, Wouter, Tailwind CSS, shadcn/ui |
 | Backend | Node.js, Express, TypeScript, Socket.IO, Pino |
 | Veri | Prisma 7.10.1, better-sqlite3 12.8.0 / SQLite 3.51.3, WAL |
-| Kimlik ve güvenlik | `express-session`, SQLite oturum deposu, bcrypt, CSRF, Zod |
+| Kimlik ve güvenlik | `express-session`, SQLite oturum deposu, bcrypt, CSRF, Zod 4 |
 | E-posta | Nodemailer, Gmail SMTP, veritabanı Outbox kuyruğu |
 | Test | Vitest, Supertest, Playwright |
 | Paket yönetimi | npm workspaces (npm 11+, `package-lock.json`) / Bun (kilit dosyasız) |
@@ -148,7 +148,7 @@ Bu akış uygulamayı bağımsız bir bilgisayara kurup kullanmak içindir.
 
 #### 1. Depoyu indirin
 
-Özel depoda GitHub hesabınızın erişim yetkisi bulunmalıdır.
+Depo herkese açıktır; klonlamak için GitHub hesabı gerekmez. Kurumunuz kendi özel kopyasını (fork/mirror) kullanıyorsa o kopyaya erişim yetkiniz bulunmalıdır.
 
 ```bash
 git clone https://github.com/sirrakadembasti/yeni-quizmaster.git
@@ -172,7 +172,7 @@ chmod +x kurulum.sh
 
 Başlatıcı, herhangi bir uygulama verisini değiştirmeden önce Node.js ve paket yöneticisi (npm 11+ veya Bun) sürümlerini denetler. Eksik veya uyumsuz bileşen varsa gereken sürümü, resmî indirme bağlantılarını ve sistemde npm/corepack durumuna göre dinamik komut alternatiflerini gösterir; proxy, DNS veya sistem `PATH` ayarlarını değiştirmez. `kurulum.sh` ayrıca Linux/macOS ayrımı, root yetki uyarısı, yazma izinleri, disk alanı (>3 GB) ve native derleme araçları kontrollerini yürütür.
 
-Node.js 22/24 ve paket yöneticiniz zaten doğru kuruluysa başlatıcı yerine doğrudan şu komut da kullanılabilir:
+Node.js (22.18+ veya 24.11+) ve paket yöneticiniz (npm 11+) zaten doğru kuruluysa başlatıcı yerine doğrudan şu komut da kullanılabilir:
 
 ```bash
 npm run setup
@@ -271,7 +271,7 @@ Ardından uygulamanın giriş ekranında belirlediğiniz e-posta ve şifreyi kul
 
 #### 1. Sunucuyu hazırlayın ve depoyu indirin
 
-Özel depoya erişebilen bir hesap veya deploy key ile:
+Depo herkese açıktır; kurumunuz özel bir kopya (fork/mirror) kullanıyorsa o kopyaya erişebilen bir hesap veya deploy key ile:
 
 ```bash
 git clone https://github.com/sirrakadembasti/yeni-quizmaster.git
@@ -285,7 +285,7 @@ chmod +x kurulum.sh
 ./kurulum.sh
 ```
 
-Başlatıcı Node.js 22/24 LTS ve bir paket yöneticisi (npm 11+ veya Bun) denetimini yapar. Eksikse yalnız resmî bağlantı ve komutları göstererek durur. Gereksinimler tamamsa bağımlılıksız bootstrap ekranı açılır ve paketler kullanıcı onayından sonra kurulur.
+Başlatıcı Node.js 22.18+/24.11+ LTS ve bir paket yöneticisi (npm 11+ veya Bun) denetimini yapar. Eksikse yalnız resmî bağlantı ve komutları göstererek durur. Gereksinimler tamamsa bağımlılıksız bootstrap ekranı açılır ve paketler kullanıcı onayından sonra kurulur.
 
 Uzak Linux/VPS kurulumu için başlatıcı portunu (sihirbaz da aynı adrestedir) SSH tüneline alın; bu portu internete açmayın:
 
@@ -320,6 +320,39 @@ Kalıcı kullanımda bu komutu doğrudan açık terminalde bırakmayın. Linux't
 DNS, TLS sertifikası, Nginx/IIS, servis hesabı, güvenlik duvarı ve yedekleme sihirbaz tarafından değiştirilmez. Bunları kurum politikasına göre yapılandırın ve uygulamadaki **Sunucu Durumu** ekranından origin/proxy/HTTPS algılamasını doğrulayın.
 
 Eksiksiz production yapılandırması, örnek `systemd`, Nginx/IIS, alt yol, güncelleme, yedekleme ve geri dönüş adımları için [Sunucu Kurulum Kılavuzu](docs/sunucu-kurulum-kilavuzu.md) zorunlu başvuru belgesidir.
+
+### Arayüzsüz (komut satırı) kurulum
+
+Tarayıcı kullanılamayan ortamlarda (SSH, CI) aynı kurulum adımları komut satırından çalıştırılır. Paketler kurulduktan sonra:
+
+```bash
+# Yerel kurulum, varsayılanlarla (soru sormaz; yanlışlıkla çalışmayı önlemek için --yes zorunludur)
+QUIZMASTER_ADMIN_EMAIL=yonetici@okul.example QUIZMASTER_ADMIN_PASSWORD='<en az 12 karakter>' npm run setup:cli -- --yes
+
+# Sunucu kurulumu: tam kurulum yükünü içeren JSON dosyasıyla
+npm run setup:cli -- --config kurulum.json
+```
+
+Yönetici parolası komut satırına yazılmaz; `QUIZMASTER_ADMIN_PASSWORD` verilmezse rastgele bir parola üretilir ve bir kez gösterilir. Yerel modda ayrıca `QUIZMASTER_ADMIN_NAME`, `QUIZMASTER_PORT` ve `QUIZMASTER_OVERWRITE_ENV=1` kullanılabilir. Kurulu bir sistemde komut hesabı ve verileri ezmeden reddedilir.
+
+Kurulum adımlarının durumu `server/data/installation.state.json` dosyasına atomik yazılır (parola veya anahtar içermez). Yarıda kesilen kurulum aynı komut yeniden çalıştırılarak kaldığı yerden sürdürülür. Veritabanı önce `quiz.db.setup-tmp` geçici dosyasında hazırlanır ve migration başarıyla bitince yerine taşınır; yarım kalan bir kurulum gerçek `quiz.db` dosyasını bozmaz.
+
+### Uygulamayı arka planda yönetme
+
+Kurulumdan sonra uygulamayı başlatmak, durdurmak ve izlemek için tek tip komutlar vardır (işletim sisteminden bağımsız; süreç ağacı birlikte durdurulur):
+
+```bash
+npm run app:start      # arka planda başlatır (server/.env içinde NODE_ENV=production ise derlenmiş sürüm, aksi hâlde dev)
+npm run app:status     # çıkış kodu 0: çalışıyor, 3: durmuş
+npm run app:logs       # son log satırları (--lines N, --follow)
+npm run app:stop       # çalışan uygulamayı süreç ağacıyla durdurur
+```
+
+`app:start` için `--mode dev|production` ve makine okunur çıktı için `--json` verilebilir. Kalıcı üretim kullanımında yine `systemd` veya bir Windows Service yöneticisi önerilir.
+
+### Paket yöneticisi seçimi
+
+Varsayılan paket yöneticisi npm'dir. Seçim sırası: açık `--pm` bayrağı, `QUIZMASTER_PM` ortam değişkeni, komutu başlatan yönetici (`npm run …` veya `bun run …`), sistemde kurulu olan ve son olarak npm. Bun alternatiftir (`QUIZMASTER_PM=bun`); `QUIZMASTER_PM=pnpm` artık "pnpm artık desteklenmiyor" hatasıyla durur. Kök betikler `node scripts/pm.mjs [--pm yönetici] install|run|exec …` üzerinden çalışır.
 
 ### Kurulum başlatıcısını yeniden çalıştırma ve temiz kurulum
 
@@ -436,6 +469,11 @@ npm run test --workspace=client -- --run
 # Üretim derlemesi
 npm run build
 
+# Kurulum, yükseltme ve yalıtılmış üretim derlemesi testleri
+npm run test:setup
+npm run test:upgrade
+npm run test:build-startup
+
 # Uçtan uca testler (önce bir kez: Chromium artık npm ci ile indirilmez)
 npm run archive:prepare --workspace=server
 npm run test:e2e
@@ -443,17 +481,20 @@ npm run test:e2e
 
 > Chromium yalnızca uçtan uca testler ve akademik arşiv PDF'i için gerekir; `npm ci` sırasında indirilmez. PDF üretimi Chromium bulamazsa açıklayıcı bir hata verir.
 
-### Geçici istisna: CI'sız birleştirme (9 Kasım 2026)
+### Sürekli entegrasyon (CI)
 
-GitHub Actions ücretsiz kotası (18 $ / 18 $, özel depo) **tükendi**; CI işleri başlamıyor (`The job was not started because recent account payments have failed or your spending limit needs to be increased`). Kota yaklaşık 22 gün sonra, **1 Aralık 2026 civarında** yenilenir. O güne kadar değişiklikler CI'sız, **yerelde doğrulanarak** birleştirilir; PR #27 ilk örnektir.
+`.github/workflows/ci.yml` her `main` itmesinde, her çekme isteğinde (PR) ve elle (**Actions → CI → Run workflow** veya `gh workflow run CI --ref main`) çalışır. Altı kontrol vardır ve birleştirmeden önce hepsinin geçmesi beklenir:
 
-- Birleştirmeden önce yerelde geçmesi zorunlu set: `npm run test:setup`, `npm run test:upgrade`, `npm run type-check --workspace=server`, `npm run type-check --workspace=client`, `npm run test:build-startup`, `npm run test --workspace=server`, `npm run test --workspace=client -- --run`.
-- Birleştirme commit'i `[skip ci]` taşır; böylece `main`'de faturalama kaynaklı kırmızı çarpı oluşmaz. Bu, CI'ın "geçtiği" anlamına gelmez, yalnızca koşmadığını belirtir.
-- Yerel sonuçlar (PR #27): backend 655/655; frontend 334/334 **`--testTimeout=30000` ile** (bu makinede varsayılan 5 sn sınırında ağır render testleri takılıyor: ilk iki koşuda 2 ve 4 test zaman aşımına düştü, düşenler her koşuda değişti, tek başına koşunca geçti; mantık hatası yok); `test:setup` 69/70 (1 atlandı), `test:upgrade` 12/12, tip denetimleri temiz, `test:build-startup` geçti.
-- Yerelde doğrulanamayanlar: Ubuntu/Node 24 ve Windows karşılaştırması (yerel makine yalnızca Windows/Node 22), `admin-hybrid-setup-closure` provası (ağ kaynaklı Prisma motor indirmesi `ECONNRESET` ile iki kez düştü).
-- **Kaldırma koşulu:** kota yenilenince `main` üzerinde CI bir kez koşturulur (Actions → Re-run) ve sonuç bu bölüme işlenir; `admin-hybrid-setup-closure` provası ağ düzelince koşulur.
+| Kontrol | Ne yapar |
+|---|---|
+| Kurulum testleri (ubuntu Node 22, ubuntu Node 24, windows Node 22) | `npm ci`, gerçek npm ağacında bağımlılık algısı, `test:setup`, `test:upgrade`, arayüzsüz `setup:cli --yes` kurulumu, durum dosyası denetimi ve kurulu sistemde ikinci kurulumun reddedilmesi |
+| Tip denetimi | Sunucu ve istemci `tsc --noEmit` |
+| Birim testleri | Chromium kurulumu, backend ve frontend testleri, `test:build-startup` (yalıtılmış üretim derlemesi + gerçek migration + başlatma + CSRF) ve `npm audit --omit=dev --audit-level=critical` (kritik açık varsa kırılır) |
+| Bun kurulum testi | Bun 1.3.14 ile `setup:cli`, bağımlılık algısı ve yükseltme akışı |
 
+CI'nın gerçekten koştuğundan emin olun: birleştirme commit'inin mesajında `[skip ci]` ifadesi **geçmemelidir**; bu ifade (squash gövdesinde bile) CI'yı atlatır. Yerelde ağır testleri (özellikle Chromium gerektirenleri) koşturamıyorsanız CI'ya güvenin; yerel makinede Playwright'ın beklediği Chromium sürümü kurulu değilse arşiv PDF testleri düşer (`npm run archive:prepare --workspace=server`).
 
+### Sayfa rotaları
 
 | Rota | Roller | Açıklama |
 |---|---|---|
@@ -514,7 +555,7 @@ Ancak geçiş **yalnızca** `provider = "postgresql"` ve `DATABASE_URL` değişi
 2. `quiz.db`, `sessions.db` ve yüklenen dosyaların doğrulanmış yedeğini alın.
 3. UTF-8 kodlamalı boş bir PostgreSQL geliştirme/veri aktarım veritabanı hazırlayın.
 4. SQLite migration geçmişini silmeyin; arşivleyin. PostgreSQL için yeni bir migration geçmişi başlatın.
-5. `schema.prisma` sağlayıcısını `postgresql` yapın ve PostgreSQL bağlantı adresini yalnız `.env`/secret yöneticisinde tutun.
+5. `schema.prisma` sağlayıcısını `postgresql` yapın ve PostgreSQL bağlantı adresini yalnız `.env`/secret yöneticisinde tutun (Prisma 7'de adres şemada değil `server/prisma.config.ts` içindedir; ayrıca çalışma zamanı istemcisi `@prisma/adapter-pg` ile uyarlanmalıdır).
 6. Boş PostgreSQL üzerinde yeni başlangıç migration'ını üretip uygulayın.
 7. Verileri, UUID değerleri ve yabancı anahtar ilişkileri korunacak biçimde taşıyın. Prisma migration komutlarının veriyi kendiliğinden taşımadığını unutmayın.
 8. Model bazında kayıt sayılarını, ilişkileri ve sınav/anket örneklerini kaynak SQLite ile karşılaştırın.
@@ -542,6 +583,10 @@ Başlatıcı arayüzündeki **Mevcut Kurulumu Güncelle** düğmesi aynı işlem
 - Vite API için `ECONNREFUSED`: backend'in yapılandırılan `PORT` üzerinde çalıştığını kontrol edin; varsayılan `5000`'dir. Vite, süreç ortamı → `server/.env` → kök `.env` sırasıyla yalnız `PORT` değerini okuyarak API, yükleme ve Socket.IO isteklerini aynı sunucuya iletir. Port değişince Vite'ı yeniden başlatın.
 - Gmail zaman aşımı: kurumsal ağın `587/465` çıkışını engelleyip engellemediğini kontrol edin; DNS/proxy değiştirmeden izinli bir ağda deneyin.
 - Çevrimdışı teslim bekliyor: aynı cihaz ve tarayıcıyla sınavı açıp bağlantının geri gelmesini bekleyin.
+- `database is locked` (`db:deploy`/`migrate deploy`): Prisma 7 şema motoru, veritabanında açık bir bağlantı varken (çalışan uygulama veya işçi süreci) migration uygulayamaz. Önce `npm run app:stop` ile uygulamayı durdurun, sonra yeniden deneyin. Yükseltme akışı zaten uygulamanın durmuş olmasını bekler.
+- `Schema engine error:` (ayrıntısız): dış ortamda `RUST_LOG=warn` veya `error` tanımlıysa Prisma şema motoru hata ayrıntısını veremez. Migration'ı `RUST_LOG=info` ile çalıştırın (kurulum sihirbazı bunu kendisi yapar).
+- `migrate deploy` yanlış veritabanını gösteriyor gibi: `server/.env` içindeki göreli `DATABASE_URL` (`file:../data/quiz.db`) `server/prisma` dizinine göre çözülür; `server/prisma.config.ts` bu kuralı korur. Mutlak yol kullanmak her zaman güvenlidir.
+- Başlatıcı "Node.js sürümü desteklenmiyor" diyor: Prisma 7 için Node.js 22.18+ veya 24.11+ gerekir (22.17 ve altı, 24.10 ve altı desteklenmez).
 
 ## Güvenlik ve veri bütünlüğü bakımı
 
@@ -549,7 +594,7 @@ Başlatıcı arayüzündeki **Mevcut Kurulumu Güncelle** düğmesi aynı işlem
 
 Yerel SQLite uygulama verisi için `npm run maintenance -- backup --project <kurulum> --name <ad>` ve `npm run maintenance -- restore --backup <yedek> --project <bağımsız-boş-veri-hedefi>` komutları eklendi. Önce tüm uygulama süreçlerini durdurun. Native WAL/session turu, gerçek şema/taşınan arşiv API'si ve geri yüklenen admin hesabıyla Chromium girişi doğrulandı; kullanım, özel ayar kapsamı ve sınırlar [Üretim ve Bakım Kılavuzunda](docs/uretim-ve-bakim-kilavuzu.md) açıklanır.
 
-Kurulu sistemi verileri koruyarak güncellemek için onaylı sürüm kodunu yerleştirip app/worker süreçlerini durdurun, ardından `npm run upgrade -- --project <kurulum>` kullanın. Terminal/BAT/SH başlangıç ekranındaki **Mevcut Kurulumu Güncelle** aynı motoru çağırır: doğrulanmış yedek, etkileşimsiz frozen install (`--prod=false` ile build araçları dahil), build, production migration ve status. İlk admin yeniden oluşturulmaz. Varsa kök `.env` fallback ayarları da özel yedek kapsamındadır; hedefteki mevcut env dosyaları ezilmez. İşlem sırası, yükseltme ve geri dönüş kabulü [Üretim ve Bakım Kılavuzundadır](docs/uretim-ve-bakim-kilavuzu.md).
+Kurulu sistemi verileri koruyarak güncellemek için onaylı sürüm kodunu yerleştirip app/worker süreçlerini durdurun, ardından `npm run upgrade -- --project <kurulum>` kullanın. Terminal/BAT/SH başlangıç ekranındaki **Mevcut Kurulumu Güncelle** aynı motoru çağırır: doğrulanmış yedek, etkileşimsiz frozen install (npm ile `npm ci --include=dev`: build araçları dahil), build, production migration ve status. İlk admin yeniden oluşturulmaz. Varsa kök `.env` fallback ayarları da özel yedek kapsamındadır; hedefteki mevcut env dosyaları ezilmez. İşlem sırası, yükseltme ve geri dönüş kabulü [Üretim ve Bakım Kılavuzundadır](docs/uretim-ve-bakim-kilavuzu.md).
 
 30 Eylül 2026 bakımında yetki/rol ilişkileri, sınav/anket geçmişi, eşzamanlı kayıt, oturumlar, AI dış bağlantıları ve çevrimdışı kuyruk güçlendirildi. [Bakım notları](docs/guvenlik-ve-bakim.md) ayrıntıları ve işletim sınırlarını açıklar.
 

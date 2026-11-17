@@ -1,5 +1,24 @@
 # QuizMaster Dokümantasyon Düzeni, Güncellik ve Temizlik Kaydı
 
+## 17 Kasım 2026 Güncellik Denetimi (kurulum yenileme, npm, Zod 4, Prisma 7)
+
+README, `docs/` ve Graphify çıktıları, 8–17 Kasım arasındaki geliştirmelerle (kurulum durum dosyası, arayüzsüz CLI, yaşam döngüsü komutları, tek port ters vekil, pnpm'in kaldırılması ve npm 11 geçişi, Bun doğrulaması, CI, Zod 4, Prisma 7, provalama betikleri) karşılaştırıldı. Yöntem: eski terimlerin (`pnpm`, `Prisma 5/6`, `Node 22/24`, `5050`, `SETUP_WIZARD_PORT`, `[skip ci]`, kota ve özel depo anlatımı) taranması ve ilgili bölümlerin kodla karşılaştırılması.
+
+| Dosya | Bulunan eskime | Yapılan |
+|---|---|---|
+| `README.md` | Depo "özel" deniyordu (artık herkese açık); "CI'sız birleştirme" geçici istisnası ve `[skip ci]` uygulaması sürüyordu; Node sürümü ve Zod bilgisi genel; arayüzsüz CLI, durum dosyası, `app:*` komutları ve paket yöneticisi seçimi anlatılmamıştı; rota tablosunun başlığı yoktu; yükseltme açıklamasında pnpm bayrağı (`--prod=false`) vardı; Prisma 7'ye özgü sorun giderme yoktu | Depo görünürlüğü, güncel CI bölümü (altı kontrol), yeni kurulum/yaşam döngüsü/paket yöneticisi bölümleri, Node 22.18+/24.11+, Zod 4, sorun giderme (`database is locked`, `Schema engine error`, göreli `DATABASE_URL`, Node sürümü), rota başlığı, `npm ci --include=dev` |
+| `docs/sunucu-kurulum-kilavuzu.md` | "15 Ekim sürümü Prisma 7.10.1" yanlış tarihsel atıf; `RUST_LOG=info` açıklaması Prisma 5.22'ye göreydi; Node sürüm aralığı | Güncel/tarihsel sürüm ayrımı, `RUST_LOG=warn` ile Prisma 7 davranışı, Node 22.18+/24.11+ |
+| `docs/guvenlik-ve-bakim.md` | Mevcut kurulum ve doğrulama komutları `pnpm` ile yazılmıştı; "pnpm override" anlatımı | `npm` komutları, kök `overrides`, Zod 4/Prisma 7 notu |
+| `docs/postgresql-gecis-rehberi.md` | Şemada `datasource.url` gösteriliyordu (Prisma 7'de geçersiz); "Prisma 5 tabanlı" notu; çalışma zamanı bağdaştırıcısı anılmıyordu | `prisma.config.ts`, `@prisma/adapter-pg` uyarısı, Prisma 7 notu |
+| `docs/npm-gecis-tasarimi.md`, `docs/kurulum-yenileme-tasarimi.md` | "Bun karar bekliyor", "5 yüksek açık", "prova betikleri çalıştırılmadı", Actions kotası istisnası güncel değildi | Durum tabloları (#24–#34), sona eren kota istisnası, kapanan açıklar, çalıştırılan provalar |
+| `docs/performans-ve-kapasite-raporu.md` | Ölçümler yalnız Prisma 6.19.3 içindi | Bölüm 3.1: Prisma 7 sonrası yeniden doğrulama (4.334 istek, 0 hata; süreler makine yükü nedeniyle karşılaştırılamaz) |
+| `docs/dokumantasyon-inceleme.md` | `pnpm run db:prepare-demo` / `start:demo` | `npm run …` |
+| `docs/graphify-mimari-haritasi.md`, `graphify-out/*` | Grafik 6 Kasım'daki `7e9ce683` commit'inden kalmaydı (kurulum yenileme, paket yöneticisi katmanı, ters vekil ve sonrası dosyalar yoktu) | `graphify update .` ile yeniden üretildi; sayılar ve kapsam belgede güncellendi |
+
+Değişmeyenler: rol kullanıcı kılavuzları (`yonetici-`, `ogretmen-`, `ogrenci-`, `veli-kilavuzu.md`), `e-posta-yapilandirma.md`, `yapay-zeka-yonetimi.md`, `yil-gecisi-ve-arsivleme.md`, `uretim-ve-bakim-kilavuzu.md` ve `docs/denetim-raporlari/` altındaki kabul raporları taranmış; npm/Prisma/Node ile çelişen bir ifade bulunmamıştır (`uretim-ve-bakim-kilavuzu.md` komutları zaten npm'e göreydi ve Prisma 7.10.1'i anıyordu). Denetim raporları o tarihlerin kanıtıdır; Prisma 6/pnpm döneminde alınmış sonuçlar tarihsel olarak bırakılmıştır.
+
+---
+
 ## 5 Kasım 2026 Kapsamlı Türkçeleştirme ve Yeniden Yapılandırma
 
 1. **Tüm Dosya ve Klasör Adlarının Türkçeleştirilmesi:**
@@ -27,7 +46,7 @@
    - Aktif test/doğrulama betiklerinin kullandığı JSON, görsel ve PDF kanıt çıktıları `docs/` dışındaki `tests/denetim-kanitlari/` (`yonetici`, `ogretmen`, `ogrenci`, `veli`, `entegrasyon`, `canli-soket`) dizinine taşındı.
 5. **Yeni Özelliklerin Belgelenmesi (5 Kasım 2026):**
    - Kayıt başarı bilgilendirme e-postası (`registration_welcome`), yönetici panelinden SMTP'siz tek kullanımlık parola sıfırlama bağlantısı (**Bağlantı Üret (SMTP'siz)**) ve terminal üzerinden yerel yönetici kurtarma (`db:reset-admin`) akışları işlendi.
-   - `domain/demo` adresinde bağımsız `server/data/demo.db` veritabanı ile çalışan salt-okunur ikinci kopya (`APP_DEMO_MODE=true`, `APP_BASE_PATH=/demo`, `pnpm run db:prepare-demo`, `pnpm run start:demo`), 4 hazır vitrin hesabı (`demo-admin`, `demo-ogretmen`, `demo-ogrenci`, `demo-veli`), `demoPassword` korunumu, `/demo` altında kayıt/şifre sıfırlama/demo dışı giriş engeli (`isRequestInDemoContext`) ve `/demo/...` URL önekinin korunması (`DemoAwareRouter`) tüm ilgili kılavuzlara ve [`demo/demo-vitrin-hesaplari.md`](../demo/demo-vitrin-hesaplari.md) belgesine işlendi.
+   - `domain/demo` adresinde bağımsız `server/data/demo.db` veritabanı ile çalışan salt-okunur ikinci kopya (`APP_DEMO_MODE=true`, `APP_BASE_PATH=/demo`, `npm run db:prepare-demo`, `npm run start:demo`), 4 hazır vitrin hesabı (`demo-admin`, `demo-ogretmen`, `demo-ogrenci`, `demo-veli`), `demoPassword` korunumu, `/demo` altında kayıt/şifre sıfırlama/demo dışı giriş engeli (`isRequestInDemoContext`) ve `/demo/...` URL önekinin korunması (`DemoAwareRouter`) tüm ilgili kılavuzlara ve [`demo/demo-vitrin-hesaplari.md`](../demo/demo-vitrin-hesaplari.md) belgesine işlendi.
 
 ---
 

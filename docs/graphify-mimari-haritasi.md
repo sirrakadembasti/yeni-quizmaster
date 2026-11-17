@@ -1,5 +1,15 @@
 # QuizMaster Graphify Mimari Haritası
 
+## 17 Kasım 2026 yenilemesi: kurulum yenileme, paket yöneticisi katmanı, Zod 4 ve Prisma 7 sonrası
+
+`graphify update .` çıkış 0 ile tamamlandı: **3.980 düğüm, 10.735 kenar, 178 topluluk** (6 Kasım'daki önceki üretim 3.525 / 8.063 / 250 idi). `graphify diagnose multigraph --graph graphify-out/graph.json --json` tutarlı: kayıp veya sarkan uç noktalı kenar yok, yinelenen kenar yok. Grafik `8f6ba6af` commit'inden üretildi; ardından yalnız belge değişiklikleri yapıldı.
+
+Bu üretimle haritaya giren başlıca yapılar: `scripts/package-manager.mjs` ve `scripts/pm.mjs` (paket yöneticisi katmanı), `scripts/app.mjs`/`app-lib.mjs` (yaşam döngüsü komutları), `scripts/setup-proxy.mjs` (tek port ters vekil), `server/setup-wizard/` (durum dosyası, arayüzsüz CLI, işlemsel veritabanı), `server/prisma.config.ts`, `server/utils/patch-body.ts` (Zod 4 PATCH süzgeci), `scripts/prisma-script-client.mjs` ve Prisma 7 uyarlamaları. Bu üretimde de yalnız yerel AST çıkarımı yapıldı: Markdown/görsel semantiği ve LLM topluluk etiketleri yenilenmedi, token maliyeti 0. Graphify, 100 kod dosyasında (yapılandırma ve bazı test dosyaları) çıkarılacak sembol bulmadığını bildirdi.
+
+Aşağıdaki üretimler tarihsel kayıttır.
+
+---
+
 ## 5 Kasım 2026 `docs/`, `tests/` ve `client/` dizin sadeleştirmesi, ana dizin temizliği, `domain/demo` salt-okunur ikinci kopya (`demo.db`), `/demo` URL ad alanı koruması ve PostgreSQL hazırlık güncellemesi
 
 `graphify update . --force` ve `graphify diagnose multigraph --graph graphify-out/graph.json --json` çıkış 0 ile tamamlandı: **3.519 düğüm, 8.031 kenar, 242 topluluk**. `docs/` dizini Türkçe kılavuzlar ve `docs/denetim-raporlari/` altındaki 6 birleştirilmiş kabul raporuyla sadeleştirildi; `tools/` ve `start-local.ps1` temizlendi, `tests-e2e/` ve `playwright.*.config.ts` dosyaları birleşik `tests/` çatısı altına alındı; `client/` altındaki 31 kullanılmayan UI şablonu ve atıl yardımcılar temizlenerek test dosyaları `client/src/test/` altında birleştirildi. Salt-okunur `domain/demo` ikinci kopya mimarisi (`server/utils/demo-mode.ts`, `server/middleware/demo-guard.ts`, `isRequestInDemoContext`, `server/prisma/prepare-demo-db.ts`, `client/src/lib/demo-mode.ts`, `DemoAwareRouter`, `enterDemoNamespace`, `getAccountDemoPassword`, `renderIndexHtmlForBasePath`), 4 hazır vitrin hesabı (`demo-admin`, `demo-ogretmen`, `demo-ogrenci`, `demo-veli`), kayıt başarı bilgilendirme e-postası (`sendRegistrationSuccessEmail`), SMTP'siz tek kullanımlık parola sıfırlama bağlantısı (`issueOfflinePasswordReset`), yerel yönetici kurtarma betiği (`server/prisma/reset-admin.ts`), PostgreSQL hazırlık yardımcıları (`detectDatabaseProvider`, `resolveConfiguredDatabaseUrl`, `getDatabaseMigrationReadiness`) ve 40 demo veli hesabı belgeleri çalışma ağacından çıkarıldı. Eksik/sarkan/dış uç, unverified düğüm, tam yinelenen kenar ve self-loop 0; producer suppression 11. Tanı üretilmiş grafiği inceler; ham üretici ilişki kaybını kanıtlamaz.
@@ -10,6 +20,7 @@
 
 | Tarih | Düğüm / Kenar / Topluluk | Kapsam ve İlgili Rapor |
 |---|---|---|
+| **17 Kasım 2026** | 3.980 / 10.735 / 178 | Kurulum yenileme (durum dosyası, CLI, yaşam döngüsü, ters vekil), paket yöneticisi katmanı ve npm geçişi, Zod 4, Prisma 7 ve provalama betikleri — [Kurulum Yenileme Tasarımı](kurulum-yenileme-tasarimi.md), [npm Geçiş Tasarımı](npm-gecis-tasarimi.md) |
 | **16 Ekim 2026** | 4.161 / 10.699 / 208 | AI profil yönetimi, sağlayıcı doğrulaması, token kullanım kaydı ve iki sekmeli yönetici arayüzü — [Yapay Zeka Yönetimi Kılavuzu](yapay-zeka-yonetimi.md) |
 | **15 Ekim 2026** | 3.881 / 10.032 / 201 | İşlem kapısı, bağımsız okumalar, revizyonlu bildirim tercihleri ve 80 öğrencilik sınav provası — [Performans ve Kapasite Raporu](performans-ve-kapasite-raporu.md) |
 | **14 Ekim 2026** | 3.563–3.806 / 9.212–9.855 / 188–207 | Üretim yükseltme/geri dönüş provası ve kod tabanı envanter incelemesi — [Üretim ve Bakım Kılavuzu](uretim-ve-bakim-kilavuzu.md) ve [Dokümantasyon İnceleme Özeti](dokumantasyon-inceleme.md) |

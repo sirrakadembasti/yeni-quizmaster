@@ -20,7 +20,7 @@ React/Vite, Express, Prisma/SQLite, Socket.IO ve e-posta outbox mimarisi korunmu
 | Ağ sınırları | Genel API/sınav eylemleri kullanıcı başına sınırlanır. Giriş/sıfırlama sınırı IP ve hesap/token özeti kullanır. CORS/socket origin izin listesiyle çalışır. | Kod incelemesi ve API testleri |
 | Çevrimdışı sınav | Ağ/408/429/5xx yeniden denenebilir. Kalıcı istemci/yetki hatası teslim kuyruğunda döngü yaratmaz. Çıkış sınav önbelleğini temizler. Yerel yükleme yolları kayıtta kabul edilir ve görseller gösterilir. Karışık sıra oturum kimliğiyle sabit kalır. | HTTP sınıflandırma/önbellek/sıra testleri |
 | E-posta kuyruğu | İşçi 5 dakikalık lease ile kayıt sahiplenir. Başarısız kayıt aynı turda tekrar alınmaz. Eski lease yeni işçinin durumunu ezemez. | Paralel sahiplenme/SMTP yeniden deneme testi |
-| Bağımlılıklar | Yamalar/gerekli sürüm yükseltmeleri yapıldı. Kullanılmayan jsPDF/uuid ve Nodemailer'ın eski harici tip paketi kaldırıldı. tar/once güvenlik sürümleri pnpm override ile sabitlendi. | Audit/derleme/tip/test kontrolleri |
+| Bağımlılıklar | Yamalar/gerekli sürüm yükseltmeleri yapıldı. Kullanılmayan jsPDF/uuid ve Nodemailer'ın eski harici tip paketi kaldırıldı. tar/once güvenlik sürümleri o tarihte pnpm override ile sabitlendi; pnpm kaldırıldığından bugün kök `package.json` içindeki `overrides` (`tar`, `@tootallnate/once`) ve `package-lock.json` ile sabittir. 16 Kasım 2026'da `zod` 4'e ve Prisma 7'ye geçilerek son yüksek `npm audit` bulguları da kapatıldı. | Audit/derleme/tip/test kontrolleri |
 
 ## Veritabanı ve mevcut kurulum
 
@@ -30,19 +30,19 @@ Migration 20260930093000_session_version_result_indexes yalnız User.sessionVers
 
 Yerel veritabanı migration öncesi SQLite backup API'siyle server/backups/security-20260930/quiz-before-session-version.db dosyasına yedeklendi. Nullable düzeltmesi öncesi ayrıca server/backups/security-20260930/quiz-before-nullable-survey.db yedeği alınmıştır. Yedek kişisel veri içerebildiğinden Git'e eklenmez. Açık veritabanının tek dosyasını kopyalamak WAL durumunda tutarlı yedek garantisi vermez.
 
-Mevcut kurulumlarda yedek sonrası pnpm install, pnpm --filter quiz-master-server db:deploy ve pnpm build çalıştırılır. Sunucu yeni derlemeyle yeniden başlatılır. Bu bakım uzak sunucuya dağıtım yapmaz.
+Mevcut kurulumlarda yedek sonrası `npm ci`, `npm run db:deploy --workspace=server` ve `npm run build` çalıştırılır (uygulama durmuşken; Prisma 7 şema motoru açık bağlantı varken migration uygulayamaz). Sunucu yeni derlemeyle yeniden başlatılır. Bu bakım uzak sunucuya dağıtım yapmaz.
 
 ## Doğrulama ve Graphify
 
 Backend testleri canlı veritabanından bağımsız geçici SQLite üzerinde migration uygular; SMTP gönderimi taklit edilir. Test klasörü yalnız doğrulanan server/data sınırları içinde temizlenir. Kontroller:
 
-    pnpm --filter quiz-master-server test
-    pnpm --filter quiz-master-client exec vitest run
-    pnpm -r type-check
-    pnpm test:setup
-    pnpm --filter quiz-master-server db:validate
-    pnpm build
-    pnpm audit
+    npm run test --workspace=server
+    npm run test --workspace=client -- --run
+    npm run type-check --workspaces --if-present
+    npm run test:setup
+    npm run db:validate --workspace=server
+    npm run build
+    npm audit --omit=dev
 
 Canlı Gmail teslimi ve uzak üretim dağıtımı bu kontrollerde denenmez. Tam test turunda 128 backend, 39 frontend ve 14 kurulum testi geçti. Metadata/görsel ve anket şeması regresyonları bu son backend turuna dahildir. TypeScript, frontend/backend build ve Prisma schema kontrolü geçti; pnpm audit sıfır uyarı bildirdi. Migration sonrasında bütünlük, yabancı anahtarlar ve bütün iş verisi kayıt sayıları değişmeden doğrulandı.
 

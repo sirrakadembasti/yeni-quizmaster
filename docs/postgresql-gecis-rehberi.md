@@ -62,16 +62,17 @@ Bu bölüm gelecekteki geçiş geliştirmesi içindir; tamamlanmış geçiş kom
 Prisma migration SQL'i sağlayıcıya özeldir. Bu nedenle mevcut SQLite migration klasörü düzenlenmemeli ve PostgreSQL'e uygulanmamalıdır.
 
 1. Mevcut `server/prisma/migrations` klasörünü Git geçmişinde koruyun ve geçiş dalında `migrations-sqlite` gibi Prisma'nın aktif migration yolu dışında bir yere arşivleyin.
-2. `server/prisma/schema.prisma` içindeki datasource değerini değiştirin:
+2. `server/prisma/schema.prisma` içindeki datasource sağlayıcısını değiştirin. Prisma 7'de şemada `url` alanı yoktur; bağlantı adresi `server/prisma.config.ts` içindeki `datasource.url` üzerinden `DATABASE_URL` ortam değişkeninden okunur (dosya `postgresql://` adreslerini olduğu gibi geçirir; yalnız göreli `file:` yollarını eski kurala göre mutlak yapar):
 
 ```prisma
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 ```
 
 3. `DATABASE_URL` değerini boş PostgreSQL geliştirme veritabanına yönlendirin.
+
+> **Çalışma zamanı istemcisi de uyarlanmalıdır.** Prisma 7 istemcisi her zaman bir sürücü bağdaştırıcısıyla açılır. Uygulama bugün `server/utils/sqlite-runtime.ts` içindeki `better-sqlite3` bağdaştırıcısını (WAL, tek yazıcı geçidi, işlem sıralaması) kullanır; PostgreSQL için `@prisma/adapter-pg` tabanlı ayrı bir istemci fabrikası yazılmalı ve `createRuntimePrismaClient` kullanan her yer (depolama, arşiv, kurulum sihirbazı, seed/admin betikleri, testler) bu fabrikaya geçirilmelidir. Prisma 7 istemcisi ayrıca `$transaction` için `maxWait` değerini kendisi uygular ve bağdaştırıcı bildirmezse SQLite için 999 bağlı değer varsayar; PostgreSQL bağdaştırıcısının sınırları ayrıca doğrulanmalıdır.
 4. Şemayı doğrulayın ve yeni başlangıç migration'ını üretin:
 
 ```bash
@@ -219,4 +220,4 @@ PostgreSQL'e geçiş tek başına sınırsız ölçek sağlamaz. Anket ve sınav
 - [Prisma veri migration'larında expand-and-contract yaklaşımı](https://www.prisma.io/docs/guides/data-migration)
 - [Prisma PostgreSQL bağlantısı](https://www.prisma.io/docs/orm/overview/databases/postgresql)
 
-> Not: Depodaki Prisma ana sürümü değiştirildiğinde komutlar ve migration davranışı yeniden resmî belgelerden doğrulanmalıdır. Bu rehber mevcut Prisma 5 tabanlı proje için hazırlanmıştır.
+> Not: Depodaki Prisma ana sürümü değiştirildiğinde komutlar ve migration davranışı yeniden resmî belgelerden doğrulanmalıdır. Bu rehber mevcut Prisma 7 (7.10.1) tabanlı proje için güncellenmiştir; komutlar yine de gerçek geçişten önce resmî belgelerden doğrulanmalıdır.
