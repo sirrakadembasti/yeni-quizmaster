@@ -449,6 +449,10 @@ export class PrismaStorage implements IStorage {
       const resultingRole = prismaData.role || currentUser?.role;
       const resultingClassId = prismaData.classId === undefined ? currentUser?.classId : prismaData.classId;
       const resultingActive = prismaData.isActive === undefined ? currentUser?.isActive : prismaData.isActive;
+      if (currentUser?.role === 'admin' && currentUser.isActive && (resultingRole !== 'admin' || resultingActive === false)) {
+        const adminsLeft = await tx.user.count({ where: { role: 'admin', isActive: true, id: { not: id } } });
+        if (adminsLeft === 0) throw new Error('LAST_ADMIN');
+      }
       if (resultingRole === 'student' && resultingClassId) {
         const occupiesNewSeat = resultingActive && (currentUser?.role !== 'student' || !currentUser.isActive || currentUser.classId !== resultingClassId);
         if (occupiesNewSeat || currentUser?.classId !== resultingClassId) await assertClassCapacity(tx, resultingClassId, occupiesNewSeat ? 1 : null, [id]);
@@ -556,7 +560,11 @@ export class PrismaStorage implements IStorage {
 
   async deactivateUser(id: string): Promise<User> {
     return writeTransaction(async (tx) => {
-      const current = await tx.user.findUnique({ where: { id }, select: { role: true } });
+      const current = await tx.user.findUnique({ where: { id }, select: { role: true, isActive: true } });
+      if (current?.role === 'admin' && current.isActive) {
+        const adminsLeft = await tx.user.count({ where: { role: 'admin', isActive: true, id: { not: id } } });
+        if (adminsLeft === 0) throw new Error('LAST_ADMIN');
+      }
       const data: Prisma.UserUpdateInput = {
         isActive: false,
         deactivatedAt: new Date(),
