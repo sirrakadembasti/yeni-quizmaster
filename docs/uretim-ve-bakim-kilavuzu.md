@@ -34,6 +34,17 @@ Hedef dizin bağımsız olmalıdır; kök `.env`, `server/.env`, `server/data` v
 - **Yedek Dizinleri:** Yedek dizini `server/backups/<ad>`; akademik paketlerin varsayılan kaynak dizini `server/data/backups` altındadır.
 - **Güvenlik:** Eksik, fazladan veya bozuk dosya, hatalı manifest, dizin aşımı (path traversal), sembolik bağlantı (symlink/junction) ve dolu hedef dizin reddedilir. Yedek gizli `.env` ayarlarını ve iş verilerini içerdiğinden sunucu dışında erişimi sınırlı özel depoda saklanmalıdır.
 
+### E-posta Büyük/Küçük Harf Düzeltmesi
+
+Giriş, kayıt, şifre sıfırlama ve profil güncelleme e-postayı küçük harfe çevirerek karşılaştırır. `20261118090000_normalize_user_email` göçü mevcut büyük harfli e-postaları küçültür. Aynı adresin iki yazımı varsa (ör. `Ali@x.com` ve `ali@x.com`) çakışan satırlar değiştirilmez. Bunları listelemek için (uygulama durdurulmuşken, yedek aldıktan sonra):
+
+```sql
+SELECT lower("email") AS adres, group_concat("id") AS kimlikler, count(*) AS adet
+FROM "User" GROUP BY lower("email") HAVING count(*) > 1;
+```
+
+Çakışan hesaplardan biri yönetici panelinden pasife alınmalı ya da e-postası değiştirilmelidir.
+
 ## 4. Veri Koruyan Sürüm Yükseltme (`upgrade`)
 
 Onayladığınız yeni sürüm kodunu `.env`, `server/data`, `server/uploads` ve arşiv paketlerini ezmeden yerleştirin. Uygulama ve bütün işçileri durdurun.
