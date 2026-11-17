@@ -40,6 +40,14 @@ Dört sınıf × 20 öğrenci (toplam 80 öğrenci), 20 görselli soru ve 30 dak
 - **Toplam:** Ölçülen **4.334 istekte 0 hata**, 1.600 kalıcı cevap, 80 tamamlanmış sonuç ve 82 öğretmen bildirimi veritabanı ile birebir eşleşti (`integrity_check=ok`, `foreign_key_check=0`).
 - **Yıllık Arşivleme ve Geçmiş Yıl Projeksiyonu:** 17.667 satırlık yıllık kapanış (capture 4,2 sn, PDF/ZIP 20,1 sn, finalization 1,0 sn) sırasında bağımsız HTTP yazıcısı **50/50** hatasız tamamlandı.
 
+### 3.1 Prisma 7 sonrası yeniden doğrulama (17 Kasım 2026)
+
+Bölüm 3'teki ölçümler Prisma 6.19.3 ile alınmıştı. Uygulama 16 Kasım 2026'da Prisma 7.10.1'e geçti (sürücü bağdaştırıcısı aynı `better-sqlite3`; işlem geçidi korunuyor). Aynı senaryo (`scripts/school-exam-rehearsal.mjs`: dört sınıf × 20 öğrenci, görselli sorular, gerçek üretim derlemesi ve üretim arayüzünde rapor/Excel kontrolü) Prisma 7 ile yeniden koşturuldu:
+
+- **4.334 ölçülen istek, 0 hata, tüm yanıtlar 200** (Prisma 6 ölçümüyle aynı sayı); gerçek üretim arayüzünde 282 yazdırma/Excel satırı üretildi, sayfa hatası yok; fixture portları serbest bırakıldı.
+- **Süreler karşılaştırılamaz:** Bu koşu, disk ve işlemci yükü yüksek ve değişken bir geliştirme makinesinde yapıldı (migration'lar bile dakikalar sürdü). Cevap kaydı p95 değerleri turlara göre yaklaşık 5,9–19,2 sn aralığında ölçüldü; Bölüm 3'teki 7,24 sn ile doğrudan kıyaslanamaz. Prisma 7'nin süre etkisini ölçmek için hedef donanımda Prisma 6 ve Prisma 7 sürümlerini aynı makinede art arda koşturmak gerekir; bu yapılmadı.
+- İstemci artık SQLite için en fazla 32.766 bağlı değer bildirir (Prisma 7 varsayılanı 999'dur); arşiv yakalama gibi binlerce kimlikli sıralı sorgular için gereklidir (`server/utils/sqlite-runtime.ts`).
+
 ## 4. İşletim Sınırları ve Saha Notları
 
 - SQLite WAL aynı anda çoklu okumaya izin verir ancak tek dosyada aynı anda tek yazıcı çalıştırır. 80 öğrencinin aynı saniyede yazma yapması birkaç saniyelik kuyruk oluşturur; çok sunuculu veya yüzlerce eşzamanlı yazıcılı kurulumlar için [PostgreSQL Geçiş Rehberi](postgresql-gecis-rehberi.md) izlenmelidir.

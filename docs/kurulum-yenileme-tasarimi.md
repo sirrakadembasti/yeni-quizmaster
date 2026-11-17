@@ -11,14 +11,14 @@ Durum: **uygulandı (8 Kasım 2026)**; sapmalar ve açık kalanlar aşağıdaki 
 | 3 İşlemsel yazım (veritabanı geçici dosyada) | Uygulandı; `.env` zaten geçici dosya + `rename` ile yazılıyordu | #6 |
 | 4 Yaşam döngüsü (`app.mjs start/stop/status/logs`) | Uygulandı | #7 |
 | 5 Tek port arayüz | Uygulandı **ters vekil** olarak (Ek A): tek süreç mümkün değil, tek port/URL/oturum sağlandı | #10 (tasarım: #11) |
-| 6 Bun kararı ve küçük kusurlar | Bun "deneysel" işaretlendi (kaldırılmadı); UTC yedek adı yerel saate çevrildi; yanıltıcı yönlendirme metni düzeltildi | #8 |
+| 6 Bun kararı ve küçük kusurlar | Bun önce "deneysel" işaretlendi, sonra **doğrulandı** (#24–#26: CLI, arayüz, derleme, yükseltme ve CI'da Bun işi) ve etiket kaldırıldı; UTC yedek adı yerel saate çevrildi; yanıltıcı yönlendirme metni düzeltildi | #8, #24–#26 |
 
 Sonradan eklenenler ve sapmalar:
-- Paket yöneticisi katmanı ve npm geçişi ([npm geçiş tasarımı](npm-gecis-tasarimi.md)): #12–#21. **pnpm kaldırıldı**; desteklenenler npm 11+ ve deneysel Bun.
+- Paket yöneticisi katmanı ve npm geçişi ([npm geçiş tasarımı](npm-gecis-tasarimi.md)): #12–#21. **pnpm kaldırıldı**; desteklenenler npm 11+ ve Bun (sonradan doğrulandı).
 - Kurulum başlatıcıları (`kurulum.bat/sh`) artık `node scripts/setup-bootstrap.mjs` ile doğrudan açılır.
 - Bölüm 3.6'daki "Corepack ile pnpm sabitleme" artık geçersizdir (pnpm yok).
 
-Açık kalanlar: Bun'un tarayıcı arayüzü/derleme/yükseltme yolları, kalan 5 yüksek `npm audit` açığı, Prisma `package.json#prisma` uyarısı, kabul/prova betiklerinin tam çalıştırılması ([npm geçiş tasarımı, uygulama durumu](npm-gecis-tasarimi.md)).
+Önceki açık kalanların durumu: Bun yolları doğrulandı (#24–#26), yüksek `npm audit` açıkları Zod 4 (#31) ve Prisma 7 (#32) ile kapandı, `package.json#prisma` uyarısı `prisma.config.ts` ile giderildi, prova betikleri çalıştırıldı (#33, #34). Yalnız ortama bağlı iki tek seferlik prova uçtan uca çalıştırılamadı ([npm geçiş tasarımı, uygulama durumu](npm-gecis-tasarimi.md)).
 
 ## 1. Sorun özeti (bugünkü durum)
 
