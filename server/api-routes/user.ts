@@ -9,6 +9,8 @@ import { sendRegistrationSuccessEmail } from "../utils/email";
 import { logger } from "../utils/logger";
 import { asyncRoute } from "../utils/async-route";
 
+const LAST_ADMIN_MESSAGE = "Sistemde en az bir etkin yönetici kalmalıdır.";
+
 const router: Router = Router();
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const PARENT_RELATIONS = new Set(["Anne", "Baba", "Diğer"]);
@@ -386,6 +388,7 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
     const { password: _, ...userWithoutPassword } = updatedUser;
     res.json({ user: userWithoutPassword });
   } catch (error) {
+    if ((error as any)?.message === "LAST_ADMIN") return res.status(409).json({ message: LAST_ADMIN_MESSAGE });
     console.error("[PATCH /api/users/:id] Error:", error);
     if ((error as any)?.code === "P2002") return res.status(409).json({ message: "Bu e-posta adresi zaten kullanılıyor." });
       if (respondToClassError(error, res)) return;
@@ -406,6 +409,7 @@ router.delete("/:id", requireAuth, requireRole(["admin"]), async (req: AuthReque
     await storage.createLog(req.user!.id, "DEACTIVATE_USER", `Kullanıcı pasife alındı: ${target.id} (${target.role})`);
     res.json({ message: "Kullanıcı pasife alındı; geçmiş kayıtları korundu." });
   } catch (error) {
+    if ((error as any)?.message === "LAST_ADMIN") return res.status(409).json({ message: LAST_ADMIN_MESSAGE });
     res.status(500).json({ message: "Kullanıcı silinemedi." });
   }
 });
@@ -418,7 +422,12 @@ router.patch("/:id/role", requireAuth, requireRole(["admin"]), asyncRoute(async 
   if (!await storage.getUser(req.params.id)) {
     return res.status(404).json({ message: "Kullanıcı bulunamadı." });
   }
-  await storage.updateUserRole(req.params.id, role);
+  try {
+    await storage.updateUserRole(req.params.id, role);
+  } catch (error) {
+    if ((error as any)?.message === "LAST_ADMIN") return res.status(409).json({ message: LAST_ADMIN_MESSAGE });
+    throw error;
+  }
   res.json({ message: "Rol güncellendi." });
 }));
 
