@@ -33,7 +33,7 @@ Parola sıfırlama bağlantısı tek kullanımlıktır ve bir saat geçerlidir. 
 
 ## 3. Öğrenci yönetimi
 
-**Öğrenciler** veya **Yönetim > Kullanıcılar** ekranından hesap oluşturabilirsiniz. Öğrenci listesindeki **Detaylar** düğmesi düzenleme sekmelerine açılır; ayrı hızlı düzenleme kaldırılmıştır. Öğrenci kaldırıldığında kayıt fiziksel olarak silinmez, pasife alınır ve sınav/sınıf geçmişi korunur. Öğretmen, veli ve yönetici hesapları için de aynı şekilde silme yerine pasife alma uygulanır: hesap giriş yapamaz, listelerde görünmez, geçmiş kayıtları (giriş kayıtları, bildirimler, oluşturulan sınav ve duyurular) korunur. Pasife alınan öğretmenin sınıf sorumluluğu ve ders atamaları, velinin öğrenci bağları kaldırılır.
+**Öğrenciler** veya **Yönetim > Kullanıcılar** ekranından hesap oluşturabilirsiniz. Öğrenci listesindeki **Detaylar** düğmesi düzenleme sekmelerine açılır; ayrı hızlı düzenleme kaldırılmıştır. Öğrenci kaldırıldığında kayıt fiziksel olarak silinmez, pasife alınır ve sınav/sınıf geçmişi korunur. Öğretmen, veli ve yönetici hesapları için de aynı şekilde silme yerine pasife alma uygulanır: hesap giriş yapamaz, listelerde görünmez, geçmiş kayıtları (giriş kayıtları, bildirimler, oluşturulan sınav ve duyurular) korunur. Sistemde en az bir etkin yönetici kalmalıdır: son etkin yönetici kendini pasife alamaz ve rolünü düşüremez (409). Pasife alınan öğretmenin sınıf sorumluluğu ve ders atamaları, velinin öğrenci bağları kaldırılır.
 
 Sınıf numarası sınıfa atama anında sistemce otomatik verilir. Sınıf içinde benzersizdir; yönetici dahil hiçbir kullanıcı bu değeri elle değiştiremez.
 
