@@ -31,6 +31,8 @@ export const initializeStorage = async () => {
 export type ContentQuestionInput = Omit<Prisma.QuestionUncheckedCreateInput, 'options' | 'config' | 'correctAnswer'> & { options?: any; config?: any; correctAnswer?: string | null };
 export type ContentSettingsInput = Prisma.QuizUncheckedCreateInput & { assignedClassIds: string[] };
 
+const EMAIL_QUEUE_PUBLIC_SELECT = { id: true, status: true, attempts: true, maxAttempts: true, lastAttempt: true, errorMessage: true, sentAt: true, createdAt: true } as const;
+
 async function writeTransaction<T>(operation: (tx: Prisma.TransactionClient) => Promise<T>): Promise<T> {
   for (let attempt = 0; ; attempt++) {
     try { return await prisma.$transaction(operation, { maxWait: 10000, timeout: 10000 }); }
@@ -196,10 +198,11 @@ export interface IStorage {
   enqueueEmail(data: { to: string; subject: string; body: string; type?: string; maxAttempts?: number }): Promise<EmailQueue>;
   getEmailLogs(filters?: { status?: string; search?: string; startDate?: Date; endDate?: Date; page?: number; limit?: number }): Promise<{ data: EmailQueue[]; total: number; counts: { total: number; sent: number; pending: number; failed: number } }>;
   retryEmail(id: string): Promise<EmailQueue | null>;
+  getEmailType(id: string): Promise<string | null>;
   deleteEmailLog(id: string): Promise<boolean>;
   getPendingEmails(limit?: number): Promise<EmailQueue[]>;
   claimPendingEmails(limit?: number, excludeIds?: string[]): Promise<EmailQueue[]>;
-  updateEmailStatus(id: string, status: string, errorMessage?: string | null, processingUntil?: Date): Promise<EmailQueue | null>;
+  updateEmailStatus(id: string, status: string, errorMessage?: string | null, processingUntil?: Date, clearBody?: boolean): Promise<EmailQueue | null>;
   createPasswordResetRequest(data: { userId: string; email: string; tokenHash: string; expiresAt: Date; requestedBy?: string | null; requestIp?: string | null }): Promise<any>;
   updatePasswordResetRequest(id: string, data: Record<string, unknown>): Promise<any>;
   getPasswordResetRequest(id: string): Promise<any | undefined>;
@@ -1884,9 +1887,14 @@ export class PrismaStorage implements IStorage {
     };
   }
 
+  async getEmailType(id: string): Promise<string | null> {
+    const email = await prisma.emailQueue.findUnique({ where: { id }, select: { type: true } });
+    return email?.type ?? null;
+  }
+
   async retryEmail(id: string): Promise<EmailQueue | null> {
     const email = await prisma.emailQueue.findUnique({ where: { id } });
-    if (!email || (email.processingUntil && email.processingUntil > new Date())) return null;
+    if (!email || email.type === 'password_reset' || (email.processingUntil && email.processingUntil > new Date())) return null;
     return await prisma.emailQueue.update({
       where: { id },
       data: {
@@ -1930,7 +1938,7 @@ export class PrismaStorage implements IStorage {
     });
   }
 
-  async updateEmailStatus(id: string, status: string, errorMessage?: string | null, processingUntil?: Date): Promise<EmailQueue | null> {
+  async updateEmailStatus(id: string, status: string, errorMessage?: string | null, processingUntil?: Date, clearBody = false): Promise<EmailQueue | null> {
     try {
       return await prisma.emailQueue.update({
         where: { id, ...(processingUntil ? { processingUntil } : {}) },
@@ -1940,6 +1948,7 @@ export class PrismaStorage implements IStorage {
           errorMessage: errorMessage ?? null,
           lastAttempt: new Date(),
           sentAt: status === 'sent' ? new Date() : undefined,
+          ...(clearBody ? { body: '[gönderildikten sonra silindi]' } : {}),
           attempts: { increment: 1 }
         }
       });
@@ -1954,15 +1963,15 @@ export class PrismaStorage implements IStorage {
   }
 
   async updatePasswordResetRequest(id: string, data: Record<string, unknown>): Promise<any> {
-    return prisma.passwordResetRequest.update({ where: { id }, data: data as any, include: { user: { select: { id: true, name: true, email: true, role: true } }, emailQueue: true } });
+    return prisma.passwordResetRequest.update({ where: { id }, data: data as any, include: { user: { select: { id: true, name: true, email: true, role: true } }, emailQueue: { select: EMAIL_QUEUE_PUBLIC_SELECT } } });
   }
 
   async getPasswordResetRequest(id: string): Promise<any | undefined> {
-    return (await prisma.passwordResetRequest.findUnique({ where: { id }, include: { user: { select: { id: true, name: true, email: true, role: true } }, emailQueue: true } })) || undefined;
+    return (await prisma.passwordResetRequest.findUnique({ where: { id }, include: { user: { select: { id: true, name: true, email: true, role: true } }, emailQueue: { select: EMAIL_QUEUE_PUBLIC_SELECT } } })) || undefined;
   }
 
   async getPasswordResetRequestByToken(tokenHash: string): Promise<any | undefined> {
-    return (await prisma.passwordResetRequest.findUnique({ where: { tokenHash }, include: { user: true, emailQueue: true } })) || undefined;
+    return (await prisma.passwordResetRequest.findUnique({ where: { tokenHash }, include: { user: true, emailQueue: { select: EMAIL_QUEUE_PUBLIC_SELECT } } })) || undefined;
   }
 
   async getPasswordResetRequests(filters?: { status?: string; search?: string; page?: number; limit?: number }): Promise<{ data: any[]; total: number; counts: Record<string, number> }> {
@@ -1972,7 +1981,7 @@ export class PrismaStorage implements IStorage {
     const page = filters?.page || 1;
     const limit = filters?.limit || 100;
     const [data, total, pending, completed, cancelled, failed] = await Promise.all([
-      prisma.passwordResetRequest.findMany({ where, include: { user: { select: { id: true, name: true, email: true, role: true } }, emailQueue: true }, orderBy: { createdAt: 'desc' }, skip: (page - 1) * limit, take: limit }),
+      prisma.passwordResetRequest.findMany({ where, include: { user: { select: { id: true, name: true, email: true, role: true } }, emailQueue: { select: EMAIL_QUEUE_PUBLIC_SELECT } }, orderBy: { createdAt: 'desc' }, skip: (page - 1) * limit, take: limit }),
       prisma.passwordResetRequest.count({ where }),
       prisma.passwordResetRequest.count({ where: { status: 'pending' } }),
       prisma.passwordResetRequest.count({ where: { status: 'completed' } }),

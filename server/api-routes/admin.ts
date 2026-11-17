@@ -235,6 +235,9 @@ router.get("/logs/emails", requireAuth, requireRole(["admin"]), async (req: Auth
 router.post("/logs/emails/:id/retry", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
+    if (await storage.getEmailType(id) === "password_reset") {
+      return res.status(409).json({ message: "Şifre sıfırlama e-postası yeniden gönderilemez; Şifre Talepleri'nden yeni bağlantı üretin." });
+    }
     const updated = await storage.retryEmail(id);
     if (!updated) {
       return res.status(404).json({ message: "E-posta kaydı bulunamadı." });
