@@ -28,6 +28,7 @@ import { archiveDb } from './services/archive-db';
 import { initializeStorage } from './storage';
 import { getArchiveBackupRoot } from './api-routes/archive';
 import { createAnnualCaptureGuard } from './middleware/annual-capture-guard';
+import { apiErrorHandler } from './middleware/error-handler';
 import { createAcademicContextGuard } from './middleware/academic-context';
 import { createDemoModeGuard } from './middleware/demo-guard';
 import { getSessionCookieName, isDemoInstanceEnabled } from './utils/demo-mode';
@@ -50,6 +51,7 @@ const isHttpsDeploy =
   (String(frontendUrl).startsWith("https://") || process.env.FORCE_SECURE_COOKIES === "1");
 const archiveWorker = createArchiveWorker({ db: archiveDb, backupRoot: getArchiveBackupRoot(), onError: error => logger.error({ err: error }, '[Archive] Persistent job failed') });
 process.once('exit', () => archiveWorker.stop());
+process.on('unhandledRejection', (reason) => logger.error({ err: reason }, 'Unhandled rejection'));
 
 export { logger };
 
@@ -226,23 +228,7 @@ app.use(httpLogger);
     });
 
     // Global error handler for API
-    app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
-      const status = err.status || err.statusCode || 500;
-      const message = err.message || "Dahili Sunucu Hatası";
-
-      logger.error({
-        err,
-        status,
-        message,
-        path: req.path,
-        method: req.method
-      }, "API Error");
-
-      if (req.path.startsWith("/api")) {
-        return res.status(status).json({ message });
-      }
-      _next(err);
-    });
+    app.use(apiErrorHandler);
 
     // In production, serve static files from the built client
     if (process.env.NODE_ENV === "production") {

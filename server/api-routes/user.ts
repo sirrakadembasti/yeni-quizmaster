@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { sendRegistrationSuccessEmail } from "../utils/email";
 import { logger } from "../utils/logger";
+import { asyncRoute } from "../utils/async-route";
 
 const router: Router = Router();
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -407,14 +408,17 @@ router.delete("/:id", requireAuth, requireRole(["admin"]), async (req: AuthReque
   }
 });
 
-router.patch("/:id/role", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+router.patch("/:id/role", requireAuth, requireRole(["admin"]), asyncRoute(async (req: AuthRequest, res: Response) => {
   const { role } = req.body;
   if (!['admin', 'teacher', 'student', 'parent'].includes(role)) {
     return res.status(400).json({ message: "Geçersiz rol." });
   }
+  if (!await storage.getUser(req.params.id)) {
+    return res.status(404).json({ message: "Kullanıcı bulunamadı." });
+  }
   await storage.updateUserRole(req.params.id, role);
   res.json({ message: "Rol güncellendi." });
-});
+}));
 
 // ==================== TEACHER CATEGORY ASSIGNMENTS ====================
 // Client: POST /api/users/:id/categories  →  öğretmene ders ata
