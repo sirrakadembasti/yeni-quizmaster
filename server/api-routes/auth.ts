@@ -19,6 +19,7 @@ import {
 } from "../utils/demo-mode";
 import { isRequestInDemoContext } from "../middleware/demo-guard";
 import { getEffectiveDeploymentConfig } from "../utils/deployment-config";
+import { asyncRoute } from "../utils/async-route";
 
 const router: Router = Router();
 
@@ -206,7 +207,7 @@ router.post("/login", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/logout", requireAuth, async (req: AuthRequest, res: Response) => {
+router.post("/logout", requireAuth, asyncRoute(async (req: AuthRequest, res: Response) => {
   const isDemoUser = isDemoInstanceEnabled() || isDemoShowcaseEmail(req.user!.email);
   if (!isDemoUser) {
     await storage.createLog(req.user!.id, "LOGOUT", `User logged out`);
@@ -226,7 +227,7 @@ router.post("/logout", requireAuth, async (req: AuthRequest, res: Response) => {
     });
     res.json({ message: "Oturum kapatıldı." });
   });
-});
+}));
 
 router.get("/me", requireAuth, (req: AuthRequest, res: Response) => {
   const { password, ...userWithoutPassword } = req.user!;

@@ -1,6 +1,7 @@
 import { Router, type Response } from "express";
 import rateLimit from "express-rate-limit";
 import { storage } from "../storage";
+import { asyncRoute } from "../utils/async-route";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
@@ -44,12 +45,12 @@ const submitSchema = z.object({
 
 // ==================== STUDENT ROUTES ====================
 
-router.get("/quizzes", requireAuth, requireRole(["student", "teacher", "admin"]), async (req: AuthRequest, res: Response) => {
+router.get("/quizzes", requireAuth, requireRole(["student", "teacher", "admin"]), asyncRoute(async (req: AuthRequest, res: Response) => {
   const allQuizzes = await storage.getAllQuizzes({ studentClassId: req.user!.classId });
   const quizzes = allQuizzes.filter(quiz => isQuizVisibleToStudent(quiz, req.user!.classId));
   
   res.json({ quizzes });
-});
+}));
 
 router.get("/results", requireAuth, requireRole(["student", "teacher", "admin"]), async (req: AuthRequest, res: Response) => {
   try {
