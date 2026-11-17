@@ -2,7 +2,7 @@
 
 ## 1. Güncel Bakım Özeti (5 Kasım 2026)
 
-- **`domain/demo` Salt-Okunur İkinci Kopya:** Bağımsız `server/data/demo.db` veritabanı `npm run db:prepare-demo` ile hazırlanır ve `npm run start:demo` (`PORT=5001`, `APP_DEMO_MODE=true`, `APP_BASE_PATH=/demo`) ile çalıştırılır. Ayrıntılar [`demo/demo-vitrin-hesaplari.md`](../demo/demo-vitrin-hesaplari.md) belgesindedir.
+- **`domain/demo` Salt-Okunur İkinci Kopya:** Bağımsız `server/data/demo.db` veritabanı `npm run db:prepare-demo` ile hazırlanır (kaynak veritabanı yalnız okunur; vitrin hesapları yalnız demo kopyasına eklenir; kaynakta gerçek yönetici varsa `--allow-real-data` verilmedikçe komut hata verir) ve `npm run start:demo` (`PORT=5001`, `APP_DEMO_MODE=true`, `APP_BASE_PATH=/demo`) ile çalıştırılır. Ayrıntılar [`demo/demo-vitrin-hesaplari.md`](../demo/demo-vitrin-hesaplari.md) belgesindedir.
 - **SMTP'siz Parola Kurtarma:** E-posta erişimi olmayan kurulumlarda yönetici şifresi `npm run db:reset-admin --workspace=server` komutuyla veya yönetici panelindeki **Şifre Talepleri > Bağlantı Üret (SMTP'siz)** seçeneğiyle sıfırlanabilir.
 - **İstemci Paket Bölme:** `client/vite.config.ts` içinde `manualChunks` (`vendor-react`, `vendor-ui`) ile 500 kB üzeri paket uyarısı giderilmiştir.
 - **Yapay Zeka Şifreleme Anahtarı:** AI yönetimi için `20261015000100_ai_management` ve öğretmen tüketim kaydı için `20261015000200_ai_usage` migration'ları dahil toplam 25 migration uygulanmıştır. Profil kayıtlarıyla `server/data/ai-encryption.key` dosyasını birlikte koruyun; yerel yedekleme/geri yükleme (`backup`/`restore`) anahtarın kayıtları çözebildiğini de doğrular. Ayrıntılar [Yapay Zeka Yönetimi](yapay-zeka-yonetimi.md) kılavuzundadır.

@@ -52,7 +52,7 @@ QuizMaster Node.js (Express + Socket.IO)
 
 Örnek: `https://sinav.kurum.gov.tr/demo/`
 
-- Ana üretim uygulaması `127.0.0.1:5000` (`server/data/quiz.db`) üzerinde çalışırken, salt-okunur vitrin kopyası `127.0.0.1:5001` (`server/data/demo.db`, `APP_DEMO_MODE=true`, `APP_BASE_PATH=/demo`) üzerinde ikinci bir süreç olarak çalıştırılır (`npm run db:prepare-demo` ve `npm run start:demo`).
+- Ana üretim uygulaması `127.0.0.1:5000` (`server/data/quiz.db`) üzerinde çalışırken, salt-okunur vitrin kopyası `127.0.0.1:5001` (`server/data/demo.db`, `APP_DEMO_MODE=true`, `APP_BASE_PATH=/demo`) üzerinde ikinci bir süreç olarak çalıştırılır (`npm run db:prepare-demo` ve `npm run start:demo`). `db:prepare-demo` kaynak `quiz.db`'yi yalnız okur; vitrin hesapları yalnız `demo.db` kopyasına eklenir. Kaynakta vitrin dışı yönetici varsa (gerçek kurulum verisi) komut kişisel verinin herkese açık demoya geçmemesi için hata verir; bilerek devam etmek için `--allow-real-data` gerekir. Halka açık demo için gerçek okul verisi içermeyen ayrı bir kaynak kullanın.
 - Bu modda istemci tüm API (`/demo/api/...`), görsel (`/demo/uploads/...`), Socket.IO (`/demo/socket.io/...`) ve oturum çerezi (`quizmaster.demo.sid`) isteklerini `/demo` önekiyle gönderir; ana uygulamanın veritabanı veya oturumlarıyla çakışmaz.
 - Ziyaretçiler `demo-admin`, `demo-ogretmen`, `demo-ogrenci` ve `demo-veli` hesaplarıyla tek tıkla giriş yapıp tüm ekranları inceleyebilir; veri değiştiren istekler `DEMO_MODE_READ_ONLY` ile engellenir. Ayrıntılar [`demo/demo-vitrin-hesaplari.md`](../demo/demo-vitrin-hesaplari.md) belgesindedir.
 
