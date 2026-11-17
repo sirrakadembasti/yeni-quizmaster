@@ -82,7 +82,7 @@ export default function TeacherDetailPage() {
     mutationFn: () => userApi.deleteUser(teacher!.id),
     onSuccess: async () => {
       await invalidateAdminRelations(queryClient);
-      toast({ title: "Başarılı", description: "Öğretmen silindi." });
+      toast({ title: "Başarılı", description: "Öğretmen pasife alındı." });
       setIsDeleteOpen(false);
       setLocation("/teachers");
     },
@@ -193,7 +193,7 @@ export default function TeacherDetailPage() {
                 className="rounded-xl font-bold gap-2"
                 onClick={() => setIsDeleteOpen(true)}
               >
-                <Trash2 className="h-4 w-4" /> Öğretmeni Sil
+                <Trash2 className="h-4 w-4" /> Öğretmeni Pasife Al
               </Button>
             </div>
           )}
@@ -384,8 +384,8 @@ export default function TeacherDetailPage() {
             isOpen={isDeleteOpen}
             onOpenChange={setIsDeleteOpen}
             onConfirm={() => deleteMutation.mutate()}
-            title="Öğretmeni Sil"
-            description={`"${teacher.name}" isimli öğretmeni silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`}
+            title="Öğretmeni Pasife Al"
+            description={`"${teacher.name}" isimli öğretmen pasife alınacak; geçmiş kayıtları korunur. Devam etmek istiyor musunuz?`}
             isPending={deleteMutation.isPending}
           />
         </>

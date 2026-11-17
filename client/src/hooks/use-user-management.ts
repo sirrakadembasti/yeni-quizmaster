@@ -43,7 +43,7 @@ export function useUserManagement(role: 'teacher' | 'student') {
     mutationFn: () => userApi.deleteUser(selectedUser!.id),
     onSuccess: async () => {
       await invalidateAdminRelations(queryClient);
-      toast({ title: "Başarılı", description: "Kullanıcı silindi." });
+      toast({ title: "Başarılı", description: "Kullanıcı pasife alındı." });
       setIsDeleteOpen(false);
       setSelectedUser(null);
     },

@@ -338,9 +338,9 @@ export default function AdminManagementPage() {
     onSuccess: async () => {
       await invalidateAdminRelations(queryClient);
       setIsDeleteUserOpen(false);
-      toast({ title: "Başarılı", description: "Kullanıcı silindi." });
+      toast({ title: "Başarılı", description: "Kullanıcı pasife alındı." });
     },
-    onError: (error: Error) => toast({ title: "Kullanıcı silinemedi", description: error.message, variant: "destructive" })
+    onError: (error: Error) => toast({ title: "Kullanıcı pasife alınamadı", description: error.message, variant: "destructive" })
   });
 
   // Mutations - Categories
@@ -1382,7 +1382,7 @@ const deleteClassMutation = useMutation({
           <DialogFooter className="flex gap-2 p-4 pt-0">
             <Button variant="outline" onClick={() => setIsDeleteClassOpen(false)} className="rounded-xl flex-1 font-bold">Vazgeç</Button>
             {(activeClass?._count?.students || 0) === 0 && (
-              <Button variant="destructive" disabled={deleteClassMutation.isPending} onClick={() => deleteClassMutation.mutate(selectedClassId!)} className="rounded-xl flex-1 font-bold shadow-lg dark:shadow-none">Evet, Sil</Button>
+              <Button variant="destructive" disabled={deleteClassMutation.isPending} onClick={() => deleteClassMutation.mutate(selectedClassId!)} className="rounded-xl flex-1 font-bold shadow-lg dark:shadow-none">Evet, Pasife Al</Button>
             )}
           </DialogFooter>
         </DialogContent>
@@ -1392,19 +1392,19 @@ const deleteClassMutation = useMutation({
       <Dialog open={isDeleteUserOpen} onOpenChange={setIsDeleteUserOpen}>
         <DialogContent className="rounded-3xl max-w-sm bg-card">
           <DialogHeader className="sr-only">
-            <DialogTitle>Kullanıcıyı Sil</DialogTitle>
-            <DialogDescription>Kullanıcı silme onayı</DialogDescription>
+            <DialogTitle>Kullanıcıyı Pasife Al</DialogTitle>
+            <DialogDescription>Kullanıcı pasife alma onayı</DialogDescription>
           </DialogHeader>
           <div className="py-8 text-center space-y-4">
             <div className="h-16 w-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-red-100 shadow-lg dark:shadow-none">
               <Trash2 className="h-8 w-8" />
             </div>
-            <h2 className="text-xl font-black text-slate-900 dark:text-slate-50">Kullanıcıyı Sil?</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 font-medium px-4">"{selectedUser?.name}" isimli kullanıcı sistemden tamamen kaldırılacak.</p>
+            <h2 className="text-xl font-black text-slate-900 dark:text-slate-50">Kullanıcıyı Pasife Al?</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 font-medium px-4">"{selectedUser?.name}" isimli kullanıcı pasife alınacak; geçmiş kayıtları korunur.</p>
           </div>
           <DialogFooter className="flex gap-2 p-4 pt-0">
             <Button variant="outline" onClick={() => setIsDeleteUserOpen(false)} className="rounded-xl flex-1 font-bold">Vazgeç</Button>
-            <Button variant="destructive" disabled={deleteUserMutation.isPending} onClick={() => deleteUserMutation.mutate(selectedUser?.id)} className="rounded-xl flex-1 font-bold shadow-lg dark:shadow-none dark:shadow-none">Evet, Sil</Button>
+            <Button variant="destructive" disabled={deleteUserMutation.isPending} onClick={() => deleteUserMutation.mutate(selectedUser?.id)} className="rounded-xl flex-1 font-bold shadow-lg dark:shadow-none dark:shadow-none">Evet, Pasife Al</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -1424,7 +1424,7 @@ const deleteClassMutation = useMutation({
           </div>
           <DialogFooter className="flex gap-2 p-4 pt-0">
             <Button variant="outline" onClick={() => setIsDeleteCategoryOpen(false)} className="rounded-xl flex-1 font-bold">Vazgeç</Button>
-            <Button variant="destructive" disabled={deleteCategoryMutation.isPending} onClick={() => deleteCategoryMutation.mutate(selectedCategoryId!)} className="rounded-xl flex-1 font-bold">Evet, Sil</Button>
+            <Button variant="destructive" disabled={deleteCategoryMutation.isPending} onClick={() => deleteCategoryMutation.mutate(selectedCategoryId!)} className="rounded-xl flex-1 font-bold">Evet, Pasife Al</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
