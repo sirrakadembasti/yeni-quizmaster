@@ -63,6 +63,9 @@ export default function StudentQuiz() {
   const [offlineMode, setOfflineMode] = useState(false);
   const [submissionQueued, setSubmissionQueued] = useState(false);
   const answerSaveQueue = useRef<Promise<unknown>>(Promise.resolve());
+  const deadlineRef = useRef<number | null>(null);
+  const autoSubmittedRef = useRef(false);
+  const submittingRef = useRef(false);
   const saveAnswer = (attemptId: string, questionId: string, answer: string) => {
     const request = answerSaveQueue.current.catch(() => {}).then(() => quizApi.submitAnswer(attemptId, questionId, answer));
     answerSaveQueue.current = request;
@@ -99,9 +102,11 @@ export default function StudentQuiz() {
         setAnswers(data.existingAnswers || {});
         // Convert minutes from DB to seconds for the timer
         const fallbackLimit = data.quiz?.timeLimit ? data.quiz.timeLimit * 60 : null;
-        setTimeLeft(data.remainingSeconds !== undefined
+        const seconds = data.remainingSeconds !== undefined
           ? data.remainingSeconds
-          : fallbackLimit);
+          : fallbackLimit;
+        setTimeLeft(seconds);
+        deadlineRef.current = typeof seconds === 'number' ? Date.now() + seconds * 1000 : null;
         if (!isPreviewMode && user) {
           const capturedAt = new Date().toISOString();
           const session = reconcileOfflineSession({
@@ -146,7 +151,9 @@ export default function StudentQuiz() {
           setQuestions(cached.questions);
           setResultId(cached.resultId);
           setAnswers(cached.answers);
-          setTimeLeft(getOfflineRemainingSeconds(cached));
+          const seconds = getOfflineRemainingSeconds(cached);
+          setTimeLeft(seconds);
+          deadlineRef.current = typeof seconds === 'number' ? Date.now() + seconds * 1000 : null;
           setOfflineMode(true);
           setSubmissionQueued(cached.pendingSubmit);
         } else {
@@ -167,21 +174,22 @@ export default function StudentQuiz() {
 
   // Timer countdown
   useEffect(() => {
-    if (!resultId || submitted || submissionQueued || timeLeft === null) return;
+    if (!resultId || submitted || submissionQueued || deadlineRef.current === null) return;
 
     const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev! <= 1) {
-          // Auto-submit when time's up
-          handleSubmit();
-          return 0;
-        }
-        return prev! - 1;
-      });
+      setTimeLeft(Math.max(0, Math.ceil((deadlineRef.current! - Date.now()) / 1000)));
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [resultId, submitted, submissionQueued, timeLeft]);
+  }, [resultId, submitted, submissionQueued]);
+
+  // Auto-submit once when time's up
+  useEffect(() => {
+    if (timeLeft === 0 && !submitted && !submissionQueued && !autoSubmittedRef.current) {
+      autoSubmittedRef.current = true;
+      void handleSubmit();
+    }
+  }, [timeLeft, submitted, submissionQueued]);
 
   // Auto-save answer when changed
   const handleAnswerChange = async (questionId: string, option: string) => {
@@ -232,6 +240,8 @@ export default function StudentQuiz() {
   };
 
   const handleSubmit = async () => {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     // In preview mode, just show a message instead of submitting
     if (isPreviewMode) {
       setSubmitted(true);
@@ -266,6 +276,8 @@ export default function StudentQuiz() {
       setOfflineMode(true);
       setSubmissionQueued(true);
       setShowConfirmDialog(false);
+    } finally {
+      submittingRef.current = false;
     }
   };
 
