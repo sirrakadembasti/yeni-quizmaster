@@ -143,7 +143,7 @@ Yönetici okul geneline, role veya sınıfa duyuru gönderebilir. Duyuruda gönd
 **Yönetim > Loglar** dört alt sekmeden oluşur:
 
 1. **Kullanıcı Logları:** Giriş ve kullanıcı/sınav/duyuru işlemleri.
-2. **E-Posta Logları:** Outbox teslimat durumu, alıcı, konu, deneme sayısı ve hata bilgisi (`password_reset`, `registration_welcome` vb.). Token içeren gövde istemciye verilmez.
+2. **E-Posta Logları:** Outbox teslimat durumu, alıcı, konu, deneme sayısı ve hata bilgisi (`password_reset`, `registration_welcome` vb.). Token içeren gövde istemciye verilmez. Şifre sıfırlama e-postasının gövdesi gönderildikten (ya da kalıcı olarak başarısız olduktan) sonra veritabanından da silinir; bu e-postalar yeniden gönderilemez, **Şifre Talepleri**'nden yeni bağlantı üretilmelidir.
 3. **Şifre Talepleri:** Kullanıcı adına e-posta ile talep oluşturma, **Bağlantı Üret (SMTP'siz)** ile doğrudan tek kullanımlık sıfırlama bağlantısı üretip kopyalama, durum/arama filtresi, yeni bağlantı gönderme (**Yenile**), satır bazında **Bağlantı Üret** ve bekleyen talebi iptal etme (**İptal**).
 4. **Sistem Hata & İşlemleri:** Arşivleme, sınıf atlatma, tasfiye ve sistem operasyonları.
 

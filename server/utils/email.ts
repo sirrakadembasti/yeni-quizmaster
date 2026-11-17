@@ -116,14 +116,14 @@ export const processEmailQueue = async () => {
           html: email.body,
         });
 
-        await storage.updateEmailStatus(email.id, "sent", null, email.processingUntil || undefined);
+        await storage.updateEmailStatus(email.id, "sent", null, email.processingUntil || undefined, email.type === "password_reset");
         logger.info({ emailId: email.id, to: email.to }, "[EmailQueue] Successfully sent email");
       } catch (err: any) {
         const errorMsg = err?.message || String(err);
         const newAttempts = email.attempts + 1;
         const newStatus = newAttempts >= email.maxAttempts ? "failed" : "pending";
 
-        await storage.updateEmailStatus(email.id, newStatus, errorMsg, email.processingUntil || undefined);
+        await storage.updateEmailStatus(email.id, newStatus, errorMsg, email.processingUntil || undefined, email.type === "password_reset" && newStatus === "failed");
         logger.warn(
           { emailId: email.id, to: email.to, attempt: newAttempts, error: errorMsg },
           `[EmailQueue] Failed to send email (attempt ${newAttempts}/${email.maxAttempts})`

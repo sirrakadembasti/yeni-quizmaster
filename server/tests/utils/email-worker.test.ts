@@ -15,7 +15,7 @@ describe('email worker retries', () => {
     fake.claim.mockImplementation(async (_limit, excluded: string[] = []) => excluded.includes(message.id) ? [] : [message]);
     await processEmailQueue();
     expect(fake.sendMail).toHaveBeenCalledTimes(1);
-    expect(fake.update).toHaveBeenCalledWith(message.id, 'pending', 'temporary SMTP failure', message.processingUntil);
+    expect(fake.update).toHaveBeenCalledWith(message.id, 'pending', 'temporary SMTP failure', message.processingUntil, false);
     await processEmailQueue();
     expect(fake.sendMail).toHaveBeenCalledTimes(2);
   });
