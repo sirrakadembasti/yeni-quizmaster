@@ -51,6 +51,20 @@ class TemplateTests(unittest.TestCase):
             module.copy_template(self.repo, self.source, self.target)
         self.assertFalse(self.target.exists())
 
+    def test_accepts_only_the_exact_migration_seeded_row(self):
+        with closing(sqlite3.connect(self.source)) as db, db:
+            db.execute('CREATE TABLE AIConfiguration(id TEXT PRIMARY KEY, defaultProfileId TEXT, revision INTEGER)')
+            db.execute("INSERT INTO AIConfiguration VALUES ('singleton', NULL, 0)")
+        self.assertEqual(module.copy_template(self.repo, self.source, self.target), 1)
+
+    def test_rejects_a_modified_migration_seeded_row(self):
+        with closing(sqlite3.connect(self.source)) as db, db:
+            db.execute('CREATE TABLE AIConfiguration(id TEXT PRIMARY KEY, defaultProfileId TEXT, revision INTEGER)')
+            db.execute("INSERT INTO AIConfiguration VALUES ('singleton', 'profile-1', 3)")
+        with self.assertRaisesRegex(ValueError, 'business data'):
+            module.copy_template(self.repo, self.source, self.target)
+        self.assertFalse(self.target.exists())
+
     def test_rejects_nonfixture_paths_and_existing_target(self):
         with self.assertRaisesRegex(ValueError, 'Owned'):
             module.copy_template(self.repo, self.repo / 'server/data/quiz.db', self.target)

@@ -6,6 +6,10 @@ import sqlite3
 import sys
 
 
+# 20261015000100_ai_management: INSERT INTO "AIConfiguration" ("id") VALUES ('singleton') (revision varsayılanı 0).
+MIGRATION_SEEDED_ROWS = {'AIConfiguration': [('singleton', None, 0)]}
+
+
 def copy_template(repo, source, target):
     repo, source, target = Path(repo).resolve(), Path(source), Path(target)
     if source.is_symlink() or source.parent.is_symlink():
@@ -35,7 +39,8 @@ def copy_template(repo, source, target):
         tables = db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name!='_prisma_migrations'").fetchall()
         for (name,) in tables:
             quoted = '"' + name.replace('"', '""') + '"'
-            if db.execute('SELECT count(*) FROM ' + quoted).fetchone()[0]:
+            # Migration'ların kendisinin tohumladığı satırlar iş verisi sayılmaz; tam olarak o satırlar beklenir.
+            if db.execute('SELECT * FROM ' + quoted + ' ORDER BY 1').fetchall() != MIGRATION_SEEDED_ROWS.get(name, []):
                 raise ValueError('Template contains business data')
         with closing(sqlite3.connect(target)) as output:
             db.backup(output)
