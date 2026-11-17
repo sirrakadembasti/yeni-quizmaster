@@ -15,7 +15,7 @@ test('Prisma 7 client construction never reads an environment file (no ambient .
  for(const file of ['.env','server/.env','server/data/academic.db'])fs.writeFileSync(ownedFile(root,file),'',{flag:'wx',mode:0o600});
  const marker='PERFORMANCE_PRIVATE_ENV_'+crypto.randomUUID().replaceAll('-','').toUpperCase(),content=marker+'=synthetic-never-import\n';
  fs.writeFileSync(sentinel,content,{flag:'wx',mode:0o600});exclusiveJson(root,'runtime.json',{root,database,runId:crypto.randomUUID()});
- const previous=process.env.DATABASE_URL;process.env.DATABASE_URL='file:'+database;
+ const previous=process.env.DATABASE_URL;process.env.DATABASE_URL='file:'+database.replaceAll('\\','/');
  let isolation,db,proof;
  try{
    isolation=isolateAcademicFixture(runtimeFile);
