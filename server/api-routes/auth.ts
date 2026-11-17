@@ -20,6 +20,7 @@ import {
 import { isRequestInDemoContext } from "../middleware/demo-guard";
 import { getEffectiveDeploymentConfig } from "../utils/deployment-config";
 import { asyncRoute } from "../utils/async-route";
+import { normalizeEmail } from "../utils/normalize-email";
 
 const router: Router = Router();
 
@@ -119,14 +120,14 @@ router.post("/register", async (req: Request, res: Response) => {
     }
 
     const { name, password, email } = validation.data;
-    const existingUser = await storage.getUserByEmail(email.trim());
+    const existingUser = await storage.getUserByEmail(normalizeEmail(email));
     if (existingUser) return res.status(400).json({ message: "Bu e-posta adresi zaten kayıtlı." });
     
     const hashedPassword = await bcrypt.hash(password, 10);
     await regenerateSession(req);
     const user = await storage.createUser({ 
       name, 
-      email: email.trim(), 
+      email: normalizeEmail(email), 
       password: hashedPassword, 
       role: 'student'
     });
@@ -173,14 +174,14 @@ router.post("/login", async (req: Request, res: Response) => {
 
     const { email, password } = validation.data;
     const demoContext = isRequestInDemoContext(req);
-    if (demoContext && !isDemoShowcaseEmail(email.trim())) {
+    if (demoContext && !isDemoShowcaseEmail(email)) {
       return res.status(403).json({
         code: DEMO_READ_ONLY_CODE,
         message: "Demo modunda yalnızca hazır demo hesaplarıyla (demo-admin, demo-ogretmen, demo-ogrenci, demo-veli) giriş yapılabilir.",
       });
     }
 
-    const user = await storage.getUserByEmail(email.trim());
+    const user = await storage.getUserByEmail(normalizeEmail(email));
     if (!user || (user as any).isActive === false) {
       return res.status(401).json({ message: "Geçersiz e-posta veya şifre." });
     }
@@ -260,7 +261,7 @@ router.patch("/me", requireAuth, async (req: AuthRequest, res: Response) => {
     if (address !== undefined) updateData.address = address || null;
 
     if (email) {
-      const trimmedEmail = email.trim();
+      const trimmedEmail = normalizeEmail(email);
       // E-posta değiştiriliyorsa başka bir kullanıcıda olup olmadığını kontrol et
       if (trimmedEmail !== req.user!.email) {
         const existingUser = await storage.getUserByEmail(trimmedEmail);
@@ -330,7 +331,7 @@ router.post("/forgot-password", async (req: Request, res: Response) => {
     }
 
     const { email } = validation.data;
-    const user = await storage.getUserByEmail(email.trim());
+    const user = await storage.getUserByEmail(normalizeEmail(email));
 
     if (!user) {
       // For security, don't reveal that the user doesn't exist
