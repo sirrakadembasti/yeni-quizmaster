@@ -82,6 +82,7 @@ export interface IStorage {
   getAllUsers(): Promise<User[]>;
   deleteUser(id: string): Promise<void>;
   deactivateStudent(id: string): Promise<User>;
+  deactivateUser(id: string): Promise<User>;
   getGuardianStudents(guardianId: string): Promise<any[]>;
   getStudentGuardians(studentId: string): Promise<any[]>;
   replaceGuardianStudents(guardianId: string, studentIds: string[]): Promise<any[]>;
@@ -509,7 +510,7 @@ export class PrismaStorage implements IStorage {
 
   async getAllUsers(): Promise<User[]> {
     const users = await readPrisma.user.findMany({
-      where: { OR: [{ role: { not: 'student' } }, { isActive: true }] },
+      where: { isActive: true },
       include: {
         class: true,
         assignedCategories: true,
@@ -550,6 +551,27 @@ export class PrismaStorage implements IStorage {
     return prisma.user.update({
       where: { id },
       data: { isActive: false, deactivatedAt: new Date() },
+    });
+  }
+
+  async deactivateUser(id: string): Promise<User> {
+    return writeTransaction(async (tx) => {
+      const current = await tx.user.findUnique({ where: { id }, select: { role: true } });
+      const data: Prisma.UserUpdateInput = {
+        isActive: false,
+        deactivatedAt: new Date(),
+        sessionVersion: { increment: 1 },
+      };
+      if (current?.role === 'teacher') {
+        await tx.class.updateMany({ where: { classTeacherId: id }, data: { classTeacherId: null } });
+        await tx.classTeacherCourse.deleteMany({ where: { teacherId: id } });
+        data.assignedCategories = { set: [] };
+        data.managedClasses = { set: [] };
+      }
+      if (current?.role === 'parent') {
+        await tx.guardianStudent.deleteMany({ where: { guardianId: id } });
+      }
+      return tx.user.update({ where: { id }, data });
     });
   }
 

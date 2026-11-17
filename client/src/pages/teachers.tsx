@@ -128,8 +128,8 @@ export default function TeachersPage() {
           isOpen={isDeleteOpen}
           onOpenChange={setIsDeleteOpen}
           onConfirm={() => deleteMutation.mutate()}
-          title="Öğretmeni Sil"
-          description={`"${selectedUser?.name}" isimli öğretmeni silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`}
+          title="Öğretmeni Pasife Al"
+          description={`"${selectedUser?.name}" isimli öğretmen pasife alınacak; geçmiş kayıtları korunur. Devam etmek istiyor musunuz?`}
           isPending={deleteMutation.isPending}
         />
       </div>

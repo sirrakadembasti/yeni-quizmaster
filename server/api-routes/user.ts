@@ -401,8 +401,10 @@ router.delete("/:id", requireAuth, requireRole(["admin"]), async (req: AuthReque
       await storage.createLog(req.user!.id, "DEACTIVATE_STUDENT", `Öğrenci pasife alındı: ${target.id}`);
       return res.json({ message: "Öğrenci pasife alındı; sınıf ve sınav geçmişi korundu." });
     }
-    await storage.deleteUser(target.id);
-    res.json({ message: "Kullanıcı silindi." });
+    await storage.deactivateUser(target.id);
+    disconnectUserSockets(target.id);
+    await storage.createLog(req.user!.id, "DEACTIVATE_USER", `Kullanıcı pasife alındı: ${target.id} (${target.role})`);
+    res.json({ message: "Kullanıcı pasife alındı; geçmiş kayıtları korundu." });
   } catch (error) {
     res.status(500).json({ message: "Kullanıcı silinemedi." });
   }
