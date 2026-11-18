@@ -77,6 +77,9 @@ router.get("/demo-info", (_req: Request, res: Response) => {
 });
 
 router.post("/demo-login", async (req: Request, res: Response) => {
+  if (!isDemoInstanceEnabled()) {
+    return res.status(404).json({ message: "Demo girişi bu kurulumda etkin değil." });
+  }
   try {
     const validation = demoLoginSchema.safeParse(req.body);
     if (!validation.success) {
@@ -173,6 +176,9 @@ router.post("/login", async (req: Request, res: Response) => {
     }
 
     const { email, password } = validation.data;
+    if (!isDemoInstanceEnabled() && isDemoShowcaseEmail(email)) {
+      return res.status(403).json({ message: "Demo hesapları bu kurulumda kullanılamaz." });
+    }
     const demoContext = isRequestInDemoContext(req);
     if (demoContext && !isDemoShowcaseEmail(email)) {
       return res.status(403).json({

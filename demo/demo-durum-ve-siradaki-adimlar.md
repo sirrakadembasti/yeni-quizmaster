@@ -23,7 +23,7 @@
    - Giriş Formatı: `<veli_ad>.veli.<sinifkodu>@quizmaster.com` / `<veli_ad>123456`
    - Dosyalar: `demo/demo-veli.json` ve `demo/demo-veli.md`
 5. **`domain/demo` Salt-Okunur İkinci Kopya (`demo.db`) ve 4 Hazır Vitrin Hesabı Oluşturuldu:**
-   - Bağımsız `server/data/demo.db` veritabanı ve `APP_DEMO_MODE=true` / `APP_BASE_PATH=/demo` ikinci kopya altyapısı (`pnpm run db:prepare-demo`, `pnpm run start:demo`) hazırlandı.
+   - Bağımsız `server/data/demo.db` veritabanı ve `APP_DEMO_MODE=true` / `APP_BASE_PATH=/demo` ikinci kopya altyapısı (`npm run db:prepare-demo`, `npm run start:demo`) hazırlandı.
    - 4 hazır vitrin hesabı (`demo-admin@quizmaster.com`, `demo-ogretmen@quizmaster.com`, `demo-ogrenci@quizmaster.com`, `demo-veli@quizmaster.com` / Şifre: `demo123456`), tek tıkla giriş kartları, üst bar rol değiştirici ve yazma işlemlerinde salt-okunur uyarı (`DEMO_MODE_READ_ONLY`) katmanı eklendi.
    - Dosyalar: `demo/demo-vitrin-hesaplari.md` ve `demo/demo-vitrin-hesaplari.json`
 

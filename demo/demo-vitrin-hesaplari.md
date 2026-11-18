@@ -20,7 +20,7 @@ Ziyaretçiler `/demo` ekranındaki kartlardan **"Hemen İncele"** düğmesiyle t
 - **Okuma (`GET`) İstekleri:** Tüm dashboardlar, grafikler, öğrenci karneleri, soru-cevap analizleri ve Excel/yazdırma görünümleri `server/data/demo.db` üzerindeki gerçek simülasyon verileriyle eksiksiz çalışır.
 - **Yazma (`POST`, `PUT`, `PATCH`, `DELETE`) İstekleri:** `createDemoModeGuard` (`server/middleware/demo-guard.ts`) tarafından veritabanına ulaşmadan HTTP `403` (`code: "DEMO_MODE_READ_ONLY"`) ile durdurulur ve arayüzde otomatik olarak şu bilgilendirme mesajı (toast) gösterilir:
   > **"Demo modundasınız: Bu işlem örnek amaçlıdır, veritabanında değişiklik yapılmaz."**
-- **Kayıt Ol, Şifre Sıfırlama ve Demo Dışı Giriş Koruması:** Ziyaretçi `/demo` sayfasındayken (`isRequestInDemoContext`: `APP_DEMO_MODE=true`, `x-quizmaster-demo: 1` başlığı, `Referer: .../demo` veya `req.session.isDemoSession`) **Kayıt Ol** sekmesindeki form alanları devre dışı bırakılır (`demo-register-blocked-banner`), `POST /api/auth/register`, `POST /api/auth/forgot-password`, `POST /api/auth/reset-password` ve 4 vitrin hesabı dışındaki e-postalarla `POST /api/auth/login` istekleri hem arayüzde hem sunucuda `403 DEMO_MODE_READ_ONLY` ile reddedilir.
+- **Kayıt Ol, Şifre Sıfırlama ve Demo Dışı Giriş Koruması:** Ziyaretçi `/demo` sayfasındayken (`isRequestInDemoContext`: yalnız `APP_DEMO_MODE=true` örneği veya `req.session.isDemoSession`; `x-quizmaster-demo` başlığı ve `Referer` artık demo bağlamı sayılmaz). Ana (üretim) örnekte `POST /api/auth/demo-login` 404 döner ve vitrin hesaplarıyla `POST /api/auth/login` 403 ile reddedilir **Kayıt Ol** sekmesindeki form alanları devre dışı bırakılır (`demo-register-blocked-banner`), `POST /api/auth/register`, `POST /api/auth/forgot-password`, `POST /api/auth/reset-password` ve 4 vitrin hesabı dışındaki e-postalarla `POST /api/auth/login` istekleri hem arayüzde hem sunucuda `403 DEMO_MODE_READ_ONLY` ile reddedilir.
 - **Kartlarda Şifre Gösterimi ve "Forma Doldur" Desteği:** Express'in küresel `secureJsonReplacer` filtresi `"password"` adlı alanları maskelediği için vitrin şifresi `GET /api/auth/demo-info` yanıtında `demoPassword: "demo123456"` olarak taşınır; böylece 4 rol kartında şifre her zaman görünür ve **"Forma Doldur"** düğmesi e-posta ile birlikte şifre alanını da eksiksiz doldurur.
 - **Tarayıcı Adres Çubuğunda `/demo` Önekinin Korunması (`DemoAwareRouter`):** `/demo` üzerinden giriş yapıldığında veya aktif oturum bir demo vitrin hesabına ait olduğunda Wouter yönlendiricisi `base="/demo"` olarak çalışır. Tüm alt sayfalar tarayıcı adres çubuğunda `/demo/results`, `/demo/quizzes`, `/demo/student/dashboard`, `/demo/parent/dashboard` şeklinde `/demo` altında kalır. Demo oturumundan çıkış yapıldığında kullanıcı `/demo` vitrin ekranına döner; sol üstteki Ana Sayfa düğmesi (`exitDemoNamespace`) ile `/demo` modundan çıkılarak ana `/` adresine geçilir.
 
@@ -30,17 +30,19 @@ Ziyaretçiler `/demo` ekranındaki kartlardan **"Hemen İncele"** düğmesiyle t
 
 ### A) Demo Veritabanını (`server/data/demo.db`) Hazırlama / Yenileme
 ```bash
-pnpm run db:prepare-demo
+npm run db:prepare-demo
 ```
-Bu komut `demo-admin`, `demo-ogretmen`, `demo-ogrenci` ve `demo-veli` hesaplarını hazırlar ve `VACUUM INTO` ile bağımsız `server/data/demo.db` dosyasını üretir.
+Bu komut önce kaynak veritabanını yalnız okuyarak `VACUUM INTO` ile bağımsız `server/data/demo.db` dosyasını üretir, ardından `demo-admin`, `demo-ogretmen`, `demo-ogrenci` ve `demo-veli` hesaplarını yalnız bu kopyaya ekler; kaynağa yazılmaz. Kaynakta vitrin dışı yönetici hesabı varsa komut, gerçek kişisel verinin halka açık demoya geçmemesi için hata verir (`--allow-real-data` ile aşılabilir; yalnız kaynağın gerçek veri içermediğinden emin olduğunuzda kullanın).
+
+**Daha önce `db:prepare-demo` çalıştırmış kurulumlar için temizlik:** Eski sürüm vitrin hesaplarını canlı `quiz.db`'ye de ekliyordu. Ana veritabanında `demo-*@quizmaster.com` hesapları varsa Yönetim panelinden pasife alın ya da parolalarını değiştirin (özellikle `demo-admin`).
 
 ### B) İkinci Kopyayı (`PORT=5001`, `APP_BASE_PATH=/demo`, `APP_DEMO_MODE=true`) Başlatma
 ```bash
 # Derleme (Ana uygulama ve demo kopyası aynı client/dist çıktısını paylaşabilir)
-pnpm run build
+npm run build
 
 # Demo ikinci kopyayı 5001 portunda başlatma (server/data/demo.db ve ayrı demo-sessions deposu kullanır)
-pnpm run start:demo
+npm run start:demo
 ```
 
 ### C) Nginx Reverse Proxy (`domain/demo`) Örneği

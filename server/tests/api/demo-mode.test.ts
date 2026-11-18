@@ -94,7 +94,8 @@ describe("Demo Mode & Showcase Accounts", () => {
     }
   });
 
-  it("blocks user registration, password reset, and non-demo logins when accessed from /demo context", async () => {
+  it("blocks user registration, password reset, and non-demo logins on the demo instance", async () => {
+    process.env.APP_DEMO_MODE = "true";
     const app = buildTestApp();
 
     // 1. Registration blocked via x-quizmaster-demo header
@@ -131,6 +132,7 @@ describe("Demo Mode & Showcase Accounts", () => {
   });
 
   it("logs in via POST /api/auth/demo-login and blocks mutations for demo showcase users while allowing reads", async () => {
+    process.env.APP_DEMO_MODE = "true";
     const app = buildTestApp();
     const agent = request.agent(app);
 
@@ -184,6 +186,49 @@ describe("Demo Mode & Showcase Accounts", () => {
       code: DEMO_READ_ONLY_CODE,
       message: DEMO_READ_ONLY_MESSAGE,
     });
+  });
+
+  it("rejects demo-login on a non-demo instance even when the showcase account exists", async () => {
+    const app = buildTestApp();
+    mockStorage.getUserByEmail.mockResolvedValue({
+      id: "demo-admin-id",
+      email: "demo-admin@quizmaster.com",
+      password: "hashed-password",
+      role: "admin",
+      isActive: true,
+      sessionVersion: 0,
+    });
+    const res = await request(app).post("/api/auth/demo-login").send({ roleKey: "demo-admin" });
+    expect(res.status).toBe(404);
+    expect(res.body.message).toBe("Demo girişi bu kurulumda etkin değil.");
+  });
+
+  it("rejects password login with showcase accounts on a non-demo instance", async () => {
+    const app = buildTestApp();
+    const res = await request(app)
+      .post("/api/auth/login")
+      .send({ email: "demo-admin@quizmaster.com", password: DEMO_SHOWCASE_PASSWORD });
+    expect(res.status).toBe(403);
+    expect(mockStorage.getUserByEmail).not.toHaveBeenCalled();
+  });
+
+  it("does not treat the x-quizmaster-demo header as demo context on a non-demo instance", async () => {
+    const app = buildTestApp();
+    mockStorage.getUserByEmail.mockResolvedValue({
+      id: "user-1",
+      email: "ogretmen@example.com",
+      password: await (await import("bcryptjs")).default.hash("Password123", 4),
+      role: "teacher",
+      isActive: true,
+      sessionVersion: 0,
+    });
+    const res = await request(app)
+      .post("/api/auth/login")
+      .set("x-quizmaster-demo", "1")
+      .set("Referer", "http://127.0.0.1:5173/demo")
+      .send({ email: "ogretmen@example.com", password: "Password123" });
+    expect(res.status).toBe(200);
+    expect(mockStorage.createLog).toHaveBeenCalledWith("user-1", "LOGIN", expect.any(String));
   });
 
   it("rewrites index.html asset paths and injects runtime globals for /demo subpath", () => {

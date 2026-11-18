@@ -493,15 +493,47 @@ export async function seedDemoShowcaseAccounts(prisma: PrismaClient) {
   };
 }
 
-async function main() {
-  if (!fs.existsSync(sourceDbPath)) {
-    throw new Error(`Kaynak veritabanı bulunamadı: ${sourceDbPath}`);
+export async function prepareDemoDatabase(options: { sourcePath?: string; targetPath?: string; allowRealData?: boolean } = {}) {
+  const source = options.sourcePath ?? sourceDbPath;
+  const target = options.targetPath ?? targetDemoDbPath;
+  if (!fs.existsSync(source)) {
+    throw new Error(`Kaynak veritabanı bulunamadı: ${source}`);
   }
 
-  const prisma = createRuntimePrismaClient({ databaseUrl: `file:${sourceDbPath}` });
+  // Kaynak veritabanı yalnız okunur: hiçbir yazma yapılmaz.
+  const rawDb = new Database(source, { readonly: true });
+  try {
+    const showcaseEmails = DEMO_SHOWCASE_ACCOUNTS.map((account) => account.email);
+    const placeholders = showcaseEmails.map(() => "?").join(",");
+    const realAdmins = rawDb
+      .prepare(`SELECT COUNT(*) AS total FROM User WHERE role = 'admin' AND email NOT IN (${placeholders})`)
+      .get(...showcaseEmails) as { total: number };
+    if (realAdmins.total > 0 && !options.allowRealData) {
+      throw new Error(
+        "Kaynak veritabanı gerçek kurulum verisi içeriyor görünüyor (vitrin dışı yönetici hesabı var). " +
+          "Demo kopyası gerçek kullanıcı ve öğrenci kişisel verisini herkese açık hale getirir. " +
+          "Bilerek devam etmek için --allow-real-data bayrağını verin.",
+      );
+    }
+
+    for (const suffix of ["", "-wal", "-shm"]) {
+      const candidate = `${target}${suffix}`;
+      if (fs.existsSync(candidate)) {
+        fs.unlinkSync(candidate);
+      }
+    }
+
+    const escapedTarget = target.replace(/'/g, "''");
+    rawDb.exec(`VACUUM INTO '${escapedTarget}'`);
+  } finally {
+    rawDb.close();
+  }
+
+  // Vitrin hesapları yalnız demo kopyasına eklenir.
+  const prisma = createRuntimePrismaClient({ databaseUrl: `file:${target}` });
   try {
     const seeded = await seedDemoShowcaseAccounts(prisma);
-    console.log("Vitrin demo hesapları kaynak veritabanında hazırlandı:", {
+    console.log("Vitrin demo hesapları demo veritabanında hazırlandı:", {
       admin: seeded.demoAdmin.email,
       teacher: seeded.demoTeacher.email,
       student: seeded.demoStudent.email,
@@ -511,25 +543,7 @@ async function main() {
     await prisma.$disconnect();
   }
 
-  // Create clean standalone server/data/demo.db using SQLite VACUUM INTO
-  for (const suffix of ["", "-wal", "-shm"]) {
-    const candidate = `${targetDemoDbPath}${suffix}`;
-    if (fs.existsSync(candidate)) {
-      fs.unlinkSync(candidate);
-    }
-  }
-
-  const rawDb = new Database(sourceDbPath);
-  try {
-    rawDb.pragma("wal_checkpoint(TRUNCATE)");
-    const escapedTarget = targetDemoDbPath.replace(/'/g, "''");
-    rawDb.exec(`VACUUM INTO '${escapedTarget}'`);
-  } finally {
-    rawDb.close();
-  }
-
-  // Ensure demo.db is in WAL mode and verify showcase users inside demo.db
-  const demoDb = new Database(targetDemoDbPath);
+  const demoDb = new Database(target);
   try {
     demoDb.pragma("journal_mode = WAL");
     const count = demoDb
@@ -537,14 +551,14 @@ async function main() {
         "SELECT COUNT(*) as total FROM User WHERE email IN ('demo-admin@quizmaster.com','demo-ogretmen@quizmaster.com','demo-ogrenci@quizmaster.com','demo-veli@quizmaster.com')",
       )
       .get() as { total: number };
-    console.log(`Bağımsız demo veritabanı oluşturuldu: ${targetDemoDbPath} (Vitrin hesap sayısı: ${count.total}/4)`);
+    console.log(`Bağımsız demo veritabanı oluşturuldu: ${target} (Vitrin hesap sayısı: ${count.total}/4)`);
   } finally {
     demoDb.close();
   }
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(import.meta.filename)) {
-  main().catch((error) => {
+  prepareDemoDatabase({ allowRealData: process.argv.includes("--allow-real-data") }).catch((error) => {
     console.error("Demo veritabanı hazırlama hatası:", error);
     process.exit(1);
   });
