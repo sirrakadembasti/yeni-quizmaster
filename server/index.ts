@@ -14,18 +14,18 @@ import fs from "fs";
 import { getProjectRoot } from "./utils/project-paths";
 import * as dotenv from "dotenv";
 import pinoHttp from "pino-http";
-import { setupSocket } from "./socket";
+import { getIO, setupSocket } from "./socket";
 import { generateToken, csrfSynchronisedProtection } from "./middleware/csrf";
 import { secureJsonReplacer } from "./utils/json-security";
 import { logger } from "./utils/logger";
 import { setupDnsFallback } from "./utils/dns-fallback";
-import { startEmailWorker } from "./utils/email";
+import { startEmailWorker, stopEmailWorker } from "./utils/email";
 import { uploadsDirectory } from "./utils/upload-paths";
 import { getEffectiveDeploymentConfig } from "./utils/deployment-config";
 import { startDataRetentionWorker } from "./services/data-retention";
 import { createArchiveWorker } from './services/archive-worker';
 import { archiveDb } from './services/archive-db';
-import { initializeStorage } from './storage';
+import { closeStorage, initializeStorage } from './storage';
 import { getArchiveBackupRoot } from './api-routes/archive';
 import { createAnnualCaptureGuard } from './middleware/annual-capture-guard';
 import { apiErrorHandler } from './middleware/error-handler';
@@ -256,3 +256,31 @@ app.use(httpLogger);
     process.exit(1);
   }
 })();
+
+// ==================== DÜZGÜN KAPANIŞ ====================
+// systemd/app:stop sinyal gönderdiğinde devam eden istekler (ör. sınav teslimi) bitirilir,
+// işçiler durdurulur ve veritabanı bağlantıları kapatılır.
+let shuttingDown = false;
+async function shutdown(signal: NodeJS.Signals) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  logger.info({ signal }, "Kapanış sinyali alındı; sunucu düzgün kapatılıyor");
+  setTimeout(() => {
+    logger.error("Düzgün kapanış 10 sn içinde bitmedi; süreç zorla sonlandırılıyor");
+    process.exit(1);
+  }, 10_000).unref();
+
+  const step = async (name: string, action: () => unknown) => {
+    try { await action(); } catch (error) { logger.error({ err: error, step: name }, "Kapanış adımı başarısız"); }
+  };
+  const httpClosed = new Promise<void>(resolve => httpServer.close(() => resolve()));
+  await step("e-posta işçisi", () => stopEmailWorker());
+  await step("arşiv işçisi", () => archiveWorker.stop());
+  await step("socket.io", () => getIO().close());
+  await step("http sunucusu", () => httpClosed);
+  await step("veritabanı", () => closeStorage());
+  await step("arşiv veritabanı", () => archiveDb.$disconnect());
+  process.exit(0);
+}
+process.once("SIGTERM", () => { void shutdown("SIGTERM"); });
+process.once("SIGINT", () => { void shutdown("SIGINT"); });

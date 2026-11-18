@@ -11,6 +11,8 @@
 
 Uygulama Prisma 7.10.1 ve `better-sqlite3` 12.8.0 (SQLite 3.51.3) kullanır; uygulama, oturum, arşiv ve yedek bağlantıları aynı sürücüdedir. WAL ve `synchronous=FULL` dayanıklılığı korunur. Güncellemeden önce bütün uygulama ve işçi (worker) süreçlerini durdurun, doğrulanmış yedek alın ve ayrı kurulumda yükseltmeyi prova edin.
 
+**Düzgün kapanış:** Sunucu `SIGTERM` veya `SIGINT` aldığında (`systemctl stop`, `npm run app:stop`, Ctrl+C) yeni bağlantı kabul etmeyi bırakır, sürmekte olan istekleri (ör. sınav teslimi) tamamlar, e-posta ve arşiv işçilerini durdurur, Socket.IO'yu ve veritabanı bağlantılarını kapatıp çıkış kodu 0 ile sonlanır. Kapanış 10 saniyede bitmezse süreç çıkış kodu 1 ile zorla sonlandırılır. Windows `SIGTERM` göndermediği için orada süreç doğrudan sonlandırılır. systemd kullanıyorsanız `TimeoutStopSec` değerini 10 saniyeden büyük tutun.
+
 ## 3. Tam Yedekleme (`backup`) ve Geri Yükleme (`restore`)
 
 Uygulamanın ve arka plan işçilerinin bütün süreçlerini durdurun; bakım boyunca yeniden başlatmayın. Komut efektif `.env` `HOST`/`PORT` adresinde dinleyici varsa işlemi reddeder. Açık SQLite WAL verisi SQLite backup API ile tutarlı, bağımsız veritabanı dosyasına alınır.
