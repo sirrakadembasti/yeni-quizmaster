@@ -23,7 +23,7 @@
     "upgrade": "node scripts/upgrade.mjs",
     "test:upgrade": "node --test scripts/upgrade.test.mjs scripts/upgrade-process.test.mjs scripts/setup-bootstrap-runtime.test.mjs",
     "test:maintenance": "node --test scripts/maintenance-backup.test.mjs scripts/maintenance-native.test.mjs scripts/maintenance-cli.test.mjs",
-    "test:build-startup": "node --test scripts/server-build-startup.test.mjs",
+    "test:build-startup": "node --test scripts/server-build-startup.test.mjs scripts/server-graceful-shutdown.test.mjs",
     "test:e2e": "playwright test"
   },
   "devDependencies": {
