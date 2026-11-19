@@ -23,6 +23,7 @@ import { startEmailWorker, stopEmailWorker } from "./utils/email";
 import { uploadsDirectory } from "./utils/upload-paths";
 import { getEffectiveDeploymentConfig } from "./utils/deployment-config";
 import { startDataRetentionWorker } from "./services/data-retention";
+import { startExpiredResultWorker } from "./services/expired-results";
 import { createArchiveWorker } from './services/archive-worker';
 import { archiveDb } from './services/archive-db';
 import { closeStorage, initializeStorage } from './storage';
@@ -247,6 +248,7 @@ app.use(httpLogger);
         if (!demoInstance) {
           startEmailWorker();
           startDataRetentionWorker();
+          startExpiredResultWorker();
           archiveWorker.start();
         }
       },

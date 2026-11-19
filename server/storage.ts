@@ -147,6 +147,7 @@ export interface IStorage {
   getResult(id: string): Promise<StudentResult | undefined>;
   saveResultAnswer(id: string, studentId: string, questionId: string, answer: string, receivedAt?: number): Promise<void>;
   completeResult(id: string, studentId: string, answers: Record<string, string>, receivedAt?: number): Promise<{ score: number; correctAnswers: number; totalQuestions: number; acceptedQueuedAnswers: boolean; newlyCompleted: boolean }>;
+  completeExpiredResults(now?: number, graceMs?: number): Promise<number>;
   getQuizStats(quizId: string): Promise<{
     totalParticipants: number;
     averageScore: number;
@@ -1430,6 +1431,23 @@ export class PrismaStorage implements IStorage {
       } });
       return { score, correctAnswers: correct, totalQuestions: questions.length, acceptedQueuedAnswers, newlyCompleted: true };
     });
+  }
+
+  // Süresi (ve tolerans) dolup teslim edilmeyen oturumları, o ana dek kaydedilen cevaplarla kapatır.
+  async completeExpiredResults(now = Date.now(), graceMs = 60000): Promise<number> {
+    const candidates = await prisma.studentResult.findMany({
+      where: { status: "in_progress", academicYear: null, quiz: { timeLimit: { not: null } } },
+      select: { id: true, studentId: true, startedAt: true, quiz: { select: { timeLimit: true } } },
+      orderBy: { startedAt: "asc" },
+      take: 200,
+    });
+    let completed = 0;
+    for (const candidate of candidates) {
+      if (candidate.startedAt.getTime() + (candidate.quiz.timeLimit ?? 0) * 60000 + graceMs >= now) continue;
+      const outcome = await this.completeResult(candidate.id, candidate.studentId, {}, now);
+      if (outcome.newlyCompleted) completed++;
+    }
+    return completed;
   }
 
   async getQuizStats(quizId: string) {

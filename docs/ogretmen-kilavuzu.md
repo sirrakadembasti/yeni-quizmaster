@@ -48,6 +48,7 @@ AI üretiminde konu, soru adedi ve sağlayıcı alanlarını geçerli değerlerl
 - Cevap kaydında doğru/yanlış bilgisi gösterilmez.
 - Sayfa yenileme süreyi sıfırlamaz; süre sunucu başlangıcına göre hesaplanır.
 - Sunucudaki süre dolduktan sonra yeni cevap kabul edilmez.
+- Süre dolduğu hâlde öğrenci sınavı teslim etmediyse (ör. tarayıcıyı kapattıysa) sunucu yaklaşık bir dakika sonra oturumu otomatik kapatır. Oturum "tamamlandı" sayılır ve o ana dek kaydedilen cevaplarla puanlanır; sonuç ekranında ve ortalamalarda görünür.
 - Tamamlanmamış sınavın cevap anahtarı öğrenciye gönderilmez.
 
 **Önizle** ile açılan sınavda bitirme onayı da önizleme olduğunu belirtir. Önizleme sonucunuz kaydedilmez ve öğrenci sonucu oluşturmaz.

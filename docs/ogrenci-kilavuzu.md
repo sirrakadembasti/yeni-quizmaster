@@ -38,6 +38,7 @@ Yalnız yayınlanmış ve sınıfınıza atanmış sınavları görebilirsiniz.
 - Önceki/sonraki düğmeleri ve soru numaralarıyla gezinebilirsiniz.
 - Soruya eklenmiş görsel varsa soru metniyle birlikte gösterilir.
 - Sayfayı yenilemek süreyi baştan başlatmaz.
+- Süreli sınavda süre dolduğunda teslim etmeseniz bile (ör. tarayıcıyı kapatsanız) sistem yaklaşık bir dakika sonra sınavı sizin yerinize teslim eder; o ana dek kaydedilen cevaplarınız puanlanır.
 - **Sınavı Bitir/Teslim Et** öncesi boş soruları kontrol edin.
 - Sunucu teslimi tamamladıktan sonra cevaplar değiştirilemez.
 
