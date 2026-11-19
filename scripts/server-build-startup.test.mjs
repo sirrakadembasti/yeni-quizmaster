@@ -100,7 +100,9 @@ test('canonical npm production start boots with native Sharp and serves CSRF usi
   assert.ok(fs.existsSync(database), 'Migration yalıtılmış veritabanını oluşturmalı');
   const startupEnv = { ...env, NODE_ENV: 'production', HOST: '127.0.0.1', PORT: String(port),
     SESSION_SECRET: secret, DATABASE_URL: `file:${database.replaceAll('\\', '/')}`,
-    FRONTEND_URL: `http://127.0.0.1:${port}`, ALLOWED_ORIGINS: `http://127.0.0.1:${port}` };
+    FRONTEND_URL: `http://127.0.0.1:${port}`, ALLOWED_ORIGINS: `http://127.0.0.1:${port}`,
+    // HTTPS dağıtımı (TLS'i ters vekil sonlandırır): çerez Secure olur, SameSite ise Lax kalmalıdır.
+    FORCE_SECURE_COOKIES: '1', TRUST_PROXY_HOPS: '1' };
   assert.equal(startupEnv.NODE_PATH, undefined);
   child = spawn(npm.command, [...npm.args, 'run', 'start', '--workspace=server'], {
     cwd: root, env: startupEnv, shell: false, windowsHide: true,
@@ -117,24 +119,27 @@ test('canonical npm production start boots with native Sharp and serves CSRF usi
   // Cold canonical npm startup exceeded the former 30 s window on this host.
   // Match the fresh-install harness's bounded API budget; keep readiness assertions.
   const deadline = Date.now() + 120000;
-  let ready = false;
+  let ready = false, setCookie = '';
   while (Date.now() < deadline) {
     if (spawnError) throw spawnError;
     assert.equal(child.exitCode, null, `Production bundle exited before API readiness: ${JSON.stringify(lifecycle)}\n${logs}`);
     let response;
     try {
-      response = await fetch(`http://127.0.0.1:${port}/api/csrf-token`, { signal: AbortSignal.timeout(1000) });
+      response = await fetch(`http://127.0.0.1:${port}/api/csrf-token`, { headers: { 'x-forwarded-proto': 'https' }, signal: AbortSignal.timeout(1000) });
     } catch {}
     if (response?.ok) {
         const body = await response.json();
         assert.equal(typeof body.csrfToken, 'string');
         assert.ok(body.csrfToken.length > 10);
+        setCookie = response.headers.get('set-cookie') || '';
         ready = true;
         break;
     }
     await new Promise(resolve => setTimeout(resolve, 100));
   }
   assert.ok(ready, `Production bundle never served CSRF: ${JSON.stringify(lifecycle)}\n${logs}`);
+  assert.match(setCookie, /;\s*SameSite=Lax/i, 'Oturum çerezi SameSite=Lax olmalı');
+  assert.match(setCookie, /;\s*Secure/i, 'HTTPS dağıtımında oturum çerezi Secure olmalı');
   assert.ok(fs.existsSync(path.join(root, 'server/data/sessions.db')), 'Session store must be in the fixture');
   assert.ok(fs.existsSync(path.join(root, 'server/uploads')), 'Uploads must be in the fixture');
   assert.equal(fs.existsSync(path.join(root, 'server/.env')), false, 'Regression does not create an environment file');
