@@ -140,6 +140,8 @@ Kurallar:
 - `SESSION_SECRET` her kurum için farklı, uzun ve rastgele olmalıdır.
 - `.env` yedekleri şifrelenmeli; e-posta/parola ile gönderilmemelidir.
 - `ALLOWED_ORIGINS` virgülle ayrılmış tam origin değerleridir; `*` kullanmayın.
+- Oturum çerezi her zaman `SameSite=Lax` yazılır (HTTPS üretiminde ayrıca `Secure`). Uygulama ve arayüz aynı alan adından sunulmalıdır; arayüzü ayrı bir sitede (farklı alan adı) çalıştırıp API'ye çapraz site istekleriyle bağlanan kurulumlarda oturum çerezi gönderilmez ve giriş çalışmaz. Böyle bir kurulum desteklenmez.
+- `HOST` tanımlı değilse sunucu yalnız `127.0.0.1` üzerinde dinler. LAN'dan doğrudan erişim gerekiyorsa `.env` içinde `HOST=0.0.0.0` yazın; önceki sürümlerde varsayılan `0.0.0.0` idi.
 - Reverse proxy sayısı bir ise `TRUST_PROXY_HOPS=1`; doğrudan internete güvenilmeyen proxy başlığı kabul etmeyin.
 - `FRONTEND_URL` yalnız origin'dir. Alt yol ayrıca `APP_BASE_PATH` ile yazılır.
 - PostgreSQL'e geçiş için [PostgreSQL geçiş rehberini](postgresql-gecis-rehberi.md) uygulayın; yalnız URL değiştirmeyin.

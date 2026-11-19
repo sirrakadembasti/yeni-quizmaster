@@ -159,7 +159,7 @@ app.use(cors({
 app.set("trust proxy", deploymentConfig.trustProxyHops);
 
 // HTTP (geliştirme sunucusu / localhost) üzerinde Secure çerez yazılmaz → CSRF/login kırılır.
-// Yalnızca gerçek HTTPS üretiminde secure + sameSite=none kullan.
+// Yalnızca gerçek HTTPS üretiminde secure kullan; uygulama tek origin'den sunulduğu için sameSite her zaman lax.
 
 const demoInstance = isDemoInstanceEnabled();
 const sessionDirectory = demoInstance
@@ -175,7 +175,7 @@ const sessionMiddleware = session({
   name: getSessionCookieName(), // Custom cookie name for better security & demo isolation
   cookie: {
     secure: isHttpsDeploy,
-    sameSite: isHttpsDeploy ? "none" : "lax",
+    sameSite: "lax",
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
   },
@@ -237,7 +237,7 @@ app.use(httpLogger);
     }
 
     const port = parseInt(process.env.PORT || "5000", 10);
-    const host = process.env.HOST || "0.0.0.0";
+    const host = process.env.HOST || "127.0.0.1";
     httpServer.listen(
       {
         port,
