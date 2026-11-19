@@ -5,6 +5,7 @@ import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { canAccessClass } from "../utils/class-authorization";
 import { respondToClassError } from '../utils/class-errors';
+import { logger } from '../utils/logger';
 
 const router: Router = Router();
 
@@ -140,7 +141,10 @@ router.delete("/:id", requireAuth, requireRole(["admin"]), async (req: AuthReque
   try {
     await storage.deleteClass(req.params.id);
     res.json({ message: "Sınıf silindi." });
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.code === "CLASS_NOT_EMPTY") return res.status(409).json({ message: error.message });
+    if (error?.code === "P2003") return res.status(409).json({ message: "Sınıf, yıl geçiş kurallarında kullanılıyor." });
+    logger.error({ err: error }, "Sınıf silinemedi");
     res.status(500).json({ message: "Sınıf silinemedi." });
   }
 });
@@ -225,7 +229,8 @@ router.post("/:id/categories", requireAuth, requireRole(["admin"]), async (req: 
     await storage.createLog(req.user!.id, "ASSIGN_CATEGORY_TO_CLASS", `Sınıf ID: ${req.params.id}, Ders ID: ${categoryId}`);
     res.status(200).json({ message: "Ders sınıfa atandı." });
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    logger.error({ err: error }, "Ders sınıfa atanamadı");
+    res.status(400).json({ message: "Ders sınıfa atanamadı." });
   }
 });
 
@@ -235,7 +240,8 @@ router.delete("/:id/categories/:categoryId", requireAuth, requireRole(["admin"])
     await storage.createLog(req.user!.id, "REMOVE_CATEGORY_FROM_CLASS", `Sınıf ID: ${req.params.id}, Ders ID: ${req.params.categoryId}`);
     res.status(200).json({ message: "Ders sınıftan çıkarıldı." });
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    logger.error({ err: error }, "Ders sınıftan çıkarılamadı");
+    res.status(400).json({ message: "Ders sınıftan çıkarılamadı." });
   }
 });
 
@@ -247,7 +253,8 @@ router.post("/teachers/:id/categories", requireAuth, requireRole(["admin"]), asy
     await storage.createLog(req.user!.id, "ASSIGN_CATEGORY_TO_TEACHER", `Öğretmen ID: ${req.params.id}, Ders ID: ${categoryId}`);
     res.status(200).json({ message: "Ders öğretmene atandı." });
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    logger.error({ err: error }, "Ders öğretmene atanamadı");
+    res.status(400).json({ message: "Ders öğretmene atanamadı." });
   }
 });
 
@@ -257,7 +264,8 @@ router.delete("/teachers/:id/categories/:categoryId", requireAuth, requireRole([
     await storage.createLog(req.user!.id, "REMOVE_CATEGORY_FROM_TEACHER", `Öğretmen ID: ${req.params.id}, Ders ID: ${req.params.categoryId}`);
     res.status(200).json({ message: "Ders öğretmenden çıkarıldı." });
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    logger.error({ err: error }, "Ders öğretmenden çıkarılamadı");
+    res.status(400).json({ message: "Ders öğretmenden çıkarılamadı." });
   }
 });
 
@@ -272,7 +280,8 @@ router.post("/:id/teachers-with-course", requireAuth, requireRole(["admin"]), as
   } catch (error: any) {
     if (error.message === 'INVALID_CLASS_TEACHER') return res.status(400).json({ message: 'Aktif bir öğretmen seçin.' });
     if (error.message === 'CLASS_NOT_FOUND' || error.message === 'CATEGORY_NOT_FOUND') return res.status(404).json({ message: 'Sınıf veya ders bulunamadı.' });
-    res.status(500).json({ message: "Atama başarısız: " + error.message });
+    logger.error({ err: error }, "Öğretmen sınıfa dersle atanamadı");
+    res.status(500).json({ message: "Öğretmen sınıfa atanamadı." });
   }
 });
 
@@ -281,7 +290,8 @@ router.delete("/teacher-course/:assignmentId", requireAuth, requireRole(["admin"
     await storage.removeTeacherFromClassWithCourse(req.params.assignmentId);
     res.json({ message: "Atama kaldırıldı." });
   } catch (error: any) {
-    res.status(500).json({ message: "Kaldırma başarısız: " + error.message });
+    logger.error({ err: error }, "Öğretmen-ders ataması kaldırılamadı");
+    res.status(500).json({ message: "Atama kaldırılamadı." });
   }
 });
 
