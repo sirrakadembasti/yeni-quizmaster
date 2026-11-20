@@ -46,11 +46,11 @@ export default function ResetPasswordPage() {
       return;
     }
 
-    if (password.length < 6) {
+    if (password.length < 8) {
       toast({
         variant: "destructive",
         title: "Zayıf Şifre",
-        description: "Yeni şifreniz en az 6 karakter olmalıdır.",
+        description: "Yeni şifreniz en az 8 karakter olmalıdır.",
       });
       return;
     }

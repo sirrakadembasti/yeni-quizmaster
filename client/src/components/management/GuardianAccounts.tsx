@@ -52,7 +52,7 @@ export function GuardianAccounts({ studentId }: { studentId: string }) {
   });
   const linkedIds = new Set((linksQuery.data?.guardians ?? []).map((link) => link.guardianId));
   const available = (parentsQuery.data?.parents ?? []).filter((parent) => !linkedIds.has(parent.id));
-  const createValid = form.name.trim().length >= 2 && /.+@.+\..+/.test(form.email) && form.password.length >= 6 && form.phoneNumber.trim().length >= 7 && form.address.trim().length >= 5;
+  const createValid = form.name.trim().length >= 2 && /.+@.+\..+/.test(form.email) && form.password.length >= 8 && form.phoneNumber.trim().length >= 7 && form.address.trim().length >= 5;
   const editValid = editForm.name.trim().length >= 2 && /.+@.+\..+/.test(editForm.email) && editForm.phoneNumber.trim().length >= 7 && editForm.address.trim().length >= 5;
 
   const startEdit = (link: GuardianLink) => {

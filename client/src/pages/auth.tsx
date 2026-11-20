@@ -171,11 +171,11 @@ export default function AuthPage() {
       return;
     }
 
-    if (regPassword.length < 6) {
+    if (regPassword.length < 8) {
       toast({
         variant: "destructive",
         title: "Zayıf Şifre",
-        description: "Şifreniz en az 6 karakter olmalıdır.",
+        description: "Şifreniz en az 8 karakter olmalıdır.",
       });
       setIsLoading(false);
       return;

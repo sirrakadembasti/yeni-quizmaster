@@ -398,7 +398,7 @@ export function UserFormModal({
             </div>
             <Input id={`${formId}-password`}
               type="password" 
-              placeholder={mode === 'edit' ? "••••••" : "En az 6 karakter"} 
+              placeholder={mode === 'edit' ? "••••••" : "En az 8 karakter"} 
               value={formData.password} 
               onChange={e => setFormData({ ...formData, password: e.target.value })} 
               className="rounded-xl border-slate-200 dark:border-slate-700"
