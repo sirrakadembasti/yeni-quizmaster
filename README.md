@@ -406,6 +406,7 @@ Sınav/anket düzenleyicisi ayarları, soruları ve yayın durumunu birlikte kay
 2. Anket ayarları, hedef sınıflar ve puansız soru türleri belirlenir.
 3. Yayınlanan anket öğrencinin **Anketlerim** ekranında görünür.
 4. Sonuçlarda katılım, cevap dağılımları, açık uçlu yanıtlar, grafikler ve tablolar birlikte gösterilir.
+5. Anket yanıtları anonim değildir; sonuç ekranında öğrenci adı görünür.
 
 ### Veli
 
@@ -437,7 +438,7 @@ Arayüzde bir alanın gizlenmesi tek güvenlik katmanı değildir; aynı erişim
 - Sistem yalnız `smtp.gmail.com` kullanır; alternatif SMTP sağlayıcı ayarları bilinçli olarak devre dışıdır.
 - `EMAIL_PORT` yalnız `587` veya `465` kabul eder; diğer değerler `587` olarak değerlendirilir.
 - Kullanıcı **Şifremi Unuttum** formunu gönderdiğinde e-posta Outbox kuyruğuna alınır.
-- Ham token yalnız e-postadaki bağlantıda bulunur; veritabanında özeti tutulur ve bağlantı bir saat geçerlidir.
+- Veritabanında token'ın yalnız SHA-256 özeti tutulur; bağlantı bir saat geçerlidir. Ham token e-postadaki bağlantıda bulunur ve e-posta gönderilene (ya da kalıcı olarak başarısız olana) kadar kuyruk gövdesinde bekler; sonra gövde silinir.
 - Yönetici **Yönetim > Loglar > Şifre Talepleri** alanından talep oluşturabilir, yenileyebilir veya bekleyen talebi iptal edebilir.
 - **E-posta Logları** teknik teslimat durumunu gösterir; token içeren e-posta gövdesi istemciye açılmaz.
 
