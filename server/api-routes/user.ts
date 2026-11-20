@@ -449,7 +449,8 @@ router.post("/:id/categories", requireAuth, requireRole(["admin"]), async (req: 
     await storage.createLog(req.user!.id, "ASSIGN_CATEGORY_TO_TEACHER", `Öğretmen ID: ${req.params.id}, Ders ID: ${categoryId}`);
     res.status(200).json({ message: "Ders öğretmene atandı." });
   } catch (error: any) {
-    res.status(400).json({ message: error.message || "Ders atanamadı." });
+    logger.error({ err: error }, "Öğretmene ders atanamadı");
+    res.status(400).json({ message: "Ders atanamadı." });
   }
 });
 
@@ -460,7 +461,8 @@ router.delete("/:id/categories/:categoryId", requireAuth, requireRole(["admin"])
     await storage.createLog(req.user!.id, "REMOVE_CATEGORY_FROM_TEACHER", `Öğretmen ID: ${req.params.id}, Ders ID: ${req.params.categoryId}`);
     res.status(200).json({ message: "Ders öğretmenden çıkarıldı." });
   } catch (error: any) {
-    res.status(400).json({ message: error.message || "Ders kaldırılamadı." });
+    logger.error({ err: error }, "Öğretmenden ders kaldırılamadı");
+    res.status(400).json({ message: "Ders kaldırılamadı." });
   }
 });
 

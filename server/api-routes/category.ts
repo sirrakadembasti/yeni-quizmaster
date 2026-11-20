@@ -3,6 +3,7 @@ import { storage } from "../storage";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
+import { logger } from "../utils/logger";
 
 const router: Router = Router();
 
@@ -43,7 +44,8 @@ router.get("/", requireAuth, async (req: AuthRequest, res: Response) => {
     }
     res.json(categories);
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch categories" });
+    logger.error({ err: error }, "Dersler alınamadı");
+    res.status(500).json({ message: "Dersler alınamadı." });
   }
 });
 
@@ -55,8 +57,10 @@ router.post("/", requireAuth, requireRole(["admin"]), async (req: AuthRequest, r
     }
     const category = await storage.createCategory(validation.data);
     res.status(201).json(category);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to create category" });
+  } catch (error: any) {
+    if (error?.code === "P2002") return res.status(409).json({ message: "Bu adla bir ders zaten var." });
+    logger.error({ err: error }, "Ders oluşturulamadı");
+    res.status(500).json({ message: "Ders oluşturulamadı." });
   }
 });
 
@@ -67,19 +71,22 @@ router.put("/:id", requireAuth, requireRole(["admin"]), async (req: AuthRequest,
       return res.status(400).json({ message: fromZodError(validation.error).message });
     }
     const updated = await storage.updateCategory(req.params.id, validation.data);
-    if (!updated) return res.status(404).json({ message: "Category not found" });
+    if (!updated) return res.status(404).json({ message: "Ders bulunamadı." });
     res.json(updated);
   } catch (error) {
-    res.status(500).json({ message: "Failed to update category" });
+    logger.error({ err: error }, "Ders güncellenemedi");
+    res.status(500).json({ message: "Ders güncellenemedi." });
   }
 });
 
 router.delete("/:id", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
   try {
     await storage.deleteCategory(req.params.id);
-    res.json({ message: "Category deleted" });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to delete category" });
+    res.json({ message: "Ders silindi." });
+  } catch (error: any) {
+    if (error?.code === "CATEGORY_IN_USE") return res.status(409).json({ message: error.message });
+    logger.error({ err: error }, "Ders silinemedi");
+    res.status(500).json({ message: "Ders silinemedi." });
   }
 });
 

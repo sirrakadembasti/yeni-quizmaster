@@ -8,6 +8,10 @@ import { canAssignClasses, getAuthorizedClassIds } from "../utils/class-authoriz
 import { storage } from "../storage";
 import { hasInvalidQuestions } from "../utils/question-validation";
 import { onlySentKeys } from "../utils/patch-body";
+import { logger } from "../utils/logger";
+
+// Öğrenciye gösterilmek üzere bilinçli üretilen cevap doğrulama hatası.
+class SurveyAnswerError extends Error {}
 
 const router: Router = Router();
 router.use('/:id', (req, res, next) => ['GET', 'HEAD', 'OPTIONS'].includes(req.method) ? next() : requireAuth(req, res, () => archiveContentGuard(req, res, next)));
@@ -353,7 +357,7 @@ router.post("/:id/submit", requireAuth, requireRole(["student"]), async (req: Au
     const normalized = questions.map((question: any) => {
       const value = parsed.data.answers[question.id];
       const validationError = validateSurveyAnswer(question, value);
-      if (validationError) throw new Error(`${question.text}: ${validationError}`);
+      if (validationError) throw new SurveyAnswerError(`${question.text}: ${validationError}`);
       return { questionId: question.id, value };
     });
 
@@ -361,10 +365,9 @@ router.post("/:id/submit", requireAuth, requireRole(["student"]), async (req: Au
     await storage.createLog(req.user!.id, "SUBMIT_SURVEY", `Submitted survey: ${survey.title}`);
     res.status(201).json({ submissionId: submission.id, submittedAt: submission.submittedAt });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Anket gönderilemedi.";
-    if (message.includes("Unique constraint")) return res.status(409).json({ message: "Bu anketi daha önce yanıtladınız." });
-    if (message.includes(": ")) return res.status(400).json({ message });
-    console.error("Survey submit error:", error);
+    if (error instanceof SurveyAnswerError) return res.status(400).json({ message: error.message });
+    if ((error as { code?: string })?.code === "P2002") return res.status(409).json({ message: "Bu anketi daha önce yanıtladınız." });
+    logger.error({ err: error }, "Survey submit error");
     res.status(500).json({ message: "Anket gönderilemedi." });
   }
 });

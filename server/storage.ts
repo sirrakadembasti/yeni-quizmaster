@@ -271,7 +271,7 @@ export class PrismaStorage implements IStorage {
     });
 
     if (category && (category._count.quizzes > 0 || category._count.teachers > 0)) {
-      throw new Error("Bu ders silinemez. Çünkü bu ders ile hazırlanmış sınavlar veya ilişkilendirilmiş öğretmenler bulunmaktadır. Sadece adını değiştirebilirsiniz.");
+      throw Object.assign(new Error("Bu ders silinemez. Çünkü bu ders ile hazırlanmış sınavlar veya ilişkilendirilmiş öğretmenler bulunmaktadır. Sadece adını değiştirebilirsiniz."), { code: 'CATEGORY_IN_USE' });
     }
 
     await prisma.category.delete({ where: { id } });
@@ -779,7 +779,7 @@ export class PrismaStorage implements IStorage {
     });
 
     if (cls && cls._count.students > 0) {
-      throw new Error("Sınıf kapatılamaz/silinemez. Önce sınıf içerisindeki öğretmen ve öğrencilerin boşaltılması gerekmektedir.");
+      throw Object.assign(new Error("Sınıf kapatılamaz/silinemez. Önce sınıf içerisindeki öğretmen ve öğrencilerin boşaltılması gerekmektedir."), { code: 'CLASS_NOT_EMPTY' });
     }
 
     await prisma.class.delete({ where: { id } });
