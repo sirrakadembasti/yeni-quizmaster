@@ -1,10 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
-import { storage } from "../storage";
 import {
   DEMO_READ_ONLY_CODE,
   DEMO_READ_ONLY_MESSAGE,
   isDemoInstanceEnabled,
-  isDemoShowcaseEmail,
 } from "../utils/demo-mode";
 
 declare module "express-session" {
@@ -61,23 +59,9 @@ export function createDemoModeGuard() {
       });
     }
 
-    const sessionUserId = req.session?.userId;
-    if (!sessionUserId) {
-      return next();
-    }
-
-    try {
-      const user = await storage.getUser(sessionUserId);
-      if (user && isDemoShowcaseEmail(user.email)) {
-        return res.status(policyStatus).json({
-          code: DEMO_READ_ONLY_CODE,
-          message: DEMO_READ_ONLY_MESSAGE,
-        });
-      }
-    } catch {
-      // Fall through to standard route error handling if storage lookup fails
-    }
-
+    // Vitrin hesapları girişte req.session.isDemoSession ile işaretlenir; isRequestInDemoContext yukarıda
+    // yakalar. Yalnız bu özellikten önce açılmış (en çok 24 saatlik) eski oturumlar için kullanıcıyı
+    // yeniden okumaya gerek yok (P-02).
     return next();
   };
 }

@@ -245,15 +245,17 @@ router.post("/logout", requireAuth, asyncRoute(async (req: AuthRequest, res: Res
   });
 }));
 
-router.get("/me", requireAuth, (req: AuthRequest, res: Response) => {
-  const { password, ...userWithoutPassword } = req.user!;
+router.get("/me", requireAuth, asyncRoute(async (req: AuthRequest, res: Response) => {
+  // requireAuth ilişkisiz kullanıcı yükler; istemci class/assignedCategories/classes bekler.
+  const fullUser = (await storage.getUser(req.user!.id)) ?? req.user!;
+  const { password, ...userWithoutPassword } = fullUser;
   const isDemoUser = Boolean(
     req.session?.isDemoSession ||
       isDemoInstanceEnabled() ||
       isDemoShowcaseEmail(userWithoutPassword.email),
   );
   res.json({ user: { ...userWithoutPassword, isDemoUser } });
-});
+}));
 
 router.patch("/me", requireAuth, async (req: AuthRequest, res: Response) => {
   try {

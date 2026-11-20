@@ -75,7 +75,8 @@ export interface IStorage {
   deleteCategory(id: string): Promise<void>;
 
   // User methods
-  getUser(id: string): Promise<User | undefined>;
+  // relations:false → ilişkisiz düz kullanıcı satırı (requireAuth her istekte bunu kullanır).
+  getUser(id: string, options?: { relations?: boolean }): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByResetToken(token: string): Promise<User | undefined>;
   createUser(user: Prisma.UserUncheckedCreateInput & { guardianStudentIds?: string[] }): Promise<User>;
@@ -288,7 +289,10 @@ export class PrismaStorage implements IStorage {
   }
 
   // User methods
-  async getUser(id: string): Promise<User | undefined> {
+  async getUser(id: string, options?: { relations?: boolean }): Promise<User | undefined> {
+    if (options?.relations === false) {
+      return (await readPrisma.user.findUnique({ where: { id } })) ?? undefined;
+    }
     const user = await readPrisma.user.findUnique({
       where: { id },
       include: { 

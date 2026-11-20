@@ -42,7 +42,7 @@ describe('Auth Middleware', () => {
 
       await requireAuth(mockReq as AuthRequest, mockRes as Response, mockNext);
 
-      expect(storage.getUser).toHaveBeenCalledWith('non-existent-id');
+      expect(storage.getUser).toHaveBeenCalledWith('non-existent-id', { relations: false });
       expect(mockRes.status).toHaveBeenCalledWith(401);
       expect(mockRes.json).toHaveBeenCalledWith({ message: "Kullanıcı bulunamadı." });
       expect(mockNext).not.toHaveBeenCalled();
