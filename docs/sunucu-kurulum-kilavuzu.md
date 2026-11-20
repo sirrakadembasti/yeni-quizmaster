@@ -157,7 +157,7 @@ npm run db:deploy --workspace=server
 npm run db:generate --workspace=server
 ```
 
-`db:seed` mevcut kayıtları temizleyen demo seed akışıdır ve üretimde kullanılmamalıdır.
+`db:seed` mevcut kayıtları temizleyen demo seed akışıdır ve üretimde kullanılmamalıdır; `NODE_ENV=production` iken ya da `server/data/installation.lock` varken komut hata verip durur (bilinçli istisna için `QUIZMASTER_ALLOW_SEED=1`).
 
 İlk yönetici hesabını demo veri oluşturmadan açın:
 
