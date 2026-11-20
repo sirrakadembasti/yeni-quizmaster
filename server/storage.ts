@@ -219,6 +219,14 @@ export interface IStorage {
 }
 
 export class PrismaStorage implements IStorage {
+  // P-01: cevap kaydı her seferinde sınavın sorularını okumasın diye quizId -> (soruId -> doğru cevap) önbelleği.
+  // Katılım başladıktan sonra sorular değişmez; yine de soru yazan her yol ilgili anahtarı geçersiz kılar.
+  private readonly answerKeyCache = new Map<string, Map<string, string | null>>();
+  private static readonly ANSWER_KEY_CACHE_LIMIT = 200;
+  private invalidateAnswerKey(quizId?: string | null) {
+    if (quizId) this.answerKeyCache.delete(quizId); else this.answerKeyCache.clear();
+  }
+
   async getResultsSummary(filters: ResultsSummaryFilters, paging?: ResultsSummaryPaging): Promise<ResultsSummaryPage> {
     return readResultsSummary(readPrisma, filters, paging);
   }
@@ -1020,11 +1028,13 @@ export class PrismaStorage implements IStorage {
   }
 
   async deleteQuiz(id: string): Promise<void> {
-    await prisma.$transaction([
-      prisma.studentResult.deleteMany({ where: { quizId: id } }),
-      prisma.question.deleteMany({ where: { quizId: id } }),
-      prisma.quiz.delete({ where: { id } })
-    ]);
+    try {
+      await prisma.$transaction([
+        prisma.studentResult.deleteMany({ where: { quizId: id } }),
+        prisma.question.deleteMany({ where: { quizId: id } }),
+        prisma.quiz.delete({ where: { id } })
+      ]);
+    } finally { this.invalidateAnswerKey(id); }
   }
 
   async getSurveySubmissions(surveyId: string, startDate?: Date, endDate?: Date): Promise<any[]> {
@@ -1108,7 +1118,7 @@ export class PrismaStorage implements IStorage {
         imageUrl: q.imageUrl,
         order: q.order,
       }
-    });
+    }).finally(() => this.invalidateAnswerKey(q.quizId));
     return {
       ...created,
       options: created.options ? JSON.parse(created.options) : [],
@@ -1129,24 +1139,32 @@ export class PrismaStorage implements IStorage {
         imageUrl: (q.imageUrl as string | null | undefined) ?? null,
         order: q.order as number,
       })),
-    });
+    }).finally(() => { for (const q of questions) this.invalidateAnswerKey(q.quizId as string); });
     return this.getQuestionsByQuiz(questions[0].quizId as string);
   }
 
   async deleteQuestion(id: string): Promise<void> {
-    await prisma.question.delete({ where: { id } });
+    try { await prisma.question.delete({ where: { id } }); }
+    finally { this.invalidateAnswerKey(); }
   }
 
   async deleteQuestionsByQuiz(quizId: string): Promise<void> {
-    await prisma.question.deleteMany({ where: { quizId } });
+    try { await prisma.question.deleteMany({ where: { quizId } }); }
+    finally { this.invalidateAnswerKey(quizId); }
   }
 
   async syncQuestions(quizId: string, questions: (Omit<Prisma.QuestionUncheckedCreateInput, 'options' | 'config' | 'correctAnswer'> & { options?: any; config?: any; correctAnswer?: string | null })[]): Promise<Question[]> {
-    await writeTransaction(tx => this.syncQuestionsInTransaction(tx, quizId, questions));
+    try { await writeTransaction(tx => this.syncQuestionsInTransaction(tx, quizId, questions)); }
+    finally { this.invalidateAnswerKey(quizId); }
     return this.getQuestionsByQuiz(quizId);
   }
 
   async deleteQuizWithAudit(id: string, actorId: string, reason: string): Promise<void> {
+    try { await this.deleteQuizWithAuditInTransaction(id, actorId, reason); }
+    finally { this.invalidateAnswerKey(id); }
+  }
+
+  private async deleteQuizWithAuditInTransaction(id: string, actorId: string, reason: string): Promise<void> {
     await writeTransaction(async tx => {
       const quiz = await tx.quiz.findUniqueOrThrow({ where: { id }, include: {
         _count: { select: { questions: true, results: true, surveySubmissions: true } },
@@ -1195,6 +1213,11 @@ export class PrismaStorage implements IStorage {
   }
 
   async saveContent(id: string, settings: ContentSettingsInput, questions: ContentQuestionInput[], actor: { id: string; role: string }) {
+    try { return await this.saveContentInTransaction(id, settings, questions, actor); }
+    finally { this.invalidateAnswerKey(id); }
+  }
+
+  private async saveContentInTransaction(id: string, settings: ContentSettingsInput, questions: ContentQuestionInput[], actor: { id: string; role: string }) {
     return writeTransaction(async tx => {
       const existing = await tx.quiz.findUnique({ where: { id } });
       if (existing && existing.contentType !== settings.contentType) throw new Error('CONTENT_TYPE_MISMATCH');
@@ -1401,10 +1424,19 @@ export class PrismaStorage implements IStorage {
       if (result.status !== "in_progress") fail("RESULT_COMPLETED");
       if (!result.quiz) fail("QUIZ_NOT_FOUND");
       if (result.quiz.timeLimit && receivedAt >= result.startedAt.getTime() + result.quiz.timeLimit * 60000) fail("RESULT_EXPIRED");
-      const questions = await tx.question.findMany({ where: { quizId: result.quizId }, select: { id: true, correctAnswer: true } });
-      if (!questions.some(q => q.id === questionId)) fail("INVALID_QUESTION_ID");
+      let answerKey = this.answerKeyCache.get(result.quizId);
+      if (!answerKey) {
+        const questions = await tx.question.findMany({ where: { quizId: result.quizId }, select: { id: true, correctAnswer: true } });
+        answerKey = new Map(questions.map(q => [q.id, q.correctAnswer] as [string, string | null]));
+        if (this.answerKeyCache.size >= PrismaStorage.ANSWER_KEY_CACHE_LIMIT) {
+          this.answerKeyCache.delete(this.answerKeyCache.keys().next().value as string);
+        }
+        this.answerKeyCache.set(result.quizId, answerKey);
+      }
+      if (!answerKey.has(questionId)) fail("INVALID_QUESTION_ID");
       const answers = { ...JSON.parse(result.answers || "{}"), [questionId]: answer };
-      const correct = questions.filter(q => answers[q.id] === q.correctAnswer).length;
+      let correct = 0;
+      for (const [id, correctAnswer] of answerKey) if (answers[id] === correctAnswer) correct++;
       await tx.studentResult.update({ where: { id }, data: { answers: JSON.stringify(answers), correctAnswersCount: correct } });
     });
   }
