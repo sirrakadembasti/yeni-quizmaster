@@ -112,6 +112,7 @@ Liste ve sınıf detayında **Excel** ve **Yazdır** seçenekleri; rapor başlı
 - Cevaplar aynı cihaz/tarayıcıda yerel olarak saklanır.
 - Bağlantı geldiğinde teslim sunucuya aktarılır ve puanlama sunucuda yapılır.
 - Süreli sınav çevrimdışı başlatılamaz; çevrimiçi başladıktan sonra bağlantı kesilse de sunucu süresi işlemeye devam eder.
+- **Görsel sınırı:** Çevrimdışı hazırlanan sınavın soru görselleri öğrencinin tarayıcısında saklanır ve tarayıcılar bir site için yaklaşık 5 MB yerel depolamaya izin verir. Çok sayıda ya da büyük görselli sınavlar çevrimdışı hazırlanamayabilir; bu durumda öğrenci "Sınav cihazda saklanamadı" iletisini görür ve hiçbir veri kaybolmaz. Çevrimdışı kullanılacak sınavlarda az sayıda ve küçük görsel kullanın ya da bu sınavı çevrimiçi çözdürün.
 
 ## 11. Sorun giderme
 
@@ -121,6 +122,7 @@ Liste ve sınıf detayında **Excel** ve **Yazdır** seçenekleri; rapor başlı
 - **Sonuç filtresi boş:** Seçilen ders-sınav ilişkisinin ve tarih aralığının uyumlu olduğunu kontrol edin.
 - **403 hatası:** Hedef kaydın yetki alanınızda olduğundan emin olun.
 - **Çevrimdışı teslim bekliyor:** Öğrencinin aynı cihaz/tarayıcıyla bağlantıya dönmesini sağlayın.
+- **"Sınav cihazda saklanamadı":** Sınav görselleri tarayıcının yaklaşık 5 MB yerel depolama sınırını aşmış olabilir. Görsel sayısını/boyutunu azaltın ya da sınavı çevrimiçi çözdürün; ayrıca cihazda boş alan ve depolama izni olduğunu kontrol edin.
 
 ## Düzenleme ve erişim sınırları
 
