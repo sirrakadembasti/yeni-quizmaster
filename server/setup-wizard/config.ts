@@ -79,6 +79,7 @@ export function buildServerEnv(payload: SetupPayload, sessionSecret = createSess
     `ALLOWED_ORIGINS=${envValue(origins.join(","))}`,
     `TRUST_PROXY_HOPS=${deployment.trustProxyHops}`,
     "ALLOW_RUNTIME_DEPLOYMENT_CHANGES=false",
+    "ALLOW_SELF_REGISTRATION=true",
     "EMAIL_PORT=587",
   ];
 

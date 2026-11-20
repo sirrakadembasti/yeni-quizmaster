@@ -21,6 +21,7 @@ import { isRequestInDemoContext } from "../middleware/demo-guard";
 import { getEffectiveDeploymentConfig } from "../utils/deployment-config";
 import { asyncRoute } from "../utils/async-route";
 import { normalizeEmail } from "../utils/normalize-email";
+import { isSelfRegistrationEnabled } from "../utils/registration";
 
 const router: Router = Router();
 
@@ -76,6 +77,10 @@ router.get("/demo-info", (_req: Request, res: Response) => {
   });
 });
 
+router.get("/registration-info", (_req: Request, res: Response) => {
+  res.json({ enabled: isSelfRegistrationEnabled() });
+});
+
 router.post("/demo-login", async (req: Request, res: Response) => {
   if (!isDemoInstanceEnabled()) {
     return res.status(404).json({ message: "Demo girişi bu kurulumda etkin değil." });
@@ -116,6 +121,9 @@ router.post("/demo-login", async (req: Request, res: Response) => {
 });
 
 router.post("/register", async (req: Request, res: Response) => {
+  if (!isSelfRegistrationEnabled()) {
+    return res.status(403).json({ message: "Kayıt kapalı. Hesabınızı okul yönetimi oluşturur." });
+  }
   try {
     const validation = registerSchema.safeParse(req.body);
     if (!validation.success) {

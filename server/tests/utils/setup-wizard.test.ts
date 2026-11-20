@@ -25,6 +25,7 @@ describe("setup wizard configuration", () => {
     const env = buildServerEnv(parsed, "fixed-session-secret");
     expect(env).toContain('SESSION_SECRET="fixed-session-secret"');
     expect(env).toContain("ALLOW_RUNTIME_DEPLOYMENT_CHANGES=false");
+    expect(env).toContain("ALLOW_SELF_REGISTRATION=true");
     expect(env).not.toContain(payload.admin.password);
     expect(env).not.toContain(payload.admin.email);
   });

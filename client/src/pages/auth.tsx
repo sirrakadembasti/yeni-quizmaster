@@ -58,6 +58,23 @@ export default function AuthPage() {
     };
   }, []);
 
+  // Sunucu kendi kendine kaydı kapattıysa (ALLOW_SELF_REGISTRATION=false) kayıt sekmesi gizlenir.
+  const [registrationEnabled, setRegistrationEnabled] = useState(true);
+  useEffect(() => {
+    let active = true;
+    Promise.resolve()
+      .then(() => authApi.getRegistrationInfo())
+      .then((info) => {
+        if (active && info.enabled === false) setRegistrationEnabled(false);
+      })
+      .catch(() => {
+        // Bilgi alınamazsa mevcut davranış (sekme görünür) korunur.
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const showDemoShowcase = isServerDemoInstance || isClientDemoMode() || location === "/demo";
 
   // Login State
@@ -302,11 +319,13 @@ export default function AuthPage() {
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "login" | "register")} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsList className={`grid w-full mb-6 ${registrationEnabled ? "grid-cols-2" : "grid-cols-1"}`}>
               <TabsTrigger value="login">Giriş Yap</TabsTrigger>
-              <TabsTrigger value="register">
-                {showDemoShowcase ? "Kayıt Ol (Demo Kapalı)" : "Kayıt Ol"}
-              </TabsTrigger>
+              {registrationEnabled && (
+                <TabsTrigger value="register">
+                  {showDemoShowcase ? "Kayıt Ol (Demo Kapalı)" : "Kayıt Ol"}
+                </TabsTrigger>
+              )}
             </TabsList>
             
             <TabsContent value="login">
