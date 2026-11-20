@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 import { setupPayloadSchema, type SetupPayload } from "./config";
 import { applySetup, createApplyState } from "./server";
 
-type Parsed = { yes: boolean; mode: "local" | "server"; config?: string; help: boolean };
+type Parsed = { yes: boolean; mode: "local" | "server"; config?: string; help: boolean; selfRegistration?: boolean };
 
 export function parseArgs(argv: string[]): Parsed {
   const parsed: Parsed = { yes: false, mode: "local", help: false };
@@ -23,6 +23,10 @@ export function parseArgs(argv: string[]): Parsed {
       const value = argv[++i];
       if (value !== "local" && value !== "server") throw new Error("--mode yalnız 'local' veya 'server' olabilir.");
       parsed.mode = value;
+    } else if (arg === "--self-registration") {
+      const value = argv[++i];
+      if (value !== "true" && value !== "false") throw new Error("--self-registration yalnız 'true' veya 'false' olabilir.");
+      parsed.selfRegistration = value === "true";
     } else if (arg === "--config") {
       const value = argv[++i];
       if (!value) throw new Error("--config bir dosya yolu bekler.");
@@ -55,6 +59,7 @@ export function buildLocalPayload(env: NodeJS.ProcessEnv): { payload: SetupPaylo
       password: env.QUIZMASTER_ADMIN_PASSWORD || generatedPassword,
     },
     email: { enabled: false },
+    allowSelfRegistration: env.QUIZMASTER_SELF_REGISTRATION !== "false",
     buildClient: false,
     overwriteExistingEnv: env.QUIZMASTER_OVERWRITE_ENV === "1",
   });
@@ -67,10 +72,13 @@ Kullanım: npm run setup:cli -- --yes [--mode local] | --config dosya.json
 
   --yes, -y        Soru sormadan kur (zorunlu; yanlışlıkla çalıştırmayı önler)
   --mode local     Varsayılan. Yerel geliştirme kurulumu, derleme yok.
+  --self-registration <true|false>
+                   Öğrenciler kendileri kayıt olabilsin mi? Varsayılan true.
+                   Okul ağı dışından erişilebilen kurulumlarda false önerilir.
   --config <dosya> Tam kurulum yükü (JSON). Sunucu kurulumu için bunu kullanın.
 
 Ortam değişkenleri (yerel mod): QUIZMASTER_ADMIN_EMAIL, QUIZMASTER_ADMIN_NAME,
-QUIZMASTER_ADMIN_PASSWORD, QUIZMASTER_PORT, QUIZMASTER_OVERWRITE_ENV=1
+QUIZMASTER_ADMIN_PASSWORD, QUIZMASTER_PORT, QUIZMASTER_SELF_REGISTRATION=false, QUIZMASTER_OVERWRITE_ENV=1
 `;
 
 export async function runCli(argv: string[], env: NodeJS.ProcessEnv = process.env): Promise<number> {
@@ -104,6 +112,8 @@ export async function runCli(argv: string[], env: NodeJS.ProcessEnv = process.en
     console.error(`Kurulum yapılandırması geçersiz: ${error instanceof Error ? error.message : String(error)}`);
     return 2;
   }
+
+  if (args.selfRegistration !== undefined) payload.allowSelfRegistration = args.selfRegistration;
 
   const job = createApplyState();
   let printed = 0;

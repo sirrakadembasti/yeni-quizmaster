@@ -38,4 +38,17 @@ describe("yerel kurulum yükü", () => {
     expect(result.payload.server.port).toBe(5100);
     expect(result.payload.admin.email).toBe("yonetici@okul.test");
   });
+
+  it("--self-registration bayrağını okur ve geçersiz değeri reddeder", () => {
+    expect(parseArgs(["--yes"]).selfRegistration).toBeUndefined();
+    expect(parseArgs(["--self-registration", "false"]).selfRegistration).toBe(false);
+    expect(parseArgs(["--self-registration", "true"]).selfRegistration).toBe(true);
+    expect(() => parseArgs(["--self-registration", "belki"])).toThrow(/--self-registration/);
+    expect(() => parseArgs(["--self-registration"])).toThrow(/--self-registration/);
+  });
+
+  it("öğrenci kaydı varsayılan açıktır; QUIZMASTER_SELF_REGISTRATION=false kapatır", () => {
+    expect(buildLocalPayload({}).payload.allowSelfRegistration).toBe(true);
+    expect(buildLocalPayload({ QUIZMASTER_SELF_REGISTRATION: "false" }).payload.allowSelfRegistration).toBe(false);
+  });
 });

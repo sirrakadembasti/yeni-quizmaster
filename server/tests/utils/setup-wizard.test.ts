@@ -30,6 +30,16 @@ describe("setup wizard configuration", () => {
     expect(env).not.toContain(payload.admin.email);
   });
 
+  it("writes ALLOW_SELF_REGISTRATION=false when self registration is turned off", () => {
+    const env = buildServerEnv(setupPayloadSchema.parse({ ...payload, allowSelfRegistration: false }), "fixed-session-secret");
+    expect(env).toContain("ALLOW_SELF_REGISTRATION=false");
+    expect(env).not.toContain("ALLOW_SELF_REGISTRATION=true");
+  });
+
+  it("keeps self registration on when the field is missing (old payloads)", () => {
+    expect(setupPayloadSchema.parse(payload).allowSelfRegistration).toBe(true);
+  });
+
   it("rejects weak passwords and non-Gmail mailboxes", () => {
     expect(() => setupPayloadSchema.parse({ ...payload, admin: { ...payload.admin, password: "password123456" } })).toThrow();
     expect(() => setupPayloadSchema.parse({ ...payload, email: { enabled: true, user: "mail@kurum.test", password: "abcdefghijklmnop", fromEmail: "mail@kurum.test", fromName: "QuizMaster" } })).toThrow();
