@@ -406,6 +406,13 @@ export const authApi = {
     }>(response);
   },
 
+  async getRegistrationInfo() {
+    const response = await apiFetch(`${API_BASE}/auth/registration-info`, {
+      credentials: 'include',
+    });
+    return handleResponse<{ enabled: boolean }>(response);
+  },
+
   async demoLogin(roleKey: DemoRoleKey) {
     const response = await apiFetch(`${API_BASE}/auth/demo-login`, {
       method: 'POST',

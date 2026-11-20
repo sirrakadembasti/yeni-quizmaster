@@ -34,6 +34,7 @@ import { createAcademicContextGuard } from './middleware/academic-context';
 import { createDemoModeGuard } from './middleware/demo-guard';
 import { getSessionCookieName, isDemoInstanceEnabled } from './utils/demo-mode';
 import { captureTrustedRequestReceipt } from './utils/request-receipt';
+import { createRegisterLimiter } from './middleware/register-limiter';
 
 // DNS Fallback: Windows/MEB ağında getaddrinfo ENOTFOUND hatalarını önler
 setupDnsFallback();
@@ -139,6 +140,7 @@ if (deploymentConfig.basePath !== "/") {
   });
 }
 app.use(captureTrustedRequestReceipt);
+app.use("/api/auth/register", createRegisterLimiter());
 app.use(["/api/auth/login", "/api/auth/demo-login", "/api/auth/register", "/api/auth/forgot-password", "/api/auth/reset-password"], authLimiter);
 
 // CORS configuration

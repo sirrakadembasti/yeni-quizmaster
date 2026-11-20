@@ -143,6 +143,7 @@ Kurallar:
 - Oturum çerezi her zaman `SameSite=Lax` yazılır (HTTPS üretiminde ayrıca `Secure`). Uygulama ve arayüz aynı alan adından sunulmalıdır; arayüzü ayrı bir sitede (farklı alan adı) çalıştırıp API'ye çapraz site istekleriyle bağlanan kurulumlarda oturum çerezi gönderilmez ve giriş çalışmaz. Böyle bir kurulum desteklenmez.
 - `HOST` tanımlı değilse sunucu yalnız `127.0.0.1` üzerinde dinler. LAN'dan doğrudan erişim gerekiyorsa `.env` içinde `HOST=0.0.0.0` yazın; önceki sürümlerde varsayılan `0.0.0.0` idi.
 - Reverse proxy sayısı bir ise `TRUST_PROXY_HOPS=1`; doğrudan internete güvenilmeyen proxy başlığı kabul etmeyin.
+- `ALLOW_SELF_REGISTRATION` varsayılan `true`dur (öğrenciler kendileri kayıt olabilir). Hesapları yalnız okul yönetimi açacaksa `ALLOW_SELF_REGISTRATION=false` yazın; kayıt uç noktası 403 döner ve giriş ekranında kayıt sekmesi gizlenir. Açık olsa bile kayıt, IP başına 15 dakikada 10 denemeyle sınırlıdır.
 - `FRONTEND_URL` yalnız origin'dir. Alt yol ayrıca `APP_BASE_PATH` ile yazılır.
 - PostgreSQL'e geçiş için [PostgreSQL geçiş rehberini](postgresql-gecis-rehberi.md) uygulayın; yalnız URL değiştirmeyin.
 
