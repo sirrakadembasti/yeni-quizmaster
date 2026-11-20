@@ -120,7 +120,7 @@ router.get("/quiz/:quizId/export", requireAuth, requireRole(["admin", "teacher"]
         student?.studentNo ?? "-",
         r.status === "completed" ? "Tamamlandı" : "Devam Ediyor",
         (r.score !== null && r.score !== undefined) ? r.score.toString() : "-",
-        r.correctAnswersCount.toString(),
+        r.status === "completed" ? r.correctAnswersCount.toString() : "-",
         r.totalQuestions.toString(),
         r.timeTaken?.toString() || "-",
         r.startedAt ? new Date(r.startedAt).toLocaleString("tr-TR") : "-"

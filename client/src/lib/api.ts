@@ -258,6 +258,7 @@ export interface StudentResult {
   id: string;
   studentId: string;
   quizId: string;
+  status?: string;
   answers: Record<string, string>;
   score: number;
   timeTaken?: number;

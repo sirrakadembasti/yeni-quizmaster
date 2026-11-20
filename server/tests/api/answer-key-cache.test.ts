@@ -27,13 +27,16 @@ async function setup(questionCount = 2) {
 }
 
 describe('P-01: cevap kaydı soru önbelleği', () => {
-  it('doğru cevap sayısı canlı olarak güncellenmeye devam eder', async () => {
+  it('doğru cevap sayısı cevap kaydında hesaplanmaz, teslimde hesaplanır', async () => {
     const { questions, learner, result } = await setup();
     await storage.saveResultAnswer(result.id, learner.id, questions[0].id, 'A');
     await storage.saveResultAnswer(result.id, learner.id, questions[1].id, 'B');
     const saved = await storage.getResult(result.id);
-    expect(saved?.correctAnswersCount).toBe(1);
+    expect(saved?.correctAnswersCount).toBe(0);
     expect(Object.keys(saved!.answers as any)).toHaveLength(2);
+    const completed = await storage.completeResult(result.id, learner.id, {});
+    expect(completed.correctAnswers).toBe(1);
+    expect((await storage.getResult(result.id))?.correctAnswersCount).toBe(1);
   });
 
   it('eşzamanlı iki farklı soru cevabı birbirini silmez', async () => {
@@ -44,7 +47,6 @@ describe('P-01: cevap kaydı soru önbelleği', () => {
     ]);
     const saved = await storage.getResult(result.id);
     expect(saved?.answers).toEqual({ [questions[0].id]: 'A', [questions[1].id]: 'A' });
-    expect(saved?.correctAnswersCount).toBe(2);
   });
 
   it('soru verisi ilk cevaptan sonra önbellekten okunur (ham silme önbelleği atlatır)', async () => {
