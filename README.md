@@ -236,7 +236,7 @@ Geliştirme yapmak isteyenler production sihirbazı yerine manuel geliştirme ak
 npm ci
 # server/.env.example dosyasını server/.env olarak kopyalayıp yer tutucuları değiştirin
 npm run db:migrate --workspace=server
-npm run db:seed --workspace=server   # yalnız geliştirme/demo verisi
+npm run db:seed --workspace=server   # yalnız geliştirme/demo verisi; üretimde ve kurulu (installation.lock) örnekte reddedilir
 npm run dev
 ```
 

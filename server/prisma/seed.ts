@@ -1,5 +1,16 @@
 import { createRuntimePrismaClient } from '../utils/sqlite-runtime';
 import bcrypt from 'bcryptjs';
+import path from 'node:path';
+import { getProjectRoot } from '../utils/project-paths';
+import { assertSeedAllowed } from './seed-guard';
+
+// Veritabanına bağlanmadan önce: üretimde/kurulu örnekte tüm veriyi silmeyi engelle.
+try {
+  assertSeedAllowed(process.env, path.join(getProjectRoot(), 'server', 'data'));
+} catch (error) {
+  console.error((error as Error).message);
+  process.exit(1);
+}
 
 const prisma = createRuntimePrismaClient();
 
