@@ -236,17 +236,20 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
     if (quiz && existingQuiz.status !== "published" && quiz.status === "published") {
       await notifyAdminsAboutTeacherQuiz(req.user!, quiz, "published");
       const io = getIO();
+      const rows: Array<{ userId: string; title: string; message: string; type: string }> = [];
       for (const classroom of (quiz as any).assignedClasses || []) {
         const students = await storage.getStudentsByClass(classroom.id);
         for (const student of students) {
-          const notification = await storage.createNotification({
+          rows.push({
             userId: student.id,
             title: quiz.contentType === "survey" ? "Yeni Anket" : "Yeni Sınav",
             message: `"${quiz.title}" yayımlandı.`,
             type: "info",
           });
-          io.to(`user_${student.id}`).emit("notification", notification);
         }
+      }
+      for (const notification of await storage.createNotifications(rows)) {
+        io.to(`user_${notification.userId}`).emit("notification", notification);
       }
     }
 

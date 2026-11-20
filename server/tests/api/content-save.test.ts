@@ -118,13 +118,43 @@ describe('Atomic content API using disposable Prisma database', () => {
   });
   it('does not report committed content as failed when publication notifications fail', async () => {
     actor = teacher;
-    const notification = vi.spyOn(storage, 'createNotification').mockRejectedValueOnce(new Error('Injected delivery failure'));
+    const notification = vi.spyOn(storage, 'createNotifications').mockRejectedValueOnce(new Error('Injected delivery failure'));
     try {
       const id = randomUUID();
       const response = await request(app).put(`/quizzes/${id}/content`).send(payload());
       expect(response.status).toBe(200);
       expect((await storage.getQuiz(id))?.status).toBe('published');
     } finally { notification.mockRestore(); }
+  });
+  it('P-03: yanıt bildirim yazımını beklemez; bildirimler sonunda oluşur', async () => {
+    actor = admin;
+    const classroom = await db.class.create({ data: { name: 'P03 class' } });
+    const recipient = await db.user.create({ data: { name: 'P03 student', email: randomUUID() + '@example.com', password: 'hash', role: 'student', classId: classroom.id } });
+    const real = storage.createNotifications.bind(storage);
+    const delayed = vi.spyOn(storage, 'createNotifications').mockImplementation(async (rows: any[]) => {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      return real(rows);
+    });
+    try {
+      const started = Date.now();
+      const response = await request(app).put(`/quizzes/${randomUUID()}/content`).send(payload({ assignedClassIds: [classroom.id] }));
+      expect(response.status).toBe(200);
+      expect(Date.now() - started).toBeLessThan(2500);
+      expect(await db.notification.count({ where: { userId: recipient.id } })).toBe(0);
+      const deadline = Date.now() + 15000;
+      let count = 0;
+      while (Date.now() < deadline && count === 0) {
+        await new Promise(resolve => setTimeout(resolve, 250));
+        count = await db.notification.count({ where: { userId: recipient.id } });
+      }
+      expect(count).toBe(1);
+    } finally { delayed.mockRestore(); }
+  }, 30000);
+  it('P-03: toplu yazım tek çağrıda tüm alıcılar için kayıt döndürür', async () => {
+    const rows = [student.id, admin.id].map(userId => ({ userId, title: 'Toplu', message: 'ileti', type: 'info' }));
+    const created = await storage.createNotifications(rows);
+    expect(created.map((n: any) => n.userId).sort()).toEqual([student.id, admin.id].sort());
+    expect(await storage.createNotifications([])).toEqual([]);
   });
   it('preserves existing legacy content and question IDs while requiring UUID for creation', async () => {
     actor = admin;

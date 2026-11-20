@@ -169,6 +169,7 @@ export interface IStorage {
   // Dönüş: { data, total } — geriye dönük uyumluluk: route `notifications` key'i altında veriyi döndürür.
   getUserNotifications(userId: string, page?: number, limit?: number): Promise<{ data: any[]; total: number; unread: number }>;
   createNotification(data: { userId: string; title: string; message: string; type?: string }): Promise<any>;
+  createNotifications(rows: Array<{ userId: string; title: string; message: string; type?: string }>): Promise<any[]>;
   markNotificationsAsRead(userId: string): Promise<void>;
   deleteNotification(userId: string, notificationId: string): Promise<boolean>;
   getNotificationPreferences(userId: string): Promise<{ muted: boolean }>;
@@ -1587,6 +1588,22 @@ export class PrismaStorage implements IStorage {
         type: data.type || "info"
       }
     }));
+  }
+
+  // Toplu bildirim: tek yazma işleminde (büyük sınıflarda öğrenci başına ayrı işlem açılmaz).
+  async createNotifications(rows: Array<{ userId: string, title: string, message: string, type?: string }>): Promise<any[]> {
+    if (!rows.length) return [];
+    return writeTransaction(async tx => {
+      const created: any[] = [];
+      for (let start = 0; start < rows.length; start += 500) {
+        created.push(...await tx.notification.createManyAndReturn({
+          data: rows.slice(start, start + 500).map(row => ({
+            userId: row.userId, title: row.title, message: row.message, type: row.type || "info"
+          }))
+        }));
+      }
+      return created;
+    });
   }
 
   async markNotificationsAsRead(userId: string): Promise<void> {
