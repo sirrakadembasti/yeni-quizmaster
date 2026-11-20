@@ -11,6 +11,7 @@ import { isQuizVisibleToStudent } from "../utils/quiz-scope-policy";
 import { archiveContentGuard, archiveResultGuard } from '../middleware/archive-readonly';
 import { captureTrustedRequestReceipt, getTrustedRequestReceipt } from '../utils/request-receipt';
 
+import { logger } from "../utils/logger";
 const router: Router = Router();
 // Preserve the index body-receipt timestamp; fallback for standalone router mounts.
 router.use(captureTrustedRequestReceipt);
@@ -177,7 +178,7 @@ router.post("/quiz/:quizId/prepare-offline", requireAuth, requireRole(["student"
       preparedAt: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Prepare offline quiz error:", error);
+    logger.error({ err: error }, "Prepare offline quiz error");
     res.status(500).json({ message: "Sınav çevrimdışı kullanım için hazırlanamadı." });
   }
 });
@@ -244,7 +245,7 @@ router.post("/quiz/:quizId/start", requireAuth, requireRole(["student", "teacher
       remainingSeconds,
     });
   } catch (e) {
-    console.error("Start quiz error:", e);
+    logger.error({ err: e }, "Start quiz error");
     res.status(500).json({ message: "Quiz başlatılamadı." });
   }
 });
@@ -268,7 +269,7 @@ router.post("/quiz/:resultId/answer", requireAuth, requireRole(["student"]), asy
     if (code === "RESULT_EXPIRED") return res.status(409).json({ message: "Sınav süresi dolduğu için cevap kaydedilemedi." });
     if (code === "RESULT_COMPLETED") return res.status(400).json({ message: "Bu sınav zaten tamamlanmış." });
     if (code === "INVALID_QUESTION_ID") return res.status(404).json({ message: "Soru bulunamadı." });
-    console.error("Answer quiz error:", e);
+    logger.error({ err: e }, "Answer quiz error");
     res.status(500).json({ message: "Cevap kaydedilemedi." });
   }
 });
@@ -314,13 +315,13 @@ router.post("/quiz/:resultId/submit", requireAuth, requireRole(["student", "teac
         io.to(`user_${quizCreator.id}`).emit("notification", notification);
       }
     } catch (notificationError) {
-      console.error("Quiz submission notification error:", notificationError);
+      logger.error({ err: notificationError }, "Quiz submission notification error");
     }
 
   } catch (e) {
     if ((e as Error).message === "INVALID_QUESTION_ID") return res.status(400).json({ message: "Geçersiz soru kimliği." });
     if ((e as Error).message === "RESULT_COMPLETED") return res.status(409).json({ message: "Sınav oturumu kapalı." });
-    console.error("Submit quiz error:", e);
+    logger.error({ err: e }, "Submit quiz error");
     res.status(500).json({ message: "Sınav teslim edilemedi." });
   }
 });

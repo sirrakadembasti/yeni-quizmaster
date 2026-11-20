@@ -81,7 +81,6 @@ export default function StudentQuiz() {
 
         // Pre-emptive CSRF refresh for previews to prevent 403 race conditions
         if (isPreviewMode) {
-          console.log("Preview mode detected, refreshing CSRF token pre-emptively");
           await refreshCsrfToken();
         }
 
@@ -396,11 +395,6 @@ export default function StudentQuiz() {
                     ? 'Bu quizde henüz hiç soru bulunmuyor. Önizleme yapabilmek için lütfen quize soru ekleyin.'
                     : 'Bu quizde henüz soru bulunmuyor.'}
               </p>
-              <div className={`text-xs p-3 rounded border ${isNoQuestions ? 'text-blue-700 bg-blue-50/50 dark:bg-blue-900/20 border-blue-300' : 'text-amber-700 bg-amber-50/50 dark:bg-amber-900/20 border-amber-300'}`}>
-                <p>Quiz ID: {quizId || 'N/A'}</p>
-                <p>Sorular: {questions.length}</p>
-                <p>Rol: {role}</p>
-              </div>
               <div className="flex gap-2">
                 <Button 
                   onClick={() => setLocation(quizListPath)}
@@ -528,7 +522,7 @@ export default function StudentQuiz() {
             <CardTitle className="text-xl">{currentQuestion.text}</CardTitle>
               {currentQuestion?.imageUrl && <img src={currentQuestion.imageUrl} alt="Soru görseli" className="my-4 max-h-96 max-w-full rounded-lg object-contain" />}
 
-            {currentQuestion.type === 'multiple_choice' && (
+            {currentQuestion.type === 'multiple-choice' && (
               <CardDescription>Doğru seçeneği seçin</CardDescription>
             )}
           </CardHeader>

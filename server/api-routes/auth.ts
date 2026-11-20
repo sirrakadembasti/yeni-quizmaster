@@ -172,7 +172,7 @@ router.post("/register", async (req: Request, res: Response) => {
     const { password: _, ...userWithoutPassword } = user;
     res.json({ user: userWithoutPassword });
   } catch (error) {
-    console.error("Registration error:", error);
+    logger.error({ err: error }, "Registration error");
     res.status(500).json({ message: "Kayıt işlemi başarısız oldu." });
   }
 });
@@ -218,7 +218,7 @@ router.post("/login", async (req: Request, res: Response) => {
     const { password: _, ...userWithoutPassword } = user;
     res.json({ user: { ...userWithoutPassword, isDemoUser } });
   } catch (error) {
-    console.error("Login error:", error);
+    logger.error({ err: error }, "Login error");
     res.status(500).json({ message: "Giriş işlemi başarısız oldu." });
   }
 });
@@ -297,7 +297,7 @@ router.patch("/me", requireAuth, async (req: AuthRequest, res: Response) => {
     const { password, ...userWithoutPassword } = updatedUser;
     res.json({ user: userWithoutPassword });
   } catch (error) {
-    console.error("Profile update error:", error);
+    logger.error({ err: error }, "Profile update error");
     res.status(500).json({ message: "Profil güncellenemedi." });
   }
 });
@@ -403,7 +403,7 @@ router.post("/reset-password", async (req: Request, res: Response) => {
 
     res.json({ message: "Şifreniz başarıyla sıfırlandı." });
   } catch (error) {
-    console.error("Reset password error:", error);
+    logger.error({ err: error }, "Reset password error");
     res.status(500).json({ message: "İşlem sırasında bir hata oluştu." });
   }
 });

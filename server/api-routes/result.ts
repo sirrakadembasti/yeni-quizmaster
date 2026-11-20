@@ -4,6 +4,7 @@ import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { archiveResultGuard } from '../middleware/archive-readonly';
 import { RESULTS_SUMMARY_PAGE_SIZE } from '../services/results-summary';
 
+import { logger } from "../utils/logger";
 const router: Router = Router();
 router.use('/:id', (req, res, next) => ['GET', 'HEAD', 'OPTIONS'].includes(req.method) ? next() : requireAuth(req, res, () => archiveResultGuard(req, res, next)));
 
@@ -138,7 +139,7 @@ router.get("/quiz/:quizId/export", requireAuth, requireRole(["admin", "teacher"]
     res.setHeader("Content-Disposition", `attachment; filename="sinav_sonuclari_${req.params.quizId}.csv"`);
     res.send(Buffer.from("\ufeff" + csvContent, "utf8")); // UTF-8 BOM for Excel
   } catch (error) {
-    console.error("Export results error:", error);
+    logger.error({ err: error }, "Export results error");
     res.status(500).json({ message: "Sonuçlar dışa aktarılamadı." });
   }
 });

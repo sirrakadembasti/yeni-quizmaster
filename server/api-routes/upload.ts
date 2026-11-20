@@ -7,6 +7,7 @@ import { requireAuth, requireRole } from "../middleware/auth";
 import sharp from "sharp";
 import { uploadsDirectory } from "../utils/upload-paths";
 
+import { logger } from "../utils/logger";
 const router: Router = Router();
 
 // Multer configuration for file uploads (store in memory temporarily for compression)
@@ -65,7 +66,7 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), (req: Request, 
       const imageUrl = `/uploads/${filename}`;
       res.json({ imageUrl });
     } catch (processError) {
-      console.error("Image processing error:", processError);
+      logger.error({ err: processError }, "Image processing error");
       res.status(500).json({ message: "Resim işlenirken bir hata oluştu." });
     }
   });
