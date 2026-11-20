@@ -213,6 +213,7 @@ export interface IStorage {
 
   createAnnouncement(data: any): Promise<any>;
   getAllAnnouncements(): Promise<any[]>;
+  getAnnouncement(id: string): Promise<any | undefined>;
   deleteAnnouncement(id: string): Promise<void>;
 }
 
@@ -1743,6 +1744,10 @@ export class PrismaStorage implements IStorage {
       include: { creator: { select: { name: true, role: true } } },
       orderBy: { createdAt: 'desc' }
     });
+  }
+
+  async getAnnouncement(id: string): Promise<any | undefined> {
+    return (await prisma.announcement.findUnique({ where: { id } })) ?? undefined;
   }
 
   async deleteAnnouncement(id: string): Promise<void> {

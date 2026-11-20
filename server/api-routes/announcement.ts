@@ -1,4 +1,5 @@
 import { Router, type Response } from "express";
+import { z } from "zod";
 import { storage } from "../storage";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { canAssignClasses } from "../utils/class-authorization";
@@ -11,6 +12,14 @@ import {
 } from "../utils/notification-policy";
 
 const router: Router = Router();
+
+const announcementSchema = z.object({
+  title: z.string().trim().min(3).max(150),
+  content: z.string().trim().min(1).max(5000),
+  targetRole: z.enum(["all", "teacher", "student", "parent"]).nullish(),
+  targetClassId: z.string().uuid().nullish(),
+});
+const NOTIFICATION_MESSAGE_LIMIT = 500;
 
 router.get("/", requireAuth, async (req: AuthRequest, res: Response) => {
   try {
@@ -59,8 +68,13 @@ router.get("/", requireAuth, async (req: AuthRequest, res: Response) => {
 
 router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
-    const { title, content, targetRole, targetClassId } = req.body;
-    if (!title || !content) return res.status(400).json({ message: "Başlık ve içerik zorunludur." });
+    const parsed = announcementSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ message: "Başlık 3-150, içerik 1-5000 karakter olmalı; hedef rol ve sınıf geçerli olmalıdır." });
+    }
+    const { title, content } = parsed.data;
+    const targetRole = parsed.data.targetRole ?? undefined;
+    const targetClassId = parsed.data.targetClassId ?? undefined;
 
     if (req.user!.role === "teacher" &&
         !isValidTeacherAnnouncementTarget(targetRole, targetClassId)) {
@@ -109,7 +123,7 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
         const notification = await storage.createNotification({
           userId: user.id,
           title,
-          message: content,
+          message: content.length > NOTIFICATION_MESSAGE_LIMIT ? `${content.slice(0, NOTIFICATION_MESSAGE_LIMIT - 1)}…` : content,
           type: "announcement"
         });
         io.to(`user_${user.id}`).emit("notification", notification);
@@ -124,8 +138,13 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
   }
 });
 
-router.delete("/:id", requireAuth, requireRole(["admin"]), async (req: AuthRequest, res: Response) => {
+router.delete("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req: AuthRequest, res: Response) => {
   try {
+    const announcement = await storage.getAnnouncement(req.params.id);
+    if (!announcement) return res.status(404).json({ message: "Duyuru bulunamadı." });
+    if (req.user!.role !== "admin" && announcement.createdBy !== req.user!.id) {
+      return res.status(403).json({ message: "Yalnızca kendi duyurunuzu silebilirsiniz." });
+    }
     await storage.deleteAnnouncement(req.params.id);
     res.json({ message: "Duyuru silindi." });
   } catch (error) {
