@@ -22,6 +22,7 @@ import { getEffectiveDeploymentConfig } from "../utils/deployment-config";
 import { asyncRoute } from "../utils/async-route";
 import { normalizeEmail } from "../utils/normalize-email";
 import { isSelfRegistrationEnabled } from "../utils/registration";
+import { passwordSchema } from "../utils/password-policy";
 
 const router: Router = Router();
 
@@ -39,7 +40,7 @@ function regenerateSession(req: Request): Promise<void> {
 const registerSchema = z.object({
   name: z.string().min(2, "İsim en az 2 karakter olmalıdır.").max(50),
   email: z.string().email("Geçerli bir e-posta adresi giriniz."),
-  password: z.string().min(6, "Şifre en az 6 karakter olmalıdır."),
+  password: passwordSchema,
 });
 
 const loginSchema = z.object({
@@ -49,7 +50,7 @@ const loginSchema = z.object({
 
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, "Mevcut şifre gereklidir."),
-  newPassword: z.string().min(6, "Yeni şifre en az 6 karakter olmalıdır."),
+  newPassword: passwordSchema,
 });
 
 const forgotPasswordSchema = z.object({
@@ -58,7 +59,7 @@ const forgotPasswordSchema = z.object({
 
 const resetPasswordSchema = z.object({
   token: z.string().min(1, "Token gereklidir."),
-  password: z.string().min(6, "Şifre en az 6 karakter olmalıdır."),
+  password: passwordSchema,
 });
 
 const demoLoginSchema = z.object({

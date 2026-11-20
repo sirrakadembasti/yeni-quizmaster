@@ -8,6 +8,7 @@ import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { sendRegistrationSuccessEmail } from "../utils/email";
 import { logger } from "../utils/logger";
 import { asyncRoute } from "../utils/async-route";
+import { PASSWORD_MIN_LENGTH, passwordSchema } from "../utils/password-policy";
 
 const LAST_ADMIN_MESSAGE = "Sistemde en az bir etkin yönetici kalmalıdır.";
 
@@ -140,8 +141,8 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
 
     if (!validParentContact(req.body)) return res.status(400).json({ message: "Veli iletişim kaydı girilecekse ad, yakınlık, telefon, e-posta ve adres eksiksiz olmalıdır." });
 
-    if (typeof name !== "string" || name.trim().length < 2 || typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) || typeof password !== "string" || password.length < 6) {
-      return res.status(400).json({ message: "Ad, geçerli e-posta ve en az 6 karakterli parola gereklidir." });
+    if (typeof name !== "string" || name.trim().length < 2 || typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) || typeof password !== "string" || password.length < PASSWORD_MIN_LENGTH) {
+      return res.status(400).json({ message: `Ad, geçerli e-posta ve en az ${PASSWORD_MIN_LENGTH} karakterli parola gereklidir.` });
     }
     if (parentEmail && (typeof parentEmail !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parentEmail.trim()))) {
       return res.status(400).json({ message: "Geçerli bir veli e-posta adresi giriniz." });
@@ -240,7 +241,7 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
     const updateSchema = z.object({
       name: z.string().trim().min(2).max(100).optional(),
       email: z.string().trim().email().optional(),
-      password: z.string().min(6).optional(),
+      password: passwordSchema.optional(),
       role: z.enum(["admin", "teacher", "student", "parent"]).optional(),
     }).passthrough();
     const validation = updateSchema.safeParse(req.body);

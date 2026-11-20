@@ -4,6 +4,7 @@ import { z } from "zod";
 import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { storage } from "../storage";
 import { asyncRoute } from "../utils/async-route";
+import { passwordSchema } from "../utils/password-policy";
 import { isQuizVisibleToStudent } from "../utils/quiz-scope-policy";
 
 const router: Router = Router();
@@ -12,7 +13,7 @@ const relationSchema = z.enum(["Anne", "Baba", "Diğer"]);
 const createParentSchema = z.object({
   name: z.string().trim().min(2).max(100),
   email: z.string().trim().email(),
-  password: z.string().min(6).max(128),
+  password: passwordSchema.max(128),
   phoneNumber: z.string().trim().min(7).max(30),
   address: z.string().trim().min(5).max(500),
   studentId: z.string().uuid(),
