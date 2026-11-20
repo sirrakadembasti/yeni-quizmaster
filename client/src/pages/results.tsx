@@ -271,7 +271,7 @@ export default function StatisticsPage() {
         { header: "Sınıf", value: (row: any) => row.student?.class?.name || row.student?.classNo },
         { header: "Durum", value: (row: any) => row.status === "completed" ? "Tamamlandı" : "Devam Ediyor" },
         { header: "Puan", value: (row: any) => row.score ?? "" },
-        { header: "Doğru", value: (row: any) => row.correctAnswersCount ?? row.correctAnswers ?? "" },
+        { header: "Doğru", value: (row: any) => row.status === "completed" ? (row.correctAnswersCount ?? row.correctAnswers ?? "") : "-" },
         { header: "Toplam Soru", value: (row: any) => row.totalQuestions ?? "" },
         { header: "Süre (sn)", value: (row: any) => row.timeTaken ?? "" },
         { header: "Tamamlanma Tarihi", value: (row: any) => row.submittedAt ? new Date(row.submittedAt) : "" },
@@ -615,7 +615,7 @@ export default function StatisticsPage() {
                             <TableCell className="text-sm font-medium">{res.quizTitle || 'Sınav'}</TableCell>
                             <TableCell className="text-center">
                               <Badge variant="outline" className="font-bold tabular-nums">
-                                {res.correctAnswersCount ?? res.correctAnswers ?? '—'} / {res.totalQuestions}
+                                {res.status === 'completed' ? (res.correctAnswersCount ?? res.correctAnswers ?? '—') : '—'} / {res.totalQuestions}
                               </Badge>
                             </TableCell>
                             <TableCell className="text-right py-4 px-6">

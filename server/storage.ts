@@ -220,12 +220,13 @@ export interface IStorage {
 }
 
 export class PrismaStorage implements IStorage {
-  // P-01: cevap kaydı her seferinde sınavın sorularını okumasın diye quizId -> (soruId -> doğru cevap) önbelleği.
+  // P-01: cevap kaydı her seferinde sınavın sorularını okumasın diye quizId -> soru kimlikleri önbelleği.
   // Katılım başladıktan sonra sorular değişmez; yine de soru yazan her yol ilgili anahtarı geçersiz kılar.
-  private readonly answerKeyCache = new Map<string, Map<string, string | null>>();
-  private static readonly ANSWER_KEY_CACHE_LIMIT = 200;
+  // Doğru cevap sayısı cevap kaydında değil, teslimde (completeResult) hesaplanır.
+  private readonly questionIdCache = new Map<string, Set<string>>();
+  private static readonly QUESTION_ID_CACHE_LIMIT = 200;
   private invalidateAnswerKey(quizId?: string | null) {
-    if (quizId) this.answerKeyCache.delete(quizId); else this.answerKeyCache.clear();
+    if (quizId) this.questionIdCache.delete(quizId); else this.questionIdCache.clear();
   }
 
   async getResultsSummary(filters: ResultsSummaryFilters, paging?: ResultsSummaryPaging): Promise<ResultsSummaryPage> {
@@ -1428,20 +1429,18 @@ export class PrismaStorage implements IStorage {
       if (result.status !== "in_progress") fail("RESULT_COMPLETED");
       if (!result.quiz) fail("QUIZ_NOT_FOUND");
       if (result.quiz.timeLimit && receivedAt >= result.startedAt.getTime() + result.quiz.timeLimit * 60000) fail("RESULT_EXPIRED");
-      let answerKey = this.answerKeyCache.get(result.quizId);
-      if (!answerKey) {
-        const questions = await tx.question.findMany({ where: { quizId: result.quizId }, select: { id: true, correctAnswer: true } });
-        answerKey = new Map(questions.map(q => [q.id, q.correctAnswer] as [string, string | null]));
-        if (this.answerKeyCache.size >= PrismaStorage.ANSWER_KEY_CACHE_LIMIT) {
-          this.answerKeyCache.delete(this.answerKeyCache.keys().next().value as string);
+      let questionIds = this.questionIdCache.get(result.quizId);
+      if (!questionIds) {
+        const questions = await tx.question.findMany({ where: { quizId: result.quizId }, select: { id: true } });
+        questionIds = new Set(questions.map(q => q.id));
+        if (this.questionIdCache.size >= PrismaStorage.QUESTION_ID_CACHE_LIMIT) {
+          this.questionIdCache.delete(this.questionIdCache.keys().next().value as string);
         }
-        this.answerKeyCache.set(result.quizId, answerKey);
+        this.questionIdCache.set(result.quizId, questionIds);
       }
-      if (!answerKey.has(questionId)) fail("INVALID_QUESTION_ID");
+      if (!questionIds.has(questionId)) fail("INVALID_QUESTION_ID");
       const answers = { ...JSON.parse(result.answers || "{}"), [questionId]: answer };
-      let correct = 0;
-      for (const [id, correctAnswer] of answerKey) if (answers[id] === correctAnswer) correct++;
-      await tx.studentResult.update({ where: { id }, data: { answers: JSON.stringify(answers), correctAnswersCount: correct } });
+      await tx.studentResult.update({ where: { id }, data: { answers: JSON.stringify(answers) } });
     });
   }
 
