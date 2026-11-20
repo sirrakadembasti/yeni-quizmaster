@@ -30,21 +30,22 @@ async function notify(actor: NonNullable<AuthRequest['user']>, quiz: any, create
   try {
     await storage.createLog(actor.id, created ? 'CREATE_QUIZ' : 'UPDATE_QUIZ', `Saved content: ${quiz.title}`);
     const label = quiz.contentType === 'survey' ? 'Anket' : 'Sınav';
-    const deliver = async (userId: string, title: string, message: string, type: string) => {
-      const notification = await storage.createNotification({ userId, title, message, type });
-      try { getIO().to(`user_${userId}`).emit('notification', notification); }
-      catch (error) { logger.warn({ err: error }, 'Saved notification could not be delivered live'); }
-    };
+    const rows: Array<{ userId: string; title: string; message: string; type: string }> = [];
+    const deliver = (userId: string, title: string, message: string, type: string) => { rows.push({ userId, title, message, type }); };
     if (actor.role === 'teacher' && (created || published)) {
       const admins = (await storage.getAllUsers()).filter(user => shouldNotifyAdminAboutQuiz(actor.role, user.role));
-      for (const admin of admins) await deliver(admin.id, `Öğretmen ${label} ${published ? 'Yayınladı' : 'Oluşturdu'}`, `${actor.name}, "${quiz.title}" adlı içeriği ${published ? 'yayınladı' : 'oluşturdu'}.`, 'quiz');
+      for (const admin of admins) deliver(admin.id, `Öğretmen ${label} ${published ? 'Yayınladı' : 'Oluşturdu'}`, `${actor.name}, "${quiz.title}" adlı içeriği ${published ? 'yayınladı' : 'oluşturdu'}.`, 'quiz');
     }
     if (published) {
       const studentIds = new Set<string>();
       for (const classroom of quiz.assignedClasses || []) {
         for (const student of await storage.getStudentsByClass(classroom.id)) studentIds.add(student.id);
       }
-      for (const id of studentIds) await deliver(id, `Yeni ${label}`, `"${quiz.title}" yayımlandı.`, 'info');
+      for (const id of studentIds) deliver(id, `Yeni ${label}`, `"${quiz.title}" yayımlandı.`, 'info');
+    }
+    for (const notification of await storage.createNotifications(rows)) {
+      try { getIO().to(`user_${notification.userId}`).emit('notification', notification); }
+      catch (error) { logger.warn({ err: error }, 'Saved notification could not be delivered live'); }
     }
   } catch (error) { logger.error({ err: error }, 'Content saved but post-save notification/log failed'); }
 }
@@ -70,8 +71,10 @@ export function saveContentHandler(contentType: 'exam' | 'survey') {
         try { await (await getAIUsageService()).bindDraft(req.user!.id, aiDraftId, saved.quiz.id); }
         catch { logger.warn('Content saved; AI draft usage linkage could not be completed'); }
       }
-      await notify(req.user!, saved.quiz, saved.created, saved.published);
-      return res.json({ [contentType === 'survey' ? 'survey' : 'quiz']: saved.quiz, questions: saved.questions });
+      // Bildirimler kayıttan sonra yazılır; yanıt (büyük sınıflarda saniyeler sürebilen) bildirim yazımını beklemez.
+      res.json({ [contentType === 'survey' ? 'survey' : 'quiz']: saved.quiz, questions: saved.questions });
+      void notify(req.user!, saved.quiz, saved.created, saved.published);
+      return;
     } catch (error) {
       const message = (error as Error).message;
       if (message === 'CONTENT_FORBIDDEN') return res.status(403).json({ message: 'Bu içeriği düzenleme yetkiniz yok.' });
