@@ -4,6 +4,7 @@ import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { getAuthorizedClassIds } from "../utils/class-authorization";
 import { storage } from "../storage";
 
+import { logger } from "../utils/logger";
 const router: Router = Router();
 
 const querySchema = z.object({
@@ -42,7 +43,7 @@ router.get("/classes", requireAuth, requireRole(["admin", "teacher"]), async (re
       },
     });
   } catch (error) {
-    console.error("Class analytics error:", error);
+    logger.error({ err: error }, "Class analytics error");
     res.status(500).json({ message: "Sinif istatistikleri getirilemedi." });
   }
 });

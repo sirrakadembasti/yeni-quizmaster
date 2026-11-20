@@ -4,6 +4,7 @@ import express from 'express';
 import { request as httpRequest } from 'node:http';
 import studentRouter from '../../api-routes/student';
 import { storage } from '../../storage';
+import { logger } from '../../utils/logger';
 import { captureTrustedRequestReceipt, getTrustedRequestReceipt } from '../../utils/request-receipt';
 const receiptClock = vi.hoisted(() => ({ now: 1000000, sessionDelay: 0 }));
 const socket = vi.hoisted(() => ({ to: vi.fn(), emit: vi.fn() }));
@@ -134,13 +135,13 @@ describe('Student answer atomic delegation and response contracts', () => {
     vi.mocked(storage.createNotification).mockRejectedValue(failure);
     let logged!: () => void;
     const notificationFailed = new Promise<void>(resolve => { logged = resolve; });
-    const log = vi.spyOn(console, 'error').mockImplementation(() => { logged(); });
+    const log = vi.spyOn(logger, 'error').mockImplementation(() => { logged(); });
     try {
       const response = await request(createTestApp('student', body => responses.push(body))).post('/api/student/quiz/result-1/submit').send({ answers: {} });
       await notificationFailed;
       expect(response.status).toBe(200);
       expect(responses).toEqual([{ score: 100, correctAnswers: 1, totalQuestions: 1, acceptedQueuedAnswers: true }]);
-      expect(log).toHaveBeenCalledWith('Quiz submission notification error:', failure);
+      expect(log).toHaveBeenCalledWith({ err: failure }, 'Quiz submission notification error');
       expect(socket.emit).not.toHaveBeenCalled();
     } finally { log.mockRestore(); }
   });
@@ -196,7 +197,7 @@ describe('Student answer atomic delegation and response contracts', () => {
   });
   it('does not disguise an unexpected failure as a successful save', async () => {
     vi.mocked(storage.saveResultAnswer).mockRejectedValue(new Error('unexpected storage failure'));
-    const log = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const log = vi.spyOn(logger, 'error').mockImplementation(() => {});
     try {
       const response = await send();
       expect(response.status).toBe(500);

@@ -218,7 +218,7 @@ router.get("/results", requireAuth, requireRole(["admin", "teacher"]), async (re
 
     res.json({ surveys: results });
   } catch (error) {
-    console.error("Survey results error:", error);
+    logger.error({ err: error }, "Survey results error");
     res.status(500).json({ message: "Anket sonuçları getirilemedi." });
   }
 });
@@ -310,7 +310,7 @@ router.post("/:id/questions", requireAuth, requireRole(["admin", "teacher"]), as
   } catch (error) {
     if ((error as Error).message === "CONTENT_HAS_RESPONSES") return res.status(409).json({ message: "Katılım başladıktan sonra sorular değiştirilemez. Yeni bir sınav/anket oluşturun." });
     if ((error as Error).message === "INVALID_QUESTION_ID") return res.status(400).json({ message: "Geçersiz soru kimliği." });
-    console.error("Survey question synchronization error:", error);
+    logger.error({ err: error }, "Survey question synchronization error");
     res.status(500).json({ message: "Anket soruları kaydedilemedi." });
   }
 });

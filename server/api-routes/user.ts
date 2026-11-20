@@ -80,7 +80,7 @@ router.get("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Auth
 
     res.json({ users: sanitizedUsers });
   } catch (error) {
-    console.error("[GET /api/users] Error:", error);
+    logger.error({ err: error }, "[GET /api/users] Error");
     res.status(500).json({ message: "Kullanıcılar getirilemedi." });
   }
 });
@@ -127,7 +127,7 @@ router.get("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
 
     return res.status(403).json({ message: "Yetkisiz işlem." });
   } catch (error) {
-    console.error("[GET /api/users/:id] Error:", error);
+    logger.error({ err: error }, "[GET /api/users/:id] Error");
     res.status(500).json({ message: "Kullanıcı bilgileri getirilemedi." });
   }
 });
@@ -390,7 +390,7 @@ router.patch("/:id", requireAuth, async (req: AuthRequest, res: Response) => {
     res.json({ user: userWithoutPassword });
   } catch (error) {
     if ((error as any)?.message === "LAST_ADMIN") return res.status(409).json({ message: LAST_ADMIN_MESSAGE });
-    console.error("[PATCH /api/users/:id] Error:", error);
+    logger.error({ err: error }, "[PATCH /api/users/:id] Error");
     if ((error as any)?.code === "P2002") return res.status(409).json({ message: "Bu e-posta adresi zaten kullanılıyor." });
       if (respondToClassError(error, res)) return;
       res.status(500).json({ message: "Kullanıcı güncellenemedi." });

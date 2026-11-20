@@ -175,7 +175,7 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
     await notifyAdminsAboutTeacherQuiz(req.user!, quiz, "created");
     res.status(201).json({ quiz });
   } catch (error) {
-    console.error("Create quiz error:", error);
+    logger.error({ err: error }, "Create quiz error");
     res.status(500).json({ message: "Sınav oluşturulamadı." });
   }
 });
@@ -255,7 +255,7 @@ router.patch("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req:
 
     res.json({ quiz });
   } catch (error) {
-    console.error("Update quiz error:", error);
+    logger.error({ err: error }, "Update quiz error");
     res.status(500).json({ message: "İçerik güncellenemedi." });
   }
 });

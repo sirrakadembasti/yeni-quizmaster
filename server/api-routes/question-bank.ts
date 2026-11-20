@@ -4,6 +4,7 @@ import { requireAuth, requireRole, type AuthRequest } from "../middleware/auth";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 
+import { logger } from "../utils/logger";
 const router: Router = Router();
 
 const questionBankSchema = z.object({
@@ -20,7 +21,7 @@ router.get("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Auth
     const items = await storage.getQuestionBankItems(req.user!.id);
     res.json({ questions: items });
   } catch (error) {
-    console.error("[GET /api/question-bank] Error:", error);
+    logger.error({ err: error }, "[GET /api/question-bank] Error");
     res.status(500).json({ message: "Soru havuzu getirilemedi." });
   }
 });
@@ -38,7 +39,7 @@ router.post("/", requireAuth, requireRole(["admin", "teacher"]), async (req: Aut
     });
     res.status(201).json({ question: item });
   } catch (error) {
-    console.error("[POST /api/question-bank] Error:", error);
+    logger.error({ err: error }, "[POST /api/question-bank] Error");
     res.status(500).json({ message: "Soru havuza eklenemedi." });
   }
 });
@@ -48,7 +49,7 @@ router.delete("/:id", requireAuth, requireRole(["admin", "teacher"]), async (req
     await storage.deleteQuestionBankItem(req.params.id, req.user!.id);
     res.json({ message: "Soru havuzdan silindi." });
   } catch (error) {
-    console.error("[DELETE /api/question-bank] Error:", error);
+    logger.error({ err: error }, "[DELETE /api/question-bank] Error");
     res.status(500).json({ message: "Soru silinemedi." });
   }
 });
