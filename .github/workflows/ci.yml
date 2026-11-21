@@ -109,6 +109,10 @@ jobs:
       - name: İstemci tip denetimi
         run: npm run type-check --workspace=client
 
+      # T-02: kurallar şimdilik "warn" düzeyindedir; yalnız hata (parse/yapılandırma) CI'ı düşürür.
+      - name: ESLint (uyarı düzeyi)
+        run: npm run lint
+
   # Backend + frontend birim testleri (Chromium: arşiv PDF testleri için).
   birim-testleri:
     name: Birim testleri
