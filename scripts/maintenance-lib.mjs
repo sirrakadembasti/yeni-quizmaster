@@ -239,3 +239,62 @@ export async function restoreApplicationBackup(backupRoot,projectRoot){
     await fsp.rm(stage,{recursive:true,force:true});
   }
 }
+
+// Günlük otomatik yedekten (server/backups/auto: quiz-YYYYMMDD.db + uploads/ yansısı) boş bir hedefe geri yükleme.
+// Yalnız veritabanı ve yüklenen dosyalar gelir; .env, ai-encryption.key, installation.lock ve yapılandırma
+// otomatik yedeğe dahil değildir (bunlar için tam `backup` kullanılır).
+export async function restoreAutoBackup(autoBackupDir,projectRoot,{date}={}){
+  const source=fs.realpathSync(autoBackupDir),root=path.resolve(projectRoot);
+  rejectAncestorLinks(root);
+  if(inside(source,root)||inside(root,source))throw new Error('Restore target must be independent');
+  if(fs.existsSync(root)&&fs.lstatSync(root).isSymbolicLink())throw new Error('Symlink restore root is not supported');
+  if(date!==undefined&&!/^\d{8}$/.test(date))throw new Error('Invalid backup date (expected YYYYMMDD)');
+  const names=(await fsp.readdir(source)).filter(name=>/^quiz-\d{8}\.db$/.test(name)).sort();
+  if(!names.length)throw new Error('No automatic backups found');
+  const name=date?`quiz-${date}.db`:names[names.length-1];
+  if(!names.includes(name))throw new Error(`Automatic backup not found: ${name}`);
+  const database=path.join(source,name);
+  if(!fs.lstatSync(database).isFile())throw new Error('Automatic backup must be a regular file');
+  for(const relative of ['server/data','server/uploads'])if(fs.existsSync(safePath(root,relative)))throw new Error('Restore requires empty data storage; existing files are preserved');
+  await fsp.mkdir(root,{recursive:true,mode:0o700});
+  const stage=await fsp.mkdtemp(path.join(root,'.quizmaster-restore-'));
+  const published=[];
+  try{
+    const stagedDb=path.join(stage,'server/data/quiz.db');
+    await fsp.mkdir(path.dirname(stagedDb),{recursive:true,mode:0o700});
+    await fsp.copyFile(database,stagedDb,fs.constants.COPYFILE_EXCL);
+    await fsp.chmod(stagedDb,0o600);
+    // Kaynağı değiştirmemek için bütünlük denetimi aşamalı kopyada yapılır.
+    await checkDatabase(stagedDb);
+    const stagedUploads=path.join(stage,'server/uploads');
+    await fsp.mkdir(stagedUploads,{recursive:true,mode:0o700});
+    let uploadFiles=0;
+    const mirror=path.join(source,'uploads');
+    if(fs.existsSync(mirror)&&fs.lstatSync(mirror).isDirectory()){
+      for(const file of await filesUnder(mirror)){
+        const relative=path.relative(mirror,file);
+        const output=path.join(stagedUploads,relative);
+        await fsp.mkdir(path.dirname(output),{recursive:true,mode:0o700});
+        await fsp.copyFile(file,output,fs.constants.COPYFILE_EXCL);
+        await fsp.chmod(output,0o600);
+        uploadFiles+=1;
+      }
+    }
+    await fsp.mkdir(path.join(root,'server'),{recursive:true,mode:0o700});
+    for(const relative of ['server/data','server/uploads']){
+      const from=safePath(stage,relative),to=safePath(root,relative);
+      if(fs.existsSync(to))throw new Error('Restore target changed during validation');
+      await fsp.rename(from,to);published.push(to);
+    }
+    return {projectRoot:root,database:name,uploadFiles};
+  }catch(error){
+    for(const target of published.reverse()){
+      if(!inside(root,target))throw new Error('Unsafe restore rollback');
+      await fsp.rm(target,{recursive:true,force:true});
+    }
+    throw error;
+  }finally{
+    if(path.dirname(stage)!==root||!path.basename(stage).startsWith('.quizmaster-restore-'))throw new Error('Unsafe staging cleanup');
+    await fsp.rm(stage,{recursive:true,force:true});
+  }
+}

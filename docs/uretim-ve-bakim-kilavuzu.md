@@ -46,7 +46,11 @@ Uygulama çalışırken, ana süreç içinde günde bir kez `server/data/quiz.db
 - **Yüklenen dosyalar:** `server/backups/auto/uploads/` altına artımlı yansıtılır (yalnız yeni/değişen dosya kopyalanır). Kaynakta silinen bir dosya yansıdan **silinmez**; bu nedenle yansı zamanla büyüyebilir ve bir geri yükleme noktası değil "son bilinen dosyalar" kopyasıdır.
 - **Kapsam dışı:** `sessions.db`, `.env`, `ai-encryption.key` ve yapılandırma dosyaları bu yedeğe dahil değildir; bunlar için yukarıdaki tam yedekleme (`backup`) komutunu kullanın.
 - **Önemli:** Bu yedek aynı diskte durur ve disk arızasına karşı **tek başına yeterli değildir**. `server/backups/auto/` dizinini düzenli olarak sunucu dışındaki erişimi sınırlı bir alana kopyalayın.
-- **Geri yükleme:** Uygulamayı durdurun, `quiz-YYYYMMDD.db` dosyasını `server/data/quiz.db` olarak yerleştirin (mevcut dosyayı ve varsa `quiz.db-wal`/`quiz.db-shm` yan dosyalarını önce yedeğe alın), uploads yansısını gerekirse `server/uploads/` altına kopyalayın ve uygulamayı başlatın.
+- **Geri yükleme:** `restore-auto` komutu en yeni (ya da `--date` ile seçilen) `quiz-YYYYMMDD.db` dosyasını bütünlük denetiminden geçirip **boş** bir hedef projeye yazar ve `uploads/` yansısını `server/uploads/` altına kopyalar. Yedek dizini proje dışına kopyalanmış olabilir (harici disk, ağ paylaşımı).
+  ```bash
+  node scripts/maintenance.mjs restore-auto --auto-backup <server/backups/auto veya dış kopya> --project <boş hedef proje> [--date YYYYMMDD]
+  ```
+  Komut mevcut verinin üzerine yazmaz; hedefte `server/data` ya da `server/uploads` varsa reddeder. Yalnız veritabanı ve yüklenen dosyalar gelir: `.env`, `ai-encryption.key` ve `installation.lock` otomatik yedekte yoktur, bunları eski kurulumdan ya da tam yedekten (`backup`) hedefe kopyalayın. Mevcut kurulumun yerini alacaksa: uygulamayı durdurun, yedeği yeni bir boş dizine geri yükleyin, gerekli yapılandırma dosyalarını taşıyıp hedefi doğrulayın, ardından eski `server/data` ve `server/uploads` dizinlerini silmek yerine başka yere taşıyarak yerine geçirin.
 
 ### E-posta Büyük/Küçük Harf Düzeltmesi
 
