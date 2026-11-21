@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -33,4 +34,13 @@ export function readPerformanceRuntime(repo, file, {runId, requireDatabase=true}
   for(const relative of ['.env','server/.env'])ownedFile(root,relative,true);
   ownedFile(root,'server/data/academic.db',requireDatabase);
   return runtime;
+}
+
+// Korunan dosyaların SHA-256 özetleri (dosya yoksa null). Sabit özet yerine çalışmadan önce/sonra
+// karşılaştırılır: gerçek `server/data/quiz.db` yoksa (yeni worktree) provanın onu OLUŞTURMAMASI da denetlenir.
+export function protectedSnapshot(root, files) {
+  return files.map(file => {
+    const target = ownedFile(root, file);
+    return fs.existsSync(target) ? crypto.createHash('sha256').update(fs.readFileSync(target)).digest('hex') : null;
+  });
 }

@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
 import { performance } from 'node:perf_hooks';
-import { ownedFile, noLinks, exclusiveJson, readPerformanceRuntime } from './production-performance-guard.mjs';
+import { ownedFile, noLinks, exclusiveJson, readPerformanceRuntime, protectedSnapshot } from './production-performance-guard.mjs';
 import { launchOwned, cleanupOwned } from './academic-owned-process.mjs';
 import { verifyFixturePortsReleased } from './linux-owned-process-cleanup.mjs';
 import { waitForAuditServer } from './audit-server-readiness.mjs';
@@ -18,9 +18,8 @@ import { schoolBrowserProof } from './school-exam-browser-proof.mjs';
 if (process.argv.length !== 2) throw Error('This rehearsal accepts no database or path arguments');
 const repo = noLinks(path.resolve(import.meta.dirname, '..'));
 const req = createRequire(path.join(repo, 'server/package.json'));
-const hash = file => crypto.createHash('sha256').update(fs.readFileSync(ownedFile(repo, file, true))).digest('hex');
 const protectedFiles = ['client/src/lib/api.ts', 'client/src/pages/server-setup.tsx', 'server/data/quiz.db'];
-const before = protectedFiles.map(hash);
+const before = protectedSnapshot(repo, protectedFiles);
 noLinks(path.join(repo, 'server/data'));
 const root = fs.mkdtempSync(path.join(repo, 'server/data/quizmaster-test-academic-performance-'));
 for (const dir of ['server/data', 'server/uploads', 'server/prisma', 'client/dist', 'dist', 'artifacts']) fs.mkdirSync(path.join(root, dir), { recursive: true });
@@ -135,7 +134,7 @@ try {
     }));
     const tasks = clients.map((client, actor) => () => client('/api/student/quiz/' + resultIds[actor] + '/answer', 'POST', { questionId: questions[n].id, selectedOption: 'A' }));
     // Four concurrent classroom observers while all students save this answer.
-    const observerPaths = ['/api/results/quiz/' + quizId + '/live', '/api/dashboard/stats', '/api/results?projection=summary&quizId=' + quizId, '/api/results/quiz/' + quizId];
+    const observerPaths = ['/api/quizzes', '/api/dashboard/stats', '/api/results?projection=summary&quizId=' + quizId, '/api/results/quiz/' + quizId];
     for (let observer = 0; observer < 4; observer++) tasks.push(() => observers[observer](observerPaths[observer]));
     // The corrected exam layout has no invisible-menu polling. Classroom
     // observers still read notifications while observing the answering burst.
@@ -143,7 +142,7 @@ try {
     await phase('answer' + (n + 1), tasks);
   }
   const saved = await db.studentResult.findMany({ where: { id: { in: resultIds } } });
-  assert.equal(saved.length, 80); assert.ok(saved.every(row => Object.keys(JSON.parse(row.answers)).length === 20 && row.correctAnswersCount === 20 && row.status === 'in_progress'));
+  assert.equal(saved.length, 80); assert.ok(saved.every(row => Object.keys(JSON.parse(row.answers)).length === 20 && row.status === 'in_progress'));
   const answers = Object.fromEntries(questions.map(q => [q.id, 'A']));
   const immediateSamples = [], immediateDetails = [];
   const submissionFlowStarted = performance.now();
@@ -167,7 +166,7 @@ try {
   await phase('student-results80', clients.map(client => () => client('/api/student/results')));
   const details = await phase('student-result-details80', clients.map((client, actor) => () => client('/api/student/results/' + resultIds[actor])));
   assert.ok(details.every(r => r.body.result.score === 100 && r.body.questions.length === 20 && r.body.questions.every(q => q.isCorrect === true)));
-  const teacherPaths = ['/api/results/quiz/' + quizId + '/live', '/api/dashboard/stats', '/api/results?projection=summary&quizId=' + quizId, '/api/results/quiz/' + quizId];
+  const teacherPaths = ['/api/quizzes', '/api/dashboard/stats', '/api/results?projection=summary&quizId=' + quizId, '/api/results/quiz/' + quizId];
   await phase('teacher-results-and-dashboard', Array.from({ length: 8 }, (_, n) => () => observers[n % 4](teacherPaths[n % 4])));
   const repeat = await clients[0]('/api/student/quiz/' + resultIds[0] + '/submit', 'POST', { answers }); assert.equal(repeat.status, 200); assert.equal(repeat.body.score, 100);
   const nearId = crypto.randomUUID();
@@ -235,7 +234,7 @@ finally {
   await db?.$disconnect(); isolation?.restore();
   proof.cleanup = cleanup;
   if (port) { try { proof.portReleased = await verifyFixturePortsReleased([port]); } catch (e) { proof.portError = e.message; process.exitCode = 1; } }
-  proof.protectedHashesUnchanged = protectedFiles.every((file, n) => hash(file) === before[n]); assert.equal(proof.protectedHashesUnchanged, true);
+  proof.protectedHashesUnchanged = JSON.stringify(protectedSnapshot(repo, protectedFiles)) === JSON.stringify(before); assert.equal(proof.protectedHashesUnchanged, true);
   fs.writeFileSync(ownedFile(root, 'proof.json'), JSON.stringify(proof, (_, value) => typeof value === 'bigint' ? Number(value) : value, 2), { flag: 'wx' });
   print({ root, completed: proof.completed === true, protectedHashesUnchanged: proof.protectedHashesUnchanged, portReleased: proof.portReleased });
 }

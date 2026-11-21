@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import {launchOwned,cleanupOwned} from './academic-owned-process.mjs';
 import {waitForAuditServer} from './audit-server-readiness.mjs';
 import {verifyFixturePortsReleased} from './linux-owned-process-cleanup.mjs';
-import {ownedFile,noLinks,exclusiveJson,readPerformanceRuntime} from './production-performance-guard.mjs';
+import {ownedFile,noLinks,exclusiveJson,readPerformanceRuntime,protectedSnapshot} from './production-performance-guard.mjs';
 import {seedPerformance} from './production-performance-seed.mjs';
 import {bundleMetrics} from './production-performance-bundle.mjs';
 import {actorClient,summarize} from './production-performance-http.mjs';
@@ -20,11 +20,9 @@ const repo=path.resolve(import.meta.dirname,'..'),req=createRequire(path.join(re
 const phase=process.argv[2];if(!['baseline','baseline-resume','after','ui','ui-offline','base','archive','roles'].includes(phase))throw Error('Select baseline/after/ui/base/archive/roles');
 const main=path.resolve(process.argv[3]);noLinks(main);
 const plan=path.join(repo,'.superpowers/sdd/2026-10-06-production-rehearsal-plan'),pointer=ownedFile(plan,'task4-fixture.json');
-const hash=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 const protectedFiles=['client/src/lib/api.ts','client/src/pages/server-setup.tsx','server/data/quiz.db'];
-const protectedBefore=protectedFiles.map(f=>hash(ownedFile(main,f,true)));
-assert.deepEqual(protectedBefore,['de94a69161d940db1e10268fb95120da5a77325dbd3b90e3b26774f30a41831c','3e2d02a470166cc33df798c2316b1345ea0a9e7c2467ccc6c4bdd95703b459cb','8210a4b79f2cfb9cf74de6a4989f5c8a5449ba1d17b2332abdbd018c3741a158']);
-noLinks(path.join(repo,'server/data'));noLinks(plan);
+const protectedBefore=protectedSnapshot(main,protectedFiles);
+noLinks(path.join(repo,'server/data'));noLinks(plan);fs.mkdirSync(plan,{recursive:true,mode:0o700});
 let root,runtime;
 if(phase==='baseline'){
  root=fs.mkdtempSync(path.join(repo,'server/data/quizmaster-test-academic-performance-'));
@@ -125,7 +123,7 @@ finally {
    await attempt(label+'-log',()=>log.writableFinished?Promise.resolve():new Promise((r,j)=>{log.once('error',j);log.end(r);}));
  }
  const released=await attempt('ports-proof',()=>verifyFixturePortsReleased(ports));
- let protectedUnchanged=false;await attempt('protected-proof',async()=>{protectedUnchanged=JSON.stringify(protectedFiles.map(f=>hash(ownedFile(main,f,true))))===JSON.stringify(protectedBefore);});
+ let protectedUnchanged=false;await attempt('protected-proof',async()=>{protectedUnchanged=JSON.stringify(protectedSnapshot(main,protectedFiles))===JSON.stringify(protectedBefore);});
  const clean=errors.length===0&&cleanup.every(c=>c.stopped)&&released?.every(r=>r.stopped)&&protectedUnchanged;
  write('cleanup',{cleanup,ports:released||[],protectedHashes:protectedBefore,protectedUnchanged,errors,clean,outboundIsolation:isolation?.state});print(JSON.stringify({evidence,cleanup:clean,portsReleased:released?.every(r=>r.stopped),protectedUnchanged}));
  if(!clean)process.exitCode=1;
