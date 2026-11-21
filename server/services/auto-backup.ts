@@ -24,6 +24,9 @@ export type AutoBackupResult =
   | { skipped: false; file: string; removed: string[]; uploadsCopied: number };
 
 const BACKUP_NAME = /^quiz-\d{8}\.db$/;
+// Yansıdaki dosya, kaynağın zaman damgasından en fazla bu kadar geride olsa da güncel sayılır:
+// utimes ms'ye yuvarlar (Linux) ve FAT/exFAT harici diskler 2 sn hassasiyetle kaydeder.
+const MIRROR_MTIME_TOLERANCE_MS = 2000;
 
 function stamp(date: Date) {
   const pad = (value: number) => String(value).padStart(2, "0");
@@ -67,7 +70,7 @@ function mirrorUploads(sourceDir: string, targetDir: string): number {
       if (!entry.isFile()) continue;
       const sourceStat = fs.statSync(source);
       const targetStat = fs.existsSync(target) ? fs.statSync(target) : null;
-      if (targetStat && targetStat.size === sourceStat.size && targetStat.mtimeMs >= Math.floor(sourceStat.mtimeMs)) continue; // utimes milisaniyeye yuvarlar
+      if (targetStat && targetStat.size === sourceStat.size && sourceStat.mtimeMs - targetStat.mtimeMs <= MIRROR_MTIME_TOLERANCE_MS) continue;
       fs.copyFileSync(source, target);
       fs.utimesSync(target, sourceStat.atime, sourceStat.mtime);
       copied += 1;

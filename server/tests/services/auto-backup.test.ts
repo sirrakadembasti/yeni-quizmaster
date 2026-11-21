@@ -82,6 +82,21 @@ describe('S-09: otomatik yedek', () => {
     } finally { db.close(); }
   });
 
+  it('yansıdaki dosyanın zaman damgası kaynaktan az geride olsa da (yuvarlama, FAT/exFAT) yeniden kopyalanmaz', async () => {
+    const { db, databaseFile, uploadsDir, backupDir } = setup();
+    try {
+      await runAutoBackup({ databaseFile, backupDir, uploadsDir, keep: 7, now: day(2026, 11, 21) });
+      // Linux'ta ms'ye yuvarlanan utimes ve FAT/exFAT'in 2 sn hassasiyeti hedefi kaynağın biraz altında bırakabilir.
+      for (const file of ['a.png', path.join('nested', 'b.png')]) {
+        const mirror = path.join(backupDir, 'uploads', file);
+        const source = fs.statSync(path.join(uploadsDir, file));
+        fs.utimesSync(mirror, source.atime, new Date(source.mtimeMs - 1500));
+      }
+      const next = await runAutoBackup({ databaseFile, backupDir, uploadsDir, keep: 7, now: day(2026, 11, 22) });
+      expect(next.skipped === false && next.uploadsCopied).toBe(0);
+    } finally { db.close(); }
+  });
+
   it('yarım kalmış .tmp dosyalarını temizler', async () => {
     const { db, databaseFile, backupDir } = setup();
     try {
