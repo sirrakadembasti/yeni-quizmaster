@@ -62,6 +62,10 @@ jobs:
       - name: Yükseltme testleri
         run: npm run test:upgrade
 
+      # Tam yedek/geri yükleme (WAL, bütünlük, SHA-256) ve proje dışına kopyalanan yedekten geri yükleme.
+      - name: Bakım (yedek ve geri yükleme) testleri
+        run: npm run test:maintenance
+
       # Boş dizinde arayüzsüz (CLI) kurulum: migration, yönetici, .env, kilit ve durum dosyası.
       - name: Arayüzsüz kurulum duman testi
         env:
