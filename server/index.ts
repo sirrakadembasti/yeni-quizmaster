@@ -24,6 +24,7 @@ import { uploadsDirectory } from "./utils/upload-paths";
 import { getEffectiveDeploymentConfig } from "./utils/deployment-config";
 import { startDataRetentionWorker } from "./services/data-retention";
 import { startExpiredResultWorker } from "./services/expired-results";
+import { startAutoBackupWorker, stopAutoBackupWorker } from "./services/auto-backup";
 import { createArchiveWorker } from './services/archive-worker';
 import { archiveDb } from './services/archive-db';
 import { closeStorage, initializeStorage } from './storage';
@@ -251,6 +252,7 @@ app.use(httpLogger);
           startEmailWorker();
           startDataRetentionWorker();
           startExpiredResultWorker();
+          startAutoBackupWorker();
           archiveWorker.start();
         }
       },
@@ -280,6 +282,7 @@ async function shutdown(signal: NodeJS.Signals) {
   const httpClosed = new Promise<void>(resolve => httpServer.close(() => resolve()));
   await step("e-posta işçisi", () => stopEmailWorker());
   await step("arşiv işçisi", () => archiveWorker.stop());
+  await step("otomatik yedek işçisi", () => stopAutoBackupWorker());
   await step("socket.io", () => getIO().close());
   await step("http sunucusu", () => httpClosed);
   await step("veritabanı", () => closeStorage());
