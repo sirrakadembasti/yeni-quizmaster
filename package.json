@@ -24,11 +24,14 @@
     "test:upgrade": "node --test scripts/upgrade.test.mjs scripts/upgrade-process.test.mjs scripts/setup-bootstrap-runtime.test.mjs",
     "test:maintenance": "node --test scripts/maintenance-backup.test.mjs scripts/maintenance-native.test.mjs scripts/maintenance-cli.test.mjs",
     "test:build-startup": "node --test scripts/server-build-startup.test.mjs scripts/server-graceful-shutdown.test.mjs scripts/seed-guard.test.mjs",
+    "lint": "eslint .",
     "test:e2e": "playwright test"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
-    "concurrently": "^9.2.4"
+    "concurrently": "^9.2.4",
+    "eslint": "^9.39.5",
+    "typescript-eslint": "^8.73.0"
   },
   "dependencies": {
     "playwright": "^1.63.0",
