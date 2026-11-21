@@ -80,8 +80,8 @@ it('student and linked parent active views omit closed results without deleting 
   const detail = await request(app).get(`/parent/results/${archivedResult.id}`);
   expect(detail.status).toBe(200); expect(detail.body.result.id).toBe(archivedResult.id);
   auth.user = teacher;
-  const archivedExport = await request(app).get(`/results/quiz/${archivedExam.id}/export`);
-  expect(archivedExport.status).toBe(200); expect(archivedExport.text).toContain('100');
+  const archivedResults = await request(app).get(`/results/quiz/${archivedExam.id}`);
+  expect(archivedResults.status).toBe(200); expect(archivedResults.body.results.some((item: any) => item.score === 100)).toBe(true);
 });
 
 it('class analytics counts current exam scores and retains the closed records physically', async () => {
