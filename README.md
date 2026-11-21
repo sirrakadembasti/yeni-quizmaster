@@ -87,6 +87,8 @@ Aynı bilgiyi birden fazla kılavuza kopyalamak yerine ana belgeye bağlantı ve
 - **Türkçe Excel desteği:** Dışa aktarımlar gerçek Excel çalışma kitabı üretir; Türkçe karakter, sütun genişliği, başlık, filtre bilgisi ve sabit başlık satırı korunur.
 - **Duyuru ve bildirim:** Rol/sınıf hedefleme, gönderen adı ve rolü, son beş bildirim, tekil silme ve ses açma/kapatma.
 - **Kayıt bilgilendirme ve parola sıfırlama:** Yeni kullanıcı kaydında veritabanı tabanlı `EmailQueue` Outbox kuyruğuna kayıt başarı bilgilendirme e-postası (`registration_welcome`), tek kullanımlık parola sıfırlama bağlantısı, SHA-256 token özeti, `PasswordResetRequest` takibi, yönetici panelinde SMTP'siz tek kullanımlık bağlantı üretme (**Bağlantı Üret (SMTP'siz)**) ve terminal üzerinden yerel yönetici kurtarma (`db:reset-admin`).
+- **Kayıt denetimi ve parola kuralı:** Öğrencilerin kendi kendine kaydı `ALLOW_SELF_REGISTRATION` ile kapatılabilir (varsayılan açık; kurulum sihirbazı ve CLI de sorar). Kapalıyken kayıt 403 döner ve giriş ekranı kayıt sekmesini gizler. Açıkken kayıt IP başına 15 dakikada 10 deneme ile sınırlıdır. Yeni parolalar en az 8 karakter olmalıdır; mevcut parolalar etkilenmez.
+- **Otomatik günlük yedek:** Uygulama çalışırken günde bir kez `server/backups/auto/quiz-YYYYMMDD.db` yedeği alır (varsayılan açık, son 7 kopya, yüklenen dosyalar `auto/uploads/` altına yansıtılır). Geri yükleme: `node scripts/maintenance.mjs restore-auto --auto-backup <dizin> --project <boş hedef>`. Yedek aynı diskte durur; sunucu dışına kopyalayın. Ayrıntılar [üretim ve bakım kılavuzunda](docs/uretim-ve-bakim-kilavuzu.md).
 - **Canlı Demo Vitrin (`domain/demo`) ve 4 hazır rol hesabı:** Ayrı bir `server/data/demo.db` veritabanı ve `APP_DEMO_MODE=true` (`APP_BASE_PATH=/demo`) ile çalışan ikinci kopya desteği; `demo-admin`, `demo-ogretmen`, `demo-ogrenci` ve `demo-veli` hesaplarıyla tek tıkla (**Hemen İncele**) veya **Forma Doldur** (`demo123456`) ile giriş, üst bardan anında rol değiştirme, tüm alt sayfalarda `/demo/...` tarayıcı URL önekinin korunması (`DemoAwareRouter`), `/demo` modunda yeni kullanıcı kaydı/şifre sıfırlama/demo dışı girişlerin engellenmesi ve veri değiştiren işlemlerde salt-okunur simülasyon koruması (`DEMO_MODE_READ_ONLY`). Ayrıntılar [`demo/demo-vitrin-hesaplari.md`](demo/demo-vitrin-hesaplari.md) belgesindedir.
 - **Çevrimdışı sınav:** Süresiz sınavı önceden cihaza hazırlama, cevapları yerelde tutma ve bağlantı geldiğinde sunucuya gönderme.
 - **Güvenlik:** Oturum yenileme, CSRF koruması, hız sınırı, rol tabanlı API denetimi, parola/token alanlarının yanıtlardan temizlenmesi ve sunucu taraflı sınav süresi doğrulaması.
@@ -473,7 +475,11 @@ npm run build
 # Kurulum, yükseltme ve yalıtılmış üretim derlemesi testleri
 npm run test:setup
 npm run test:upgrade
+npm run test:maintenance   # tam yedek/geri yükleme, dizin dışı yedekten ve otomatik yedekten geri yükleme
 npm run test:build-startup
+
+# ESLint (yalnız uyarı düzeyinde; hata yoksa çıkış kodu 0)
+npm run lint
 
 # Uçtan uca testler (önce bir kez: Chromium artık npm ci ile indirilmez)
 npm run archive:prepare --workspace=server
@@ -488,8 +494,8 @@ npm run test:e2e
 
 | Kontrol | Ne yapar |
 |---|---|
-| Kurulum testleri (ubuntu Node 22, ubuntu Node 24, windows Node 22) | `npm ci`, gerçek npm ağacında bağımlılık algısı, `test:setup`, `test:upgrade`, arayüzsüz `setup:cli --yes` kurulumu, durum dosyası denetimi ve kurulu sistemde ikinci kurulumun reddedilmesi |
-| Tip denetimi | Sunucu ve istemci `tsc --noEmit` |
+| Kurulum testleri (ubuntu Node 22, ubuntu Node 24, windows Node 22) | `npm ci`, gerçek npm ağacında bağımlılık algısı, `test:setup`, `test:upgrade`, `test:maintenance` (yedek ve geri yükleme), arayüzsüz `setup:cli --yes` kurulumu, durum dosyası denetimi ve kurulu sistemde ikinci kurulumun reddedilmesi |
+| Tip denetimi | Sunucu ve istemci `tsc --noEmit`, ardından `npm run lint` (ESLint, `no-floating-promises` ve `no-misused-promises` uyarı düzeyinde; uyarılar CI'yı düşürmez, yalnız hata düşürür) |
 | Birim testleri | Chromium kurulumu, backend ve frontend testleri, `test:build-startup` (yalıtılmış üretim derlemesi + gerçek migration + başlatma + CSRF) ve `npm audit --omit=dev --audit-level=critical` (kritik açık varsa kırılır) |
 | Bun kurulum testi | Bun 1.3.14 ile `setup:cli`, bağımlılık algısı ve yükseltme akışı |
 
