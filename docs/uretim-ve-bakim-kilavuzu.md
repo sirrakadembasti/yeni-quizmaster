@@ -36,6 +36,18 @@ Hedef dizin bağımsız olmalıdır; kök `.env`, `server/.env`, `server/data` v
 - **Yedek Dizinleri:** Yedek dizini `server/backups/<ad>`; akademik paketlerin varsayılan kaynak dizini `server/data/backups` altındadır.
 - **Güvenlik:** Eksik, fazladan veya bozuk dosya, hatalı manifest, dizin aşımı (path traversal), sembolik bağlantı (symlink/junction) ve dolu hedef dizin reddedilir. Yedek gizli `.env` ayarlarını ve iş verilerini içerdiğinden sunucu dışında erişimi sınırlı özel depoda saklanmalıdır.
 
+### Otomatik Günlük Yedek (uygulama çalışırken)
+
+Uygulama çalışırken, ana süreç içinde günde bir kez `server/data/quiz.db` veritabanının tutarlı bir anlık görüntüsünü `server/backups/auto/quiz-YYYYMMDD.db` olarak alır. Uygulamayı durdurmak gerekmez (SQLite çevrimiçi `backup()` API'si WAL modunda güvenlidir).
+
+- **Varsayılan:** Açık, günlük, son **7** kopya tutulur, yüklenen dosyalar (`uploads`) dahildir. Bugünün yedeği yoksa her saat denenir; sunucu kapalı kalan günlerden sonra ilk fırsatta yedek alınır.
+- **Ayar:** `server/data/deployment-config.json` içindeki `backup` bölümü: `{ "enabled": true, "keep": 7, "includeUploads": true }` (`keep` 1–60). Kapatmak için `enabled: false`.
+- **Doğrulama:** Her yedek bağımsız (WAL yan dosyasız) bir veritabanıdır ve `integrity_check` ile `foreign_key_check` geçmeden kabul edilmez. Yarım kalan yazım `*.tmp` olarak kalır ve sonraki çalıştırmada silinir.
+- **Yüklenen dosyalar:** `server/backups/auto/uploads/` altına artımlı yansıtılır (yalnız yeni/değişen dosya kopyalanır). Kaynakta silinen bir dosya yansıdan **silinmez**; bu nedenle yansı zamanla büyüyebilir ve bir geri yükleme noktası değil "son bilinen dosyalar" kopyasıdır.
+- **Kapsam dışı:** `sessions.db`, `.env`, `ai-encryption.key` ve yapılandırma dosyaları bu yedeğe dahil değildir; bunlar için yukarıdaki tam yedekleme (`backup`) komutunu kullanın.
+- **Önemli:** Bu yedek aynı diskte durur ve disk arızasına karşı **tek başına yeterli değildir**. `server/backups/auto/` dizinini düzenli olarak sunucu dışındaki erişimi sınırlı bir alana kopyalayın.
+- **Geri yükleme:** Uygulamayı durdurun, `quiz-YYYYMMDD.db` dosyasını `server/data/quiz.db` olarak yerleştirin (mevcut dosyayı ve varsa `quiz.db-wal`/`quiz.db-shm` yan dosyalarını önce yedeğe alın), uploads yansısını gerekirse `server/uploads/` altına kopyalayın ve uygulamayı başlatın.
+
 ### E-posta Büyük/Küçük Harf Düzeltmesi
 
 Giriş, kayıt, şifre sıfırlama ve profil güncelleme e-postayı küçük harfe çevirerek karşılaştırır. `20261118090000_normalize_user_email` göçü mevcut büyük harfli e-postaları küçültür. Aynı adresin iki yazımı varsa (ör. `Ali@x.com` ve `ali@x.com`) çakışan satırlar değiştirilmez. Bunları listelemek için (uygulama durdurulmuşken, yedek aldıktan sonra):

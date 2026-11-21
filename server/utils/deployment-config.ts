@@ -11,6 +11,13 @@ const retentionSchema = z.object({
   passwordResetDays: z.number().int().min(7).max(3650).default(90),
 });
 
+// S-09: uygulama çalışırken günlük otomatik veritabanı yedeği (server/backups/auto/).
+const backupSchema = z.object({
+  enabled: z.boolean().default(true),
+  keep: z.number().int().min(1).max(60).default(7),
+  includeUploads: z.boolean().default(true),
+});
+
 const originSchema = z.string().url().refine((value) => {
   let parsed: URL;
   try { parsed = new URL(value); } catch { return false; }
@@ -37,6 +44,7 @@ export const deploymentConfigSchema = z.object({
     emailLogDays: 90,
     passwordResetDays: 90,
   }),
+  backup: backupSchema.default({ enabled: true, keep: 7, includeUploads: true }),
   updatedAt: z.string().datetime().optional(),
   updatedBy: z.string().optional(),
 }).superRefine((value, context) => {
@@ -82,6 +90,8 @@ const defaultRetention: DeploymentConfig["retention"] = {
   emailLogDays: 90,
   passwordResetDays: 90,
 };
+
+const defaultBackup: DeploymentConfig["backup"] = { enabled: true, keep: 7, includeUploads: true };
 
 export const deploymentConfigPath = path.join(
   getProjectRoot(),
@@ -135,6 +145,7 @@ export function getEffectiveDeploymentConfig(): DeploymentConfig {
     allowedOrigins: envOrigins(),
     trustProxyHops: Math.min(5, Math.max(0, Number(process.env.TRUST_PROXY_HOPS) || (isLocalHost ? 0 : 1))),
     retention: defaultRetention,
+    backup: defaultBackup,
   };
 }
 
