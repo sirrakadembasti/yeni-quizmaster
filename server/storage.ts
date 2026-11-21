@@ -141,7 +141,6 @@ export interface IStorage {
   getFilteredResults(filters: { quizId?: string; categoryId?: string; classId?: string; studentId?: string; createdBy?: string }): Promise<StudentResult[]>;
   getResultsSummary(filters: ResultsSummaryFilters, paging?: ResultsSummaryPaging): Promise<ResultsSummaryPage>;
   getResultsByQuiz(quizId: string, options?: { activeOnly?: boolean }): Promise<StudentResult[]>;
-  getLiveResults(quizId: string): Promise<StudentResult[]>;
   getStudentQuizResult(studentId: string, quizId: string): Promise<StudentResult | undefined>;
   createResult(result: Prisma.StudentResultUncheckedCreateInput & { answers?: any }): Promise<StudentResult>;
   updateResult(id: string, result: Partial<Prisma.StudentResultUncheckedCreateInput> & { answers?: any }): Promise<void>;
@@ -1349,18 +1348,6 @@ export class PrismaStorage implements IStorage {
       where: { quizId, ...(options?.activeOnly ? { academicYear: null, quiz: activeQuizWhere } : {}) },
       include: { student: { select: resultStudentSelect } },
       orderBy: { score: 'desc' }
-    });
-    return results.map(r => ({
-      ...r,
-      answers: r.answers ? JSON.parse(r.answers) : {}
-    })) as unknown as StudentResult[];
-  }
-
-  async getLiveResults(quizId: string): Promise<StudentResult[]> {
-    const results = await readPrisma.studentResult.findMany({
-      where: { quizId, status: 'in_progress' },
-      include: { student: { select: resultStudentSelect } },
-      orderBy: { startedAt: 'desc' }
     });
     return results.map(r => ({
       ...r,
