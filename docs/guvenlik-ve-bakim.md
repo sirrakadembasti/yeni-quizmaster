@@ -22,6 +22,40 @@ React/Vite, Express, Prisma/SQLite, Socket.IO ve e-posta outbox mimarisi korunmu
 | E-posta kuyruğu | İşçi 5 dakikalık lease ile kayıt sahiplenir. Başarısız kayıt aynı turda tekrar alınmaz. Eski lease yeni işçinin durumunu ezemez. | Paralel sahiplenme/SMTP yeniden deneme testi |
 | Bağımlılıklar | Yamalar/gerekli sürüm yükseltmeleri yapıldı. Kullanılmayan jsPDF/uuid ve Nodemailer'ın eski harici tip paketi kaldırıldı. tar/once güvenlik sürümleri o tarihte pnpm override ile sabitlendi; pnpm kaldırıldığından bugün kök `package.json` içindeki `overrides` (`tar`, `@tootallnate/once`) ve `package-lock.json` ile sabittir. 16 Kasım 2026'da `zod` 4'e ve Prisma 7'ye geçilerek son yüksek `npm audit` bulguları da kapatıldı. | Audit/derleme/tip/test kontrolleri |
 
+## Yol haritası düzeltmeleri — 21 Kasım 2026
+
+17 Kasım 2026 mimari incelemesinin (`docs/yol-haritasi.md`, depoya eklenmemiş yerel belge) bütün görevleri uygulandı; her biri ayrı PR'dır, önce başarısız test yazılıp sonra düzeltme yapıldı.
+
+| Görev | Düzeltme | PR |
+| --- | --- | --- |
+| G-01 | Demo hazırlama canlı veritabanını değiştirmez; demo bağlamı yalnız demo örneğinde geçerlidir | #43 |
+| G-02 | `async` rotalardaki yakalanmayan hatalar küresel hata işleyicisine yönlenir | #36 |
+| G-03 | Öğrenci dışı kullanıcılar silinmez, pasife alınır | #37 |
+| G-04 | Son etkin yönetici silinemez, rolü düşürülemez | #39 |
+| G-05 | E-posta büyük/küçük harf tutarsızlığı giderildi | #40 |
+| G-06 | Sıfırlama token'ı düz metin saklanmaz ve yönetici API'sinden dönmez | #41 |
+| G-07 | Süreli sınavda tekrarlı teslim önlendi, sayaç duvar saatine bağlandı | #42 |
+| S-01 | Düzgün kapanış (SIGTERM/SIGINT) | #44 |
+| S-02 | Süresi dolup teslim edilmeyen sınav oturumları otomatik kapanır | #45 |
+| S-03 | `ALLOW_SELF_REGISTRATION` bayrağı, `registration-info` ucu, kayıt için IP sınırı; sihirbaz sorusu | #50, #51 |
+| S-04 | Parola alt sınırı tüm yollarda 8 karakter | #52 |
+| S-05 | Oturum çerezi `SameSite=Lax`; `HOST` varsayılanı `127.0.0.1` | #46 |
+| S-06 | Hata iletilerinde sızıntı, yutulan neden ve yanlış durum kodları düzeltildi | #47 |
+| S-07 | Duyuru girdi doğrulaması; öğretmen kendi duyurusunu silebilir (yalnız API) | #48 |
+| S-08 | `db:seed` üretimde ve kurulu örnekte reddedilir | #49 |
+| S-09 | Günlük otomatik yedek; `restore-auto` komutu; dizin dışı yedekten geri yükleme testleri; bakım testleri CI'da | #62, #63, #64 |
+| P-01 | Cevap kaydında soru önbelleği; doğru sayısı teslimde hesaplanır | #54, #57 |
+| P-02 | `requireAuth` ilişkisiz kullanıcı sorgusu kullanır; demo korumasının ikinci sorgusu kaldırıldı | #55 |
+| P-03 | Yayınlama bildirimleri toplu yazılır, yanıt beklemez | #53 |
+| P-04 | Çevrimdışı görsel sınırı yalnız belgelendi | #56 |
+| T-01 | Kullanılmayan CSV dışa aktarma ve canlı sonuç rotaları silindi | #60 |
+| T-02 | ESLint (uyarı düzeyinde) ve CI adımı | #61 |
+| T-03 | Rotalarda `console.*` yerine `logger` | #58 |
+| T-05 | Belge düzeltmeleri | #59 |
+| Yük provası | 80 öğrenci provası güncel kodda çalıştırıldı (0 hata); süreler gürültülü, yeniden ölçüm gerekir | #65 |
+
+Açık kalan işler, kararlar ve önceliklerle birlikte [`docs/devir-notu.md`](devir-notu.md) dosyasında toplanmıştır.
+
 ## Veritabanı ve mevcut kurulum
 
 Migration 20260930093000_session_version_result_indexes yalnız User.sessionVersion, EmailQueue.processingUntil ve StudentResult indekslerini ekler. Kayıt silmez. Tarihsel mükerrer sonuçlar otomatik silinmez; yeni başlatma transaction içinde mevcut sonucu kullanır.
