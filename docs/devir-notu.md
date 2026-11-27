@@ -33,7 +33,7 @@ Kullanıcının verdiği kararlar:
 | 7 | ESLint'in 312 uyarısı (`no-misused-promises` 258, `no-floating-promises` 54) | **3** | Çoğu `async` Express işleyicisi. Yer tutucu `react-hooks` eklentisi `eslint.config.mjs` içinde; gerçek `eslint-plugin-react-hooks` kurulursa kaldırılabilir. |
 | 8 | E2E testlerinin CI'a eklenmesi | **3** | Karar: eklenmedi. CI'daki Playwright satırları yalnız PDF testleri için Chromium kurulumudur. |
 | 9 | G-06 öncesi gönderilmiş sıfırlama e-postalarının eski gövdeleri | **4** | Veritabanında/yedeklerde kalabilir; toplu temizleyen göç yazılmadı. |
-| 10 | Küçük temizlikler | **2** | `server/vitest.config.ts` içindeki `student-deadline` dışlaması; `class.ts` içindeki iki hata kodu yazımının (`error.message === KOD` ve `error.code`) birleştirilmesi; P-04 IndexedDB (karar: hayır); T-01'in soru havuzu ve `POST/PATCH /api/quizzes` kalanları; P-02'nin eski vitrin oturumu notu. |
+| 10 | Küçük temizlikler | **2** | **Yapıldı:** `student-deadline` dışlaması kalktı, bayat bir doğrulama düzeltildi (#73); `class.ts` hata kodu okuması `respondToClassError`'da birleşti (#74); P-02'nin eski vitrin oturumu notu geçersiz (oturum ömrü 24 saat, #55 20 Kasım'da birleşti). **Kalan:** T-01'in soru havuzu ve `POST/PATCH /api/quizzes` rotalarının silinmesi (kullanıcı kararı; önce bu rotaları kullanan istemci olup olmadığı taranmalı). P-04 IndexedDB: karar hayır. |
 
 ## 3. Bu oturumda öğrenilen, kodda görünmeyen şeyler
 
