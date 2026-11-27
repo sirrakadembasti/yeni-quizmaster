@@ -22,6 +22,7 @@ import { setupDnsFallback } from "./utils/dns-fallback";
 import { startEmailWorker, stopEmailWorker } from "./utils/email";
 import { uploadsDirectory } from "./utils/upload-paths";
 import { getEffectiveDeploymentConfig } from "./utils/deployment-config";
+import { getSelfRegistrationWarnings } from "./utils/registration";
 import { startDataRetentionWorker } from "./services/data-retention";
 import { startExpiredResultWorker } from "./services/expired-results";
 import { startAutoBackupWorker, stopAutoBackupWorker } from "./services/auto-backup";
@@ -249,6 +250,9 @@ app.use(httpLogger);
       () => {
         logger.info({ host, port, basePath: deploymentConfig.basePath, demoMode: demoInstance }, "Server serving");
         if (!demoInstance) {
+          for (const warning of getSelfRegistrationWarnings(process.env, deploymentConfig)) {
+            logger.warn(warning);
+          }
           startEmailWorker();
           startDataRetentionWorker();
           startExpiredResultWorker();
