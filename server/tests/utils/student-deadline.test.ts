@@ -51,7 +51,8 @@ it('saves an answer received before cutoff despite transaction processing after 
 });
 it('captures the default answer timestamp once before entering the transaction queue', async () => {
   await storage.saveResultAnswer('deadline-result', 'deadline-owner', 'deadline-question', 'A');
-  expect((await db.studentResult.findUniqueOrThrow({ where: { id: 'deadline-result' } })).correctAnswersCount).toBe(1);
+  // P-01 sonrası doğru sayısı teslimde hesaplanır; burada cevabın kabul edilip kaydedildiği doğrulanır.
+  expect((await db.studentResult.findUniqueOrThrow({ where: { id: 'deadline-result' } })).answers).toBe('{"deadline-question":"A"}');
 });
 it('accepts submitted answers received before cutoff despite delayed transaction processing', async () => {
   const outcome = await storage.completeResult('deadline-result', 'deadline-owner', { 'deadline-question': 'A' }, cutoff - 1);
