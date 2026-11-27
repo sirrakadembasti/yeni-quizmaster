@@ -4,7 +4,6 @@ import { resolve, join } from 'node:path';
 import { login, api, assertIsolatedRuntime, teacherAuditIds, forgetCachedLogin } from './teacher-audit-helpers';
 
 // Real isolated APIs and UI. No intercepted errors or external AI/SMTP requests.
-// No question-bank page/form exists; its existing endpoints are audited below.
 test.describe('Teacher audit: shared functions', () => {
   test.beforeAll(() => { assertIsolatedRuntime(); });
   test.beforeEach(async ({ page }) => { await login(page); });
@@ -221,28 +220,6 @@ test.describe('Teacher audit: shared functions', () => {
     await expect(page.locator('html')).not.toHaveClass(/dark/);
     await page.reload();
     await expect(page.locator('html')).not.toHaveClass(/dark/);
-  });
-
-  test('question bank API creates, lists and deletes only this teacher item', async ({ page }) => {
-    let id: string | undefined;
-    const text = `Teacher audit new bank question ${Date.now()}?`;
-    try {
-      const invalid = await api(page, '/question-bank', 'POST', { text: '', options: [] });
-      expect(invalid.status).toBe(400);
-      const created = await api(page, '/question-bank', 'POST', { text, options: ['One', 'Two'], correctAnswer: 'Two', categoryId: teacherAuditIds.category });
-      id = created.body.question?.id;
-      expect(created.status, JSON.stringify(created.body)).toBe(201);
-      expect(id).toBeTruthy();
-      const list = await api(page, '/question-bank');
-      expect(list.status).toBe(200);
-      expect(list.body.questions.some((q: any) => q.id === id && q.text === text)).toBe(true);
-      expect(list.body.questions.every((q: any) => q.teacherId === 'teacher-audit-teacher')).toBe(true);
-    } finally {
-      if (id) {
-        expect((await api(page, `/question-bank/${id}`, 'DELETE')).status).toBe(200);
-        expect((await api(page, '/question-bank')).body.questions.some((q: any) => q.id === id)).toBe(false);
-      }
-    }
   });
 
   test('image upload API rejects invalid type and over 5MB without creating an asset', async ({ page }) => {

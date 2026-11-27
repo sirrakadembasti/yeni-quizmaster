@@ -12,7 +12,6 @@ import { createAIManagementRouter } from "./ai-management";
 import adminRouter from "./admin";
 import uploadRouter from "./upload";
 import parentRouter from "./parent";
-import questionBankRouter from "./question-bank";
 import notificationRouter from "./notification";
 import announcementRouter from "./announcement";
 import studentRouter from "./student";
@@ -37,7 +36,6 @@ export async function registerRoutes(_httpServer: Server, app: Express) {
   router.use("/admin", adminRouter);
   router.use("/upload", uploadRouter);
   router.use("/parents", parentRouter);
-  router.use("/question-bank", questionBankRouter);
   router.use("/notifications", notificationRouter);
   router.use("/announcements", announcementRouter);
   router.use("/student", studentRouter);
