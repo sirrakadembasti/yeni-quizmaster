@@ -44,7 +44,7 @@ const announcementAudienceLabels: Record<string, string> = {
 };
 
 export default function AnnouncementsPage() {
-  const { role } = useAuth();
+  const { role, user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -162,7 +162,7 @@ export default function AnnouncementsPage() {
                 <div className="p-3 sm:p-3.5 space-y-2">
                   <div className="flex items-start justify-between gap-4">
                     <AnnouncementAuthor creator={ann.creator} createdAt={ann.createdAt} />
-                    {role === 'admin' && (
+                    {(role === 'admin' || (isTeacher && ann.createdBy === user?.id)) && (
                       <Button 
                         variant="ghost" 
                         size="icon" 
