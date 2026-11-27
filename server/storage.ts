@@ -1,5 +1,5 @@
 import { isDeepStrictEqual } from "node:util";
-import { Prisma, User, Quiz, Question, QuestionBank, StudentResult, Category, Class, ActionLog, EmailQueue } from '@prisma/client';
+import { Prisma, User, Quiz, Question, StudentResult, Category, Class, ActionLog, EmailQueue } from '@prisma/client';
 import { createRuntimePrismaClient } from './utils/sqlite-runtime';
 import { getDashboardStats as readDashboardStats, type DashboardStats } from './services/dashboard-stats';
 import { readNotificationPreferences, writeNotificationPreferences, type NotificationPreferences } from './services/notification-preferences';
@@ -160,8 +160,6 @@ export interface IStorage {
   }>;
   getClassAnalytics(classIds: string[], startDate: Date, endDate: Date): Promise<any[]>;
   getDashboardOverview(role: string, userId: string): Promise<any[]>;
-  getQuestionBankItems(teacherId: string): Promise<QuestionBank[]>;
-  createQuestionBankItem(item: Omit<Prisma.QuestionBankUncheckedCreateInput, 'id' | 'createdAt' | 'options'> & { options?: any }): Promise<QuestionBank>;
 
 
   // Notification methods
@@ -1259,39 +1257,6 @@ export class PrismaStorage implements IStorage {
       await this.syncQuestionsInTransaction(tx, id, normalized);
       const saved = await tx.question.findMany({ where: { quizId: id }, orderBy: { order: 'asc' } });
       return { quiz: quiz as unknown as Quiz, questions: saved.map(q => ({ ...q, options: JSON.parse(q.options || '[]'), config: q.config ? JSON.parse(q.config) : null })) as unknown as Question[], created: !existing, published };
-    });
-  }
-
-  // Question Bank methods
-  async getQuestionBankItems(teacherId: string): Promise<QuestionBank[]> {
-    const items = await prisma.questionBank.findMany({
-      where: { teacherId },
-      include: { category: true },
-      orderBy: { createdAt: 'desc' },
-    });
-    return items.map(q => ({
-      ...q,
-      options: q.options ? JSON.parse(q.options) : null,
-    })) as unknown as QuestionBank[];
-  }
-
-  async createQuestionBankItem(item: Omit<Prisma.QuestionBankUncheckedCreateInput, 'id' | 'createdAt' | 'options'> & { options?: any }): Promise<QuestionBank> {
-    const created = await prisma.questionBank.create({
-      data: {
-        ...item,
-        options: item.options ? JSON.stringify(item.options) : null,
-      },
-      include: { category: true }
-    });
-    return {
-      ...created,
-      options: created.options ? JSON.parse(created.options) : null,
-    } as unknown as QuestionBank;
-  }
-
-  async deleteQuestionBankItem(id: string, teacherId: string): Promise<void> {
-    await prisma.questionBank.deleteMany({
-      where: { id, teacherId },
     });
   }
 
