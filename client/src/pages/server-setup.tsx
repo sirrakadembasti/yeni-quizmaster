@@ -142,6 +142,17 @@ export default function ServerSetupPage() {
           </CardContent>
         </Card>
 
+        {statusQuery.data?.selfRegistration?.warnings.length ? (
+          <Card className="border-red-200 bg-red-50/60 dark:border-red-900 dark:bg-red-950/20" role="alert">
+            <CardContent className="flex gap-3 p-4 text-sm text-red-900 dark:text-red-200">
+              <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0" />
+              <ul className="space-y-1">
+                {statusQuery.data.selfRegistration.warnings.map((warning) => <li key={warning}>{warning}</li>)}
+              </ul>
+            </CardContent>
+          </Card>
+        ) : null}
+
         {!changesAllowed && (
           <Card className="border-sky-200 bg-sky-50/60 dark:border-sky-900 dark:bg-sky-950/20">
             <CardContent className="p-4 text-sm text-sky-900 dark:text-sky-200">

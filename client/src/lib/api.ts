@@ -128,6 +128,7 @@ export interface DeploymentStatus {
   source: 'web-profile' | 'environment';
   runtimeChangesAllowed: boolean;
   restartRequiredForSavedChanges: boolean;
+  selfRegistration?: { enabled: boolean; warnings: string[] };
   detected: Record<string, string | boolean | null>;
   checks: {
     databaseReady: boolean;

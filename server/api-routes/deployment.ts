@@ -15,6 +15,7 @@ import {
 } from "../utils/deployment-config";
 import { runDataRetention } from "../services/data-retention";
 import { logger } from "../utils/logger";
+import { getSelfRegistrationWarnings, isSelfRegistrationEnabled } from "../utils/registration";
 
 const router: Router = Router();
 router.use(requireAuth, requireRole(["admin"]));
@@ -59,6 +60,10 @@ router.get("/status", async (req: AuthRequest, res: Response) => {
       source: saved ? "web-profile" : "environment",
       runtimeChangesAllowed: runtimeDeploymentChangesAllowed(),
       restartRequiredForSavedChanges: true,
+      selfRegistration: {
+        enabled: isSelfRegistrationEnabled(),
+        warnings: getSelfRegistrationWarnings(process.env, config),
+      },
       detected: {
         origin: detectedOrigin(req),
         forwardedProto: req.headers["x-forwarded-proto"] || null,

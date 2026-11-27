@@ -76,3 +76,36 @@ describe('S-03: register için IP sınırlayıcı', () => {
     expect(statuses[10]).toBe(429);
   });
 });
+
+describe('S-03: register sınırlayıcısı ve proxy / X-Forwarded-For', () => {
+  const attempts = async (a: express.Express, header: (n: number) => string | undefined, count: number) => {
+    const statuses: number[] = [];
+    for (let n = 1; n <= count; n++) {
+      const req = request(a).post('/api/auth/register').send(body(n)).timeout(5000);
+      const xff = header(n);
+      if (xff) req.set('X-Forwarded-For', xff);
+      statuses.push((await req).status);
+    }
+    return statuses;
+  };
+
+  it('güvenilir proxy yokken sahte X-Forwarded-For sınırı aşmaya yaramaz', async () => {
+    const a = app(true);
+    const statuses = await attempts(a, n => `203.0.113.${n}`, 11);
+    expect(statuses[10]).toBe(429);
+  });
+
+  it('güvenilir proxy varken farklı istemci IP\'leri ayrı sayılır', async () => {
+    const a = app(true);
+    a.set('trust proxy', 1);
+    const statuses = await attempts(a, n => `203.0.113.${n}`, 11);
+    expect(statuses.every(code => code !== 429)).toBe(true);
+  });
+
+  it('güvenilir proxy varken aynı istemci IP\'si 10 denemeden sonra 429 alır', async () => {
+    const a = app(true);
+    a.set('trust proxy', 1);
+    const statuses = await attempts(a, () => '203.0.113.9', 11);
+    expect(statuses[10]).toBe(429);
+  });
+});
