@@ -110,17 +110,84 @@ export async function runAutoBackup(options: AutoBackupOptions): Promise<AutoBac
   return { skipped: false, file: finalFile, removed, uploadsCopied };
 }
 
+export interface OffsiteSyncOptions {
+  sourceDir: string;
+  /** Ağ paylaşımı veya harici disk altındaki hedef klasör. Üst dizini önceden var olmalıdır (bağlı olmayan paylaşım yerelde klasör açtırmaz). */
+  targetDir: string;
+  keep: number;
+}
+
+// Yerel yedeklerden hedefte eksik olanları kopyalar (önce .tmp, sonra rename), hedefte son `keep` yedeği tutar.
+// Yerel yedeğin alınmasından bağımsız çalışır: paylaşım o gün erişilemediyse sonraki denetimde tamamlanır.
+export async function syncOffsiteBackups(options: OffsiteSyncOptions) {
+  const { sourceDir, targetDir } = options;
+  const keep = Math.max(1, Math.floor(options.keep));
+  if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir); // recursive değil: üst dizin yoksa hata verir
+  removeStaleTemporaryFiles(targetDir);
+
+  const copied: string[] = [];
+  const localNames = fs.readdirSync(sourceDir).filter(name => BACKUP_NAME.test(name)).sort();
+  for (const name of localNames) {
+    const source = path.join(sourceDir, name);
+    const target = path.join(targetDir, name);
+    const size = fs.statSync(source).size;
+    if (fs.existsSync(target) && fs.statSync(target).size === size) continue;
+    const temporary = `${target}.tmp`;
+    try {
+      fs.copyFileSync(source, temporary);
+      if (fs.statSync(temporary).size !== size) throw new Error(`Dış kopya eksik yazıldı: ${name}`);
+      fs.renameSync(temporary, target);
+    } catch (error) {
+      fs.rmSync(temporary, { force: true });
+      throw error;
+    }
+    copied.push(name);
+  }
+
+  const uploadsSource = path.join(sourceDir, "uploads");
+  const uploadsCopied = fs.existsSync(uploadsSource) ? mirrorUploads(uploadsSource, path.join(targetDir, "uploads")) : 0;
+
+  const removed = fs.readdirSync(targetDir)
+    .filter(name => BACKUP_NAME.test(name))
+    .sort()
+    .reverse()
+    .slice(keep);
+  for (const name of removed) fs.rmSync(path.join(targetDir, name), { force: true });
+
+  return { copied, removed, uploadsCopied };
+}
+
+// server/.env: BACKUP_OFFSITE_DIR (ör. \\nas\quiz-yedek\quizmaster), BACKUP_OFFSITE_KEEP (varsayılan 14).
+export function getOffsiteConfig(env: NodeJS.ProcessEnv = process.env) {
+  const targetDir = (env.BACKUP_OFFSITE_DIR ?? "").trim();
+  if (!targetDir) return null;
+  const keep = Number(env.BACKUP_OFFSITE_KEEP);
+  return { targetDir, keep: Number.isFinite(keep) && keep >= 1 ? Math.floor(keep) : 14 };
+}
+
 export async function runScheduledBackup(now = new Date()) {
   const policy = getEffectiveDeploymentConfig().backup;
   if (!policy.enabled) return { enabled: false, skipped: true } as const;
+  const backupDir = path.join(getProjectRoot(), "server", "backups", "auto");
   const result = await runAutoBackup({
     databaseFile: resolveRuntimeSQLitePath(),
-    backupDir: path.join(getProjectRoot(), "server", "backups", "auto"),
+    backupDir,
     uploadsDir: policy.includeUploads ? uploadsDirectory : null,
     keep: policy.keep,
     now,
   });
   if (!result.skipped) logger.info({ file: path.basename(result.file), removed: result.removed.length, uploadsCopied: result.uploadsCopied }, "[Backup] Günlük yedek alındı");
+
+  // Dış kopya hatası yerel yedeği etkilemez; hata günlüğe yazılır, sonraki denetimde yeniden denenir.
+  const offsite = getOffsiteConfig();
+  if (offsite) {
+    try {
+      const sync = await syncOffsiteBackups({ sourceDir: backupDir, ...offsite });
+      if (sync.copied.length) logger.info({ copied: sync.copied, removed: sync.removed.length }, "[Backup] Dış kopya alındı");
+    } catch (error) {
+      logger.error({ err: error }, "[Backup] Dış kopya başarısız (paylaşım erişilebilir mi?)");
+    }
+  }
   return { enabled: true, ...result } as const;
 }
 
