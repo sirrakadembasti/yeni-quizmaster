@@ -106,10 +106,6 @@ router.post("/", requireAuth, requireRole(["admin"]), async (req: AuthRequest, r
     });
     res.status(201).json(cls);
   } catch (error: any) {
-    if (error.message === "CLASS_EXISTS") {
-      return res.status(400).json({ message: "Bu isimde bir sınıf zaten mevcut." });
-    }
-    if (error.message === 'INVALID_CLASS_TEACHER') return res.status(400).json({ message: 'Aktif bir öğretmen seçin.' });
     if (respondToClassError(error, res)) return;
     res.status(500).json({ message: "Sınıf oluşturulamadı." });
   }
@@ -128,10 +124,6 @@ router.patch("/:id", requireAuth, requireRole(["admin"]), async (req: AuthReques
     if (!cls) return res.status(404).json({ message: "Sınıf bulunamadı." });
     res.json(cls);
   } catch (error: any) {
-    if (error.message === "CLASS_EXISTS") {
-      return res.status(400).json({ message: "Bu isimde bir sınıf zaten mevcut." });
-    }
-    if (error.message === 'INVALID_CLASS_TEACHER') return res.status(400).json({ message: 'Aktif bir öğretmen seçin.' });
     if (respondToClassError(error, res)) return;
     res.status(500).json({ message: "Sınıf güncellenemedi." });
   }
@@ -142,7 +134,7 @@ router.delete("/:id", requireAuth, requireRole(["admin"]), async (req: AuthReque
     await storage.deleteClass(req.params.id);
     res.json({ message: "Sınıf silindi." });
   } catch (error: any) {
-    if (error?.code === "CLASS_NOT_EMPTY") return res.status(409).json({ message: error.message });
+    if (respondToClassError(error, res)) return;
     if (error?.code === "P2003") return res.status(409).json({ message: "Sınıf, yıl geçiş kurallarında kullanılıyor." });
     logger.error({ err: error }, "Sınıf silinemedi");
     res.status(500).json({ message: "Sınıf silinemedi." });
