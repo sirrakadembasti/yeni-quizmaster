@@ -14,7 +14,7 @@ Kullanıcının verdiği kararlar:
 |---|---|
 | S-03 açık kayıt | `ALLOW_SELF_REGISTRATION`, varsayılan **açık**; kurulum sihirbazı ve CLI de sorar |
 | S-04 parola | Herkes için en az **8** karakter |
-| S-09 yedek | Varsayılan **açık**, günlük, son **7**, `uploads` dahil (artımlı yansı), hedef `server/backups/auto/` |
+| S-09 yedek | Varsayılan **açık**, günlük, son **7**, `uploads` dahil (artımlı yansı), hedef `server/backups/auto/`; dış kopya: ağ paylaşımı, günlük, son **14** (`BACKUP_OFFSITE_DIR`, #71) |
 | P-01 adım 1 | Doğru sayısı cevap kaydında hesaplanmaz; devam eden sınavda CSV'de `-`, listede `—` |
 | P-04 | Görseller IndexedDB'ye **taşınmaz**, yalnız belgelenir |
 | T-01 | CSV dışa aktarma ve canlı sonuç rotaları silindi; soru havuzu ve `POST/PATCH /api/quizzes` rotaları **silinmedi** (ayrı karar) |
@@ -24,12 +24,12 @@ Kullanıcının verdiği kararlar:
 
 | # | İş | Önem | Not |
 |---|---|---|---|
-| 1 | Yedeği sunucu dışına kopyalama | **8** | Otomatik yedek aynı diskte. Hedef (harici disk, ağ paylaşımı, bulut) kullanıcı kararı; hedef belli olunca zamanlanmış kopya betiği yazılabilir. Geri yükleme araçları hazır: `maintenance restore` ve `restore-auto`, dizin dışı kopyadan geri yükleme testli (#63, #64). |
+| 1 | ~~Yedeği sunucu dışına kopyalama~~ | — | **Kod yapıldı (#71), canlıda açılması kullanıcıya kalır:** karar ağ paylaşımı (SMB/NAS), günlük, hedefte son 14. `server/.env` içinde `BACKUP_OFFSITE_DIR` (ve isteğe bağlı `BACKUP_OFFSITE_KEEP`) yazılıp sunucu yeniden başlatılınca devreye girer; yazılmadıkça kapalıdır. Gerçek bir SMB paylaşımında denenmedi: ilk kopyadan sonra günlükte `Dış kopya alındı` satırını doğrulayın. Geri yükleme araçları hazır: `maintenance restore` ve `restore-auto` (#63, #64). |
 | 2 | Açık kayıt koruması | **8** internete açıksa, **2** yalnız okul ağında | Bayrak `.env`'e `ALLOW_SELF_REGISTRATION=false` yazılarak kapanır (kullanıcının işi; `server/.env` ajan tarafından değiştirilmez). **Kısmen yapıldı (#67):** herkese açık adreste açık kayıt ve `TRUST_PROXY_HOPS=0` için başlangıç günlüğü ve "Sunucu Durumu" ekranı uyarısı; kayıt sınırlayıcısı için proxy/`X-Forwarded-For` testleri. Kalan: e-posta doğrulama, CAPTCHA, alan adı kısıtı, yönetici onayı yok (kullanıcı kararı gerektirir). |
 | 3 | Yük provasını makine boşken yeniden ölç | **6** | Rapor `docs/performans-ve-kapasite-raporu.md` bölüm 3.2: 80 öğrenci, 4.334 istek, 0 hata; cevap kaydı p95 11,04 sn, teslim p95 16,26 sn. Eski değerlerden yüksek ama ölçüm yoğun kullanılan 4 çekirdekli dizüstünde ve aynı anda başka işler koşarken alındı, **yorumlanamaz**. Hedef donanımda tekrarlayıp raporu güncelleyin. |
 | 4 | Otomatik yedeğin canlıda yeni gün ve temizlik davranışı | **4** | İlk yedek canlıda doğrulandı (21 Kasım 11:41, `quiz-20261121.db`, bütünlük `ok`). Birkaç gün sonra klasörde günlük dosya birikmesini ve 7'den fazlasının silinmesini kontrol edin. |
 | 5 | ~~`server/prisma/reset-admin.ts` en az 6 karakter kabul ediyor~~ | — | **Yapıldı (#68):** artık ortak `PASSWORD_MIN_LENGTH` (8). Test betiği çalıştırmaz, kaynağı denetler. |
-| 6 | İstemcide öğretmenin kendi duyurusunu silme düğmesi | **3** | S-07 yalnız API'yi açtı; `client/src/pages/announcements.tsx` düğmeyi yalnız yöneticiye gösterir. |
+| 6 | ~~İstemcide öğretmenin kendi duyurusunu silme düğmesi~~ | — | **Yapıldı (#70):** öğretmen yalnız `createdBy` kendisi olan duyurularda düğmeyi görür. |
 | 7 | ESLint'in 312 uyarısı (`no-misused-promises` 258, `no-floating-promises` 54) | **3** | Çoğu `async` Express işleyicisi. Yer tutucu `react-hooks` eklentisi `eslint.config.mjs` içinde; gerçek `eslint-plugin-react-hooks` kurulursa kaldırılabilir. |
 | 8 | E2E testlerinin CI'a eklenmesi | **3** | Karar: eklenmedi. CI'daki Playwright satırları yalnız PDF testleri için Chromium kurulumudur. |
 | 9 | G-06 öncesi gönderilmiş sıfırlama e-postalarının eski gövdeleri | **4** | Veritabanında/yedeklerde kalabilir; toplu temizleyen göç yazılmadı. |
