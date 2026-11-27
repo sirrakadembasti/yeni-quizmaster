@@ -2,6 +2,7 @@ import "dotenv/config";
 import bcrypt from "bcryptjs";
 import { storage, closeStorage } from "../storage";
 import { issueOfflinePasswordReset } from "../services/password-reset";
+import { PASSWORD_MIN_LENGTH } from "../utils/password-policy";
 
 async function main() {
   const emailArgIndex = process.argv.indexOf("--email");
@@ -32,8 +33,8 @@ async function main() {
   }
 
   if (newPassword) {
-    if (newPassword.length < 6) {
-      throw new Error("RESET_ADMIN_PASSWORD en az 6 karakter olmalıdır.");
+    if (newPassword.length < PASSWORD_MIN_LENGTH) {
+      throw new Error(`RESET_ADMIN_PASSWORD en az ${PASSWORD_MIN_LENGTH} karakter olmalıdır.`);
     }
     await storage.cancelPendingPasswordResetRequests(adminUser.id);
     const passwordHash = await bcrypt.hash(newPassword, 12);
